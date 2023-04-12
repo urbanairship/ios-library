@@ -48,38 +48,39 @@ public class PromptPermissionAction: NSObject, Action {
 
     public func perform(
         with arguments: ActionArguments) async -> ActionResult {
-
-        guard let arg = arguments.value else {
-            return ActionResult.empty()
-        }
-
-        do {
-            let data = try JSONSerialization.data(
-                withJSONObject: arg,
-                options: []
-            )
-            let args = try JSONDecoder().decode(Args.self, from: data)
-            self.permissionPrompter()
-                .prompt(
-                    permission: args.permission,
-                    enableAirshipUsage: args.enableAirshipUsage ?? false,
-                    fallbackSystemSettings: args.fallbackSystemSettings ?? false
-                ) { start, end in
-
-                    if let metadata = arguments.metadata {
-                        let resultReceiver =
-                            metadata[
-                                PromptPermissionAction.resultReceiverMetadataKey
-                            ]
-                            as? PermissionResultReceiver
-
-                        resultReceiver?(args.permission, start, end)
-                    }
+            
+            guard let arg = arguments.value else {
+                return ActionResult.empty()
+            }
+            
+            do {
+                let data = try JSONSerialization.data(
+                    withJSONObject: arg,
+                    options: []
+                )
+                let args = try JSONDecoder().decode(Args.self, from: data)
+                
+                let (start, end) = await self.permissionPrompter()
+                    .prompt(
+                        permission: args.permission,
+                        enableAirshipUsage: args.enableAirshipUsage ?? false,
+                        fallbackSystemSettings: args.fallbackSystemSettings ?? false
+                    )
+                
+                if let metadata = arguments.metadata {
+                    let resultReceiver =
+                    metadata[
+                        PromptPermissionAction.resultReceiverMetadataKey
+                    ]
+                    as? PermissionResultReceiver
+                    
+                    resultReceiver?(args.permission, start, end)
                 }
-            return ActionResult.empty()
-        } catch {
-            return ActionResult(error: error)
-        }
+                
+                return ActionResult.empty()
+            } catch {
+                return ActionResult(error: error)
+            }
     }
 
     internal struct Args: Decodable {

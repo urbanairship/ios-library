@@ -28,6 +28,7 @@ public class DeepLinkAction: NSObject, Action {
         }
     }
 
+    @MainActor
     public func perform(
         with arguments: ActionArguments
     ) async -> ActionResult {
@@ -45,6 +46,7 @@ public class DeepLinkAction: NSObject, Action {
         }
     }
 
+    @MainActor
     private func openURL(
         _ url: URL) async -> ActionResult {
             guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL)

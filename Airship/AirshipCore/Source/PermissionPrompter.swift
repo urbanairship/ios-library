@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 typealias PermissionResultReceiver = (
     AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus
@@ -11,10 +12,9 @@ protocol PermissionPrompter {
     func prompt(
         permission: AirshipPermission,
         enableAirshipUsage: Bool,
-        fallbackSystemSettings: Bool,
-        completionHandler: @escaping (AirshipPermissionStatus, AirshipPermissionStatus) ->
-            Void
-    )
+        fallbackSystemSettings: Bool
+    ) async ->  (AirshipPermissionStatus, AirshipPermissionStatus)
+
 }
 
 struct AirshipPermissionPrompter: PermissionPrompter {
@@ -30,69 +30,64 @@ struct AirshipPermissionPrompter: PermissionPrompter {
         self.notificationCenter = notificationCenter
     }
 
+    @MainActor
     func prompt(
         permission: AirshipPermission,
         enableAirshipUsage: Bool,
-        fallbackSystemSettings: Bool,
-        completionHandler: @escaping (AirshipPermissionStatus, AirshipPermissionStatus) ->
-            Void
-    ) {
+        fallbackSystemSettings: Bool
+    ) async ->  (AirshipPermissionStatus, AirshipPermissionStatus) {
 
-        self.permissionsManager.checkPermissionStatus(permission) {
-            startResult in
-            if fallbackSystemSettings && startResult == .denied {
-                #if !os(watchOS)
-                self.requestSystemSettingsChange(permission: permission) {
-                    endResult in
-                    completionHandler(startResult, endResult)
-                }
-                #endif
-            } else {
-                self.permissionsManager.requestPermission(
-                    permission,
-                    enableAirshipUsageOnGrant: enableAirshipUsage
-                ) { endResult in
-                    completionHandler(startResult, endResult)
-                }
-            }
+        let startResult = await self.permissionsManager.checkPermissionStatus(permission)
+        if fallbackSystemSettings && startResult == .denied {
+            #if !os(watchOS)
+            let endResult = await self.requestSystemSettingsChange(permission: permission)
+            #else
+            let endResult = await self.permissionsManager.requestPermission(
+                permission,
+                enableAirshipUsageOnGrant: enableAirshipUsage
+            )
+            #endif
+            return (startResult, endResult)
+
+        } else {
+            let endResult = await self.permissionsManager.requestPermission(
+                permission,
+                enableAirshipUsageOnGrant: enableAirshipUsage
+            )
+
+            return (startResult, endResult)
         }
     }
-
+    
     #if !os(watchOS)
 
+    @MainActor
     private func requestSystemSettingsChange(
-        permission: AirshipPermission,
-        completionHandler: @escaping (AirshipPermissionStatus) -> Void
-    ) {
+        permission: AirshipPermission
+    ) async -> AirshipPermissionStatus {
         if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url, options: [:]) { _ in
-
-                var observer: Any? = nil
-                observer = self.notificationCenter.addObserver(
-                    forName: AppStateTracker.didBecomeActiveNotification,
-                    object: nil,
-                    queue: .main
-                ) { _ in
-
-                    if let observer = observer {
-                        self.notificationCenter.removeObserver(observer)
-                    }
-
-                    self.permissionsManager.checkPermissionStatus(
-                        permission,
-                        completionHandler: completionHandler
-                    )
-                }
-            }
+            await UIApplication.shared.open(url, options: [:])
+            await waitNextOpen()
         } else {
             AirshipLogger.error("Unable to navigate to system settings.")
-            self.permissionsManager.checkPermissionStatus(
-                permission,
-                completionHandler: completionHandler
-            )
         }
+
+        return await self.permissionsManager.checkPermissionStatus(permission)
     }
 
+
+    @MainActor
+    private func waitNextOpen() async {
+        var subscription: AnyCancellable?
+        await withCheckedContinuation { continuation in
+            subscription = self.notificationCenter.publisher(for: AppStateTracker.didBecomeActiveNotification)
+                .sink { _ in
+                    continuation.resume()
+                }
+        }
+
+        subscription?.cancel()
+    }
     #endif
 
 }

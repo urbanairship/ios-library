@@ -12,58 +12,42 @@ struct UNNotificationRegistrar: NotificationRegistrar {
     }
     #endif
 
-    func checkStatus(
-        completionHandler: @escaping (
-            UAAuthorizationStatus, UAAuthorizedNotificationSettings
-        ) -> Void
-    ) {
-        UNUserNotificationCenter.current()
-            .getNotificationSettings { settings in
-                completionHandler(
-                    settings.authorizationStatus.airshipStatus,
-                    settings.airshipSettings
-                )
-            }
+    @MainActor
+    func checkStatus() async -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings) {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        return (settings.authorizationStatus.airshipStatus, settings.airshipSettings)
     }
 
     func updateRegistration(
         options: UANotificationOptions,
-        skipIfEphemeral: Bool,
-        completionHandler: @escaping () -> Void
-    ) {
+        skipIfEphemeral: Bool
+    ) async -> Void {
 
         let requestOptions = options.appleOptions
-        checkStatus { status, settings in
+        let (status, settings) = await checkStatus()
 
-            // Skip registration if no options are enable dand we are requestion no options
-            if settings == [] && requestOptions == [] {
-                completionHandler()
-                return
-            }
-
-            // Skip registration for ephemeral if skipRegistrationIfEphemeral
-            if status == .ephemeral && skipIfEphemeral {
-                completionHandler()
-                return
-            }
-
-            // Request
-            UNUserNotificationCenter.current()
-                .requestAuthorization(
-                    options: options.appleOptions
-                ) { granted, error in
-                    AirshipLogger.debug(
-                        "requestAuthorizationWithOptions \(granted)"
-                    )
-
-                    if let error = error {
-                        AirshipLogger.error(
-                            "requestAuthorizationWithOptions failed with error: \(error)"
-                        )
-                    }
-                    completionHandler()
-                }
+        // Skip registration if no options are enable dand we are requestion no options
+        if settings == [] && requestOptions == [] {
+            return
         }
+
+        // Skip registration for ephemeral if skipRegistrationIfEphemeral
+        if status == .ephemeral && skipIfEphemeral {
+            return
+        }
+
+        var granted = false
+        // Request
+        do {
+            granted = try await UNUserNotificationCenter.current().requestAuthorization(options: options.appleOptions)
+        } catch {
+            AirshipLogger.error(
+                "requestAuthorizationWithOptions failed with error: \(error)"
+            )
+        }
+        AirshipLogger.debug(
+            "requestAuthorizationWithOptions \(granted)"
+        )
     }
 }
 

@@ -3,7 +3,7 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-protocol ContactSubscriptionListAPIClientProtocol {
+protocol ContactSubscriptionListAPIClientProtocol: Sendable {
     func fetchSubscriptionLists(
         contactID: String
     ) async throws ->  AirshipHTTPResponse<[String: [ChannelScope]]>

@@ -9,10 +9,9 @@ class TestPermissionPrompter: PermissionPrompter {
     var onPrompt:
         (
             (
-                AirshipPermission, Bool, Bool,
-                (AirshipPermissionStatus, AirshipPermissionStatus) -> Void
+                AirshipPermission, Bool, Bool
             ) ->
-                Void
+            (AirshipPermissionStatus, AirshipPermissionStatus)
         )?
 
     init() {}
@@ -20,20 +19,16 @@ class TestPermissionPrompter: PermissionPrompter {
     func prompt(
         permission: AirshipPermission,
         enableAirshipUsage: Bool,
-        fallbackSystemSettings: Bool,
-        completionHandler: @escaping (AirshipPermissionStatus, AirshipPermissionStatus) ->
-            Void
-    ) {
+        fallbackSystemSettings: Bool) async ->  (AirshipPermissionStatus, AirshipPermissionStatus) {
 
         if let onPrompt = self.onPrompt {
-            onPrompt(
+            return onPrompt(
                 permission,
                 enableAirshipUsage,
-                fallbackSystemSettings,
-                completionHandler
+                fallbackSystemSettings
             )
         } else {
-            completionHandler(.notDetermined, .notDetermined)
+            return(.notDetermined, .notDetermined)
         }
     }
 }

@@ -58,13 +58,12 @@ class PromptPermissionActionTest: XCTestCase {
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
-            fallbackSystemSetting,
-            completionHandler in
+            fallbackSystemSetting in
             XCTAssertEqual(permission, .location)
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
-            completionHandler(.notDetermined, .notDetermined)
             prompted.fulfill()
+            return (.notDetermined, .notDetermined)
         }
 
     
@@ -86,13 +85,12 @@ class PromptPermissionActionTest: XCTestCase {
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
-            fallbackSystemSetting,
-            completionHandler in
+            fallbackSystemSetting in
             XCTAssertEqual(permission, .displayNotifications)
             XCTAssertFalse(enableAirshipUsage)
             XCTAssertFalse(fallbackSystemSetting)
-            completionHandler(.notDetermined, .notDetermined)
             prompted.fulfill()
+            return (.notDetermined, .notDetermined)
         }
 
       
@@ -114,12 +112,11 @@ class PromptPermissionActionTest: XCTestCase {
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
-            fallbackSystemSetting,
-            completionHandler in
+            fallbackSystemSetting in
             XCTFail()
+            return (.notDetermined, .notDetermined)
         }
 
-       
         let result = await self.action.perform(with: arguments)
         XCTAssertNotNil(result.error)
     }
@@ -155,11 +152,9 @@ class PromptPermissionActionTest: XCTestCase {
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
-            fallbackSystemSetting,
-            completionHandler in
-            completionHandler(.notDetermined, .granted)
+            fallbackSystemSetting in
+            return (.notDetermined, .granted)
         }
-
 
         _ = await self.action.perform(with: arguments)
         await self.waitForExpectations(timeout: 10)

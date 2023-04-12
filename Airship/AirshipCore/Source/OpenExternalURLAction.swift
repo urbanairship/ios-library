@@ -44,6 +44,7 @@ public class OpenExternalURLAction: NSObject, Action {
         }
     }
 
+    @MainActor
     public func perform(
         with arguments: ActionArguments) async -> ActionResult {
             guard let url = parseURL(arguments) else {

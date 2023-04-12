@@ -47,8 +47,11 @@ class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
         AirshipLogger.debug("Request to update remote data: \(request)")
 
         return try await self.session.performHTTPRequest(request) { data , response in
-            let lastModified =
-            response.allHeaderFields["Last-Modified"] as? String
+            guard response.statusCode == 200 else {
+                return nil
+            }
+
+            let lastModified = response.allHeaderFields["Last-Modified"] as? String
             let metadata = self.metadata(
                 url: url,
                 lastModified: lastModified

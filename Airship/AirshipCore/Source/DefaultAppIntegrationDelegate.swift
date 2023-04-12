@@ -32,7 +32,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
     public func onBackgroundAppRefresh() {
         AirshipLogger.info("Application received backgound app refresh")
-        self.push.updateAuthorizedNotificationTypes()
+        self.push.dispatchUpdateAuthorizedNotificationTypes()
     }
 
     public func didRegisterForRemoteNotifications(deviceToken: Data) {

@@ -18,24 +18,17 @@ class NotificationPermissionDelegate: AirshipPermissionDelegate {
         self.config = config
     }
 
-    func checkPermissionStatus(
-        completionHandler: @escaping (AirshipPermissionStatus) -> Void
-    ) {
-        registrar.checkStatus { status, _ in
-            completionHandler(status.permissionStatus)
-        }
+    func checkPermissionStatus() async -> AirshipPermissionStatus {
+        return await registrar.checkStatus().0.permissionStatus
     }
 
-    func requestPermission(
-        completionHandler: @escaping (AirshipPermissionStatus) -> Void
-    ) {
+    func requestPermission() async -> AirshipPermissionStatus {
         let config = self.config()
-        self.registrar.updateRegistration(
+        await self.registrar.updateRegistration(
             options: config.options,
             skipIfEphemeral: config.skipIfEphemeral
-        ) {
-            self.checkPermissionStatus(completionHandler: completionHandler)
-        }
+        )
+        return await self.checkPermissionStatus()
     }
 }
 

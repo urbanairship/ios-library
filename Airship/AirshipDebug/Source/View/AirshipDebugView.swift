@@ -336,6 +336,7 @@ private class AirshipDebugViewModel: ObservableObject {
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
+    @MainActor
     init() {
         self.locale = Locale.autoupdatingCurrent
 
@@ -375,9 +376,11 @@ private class AirshipDebugViewModel: ObservableObject {
 
         Airship.push.optInUpdates
             .sink(receiveValue: { _ in
-                self.isPushNotificationsOptedIn =
-                    Airship.push.isPushNotificationsOptedIn
-                self.deviceToken = Airship.push.deviceToken
+                Task { @MainActor in
+                    self.isPushNotificationsOptedIn =
+                        Airship.push.isPushNotificationsOptedIn
+                    self.deviceToken = Airship.push.deviceToken
+                }
             })
             .store(in: &self.subscriptions)
 

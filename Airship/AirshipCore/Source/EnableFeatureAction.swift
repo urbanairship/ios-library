@@ -67,35 +67,35 @@ public class EnableFeatureAction: NSObject, Action {
         }
     }
 
+    @MainActor
     public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
+        with arguments: ActionArguments
+    ) async -> ActionResult {
 
-        var permission: AirshipPermission!
-        do {
-            permission = try parsePermission(arguments: arguments)
-        } catch {
-            return ActionResult(error: error)
-        }
-
-        self.permissionPrompter()
-            .prompt(
-                permission: permission,
-                enableAirshipUsage: true,
-                fallbackSystemSettings: true
-            ) { start, end in
-
-                if let metadata = arguments.metadata {
-                    let resultReceiver =
-                        metadata[
-                            PromptPermissionAction.resultReceiverMetadataKey
-                        ]
-                        as? PermissionResultReceiver
-
-                    resultReceiver?(permission, start, end)
-                }
+            var permission: AirshipPermission!
+            do {
+                permission = try parsePermission(arguments: arguments)
+            } catch {
+                return ActionResult(error: error)
             }
-
-        return ActionResult.empty()
+            
+            let (start, end) = await self.permissionPrompter()
+                .prompt(
+                    permission: permission,
+                    enableAirshipUsage: true,
+                    fallbackSystemSettings: true
+                )
+            
+            if let metadata = arguments.metadata {
+                let resultReceiver =
+                metadata[
+                    PromptPermissionAction.resultReceiverMetadataKey
+                ]
+                as? PermissionResultReceiver
+                
+                resultReceiver?(permission, start, end)
+            }
+            return ActionResult.empty()
     }
 
     private func parsePermission(arguments: ActionArguments) throws

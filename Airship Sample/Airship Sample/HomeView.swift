@@ -99,7 +99,7 @@ struct HomeView: View {
     @ViewBuilder
     func makeEnablePushButton() -> some View {
         // MARK: Push/Bleat Button
-        Button(action: { viewModel.pushEnabled.toggle() }) {
+        Button(action: { viewModel.togglePushEnabled() }) {
             ZStack {
                 Capsule()
                     .strokeBorder(Color.accentColor, lineWidth: 2.0)
@@ -180,19 +180,7 @@ struct HomeView: View {
 
     class ViewModel: ObservableObject {
         @Published
-        var pushEnabled: Bool =
-            Airship.push.userPushNotificationsEnabled
-            && Airship.shared.privacyManager.isEnabled(.push)
-        {
-            didSet {
-                if pushEnabled {
-                    Airship.shared.privacyManager.enableFeatures(.push)
-                    Airship.push.userPushNotificationsEnabled = true
-                } else {
-                    Airship.push.userPushNotificationsEnabled = false
-                }
-            }
-        }
+        var pushEnabled: Bool = true
 
         @Published
         var channelID: String? = Airship.channel.identifier
@@ -202,6 +190,7 @@ struct HomeView: View {
 
         private var subscriptions = Set<AnyCancellable>()
 
+        @MainActor
         init() {
             NotificationCenter.default
                 .publisher(for: AirshipChannel.channelCreatedEvent)
@@ -218,11 +207,32 @@ struct HomeView: View {
                 }
                 .store(in: &self.subscriptions)
 
+            Airship.push.optInUpdates.receive(on: RunLoop.main)
+                .sink { optedIn in
+                    self.pushEnabled = optedIn
+                }
+                .store(in: &self.subscriptions)
+
         }
 
         func copyChannel() {
             UIPasteboard.general.string = Airship.channel.identifier
         }
 
+        func togglePushEnabled() {
+            if (!self.pushEnabled) {
+                Task {
+                    let result = await ActionRunner.run("prompt_permission_action", value: [
+                        "enable_airship_usage": true,
+                        "fallback_system_settings": true,
+                        "permission": "display_notifications"
+                    ] as [String : Any], situation: .manualInvocation)
+
+                    print(result)
+                }
+            } else {
+                Airship.push.userPushNotificationsEnabled = false
+            }
+        }
     }
 }

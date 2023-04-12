@@ -9,15 +9,12 @@ protocol NotificationRegistrar {
     func setCategories(_ categories: Set<UNNotificationCategory>)
     #endif
 
-    func checkStatus(
-        completionHandler: @escaping (
-            UAAuthorizationStatus, UAAuthorizedNotificationSettings
-        ) -> Void
-    )
+    @MainActor
+    func checkStatus() async -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings)
 
+    @MainActor
     func updateRegistration(
         options: UANotificationOptions,
-        skipIfEphemeral: Bool,
-        completionHandler: @escaping () -> Void
-    )
+        skipIfEphemeral: Bool
+    ) async -> Void
 }

@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-final class RemoteConfigCache {
-    private static let dataStoreKey =
-        "com.urbanairship.config.remote_config_cache"
+final class RemoteConfigCache: Sendable {
+    private static let dataStoreKey = "com.urbanairship.config.remote_config_cache"
     private let dataStore: PreferenceDataStore
     private let _remoteConfig: Atomic<RemoteConfig?>
 

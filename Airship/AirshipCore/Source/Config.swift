@@ -224,10 +224,6 @@ public class AirshipConfig: NSObject, NSCopying {
     @objc
     public var isExtendedBroadcastsEnabled = false
 
-    /// Dictionary of custom config values.
-    @objc
-    public var customConfig: [AnyHashable: Any] = [:]
-
     /// If set to 'YES', the Airship SDK will request authorization to use
     /// notifications from the user. Apps that set this flag to `false` are
     /// required to request authorization themselves.
@@ -404,7 +400,6 @@ public class AirshipConfig: NSObject, NSCopying {
         urlAllowListScopeOpenURL = config.urlAllowListScopeOpenURL
         clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore
         isChannelCaptureEnabled = config.isChannelCaptureEnabled
-        customConfig = config.customConfig
         isChannelCreationDelayEnabled = config.isChannelCreationDelayEnabled
         isExtendedBroadcastsEnabled = config.isExtendedBroadcastsEnabled
         messageCenterStyleConfig = config.messageCenterStyleConfig
@@ -451,7 +446,6 @@ public class AirshipConfig: NSObject, NSCopying {
                 URL Accepts List Scope Open : %@\n\
                 Clear named user on App Restore: %d\n\
                 Channel Capture Enabled: %d\n\
-                Custom Config: %@\n\
                 Delay Channel Creation: %d\n\
                 Extended broadcasts: %d\n\
                 Default Message Center Style Config File: %@\n\
@@ -488,7 +482,6 @@ public class AirshipConfig: NSObject, NSCopying {
             urlAllowListScopeOpenURL,
             clearNamedUserOnAppRestore,
             isChannelCaptureEnabled,
-            customConfig,
             isChannelCreationDelayEnabled,
             isExtendedBroadcastsEnabled,
             messageCenterStyleConfig ?? "",

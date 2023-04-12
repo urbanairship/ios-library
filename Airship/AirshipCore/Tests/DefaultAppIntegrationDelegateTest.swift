@@ -80,6 +80,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 }
 
 class TestPush: InternalPushProtocol, PushProtocol {
+
     var isPushNotificationsOptedIn: Bool = false
 
     var backgroundPushNotificationsEnabled: Bool = false
@@ -127,7 +128,7 @@ class TestPush: InternalPushProtocol, PushProtocol {
         )?
     var combinedCategories: Set<UNNotificationCategory> = Set()
 
-    func updateAuthorizedNotificationTypes() {
+    func dispatchUpdateAuthorizedNotificationTypes() {
         self.updateAuthorizedNotificationTypesCalled = true
     }
 

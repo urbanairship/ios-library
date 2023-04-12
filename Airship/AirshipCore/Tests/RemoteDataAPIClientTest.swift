@@ -89,22 +89,17 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             httpVersion: nil,
             headerFields: [
                 "Last-Modified": lastModified
-            ])
+            ]
+        )
         
-        let expectation = XCTestExpectation(description: "Refresh finished")
-        
-        // Make call
-        do {
-            _ = try await self.remoteDataAPIClient?.fetchRemoteData(
-                locale: NSLocale.current,
-                randomValue: 777,
-                lastModified: lastModified)
-        } catch {
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-        
-        wait(for: [expectation], timeout: 3.0)
+
+        let result = try await self.remoteDataAPIClient?.fetchRemoteData(
+            locale: NSLocale.current,
+            randomValue: 777,
+            lastModified: lastModified
+        )
+
+        XCTAssertEqual(result?.statusCode, 304)
     }
     
     /// Test refresh the remote data when no remote data returned from cloud

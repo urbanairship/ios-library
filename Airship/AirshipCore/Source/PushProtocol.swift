@@ -125,7 +125,7 @@ public protocol PushProtocol {
 
 protocol InternalPushProtocol {
     var deviceToken: String? { get }
-    func updateAuthorizedNotificationTypes()
+    func dispatchUpdateAuthorizedNotificationTypes()
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)
 
@@ -135,7 +135,6 @@ protocol InternalPushProtocol {
         isForeground: Bool,
         completionHandler: @escaping (Any) -> Void
     )
-    
 
     func presentationOptionsForNotification(
         _ notification: UNNotification,

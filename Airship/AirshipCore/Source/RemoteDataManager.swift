@@ -7,18 +7,14 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
 
     static let refreshTaskID = "RemoteDataManager.refresh"
     static let defaultRefreshInterval: TimeInterval = 10
-    static let refreshRemoteDataPushPayloadKey =
-        "com.urbanairship.remote-data.update"
+    static let refreshRemoteDataPushPayloadKey = "com.urbanairship.remote-data.update"
 
     // Datastore keys
     private static let refreshIntervalKey = "remotedata.REFRESH_INTERVAL"
-    private static let lastRefreshMetadataKey =
-        "remotedata.LAST_REFRESH_METADATA"
+    private static let lastRefreshMetadataKey = "remotedata.LAST_REFRESH_METADATA"
     private static let lastRefreshTimeKey = "remotedata.LAST_REFRESH_TIME"
-    private static let lastRefreshAppVersionKey =
-        "remotedata.LAST_REFRESH_APP_VERSION"
-    private static let lastRemoteDataModifiedTime =
-        "UALastRemoteDataModifiedTime"
+    private static let lastRefreshAppVersionKey = "remotedata.LAST_REFRESH_APP_VERSION"
+    private static let lastRemoteDataModifiedTime = "UALastRemoteDataModifiedTime"
     private static let deviceRandomValueKey = "remotedata.randomValue"
 
     private let dataStore: PreferenceDataStore

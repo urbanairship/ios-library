@@ -7,21 +7,15 @@ import Foundation
 public protocol AirshipPermissionDelegate {
 
     /// Called when a permission needs to be checked.
-    /// - Parameters:
-    ///     - completionHandler: The completion handler
+    /// - Returns: the permission status.
     @objc
-    func checkPermissionStatus(
-        completionHandler: @escaping (AirshipPermissionStatus) -> Void
-    )
+    func checkPermissionStatus() async -> AirshipPermissionStatus
 
     /// Called when a permission should be requested.
     ///
     /// - Note: A permission might be already granted when this method is called.
     ///
-    /// - Parameters:
-    ///     - completionHandler: The completion handler
+    /// - Returns: the permission status.
     @objc
-    func requestPermission(
-        completionHandler: @escaping (AirshipPermissionStatus) -> Void
-    )
+    func requestPermission() async -> AirshipPermissionStatus
 }

@@ -263,9 +263,10 @@ private class EventTestPush: PushProtocol {
 }
 
 private final class InternalPush: InternalPushProtocol {
+
     var deviceToken: String? = "a12312ad"
 
-    func updateAuthorizedNotificationTypes() {}
+    func dispatchUpdateAuthorizedNotificationTypes() {}
 
     func didRegisterForRemoteNotifications(_ deviceToken: Data) {}
 

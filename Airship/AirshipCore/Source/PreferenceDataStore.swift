@@ -5,7 +5,7 @@ import Foundation
 /// Preference data store.
 /// - Note: For internal use only. :nodoc:
 @objc(UAPreferenceDataStore)
-public class PreferenceDataStore: NSObject {
+public final class PreferenceDataStore: NSObject, @unchecked Sendable {
     private let defaults: UserDefaults
     private let appKey: String
     static let deviceIDKey = "deviceID"

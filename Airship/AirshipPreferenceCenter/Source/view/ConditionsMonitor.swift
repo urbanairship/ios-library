@@ -9,21 +9,29 @@ import AirshipCore
 
 class ConditionsMonitor: ObservableObject {
     @Published
-    public private(set) var isMet: Bool = false
+    public private(set) var isMet: Bool = true
 
     private let conditions: [PreferenceCenterConfig.Condition]
     private var cancellable: AnyCancellable?
 
     init(conditions: [PreferenceCenterConfig.Condition]) {
         self.conditions = conditions
-        self.isMet = checkConditions()
+
+        Task { @MainActor in
+            self.updateConditions
+        }
 
         let conditionUpdates = conditions.map { self.conditionUpdates($0) }
         self.cancellable = Publishers.MergeMany(conditionUpdates)
             .receive(on: RunLoop.main)
-            .sink(receiveValue: { _ in
-                self.isMet = self.checkConditions()
-            })
+            .sink { [weak self] _ in
+                self?.updateConditions()
+            }
+    }
+
+    @MainActor(unsafe)
+    private func updateConditions() {
+        self.isMet = self.checkConditions()
     }
 
     private func conditionUpdates(_ condition: PreferenceCenterConfig.Condition)
@@ -40,11 +48,13 @@ class ConditionsMonitor: ObservableObject {
 
     }
 
+    @MainActor
     private func checkConditions() -> Bool {
         let conditionResults = self.conditions.map { self.checkCondition($0) }
         return !conditionResults.contains(false)
     }
 
+    @MainActor
     private func checkCondition(_ condition: PreferenceCenterConfig.Condition)
         -> Bool
     {
@@ -63,3 +73,4 @@ class ConditionsMonitor: ObservableObject {
         }
     }
 }
+

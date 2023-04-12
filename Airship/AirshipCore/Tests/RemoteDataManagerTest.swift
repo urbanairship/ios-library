@@ -379,6 +379,16 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     }
 
     func testSubscriptionUpdates() async throws {
+        let callbackCalled = expectation(description: "Callback called")
+        callbackCalled.expectedFulfillmentCount = 3
+        var responses: [[RemoteDataPayload]] = []
+        let disposable = self.remoteDataManager?.subscribe(types: ["test"]) { remoteDataArray in
+            responses.append(remoteDataArray)
+            callbackCalled.fulfill()
+        }
+
+        try await updatePayloads([])
+
         let payloads = [
             [
                 "type": "test",
@@ -398,25 +408,17 @@ final class RemoteDataManagerTest: AirshipBaseTest {
             ]
         ]
 
-        let callbackCalled = expectation(description: "Callback called")
-        callbackCalled.expectedFulfillmentCount = 2
-        var responses: [[RemoteDataPayload]] = []
-        let disposable = self.remoteDataManager?.subscribe(types: ["test"]) { remoteDataArray in
-            responses.append(remoteDataArray)
-            callbackCalled.fulfill()
-        }
-
         try await updatePayloads(payloads)
         try await updatePayloads(update)
 
         await waitForExpectations(timeout: testExpectationTimeOut)
 
-        XCTAssertEqual(2, responses.count)
-        var payload = responses[0][0]
+        XCTAssertEqual(3, responses.count)
+        var payload = responses[1][0]
         XCTAssertEqual(payloads[0]["data"] as? [String : String], payload.data as? [String : String])
         XCTAssertEqual("test", payload.type)
 
-        payload = responses[1][0]
+        payload = responses[2][0]
         XCTAssertEqual(update[0]["data"] as? [String : String], payload.data as? [String : String])
         XCTAssertEqual("test", payload.type)
     }
@@ -432,6 +434,8 @@ final class RemoteDataManagerTest: AirshipBaseTest {
             ]
         ]
 
+        try await updatePayloads(payloads)
+
         let callbackCalled = expectation(description: "Callback called")
         callbackCalled.expectedFulfillmentCount = 1
         var responses: [[RemoteDataPayload]] = []
@@ -440,7 +444,6 @@ final class RemoteDataManagerTest: AirshipBaseTest {
             callbackCalled.fulfill()
         }
 
-        try await updatePayloads(payloads)
         try await updatePayloads(payloads)
 
         await waitForExpectations(timeout: testExpectationTimeOut)
@@ -452,6 +455,16 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     }
 
     func testSubscriptionUpdatesMetadataChanged() async throws {
+        let callbackCalled = expectation(description: "Callback called")
+        callbackCalled.expectedFulfillmentCount = 3
+        var responses: [[RemoteDataPayload]] = []
+        let disposable = self.remoteDataManager?.subscribe(types: ["test"]) { remoteDataArray in
+            responses.append(remoteDataArray)
+            callbackCalled.fulfill()
+        }
+
+        try await updatePayloads([])
+
         let payloads = [
             [
                 "type": "test",
@@ -462,29 +475,22 @@ final class RemoteDataManagerTest: AirshipBaseTest {
             ]
         ]
 
-        let callbackCalled = expectation(description: "Callback called")
-        callbackCalled.expectedFulfillmentCount = 2
-        var responses: [[RemoteDataPayload]] = []
-        let disposable = self.remoteDataManager?.subscribe(types: ["test"]) { remoteDataArray in
-            responses.append(remoteDataArray)
-            callbackCalled.fulfill()
-        }
-
         try await updatePayloads(payloads)
+
 
         // change URL so metadata changes
         requestURL = URL(string: "some-other-url")
 
         try await updatePayloads(payloads)
 
-        await waitForExpectations(timeout: testExpectationTimeOut)
+        wait(for: [callbackCalled], timeout: testExpectationTimeOut)
 
-        XCTAssertEqual(2, responses.count)
-        var payload = responses[0][0]
+        XCTAssertEqual(3, responses.count)
+        var payload = responses[1][0]
         XCTAssertEqual(payloads[0]["data"] as? [String : String], payload.data as? [String : String])
         XCTAssertEqual("test", payload.type)
 
-        payload = responses[1][0]
+        payload = responses[2][0]
         XCTAssertEqual(payloads[0]["data"] as? [String : String], payload.data as? [String : String])
         XCTAssertEqual("test", payload.type)
     }
@@ -532,7 +538,6 @@ final class RemoteDataManagerTest: AirshipBaseTest {
     func updatePayloads(_ payloads: [[String : Any]]) async throws {
 
         self.testAPIClient.fetchData = { locale, timestamp in
-
             let metadata = self.testAPIClient.metdataCallback!(locale, "2018-01-01T12:00:00")
             var parsed: [RemoteDataPayload] = []
             for payload in payloads {

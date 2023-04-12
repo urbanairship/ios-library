@@ -4,7 +4,7 @@ import Foundation
 
 /// Airship config needed for runtime. Generated from `UAConfig` during takeOff.
 @objc(UARuntimeConfig)
-open class RuntimeConfig: NSObject {
+public final class RuntimeConfig: NSObject, @unchecked Sendable {
 
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     @objc
@@ -43,10 +43,6 @@ open class RuntimeConfig: NSObject {
     /// The production status of this application.
     @objc
     public let inProduction: Bool
-
-    /// Dictionary of custom config values.
-    @objc
-    public let customConfig: [AnyHashable: Any]?
 
     /// If enabled, the Airship library automatically registers for remote notifications when push is enabled
     /// and intercepts incoming notifications in both the foreground and upon launch.
@@ -286,7 +282,6 @@ open class RuntimeConfig: NSObject {
         self.suppressAllowListError = config.suppressAllowListError
         self.clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore
         self.isChannelCaptureEnabled = config.isChannelCaptureEnabled
-        self.customConfig = config.customConfig
         self.isChannelCreationDelayEnabled =
             config.isChannelCreationDelayEnabled
         self.isExtendedBroadcastsEnabled = config.isExtendedBroadcastsEnabled
