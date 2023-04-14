@@ -95,6 +95,10 @@ struct MediaWebView: UIViewRepresentable {
                               }
                             });
                           }
+                    
+                          function onPlayerReady(event) {
+                            event.target.playVideo();
+                          }
                         </script>
                     </body>
                     """,
@@ -156,6 +160,7 @@ struct MediaWebView: UIViewRepresentable {
             uiView.evaluateJavaScript("videoElement.play();")
         } else if type == .youtube {
             uiView.evaluateJavaScript("player.playVideo();")
+            uiView.evaluateJavaScript("player.addEventListener(\"onReady\", \"onPlayerReady\");")
         }
     }
     
