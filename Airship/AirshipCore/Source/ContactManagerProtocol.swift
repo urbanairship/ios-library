@@ -15,7 +15,7 @@ protocol ContactManagerProtocol: Actor, AuthTokenProvider {
 
     func currentContactIDInfo() -> ContactIDInfo?
 
-    func pendingAudienceOverrides(contactID: String?) -> ContactAudienceOverrides
+    func pendingAudienceOverrides(contactID: String) -> ContactAudienceOverrides
 }
 
 struct ContactAudienceUpdate: Equatable, Sendable {

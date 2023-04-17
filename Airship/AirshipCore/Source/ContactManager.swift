@@ -482,9 +482,9 @@ actor ContactManager: ContactManagerProtocol {
         return response.isOperationComplete
     }
 
-    func pendingAudienceOverrides(contactID: String?) -> ContactAudienceOverrides {
+    func pendingAudienceOverrides(contactID: String) -> ContactAudienceOverrides {
         // If we have a contact ID but its stale, return an empty overrides
-        guard contactID == nil || contactID == self.lastContactInfo?.contactID else {
+        guard contactID == self.lastContactInfo?.contactID else {
             return ContactAudienceOverrides()
         }
 
@@ -496,47 +496,21 @@ actor ContactManager: ContactManagerProtocol {
         var lastOperationNamedUser: String? = nil
 
         for operation in operations {
+            // A reset will generate a new contact ID
             if case .reset = operation {
-                // If we are not looking for a particular contactID:
-                // - reset overrides if we are just looking for the last overrides
-                // - break out if we are looking for the current contact ID overrides
-                if (contactID == nil) {
-                    tags.removeAll()
-                    attributes.removeAll()
-                    subscriptionLists.removeAll()
-                } else {
-                    break
-                }
-
-                continue
+               break
             }
 
             if case let .identify(namedUserID) = operation {
-
-                // If we are looking for a contactID and we come across an identify operation
-                // that does not match the current contact info, then any further operations are
-                // for a different contact
-                if contactID != nil,
-                   self.lastContactInfo?.isAnonymous == false,
-                   namedUserID != self.lastContactInfo?.namedUserID
-                {
+                // If we come across an identify operation that does not match the current contact info,
+                // then any further operations are for a different contact
+                if self.lastContactInfo?.isAnonymous == false, namedUserID != self.lastContactInfo?.namedUserID {
                     break
                 }
 
                 // If we have a lastOperationNamedUser and it does not match the operation
                 if lastOperationNamedUser != nil, lastOperationNamedUser != namedUserID {
-
-                    // If we are not looking for a particular contact ID we just want the last
-                    // overrides
-                    if (contactID == nil) {
-                        tags.removeAll()
-                        attributes.removeAll()
-                        subscriptionLists.removeAll()
-                    } else {
-                        // If we are looking for a contact ID, then this operation will result in
-                        // a different contact
-                        break
-                    }
+                    break
                 }
 
                 lastOperationNamedUser = namedUserID

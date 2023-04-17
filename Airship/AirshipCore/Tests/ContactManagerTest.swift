@@ -523,6 +523,8 @@ final class ContactManagerTest: XCTestCase {
     }
 
     func testPendingUpdatesCombineOperations() async throws {
+        await self.contactManager.generateDefaultContactIDIfNotSet()
+
         let tags = [
             TagGroupUpdate(group: "some group", tags: ["tag"], type: .add)
         ]
@@ -559,8 +561,10 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-
-        let pendingOverrides = await self.contactManager.pendingAudienceOverrides(contactID: nil)
+        let contactID = await self.contactManager.currentContactIDInfo()!.contactID
+        let pendingOverrides = await self.contactManager.pendingAudienceOverrides(
+            contactID: contactID
+        )
 
         XCTAssertEqual(tags, pendingOverrides.tags)
         XCTAssertEqual(attributes, pendingOverrides.attributes)
@@ -620,12 +624,6 @@ final class ContactManagerTest: XCTestCase {
         XCTAssertEqual(attributes, anonUserOverrides.attributes)
         XCTAssertEqual([], anonUserOverrides.subscriptionLists)
 
-
-        // If no contact ID is provided we take all the updates for the last assumed contact ID
-        let lastOverrides = await self.contactManager.pendingAudienceOverrides(contactID: nil)
-        XCTAssertEqual([], lastOverrides.tags)
-        XCTAssertEqual([], lastOverrides.attributes)
-        XCTAssertEqual(subscriptions, lastOverrides.subscriptionLists)
 
         // If we request a stale contact ID, it should return empty overrides
         let staleOverrides = await self.contactManager.pendingAudienceOverrides(contactID: "not the current contact id")

@@ -746,7 +746,7 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
     func setPendingAudienceOverrides(_ overrides: ContactAudienceOverrides) {
         self._pendingAudienceOverrides = overrides
     }
-    func pendingAudienceOverrides(contactID: String?) -> ContactAudienceOverrides {
+    func pendingAudienceOverrides(contactID: String) -> ContactAudienceOverrides {
         return self._pendingAudienceOverrides
     }
 

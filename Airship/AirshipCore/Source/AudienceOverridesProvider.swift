@@ -2,7 +2,7 @@ import Foundation
 
 protocol AudienceOverridesProvider: Actor {
     func setStableContactIDProvider(
-        _ provider: @escaping @Sendable () async -> String?
+        _ provider: @escaping @Sendable () async -> String
     )
 
     func setPendingChannelOverridesProvider(
@@ -10,7 +10,7 @@ protocol AudienceOverridesProvider: Actor {
     )
 
     func setPendingContactOverridesProvider(
-        _ provider: @escaping @Sendable (String?) async -> ContactAudienceOverrides?
+        _ provider: @escaping @Sendable (String) async -> ContactAudienceOverrides?
     )
     
     func contactUpdaed(
@@ -46,8 +46,8 @@ protocol AudienceOverridesProvider: Actor {
 actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
     private let updates: CachedList<UpdateRecord>
     private var pendingChannelOverridesProvider: (@Sendable (String) async -> ChannelAudienceOverrides?)? = nil
-    private var pendingContactOverridesProvider: (@Sendable (String?) async -> ContactAudienceOverrides?)? = nil
-    private var stableContactIDProvider: (@Sendable () async -> String?)? = nil
+    private var pendingContactOverridesProvider: (@Sendable (String) async -> ContactAudienceOverrides?)? = nil
+    private var stableContactIDProvider: (@Sendable () async -> String)? = nil
 
 
     private static let maxRecordAge: TimeInterval = 600 // 10 minutes
@@ -63,13 +63,13 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
     }
 
     func setPendingContactOverridesProvider(
-        _ provider: @escaping @Sendable (String?) async -> ContactAudienceOverrides?
+        _ provider: @escaping @Sendable (String) async -> ContactAudienceOverrides?
     ) {
         self.pendingContactOverridesProvider = provider
     }
 
     func setStableContactIDProvider(
-        _ provider: @escaping @Sendable () async -> String?
+        _ provider: @escaping @Sendable () async -> String
     )  {
         self.stableContactIDProvider = provider
     }
@@ -78,7 +78,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         return await self.pendingChannelOverridesProvider?(channelID)
     }
 
-    func pendingOverrides(contactID: String?) async -> ContactAudienceOverrides? {
+    func pendingOverrides(contactID: String) async -> ContactAudienceOverrides? {
         return await self.pendingContactOverridesProvider?(contactID)
     }
 
@@ -118,6 +118,15 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         )
     }
 
+    func convertAppScopes(scoped: [ScopedSubscriptionListUpdate]) -> [SubscriptionListUpdate] {
+        return scoped.compactMap { update in
+            if (update.scope == .app) {
+                return SubscriptionListUpdate(listId: update.listId, type: update.type)
+            } else {
+                return nil
+            }
+        }
+    }
 
     func channelOverrides(
         channelID: String
@@ -134,63 +143,66 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
     ) async -> ChannelAudienceOverrides {
         let contactID = await resolveContactID(contactID: contactID)
         let pendingChannel = await self.pendingOverrides(channelID: channelID)
-        let pendingContact = await self.pendingOverrides(contactID: contactID)
+        var pendingContact: ContactAudienceOverrides?
+        if let contactID = contactID {
+            pendingContact = await self.pendingOverrides(contactID: contactID)
+        }
 
         var tags: [TagGroupUpdate]  = []
         var attributes: [AttributeUpdate] = []
         var subscriptionLists: [SubscriptionListUpdate] = []
-        var scopedSubscriptionLists: [ScopedSubscriptionListUpdate] = []
 
 
-        self.updates.values.filter { update  in
+        /// Apply updates first
+        self.updates.values.forEach { update  in
             switch (update.recordType) {
             case .contact(let identifier):
-                if let contactID = contactID, contactID != identifier {
-                    return false
+                if let contactID = contactID, contactID == identifier {
+                    if let updateTags = update.tags {
+                        tags += updateTags
+                    }
+
+                    if let updateAttributes = update.attributes {
+                        attributes += updateAttributes
+                    }
+
+                    if let updateSubscriptionLists = update.subscriptionLists {
+                        subscriptionLists += updateSubscriptionLists
+                    }
+
+                    if let updateScopedSubscriptionLists = update.scopedSubscriptionLists {
+                        subscriptionLists += convertAppScopes(scoped: updateScopedSubscriptionLists)
+                    }
                 }
             case .channel(let identifier):
-                if channelID != identifier {
-                    return false
+                if channelID == identifier {
+                    if let updateTags = update.tags {
+                        tags += updateTags
+                    }
+
+                    if let updateAttributes = update.attributes {
+                        attributes += updateAttributes
+                    }
+
+                    if let updateSubscriptionLists = update.subscriptionLists {
+                        subscriptionLists += updateSubscriptionLists
+                    }
                 }
-            }
-
-            return true
-        }.forEach { update in
-            if let updateTags = update.tags {
-                tags += updateTags
-            }
-
-            if let updateAttributes = update.attributes {
-                attributes += updateAttributes
-            }
-
-            if let updateSubscriptionLists = update.subscriptionLists {
-                subscriptionLists += updateSubscriptionLists
-            }
-
-            if let updateScopedSubscriptionLists = update.scopedSubscriptionLists {
-                scopedSubscriptionLists += updateScopedSubscriptionLists
             }
         }
 
+        // Pending channel
         if let pendingChannel = pendingChannel {
             tags += pendingChannel.tags
             attributes += pendingChannel.attributes
             subscriptionLists += pendingChannel.subscriptionLists
         }
 
+        // Pending contact
         if let pendingContact = pendingContact {
             tags += pendingContact.tags
             attributes += pendingContact.attributes
-            scopedSubscriptionLists += pendingContact.subscriptionLists
-        }
-
-        subscriptionLists += scopedSubscriptionLists.compactMap { update in
-            if (update.scope == .app) {
-                return SubscriptionListUpdate(listId: update.listId, type: update.type)
-            } else {
-                return nil
-            }
+            subscriptionLists += convertAppScopes(scoped: pendingContact.subscriptionLists)
         }
 
         return ChannelAudienceOverrides(
@@ -209,36 +221,33 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         contactID: String?
     ) async -> ContactAudienceOverrides {
         let contactID = await resolveContactID(contactID: contactID)
+        guard let contactID = contactID else {
+            return ContactAudienceOverrides()
+        }
+
         let pendingContactOverrides = await self.pendingOverrides(contactID: contactID)
         var tags: [TagGroupUpdate]  = []
         var attributes: [AttributeUpdate] = []
         var scopedSubscriptionLists: [ScopedSubscriptionListUpdate] = []
 
-        self.updates.values.filter { update  in
-            switch (update.recordType) {
-            case .contact(let identifier):
-                if let contactID = contactID, contactID != identifier {
-                    return false
+        // Contact updates
+        self.updates.values.forEach { update in
+            if case let .contact(identifier) = update.recordType, identifier == contactID {
+                if let updateTags = update.tags {
+                    tags += updateTags
                 }
-            case .channel(_):
-                return false
-            }
 
-            return true
-        }.forEach { update in
-            if let updateTags = update.tags {
-                tags += updateTags
-            }
+                if let updateAttributes = update.attributes {
+                    attributes += updateAttributes
+                }
 
-            if let updateAttributes = update.attributes {
-                attributes += updateAttributes
-            }
-
-            if let updateScopedSubscriptionLists = update.scopedSubscriptionLists {
-                scopedSubscriptionLists += updateScopedSubscriptionLists
+                if let updateScopedSubscriptionLists = update.scopedSubscriptionLists {
+                    scopedSubscriptionLists += updateScopedSubscriptionLists
+                }
             }
         }
 
+        // Pending contact
         if let pendingContactOverrides = pendingContactOverrides {
             tags += pendingContactOverrides.tags
             attributes += pendingContactOverrides.attributes
@@ -258,9 +267,6 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         }
         return contactID
     }
-
-    
-
 
     fileprivate struct UpdateRecord {
         enum RecordType {

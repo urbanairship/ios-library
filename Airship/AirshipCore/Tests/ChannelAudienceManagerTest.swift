@@ -253,6 +253,10 @@ class ChannelAudienceManagerTest: XCTestCase {
     }
 
     func testGetSubscriptionListOverrides() async throws {
+        await self.audienceOverridesProvider.setStableContactIDProvider {
+            "some contact ID"
+        }
+
         await self.audienceOverridesProvider.contactUpdaed(
             contactID: "some contact ID",
             tags: nil,
