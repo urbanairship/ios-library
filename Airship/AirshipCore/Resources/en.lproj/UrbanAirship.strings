@@ -27,7 +27,7 @@
 "ua_select_none_messages_description" = "Reset message selection";
 
 "ua_edit_messages" = "Edit";
-"ua_edit_messages_description" = "Edit messsages";
+"ua_edit_messages_description" = "Edit messages";
 "ua_unread_message_description" = "Message unread";
 
 // Message <TITLE>, sent at <DATE>

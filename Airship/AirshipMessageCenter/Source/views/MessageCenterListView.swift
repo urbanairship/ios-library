@@ -187,6 +187,7 @@ public struct MessageCenterListView: View {
                 }
             }
         )
+        .accessibilityHint("ua_delete_messages".messageCenterlocalizedString)
         .disabled(self.selection.isEmpty)
     }
 
@@ -209,6 +210,7 @@ public struct MessageCenterListView: View {
             }
         )
         .disabled(self.selection.isEmpty)
+        .accessibilityHint("ua_mark_messages_read".messageCenterlocalizedString)
     }
 
     @ViewBuilder
@@ -227,6 +229,7 @@ public struct MessageCenterListView: View {
             Text("ua_select_all_messages".messageCenterlocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor)
         }
+        .accessibilityHint("ua_select_all_messages".messageCenterlocalizedString)
     }
 
     private func selectNone() -> some View {
@@ -236,6 +239,7 @@ public struct MessageCenterListView: View {
             Text("ua_select_none_messages".messageCenterlocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor)
         }
+        .accessibilityHint("ua_select_none_messages".messageCenterlocalizedString)
     }
 
     private func bottomToolBar() -> some ToolbarContent {
@@ -258,7 +262,7 @@ public struct MessageCenterListView: View {
             isEditMode
             ? theme.cancelButtonTitleColor : theme.editButtonTitleColor
 
-        return EditButton().foregroundColor(color)
+        return EditButton().foregroundColor(color).accessibilityHint("ua_edit_messages_description".messageCenterlocalizedString)
     }
 
     @ViewBuilder

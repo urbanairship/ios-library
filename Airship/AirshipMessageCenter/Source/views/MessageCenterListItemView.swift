@@ -168,16 +168,22 @@ private struct MessageCenterListContentView: View {
     @ViewBuilder
     var body: some View {
         let message = message
+        
         HStack(alignment: .top, spacing: 5) {
             makeIcon(message.listIcon)
             VStack(alignment: .leading, spacing: 5) {
                 makeTitle(message.title)
+                    .accessibilityHidden(true)
                 makeSubtitle(message.subtitle)
+                    .accessibilityHidden(true)
                 makeMessageSentDate(message.sentDate)
+                    .accessibilityHidden(true)
             }
             Spacer()
         }
         .overlay(makeUnreadIndicator(message.unread), alignment: .topLeading)
         .padding(8)
+        .accessibilityLabel(String(format: message.unread ? "ua_message_unread_description".messageCenterlocalizedString : "ua_message_description".messageCenterlocalizedString, message.title,  AirshipDateFormatter.string(fromDate: message.sentDate, format: .relativeFull)))
+        .accessibilityHint("ua_message_cell_description".messageCenterlocalizedString)
     }
 }
