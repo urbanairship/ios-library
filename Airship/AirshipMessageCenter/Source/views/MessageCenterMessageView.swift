@@ -133,10 +133,13 @@ struct MessageCenterWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
+        configuration.dataDetectorTypes = .all
+
         let webView = WKWebView(
             frame: CGRect.zero,
             configuration: configuration
         )
+        webView.allowsLinkPreview = false
         webView.navigationDelegate = context.coordinator.nativeBridge
         return webView
     }
