@@ -17,7 +17,7 @@ class ConditionsMonitor: ObservableObject {
     init(conditions: [PreferenceCenterConfig.Condition]) {
         self.conditions = conditions
 
-        Task { @MainActor in
+        Task {
             self.updateConditions
         }
 
@@ -25,7 +25,10 @@ class ConditionsMonitor: ObservableObject {
         self.cancellable = Publishers.MergeMany(conditionUpdates)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                self?.updateConditions()
+                Task { [weak self] in
+                    await self?.updateConditions()
+                }
+
             }
     }
 

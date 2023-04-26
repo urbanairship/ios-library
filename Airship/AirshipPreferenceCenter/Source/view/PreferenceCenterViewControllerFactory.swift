@@ -14,6 +14,7 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
     @objc
+    @MainActor
     public class func makeViewController(
         preferenceCenterID: String,
         dismissAction: (() -> Void)? = nil
@@ -32,6 +33,7 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     ///     - preferenceCenterThemePlist: The theme plist.
     /// - Returns: A view controller.
     @objc
+    @MainActor
     public class func makeViewController(
         preferenceCenterID: String,
         preferenceCenterThemePlist: String
@@ -52,6 +54,7 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     ///     - preferenceCenterTheme: The theme.
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
+    @MainActor
     public class func makeViewController(
         preferenceCenterID: String,
         preferenceCenterTheme: PreferenceCenterTheme? = nil,
@@ -71,6 +74,7 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     ///     - preferenceCenterTheme: The theme.
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
+    @MainActor
     public class func makeViewController(
         view: PreferenceCenterView,
         preferenceCenterTheme: PreferenceCenterTheme?,

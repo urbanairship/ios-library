@@ -586,9 +586,6 @@
 		6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
 		6E6ED1692683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
 		6E6ED16A2683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
-		6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */; };
-		6E6ED16C2683DBC300A2CBD0 /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */; };
-		6E6ED1702683F14C00A2CBD0 /* TestSystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED16F2683F14B00A2CBD0 /* TestSystemVersion.swift */; };
 		6E6ED172268448EC00A2CBD0 /* TestNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */; };
 		6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6EF9E6270625C400D30C35 /* EventTest.swift */; };
 		6E71129B2880DACB004942E4 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7112952880DACB004942E4 /* ViewState.swift */; };
@@ -1175,7 +1172,6 @@
 		A62C3354299FD509004DB0DA /* ShareActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62C3353299FD509004DB0DA /* ShareActionTest.swift */; };
 		A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567528F449D8004B8951 /* TestWorkManager.swift */; };
 		A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */; };
-		A63A567A28F458A6004B8951 /* TestWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567928F458A6004B8951 /* TestWorker.swift */; };
 		A64D2F4127D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */; };
 		A64D2F4227D1137900E034A6 /* UADeferredAPIClientResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */; };
 		A65070DD275FC6FD00BA22E4 /* UAInAppMessageEventTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A65070DC275FC6FD00BA22E4 /* UAInAppMessageEventTest.m */; };
@@ -1402,7 +1398,6 @@
 		A6722AA6281A9EDA0033F54D /* BeveledLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED14E2683DBC200A2CBD0 /* BeveledLoadingIndicator.swift */; };
 		A6722AA7281A9EDA0033F54D /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
 		A6722AA8281A9EDA0033F54D /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */; };
-		A6722AA9281A9EDA0033F54D /* SystemVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */; };
 		A6722AAA281A9EDA0033F54D /* ViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED14B2683DBC200A2CBD0 /* ViewUtils.swift */; };
 		A6722AAB281A9EDA0033F54D /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED14C2683DBC200A2CBD0 /* WebView.swift */; };
 		A6722AAC281A9EDA0033F54D /* AirshipDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */; };
@@ -2257,8 +2252,6 @@
 		6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationMetrics.swift; sourceTree = "<group>"; };
 		6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UACoreData.swift; sourceTree = "<group>"; };
 		6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
-		6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemVersion.swift; sourceTree = "<group>"; };
-		6E6ED16F2683F14B00A2CBD0 /* TestSystemVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSystemVersion.swift; sourceTree = "<group>"; };
 		6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkMonitor.swift; sourceTree = "<group>"; };
 		6E6EF9E6270625C400D30C35 /* EventTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTest.swift; sourceTree = "<group>"; };
 		6E7112952880DACB004942E4 /* ViewState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
@@ -2578,7 +2571,6 @@
 		A62C3353299FD509004DB0DA /* ShareActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareActionTest.swift; sourceTree = "<group>"; };
 		A63A567528F449D8004B8951 /* TestWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkManager.swift; sourceTree = "<group>"; };
 		A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkRateLimiterActor.swift; sourceTree = "<group>"; };
-		A63A567928F458A6004B8951 /* TestWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorker.swift; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A64D2F3F27D1137900E034A6 /* UADeferredAPIClientResponse+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UADeferredAPIClientResponse+Internal.h"; sourceTree = "<group>"; };
 		A64D2F4027D1137900E034A6 /* UADeferredAPIClientResponse.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeferredAPIClientResponse.m; sourceTree = "<group>"; };
@@ -3715,7 +3707,6 @@
 				6E6ED14E2683DBC200A2CBD0 /* BeveledLoadingIndicator.swift */,
 				6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */,
 				6E6ED1542683DBC300A2CBD0 /* NetworkMonitor.swift */,
-				6E6ED1552683DBC300A2CBD0 /* SystemVersion.swift */,
 				6E6ED14B2683DBC200A2CBD0 /* ViewUtils.swift */,
 				6E6ED14C2683DBC200A2CBD0 /* WebView.swift */,
 				6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */,
@@ -4569,7 +4560,6 @@
 				C088383526E0244C00D40838 /* TestURLAllowList.swift */,
 				6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */,
 				6E6ED1442683BC7F00A2CBD0 /* TestDispatcher.swift */,
-				6E6ED16F2683F14B00A2CBD0 /* TestSystemVersion.swift */,
 				6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */,
 				6EC7E47926A6057C0038CFDD /* TestTaskManager.swift */,
 				6EC7E48426A60CDF0038CFDD /* TestChannel.swift */,
@@ -4587,7 +4577,6 @@
 				6E87BE1726E2C5940005D20D /* TestAnalytics.swift */,
 				A63A567528F449D8004B8951 /* TestWorkManager.swift */,
 				A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */,
-				A63A567928F458A6004B8951 /* TestWorker.swift */,
 				6E6363E929DCECA1009C358A /* TestContactSubscriptionListAPIClient.swift */,
 				6E60EF6729DF5106003F7A8D /* TestExtensions.swift */,
 			);
@@ -6119,7 +6108,6 @@
 				6E57CE3228DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
 				6E78848F29B9643C00ACAE45 /* ContactProtocol.swift in Sources */,
 				6E664BBD26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
-				6E6ED16B2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
 				6E299FDF28D14258001305A7 /* AirshipRequestSession.swift in Sources */,
 				6E7112A52880DACB004942E4 /* StateController.swift in Sources */,
 				6ECDDE7429B80462009D79DB /* ChannelAuthTokenProvider.swift in Sources */,
@@ -6542,7 +6530,6 @@
 				A6722AA6281A9EDA0033F54D /* BeveledLoadingIndicator.swift in Sources */,
 				A6722AA7281A9EDA0033F54D /* UACoreData.swift in Sources */,
 				A6722AA8281A9EDA0033F54D /* NetworkMonitor.swift in Sources */,
-				A6722AA9281A9EDA0033F54D /* SystemVersion.swift in Sources */,
 				A6722AAA281A9EDA0033F54D /* ViewUtils.swift in Sources */,
 				A6722AAB281A9EDA0033F54D /* WebView.swift in Sources */,
 				A6722AAC281A9EDA0033F54D /* AirshipDate.swift in Sources */,
@@ -6841,7 +6828,6 @@
 				6EC7E47D26A607210038CFDD /* TestTaskManager.swift in Sources */,
 				991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */,
 				CC64F1081D8B781C009CEF27 /* UAirshipTest.m in Sources */,
-				A63A567A28F458A6004B8951 /* TestWorker.swift in Sources */,
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
 				DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */,
 				6EC7E46E269E2A4C0038CFDD /* AttributeEditorTest.swift in Sources */,
@@ -6882,7 +6868,6 @@
 				6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */,
 				6E96ED1029416E8F0053CC91 /* EventAPIClientTest.swift in Sources */,
 				6E92ECB6284ED7330038802D /* CachedListTest.swift in Sources */,
-				6E6ED1702683F14C00A2CBD0 /* TestSystemVersion.swift in Sources */,
 				CC64F11B1D8B781C009CEF27 /* UAPreferenceDataStoreTest.m in Sources */,
 				6ED735E426CAE8AA003B0A7D /* TestChannelAudienceManager.swift in Sources */,
 				6E15B70526CE07180099C92D /* TestRemoteDataProvider.swift in Sources */,
@@ -7151,7 +7136,6 @@
 				6E3B32D02755D8C700B89C7B /* LayoutState.swift in Sources */,
 				6E2D6AEF26B096B600B7C226 /* ChannelAudienceManager.swift in Sources */,
 				6E87BE1426E28F570005D20D /* AirshipInstance.swift in Sources */,
-				6E6ED16C2683DBC300A2CBD0 /* SystemVersion.swift in Sources */,
 				6E96ECFB293FDDD90053CC91 /* AirshipSDKExtension.swift in Sources */,
 				E976487027A46CC50024518D /* ChannelType.swift in Sources */,
 				6E68203328EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */,

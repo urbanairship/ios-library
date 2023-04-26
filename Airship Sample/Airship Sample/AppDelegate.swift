@@ -44,13 +44,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         
         #if canImport(ActivityKit)
         if #available(iOS 16.1, *) {
-            Task {
-                await Airship.channel.restoreLiveActivityTracking {
-                    restorer in
-                    await restorer.restore(
-                        forType: Activity<DeliveryAttributes>.self
-                    )
-                }
+            Airship.channel.restoreLiveActivityTracking { restorer in
+                await restorer.restore(
+                    forType: Activity<DeliveryAttributes>.self
+                )
             }
         }
         #endif

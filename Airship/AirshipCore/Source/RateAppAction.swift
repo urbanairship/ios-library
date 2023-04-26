@@ -133,6 +133,7 @@ private struct DefaultAppRater: AppRaterProtocol {
         SKStoreReviewController.requestReview(in: scene)
     }
 
+    @MainActor
     private func findScene() -> UIWindowScene? {
         if let mainWindowScene = AirshipUtils.mainWindow()?.windowScene {
             return mainWindowScene

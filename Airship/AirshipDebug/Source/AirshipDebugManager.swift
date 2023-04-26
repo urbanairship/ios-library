@@ -111,6 +111,7 @@ public class AirshipDebugManager: NSObject, Component {
         return await self.eventDataManager.events(searchString: searchString)
     }
 
+    @MainActor
     public func open() {
         guard let scene = try? AirshipUtils.findWindowScene() else {
             AirshipLogger.error("Unable to display, missing scene.")

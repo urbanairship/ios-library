@@ -49,15 +49,14 @@ actor LiveActivityRegistry {
     /// Should be called for all live activities right after takeOff.
     /// - Parameters:
     ///     - activities: An array of activities
-    func restoreTracking(activities: [LiveActivity]) {
+    func restoreTracking(activities: [LiveActivityProtocol]) {
         activities.forEach { activity in
-            findInfos(id: activity.id)
-                .forEach { info in
-                    AirshipLogger.debug(
-                        "Live activity restore: \(activity.id) name: \(info.name)"
-                    )
-                    watchActivity(activity, name: info.name)
-                }
+            findInfos(id: activity.id).forEach { info in
+                AirshipLogger.debug(
+                    "Live activity restore: \(activity.id) name: \(info.name)"
+                )
+                watchActivity(activity, name: info.name)
+            }
         }
     }
 
@@ -86,10 +85,11 @@ actor LiveActivityRegistry {
     /// Adds a live activity to the registry. The activity will be monitored and
     /// automatically removed after its finished.
     func addLiveActivity(
-        _ activity: LiveActivity,
+        _ liveActivity: LiveActivityProtocol,
         name: String
     ) {
-        guard activity.isActive else {
+
+        guard liveActivity.isActive else {
             return
         }
 
@@ -99,9 +99,9 @@ actor LiveActivityRegistry {
             }
 
         let info = LiveActivityInfo(
-            id: activity.id,
+            id: liveActivity.id,
             name: name,
-            token: activity.pushTokenString,
+            token: liveActivity.pushTokenString,
             startDate: self.date.now
         )
 
@@ -114,24 +114,24 @@ actor LiveActivityRegistry {
             )
         }
 
-        watchActivity(activity, name: info.name)
+        watchActivity(liveActivity, name: info.name)
     }
 
     private func watchActivity(
-        _ activity: LiveActivity,
+        _ liveActivity: LiveActivityProtocol,
         name: String
     ) {
         let task: Task<Void, Never> = Task {
 
             /// This will wait until the activity is no longer active
-            await activity.track { token in
-                self.updateToken(id: activity.id, name: name, token: token)
+            await liveActivity.track { token in
+                await self.updateToken(id: liveActivity.id, name: name, token: token)
             }
 
-            self.removeLiveActivity(id: activity.id, name: name)
+            self.removeLiveActivity(id: liveActivity.id, name: name)
         }
 
-        taskMap[makeTaskID(id: activity.id, name: name)] = task
+        taskMap[makeTaskID(id: liveActivity.id, name: name)] = task
     }
 
     private func updateToken(id: String, name: String, token: String) {

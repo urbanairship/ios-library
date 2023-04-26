@@ -242,6 +242,7 @@ public class PreferenceCenter: NSObject, Component {
 
 extension PreferenceCenter {
 
+    @MainActor
     fileprivate func showPreferenceCenter(
         _ preferenceCenterID: String,
         scene: UIWindowScene,

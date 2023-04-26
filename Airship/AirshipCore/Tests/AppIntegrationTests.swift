@@ -46,6 +46,7 @@ class AppIntegrationTests: XCTestCase {
         XCTAssertEqual(error, self.testDelegate.registrationError as NSError?)
     }
 
+    @MainActor
     func testDidReceiveRemoteNotifications() throws {
         let notification = ["some": "alert"]
 

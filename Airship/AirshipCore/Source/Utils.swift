@@ -267,6 +267,7 @@ public class AirshipUtils: NSObject {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @objc
+    @MainActor
     public class func mainWindow() -> UIWindow? {
         let sharedApp: UIApplication = UIApplication.shared
         for window in sharedApp.windows {
@@ -286,6 +287,7 @@ public class AirshipUtils: NSObject {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @objc(mainWindow:)
+    @MainActor
     @available(iOS 13.0, tvOS 13.0, *)
     public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
         for w in scene.windows {
@@ -303,6 +305,7 @@ public class AirshipUtils: NSObject {
     ///
     /// - Returns: The window containing the view, or `nil` if the view is not currently displayed.
     @objc
+    @MainActor
     public class func windowFor(view: UIView) -> UIWindow? {
         var view: UIView? = view
         var window: UIWindow? = nil
@@ -317,6 +320,7 @@ public class AirshipUtils: NSObject {
         return window
     }
 
+    @MainActor
     class func presentInNewWindow(
         _ rootViewController: UIViewController,
         windowLevel: UIWindow.Level = .normal
@@ -335,6 +339,7 @@ public class AirshipUtils: NSObject {
     }
 
     @objc
+    @MainActor
     public class func findWindowScene() throws -> UIWindowScene {
         guard
             let scene = UIApplication.shared.connectedScenes.first(where: {

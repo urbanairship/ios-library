@@ -146,8 +146,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
 
     /// Default enabled Airship features for the app. For more details, see PrivacyManager.
     /// Defaults to FeaturesAll.
-    @objc
-    public let enabledFeatures: Features
+    public let enabledFeatures: AirshipFeature
 
     private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache

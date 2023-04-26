@@ -66,7 +66,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     @MainActor
     var contactAuthTokenProvider: AuthTokenProvider?
 
-    private static var sharedURLSession: URLRequestSessionProtocol = {
+    private static let sharedURLSession: URLRequestSessionProtocol = {
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.urlCache = nil
         sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData

@@ -22,11 +22,8 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
     // In addition to the default data collection, push will collect:
     // - Push tokens
     UAFeaturesPush   = (1 << 2),
-    
-    // Enables Airship Chat.
-    // In addition to the default data collection, Airship Chat will collect:
-    // - User messages
-    UAFeaturesChat = (1 << 3),
+
+    // Do not use: UAFeaturesChat = (1 << 3),
     
     // Enables analytics.
     // In addition to the default data collection, analytics will collect:
@@ -53,16 +50,12 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
     // In addition to the default data collection, contacts will collect:
     // External ids (named user)
     UAFeaturesContacts = (1 << 6),
-    
-    // Enables location (with Location module).
-    // In addition to the default data collection, location will collect:
-    // - Location permissions
-    // - Collect location for the app (Airship no longer supports uploading location as events)
-    UAFeaturesLocation = (1 << 7),
+
+   // Do not use: UAFeaturesLocation = (1 << 7),
     
     // Sets enabled features to all.
-    UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesChat | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts | UAFeaturesLocation)
-} NS_SWIFT_NAME(Features);
+    UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts)
+} NS_SWIFT_NAME(_UAFeatures);
 
 // Sets enabled features to none.
 static const UAFeatures UAFeaturesNone NS_SWIFT_UNAVAILABLE("Use [] instead.") = 0;

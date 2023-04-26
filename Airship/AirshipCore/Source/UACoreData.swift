@@ -40,12 +40,19 @@ public class UACoreData: NSObject {
         super.init()
 
         #if !os(watchOS)
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(protectedDataAvailable),
-            name: UIApplication.protectedDataDidBecomeAvailableNotification,
-            object: nil
-        )
+        Task { @MainActor in
+            if (UIApplication.shared.isProtectedDataAvailable) {
+                protectedDataAvailable()
+            } else {
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(protectedDataAvailable),
+                    name: UIApplication.protectedDataDidBecomeAvailableNotification,
+                    object: nil
+                )
+            }
+        }
+
         #endif
     }
 

@@ -47,6 +47,7 @@ public class Thomas: NSObject {
 
     #if !os(watchOS)
     @objc
+    @MainActor
     public class func deferredDisplay(
         json: Any,
         scene: UIWindowScene,
@@ -67,6 +68,7 @@ public class Thomas: NSObject {
 
     @objc
     @discardableResult
+    @MainActor
     public class func deferredDisplay(
         data: Data,
         scene: UIWindowScene,
@@ -95,6 +97,7 @@ public class Thomas: NSObject {
         }
     }
 
+    @MainActor
     @discardableResult
     public class func display(
         _ data: Data,
@@ -110,6 +113,7 @@ public class Thomas: NSObject {
         )()
     }
 
+    @MainActor
     private class func bannerDisplay(
         _ presentation: BannerPresentationModel,
         scene: UIWindowScene,
@@ -168,6 +172,7 @@ public class Thomas: NSObject {
         }
     }
 
+    @MainActor
     private class func modalDisplay(
         _ presentation: ModalPresentationModel,
         scene: UIWindowScene,

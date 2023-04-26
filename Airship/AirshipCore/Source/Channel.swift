@@ -713,8 +713,12 @@ extension AirshipChannel {
     public func trackLiveActivity<T: ActivityAttributes>(
         _ activity: Activity<T>,
         name: String
-    ) async {
-        await liveActivityRegistry.addLiveActivity(activity, name: name)
+    ) {
+        let liveActivity = LiveActivity(activity: activity)
+        Task {
+            await liveActivityRegistry.addLiveActivity(liveActivity, name: name)
+        }
+
     }
 
     /// Called to restore live activity tracking. This method needs to be called exactly once
@@ -723,14 +727,17 @@ extension AirshipChannel {
     /// - Parameters:
     ///     - callback: Callback with the restorer.
     public func restoreLiveActivityTracking(
-        callback: (LiveActivityRestorer) async -> Void
-    ) async {
+        callback: @escaping @Sendable (LiveActivityRestorer) async -> Void
+    ) {
         let restorer = AirshipLiveActivityRestorer(
             registry: self.liveActivityRegistry
         )
-        await callback(restorer)
-        await self.liveActivityRegistry.clearUntracked()
+        Task {
+            await callback(restorer)
+            await self.liveActivityRegistry.clearUntracked()
+        }
     }
 }
+
 
 #endif

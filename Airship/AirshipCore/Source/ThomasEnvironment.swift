@@ -29,6 +29,7 @@ class ThomasEnvironment: ObservableObject {
     @Published private(set) var keyboardHeight: Double = 0
     @Published private(set) var keyboardState: KeyboardState = .hidden
 
+    @MainActor
     init(
         delegate: ThomasDelegate,
         extensions: ThomasExtensions?,
@@ -176,6 +177,7 @@ class ThomasEnvironment: ObservableObject {
     }
 
     #if !os(tvOS) && !os(watchOS)
+    @MainActor
     private func subscribeKeyboard() {
         Publishers.Merge(
             NotificationCenter.default

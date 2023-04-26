@@ -169,7 +169,9 @@ class EventManager: EventManagerProtocol {
 
         self.tuningInfo = response.result
 
-        await self.scheduleUpload(eventPriority: .normal)
+        if (try? await self.eventStore.hasEvents()) == true {
+            await self.scheduleUpload(eventPriority: .normal)
+        }
 
         return .success
     }

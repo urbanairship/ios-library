@@ -31,6 +31,7 @@ struct FormInputEnabledViewModifier: ViewModifier {
 
 extension View {
     @ViewBuilder
+    @MainActor
     func formElement() -> some View {
         self.modifier(FormVisibilityViewModifier())
             .modifier(FormInputEnabledViewModifier())

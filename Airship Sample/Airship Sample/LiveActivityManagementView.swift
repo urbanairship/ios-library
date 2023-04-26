@@ -94,12 +94,10 @@ struct LiveActivityManagementView: View {
 
                 self.activities.append(activity)
 
-                Task {
-                    await Airship.channel.trackLiveActivity(
-                        activity,
-                        name: attributes.orderNumber
-                    )
-                }
+                Airship.channel.trackLiveActivity(
+                    activity,
+                    name: attributes.orderNumber
+                )
             } catch (let error) {
                 print("Error requesting LiveActivity \(error).")
             }
@@ -197,6 +195,8 @@ extension ActivityState {
             return "Dismissed"
         case .ended:
             return "Ended"
+        case .stale:
+            return "Stale"
         @unknown default:
             fatalError()
         }

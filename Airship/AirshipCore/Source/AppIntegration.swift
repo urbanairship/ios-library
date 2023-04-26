@@ -125,6 +125,7 @@ public class AppIntegration: NSObject {
      *   - completionHandler: The completion handler.
      */
     @objc
+    @MainActor
     public class func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],

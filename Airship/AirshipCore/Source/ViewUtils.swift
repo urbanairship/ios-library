@@ -8,6 +8,7 @@ import UIKit
 @objc(UAViewUtils)
 public class ViewUtils: NSObject {
     @objc
+    @MainActor
     public class func applyContainerConstraints(
         toContainer container: UIView?,
         containedView contained: UIView?

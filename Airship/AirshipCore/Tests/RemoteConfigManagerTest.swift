@@ -37,7 +37,7 @@ class RemoteConfigManagerTest: XCTestCase {
         self.privacyManager.enabledFeatures = []
         XCTAssertEqual(0, self.testRemoteDataProvider.subscribers.count)
 
-        self.privacyManager.enabledFeatures = .chat
+        self.privacyManager.enabledFeatures = .analytics
         XCTAssertEqual(2, self.testRemoteDataProvider.subscribers.count)
     }
 

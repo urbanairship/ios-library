@@ -44,8 +44,18 @@ public class AirshipConfig: NSObject, NSCopying {
 
     /// Default enabled Airship features for the app. For more details, see `PrivacyManager`.
     /// Defaults to `all`.
-    @objc
-    public var enabledFeatures: Features = .all
+    public var enabledFeatures: AirshipFeature = .all
+
+    /// :nodoc:
+    @objc(enabledFeatures)
+    public var _objc_enabledFeatures: _UAFeatures {
+        get {
+            return enabledFeatures.toObjc
+        }
+        set {
+            enabledFeatures = newValue.toSwift
+        }
+    }
 
     /// The default app key. Depending on the `inProduction` status,
     /// `developmentAppKey` or `productionAppKey` will take priority.
@@ -652,8 +662,8 @@ public class AirshipConfig: NSObject, NSCopying {
                 {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
                     normalizedValue = AirshipConfig.coerceLogLevel(value)?.rawValue
-                } else if propertyType == Features.self
-                    || propertyType == Features?.self
+                } else if propertyType == AirshipFeature.self
+                    || propertyType == AirshipFeature?.self
                 {
                     normalizedValue = AirshipConfig.coerceFeatures(value)?.rawValue
                 } else if propertyType == String.self
@@ -767,8 +777,8 @@ public class AirshipConfig: NSObject, NSCopying {
         return nil
     }
 
-    private class func coerceFeatures(_ value: Any) -> Features? {
-        if let features = value as? Features {
+    private class func coerceFeatures(_ value: Any) -> AirshipFeature? {
+        if let features = value as? AirshipFeature {
             return features
         }
 
@@ -784,7 +794,7 @@ public class AirshipConfig: NSObject, NSCopying {
         guard let names = names else {
             return nil
         }
-        var features: Features = []
+        var features: AirshipFeature = []
         for name in names {
             guard
                 let parsedFeatures = FeatureNames(rawValue: name.lowercased())?
@@ -931,9 +941,7 @@ private enum LogLevelNames: String {
 
 private enum FeatureNames: String {
     case push
-    case chat
     case contacts
-    case location
     case messageCenter = "message_center"
     case analytics
     case tagsAndAttributes = "tags_and_attributes"
@@ -941,28 +949,16 @@ private enum FeatureNames: String {
     case none
     case all
 
-    func toFeatures() -> Features {
+    func toFeatures() -> AirshipFeature {
         switch self {
-        case .push:
-            return Features.push
-        case .chat:
-            return Features.chat
-        case .contacts:
-            return Features.contacts
-        case .location:
-            return Features.location
-        case .messageCenter:
-            return Features.messageCenter
-        case .analytics:
-            return Features.analytics
-        case .tagsAndAttributes:
-            return Features.tagsAndAttributes
-        case .inAppAutomation:
-            return Features.inAppAutomation
-        case .none:
-            return []
-        case .all:
-            return Features.all
+        case .push: return .push
+        case .contacts: return .contacts
+        case .messageCenter: return .messageCenter
+        case .analytics: return .analytics
+        case .tagsAndAttributes: return .tagsAndAttributes
+        case .inAppAutomation: return .inAppAutomation
+        case .none: return []
+        case .all: return .all
         }
     }
 }

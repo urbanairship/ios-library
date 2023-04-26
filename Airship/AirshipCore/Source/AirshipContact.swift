@@ -7,7 +7,7 @@ import Foundation
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContact)
-public final class AirshipContact: NSObject, Component, AirshipContactProtocol {
+public final class AirshipContact: NSObject, Component, AirshipContactProtocol, @unchecked Sendable {
     private static let resolveDateKey = "Contact.resolveDate"
     static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
@@ -98,7 +98,6 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol {
             return await self.contactManager.currentNamedUserID()
         }
     }
-
 
     private let disableHelper: ComponentDisableHelper
 

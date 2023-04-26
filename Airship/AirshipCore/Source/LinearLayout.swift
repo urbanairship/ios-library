@@ -17,6 +17,7 @@ struct LinearLayout: View {
     private var numberGenerator = RepeatableNumberGenerator()
 
     @ViewBuilder
+    @MainActor
     private func makeVStack(
         items: [LinearLayoutItem],
         parentConstraints: ViewConstraints
@@ -31,6 +32,7 @@ struct LinearLayout: View {
     }
 
     @ViewBuilder
+    @MainActor
     private func makeHStack(
         items: [LinearLayoutItem],
         parentConstraints: ViewConstraints
@@ -45,6 +47,7 @@ struct LinearLayout: View {
     }
 
     @ViewBuilder
+    @MainActor
     private func makeStack() -> some View {
         if self.model.direction == .vertical {
             makeVStack(
@@ -68,6 +71,7 @@ struct LinearLayout: View {
     }
 
     @ViewBuilder
+    @MainActor
     private func childItem(
         _ item: LinearLayoutItem,
         parentConstraints: ViewConstraints

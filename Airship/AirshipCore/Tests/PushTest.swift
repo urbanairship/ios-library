@@ -27,7 +27,7 @@ class PushTest: XCTestCase {
     override func setUp() async throws {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
-            defaultEnabledFeatures: .all,
+            defaultEnabledFeatures: AirshipFeature.all,
             notificationCenter: notificationCenter
         )
         self.push = await createPush()

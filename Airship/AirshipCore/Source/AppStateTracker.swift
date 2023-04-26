@@ -49,6 +49,7 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
     )
 
     @objc
+    @MainActor
     public static let shared: AppStateTracker = AppStateTracker()
 
     private let notificationCenter: NotificationCenter
@@ -62,7 +63,8 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
     public var state: ApplicationState {
         return adapter.state
     }
-    
+
+    @MainActor
     init(
         adapter: AppStateTrackerAdapter = DefaultAppStateTrackerAdapter(),
         notificationCenter: NotificationCenter = NotificationCenter.default

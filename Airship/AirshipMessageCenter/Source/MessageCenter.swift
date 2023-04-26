@@ -269,6 +269,7 @@ extension MessageCenter: Component, PushableComponent {
 
 extension MessageCenter {
 
+    @MainActor
     fileprivate func showMessageCenter(
         scene: UIWindowScene,
         theme: MessageCenterTheme?

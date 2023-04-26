@@ -7,7 +7,7 @@ import Foundation
 public final class AirshipDate: NSObject, AirshipDateProtocol {
 
     @objc
-    public static var shared = AirshipDate()
+    public static let shared = AirshipDate()
 
     @objc
     public override init() {

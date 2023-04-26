@@ -15,6 +15,7 @@ public class MessageCenterViewControllerFactory: NSObject {
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
     @objc
+    @MainActor
     public class func make(
         theme: MessageCenterTheme? = nil,
         controller: MessageCenterController,

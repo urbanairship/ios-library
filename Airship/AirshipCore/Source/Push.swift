@@ -259,6 +259,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
         }
     }
 
+    @MainActor
     private func observeNotificationCenterEvents() {
         #if !os(watchOS)
         self.notificationCenter.addObserver(
@@ -966,7 +967,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     private func updateCategories() {
         #if !os(tvOS)
         guard self.isComponentEnabled,
-            self.privacyManager.isEnabled(Features.push),
+            self.privacyManager.isEnabled(.push),
             self.config.requestAuthorizationToUseNotifications
         else {
             return
@@ -985,7 +986,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     @MainActor
     private func updateNotifications() async {
         guard self.isComponentEnabled,
-              self.privacyManager.isEnabled(Features.push)
+              self.privacyManager.isEnabled(.push)
         else {
             return
         }

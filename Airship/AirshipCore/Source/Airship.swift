@@ -450,6 +450,7 @@ public class Airship: NSObject {
     /// - Parameters:
     ///     - deepLink: The deep link.
     ///     - completionHandler: The result. `true` if the link was able to be procesed, otherwise `false`.
+    @MainActor
     @objc
     public func deepLink(
         _ deepLink: URL
@@ -481,9 +482,9 @@ public class Airship: NSObject {
     /// - Parameters:
     ///     - deepLink: The deep link.
     /// - Returns: `true` if the deeplink is handled, `false` otherwise.
+    @MainActor
     @objc
     private func handleAirshipDeeplink(_ deeplink: URL) -> Bool {
-
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
             #if !os(watchOS)

@@ -71,7 +71,6 @@ actor Worker {
         if queueWork {
             let pendingID = nextPendingID
             nextPendingID += 1
-
             let pendingRequest = PendingRequest(id: pendingID, request: request)
             pending.append(pendingRequest)
             workContinuation?.yield(pendingRequest)
@@ -83,7 +82,6 @@ actor Worker {
             let task: Task<Void, Error> = Task {
                 var attempt = 1
                 while self.isValidRequest(next) == true {
-                    
                     let cancellableValueHolder: CancellabelValueHolder<Task<Void, Error>> = CancellabelValueHolder { task in
                         task.cancel()
                     }
@@ -141,41 +139,33 @@ actor Worker {
         try await prepare(pendingRequest: pendingRequest)
         try Task.checkCancellation()
 
-        let backgroundTask = try backgroundTasks.beginTask(
-            "Airship: \(canonicalID)"
-        ) {
+        let backgroundTask = try await backgroundTasks.beginTask("Airship: \(canonicalID)") {
             onCancel()
         }
+
         var result: AirshipWorkResult = .failure
         do {
             result = try await self.workHandler(pendingRequest.request)
         } catch {
-            AirshipLogger.debug(
-                "Failed to execute work \(canonicalID): \(error)"
-            )
+            AirshipLogger.debug("Failed to execute work \(canonicalID): \(error)")
         }
+
 
         if result == .success {
             // Success
-            AirshipLogger.trace(
-                "Work \(canonicalID) finished"
-            )
+            AirshipLogger.trace("Work \(canonicalID) finished")
             self.removeRequest(pendingRequest)
-            backgroundTask.dispose()
+            backgroundTask.cancel()
         } else {
-            AirshipLogger.trace(
-                "Work \(canonicalID) failed"
-            )
-            backgroundTask.dispose()
+            AirshipLogger.trace("Work \(canonicalID) failed")
+            backgroundTask.cancel()
             try Task.checkCancellation()
             let backOff = min(
                 Worker.maxBackOff,
                 Double(attempt) * Worker.initialBackOff
             )
-            AirshipLogger.trace(
-                "Work \(canonicalID) backing off for \(backOff) seconds."
-            )
 
+            AirshipLogger.trace("Work \(canonicalID) backing off for \(backOff) seconds.")
             let cancellable = self.notificationCenter
                 .publisher(
                     for: AppStateTracker.didEnterBackgroundNotification
@@ -190,9 +180,9 @@ actor Worker {
         }
     }
 
-    func calculateBackgroundWaitTime(maxTime: TimeInterval) async
-        -> TimeInterval
-    {
+    func calculateBackgroundWaitTime(
+        maxTime: TimeInterval
+    ) async -> TimeInterval {
         switch self.type {
         case .serial:
             guard let pending = self.pending.first else {
@@ -217,6 +207,7 @@ actor Worker {
         }
     }
 
+
     private func calculateBackgroundWaitTime(
         workRequest: AirshipWorkRequest,
         maxTime: TimeInterval
@@ -224,17 +215,16 @@ actor Worker {
         guard
             await self.conditionsMonitor.checkConditions(
                 workRequest: workRequest
-            )
+            ),
+            !workRequest.rateLimitIDs.isEmpty
         else {
             return 0.0
         }
 
-        guard !workRequest.rateLimitIDs.isEmpty else {
-            return 1.0
-        }
         let wait = await self.rateLimiter.nextAvailable(
             workRequest.rateLimitIDs
         )
+
         if wait > maxTime {
             return 0.0
         }

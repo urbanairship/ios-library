@@ -115,7 +115,7 @@ struct PrivacyManagerDebugView: View {
             }
         }
 
-        private func update(_ features: Features, enable: Bool) {
+        private func update(_ features: AirshipFeature, enable: Bool) {
             guard Airship.isFlying else { return }
 
             if enable {

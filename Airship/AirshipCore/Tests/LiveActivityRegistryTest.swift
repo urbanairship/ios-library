@@ -194,7 +194,7 @@ final class LiveActivityRegistryTest: XCTestCase {
 }
 
 /// Tried to match as closely as I coudl to the real object
-private class TestLiveActivity: LiveActivity {
+private final class TestLiveActivity: LiveActivityProtocol, @unchecked Sendable {
     let id: String
     var isActive: Bool = true {
         didSet {

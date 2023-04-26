@@ -97,6 +97,7 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
     ///
     /// - Returns: An instance of UAURLAllowList
     @objc
+    @MainActor
     public static func allowListWithConfig(_ config: RuntimeConfig)
         -> URLAllowList
     {

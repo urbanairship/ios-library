@@ -9,69 +9,66 @@ class AirshipWorkManager: AirshipWorkManagerProtocol {
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()
     private let workers: Workers = Workers()
-    private let notificationCenter = NotificationCenter.default
-    private var subscriptions: Set<AnyCancellable> = Set()
+    private let startTask: Task<Void, Never>
+    @MainActor
+    private var backgroundWaitTask: AirshipCancellable? = nil
+    private let queue: AsyncSerialQueue = AsyncSerialQueue()
+
 
     /// Shared instance
     static let shared = AirshipWorkManager()
 
-    init() {
-        let task = Task { [weak self] in
-            await self?.workers.run()
-        }
-
-        startBackgroundListener()
-
-        AnyCancellable {
-            task.cancel()
-        }
-        .store(in: &subscriptions)
+    deinit {
+        startTask.cancel()
     }
 
-    private func startBackgroundListener() {
-        var task: Task<Void, Never>? = nil
-        let cancellable = self.notificationCenter
-            .publisher(
-                for: AppStateTracker.didEnterBackgroundNotification
-            )
-            .sink { _ in
-                task?.cancel()
-
-                let backgroundTask = try? self.backgroundTasks.beginTask(
-                    "Airship.WorkManager"
-                ) {
-                    task?.cancel()
-                }
-
-                guard let backgroundTask = backgroundTask else {
-                    return
-                }
-
-                task = Task {
-                    let wait = 300.0
-                    if wait > 0 {
-                        try? await Task.sleep(
-                            nanoseconds: UInt64(wait * 1_000_000_000)
-                        )
-                    }
-                    backgroundTask.dispose()
-                }
-            }
-
-        self.notificationCenter
-            .publisher(
-                for: AppStateTracker.didBecomeActiveNotification
-            )
-            .sink { _ in
-                task?.cancel()
-            }
-            .store(in: &self.subscriptions)
-
-        AnyCancellable {
-            cancellable.cancel()
-            task?.cancel()
+    init() {
+        self.startTask = Task { [workers = self.workers] in
+            await workers.run()
         }
-        .store(in: &self.subscriptions)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: AppStateTracker.didBecomeActiveNotification,
+            object: nil
+        )
+    }
+
+
+    @objc
+    @MainActor(unsafe)
+    private func applicationDidEnterBackground() {
+        backgroundWaitTask?.cancel()
+
+        let cancellable: CancellabelValueHolder<Task<Void, Never>> = CancellabelValueHolder { task in
+            task.cancel()
+        }
+
+        let background = try? self.backgroundTasks.beginTask("AirshipWorkManager") { [cancellable] in
+            cancellable.cancel()
+        }
+
+        cancellable.value = Task {
+            let sleep = await workers.calculateBackgroundWaitTime(maxTime: 15.0)
+            try? await Task.sleep(nanoseconds: UInt64(max(sleep, 5.0) * 1_000_000_000))
+            background?.cancel()
+        }
+
+        backgroundWaitTask = cancellable
+    }
+
+    @objc
+    @MainActor(unsafe)
+    private func applicationDidBecomeActive() {
+        backgroundWaitTask?.cancel()
     }
 
     public func registerWorker(
@@ -120,9 +117,10 @@ class AirshipWorkManager: AirshipWorkManagerProtocol {
             workHandler: workHandler
         )
 
-        Task {
+        queue.enqueue { [workers = self.workers] in
             await workers.addWorker(worker, workID: workID)
         }
+
     }
 
     public func setRateLimit(
@@ -130,8 +128,8 @@ class AirshipWorkManager: AirshipWorkManagerProtocol {
         rate: Int,
         timeInterval: TimeInterval
     ) {
-        Task {
-            try? await self.rateLimitor.set(
+        Task { [rateLimitor = self.rateLimitor] in
+            try? await rateLimitor.set(
                 rateLimitID,
                 rate: rate,
                 timeInterval: timeInterval
@@ -140,8 +138,8 @@ class AirshipWorkManager: AirshipWorkManagerProtocol {
     }
 
     public func dispatchWorkRequest(_ request: AirshipWorkRequest) {
-        Task {
-            await self.workers.dispatchWorkRequest(request)
+        queue.enqueue { [workers = self.workers] in
+            await workers.dispatchWorkRequest(request)
         }
     }
 }
@@ -161,6 +159,21 @@ private actor Workers {
         }
         workerMap[workID]?.append(worker)
         workerContinuation?.yield(worker)
+    }
+
+    func calculateBackgroundWaitTime(
+        maxTime: TimeInterval
+    ) async -> TimeInterval {
+
+        let workers: [Worker] = workerMap.values.reduce([], +)
+
+        var result: TimeInterval = 0.0
+        for worker in workers {
+            let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
+            result = max(result, workerResult)
+        }
+
+        return result
     }
 
     func dispatchWorkRequest(_ request: AirshipWorkRequest) async {

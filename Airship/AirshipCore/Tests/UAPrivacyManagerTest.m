@@ -13,18 +13,18 @@
 @implementation UAPrivacyManagerTest
 
 - (void)setUp {
-    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 }
 
 - (void)testDefaultFeatures {
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesAll);
     
-    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesNone);
 }
 
 - (void)testEnableFeatures {
-    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
 
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesNone);
     
@@ -35,12 +35,6 @@
     [self.privacyManager enableFeatures:UAFeaturesContacts];
     
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesPush | UAFeaturesContacts);
-    
-    [self.privacyManager enableFeatures:UAFeaturesLocation | UAFeaturesAnalytics];
-    
-    XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesPush | UAFeaturesContacts | UAFeaturesAnalytics | UAFeaturesLocation);
-    
-    XCTAssertNotEqual(self.privacyManager.enabledFeatures, UAFeaturesChat);
 }
 
 - (void)testDisableFeatures {
@@ -50,23 +44,23 @@
     
     XCTAssertNotEqual(self.privacyManager.enabledFeatures, UAFeaturesAll);
     
-    [self.privacyManager disableFeatures:UAFeaturesLocation | UAFeaturesAnalytics | UAFeaturesMessageCenter | UAFeaturesTagsAndAttributes];
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics | UAFeaturesMessageCenter | UAFeaturesTagsAndAttributes];
     
-    XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesChat | UAFeaturesInAppAutomation | UAFeaturesContacts);
+    XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesInAppAutomation | UAFeaturesContacts);
 }
 
 - (void)testIsEnabled {
-    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
 
-    XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesChat]);
+    XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesAnalytics]);
     
     [self.privacyManager enableFeatures:UAFeaturesContacts];
     
     XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesContacts]);
     
-    [self.privacyManager enableFeatures:UAFeaturesChat];
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
     
-    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesChat]);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesAnalytics]);
     
     [self.privacyManager enableFeatures:UAFeaturesAll];
     
@@ -86,9 +80,9 @@
 }
 
 - (void)testSetEnabled {
-    self.privacyManager.enabledFeatures = UAFeaturesChat;
+    self.privacyManager.enabledFeatures = UAFeaturesContacts;
 
-    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesChat]);
+    XCTAssertTrue([self.privacyManager isEnabled:UAFeaturesContacts]);
     XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesAnalytics]);
 
     self.privacyManager.enabledFeatures = UAFeaturesAnalytics;
@@ -110,10 +104,10 @@
     [self.privacyManager enableFeatures:UAFeaturesAnalytics];
     XCTAssertEqual(0, eventCount);
 
-    [self.privacyManager disableFeatures:UAFeaturesChat];
+    [self.privacyManager disableFeatures:UAFeaturesAnalytics];
     XCTAssertEqual(1, eventCount);
 
-    [self.privacyManager enableFeatures:UAFeaturesChat];
+    [self.privacyManager enableFeatures:UAFeaturesAnalytics];
     XCTAssertEqual(2, eventCount);
 
     [[NSNotificationCenter defaultCenter] removeObserver:observer];

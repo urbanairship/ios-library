@@ -5,7 +5,8 @@ import Foundation
 protocol AppStateTrackerAdapter {
     @MainActor
     var state: ApplicationState { get }
-    
+
+    @MainActor
     func watchAppLifeCycleEvents(
         eventHandler: @MainActor @Sendable @escaping (AppLifeCycleEvent) -> Void
     )
@@ -120,7 +121,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.didBecomeActive)
                 }
             }
@@ -132,7 +133,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.willResignActive)
                 }
             }
@@ -144,7 +145,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.willEnterForeground)
                 }
             }
@@ -156,7 +157,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.didEnterBackground)
                 }
             }
@@ -168,21 +169,18 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.willTerminate)
                 }
             }
         )
     }
 
-}
-
-#endif
-
-
-extension MainActor {
     @MainActor(unsafe)
     static func runUnsafe(_ block: @MainActor () -> Void) {
         block()
     }
 }
+
+#endif
+

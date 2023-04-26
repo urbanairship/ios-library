@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
+final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendable {
     private let tokenPath = "/api/auth/device"
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
@@ -102,7 +102,7 @@ struct ChannelAuthTokenResponse: Decodable, Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
-protocol ChannelAuthTokenAPIClientProtocol {
+protocol ChannelAuthTokenAPIClientProtocol: Sendable {
     func fetchToken(
         channelID: String
     ) async throws -> AirshipHTTPResponse<ChannelAuthTokenResponse>

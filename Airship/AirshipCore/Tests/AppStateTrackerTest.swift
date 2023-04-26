@@ -9,6 +9,7 @@ final class AppStateTrackerTest: XCTestCase {
     private let notificationCenter = NotificationCenter()
     private var tracker: AppStateTracker!
 
+    @MainActor
     override func setUp() async throws {
         self.tracker = AppStateTracker(
             adapter: adapter,

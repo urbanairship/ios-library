@@ -26,9 +26,8 @@
     self.mockPush = [self mockForClass:[UAPush class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockApplicationMetrics = [self mockForClass:[UAApplicationMetrics class]];
-    
-    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore
-                                               defaultEnabledFeatures:UAFeaturesAll];
+
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
     self.permissionManager = [[UAPermissionsManager alloc] init];
 
     self.airship = [[UATestAirshipInstance alloc] init];
@@ -42,7 +41,7 @@
 - (void)testEmptyAudience {
     UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
     }];
-    
+
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
     }];
@@ -53,7 +52,7 @@
     UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
     }];
-    
+
     UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
@@ -77,11 +76,11 @@
     UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @YES;
     }];
-    
+
     UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.locationOptIn = @NO;
     }];
-    
+
     TestPermissionsDelegate *locationDelgate = [[TestPermissionsDelegate alloc] init];
     locationDelgate.permissionStatus = UAPermissionStatusDenied;
     [self.permissionManager setDelegate:locationDelgate permission:UAPermissionLocation];
@@ -121,11 +120,11 @@
     UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @YES;
     }];
-    
+
     UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @NO;
     }];
-    
+
     [[[self.mockPush stub] andReturnValue:@YES] userPushNotificationsEnabled];
     [[[self.mockPush stub] andReturnValue:@(UAAuthorizedNotificationSettingsAlert)] authorizedNotificationSettings];
 
@@ -143,11 +142,11 @@
     UAScheduleAudience *requiresOptedIn = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @YES;
     }];
-    
+
     UAScheduleAudience *requiresOptedOut = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.notificationsOptIn = @NO;
     }];
-    
+
     [[[self.mockPush stub] andReturnValue:@NO] userPushNotificationsEnabled];
 
     // test
@@ -179,7 +178,7 @@
 - (void)testTagSelector {
     // setup
     NSMutableArray<NSString *> *tags = [NSMutableArray array];
-    
+
     [[[self.mockChannel stub] andDo:^(NSInvocation *invocation) {
         [invocation setReturnValue:(void *)&tags];
     }] tags];
@@ -187,7 +186,7 @@
     UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.tagSelector = [UATagSelector tag:@"expected tag"];
     }];
-    
+
     // test
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
@@ -298,7 +297,7 @@
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
     }];
-    
+
     audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.languageTags = @[@"fr",@"de-CH"];
     }];
@@ -317,18 +316,18 @@
         UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
     }];
-    
+
     // test
     mockVersion = @"1.0";
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
     }];
-    
+
     mockVersion = @"2";
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
     }];
-    
+
     mockVersion = @"3";
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
@@ -340,7 +339,7 @@
     UAScheduleAudience *requiresAnalyticsEnabled = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.requiresAnalytics = @YES;
     }];
-    
+
     UAScheduleAudience *requiresAnalyticsDisabled = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         builder.requiresAnalytics = @NO;
     }];
@@ -355,10 +354,10 @@
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresAnalyticsDisabled completionHandler:^(BOOL result) {
         XCTAssertTrue(result);
     }];
-    
+
     //Disable privacy manager analytics
     [[UAirship shared].privacyManager disableFeatures:UAFeaturesAnalytics];
-    
+
     // test
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:requiresAnalyticsEnabled completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
@@ -369,7 +368,7 @@
 }
 
 - (void)testPermissions {
-    
+
     UAScheduleAudience *audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
         UAJSONMatcher *notificationMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"granted"] key:@"display_notifications"];
         UAJSONMatcher *locationMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWhereStringEquals:@"denied"] key:@"location"];
@@ -377,20 +376,20 @@
         UAJSONPredicate *locationPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:locationMatcher];
         UAJSONPredicate *predicate = [UAJSONPredicate andPredicateWithSubpredicates:@[notificationPredicate, locationPredicate]];
         XCTAssertNotNil(predicate);
-        
+
         builder.permissionPredicate = predicate;
     }];
-    
+
     TestPermissionsDelegate *notificationDelegate = [[TestPermissionsDelegate alloc] init];
     TestPermissionsDelegate *locationDelgate = [[TestPermissionsDelegate alloc] init];
-    
+
     //audience = @{@"post_notifications":@"denied"}
     [self.permissionManager setDelegate:notificationDelegate permission:UAPermissionDisplayNotifications];
     notificationDelegate.permissionStatus = UAPermissionStatusDenied;
     [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
         XCTAssertFalse(result);
     }];
-    
+
     //audience = @{@"post_notifications": @"granted"}
     [self.permissionManager setDelegate:notificationDelegate permission:UAPermissionLocation];
     notificationDelegate.permissionStatus = UAPermissionStatusGranted;
@@ -409,3 +408,4 @@
 }
 
 @end
+

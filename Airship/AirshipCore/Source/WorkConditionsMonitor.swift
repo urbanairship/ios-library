@@ -1,7 +1,7 @@
-import Combine
+@preconcurrency import Combine
 
 struct WorkConditionsMonitor {
-    private var cancellables = Set<AnyCancellable>()
+    private let cancellable: AnyCancellable
     private let conditionsSubject = PassthroughSubject<Void, Never>()
     private let networkMonitor: NetworkMonitor
 
@@ -9,8 +9,7 @@ struct WorkConditionsMonitor {
         networkMonitor: NetworkMonitor = NetworkMonitor()
     ) {
         self.networkMonitor = networkMonitor
-
-        Publishers.CombineLatest(
+        self.cancellable = Publishers.CombineLatest(
             NotificationCenter.default.publisher(
                 for: AppStateTracker.didBecomeActiveNotification
             ),
@@ -21,8 +20,7 @@ struct WorkConditionsMonitor {
         .sink { [conditionsSubject] _ in
             conditionsSubject.send()
         }
-        .store(in: &self.cancellables)
-
+        
         networkMonitor.connectionUpdates = { [conditionsSubject] _ in
             conditionsSubject.send()
         }

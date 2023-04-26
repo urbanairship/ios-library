@@ -458,6 +458,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
      * -
      */
     @available(iOSApplicationExtension, unavailable)
+    @MainActor
     private func handle(
         _ url: URL?,
         _ completionHandler: @escaping (Bool) -> Void

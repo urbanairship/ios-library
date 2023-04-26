@@ -17,11 +17,13 @@ struct MediaWebView: UIViewRepresentable {
     let video: Video?
     @Environment(\.isVisible) var isVisible
     @State private var isLoaded: Bool = false
-    
+
+    @MainActor
     func makeUIView(context: Context) -> WKWebView {
         return createWebView(context: context)
     }
 
+    @MainActor
     func updateUIView(_ uiView: WKWebView, context: Context) {
         if isLoaded {
             handleAutoplayingVideos(uiView: uiView)
@@ -30,6 +32,7 @@ struct MediaWebView: UIViewRepresentable {
         }
     }
 
+    @MainActor
     func createWebView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
@@ -136,7 +139,8 @@ struct MediaWebView: UIViewRepresentable {
             return nil
         }
     }
-    
+
+    @MainActor
     func handleAutoplayingVideos(uiView: WKWebView) {
         if isVisible {
             if video?.autoplay ?? false {
@@ -146,7 +150,8 @@ struct MediaWebView: UIViewRepresentable {
             pauseMedias(uiView: uiView)
         }
     }
-    
+
+    @MainActor
     func pauseMedias(uiView: WKWebView) {
         if type == .video {
             uiView.evaluateJavaScript("videoElement.pause();")
@@ -154,7 +159,8 @@ struct MediaWebView: UIViewRepresentable {
             uiView.evaluateJavaScript("player.pauseVideo();")
         }
     }
-    
+
+    @MainActor
     func playMedias(uiView: WKWebView) {
         if type == .video {
             uiView.evaluateJavaScript("videoElement.play();")

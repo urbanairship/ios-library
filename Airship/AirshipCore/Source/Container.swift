@@ -38,6 +38,7 @@ struct Container: View {
     }
 
     @ViewBuilder
+    @MainActor
     private func childItem(_ index: Int, item: ContainerItem) -> some View {
         let placementWidth = placementWidth(item.position.horizontal)
         let placementHeight = placementHeight(item.position.vertical)

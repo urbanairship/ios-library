@@ -46,7 +46,7 @@
 - (void)setUp {
     [super setUp];
 
-    self.privacyManager = [[UAPrivacyManager alloc] initWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
     self.mockAudienceOverridesProvider = [self mockForClass:[UAAutomationAudienceOverridesProvider class]];

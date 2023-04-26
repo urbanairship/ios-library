@@ -6,6 +6,7 @@ import SwiftUI
 /// View factory. Inflates views based on type.
 
 struct ViewFactory {
+    @MainActor
     @ViewBuilder
     static func createView(model: ViewModel, constraints: ViewConstraints)
         -> some View
