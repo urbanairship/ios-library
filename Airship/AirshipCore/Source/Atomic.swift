@@ -24,6 +24,21 @@ final class Atomic<T: Equatable>: @unchecked Sendable {
         }
     }
 
+
+    @discardableResult
+    func setValue(_ value: T, onChange:(() -> Void)? = nil) -> Bool {
+        var changed = false
+        lock.sync {
+            changed = self.value != value
+            self.value = value
+            if (changed) {
+                onChange?()
+            }
+        }
+        return changed
+    }
+
+    @discardableResult
     func compareAndSet(expected: T, value: T) -> Bool {
         var result = false
         lock.sync {

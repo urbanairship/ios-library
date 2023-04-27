@@ -91,8 +91,7 @@ public class FetchDeviceInfoAction: NSObject, Action {
             dict[FetchDeviceInfoAction.tags] = tags
         }
 
-        dict[FetchDeviceInfoAction.pushOptIn] =
-        push.isPushNotificationsOptedIn
+        dict[FetchDeviceInfoAction.pushOptIn] = await push.isPushNotificationsOptedIn
 
         return ActionResult(value: dict)
     }

@@ -16,7 +16,7 @@ import Foundation
 /// - SDK version
 /// - Accengage Device ID (Accengage module for migration)
 @objc(UAPrivacyManager)
-public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
+public final class AirshipPrivacyManager: NSObject, Sendable {
 
     /**
     * NSNotification event when enabled feature list is updated.
@@ -26,7 +26,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
         "com.urbanairship.privacymanager.enabledfeatures_changed"
     )
 
-    private let UAPrivacyManagerEnabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
+    private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
     private let LegacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
     private let LegacyChatEnableFlag = "AirshipChat.enabled"
     private let LegacyLocationEnableFlag = "UALocationUpdatesEnabled"
@@ -36,36 +36,25 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
 
     private let dataStore: PreferenceDataStore
 
-    private let notificationCenter: NotificationCenter
+    private let notificationCenter: AirshipNotificationCenter
 
-    private let featureLock: AirshipLock = AirshipLock()
-    private var currentEnabledFeatures: AirshipFeature = []
+    private let currentEnabledFeatures: Atomic<AirshipFeature> = Atomic([])
 
     /// The current set of enabled features.
     public var enabledFeatures: AirshipFeature {
         get {
-            var result: AirshipFeature = []
-            featureLock.sync {
-                result = currentEnabledFeatures
-            }
-            return result
+            return currentEnabledFeatures.value
         }
         set {
-            featureLock.sync {
-                if currentEnabledFeatures != newValue {
-                    currentEnabledFeatures = newValue
-                    dataStore.setObject(
-                        NSNumber(value: currentEnabledFeatures.rawValue),
-                        forKey: UAPrivacyManagerEnabledFeaturesKey
-                    )
+            let changed = currentEnabledFeatures.setValue(newValue) {
+                self.dataStore.setObject(
+                    NSNumber(value: newValue.rawValue),
+                    forKey: AirshipPrivacyManager.enabledFeaturesKey
+                )
+            }
 
-                    UADispatcher.main.dispatchAsyncIfNecessary {
-                        self.notificationCenter.post(
-                            name: AirshipPrivacyManager.changeEvent,
-                            object: nil
-                        )
-                    }
-                }
+            if (changed) {
+                self.notificationCenter.postOnMain(name: AirshipPrivacyManager.changeEvent)
             }
         }
     }
@@ -84,20 +73,6 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
     /*
      * - Note: For internal use only. :nodoc:
      */
-    public convenience init(
-        dataStore: PreferenceDataStore,
-        defaultEnabledFeatures: AirshipFeature
-    ) {
-        self.init(
-            dataStore: dataStore,
-            defaultEnabledFeatures: defaultEnabledFeatures,
-            notificationCenter: NotificationCenter.default
-        )
-    }
-
-    /*
-     * - Note: For internal use only. :nodoc:
-     */
     @objc(privacyManagerWithDataStore:defaultEnabledFeatures:)
     public static func _objc_factory(
         dataStore: PreferenceDataStore,
@@ -111,17 +86,17 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
     public init(
         dataStore: PreferenceDataStore,
         defaultEnabledFeatures: AirshipFeature,
-        notificationCenter: NotificationCenter
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
 
         self.dataStore = dataStore
         self.notificationCenter = notificationCenter
 
-        if self.dataStore.keyExists(UAPrivacyManagerEnabledFeaturesKey),
-           let value = self.dataStore.unsignedInteger(forKey: UAPrivacyManagerEnabledFeaturesKey) {
-            self.currentEnabledFeatures = AirshipFeature(rawValue:(value & AirshipFeature.all.rawValue))
+        if self.dataStore.keyExists(AirshipPrivacyManager.enabledFeaturesKey),
+           let value = self.dataStore.unsignedInteger(forKey: AirshipPrivacyManager.enabledFeaturesKey) {
+            self.currentEnabledFeatures.value = AirshipFeature(rawValue:(value & AirshipFeature.all.rawValue))
         } else {
-            self.currentEnabledFeatures = defaultEnabledFeatures
+            self.currentEnabledFeatures.value = defaultEnabledFeatures
         }
 
         super.init()
@@ -132,11 +107,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
     /// This will append any features to the `enabledFeatures` property.
     /// - Parameter features: The features to enable.
     public func enableFeatures(_ features: AirshipFeature) {
-        featureLock.sync {
-            var copy = enabledFeatures
-            copy.insert(features)
-            enabledFeatures = copy
-        }
+        self.enabledFeatures.insert(features)
     }
 
     /// :nodoc:
@@ -149,11 +120,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
     /// This will remove any features to the `enabledFeatures` property.
     /// - Parameter features: The features to disable.
     public func disableFeatures(_ features: AirshipFeature) {
-        featureLock.sync {
-            var copy = enabledFeatures
-            copy.remove(features)
-            enabledFeatures = copy
-        }
+        self.enabledFeatures.remove(features)
     }
 
     /// :nodoc:
@@ -192,7 +159,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
     }
 
     func migrateData() {
-        var features = currentEnabledFeatures
+        var features = currentEnabledFeatures.value
         if dataStore.keyExists(LegacyDataCollectionEnableEnableFlag) {
             if dataStore.bool(forKey: LegacyDataCollectionEnableEnableFlag) {
                 features = .all
@@ -234,7 +201,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
             dataStore.removeObject(forKey: LegacyLocationEnableFlag)
         }
 
-        currentEnabledFeatures = features
+        currentEnabledFeatures.value = features
     }
 }
 

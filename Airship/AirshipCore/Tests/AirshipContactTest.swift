@@ -7,7 +7,9 @@ import XCTest
 class AirshipContactTest: XCTestCase {
     private let channel: TestChannel = TestChannel()
     private let apiClient: TestContactSubscriptionListAPIClient = TestContactSubscriptionListAPIClient()
-    private let notificationCenter: NotificationCenter = NotificationCenter()
+    private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
+        notificationCenter: NotificationCenter()
+    )
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
@@ -144,7 +146,7 @@ class AirshipContactTest: XCTestCase {
     @MainActor
     func testChannelCreatedEnqueuesUpdateTask() async throws {
         notificationCenter.post(
-            Notification(name: AirshipChannel.channelCreatedEvent)
+            name: AirshipChannel.channelCreatedEvent
         )
 
         await verifyOperations([.resolve])
@@ -168,7 +170,7 @@ class AirshipContactTest: XCTestCase {
 
     func testForegroundResolves() async throws {
         notificationCenter.post(
-            Notification(name: AppStateTracker.didBecomeActiveNotification)
+            name: AppStateTracker.didBecomeActiveNotification
         )
 
         await verifyOperations([.resolve])
@@ -177,7 +179,7 @@ class AirshipContactTest: XCTestCase {
 
     func testForegroundSkipsResolvesLessThan24Hours() async throws {
         notificationCenter.post(
-            Notification(name: AppStateTracker.didBecomeActiveNotification)
+            name: AppStateTracker.didBecomeActiveNotification
         )
 
         await verifyOperations([.resolve])
@@ -185,7 +187,7 @@ class AirshipContactTest: XCTestCase {
         self.date.offset += 24 * 60 * 60 - 1
 
         notificationCenter.post(
-            Notification(name: AppStateTracker.didBecomeActiveNotification)
+            name: AppStateTracker.didBecomeActiveNotification
         )
 
         await verifyOperations([.resolve])
@@ -193,7 +195,7 @@ class AirshipContactTest: XCTestCase {
         self.date.offset += 1
 
         notificationCenter.post(
-            Notification(name: AppStateTracker.didBecomeActiveNotification)
+            name: AppStateTracker.didBecomeActiveNotification
         )
 
         await verifyOperations([.resolve, .resolve])
@@ -270,7 +272,7 @@ class AirshipContactTest: XCTestCase {
     @MainActor
     func testResolveSkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
-        notificationCenter.post(Notification(name: AirshipChannel.channelCreatedEvent))
+        notificationCenter.post(name: AirshipChannel.channelCreatedEvent)
         await self.verifyOperations([.reset])
     }
 

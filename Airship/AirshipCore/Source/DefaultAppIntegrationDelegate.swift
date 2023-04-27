@@ -274,7 +274,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             ? Situation.foregroundPush : Situation.backgroundPush
         let dispatchGroup = DispatchGroup()
         var fetchResults: [UInt] = []
-        let lock = Lock()
+        let lock = AirshipLock()
         var metadata: [AnyHashable: Any] = [:]
         metadata[UAActionMetadataPushPayloadKey] = userInfo
 

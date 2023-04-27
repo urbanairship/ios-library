@@ -17,7 +17,7 @@ class PreferenceCenterViewLoader: ObservableObject {
 
     public func load(
         preferenceCenterID: String,
-        onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil
+        onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)? = nil
     ) {
         self.task?.cancel()
         self.task = Task {

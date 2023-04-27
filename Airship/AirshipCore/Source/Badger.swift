@@ -7,8 +7,9 @@ import UIKit
 import WatchKit
 #endif
 
-protocol Badger {
+protocol Badger: AnyObject, Sendable {
     #if !os(watchOS)
+    @MainActor
     var applicationIconBadgeNumber: Int { get set }
     #endif
 }

@@ -5,7 +5,7 @@ import Foundation
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
+public final class AirshipAnalytics: NSObject, Component, AnalyticsProtocol, @unchecked Sendable {
 
     /// The shared Analytics instance.
     @objc
@@ -45,9 +45,9 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     private let dataStore: PreferenceDataStore
     private let channel: AirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
-    private let notificationCenter: NotificationCenter
+    private let notificationCenter: AirshipNotificationCenter
     private let date: AirshipDateProtocol
-    private var eventManager: EventManagerProtocol
+    private let eventManager: EventManagerProtocol
     private let localeManager: AirshipLocaleManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
     private let permissionsManager: AirshipPermissionsManager
@@ -55,7 +55,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
     private let lifeCycleEventFactory: LifeCycleEventFactoryProtocol
     private let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
 
-    private var sdkExtensions: [String] = []
+    private let sdkExtensions: Atomic<[String]> = Atomic([])
 
     // Screen tracking state
     private var currentScreen: String?
@@ -155,7 +155,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: AirshipChannelProtocol,
-        notificationCenter: NotificationCenter = NotificationCenter.default,
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: AirshipDateProtocol = AirshipDate.shared,
         localeManager: AirshipLocaleManagerProtocol,
         appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
@@ -187,7 +187,9 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
             self?.updateEnablement()
         }
 
-        self.eventManager.addHeaderProvider(self.makeHeaders)
+        self.eventManager.addHeaderProvider {
+            await self.makeHeaders()
+        }
 
         startSession()
 
@@ -293,7 +295,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
 
     /// :nodoc:
     public func addHeaderProvider(
-        _ headerProvider: @escaping () async -> [String: String]
+        _ headerProvider: @Sendable @escaping () async -> [String: String]
     ) {
         self.eventManager.addHeaderProvider(headerProvider)
     }
@@ -337,8 +339,9 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
         headers["X-UA-Lib-Version"] = AirshipVersion.get()
 
         // SDK Extensions
-        if self.sdkExtensions.count > 0 {
-            headers["X-UA-Frameworks"] = self.sdkExtensions.joined(
+        let extensions = self.sdkExtensions.value
+        if extensions.count > 0 {
+            headers["X-UA-Frameworks"] = extensions.joined(
                 separator: ", "
             )
         }
@@ -538,7 +541,7 @@ public class AirshipAnalytics: NSObject, Component, AnalyticsProtocol {
         version: String
     ) {
         let sanitizedVersion = version.replacingOccurrences(of: ",", with: "")
-        self.sdkExtensions.append("\(ext.name):\(sanitizedVersion)")
+        self.sdkExtensions.value.append("\(ext.name):\(sanitizedVersion)")
     }
 
     @objc
@@ -676,12 +679,12 @@ enum LifeCycleEventType {
     case background
 }
 
-protocol LifeCycleEventFactoryProtocol {
+protocol LifeCycleEventFactoryProtocol: Sendable {
     @MainActor
     func make(type: LifeCycleEventType) -> Event
 }
 
-fileprivate class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
+fileprivate final class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
     @MainActor
     func make(type: LifeCycleEventType) -> Event {
         switch (type) {

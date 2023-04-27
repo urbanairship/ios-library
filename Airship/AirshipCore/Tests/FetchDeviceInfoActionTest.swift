@@ -39,6 +39,7 @@ final class FetchDeviceInfoActionTest: XCTestCase {
         }
     }
 
+    @MainActor
     func testPerform() async throws {
         self.channel.identifier = "some-channel-id"
         self.contact.namedUserID = "some-named-user"

@@ -10,7 +10,7 @@ class ChannelTest: XCTestCase {
     private let localeManager = TestLocaleManager()
     private let audienceManager = TestChannelAudienceManager()
     private let appStateTracker = TestAppStateTracker()
-    private let notificationCenter = NotificationCenter()
+    private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var config = AirshipConfig()
     private var privacyManager: AirshipPrivacyManager!

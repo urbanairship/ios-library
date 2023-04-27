@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol AirshipWorkManagerProtocol {
+public protocol AirshipWorkManagerProtocol: Sendable {
     func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,

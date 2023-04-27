@@ -3,9 +3,10 @@
 import Foundation
 import UserNotifications
 
-protocol NotificationRegistrar {
+protocol NotificationRegistrar: Sendable {
 
     #if !os(tvOS)
+    @MainActor
     func setCategories(_ categories: Set<UNNotificationCategory>)
     #endif
 

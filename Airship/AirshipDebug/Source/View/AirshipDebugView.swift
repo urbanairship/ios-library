@@ -322,6 +322,7 @@ private class AirshipDebugViewModel: ObservableObject {
     }
 
     @Published
+    @MainActor
     var backgroundPushEnabled: Bool {
         didSet {
             guard Airship.isFlying else { return }

@@ -7,7 +7,9 @@ import XCTest
 class ChannelAudienceManagerTest: XCTestCase {
 
     private let workManager = TestWorkManager()
-    private let notificationCenter: NotificationCenter = NotificationCenter()
+    private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
+        notificationCenter: NotificationCenter()
+    )
     private let date: UATestDate = UATestDate()
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let subscriptionListClient: TestSubscriptionListAPIClient = TestSubscriptionListAPIClient()

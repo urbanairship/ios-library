@@ -5,7 +5,7 @@ import Foundation
 
 /// This singleton provides an interface to the channel functionality.
 @objc(UAChannel)
-public class AirshipChannel: NSObject, Component, AirshipChannelProtocol {
+public final class AirshipChannel: NSObject, Component, AirshipChannelProtocol, @unchecked Sendable {
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
 
@@ -46,9 +46,9 @@ public class AirshipChannel: NSObject, Component, AirshipChannelProtocol {
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
     private let localeManager: AirshipLocaleManagerProtocol
-    private var audienceManager: ChannelAudienceManagerProtocol
+    private let audienceManager: ChannelAudienceManagerProtocol
     private let channelRegistrar: ChannelRegistrarProtocol
-    private let notificationCenter: NotificationCenter
+    private let notificationCenter: AirshipNotificationCenter
     private let appStateTracker: AppStateTrackerProtocol
     private let tagsLock = AirshipLock()
     private var subscriptions: Set<AnyCancellable> = Set()
@@ -133,7 +133,7 @@ public class AirshipChannel: NSObject, Component, AirshipChannelProtocol {
         localeManager: AirshipLocaleManagerProtocol,
         audienceManager: ChannelAudienceManagerProtocol,
         channelRegistrar: ChannelRegistrarProtocol,
-        notificationCenter: NotificationCenter,
+        notificationCenter: AirshipNotificationCenter,
         appStateTracker: AppStateTrackerProtocol
     ) {
 
@@ -231,7 +231,7 @@ public class AirshipChannel: NSObject, Component, AirshipChannelProtocol {
                 config: config,
                 dataStore: dataStore
             ),
-            notificationCenter: NotificationCenter.default,
+            notificationCenter: AirshipNotificationCenter.shared,
             appStateTracker: AppStateTracker.shared
         )
     }
@@ -265,36 +265,25 @@ public class AirshipChannel: NSObject, Component, AirshipChannelProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidTransitionToForeground),
-            name: AppStateTracker.didTransitionToForeground,
-            object: nil
-        )
-
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(applicationDidTransitionToForeground),
-            name: AirshipLocaleManager.localeUpdatedEvent,
-            object: nil
+            name: AppStateTracker.didTransitionToForeground
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(remoteConfigUpdated),
-            name: RuntimeConfig.configUpdatedEvent,
-            object: nil
+            name: RuntimeConfig.configUpdatedEvent
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(onEnableFeaturesChanged),
-            name: AirshipPrivacyManager.changeEvent,
-            object: nil
+            name: AirshipPrivacyManager.changeEvent
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(localeUpdates),
-            name: AirshipLocaleManager.localeUpdatedEvent,
-            object: nil
+            name: AirshipLocaleManager.localeUpdatedEvent
         )
     }
 

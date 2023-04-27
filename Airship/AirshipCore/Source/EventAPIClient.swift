@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 import Foundation
 
-protocol EventAPIClientProtocol {
+protocol EventAPIClientProtocol: Sendable {
     func uploadEvents(
         _ events: [AirshipEventData],
         headers: [String: String]
     ) async throws -> AirshipHTTPResponse<EventUploadTuningInfo>
 }
 
-class EventAPIClient: EventAPIClientProtocol {
+final class EventAPIClient: EventAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
     private let encoder: JSONEncoder = JSONEncoder()

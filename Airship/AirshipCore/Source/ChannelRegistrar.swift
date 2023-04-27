@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 // NOTE: For internal use only. :nodoc:
-protocol ChannelRegistrarProtocol {
+protocol ChannelRegistrarProtocol: AnyObject, Sendable {
     var channelID: String? { get }
     var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> { get }
     func register(forcefully: Bool)
@@ -20,7 +20,7 @@ enum ChannelRegistrationUpdate {
 
 /// The ChannelRegistrar class is responsible for device registrations.
 /// - Note: For internal use only. :nodoc:
-class ChannelRegistrar: ChannelRegistrarProtocol {
+final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     static let workID = "UAChannelRegistrar.registration"
 
     fileprivate static let forcefullyKey = "forcefully"

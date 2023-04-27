@@ -12,7 +12,7 @@ class PushTest: XCTestCase {
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
     private let permissionsManager = AirshipPermissionsManager()
-    private let notificationCenter = NotificationCenter()
+    private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
     private let apnsRegistrar = TestAPNSRegistrar()
     private let badger = TestBadger()
@@ -59,6 +59,7 @@ class PushTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testBackgroundPushNotificationsEnabled() async throws {
         XCTAssertTrue(self.push.backgroundPushNotificationsEnabled)
         XCTAssertFalse(self.channel.updateRegistrationCalled)
@@ -477,6 +478,7 @@ class PushTest: XCTestCase {
         XCTAssertNil(payload.channel.iOSChannelSettings?.quietTimeTimeZone)
     }
 
+    @MainActor
     func testChannelPayloadAutoBadge() async throws {
         self.push.autobadgeEnabled = true
         self.push.badgeNumber = 10
@@ -546,12 +548,14 @@ class PushTest: XCTestCase {
         XCTAssertEqual(expected, headers)
     }
 
+    @MainActor
     func testDefaultNotificationCategories() throws {
         let defaultCategories = NotificationCategories.defaultCategories()
         XCTAssertEqual(defaultCategories, notificationRegistrar.categories)
         XCTAssertEqual(defaultCategories, self.push.combinedCategories)
     }
 
+    @MainActor
     func testNotificationCategories() throws {
         let defaultCategories = NotificationCategories.defaultCategories()
         let customCategory = UNNotificationCategory(
@@ -565,6 +569,7 @@ class PushTest: XCTestCase {
         XCTAssertEqual(combined, notificationRegistrar.categories)
     }
 
+    @MainActor
     func testRequireAuthorizationForDefaultCategories() throws {
         self.push.requireAuthorizationForDefaultCategories = true
         let defaultCategories = NotificationCategories.defaultCategories(
@@ -574,11 +579,13 @@ class PushTest: XCTestCase {
         XCTAssertEqual(defaultCategories, self.push.combinedCategories)
     }
 
+    @MainActor
     func testBadge() throws {
         self.push.badgeNumber = 100
         XCTAssertEqual(100, self.badger.applicationIconBadgeNumber)
     }
 
+    @MainActor
     func testAutoBadge() throws {
         self.push.autobadgeEnabled = false
         self.push.badgeNumber = 100
@@ -599,6 +606,7 @@ class PushTest: XCTestCase {
         XCTAssertTrue(self.channel.updateRegistrationCalled)
     }
 
+    @MainActor
     func testResetBadge() {
         self.push.badgeNumber = 1000
         self.push.resetBadge()

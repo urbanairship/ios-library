@@ -2,19 +2,19 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-protocol SubscriptionListAPIClientProtocol {
+protocol SubscriptionListAPIClientProtocol: Sendable {
     func get(
         channelID: String
     ) async throws -> AirshipHTTPResponse<[String]>
 }
 
 // NOTE: For internal use only. :nodoc:
-class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
+final class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
 
     private static let getPath = "/api/subscription_lists/channels/"
 
-    private var config: RuntimeConfig
-    private var session: AirshipRequestSession
+    private let config: RuntimeConfig
+    private let session: AirshipRequestSession
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config

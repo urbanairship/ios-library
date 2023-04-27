@@ -34,7 +34,7 @@ public struct PreferenceCenterList: View {
     private var preferenceCenterTheme
 
     private let preferenceCenterID: String
-    private let onLoad: ((String) async -> PreferenceCenterViewPhase)?
+    private let onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)?
     private let onPhaseChange: ((PreferenceCenterViewPhase) -> Void)?
 
     /// The default constructor
@@ -44,7 +44,7 @@ public struct PreferenceCenterList: View {
     ///     - onPhaseChange: A callback when the phase changed
     public init(
         preferenceCenterID: String,
-        onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil,
+        onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)? = nil,
         onPhaseChange: ((PreferenceCenterViewPhase) -> Void)? = nil
     ) {
         self.preferenceCenterID = preferenceCenterID

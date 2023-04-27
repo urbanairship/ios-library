@@ -5,7 +5,7 @@ import Foundation
 
 /// Airship Channel protocol.
 @objc(UAChannelProtocol)
-public protocol BaseAirshipChannelProtocol {
+public protocol BaseAirshipChannelProtocol: Sendable {
     /**
      * The Channel ID.
      */

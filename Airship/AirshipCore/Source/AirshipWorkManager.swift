@@ -4,7 +4,7 @@ import Combine
 import Foundation
 
 /// Manages work for the Airship SDK
-class AirshipWorkManager: AirshipWorkManagerProtocol {
+final class AirshipWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
     private let rateLimitor = WorkRateLimiter()
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()

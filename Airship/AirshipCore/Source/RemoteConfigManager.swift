@@ -17,7 +17,7 @@ class RemoteConfigManager {
     private let remoteDataManager: RemoteDataProvider
     private let privacyManager: AirshipPrivacyManager
     private let versionBlock: (() -> String)
-    private let notificationCenter: NotificationCenter
+    private let notificationCenter: AirshipNotificationCenter
 
     convenience init(
         remoteDataManager: RemoteDataProvider,
@@ -28,7 +28,7 @@ class RemoteConfigManager {
             remoteDataManager: remoteDataManager,
             privacyManager: privacyManager,
             moduleAdapter: RemoteConfigModuleAdapter(),
-            notificationCenter: NotificationCenter.default,
+            notificationCenter: AirshipNotificationCenter.shared,
             versionBlock: { return AirshipUtils.bundleShortVersionString() ?? "" }
         )
     }
@@ -37,7 +37,7 @@ class RemoteConfigManager {
         remoteDataManager: RemoteDataProvider,
         privacyManager: AirshipPrivacyManager,
         moduleAdapter: RemoteConfigModuleAdapterProtocol,
-        notificationCenter: NotificationCenter,
+        notificationCenter: AirshipNotificationCenter,
         versionBlock: @escaping () -> String
     ) {
 

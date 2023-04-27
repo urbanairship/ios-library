@@ -7,7 +7,7 @@ class RemoteConfigManagerTest: XCTestCase {
     let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     let testRemoteDataProvider = TestRemoteDataProvider()
     let testModuleAdapter = TestRemoteConfigModuleAdapter()
-    let notificationCenter = NotificationCenter.default
+    let notificationCenter = AirshipNotificationCenter.shared
 
     var privacyManager: AirshipPrivacyManager!
     var remoteConfigManager: RemoteConfigManager!

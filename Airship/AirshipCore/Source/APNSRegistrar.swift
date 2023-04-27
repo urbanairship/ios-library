@@ -7,11 +7,15 @@ import UIKit
 import WatchKit
 #endif
 
-protocol APNSRegistrar {
+protocol APNSRegistrar: Sendable {
+    @MainActor
     var isRegisteredForRemoteNotifications: Bool { get }
+    @MainActor
     func registerForRemoteNotifications()
+    @MainActor
     var isRemoteNotificationBackgroundModeEnabled: Bool { get }
     #if !os(watchOS)
+    @MainActor
     var isBackgroundRefreshStatusAvailable: Bool { get }
     #endif
 }

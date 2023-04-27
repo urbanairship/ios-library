@@ -363,7 +363,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     }
 }
 
-protocol AuthTokenProvider {
+protocol AuthTokenProvider: Sendable {
     func resolveAuth(identifier: String) async throws -> String
     func authTokenExpired(token: String) async
 }

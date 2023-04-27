@@ -13,7 +13,7 @@ class AnalyticsTest: XCTestCase {
     private let channel = TestChannel()
     private let locale = TestLocaleManager()
     private let permissionsManager = AirshipPermissionsManager()
-    private let notificationCenter = NotificationCenter()
+    private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let date = UATestDate()
     private let eventManager = TestEventManager()
     private let lifecycleEventFactory = TestLifecyleEventFactory()
@@ -309,9 +309,7 @@ class AnalyticsTest: XCTestCase {
     func testForwardScreenTracking() throws {
         let eventAdded = self.expectation(description: "Event added")
         self.notificationCenter.addObserver(
-            forName: AirshipAnalytics.screenTracked,
-            object: nil,
-            queue: nil
+            forName: AirshipAnalytics.screenTracked
         ) { notification in
 
             XCTAssertEqual(

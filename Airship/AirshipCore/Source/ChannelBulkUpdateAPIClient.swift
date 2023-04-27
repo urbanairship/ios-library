@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 // NOTE: For internal use only. :nodoc:
-protocol ChannelBulkUpdateAPIClientProtocol {
+protocol ChannelBulkUpdateAPIClientProtocol: Sendable {
     func update(
         _ update: AudienceUpdate,
         channelID: String
@@ -9,12 +9,12 @@ protocol ChannelBulkUpdateAPIClientProtocol {
 }
 
 // NOTE: For internal use only. :nodoc:
-class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
+final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
     private static let path = "/api/channels/sdk/batch/"
 
-    private var config: RuntimeConfig
-    private var session: AirshipRequestSession
-    private var encoder: JSONEncoder = JSONEncoder()
+    private let config: RuntimeConfig
+    private let session: AirshipRequestSession
+    private let encoder: JSONEncoder = JSONEncoder()
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config

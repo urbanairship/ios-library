@@ -7,7 +7,9 @@ import XCTest
 final class ApplicationMetricsTest: XCTestCase {
 
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
-    private let notificationCenter: NotificationCenter = NotificationCenter()
+    private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
+        notificationCenter: NotificationCenter()
+    )
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var privacyManager: AirshipPrivacyManager!
     private var metrics: ApplicationMetrics!

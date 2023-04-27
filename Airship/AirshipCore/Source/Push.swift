@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
+
 import Foundation
 import UserNotifications
 
@@ -11,7 +12,7 @@ import UIKit
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
-public class AirshipPush: NSObject, Component, PushProtocol {
+public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Sendable {
 
     private let pushTokenSubject = PassthroughSubject<String?, Never>()
     private var pushTokenPublisher: AnyPublisher<String?, Never> {
@@ -123,17 +124,18 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     private let channel: InternalAirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
     private let permissionsManager: AirshipPermissionsManager
-    private let notificationCenter: NotificationCenter
+    private let notificationCenter: AirshipNotificationCenter
     private let notificationRegistrar: NotificationRegistrar
-
     private let apnsRegistrar: APNSRegistrar
-    private var badger: Badger
-
+    private let badger: Badger
     private let disableHelper: ComponentDisableHelper
-    private var shouldUpdateNotificationRegistration = true
+
+    @MainActor
     private var waitForDeviceToken = false
+
+    @MainActor
     private var pushEnabled = false
-    private var deviceTokenAvailableBlock: (() -> Void)?
+
     private let serialQueue: AsyncSerialQueue
 
 
@@ -168,7 +170,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
         analytics: InternalAnalyticsProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        notificationCenter: NotificationCenter = NotificationCenter.default,
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: NotificationRegistrar =
             UNNotificationRegistrar(),
         apnsRegistrar: APNSRegistrar,
@@ -248,7 +250,9 @@ public class AirshipPush: NSObject, Component, PushProtocol {
             )
         }
 
-        analytics.addHeaderProvider(self.analyticsHeaders)
+        analytics.addHeaderProvider {
+            await self.analyticsHeaders()
+        }
 
         self.updatePushEnablement()
 
@@ -340,23 +344,6 @@ public class AirshipPush: NSObject, Component, PushProtocol {
         }
     }
 
-    /// Enables/disables extended App Clip user notifications on this device through Airship.
-    /// Defaults to `false`. Once set to `true`, the user will be prompted for remote notifications if userPushNotificationsEnabled and the user currently has
-    /// ephemeral authorization.
-    @objc
-    @available(
-        *,
-        deprecated,
-        message: "Use requestExplicitPermissionWhenEphemeral instead"
-    )
-    public var extendedPushNotificationPermissionEnabled: Bool {
-        set {
-            self.requestExplicitPermissionWhenEphemeral = newValue
-        }
-        get {
-            self.requestExplicitPermissionWhenEphemeral
-        }
-    }
 
     /// When enabled, if the user has ephemeral notification authorization the SDK will promp the user for
     /// notifications.  Defaults to `false`.
@@ -416,7 +403,6 @@ public class AirshipPush: NSObject, Component, PushProtocol {
                     deviceToken,
                     forKey: AirshipPush.deviceTokenKey
                 )
-                self.deviceTokenAvailableBlock?()
                 AirshipLogger.importantInfo("Device token: \(deviceToken)")
             } catch {
                 AirshipLogger.error("Unable to set device token")
@@ -475,6 +461,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     /// Changes to this value will not take effect until the next time the app registers
     /// with updateRegistration.
     @objc
+    @MainActor
     public var customCategories: Set<UNNotificationCategory> = Set() {
         didSet {
             self.updateCategories()
@@ -484,23 +471,14 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     /// The combined set of notification categories from `customCategories` set by the app
     /// and the Airship provided categories.
     @objc
+    @MainActor
     public var combinedCategories: Set<UNNotificationCategory> {
         let defaultCategories = NotificationCategories.defaultCategories(
             withRequireAuth: requireAuthorizationForDefaultCategories
         )
-        return defaultCategories.union(
-            self.customCategories.union(self.accengageCategories)
-        )
+        return defaultCategories.union(self.customCategories)
     }
 
-    /// The set of Accengage notification categories.
-    /// - Note For internal use only. :nodoc:
-    @objc
-    public var accengageCategories: Set<UNNotificationCategory> = [] {
-        didSet {
-            self.updateCategories()
-        }
-    }
     #endif
 
     /// Sets authorization required for the default Airship categories. Only applies
@@ -509,6 +487,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     /// Changes to this value will not take effect until the next time the app registers
     /// with updateRegistration.
     @objc
+    @MainActor
     public var requireAuthorizationForDefaultCategories = true {
         didSet {
             self.updateCategories()
@@ -801,6 +780,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     ///
     /// - Note: This property must be accessed on the main thread.
     @objc
+    @MainActor
     public var badgeNumber: Int {
         set {
             if self.badger.applicationIconBadgeNumber == newValue {
@@ -847,6 +827,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
     ///
     /// - Note: This method must be called on the main thread.
     @objc
+    @MainActor
     public func resetBadge() {
         self.badgeNumber = 0
     }
@@ -964,6 +945,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
         self.dispatchUpdateNotifications()
     }
 
+    @MainActor
     private func updateCategories() {
         #if !os(tvOS)
         guard self.isComponentEnabled,
@@ -1043,6 +1025,7 @@ public class AirshipPush: NSObject, Component, PushProtocol {
 
     #if !os(watchOS)
     @objc
+    @MainActor
     private func applicationBackgroundRefreshStatusChanged() {
         if self.privacyManager.isEnabled(.push) {
             AirshipLogger.trace("Background refresh status changed.")

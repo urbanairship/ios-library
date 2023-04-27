@@ -1,11 +1,13 @@
 // Copyright Airship and Contributors
 
 import Foundation
+@preconcurrency import UserNotifications
 
 /// UNNotificationCenter notification registrar
 struct UNNotificationRegistrar: NotificationRegistrar {
 
     #if !os(tvOS)
+    @MainActor
     func setCategories(_ categories: Set<UNNotificationCategory>) {
         UNUserNotificationCenter.current()
             .setNotificationCategories(categories)

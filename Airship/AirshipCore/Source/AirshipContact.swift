@@ -128,7 +128,7 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
         privacyManager: AirshipPrivacyManager,
         subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
-        notificationCenter: NotificationCenter = NotificationCenter.default,
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: AudienceOverridesProvider,
         contactManager: ContactManagerProtocol,
         serialQueue: AsyncSerialQueue = AsyncSerialQueue(priority: .high)

@@ -1,6 +1,6 @@
-@preconcurrency import Combine
+import Combine
 
-struct WorkConditionsMonitor {
+struct WorkConditionsMonitor: @unchecked Sendable {
     private let cancellable: AnyCancellable
     private let conditionsSubject = PassthroughSubject<Void, Never>()
     private let networkMonitor: NetworkMonitor

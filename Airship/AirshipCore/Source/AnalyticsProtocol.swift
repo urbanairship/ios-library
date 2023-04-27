@@ -5,7 +5,7 @@ import Foundation
 /// Analytics protocol
 /// For internal use only. :nodoc:
 @objc(UAAnalyticsProtocol)
-public protocol AnalyticsProtocol {
+public protocol AnalyticsProtocol: Sendable {
     /// The conversion send ID. :nodoc:
     @objc
     var conversionSendID: String? { get }
@@ -75,6 +75,6 @@ protocol InternalAnalyticsProtocol: AnalyticsProtocol {
     @MainActor
     func launched(fromNotification notification: [AnyHashable: Any])
 
-    func addHeaderProvider(_ headerProvider: @escaping () async -> [String: String])
+    func addHeaderProvider(_ headerProvider: @Sendable @escaping () async -> [String: String])
 
 }

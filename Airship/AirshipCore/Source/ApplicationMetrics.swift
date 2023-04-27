@@ -41,7 +41,7 @@ public class ApplicationMetrics: NSObject {
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
-        notificationCenter: NotificationCenter = NotificationCenter.default,
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: AirshipDateProtocol = AirshipDate.shared,
         appVersion: String? = AirshipUtils.bundleShortVersionString()
     ) {

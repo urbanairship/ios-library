@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+@preconcurrency import Combine
 import Foundation
 
-protocol ChannelAudienceManagerProtocol {
+protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
     var channelID: String? { get set }
 
     var enabled: Bool { get set }
@@ -24,7 +24,7 @@ protocol ChannelAudienceManagerProtocol {
 }
 
 // NOTE: For internal use only. :nodoc:
-class ChannelAudienceManager: ChannelAudienceManagerProtocol {
+final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     static let updateTaskID = "ChannelAudienceManager.update"
     static let updatesKey = "UAChannel.audienceUpdates"
 
@@ -57,15 +57,27 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.subscriptionListEditsSubject.eraseToAnyPublisher()
     }
 
+    private let _channelID: Atomic<String?> = Atomic(nil)
     var channelID: String? {
-        didSet {
-            self.enqueueTask()
+        get {
+            _channelID.value
+        }
+        set {
+            if (_channelID.setValue(newValue)) {
+                self.enqueueTask()
+            }
         }
     }
 
-    var enabled: Bool = false {
-        didSet {
-            self.enqueueTask()
+    private let _enabled: Atomic<Bool> = Atomic(false)
+    var enabled: Bool {
+        get {
+            _enabled.value
+        }
+        set {
+            if (_enabled.setValue(newValue)) {
+                self.enqueueTask()
+            }
         }
     }
 
@@ -75,7 +87,7 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         subscriptionListClient: SubscriptionListAPIClientProtocol,
         updateClient: ChannelBulkUpdateAPIClientProtocol,
         privacyManager: AirshipPrivacyManager,
-        notificationCenter: NotificationCenter =  NotificationCenter.default,
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: AirshipDateProtocol = AirshipDate.shared,
         audienceOverridesProvider: AudienceOverridesProvider
     ) {

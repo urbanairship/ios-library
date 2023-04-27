@@ -1,86 +1,32 @@
 import Foundation
 
-protocol EventManagerProtocol {
+protocol EventManagerProtocol: AnyObject, Sendable {
     var uploadsEnabled: Bool { get set }
     func addEvent(_ event: AirshipEventData) async throws
     func deleteEvents() async throws
     func scheduleUpload(eventPriority: EventPriority) async
 
     func addHeaderProvider(
-        _ headerProvider: @escaping  () async -> [String: String]
+        _ headerProvider: @Sendable @escaping () async -> [String: String]
     )
 }
 
-class EventManager: EventManagerProtocol {
-    private static let tuninigInfoDefaultsKey = "Analytics.tuningInfo"
+final class EventManager: EventManagerProtocol {
 
-    // Max database size
-    private static let maxTotalDBSizeKB: UInt = 5120
-    private static let minTotalDBSizeKB: UInt = 10
+    private let _uploadsEnabled = Atomic<Bool>(false)
+    var uploadsEnabled: Bool  {
+        get {
+            _uploadsEnabled.value
+        }
+        set {
+            _uploadsEnabled.value = newValue
+        }
+    }
 
-    // Total size in bytes that a given event post is allowed to send.
-    private static let maxBatchSizeKB: UInt = 500
-    private static let minBatchSizeKB: UInt = 10
-
-    // The actual amount of time in seconds that elapse between event-server posts
-    private static let minBatchInterval: TimeInterval = 60
-    private static let maxBatchInterval: TimeInterval = 604800 // 7 days
-
-    var uploadsEnabled: Bool = false
-    private let dataStore: PreferenceDataStore
     private let eventStore: EventStore
     private let eventAPIClient: EventAPIClientProtocol
     private let eventScheduler: EventUploadSchedulerProtocol
-    private var headerBlocks: [(() async -> [String: String])] = []
-
-    private var _tuningInfo: EventUploadTuningInfo?
-    private var tuningInfo: EventUploadTuningInfo? {
-        get {
-            if let tuningInfo = self._tuningInfo {
-                return tuningInfo
-            }
-
-            self._tuningInfo = try? self.dataStore.codable(
-                forKey: EventManager.tuninigInfoDefaultsKey
-            )
-
-            return self._tuningInfo
-        }
-
-        set {
-            self._tuningInfo = newValue
-            try? self.dataStore.setCodable(
-                newValue,
-                forKey: EventManager.tuninigInfoDefaultsKey
-            )
-        }
-    }
-
-
-    private var minBatchInterval: TimeInterval {
-        AirshipUtils.clamp(
-            self.tuningInfo?.minBatchInterval ?? EventManager.minBatchInterval,
-            min: EventManager.minBatchInterval,
-            max: EventManager.maxBatchInterval
-        )
-    }
-
-    private var maxTotalStoreSizeKB: UInt {
-        AirshipUtils.clamp(
-            self.tuningInfo?.maxTotalStoreSizeKB ?? EventManager.maxTotalDBSizeKB,
-            min: EventManager.minTotalDBSizeKB,
-            max: EventManager.maxTotalDBSizeKB
-        )
-    }
-
-    private var maxBatchSizeKB: UInt {
-        AirshipUtils.clamp(
-            self.tuningInfo?.maxBatchSizeKB ?? EventManager.maxBatchSizeKB,
-            min: EventManager.minBatchSizeKB,
-            max: EventManager.maxBatchSizeKB
-        )
-    }
-
+    private let state: EventManagerState
 
     convenience init(
         config: RuntimeConfig,
@@ -99,10 +45,10 @@ class EventManager: EventManagerProtocol {
         eventAPIClient: EventAPIClientProtocol,
         eventScheduler: EventUploadSchedulerProtocol = EventUploadScheduler()
     ) {
-        self.dataStore = dataStore
         self.eventStore = eventStore
         self.eventAPIClient = eventAPIClient
         self.eventScheduler = eventScheduler
+        self.state = EventManagerState(dataStore: dataStore)
 
         Task {
             await self.eventScheduler.setWorkBlock { [weak self] in
@@ -120,9 +66,11 @@ class EventManager: EventManagerProtocol {
     }
 
     func addHeaderProvider(
-        _ headerProvider: @escaping () async -> [String : String]
+        _ headerProvider: @Sendable @escaping () async -> [String : String]
     ) {
-        self.headerBlocks.append(headerProvider)
+        Task {
+            await self.state.addHeaderProvider(headerProvider)
+        }
     }
 
     func scheduleUpload(eventPriority: EventPriority) async {
@@ -130,7 +78,7 @@ class EventManager: EventManagerProtocol {
 
         await self.eventScheduler.scheduleUpload(
             eventPriority: eventPriority,
-            minBatchInterval: self.minBatchInterval
+            minBatchInterval: await self.state.minBatchInterval
         )
     }
 
@@ -147,7 +95,7 @@ class EventManager: EventManagerProtocol {
             return .success
         }
 
-        let headers = await self.prepareHeaders()
+        let headers = await self.state.prepareHeaders()
         let response = try await self.eventAPIClient.uploadEvents(
             events,
             headers: headers
@@ -167,7 +115,7 @@ class EventManager: EventManagerProtocol {
             }
         )
 
-        self.tuningInfo = response.result
+        await self.state.updateTuniningInfo(response.result)
 
         if (try? await self.eventStore.hasEvents()) == true {
             await self.scheduleUpload(eventPriority: .normal)
@@ -179,18 +127,99 @@ class EventManager: EventManagerProtocol {
     private func prepareEvents() async throws -> [AirshipEventData] {
         do {
             try await self.eventStore.trimEvents(
-                maxStoreSizeKB: self.maxTotalStoreSizeKB
+                maxStoreSizeKB: await self.state.maxTotalStoreSizeKB
             )
         } catch {
             AirshipLogger.warn("Unable to trim database: \(error)")
         }
 
         return try await self.eventStore.fetchEvents(
-            maxBatchSizeKB: self.maxBatchSizeKB
+            maxBatchSizeKB: await self.state.maxBatchSizeKB
+        )
+    }
+}
+
+fileprivate actor EventManagerState {
+
+    // Max database size
+    private static let maxTotalDBSizeKB: UInt = 5120
+    private static let minTotalDBSizeKB: UInt = 10
+    private static let tuninigInfoDefaultsKey = "Analytics.tuningInfo"
+
+    // Total size in bytes that a given event post is allowed to send.
+    private static let maxBatchSizeKB: UInt = 500
+    private static let minBatchSizeKB: UInt = 10
+
+    // The actual amount of time in seconds that elapse between event-server posts
+    private static let minBatchInterval: TimeInterval = 60
+    private static let maxBatchInterval: TimeInterval = 604800 // 7 days
+    private var headerBlocks: [(@Sendable () async -> [String: String])] = []
+
+    private var _tuningInfo: EventUploadTuningInfo?
+    private var tuningInfo: EventUploadTuningInfo? {
+        get {
+            if let tuningInfo = self._tuningInfo {
+                return tuningInfo
+            }
+
+            self._tuningInfo = try? self.dataStore.codable(
+                forKey: EventManagerState.tuninigInfoDefaultsKey
+            )
+
+            return self._tuningInfo
+        }
+
+        set {
+            self._tuningInfo = newValue
+            try? self.dataStore.setCodable(
+                newValue,
+                forKey: EventManagerState.tuninigInfoDefaultsKey
+            )
+        }
+    }
+
+
+    var minBatchInterval: TimeInterval {
+        AirshipUtils.clamp(
+            self.tuningInfo?.minBatchInterval ?? EventManagerState.minBatchInterval,
+            min: EventManagerState.minBatchInterval,
+            max: EventManagerState.maxBatchInterval
         )
     }
 
-    private func prepareHeaders() async -> [String: String] {
+    var maxTotalStoreSizeKB: UInt {
+        AirshipUtils.clamp(
+            self.tuningInfo?.maxTotalStoreSizeKB ?? EventManagerState.maxTotalDBSizeKB,
+            min: EventManagerState.minTotalDBSizeKB,
+            max: EventManagerState.maxTotalDBSizeKB
+        )
+    }
+
+    var maxBatchSizeKB: UInt {
+        AirshipUtils.clamp(
+            self.tuningInfo?.maxBatchSizeKB ?? EventManagerState.maxBatchSizeKB,
+            min: EventManagerState.minBatchSizeKB,
+            max: EventManagerState.maxBatchSizeKB
+        )
+    }
+
+    let dataStore: PreferenceDataStore
+
+    init(dataStore: PreferenceDataStore) {
+        self.dataStore = dataStore
+    }
+
+    func updateTuniningInfo(_ tuningInfo: EventUploadTuningInfo?) {
+        self.tuningInfo = tuningInfo
+    }
+
+    func addHeaderProvider(
+        _ headerProvider: @Sendable @escaping () async -> [String: String]
+    ) {
+        self.headerBlocks.append(headerProvider)
+    }
+
+    func prepareHeaders() async -> [String: String] {
         var allHeaders: [String: String] = [:]
         for headerBlock in self.headerBlocks {
             let headers = await headerBlock()
