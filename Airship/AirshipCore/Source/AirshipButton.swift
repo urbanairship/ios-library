@@ -68,6 +68,37 @@ struct AirshipButton<Label> : View  where Label : View {
                     pagerState.pageIndex = max(pagerState.pageIndex - 1, 0)
                 }
 
+            case .pagerNextOrDismiss:
+                if pagerState.isLastPage() {
+                    thomasEnvironment.dismiss(
+                        buttonIdentifier: self.identifier,
+                        buttonDescription: self.description,
+                        cancel: false,
+                        layoutState: layoutState
+                    )
+                } else {
+                    withAnimation {
+                        pagerState.pageIndex = max(pagerState.pageIndex + 1, 0)
+                    }
+                }
+
+            case .pagerNextOrFirst:
+                if pagerState.isLastPage() {
+                    withAnimation {
+                        pagerState.pageIndex = 0
+                    }
+                } else {
+                    withAnimation {
+                        pagerState.pageIndex = max(pagerState.pageIndex + 1, 0)
+                    }
+                }
+                
+            case .pagerPause:
+                pagerState.pause()
+                
+            case .pagerResume:
+                pagerState.resume()
+                
             case .formSubmit:
                 let formState = formState.topFormState
                 thomasEnvironment.submitForm(formState, layoutState: layoutState)
@@ -85,9 +116,17 @@ fileprivate extension ButtonClickBehavior {
     var sortOrder: Int {
         switch self {
         case .dismiss:
-            return 2
+            return 3
         case .cancel:
+            return 3
+        case .pagerPause:
             return 2
+        case .pagerResume:
+            return 2
+        case .pagerNextOrFirst:
+            return 1
+        case .pagerNextOrDismiss:
+            return 1
         case .pagerNext:
             return 1
         case .pagerPrevious:

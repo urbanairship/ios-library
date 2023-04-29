@@ -62,6 +62,16 @@ public extension View {
     ) -> some View {
         self.modifier(modifiers())
     }
+    
+    func overlay<T: View>(
+        alignment: Alignment = .center,
+        @ViewBuilder content: () -> T
+    ) -> some View {
+        overlay(
+            Group(content: content),
+            alignment: alignment
+        )
+    }
 }
 
 

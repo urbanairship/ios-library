@@ -92,13 +92,19 @@ NSString *const UAInAppMessagePageViewEventPageCountKey = @"page_count";
 NSString *const UAInAppMessagePageViewEventCompletedKey = @"completed";
 NSString *const UAInAppMessagePageViewEventViewedCountKey = @"viewed_count";
 
-// Page swipe
+// Page event type
+NSString *const UAInAppMessagePagerGestureEventType = @"in_app_pager_gesture";
+NSString *const UAInAppMessagePagerAutomatedActionEventType = @"in_app_page_automated_action";
 NSString *const UAInAppMessagePageSwipeEventType = @"in_app_page_swipe";
-NSString *const UAInAppMessagePageSwipeEventPagerIDKey = @"pager_identifier";
-NSString *const UAInAppMessagePageSwipeEventFromIndexKey = @"from_page_index";
-NSString *const UAInAppMessagePageSwipeEventToIndexKey = @"to_page_index";
-NSString *const UAInAppMessagePageSwipeEventFromPageIDKey = @"from_page_identifier";
-NSString *const UAInAppMessagePageSwipeEventToPageIDKey = @"to_page_identifier";
+
+// Page event keys
+NSString *const UAInAppMessagePageEventPagerGestureIDKey = @"pager_gesture_identifier";
+NSString *const UAInAppMessagePageEventPagerAutomatedActionIDKey = @"page_automated_action_identifier";
+NSString *const UAInAppMessagePageEventPagerIDKey = @"pager_identifier";
+NSString *const UAInAppMessagePageEventFromIndexKey = @"from_page_index";
+NSString *const UAInAppMessagePageEventToIndexKey = @"to_page_index";
+NSString *const UAInAppMessagePageEventFromPageIDKey = @"from_page_identifier";
+NSString *const UAInAppMessagePageEventToPageIDKey = @"to_page_identifier";
 
 // Permission
 NSString *const UAInAppMessagePermissionResultEventType = @"in_app_permission_result";
@@ -331,17 +337,45 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
                                   baseData:baseData];
 }
 
++ (instancetype)pageGestureEventWithScheduleID:(NSString *)scheduleID
+                             identifier:(NSString *)identifier
+                                message:(UAInAppMessage *)message {
+    
+    NSDictionary *baseData = @{
+        UAInAppMessagePageEventPagerGestureIDKey : identifier,
+    };
+    
+    return [[self alloc] initWithEventType:UAInAppMessagePagerGestureEventType
+                                scheduleID:scheduleID
+                                   message:message
+                                  baseData:baseData];
+}
+
++ (instancetype)pageAutomatedActionEventWithScheduleID:(NSString *)scheduleID
+                             identifier:(NSString *)identifier
+                                message:(UAInAppMessage *)message {
+    
+    NSDictionary *baseData = @{
+        UAInAppMessagePageEventPagerAutomatedActionIDKey : identifier,
+    };
+    
+    return [[self alloc] initWithEventType:UAInAppMessagePagerAutomatedActionEventType
+                                scheduleID:scheduleID
+                                   message:message
+                                  baseData:baseData];
+}
+
 + (instancetype)pageSwipeEventWithScheduleID:(NSString *)scheduleID
                                      message:(UAInAppMessage *)message
                                         from:(UAThomasPagerInfo *)from
                                           to:(UAThomasPagerInfo *)to {
     
     NSDictionary *baseData = @{
-        UAInAppMessagePageSwipeEventPagerIDKey : from.identifier,
-        UAInAppMessagePageSwipeEventToIndexKey: @(to.pageIndex),
-        UAInAppMessagePageSwipeEventToPageIDKey: to.pageIdentifier,
-        UAInAppMessagePageSwipeEventFromIndexKey: @(from.pageIndex),
-        UAInAppMessagePageSwipeEventFromPageIDKey: from.pageIdentifier
+        UAInAppMessagePageEventPagerIDKey : from.identifier,
+        UAInAppMessagePageEventToIndexKey: @(to.pageIndex),
+        UAInAppMessagePageEventToPageIDKey: to.pageIdentifier,
+        UAInAppMessagePageEventFromIndexKey: @(from.pageIndex),
+        UAInAppMessagePageEventFromPageIDKey: from.pageIdentifier
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePageSwipeEventType

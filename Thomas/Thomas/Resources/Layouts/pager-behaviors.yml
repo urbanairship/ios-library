@@ -1,0 +1,253 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 90%
+      height: 90%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        hex: "#444444"
+        alpha: .3
+view:
+  type: linear_layout
+  direction: vertical
+  background_color:
+    default:
+      hex: "#FFFFFF"
+      alpha: 1
+  items:
+  - size:
+      height: auto
+      width: auto
+    margin:
+      top: 16
+      start: 16
+      end: 16
+      bottom: 16
+    view:
+      type: label
+      text: Pager Behaviors
+      text_appearance:
+        alignment: center
+        font_size: 14
+        color:
+          default:
+            hex: "#000000"
+  - size:
+      width: 100%
+      height: auto
+    view:
+      type: pager_controller
+      identifier: pager_controller
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+        - size:
+            width: 100%
+            height: auto
+          view:
+            type: container
+            items:
+              - position:
+                  vertical: center
+                  horizontal: center
+                size:
+                  height: 75
+                  width: 50%
+                view:
+                  type: pager
+                  border:
+                    radius: 2
+                    stroke_width: 1
+                    stroke_color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                  items:
+                    - identifier: "page1"
+                      view:
+                        type: empty_view
+                        background_color:
+                          default:
+                            hex: "#00FF00"
+                            alpha: 0.5
+                    - identifier: "page2"
+                      view:
+                        type: empty_view
+                        background_color:
+                          default:
+                            hex: "#FFFF00"
+                            alpha: 0.5
+                    - identifier: "page3"
+                      view:
+                        type: empty_view
+                        background_color:
+                          default:
+                            hex: "#FF00FF"
+                            alpha: 0.5
+
+              - position:
+                  horizontal: center
+                  vertical: bottom
+                size:
+                  height: 24
+                  width: auto
+                margin:
+                  bottom: 8
+                view:
+                  type: pager_indicator
+                  background_color:
+                    default:
+                      hex: "#333333"
+                      alpha: 0.7
+                  border:
+                    radius: 4
+                  spacing: 4
+                  bindings:
+                    selected:
+                      shapes:
+                        - type: rectangle
+                          aspect_ratio: 2.25
+                          scale: 0.9
+                          border:
+                            radius: 4
+                            stroke_width: 1
+                            stroke_color:
+                              default:
+                                hex: "#ffffff"
+                                alpha: 0.7
+                          color:
+                            default:
+                              hex: "#ffffff"
+                              alpha: 1
+                    unselected:
+                      shapes:
+                        - type: rectangle
+                          aspect_ratio: 2.25
+                          scale: .9
+                          border:
+                            radius: 4
+                            stroke_width: 1
+                            stroke_color:
+                              default:
+                                hex: "#ffffff"
+                                alpha: 0.7
+                          color:
+                            default:
+                              hex: "#000000"
+                              alpha: 0
+        - size:
+            height: auto
+            width: auto
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+            - size:
+                height: auto
+                width: auto
+              margin:
+                start: 16
+                end: 16
+                top: 16
+                bottom: 16
+              view:
+                type: label_button
+                identifier: button1
+                background_color:
+                  default:
+                    hex: "#FFD600"
+                label:
+                  type: label
+                  text_appearance:
+                    font_size: 10
+                    color:
+                      default:
+                        hex: "#333333"
+                    alignment: center
+                  text: 'Previous'
+                button_click: [ "pager_previous" ]
+                enabled: [ "pager_previous" ]
+            - size:
+                height: auto
+                width: auto
+              margin:
+                start: 16
+                end: 16
+                top: 16
+                bottom: 16
+              view:
+                type: label_button
+                identifier: button1
+                background_color:
+                  default:
+                    hex: "#FFD600"
+                label:
+                  type: label
+                  text_appearance:
+                    font_size: 10
+                    color:
+                      default:
+                        hex: "#333333"
+                    alignment: center
+                  text: 'Next'
+                button_click: [ "pager_next" ]
+                enabled: [ "pager_next" ]
+
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label_button
+            identifier: button1
+            background_color:
+              default:
+                hex: "#FFD600"
+            label:
+              type: label
+              text_appearance:
+                font_size: 10
+                color:
+                  default:
+                    hex: "#333333"
+                alignment: center
+              text: 'Next or dismiss'
+            button_click: [ "pager_next_or_dismiss" ]
+
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label_button
+            identifier: button1
+            background_color:
+              default:
+                hex: "#FFD600"
+            label:
+              type: label
+              text_appearance:
+                font_size: 10
+                color:
+                  default:
+                    hex: "#333333"
+                alignment: center
+              text: 'Next or first'
+            button_click: [ "pager_next_or_first" ]

@@ -207,6 +207,7 @@ enum ViewModelType: String, Decodable {
     case emptyView = "empty_view"
     case pager = "pager"
     case pagerIndicator = "pager_indicator"
+    case storyIndicator = "story_indicator"
     case pagerController = "pager_controller"
     case formController = "form_controller"
     case checkbox = "checkbox"
@@ -218,6 +219,37 @@ enum ViewModelType: String, Decodable {
     case npsController = "nps_form_controller"
     case toggle = "toggle"
     case stateController = "state_controller"
+}
+
+indirect enum PagerGestureModel: Decodable, Equatable {
+    case swipeGesture(PagerDragGesture)
+    case tapGesture(PagerTapGesture)
+    case holdGesture(PagerHoldGesture)
+    
+    private enum CodingKeys: String, CodingKey {
+        case type
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(PagerGestureType.self, forKey: .type)
+        let singleValueContainer = try decoder.singleValueContainer()
+        
+        switch type {
+        case .tap:
+            self = .tapGesture(
+                try singleValueContainer.decode(PagerTapGesture.self)
+            )
+        case .swipe:
+            self = .swipeGesture(
+                try singleValueContainer.decode(PagerDragGesture.self)
+            )
+        case .hold:
+            self = .holdGesture(
+                try singleValueContainer.decode(PagerHoldGesture.self)
+            )
+        }
+    }
 }
 
 indirect enum ViewModel: Decodable, Equatable {
@@ -234,6 +266,7 @@ indirect enum ViewModel: Decodable, Equatable {
     case emptyView(EmptyViewModel)
     case pager(PagerModel)
     case pagerIndicator(PagerIndicatorModel)
+    case storyIndicator(StoryIndicatorModel)
     case pagerController(PagerControllerModel)
     case formController(FormControllerModel)
     case checkbox(CheckboxModel)
@@ -301,6 +334,10 @@ indirect enum ViewModel: Decodable, Equatable {
         case .pagerIndicator:
             self = .pagerIndicator(
                 try singleValueContainer.decode(PagerIndicatorModel.self)
+            )
+        case .storyIndicator:
+            self = .storyIndicator(
+                try singleValueContainer.decode(StoryIndicatorModel.self)
             )
         case .pagerController:
             self = .pagerController(
@@ -815,15 +852,98 @@ struct EmptyViewModel: BaseModel {
     }
 }
 
+enum GestureDirection: String, Decodable, Equatable {
+    case up
+    case down
+    case start
+    case end
+    case left
+    case right
+}
+
+enum GestureLocation: String, Decodable, Equatable {
+    case top
+    case bottom
+    case start
+    case end
+    case left
+    case right
+    case any
+}
+
+enum PagerGestureType: String, Decodable, Equatable {
+    case tap
+    case swipe
+    case hold
+}
+
+protocol PagerGesture: Decodable, Equatable {
+    var type: PagerGestureType { get }
+    var identifier: String { get }
+}
+
+struct PagerDragGesture: PagerGesture {
+    var type = PagerGestureType.swipe
+    var identifier: String
+    let direction: GestureDirection
+    let behavior: PagerGestureBehavior
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case direction = "direction"
+        case behavior = "behavior"
+    }
+}
+
+struct PagerTapGesture: PagerGesture {
+    var type = PagerGestureType.tap
+    var identifier: String
+    let location: GestureLocation
+    let behavior: PagerGestureBehavior
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case location = "location"
+        case behavior = "behavior"
+    }
+}
+
+struct PagerHoldGesture: PagerGesture {
+    var type = PagerGestureType.hold
+    var identifier: String
+    let location: GestureLocation
+    let pressBehavior: PagerGestureBehavior
+    let releaseBehavior: PagerGestureBehavior
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case location = "location"
+        case pressBehavior = "press_behavior"
+        case releaseBehavior = "release_behavior"
+    }
+}
+
+struct PagerGestureBehavior: Decodable, Equatable {
+    let actions: [ActionsPayload]?
+    let behaviors: [ButtonClickBehavior]?
+    
+    enum CodingKeys: String, CodingKey {
+        case actions = "actions"
+        case behaviors = "behaviors"
+    }
+}
+
 struct PagerModel: BaseModel {
     let type = ViewModelType.pager
     let border: Border?
     let backgroundColor: ThomasColor?
+    // TODO: deprecate? need for backwards compatibility
     let disableSwipe: Bool?
     let items: [PagerItem]
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
+    let gestures: [PagerGestureModel]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -833,6 +953,35 @@ struct PagerModel: BaseModel {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
+        case gestures = "gestures"
+    }
+}
+
+struct AutomatedAction: Decodable, Equatable {
+    let identifier: String
+    let delay: Double?
+    let actions: [ActionsPayload]?
+    let behaviors: [ButtonClickBehavior]?
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case delay = "delay"
+        case actions = "actions"
+        case behaviors = "behaviors"
+    }
+}
+
+enum ProgressType: String, Decodable {
+    case linear = "linear"
+}
+
+struct Progress: Decodable, Equatable {
+    var type: ProgressType
+    var color: ThomasColor
+    
+    enum CodingKeys: String, CodingKey {
+        case type = "type"
+        case color = "color"
     }
 }
 
@@ -840,11 +989,13 @@ struct PagerItem: Decodable, Equatable {
     let identifier: String
     let view: ViewModel
     let displayActions: ActionsPayload?
-
+    let automatedActions: [AutomatedAction]?
+    
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
         case view = "view"
         case displayActions = "display_actions"
+        case automatedActions = "automated_actions"
     }
 }
 
@@ -886,6 +1037,58 @@ struct PagerIndicatorModel: BaseModel {
             case shapes = "shapes"
             case icon = "icon"
         }
+    }
+}
+
+struct StoryIndicatorModel: BaseModel {
+    let type = ViewModelType.storyIndicator
+    let border: Border?
+    let backgroundColor: ThomasColor?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
+    let source: StoryIndicatorSource
+    let style: LinearProgressStoryIndicatorStyle
+
+    enum CodingKeys: String, CodingKey {
+        case border = "border"
+        case backgroundColor = "background_color"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
+        case source = "source"
+        case style = "style"
+    }
+    
+    struct StoryIndicatorSource: Decodable, Equatable {
+        let type: IndicatorType
+    }
+    
+    enum IndicatorType: String, Decodable, Equatable {
+        case pager = "pager"
+        case currentPage = "current_page"
+    }
+    
+    enum LayoutDirection: String, Decodable, Equatable {
+        case vertical = "vertical"
+        case horizontal = "horizontal"
+    }
+    
+    struct LinearProgressStoryIndicatorStyle: Decodable, Equatable {
+      let type: ProgressType
+      let direction: LayoutDirection
+      let sizing: ProgressSizingType?
+      let spacing: Double?
+      let color: ThomasColor
+    }
+    
+    enum ProgressSizingType: String,Decodable, Equatable {
+        case equal = "equal"
+        case pageDuration = "page_duration"
+    }
+    
+    enum ProgressType: String, Decodable, Equatable {
+        case linearProgress = "linear_progress"
     }
 }
 
@@ -1525,7 +1728,11 @@ enum ButtonClickBehavior: String, Decodable, Equatable {
     case cancel = "cancel"
     case pagerNext = "pager_next"
     case pagerPrevious = "pager_previous"
+    case pagerNextOrDismiss = "pager_next_or_dismiss"
+    case pagerNextOrFirst = "pager_next_or_first"
     case formSubmit = "form_submit"
+    case pagerPause = "pager_pause"
+    case pagerResume = "pager_resume"
 }
 
 enum FormSubmitBehavior: String, Decodable, Equatable {

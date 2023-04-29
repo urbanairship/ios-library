@@ -2,6 +2,7 @@
 
 import AirshipCore
 import SwiftUI
+import WebKit
 
 struct LayoutsList: View {
 
@@ -86,9 +87,10 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 class Delegate: ThomasDelegate {
+    
     func onRunActions(
         actions: [String: Any],
-        layoutContext: ThomasLayoutContext
+        layoutContext: AirshipCore.ThomasLayoutContext
     ) {
         print(
             "Thomas.onRunActions{actions=\(actions), context=\(layoutContext)}"
@@ -106,15 +108,18 @@ class Delegate: ThomasDelegate {
         let metadata: [AnyHashable: Any] = [
             PromptPermissionAction.resultReceiverMetadataKey: permissionReceiver
         ]
-        ActionRunner.run(
-            actionValues: actions,
-            situation: .manualInvocation,
-            metadata: metadata
-        ) { result in
+
+        Task {
+            let result = await ActionRunner.run(
+                actionValues: actions,
+                situation: .manualInvocation,
+                metadata: metadata
+            )
             AirshipLogger.trace(
                 "Finishing running actions with result: \(result)"
             )
         }
+
     }
 
     func onFormSubmitted(
@@ -173,7 +178,19 @@ class Delegate: ThomasDelegate {
             "Thomas.onPageViewed{pagerInfo=\(pagerInfo), context=\(layoutContext)}"
         )
     }
-
+    
+    func onPageGesture(identifier: String, layoutContext: AirshipCore.ThomasLayoutContext) {
+        print(
+            "Thomas.onPageGesture{context=\(layoutContext)}"
+        )
+    }
+    
+    func onPageAutomatedAction(identifier: String, layoutContext: AirshipCore.ThomasLayoutContext) {
+        print(
+            "Thomas.onPageAutomatedAction{context=\(layoutContext)}"
+        )
+    }
+    
     func onPageSwiped(
         from: ThomasPagerInfo,
         to: ThomasPagerInfo,
@@ -186,10 +203,19 @@ class Delegate: ThomasDelegate {
 }
 
 class ThomasNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
+    
     func extendJavaScriptEnvironment(
-        _ js: JavaScriptEnvironmentProtocol,
+        _ js: AirshipCore.JavaScriptEnvironmentProtocol,
         webView: WKWebView
-    ) {
+    ) async {
         js.add("chooChoo", string: "chooooo choooooo!")
     }
+    
+    func actionsMetadata(
+        for command: AirshipCore.JavaScriptCommand,
+        webView: WKWebView
+    ) -> [AnyHashable : Any] {
+        return [ : ]
+    }
+    
 }

@@ -74,6 +74,58 @@
 }
 
 /**
+ * Test in-app pager gesture event.
+ */
+- (void)testPagerGestureEvent {
+    NSDictionary *expectedData = @{
+        @"id": @{
+            @"message_id": self.scheduleID
+        },
+        @"conversion_send_id": self.analytics.conversionSendID,
+        @"conversion_metadata": self.analytics.conversionPushMetadata,
+        @"locale": self.message.renderedLocale,
+        @"source": @"urban-airship",
+        @"pager_gesture_identifier": @"pager_gesture_id"
+    };
+    
+    UAInAppReporting *reporting = [UAInAppReporting pageGestureEventWithScheduleID:self.scheduleID
+                                                                        identifier:@"pager_gesture_id"
+                                                                           message:self.message];
+    
+    [reporting record:self.analytics];
+    id<UAEvent> event = self.analytics.events[0];
+    
+    XCTAssertEqualObjects(event.data, expectedData);
+    XCTAssertEqualObjects(event.eventType, @"in_app_pager_gesture");
+}
+
+/**
+ * Test in-app page automated action event.
+ */
+- (void)testPageAutomatedActionEvent {
+    NSDictionary *expectedData = @{
+        @"id": @{
+            @"message_id": self.scheduleID
+        },
+        @"conversion_send_id": self.analytics.conversionSendID,
+        @"conversion_metadata": self.analytics.conversionPushMetadata,
+        @"locale": self.message.renderedLocale,
+        @"source": @"urban-airship",
+        @"page_automated_action_identifier": @"page_automated_action_id"
+    };
+    
+    UAInAppReporting *reporting = [UAInAppReporting pageAutomatedActionEventWithScheduleID:self.scheduleID
+                                                                                identifier:@"page_automated_action_id"
+                                                                                   message:self.message];
+    
+    [reporting record:self.analytics];
+    id<UAEvent> event = self.analytics.events[0];
+    
+    XCTAssertEqualObjects(event.data, expectedData);
+    XCTAssertEqualObjects(event.eventType, @"in_app_page_automated_action");
+}
+
+/**
  * Test in-app pager summary event.
  */
 - (void)testPagerSummaryEvent {

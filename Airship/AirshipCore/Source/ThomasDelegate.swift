@@ -66,6 +66,24 @@ public protocol ThomasDelegate {
         layoutContext: ThomasLayoutContext
     )
 
+    /// Called when a pager page has a gesture.
+    /// - Parameters:
+    ///     - identifier: The pager gesture identifier.
+    ///     - layoutContext: The layout context.
+    func onPageGesture(
+        identifier: String,
+        layoutContext: ThomasLayoutContext
+    )
+
+    /// Called when a pager page changed automatically after a delay.
+    /// - Parameters:
+    ///     - identifier: The automated action identifier.
+    ///     - layoutContext: The layout context.
+    func onPageAutomatedAction(
+        identifier: String,
+        layoutContext: ThomasLayoutContext
+    )
+    
     /// Called when a pager page changed due to a swipe.
     /// - Parameters:
     ///     - from: The originated pager info

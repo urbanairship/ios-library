@@ -87,6 +87,8 @@ extension Layout {
             return nil
         case .pagerIndicator(_):
             return nil
+        case .storyIndicator(_):
+            return nil
         case .checkbox(_):
             return nil
         case .radioInput(_):

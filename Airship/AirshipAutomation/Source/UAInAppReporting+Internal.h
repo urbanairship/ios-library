@@ -48,6 +48,14 @@ NS_SWIFT_NAME(InAppReporting)
                                   pagerInfo:(UAThomasPagerInfo *)pagerInfo
                                   viewCount:(NSUInteger)viewCount;
 
++ (instancetype)pageGestureEventWithScheduleID:(NSString *)scheduleID
+                                    identifier:(NSString *)identifier
+                                       message:(UAInAppMessage *)message;
+    
++ (instancetype)pageAutomatedActionEventWithScheduleID:(NSString *)scheduleID
+                                            identifier:(NSString *)identifier
+                                               message:(UAInAppMessage *)message;
+
 + (instancetype)pageSwipeEventWithScheduleID:(NSString *)scheduleID
                                      message:(UAInAppMessage *)message
                                         from:(UAThomasPagerInfo *)from

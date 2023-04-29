@@ -136,7 +136,31 @@ class ThomasEnvironment: ObservableObject {
             )
         }
     }
-
+    
+    func pageGesture(
+        identifier: String?,
+        layoutState: LayoutState
+    ) {
+        if let identifier {
+            self.delegate.onPageGesture(
+                identifier: identifier,
+                layoutContext: layoutState.toLayoutContext()
+            )
+        }
+    }
+    
+    func pageAutomated(
+        identifier: String?,
+        layoutState: LayoutState
+    ) {
+        if let identifier {
+            self.delegate.onPageAutomatedAction(
+                identifier: identifier,
+                layoutContext: layoutState.toLayoutContext()
+            )
+        }
+    }
+    
     func pageSwiped(
         _ pagerState: PagerState,
         fromIndex: Int,
@@ -269,7 +293,7 @@ extension PagerState {
         let index = index ?? self.pageIndex
         var pageId: String = ""
         if index < self.pages.count {
-            pageId = self.pages[index]
+            pageId = self.pages[index].identifier
         }
 
         return ThomasPagerInfo(

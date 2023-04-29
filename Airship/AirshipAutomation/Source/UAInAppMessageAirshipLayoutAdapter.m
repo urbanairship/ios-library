@@ -241,6 +241,7 @@
     }];
 
 }
+
 - (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier
                              layoutContext:(UAThomasLayoutContext * _Nonnull)layoutContext {
 
@@ -309,8 +310,18 @@
         completed.layoutContext = layoutContext;
         [self record:completed];
     }
-  
-    
+}
+
+-(void)onPageGestureWithIdentifier:(NSString *)identifier layoutContext:(UAThomasLayoutContext *)layoutContext {
+    UAInAppReporting *reporting = [UAInAppReporting pageGestureEventWithScheduleID:self.scheduleID identifier:identifier message:self.message];
+    reporting.layoutContext = layoutContext;
+    [self record:reporting];
+}
+
+-(void)onPageAutomatedActionWithIdentifier:(NSString *)identifier layoutContext:(UAThomasLayoutContext *)layoutContext {
+    UAInAppReporting *reporting = [UAInAppReporting pageAutomatedActionEventWithScheduleID:self.scheduleID identifier:identifier message:self.message];
+    reporting.layoutContext = layoutContext;
+    [self record:reporting];
 }
 
 - (void)onPageSwipedFrom:(UAThomasPagerInfo * _Nonnull)from

@@ -172,8 +172,10 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
+				ar,
+				fr,
 				Base,
+				en,
 			);
 			mainGroup = 324449222721667D00D108B5;
 			packageReferences = (

@@ -41,6 +41,7 @@
 		1B05133624AF600000F5051F /* UAScheduleTriggerContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B05133424AF600000F5051F /* UAScheduleTriggerContext.m */; };
 		1B05133D24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B05133B24AF657C00F5051F /* UAScheduleTriggerContext+Internal.h */; };
 		1B70A14224F7B85D003209E0 /* AirshipAutomationLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3215CA9E2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		3231126A29D5E4F600CF0D86 /* AutomationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231126929D5E4F600CF0D86 /* AutomationResources.swift */; };
@@ -86,6 +87,10 @@
 		32D1D739290C0CD4008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
 		32D1D73A290C0CD4008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
 		32D6E87B2727F7060077C784 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6E87A2727F7060077C784 /* Image.swift */; };
+		32F01B0729E83C7A007A2131 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
+		32F01B0829E83C7A007A2131 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
+		32F01B0929E83C87007A2131 /* StoryIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F97AC029E5986B00FED65F /* StoryIndicator.swift */; };
+		32F01B0A29E83C88007A2131 /* StoryIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F97AC029E5986B00FED65F /* StoryIndicator.swift */; };
 		32F293D5295AFD94004A7D9C /* ActionArgumentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F293D4295AFD94004A7D9C /* ActionArgumentsTest.swift */; };
 		32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F615A628F708980015696D /* MessageCenterListTests.swift */; };
 		32F615A828F708AD0015696D /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
@@ -94,6 +99,7 @@
 		32F68CEF28F07C2C00F7F52A /* MessageCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */; };
 		32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CED28F07C2C00F7F52A /* MessageCenter.swift */; };
 		32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF428F07C4800F7F52A /* MessageCenterList.swift */; };
+		32F97AC129E5986B00FED65F /* StoryIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F97AC029E5986B00FED65F /* StoryIndicator.swift */; };
 		3C07645825EDEDEE007F425C /* UAStateOverridesTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */; };
 		3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C13BFB72384AC0E0071E80C /* UAAutomationResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */; };
@@ -1801,6 +1807,7 @@
 		1B2F3B0824B7525500A5DE8C /* UAAutomation 6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 6.xcdatamodel"; sourceTree = "<group>"; };
 		1B2F3B0924B7525500A5DE8C /* UAAutomation 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 5.xcdatamodel"; sourceTree = "<group>"; };
 		1B70A14124F7B85D003209E0 /* AirshipAutomationLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipAutomationLib.h; sourceTree = "<group>"; };
+		320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerGestureMap.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		3231126929D5E4F600CF0D86 /* AutomationResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationResources.swift; sourceTree = "<group>"; };
 		3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitStore.swift; sourceTree = "<group>"; };
@@ -1841,6 +1848,7 @@
 		32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterSDKModule.swift; sourceTree = "<group>"; };
 		32F68CED28F07C2C00F7F52A /* MessageCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenter.swift; sourceTree = "<group>"; };
 		32F68CF428F07C4800F7F52A /* MessageCenterList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterList.swift; sourceTree = "<group>"; };
+		32F97AC029E5986B00FED65F /* StoryIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryIndicator.swift; sourceTree = "<group>"; };
 		3C07644A25EDEDE4007F425C /* UAStateOverridesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAStateOverridesTest.m; sourceTree = "<group>"; };
 		3C13BFB42384AC0E0071E80C /* UAAutomationResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAutomationResources.h; sourceTree = "<group>"; };
 		3C13BFB52384AC0E0071E80C /* UAAutomationResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAutomationResources.m; sourceTree = "<group>"; };
@@ -3348,6 +3356,7 @@
 				6EFD6D84272A53FA005B26F1 /* Pager.swift */,
 				6EFD6D86272A53FB005B26F1 /* PagerController.swift */,
 				6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */,
+				32F97AC029E5986B00FED65F /* StoryIndicator.swift */,
 				6EFD6D5B27273257005B26F1 /* Shapes.swift */,
 				A658DE0A2727020100007672 /* ImageButton.swift */,
 				6E062D02271656DE001A74A1 /* Container.swift */,
@@ -3367,6 +3376,7 @@
 				6E6541DF2758976D009676CA /* AirshipProgressView.swift */,
 				32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */,
 				6EF66D902769B69C00ABCB76 /* RootView.swift */,
+				320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -5985,9 +5995,11 @@
 				6E299FD728D13E54001305A7 /* AirshipRequest.swift in Sources */,
 				8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */,
 				3CC95B2B2696549B00FE2ACD /* PushableComponent.swift in Sources */,
+				32F97AC129E5986B00FED65F /* StoryIndicator.swift in Sources */,
 				6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */,
 				6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
 				324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */,
+				320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */,
 				A6A5531026D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */,
 				6E15B6EA26CC81040099C92D /* RemoteConfigDisableInfo.swift in Sources */,
 				6E664BE726C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */,
@@ -6492,6 +6504,7 @@
 				A6722A86281A9EDA0033F54D /* EmailRegistrationOptions.swift in Sources */,
 				6E91E43C28EF423400B6F25E /* WorkBackgroundTasks.swift in Sources */,
 				A6722A87281A9EDA0033F54D /* SMSRegistrationOptions.swift in Sources */,
+				32F01B0A29E83C88007A2131 /* StoryIndicator.swift in Sources */,
 				A6722A88281A9EDA0033F54D /* OpenRegistrationOptions.swift in Sources */,
 				A6722A89281A9EDA0033F54D /* NativeBridgeDelegate.swift in Sources */,
 				A6722A8A281A9EDA0033F54D /* NativeBridge.swift in Sources */,
@@ -6515,6 +6528,7 @@
 				A6722A94281A9EDA0033F54D /* RemoteConfigModuleAdapter.swift in Sources */,
 				A6722A95281A9EDA0033F54D /* RemoteConfigManager.swift in Sources */,
 				A6722A96281A9EDA0033F54D /* RemoteConfig.swift in Sources */,
+				32F01B0829E83C7A007A2131 /* PagerGestureMap.swift in Sources */,
 				A6722A97281A9EDA0033F54D /* RemoteDataManager.swift in Sources */,
 				6E96ECF4293EB7900053CC91 /* AirshipEventData.swift in Sources */,
 				A6722A98281A9EDA0033F54D /* RemoteDataProvider.swift in Sources */,
@@ -7066,6 +7080,7 @@
 				6E510C1E2721DA77006D9126 /* ViewConstraints.swift in Sources */,
 				6E91B44126868C3400DDB1A8 /* RegionEvent.swift in Sources */,
 				6E49D7C728401D2E00C7BB9D /* Badger.swift in Sources */,
+				32F01B0729E83C7A007A2131 /* PagerGestureMap.swift in Sources */,
 				6E96ECF7293FCE080053CC91 /* EventUploadScheduler.swift in Sources */,
 				6EF27DE72730E77300548DA3 /* RadioInputState.swift in Sources */,
 				6E71129E2880DACB004942E4 /* EventHandlerViewModifier.swift in Sources */,
@@ -7083,6 +7098,7 @@
 				6ECDDE7A29B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */,
 				6EFD6D88272A53FB005B26F1 /* Pager.swift in Sources */,
 				6E91B46A2689327D00DDB1A8 /* CustomEvent.swift in Sources */,
+				32F01B0929E83C87007A2131 /* StoryIndicator.swift in Sources */,
 				6E664BCB26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
 				6E91B4622689092F00DDB1A8 /* InstallAttributionEvent.swift in Sources */,
 				6E664BE326C4D6B600A2C8E5 /* WalletAction.swift in Sources */,
