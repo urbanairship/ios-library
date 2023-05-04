@@ -112,7 +112,7 @@ struct AirshipButton<Label> : View  where Label : View {
     }
 }
 
-fileprivate extension ButtonClickBehavior {
+extension ButtonClickBehavior {
     var sortOrder: Int {
         switch self {
         case .dismiss:

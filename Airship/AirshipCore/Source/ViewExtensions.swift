@@ -21,6 +21,19 @@ public extension View {
             self
         }
     }
+    
+    @ViewBuilder
+    func applyIf<Content: View, ElseContent: View>(
+        _ predicate: @autoclosure () -> Bool,
+        transform: (Self) -> Content,
+        elseTransform: (Self) -> ElseContent
+    ) -> some View {
+        if predicate() {
+            transform(self)
+        } else {
+            elseTransform(self)
+        }
+    }
 
     internal func addTapGesture(action: @escaping () -> Void) -> some View {
         #if os(tvOS)

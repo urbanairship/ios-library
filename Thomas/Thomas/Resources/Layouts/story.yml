@@ -72,21 +72,8 @@ view:
           behavior:
             behaviors:
             - pager_next
-        - type: swipe
-          identifier: "swipe-gesture-start-id"
-          direction: start
-          behavior:
-            behaviors:
-            - pager_previous
-        - type: swipe
-          identifier: "swipe-gesture-end-id"
-          direction: end
-          behavior:
-            behaviors:
-            - pager_next
         - type: hold
           identifier: "hold-gesture-any-id"
-          location: any
           press_behavior:
             behaviors:
             - pager_pause
@@ -216,6 +203,7 @@ view:
             identifier: "automated-action-3-delay8-id"
             behaviors:
             - pager_next_or_first
+            - form_submit
           display_actions:
             add_tags_action: 'pager-page-3x'
           view:

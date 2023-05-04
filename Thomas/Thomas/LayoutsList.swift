@@ -45,6 +45,7 @@ struct LayoutsList: View {
         }
     }
 
+    @MainActor
     func openLayout(_ fileName: String, metrics: GeometryProxy) {
         do {
             let data = try loadData(fileName: fileName)

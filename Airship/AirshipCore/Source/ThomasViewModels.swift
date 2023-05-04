@@ -852,16 +852,12 @@ struct EmptyViewModel: BaseModel {
     }
 }
 
-enum GestureDirection: String, Decodable, Equatable {
+enum PagerGestureDirection: String, Decodable, Equatable {
     case up
     case down
-    case start
-    case end
-    case left
-    case right
 }
 
-enum GestureLocation: String, Decodable, Equatable {
+enum PagerGestureLocation: String, Decodable, Equatable {
     case top
     case bottom
     case start
@@ -885,7 +881,7 @@ protocol PagerGesture: Decodable, Equatable {
 struct PagerDragGesture: PagerGesture {
     var type = PagerGestureType.swipe
     var identifier: String
-    let direction: GestureDirection
+    let direction: PagerGestureDirection
     let behavior: PagerGestureBehavior
     
     enum CodingKeys: String, CodingKey {
@@ -898,7 +894,7 @@ struct PagerDragGesture: PagerGesture {
 struct PagerTapGesture: PagerGesture {
     var type = PagerGestureType.tap
     var identifier: String
-    let location: GestureLocation
+    let location: PagerGestureLocation
     let behavior: PagerGestureBehavior
     
     enum CodingKeys: String, CodingKey {
@@ -911,13 +907,11 @@ struct PagerTapGesture: PagerGesture {
 struct PagerHoldGesture: PagerGesture {
     var type = PagerGestureType.hold
     var identifier: String
-    let location: GestureLocation
     let pressBehavior: PagerGestureBehavior
     let releaseBehavior: PagerGestureBehavior
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
-        case location = "location"
         case pressBehavior = "press_behavior"
         case releaseBehavior = "release_behavior"
     }

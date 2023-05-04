@@ -2,71 +2,81 @@
 
 import SwiftUI
 
-struct TopTrapezoid: Shape {
+fileprivate struct TopTrapezoid: Shape {
     func path(in rect: CGRect) -> Path {
+        let thirdWidth = rect.width * 0.3
+        let thirdHeight = rect.height * 0.3
+
         var path = Path()
         path.move(to: CGPoint(x: rect.minX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.width * 0.3 * 2, y: rect.height * 0.3))
-        path.addLine(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3))
+        path.addLine(to: CGPoint(x: rect.maxX - thirdWidth, y: rect.minY + thirdHeight))
+        path.addLine(to: CGPoint(x: rect.minX + thirdWidth, y: rect.minY + thirdHeight))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
-        
         return path
     }
 }
 
-struct BottomTrapezoid: Shape {
+fileprivate struct BottomTrapezoid: Shape {
     func path(in rect: CGRect) -> Path {
+        let thirdWidth = rect.width * 0.3
+        let thirdHeight = rect.height * 0.3
+
         var path = Path()
-        
-        path.move(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3 * 2))
-        path.addLine(to: CGPoint(x: rect.width * 0.3 * 2, y: rect.height * 0.3 * 2))
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX - thirdWidth, y: rect.maxY - thirdHeight))
+        path.addLine(to: CGPoint(x: rect.minX + thirdWidth, y: rect.maxY - thirdHeight))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3 * 2))
-        
         return path
     }
 }
 
-struct RightTrapezoid: Shape {
+fileprivate struct RightTrapezoid: Shape {
     func path(in rect: CGRect) -> Path {
+        let thirdWidth = rect.width * 0.3
+        let thirdHeight = rect.height * 0.3
+
         var path = Path()
         path.move(to: CGPoint(x: rect.maxX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.width * 0.3 * 2, y: rect.height * 0.3 * 2))
-        path.addLine(to: CGPoint(x: rect.width * 0.3 * 2, y: rect.height * 0.3))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        
+        path.addLine(to: CGPoint(x: rect.maxX - thirdWidth, y: rect.maxY - thirdHeight))
+        path.addLine(to: CGPoint(x: rect.maxX - thirdWidth, y: rect.minY + thirdHeight))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
         return path
     }
 }
 
-struct LeftTrapezoid: Shape {
+fileprivate struct LeftTrapezoid: Shape {
     func path(in rect: CGRect) -> Path {
+        let thirdWidth = rect.width * 0.3
+        let thirdHeight = rect.height * 0.3
+
         var path = Path()
         path.move(to: CGPoint(x: rect.minX, y: rect.minY))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3 * 2))
-        path.addLine(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3))
+        path.addLine(to: CGPoint(x: rect.minX + thirdWidth, y: rect.maxY - thirdHeight))
+        path.addLine(to: CGPoint(x: rect.minX + thirdWidth, y: rect.minY + thirdHeight))
         path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
-        
         return path
     }
 }
 
-struct CenterRectangle: Shape {
+fileprivate struct CenterRectangle: Shape {
     func path(in rect: CGRect) -> Path {
+        let thirdWidth = rect.width * 0.3
+        let thirdHeight = rect.height * 0.3
+
         var path = Path()
-        path.move(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3))
-        path.addLine(to: CGPoint(x: rect.width * 0.3 * 2, y: rect.height * 0.3))
-        path.addLine(to: CGPoint(x: rect.width * 0.3 * 2, y: rect.height * 0.3 * 2))
-        path.addLine(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3 * 2))
-        path.addLine(to: CGPoint(x: rect.width * 0.3, y: rect.height * 0.3))
-        
+        path.move(to: CGPoint(x: rect.minX + thirdWidth, y: rect.minY + thirdHeight))
+        path.addLine(to: CGPoint(x: rect.minX + thirdWidth, y: rect.minY + thirdHeight))
+        path.addLine(to: CGPoint(x: rect.maxX - thirdWidth, y: rect.minY + thirdHeight))
+        path.addLine(to: CGPoint(x: rect.maxX - thirdWidth, y: rect.maxY - thirdHeight))
+        path.addLine(to: CGPoint(x: rect.minX + thirdWidth, y: rect.maxY - thirdHeight))
         return path
     }
 }
+
 
 struct PagerGestureMapExplorer {
     
@@ -74,43 +84,56 @@ struct PagerGestureMapExplorer {
     let bottomTrapezoidPath: Path
     let leftTrapezoidPath: Path
     let rightTrapezoidPath: Path
-    let centerTrapezoidPath: Path
-    
+    let centerSquarePath: Path
+
+
     init(_ rect: CGRect) {
         topTrapezoidPath = TopTrapezoid().path(in: rect)
         bottomTrapezoidPath = BottomTrapezoid().path(in: rect)
         leftTrapezoidPath = LeftTrapezoid().path(in: rect)
         rightTrapezoidPath = RightTrapezoid().path(in: rect)
-        centerTrapezoidPath = CenterRectangle().path(in: rect)
+        centerSquarePath = CenterRectangle().path(in: rect)
     }
     
     func location(
+        layoutDirection: LayoutDirection,
         forPoint point: CGPoint
-    ) -> PagerGestureLocation {
+    ) -> [PagerGestureLocation] {
         if topTrapezoidPath.contains(point) {
-            return .top
+            return [.top, .any]
         }
+
         if bottomTrapezoidPath.contains(point) {
-            return .bottom
+            return [.bottom, .any]
         }
+
         if leftTrapezoidPath.contains(point) {
-            return .left
+            if (layoutDirection == .leftToRight) {
+                return [.left, .start, .any]
+            } else {
+                return [.left, .end, .any]
+            }
         }
+
         if rightTrapezoidPath.contains(point) {
-            return .right
+            if (layoutDirection == .leftToRight) {
+                return [.right, .end, .any]
+            } else {
+                return [.right, .start, .any]
+            }
         }
-        if centerTrapezoidPath.contains(point) {
-            return .center
+
+        if centerSquarePath.contains(point) {
+            return [.any]
         }
-        return .none
+
+        return []
     }
 }
 
 struct PagerGestureMap: View {
     var body: some View {
         Rectangle()
-            .stroke(lineWidth: 10)
-            .fill(.green)
             .overlay {
                 TopTrapezoid()
                     .fill(.blue)
@@ -122,13 +145,14 @@ struct PagerGestureMap: View {
                     .fill(.purple)
                 CenterRectangle()
                     .fill(.green)
+
             }
+            .border(.red, width: 1)
     }
 }
 
 struct PagerGestureMap_Previews: PreviewProvider {
     static var previews: some View {
         PagerGestureMap()
-            .frame(width: 400, height: 800)
     }
 }
