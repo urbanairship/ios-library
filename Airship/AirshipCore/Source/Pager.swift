@@ -157,7 +157,10 @@ struct Pager: View {
                     pagerState.pages = self.model.items.map {
                         PageState(
                             identifier: $0.identifier,
-                            delay: earliestNavigationAction($0.automatedActions)?.delay ?? 0.0
+                            delay: earliestNavigationAction($0.automatedActions)?.delay ?? 0.0,
+                            automatedActions: $0.automatedActions?.compactMap({ automatedAction in
+                                automatedAction.identifier
+                            })
                         )
                     }
                     reportPage(value)
@@ -368,9 +371,11 @@ struct Pager: View {
                 self.pagerState.progress += Pager.timerTransition / duration
             }
             
+            // Check for any automated action past the current duration that have not been exectuted yet
             let automatedAction = automatedActions.first {
-                let currentDuration = (self.pagerState.progress * duration).round(to: 2)
-                return $0.delay == currentDuration
+                let isExecuted = (self.pagerState.currentPage.automatedActionStatus[$0.identifier] == true)
+                let isOlder = (self.pagerState.progress * duration) >= ($0.delay ?? 0.0)
+                return !isExecuted && isOlder
             }
             
             if let automatedAction = automatedAction  {
@@ -380,6 +385,7 @@ struct Pager: View {
                     transition: .automated(identifier: automatedAction.identifier),
                     index: index
                 )
+                pagerState.markAutomatedActionExecuted(automatedAction.identifier)
             }
 
         }
@@ -561,25 +567,17 @@ struct Pager: View {
             )
             
             let automatedAction = page.automatedActions?.first {
-                $0.delay == 0.0
+                $0.delay == nil || $0.delay == 0.0
             }
-            automatedAction?.actions?.forEach({ action in
-                self.thomasEnvironment.runActions(
-                    action,
-                    layoutState: layoutState
-                )
-            })
+            
+            if let automatedAction = automatedAction {
+                handleActions(automatedAction.actions)
+                pagerState.markAutomatedActionExecuted(automatedAction.identifier)
+            }
 
         }
     }
     
-}
-
-extension Double {
-    func round(to places: Int) -> Double {
-        let divisor = pow(10.0, Double(places))
-        return (self * divisor).rounded() / divisor
-    }
 }
 
 

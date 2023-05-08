@@ -5,6 +5,28 @@ import Foundation
 struct PageState {
     var identifier: String
     var delay: Double
+    // represent the automated action identifier and it's status (true if it's exectuted and false if not)
+    var automatedActionStatus: [String: Bool] = [:]
+    
+    init(identifier: String,
+         delay: Double,
+         automatedActions: [String]?
+    ) {
+        self.identifier = identifier
+        self.delay = delay
+        
+        if let automatedActions = automatedActions {
+            automatedActions.forEach { automatedAction in
+                self.automatedActionStatus[automatedAction] = false
+            }
+        }
+    }
+    
+    mutating func markAutomatedActionExecuted(
+        _ identifier: String
+    ) {
+        self.automatedActionStatus[identifier] = true
+    }
 }
 
 class PagerState: ObservableObject {
@@ -40,5 +62,9 @@ class PagerState: ObservableObject {
     
     func resetProgress() {
         self.progress = 0.0
+    }
+    
+    func markAutomatedActionExecuted(_ identifier: String) {
+        self.currentPage.markAutomatedActionExecuted(identifier)
     }
 }
