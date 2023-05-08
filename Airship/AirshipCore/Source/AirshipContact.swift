@@ -56,9 +56,9 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
         subscriptionListEditsSubject.eraseToAnyPublisher()
     }
 
-    private let conflictEventsSubject = PassthroughSubject<ContactConflictEvent, Never>()
-    public var conflictEvents: AnyPublisher<ContactConflictEvent, Never> {
-        conflictEventsSubject.eraseToAnyPublisher()
+    private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
+    public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
+        conflictEventSubject.eraseToAnyPublisher()
     }
 
     private let contactIDUpdatesSubject = PassthroughSubject<ContactIDInfo?, Never>()
@@ -75,9 +75,9 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
             .eraseToAnyPublisher()
     }
 
-    private let namedUserUpdatesSubject = PassthroughSubject<String?, Never>()
-    public var namedUserUpdates: AnyPublisher<String?, Never> {
-        namedUserUpdatesSubject
+    private let namedUserIDSubject = PassthroughSubject<String?, Never>()
+    public var namedUserIDPublisher: AnyPublisher<String?, Never> {
+        namedUserIDSubject
             .prepend(Future { promise in
                 Task {
                     await promise(.success(self.contactManager.currentNamedUserID()))
@@ -190,7 +190,7 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
             }.store(in: &self.subscriptions)
 
         // For obj-c compatibility
-        self.conflictEvents
+        self.conflictEventPublisher
             .receive(on: RunLoop.main)
             .sink { event in
                 notificationCenter.post(
@@ -244,11 +244,11 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
             for await update in await self.contactManager.contactUpdates {
                 switch (update) {
                 case .conflict(let event):
-                    self.conflictEventsSubject.send(event)
+                    self.conflictEventSubject.send(event)
                 case .contactIDUpdate(let update):
                     self.contactIDUpdatesSubject.send(update)
                 case .namedUserUpdate(let namedUserID):
-                    self.namedUserUpdatesSubject.send(namedUserID)
+                    self.namedUserIDSubject.send(namedUserID)
                 }
             }
         }

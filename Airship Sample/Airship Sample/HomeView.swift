@@ -200,7 +200,7 @@ struct HomeView: View {
                 }
                 .store(in: &self.subscriptions)
 
-            Airship.contact.namedUserUpdates
+            Airship.contact.namedUserIDPublisher
                 .receive(on: RunLoop.main)
                 .sink { namedUserID in
                     self.namedUserID = namedUserID

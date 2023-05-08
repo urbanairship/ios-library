@@ -72,6 +72,30 @@ final class ContactManagerTest: XCTestCase {
         XCTAssertFalse(self.workManager.workRequests.isEmpty)
     }
 
+    func testAddSkippableOperationEnqueuesWork() async throws {
+        await self.contactManager.setEnabled(enabled: true)
+        await self.contactManager.addOperation(.resolve)
+
+        self.apiClient.resolveCallback = { channelID, contactID in
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+        self.workManager.workRequests.removeAll()
+
+        await self.contactManager.addOperation(.reset)
+        XCTAssertFalse(self.workManager.workRequests.isEmpty)
+    }
+
     func testRateLimitConfig() async throws {
         let rateLimits = self.workManager.rateLimits
         XCTAssertEqual(2, rateLimits.count)

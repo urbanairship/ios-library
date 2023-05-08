@@ -24,7 +24,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        Airship.contact.namedUserUpdates
+        Airship.contact.namedUserIDPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] namedUserID in
                 self?.namedUserCell.detailTextLabel?.text =

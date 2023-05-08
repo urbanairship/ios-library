@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -26,6 +27,9 @@ public struct PreferenceCenterList: View {
 
     @State
     private var initialLoadCalled = false
+
+    @State
+    private var namedUser: String?
 
     @Environment(\.airshipPreferenceCenterStyle)
     private var style
@@ -70,6 +74,12 @@ public struct PreferenceCenterList: View {
         )
 
         style.makeBody(configuration: configuration)
+            .onReceive(makeNamedUserIDPublisher()) { identifier in
+                if (self.namedUser != identifier) {
+                    self.namedUser = identifier
+                    refresh()
+                }
+            }
             .onReceive(self.loader.$phase) {
                 self.onPhaseChange?($0)
 
@@ -79,7 +89,21 @@ public struct PreferenceCenterList: View {
                 }
             }
     }
+
+    private func makeNamedUserIDPublisher() -> AnyPublisher<String?, Never> {
+        guard Airship.isFlying else {
+            return Just(nil).eraseToAnyPublisher()
+        }
+
+        return Airship.contact.namedUserIDPublisher
+            .receive(on: RunLoop.main)
+            .dropFirst()
+            .eraseToAnyPublisher()
+
+    }
 }
+
+
 
 /// Preference Center view style configuration
 public struct PreferenceCenterViewStyleConfiguration {

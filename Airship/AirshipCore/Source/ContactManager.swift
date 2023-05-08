@@ -238,6 +238,7 @@ actor ContactManager: ContactManagerProtocol {
         }
 
         self.clearSkippableOperations()
+        yieldContactUpdates()
 
         guard let operationGroup = prepareNextOperationGroup() else {
             return true
@@ -272,17 +273,17 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func enqueueTask() {
-        let next = self.operations.first { !self.isSkippable(operation: $0.operation) }?.operation
         guard
             self.channel.identifier != nil,
-            self.isEnabled,
-            let next = next
+            self.isEnabled
         else {
             return
         }
 
         var rateLimitIDs = [ContactManager.updateRateLimitID]
-        if (next.type == .reset || next.type == .identify || tokenIfValid() == nil) {
+
+        let next = self.operations.first { !self.isSkippable(operation: $0.operation) }?.operation
+        if (next?.type == .reset || next?.type == .identify || tokenIfValid() == nil) {
             rateLimitIDs += [ContactManager.identityRateLimitID]
         }
 

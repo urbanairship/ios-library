@@ -17,9 +17,15 @@ class TestContact: NSObject, AirshipContactProtocol, Component {
     @objc
     public static let maxNamedUserIDLength = 128
 
+
+    private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
+    public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
+        conflictEventSubject.eraseToAnyPublisher()
+    }
     
+
     private let namedUserUpdatesSubject = PassthroughSubject<String?, Never>()
-    public var namedUserUpdates: AnyPublisher<String?, Never> {
+    public var namedUserIDPublisher: AnyPublisher<String?, Never> {
         namedUserUpdatesSubject
             .prepend(namedUserID)
             .removeDuplicates()

@@ -126,13 +126,14 @@ public protocol AirshipContactBaseProtocol {
 }
 
 public protocol AirshipContactProtocol: AirshipContactBaseProtocol {
-    /**
-     * Gets the current named user ID.
-     */
+    /// Current named user ID
     var namedUserID: String? { get async }
 
-    /// Notifies updates to the current named user ID.
-    var namedUserUpdates: AnyPublisher<String?, Never> { get }
+    /// The named user ID current value publisher.
+    var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
+
+    /// Conflict event publisher
+    var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
 
     /// Notifies any edits to the subscription lists.
     var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }

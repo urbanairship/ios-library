@@ -627,7 +627,7 @@ class AirshipContactTest: XCTestCase {
         )
 
         let expectation = XCTestExpectation()
-        let subscription = self.contact.conflictEvents.sink { conflict in
+        let subscription = self.contact.conflictEventPublisher.sink { conflict in
             XCTAssertEqual(event, conflict)
             expectation.fulfill()
         }
