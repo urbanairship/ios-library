@@ -28,7 +28,7 @@ public class RemoteDataManager: NSObject, Component, RemoteDataProvider {
     private let privacyManager: AirshipPrivacyManager
     private let networkMonitor: NetworkMonitor
 
-    private var updatedSinceLastForeground: Atomic<Bool> = Atomic(false)
+    private let updatedSinceLastForeground: Atomic<Bool> = Atomic(false)
 
     private var refreshCompletionHandlers: [(@Sendable (Bool) -> Void)?] = []
     private let refreshLock = AirshipLock()

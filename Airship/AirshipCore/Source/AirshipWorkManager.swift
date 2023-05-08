@@ -4,17 +4,16 @@ import Combine
 import Foundation
 
 /// Manages work for the Airship SDK
-final class AirshipWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
+final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private let rateLimitor = WorkRateLimiter()
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()
     private let workers: Workers = Workers()
     private let startTask: Task<Void, Never>
-    @MainActor
-    private var backgroundWaitTask: AirshipCancellable? = nil
+    private let backgroundWaitTask: AirshipMainActorWrapper<AirshipCancellable?> = AirshipMainActorWrapper(nil)
     private let queue: AsyncSerialQueue = AsyncSerialQueue()
 
-
+    
     /// Shared instance
     static let shared = AirshipWorkManager()
 
@@ -46,7 +45,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable 
     @objc
     @MainActor(unsafe)
     private func applicationDidEnterBackground() {
-        backgroundWaitTask?.cancel()
+        backgroundWaitTask.value?.cancel()
 
         let cancellable: CancellabelValueHolder<Task<Void, Never>> = CancellabelValueHolder { task in
             task.cancel()
@@ -62,13 +61,13 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable 
             background?.cancel()
         }
 
-        backgroundWaitTask = cancellable
+        backgroundWaitTask.value = cancellable
     }
 
     @objc
     @MainActor(unsafe)
     private func applicationDidBecomeActive() {
-        backgroundWaitTask?.cancel()
+        backgroundWaitTask.value?.cancel()
     }
 
     public func registerWorker(

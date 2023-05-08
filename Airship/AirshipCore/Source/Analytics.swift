@@ -390,6 +390,22 @@ public final class AirshipAnalytics: NSObject, Component, AnalyticsProtocol, @un
             type: event.eventType
         )
 
+        if let customEvent = event as? CustomEvent {
+            self.notificationCenter.post(
+                name: AirshipAnalytics.customEventAdded,
+                object: self,
+                userInfo: [AirshipAnalytics.eventKey: customEvent]
+            )
+        }
+
+        if let regionEvent = event as? RegionEvent {
+            self.notificationCenter.post(
+                name: AirshipAnalytics.regionEventAdded,
+                object: self,
+                userInfo: [AirshipAnalytics.eventKey: regionEvent]
+            )
+        }
+
         self.serialQueue.enqueue {
             guard self.isAnalyticsEnabled else {
                 return
@@ -406,25 +422,6 @@ public final class AirshipAnalytics: NSObject, Component, AnalyticsProtocol, @un
             } catch {
                 AirshipLogger.error("Failed to save event \(error)")
                 return
-            }
-
-
-            Task { @MainActor in
-                if let customEvent = event as? CustomEvent {
-                    self.notificationCenter.post(
-                        name: AirshipAnalytics.customEventAdded,
-                        object: self,
-                        userInfo: [AirshipAnalytics.eventKey: customEvent]
-                    )
-                }
-
-                if let regionEvent = event as? RegionEvent {
-                    self.notificationCenter.post(
-                        name: AirshipAnalytics.regionEventAdded,
-                        object: self,
-                        userInfo: [AirshipAnalytics.eventKey: regionEvent]
-                    )
-                }
             }
         }
     }

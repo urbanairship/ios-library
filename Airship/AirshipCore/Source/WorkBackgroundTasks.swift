@@ -11,12 +11,10 @@ protocol WorkBackgroundTasksProtocol: Sendable {
     ) throws -> AirshipCancellable
 }
 
-final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, @unchecked Sendable {
+final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
 
-    @MainActor
-    private var requestMap: [UInt: UIBackgroundTaskIdentifier] = [:]
-    @MainActor
-    private var nextRequestID: UInt = 0
+    private let requestMap: AirshipMainActorWrapper<[UInt: UIBackgroundTaskIdentifier]> = AirshipMainActorWrapper([:])
+    private let nextRequestID: AirshipMainActorWrapper<UInt> = AirshipMainActorWrapper(0)
 
     @MainActor
     func beginTask(
@@ -25,8 +23,8 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, @unchecked Sendabl
     ) throws -> AirshipCancellable {
         AirshipLogger.error("Requesting task: \(name)")
 
-        let requestID = nextRequestID
-        nextRequestID += 1
+        let requestID = nextRequestID.value
+        nextRequestID.value += 1
 
         let cancellable: CancellabelValueHolder<UInt> = CancellabelValueHolder(value: requestID) { requestID in
             Task { @MainActor in
@@ -40,13 +38,13 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, @unchecked Sendabl
 
 
         let application = UIApplication.shared
-        self.requestMap[requestID] = application.beginBackgroundTask(withName: name) {
+        self.requestMap.value[requestID] = application.beginBackgroundTask(withName: name) {
             AirshipLogger.error("Task expired: \(name)")
             self.cancel(requestID: requestID)
             expirationHandler?()
         }
 
-        guard let task = self.requestMap[requestID], task != UIBackgroundTaskIdentifier.invalid else {
+        guard let task = self.requestMap.value[requestID], task != UIBackgroundTaskIdentifier.invalid else {
             throw AirshipErrors.error("Unable to request background time.")
         }
 
@@ -59,7 +57,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, @unchecked Sendabl
     private func cancel(requestID: UInt) {
 #if !os(watchOS)
 
-        guard let taskID = self.requestMap.removeValue(forKey: requestID),
+        guard let taskID = self.requestMap.value.removeValue(forKey: requestID),
               taskID != UIBackgroundTaskIdentifier.invalid
         else {
             return
