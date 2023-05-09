@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
+import Combine
 
 @testable import AirshipCore
 
@@ -80,6 +81,20 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 }
 
 class TestPush: InternalPushProtocol, PushProtocol {
+
+    let notificationStatusSubject: PassthroughSubject<AirshipNotificationStatus, Never> = PassthroughSubject()
+
+    var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
+        notificationStatusSubject.removeDuplicates().eraseToAnyPublisher()
+    }
+
+    var notificationStatus: AirshipNotificationStatus = AirshipNotificationStatus(
+        isUserNotificationsEnabled: false,
+        areNotificationsAllowed: false,
+        isPushPrivacyFeatureEnabled: false,
+        isPushTokenRegistered: false
+    )
+
 
     var isPushNotificationsOptedIn: Bool = false
 

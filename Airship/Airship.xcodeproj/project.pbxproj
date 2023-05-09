@@ -1091,6 +1091,9 @@
 		6ED807A4273DBEFF00D1F455 /* ActionRunnerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED807A2273DBEFF00D1F455 /* ActionRunnerProtocol.swift */; };
 		6ED807AA273DEA7D00D1F455 /* UAInAppMessageAirshipLayoutAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED807A8273DEA7C00D1F455 /* UAInAppMessageAirshipLayoutAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ED807AB273DEA7D00D1F455 /* UAInAppMessageAirshipLayoutDisplayContent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED807A9273DEA7C00D1F455 /* UAInAppMessageAirshipLayoutDisplayContent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EE49BDD2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
+		6EE49BDE2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
+		6EE49BDF2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */; };
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EE7725B238F179300E79944 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -2476,6 +2479,7 @@
 		6ED87FA01FEB315B003B652A /* UAInAppMessageTextInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageTextInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FAC1FEB5044003B652A /* UATagSelector+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UATagSelector+Internal.h"; sourceTree = "<group>"; };
+		6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNotificationStatus.swift; sourceTree = "<group>"; };
 		6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLStyleTest.m; sourceTree = "<group>"; };
 		6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageHTMLStyle.plist"; sourceTree = "<group>"; };
 		6EEAE7F724C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleTriggerContextTransformer+Internal.h"; sourceTree = "<group>"; };
@@ -3641,6 +3645,7 @@
 				3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */,
 				3CC8AA0526BB3C7900405614 /* Push.swift */,
 				3C63555F26CDD4F8006E9916 /* PushProtocol.swift */,
+				6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */,
 			);
 			name = Push;
 			sourceTree = "<group>";
@@ -6030,6 +6035,7 @@
 				6EFD6D6E27290C0B005B26F1 /* FormController.swift in Sources */,
 				6E91E44C28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
 				6ED807A3273DBEFF00D1F455 /* ActionRunnerProtocol.swift in Sources */,
+				6EE49BDD2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */,
 				6EFD6D82272A53AE005B26F1 /* PagerState.swift in Sources */,
 				6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E87BE0726E283850005D20D /* DeepLinkDelegate.swift in Sources */,
@@ -6754,6 +6760,7 @@
 				A67229EF281A9E640033F54D /* ImageButton.swift in Sources */,
 				A67229F0281A9E640033F54D /* Container.swift in Sources */,
 				A67229F1281A9E640033F54D /* LinearLayout.swift in Sources */,
+				6EE49BDF2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */,
 				A67229F2281A9E640033F54D /* Label.swift in Sources */,
 				6E7DB38028ECDB13002725F6 /* LiveActivityRegistry.swift in Sources */,
 				A67229F3281A9E640033F54D /* LabelButton.swift in Sources */,
@@ -7051,6 +7058,7 @@
 				6E87BE0826E283850005D20D /* DeepLinkDelegate.swift in Sources */,
 				6ED807A4273DBEFF00D1F455 /* ActionRunnerProtocol.swift in Sources */,
 				6E91E44D28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
+				6EE49BDE2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */,
 				6EFD6D83272A53AE005B26F1 /* PagerState.swift in Sources */,
 				6E91B45E268904D900DDB1A8 /* AssociateIdentifiersEvent.swift in Sources */,
 				6E9D529C26C1A77C004EA16B /* ActionRegistry.swift in Sources */,

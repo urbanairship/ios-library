@@ -614,10 +614,9 @@ class PushTest: XCTestCase {
         XCTAssertEqual(0, self.badger.applicationIconBadgeNumber)
     }
 
+    @MainActor
     func testActiveChecksRegistration() async  {
-        let updated = self.expectation(description: "Updated")
         self.notificationRegistrar.onCheckStatus = {
-            updated.fulfill()
             return (.authorized, [.alert])
         }
 
@@ -626,7 +625,6 @@ class PushTest: XCTestCase {
             object: nil
         )
 
-        self.wait(for: [updated], timeout: 10.0)
         await self.serialQueue.waitForCurrentOperations()
 
         XCTAssertEqual(.authorized, self.push.authorizationStatus)
@@ -636,9 +634,7 @@ class PushTest: XCTestCase {
     }
 
     func testAuthorizedStatusUpdatesChannelRegistration() async {
-        let updated = self.expectation(description: "Updated")
         self.notificationRegistrar.onCheckStatus = {
-            updated.fulfill()
             return(.authorized, [.alert])
         }
 
@@ -648,7 +644,6 @@ class PushTest: XCTestCase {
         )
 
         await self.serialQueue.waitForCurrentOperations()
-        self.wait(for: [updated], timeout: 10.0)
         XCTAssertTrue(self.channel.updateRegistrationCalled)
     }
 
@@ -980,6 +975,98 @@ class PushTest: XCTestCase {
         self.waitForExpectations(timeout: 10)
     }
 
+    @MainActor
+    func testNotificationStatus() async {
+        self.push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
+        self.push.userPushNotificationsEnabled = true
+
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.alert])
+        }
+
+        self.apnsRegistrar.isRegisteredForRemoteNotifications = true
+
+        self.privacyManager.enabledFeatures = .push
+
+        let status = await self.push.notificationStatus
+        XCTAssertEqual(
+            AirshipNotificationStatus(
+                isUserNotificationsEnabled: true,
+                areNotificationsAllowed: true,
+                isPushPrivacyFeatureEnabled: true,
+                isPushTokenRegistered: true
+            ),
+            status
+        )
+    }
+
+    @MainActor
+    func testNotificationStatusNoTokenRegistration() async {
+        self.push.didRegisterForRemoteNotifications(
+            PushTest.validDeviceToken.hexData
+        )
+
+        var status = await self.push.notificationStatus
+        XCTAssertEqual(
+            AirshipNotificationStatus(
+                isUserNotificationsEnabled: false,
+                areNotificationsAllowed: false,
+                isPushPrivacyFeatureEnabled: true,
+                isPushTokenRegistered: false
+            ),
+            status
+        )
+
+        self.apnsRegistrar.isRegisteredForRemoteNotifications = true
+
+        status = await self.push.notificationStatus
+        XCTAssertEqual(
+            AirshipNotificationStatus(
+                isUserNotificationsEnabled: false,
+                areNotificationsAllowed: false,
+                isPushPrivacyFeatureEnabled: true,
+                isPushTokenRegistered: true
+            ),
+            status
+        )
+    }
+
+
+    @MainActor
+    func testNotificationStatusAllowed() async {
+        self.notificationRegistrar.onCheckStatus = {
+            return (.notDetermined, [.alert])
+        }
+
+        var status = await self.push.notificationStatus
+        XCTAssertEqual(
+            AirshipNotificationStatus(
+                isUserNotificationsEnabled: false,
+                areNotificationsAllowed: false,
+                isPushPrivacyFeatureEnabled: true,
+                isPushTokenRegistered: false
+            ),
+            status
+        )
+
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.alert])
+        }
+
+        status = await self.push.notificationStatus
+        XCTAssertEqual(
+            AirshipNotificationStatus(
+                isUserNotificationsEnabled: false,
+                areNotificationsAllowed: true,
+                isPushPrivacyFeatureEnabled: true,
+                isPushTokenRegistered: false
+            ),
+            status
+        )
+
+    }
 }
 
 extension String {

@@ -3,11 +3,13 @@
 import Foundation
 import UIKit
 import UserNotifications
+import Combine
 
 /// Airship Push protocol.
 @objc(UAPushProtocol)
-public protocol PushProtocol: Sendable {
+public protocol BasePushProtocol: Sendable {
 
+    /// Checks to see if push notificaitons are opted in.
     @objc
     @MainActor
     var isPushNotificationsOptedIn: Bool { get }
@@ -112,6 +114,15 @@ public protocol PushProtocol: Sendable {
     @MainActor
     var badgeNumber: Int { get set }
     #endif
+}
+
+public protocol PushProtocol: BasePushProtocol {
+    /// Notification status updates
+    var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> { get }
+
+    /// Gets the current notificaiton status
+    var notificationStatus: AirshipNotificationStatus { get async }
+
 }
 
 protocol InternalPushProtocol {

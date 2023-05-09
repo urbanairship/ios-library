@@ -26,14 +26,12 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
     }
 
 
-    private let optInSubject = PassthroughSubject<Bool, Never>()
-
-    /// Push opt-in updates
-    public var optInUpdates: AnyPublisher<Bool, Never> {
-        optInSubject
+    private let notificationStatusSubject = PassthroughSubject<AirshipNotificationStatus, Never>()
+    public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
+        notificationStatusSubject
             .prepend(Future { promise in
                 Task {
-                    return await promise(.success(self.isPushNotificationsOptedIn))
+                    return await promise(.success(self.notificationStatus))
                 }
             })
             .removeDuplicates()
@@ -96,8 +94,7 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
 
     private static let typesAuthorizedKey = "UAPushTypesAuthorized"
     private static let authorizationStatusKey = "UAPushAuthorizationStatus"
-    private static let userPromptedForNotificationsKey =
-        "UAPushUserPromptedForNotifications"
+    private static let userPromptedForNotificationsKey = "UAPushUserPromptedForNotifications"
 
     // Old push enabled key
     private static let oldPushEnabledKey = "UAPushEnabled"
@@ -113,10 +110,8 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
     private static let presentationOptionBanner = "banner"
 
     // Foreground presentation keys
-    private static let ForegroundPresentationLegacykey =
-        "foreground_presentation"
-    private static let ForegroundPresentationkey =
-        "com.urbanairship.foreground_presentation"
+    private static let ForegroundPresentationLegacykey = "foreground_presentation"
+    private static let ForegroundPresentationkey = "com.urbanairship.foreground_presentation"
     private static let deviceTokenRegistrationWaitTime: TimeInterval = 10
 
     private let config: RuntimeConfig
@@ -233,7 +228,7 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
             )
             self.privacyManager.enableFeatures(.push)
             self.channel.updateRegistration()
-            self.optInSubject.send(self.isPushNotificationsOptedIn)
+            self.updateNotificationStatus()
         }
 
         self.waitForDeviceToken = self.channel.identifier == nil
@@ -332,9 +327,7 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
                 self.dispatchUpdateNotifications()
             }
 
-            Task {
-                self.optInSubject.send(await self.isPushNotificationsOptedIn)
-            }
+            self.updateNotificationStatus()
         }
 
         get {
@@ -373,7 +366,7 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
         set {
             guard let deviceToken = newValue else {
                 self.dataStore.removeObject(forKey: AirshipPush.deviceTokenKey)
-                optInSubject.send(isPushNotificationsOptedIn)
+                self.updateNotificationStatus()
                 return
             }
 
@@ -408,7 +401,7 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
                 AirshipLogger.error("Unable to set device token")
             }
 
-            optInSubject.send(isPushNotificationsOptedIn)
+            self.updateNotificationStatus()
         }
 
         get {
@@ -520,8 +513,6 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
                 Int(newValue.rawValue),
                 forKey: AirshipPush.typesAuthorizedKey
             )
-
-            optInSubject.send(isPushNotificationsOptedIn)
         }
 
         get {
@@ -612,6 +603,8 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
                 settingsChanged = true
             }
         }
+
+        updateNotificationStatus()
 
         if (settingsChanged || alwaysUpdateChannel) {
             self.channel.updateRegistration()
@@ -714,6 +707,20 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
         return optedIn
     }
 
+    public var notificationStatus: AirshipNotificationStatus {
+        get async {
+            let (status, settings) = await self.notificationRegistrar.checkStatus()
+            let isRegisteredForRemoteNotifications = await self.apnsRegistrar.isRegisteredForRemoteNotifications
+
+            return await AirshipNotificationStatus(
+                isUserNotificationsEnabled: self.userPushNotificationsEnabled,
+                areNotificationsAllowed: status != .denied && status != .notDetermined && settings != [],
+                isPushPrivacyFeatureEnabled: self.privacyManager.isEnabled(.push),
+                isPushTokenRegistered: self.deviceToken != nil && isRegisteredForRemoteNotifications
+            )
+        }
+    }
+
     @MainActor
     private func backgroundPushNotificationsAllowed() -> Bool {
         guard self.deviceToken != nil,
@@ -741,8 +748,16 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
             self.pushEnabled = false
         }
 
-        optInSubject.send(isPushNotificationsOptedIn)
+        updateNotificationStatus()
     }
+
+    private func updateNotificationStatus() {
+        Task { @MainActor in
+            self.notificationStatusSubject.send(await self.notificationStatus)
+        }
+    }
+
+
 
     @MainActor
     private func onNotificationRegistrationFinished() async {
@@ -1351,3 +1366,4 @@ extension UNNotification {
     
 }
 #endif
+

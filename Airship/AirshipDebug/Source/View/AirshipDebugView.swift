@@ -375,11 +375,10 @@ private class AirshipDebugViewModel: ObservableObject {
             })
             .store(in: &self.subscriptions)
 
-        Airship.push.optInUpdates
-            .sink(receiveValue: { _ in
+        Airship.push.notificationStatusPublisher
+            .sink(receiveValue: { status in
                 Task { @MainActor in
-                    self.isPushNotificationsOptedIn =
-                        Airship.push.isPushNotificationsOptedIn
+                    self.isPushNotificationsOptedIn = status.isOptedIn
                     self.deviceToken = Airship.push.deviceToken
                 }
             })

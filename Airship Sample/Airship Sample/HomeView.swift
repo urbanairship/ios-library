@@ -207,12 +207,15 @@ struct HomeView: View {
                 }
                 .store(in: &self.subscriptions)
 
-            Airship.push.optInUpdates.receive(on: RunLoop.main)
+            Airship.push.notificationStatusPublisher
+                .map { status in
+                    status.isUserOptedIn
+                }
+                .receive(on: RunLoop.main)
                 .sink { optedIn in
                     self.pushEnabled = optedIn
                 }
                 .store(in: &self.subscriptions)
-
         }
 
         func copyChannel() {

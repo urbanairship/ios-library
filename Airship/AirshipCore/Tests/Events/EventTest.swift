@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
+import Combine
 
 @testable import AirshipCore
 
@@ -221,6 +222,14 @@ class EventTest: XCTestCase {
 }
 
 private class EventTestPush: PushProtocol {
+    var notificationStatusPublisher: AnyPublisher<AirshipCore.AirshipNotificationStatus, Never> {
+        fatalError("not implemented")
+    }
+
+    var notificationStatus: AirshipCore.AirshipNotificationStatus {
+        fatalError("not implemented")
+    }
+
     var isPushNotificationsOptedIn: Bool = false
 
     var deviceToken: String?
