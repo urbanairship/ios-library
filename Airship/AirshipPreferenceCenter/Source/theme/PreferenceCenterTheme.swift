@@ -159,6 +159,26 @@ public struct PreferenceCenterTheme: Equatable {
         /// Chip theme
         public var chip: Chip? = nil
     }
+    
+    public init(
+        viewController: PreferenceCenterTheme.ViewController? = nil,
+        preferenceCenter: PreferenceCenterTheme.PreferenceCenter? = nil,
+        commonSection: CommonSection? = nil,
+        labeledSectionBreak: LabeledSectionBreak? = nil,
+        alert: Alert? = nil,
+        channelSubscription: ChannelSubscription? = nil,
+        contactSubscription: ContactSubscription? = nil,
+        contactSubscriptionGroup: ContactSubscriptionGroup? = nil
+    ) {
+        self.viewController = viewController
+        self.preferenceCenter = preferenceCenter
+        self.commonSection = commonSection
+        self.labeledSectionBreak = labeledSectionBreak
+        self.alert = alert
+        self.channelSubscription = channelSubscription
+        self.contactSubscription = contactSubscription
+        self.contactSubscriptionGroup = contactSubscriptionGroup
+    }
 }
 
 struct PreferenceCenterThemeKey: EnvironmentKey {
