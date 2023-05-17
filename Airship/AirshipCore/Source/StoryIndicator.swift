@@ -32,6 +32,7 @@ struct StoryIndicator: View {
                         let currentDelay = pagerState.pages[index].delay
                         
                         createChild(
+                            index: index,
                             progressDelay: delay,
                             constraints: childConstraints
                         )
@@ -54,11 +55,16 @@ struct StoryIndicator: View {
     
     @ViewBuilder
     private func createChild(
+        index: Int? = nil,
         progressDelay: Binding<Double>? = nil,
         constraints: ViewConstraints
     ) -> some View {
         if self.model.style.type == .linearProgress {
             Rectangle()
+                .applyIf(isPreviousIndicator(index)) { view in
+                    view
+                        .fill(model.style.color.toColor(colorScheme))
+                }
                 .overlay {
                     if let progressDelay = progressDelay {
                         GeometryReader { metrics in
@@ -71,7 +77,7 @@ struct StoryIndicator: View {
                 }
         }
     }
-
+    
     var body: some View {
         let childConstraints = ViewConstraints(
             height: constraints.height ?? StoryIndicator.defaultHeight
@@ -90,5 +96,12 @@ struct StoryIndicator: View {
         .background(self.model.backgroundColor)
         .border(self.model.border)
         .common(self.model)
+    }
+    
+    private func isPreviousIndicator(_ index: Int?) -> Bool {
+        guard let index = index else {
+            return false
+        }
+        return index < pagerState.pageIndex
     }
 }
