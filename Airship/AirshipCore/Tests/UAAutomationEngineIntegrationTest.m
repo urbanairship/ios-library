@@ -47,6 +47,12 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     self.mockAppStateTracker = [self mockForClass:[UAAppStateTracker class]];
 
     self.mockDelegate = [self mockForProtocol:@protocol(UAAutomationEngineDelegate)];
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^handler)(UAAutomationScheduleReadyResult) = (__bridge void (^)(UAAutomationScheduleReadyResult))arg;
+        handler(UAAutomationScheduleReadyResultContinue);
+    }] isScheduleReadyPrecheck:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
     self.testStore = [UAAutomationStore automationStoreWithConfig:self.config
                                                      scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT
@@ -230,7 +236,6 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
         [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
             [executedPriorityLevel addObject:testPriorityLevels[i]];
             [expectation fulfill];
-
         }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
             UASchedule *schedule = obj;
             return schedule.priority == [testPriorityLevels[i] intValue];

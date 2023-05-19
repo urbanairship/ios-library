@@ -16,6 +16,7 @@
 @class UAAnalytics;
 @class UAPrivacyManager;
 @class UAAutomationAudienceOverridesProvider;
+@class UARemoteDataAutomationAccess;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param config The UARuntimeConfigInstance.
  * @param audienceOverridesProvider The audience overides provider.
- * @param remoteDataProvider The remote data provider.
+ * @param remoteData The remote data provider.
  * @param dataStore The preference data store.
  * @param channel The channel.
  * @param analytics The system analytics instance.
@@ -63,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
            audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
-                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
+                          remoteData:(UARemoteDataAutomationAccess *)remoteData
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics

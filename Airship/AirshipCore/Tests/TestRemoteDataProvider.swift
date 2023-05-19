@@ -1,70 +1,67 @@
+
+@testable
 import AirshipCore
 import Foundation
+import Combine
 
-class TestRemoteDataProvider: NSObject, RemoteDataProvider {
+
+final class TestRemoteData: NSObject, InternalRemoteDataProtocol, @unchecked Sendable {
+    let updatesSubject = PassthroughSubject<[RemoteDataPayload], Never>()
+    var isCurrent = true
+    var payloads: [RemoteDataPayload] = [] {
+        didSet {
+            updatesSubject.send(payloads)
+        }
+    }
+
     var remoteDataRefreshInterval: TimeInterval = 0
-    func setRefreshInterval(_ refreshInterval: TimeInterval) {
-        remoteDataRefreshInterval = refreshInterval
+    var isContactSourceEnabled: Bool = false
+    func setContactSourceEnabled(enabled: Bool) {
+        isContactSourceEnabled = enabled
     }
 
-    var isMetadataCurrent = true
-    var subscribers: [String: [UUID]] = [:]
-    var blocks: [UUID: (([RemoteDataPayload]) -> Void)] = [:]
 
-    override init() {
-        super.init()
+    func isCurrent(remoteDataInfo: RemoteDataInfo) async -> Bool {
+        return isCurrent
     }
 
-    func dispatchPayload(_ payload: RemoteDataPayload) {
-        let blockIds = self.subscribers[payload.type]
-        blockIds?
-            .forEach({ blockId in
-                self.blocks[blockId]?([payload])
-            })
+    func notifyOutdated(remoteDataInfo: AirshipCore.RemoteDataInfo) async {
+
     }
 
-    func dispatchPayloads(_ payloads: [RemoteDataPayload]) {
-        var blockIdMap: [UUID: [RemoteDataPayload]] = [:]
-
-        payloads.forEach { payload in
-            self.subscribers[payload.type]?
-                .forEach { blockId in
-                    blockIdMap[blockId] = blockIdMap[blockId] ?? []
-                    blockIdMap[blockId]?.append(payload)
+    func publisher(types: [String]) -> AnyPublisher<[RemoteDataPayload], Never> {
+        updatesSubject
+            .prepend(payloads)
+            .map{ payloads in
+                return payloads.filter { payload in
+                    types.contains(payload.type)
                 }
-        }
-
-        blockIdMap.forEach { blockId, payloads in
-            self.blocks[blockId]?(payloads)
-        }
-    }
-
-    public func subscribe(
-        types: [String],
-        block publishBlock: @escaping ([RemoteDataPayload]) -> Void
-    ) -> Disposable {
-        let blockID = UUID()
-        self.blocks[blockID] = publishBlock
-
-        types.forEach { type in
-            var blocks = self.subscribers[type] ?? []
-            blocks.append(blockID)
-            self.subscribers[type] = blocks
-        }
-
-        return Disposable {
-            self.blocks[blockID] = nil
-            types.forEach { type in
-                var blocks = self.subscribers[type] ?? []
-                blocks.removeAll { $0 == blockID }
-                self.subscribers[type] = blocks.isEmpty ? nil : blocks
+                .sorted { first, second in
+                    let firstIndex = types.firstIndex(of: first.type) ?? 0
+                    let secondIndex = types.firstIndex(of: second.type) ?? 0
+                    return firstIndex < secondIndex
+                }
             }
+            .eraseToAnyPublisher()
+    }
+
+    func payloads(types: [String]) async -> [RemoteDataPayload] {
+        return payloads.filter { payload in
+            types.contains(payload.type)
+        }
+        .sorted { first, second in
+            let firstIndex = types.firstIndex(of: first.type) ?? 0
+            let secondIndex = types.firstIndex(of: second.type) ?? 0
+            return firstIndex < secondIndex
         }
     }
 
-    func isMetadataCurrent(_ metadata: [AnyHashable: Any]) -> Bool {
+    func refresh() async -> Bool {
         return true
     }
 
-    func refresh(force: Bool) async -> Bool { return false }
+    func refresh(source: AirshipCore.RemoteDataSource) async -> Bool {
+        return true
+    }
 }
+

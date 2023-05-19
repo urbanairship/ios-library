@@ -11,7 +11,7 @@ class RemoteConfigDisableInfoTest: XCTestCase {
             "modules": ["push", "message_center"],
             "app_versions": [
                 "value": ["version_matches": "+"], "scope": ["ios", "version"],
-            ],
+            ] as [String : Any],
             "sdk_versions": ["1.0.0", "[1.0,99.0["],
             "remote_data_refresh_interval": 100,
         ]

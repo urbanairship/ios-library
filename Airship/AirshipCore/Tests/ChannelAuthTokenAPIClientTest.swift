@@ -23,7 +23,7 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
         self.session.data = try JSONUtils.data([
             "token": "abc123",
             "expires_in": 12345
-        ])
+        ] as [String : Any])
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://www.linkedin.com/")!,
             statusCode: 200,
@@ -66,7 +66,7 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
         self.session.data = try JSONUtils.data([
             "not a token": "abc123",
             "expires_in_3_2_1": 12345
-        ])
+        ] as [String : Any])
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://www.linkedin.com/")!,
             statusCode: 200,

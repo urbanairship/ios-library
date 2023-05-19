@@ -35,7 +35,7 @@ final class AirshipJSONTest: XCTestCase {
             [
                 "foo",
                 ["cool": "story"],
-            ],
+            ] as [Any],
             ["neat": "object"],
             nil,
             true,

@@ -208,7 +208,7 @@
     }]];
     id mockURLResponse = [self mockForClass:[NSHTTPURLResponse class]];
     [[[mockURLResponse stub] andReturnValue:OCMOCK_VALUE(500)] statusCode];
-    [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
+    [(NSURLSessionDownloadTask *)[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
 
@@ -253,7 +253,7 @@
     }]];
     id mockURLResponse = [self mockForClass:[NSHTTPURLResponse class]];
     [[[mockURLResponse stub] andReturnValue:OCMOCK_VALUE(401)] statusCode];
-    [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
+    [(NSURLSessionDownloadTask *)[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
 
@@ -299,7 +299,7 @@
     }]];
     id mockURLResponse = [self mockForClass:[NSHTTPURLResponse class]];
     [[[mockURLResponse stub] andReturnValue:OCMOCK_VALUE(200)] statusCode];
-    [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
+    [(NSURLSessionDownloadTask *)[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
 
@@ -352,7 +352,7 @@
     }]];
     id mockURLResponse = [self mockForClass:[NSHTTPURLResponse class]];
     [[[mockURLResponse stub] andReturnValue:OCMOCK_VALUE(200)] statusCode];
-    [[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
+    [(NSURLSessionDownloadTask *)[[mockDownloadTask stub] andDo:^(NSInvocation *invocation) {
         completionHandler([NSURL URLWithString:@"does-not-matter"], mockURLResponse, nil);
     }] resume];
 

@@ -73,7 +73,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
            audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
-                  remoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
+                          remoteData:(UARemoteDataAutomationAccess *)remoteData
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
@@ -85,9 +85,9 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
-    UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:remoteDataProvider
-                                                                                      dataStore:dataStore
-                                                                                        channel:channel];
+    UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteData:remoteData
+                                                                              dataStore:dataStore
+                                                                                channel:channel];
 
     UAInAppMessageManager *inAppMessageManager = [UAInAppMessageManager managerWithDataStore:dataStore
                                                                                    analytics:analytics];
@@ -271,9 +271,25 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     UA_LDEBUG(@"Trigger Context trigger: %@ event: %@", triggerContext.trigger, triggerContext.event);
     UA_LDEBUG(@"Preparing schedule: %@", schedule.identifier);
 
+    
     NSString *scheduleID = schedule.identifier;
-    __block UAFrequencyChecker *checker;
 
+    // Check valid
+    UA_WEAKIFY(self)
+    UARetriable *checkValid = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
+        UA_STRONGIFY(self)
+        [self.remoteDataClient refreshAndCheckScheduleUpToDate:schedule completionHandler:^(BOOL isValid) {
+            if (isValid) {
+                retriableHandler(UARetriableResultSuccess, 0);
+            } else {
+                completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                retriableHandler(UARetriableResultInvalidate, 0);
+            }
+        }];
+    }];
+
+
+    __block UAFrequencyChecker *checker;
     UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
         [self.frequencyLimitManager getFrequencyChecker:schedule.frequencyConstraintIDs completionHandler:^(UAFrequencyChecker *c) {
             checker = c;
@@ -303,7 +319,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         }];
     }];
 
-    UA_WEAKIFY(self)
     void (^prepareCompletionHandlerWrapper)(UAAutomationSchedulePrepareResult) = ^(UAAutomationSchedulePrepareResult result){
         UA_STRONGIFY(self)
         if (checker && result == UAAutomationSchedulePrepareResultContinue) {
@@ -346,22 +361,12 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     }];
 
 
-    NSArray *operations = @[checkFrequencyLimits, checkAudience, prepare];
-
-    if ([self.remoteDataClient isRemoteSchedule:schedule]) {
-        [self.remoteDataClient attemptRemoteDataRefreshWithForce:NO completionHandler:^{
-            if ([self isScheduleInvalid:schedule]) {
-                [self.remoteDataClient notifyOnUpdate:^{
-                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-                }];
-                return;
-            }
-
-            [self.prepareSchedulePipeline addChainedRetriables:operations];
-        }];
-    } else {
-        [self.prepareSchedulePipeline addChainedRetriables:operations];
-    }
+    [self.prepareSchedulePipeline addChainedRetriables:@[
+        checkValid,
+        checkFrequencyLimits,
+        checkAudience,
+        prepare
+    ]];
 }
 
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
@@ -430,11 +435,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                         break;
                     }
                     case 409: {
-                        [self.remoteDataClient attemptRemoteDataRefreshWithForce:YES
-                                                               completionHandler:^{
-                            [self.remoteDataClient notifyOnUpdate:^{
-                                completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-                            }];
+                        [self.remoteDataClient invalidateAndRefreshSchedule:schedule completionHandler:^{
+                            completionHandler(UAAutomationSchedulePrepareResultInvalidate);
                         }];
                         retriableHandler(UARetriableResultCancel, 0);
                         break;
@@ -484,13 +486,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     if (self.isPaused) {
         UA_LTRACE(@"InAppAutoamtion currently paused. Schedule: %@ not ready.", schedule.identifier);
         return UAAutomationScheduleReadyResultNotReady;
-    }
-
-    if ([self isScheduleInvalid:schedule]) {
-        if (schedule.type == UAScheduleTypeInAppMessage) {
-            [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
-        }
-        return UAAutomationScheduleReadyResultInvalidate;
     }
 
     switch (schedule.type) {
@@ -576,18 +571,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     }
 }
 
-/**
- * Checks to see if a schedule from remote-data is still valid.
- *
- * @param schedule The in-app schedule.
- * @return `YES` if the schedule is valid, otherwise `NO`.
- */
-- (BOOL)isScheduleInvalid:(UASchedule *)schedule {
-    return [self.remoteDataClient isRemoteSchedule:schedule] &&
-    ![self.remoteDataClient isScheduleUpToDate:schedule];
-}
-
-
 - (void)onScheduleExpired:(UASchedule *)schedule {
     if (schedule.type == UAScheduleTypeInAppMessage) {
         [self.inAppMessageManager messageExpired:(UAInAppMessage *)schedule.data
@@ -616,6 +599,21 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                                         scheduleID:schedule.identifier];
     }
 }
+
+- (void)isScheduleReadyPrecheck:(nonnull UASchedule *)schedule
+              completionHandler:(nonnull void (^)(UAAutomationScheduleReadyResult))completionHandler {
+    [self.remoteDataClient isScheduleUpToDate:schedule completionHandler:^(BOOL result) {
+        if (result) {
+            completionHandler(UAAutomationScheduleReadyResultContinue);
+        } else {
+            if (schedule.type == UAScheduleTypeInAppMessage) {
+                [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
+            }
+            completionHandler(UAAutomationScheduleReadyResultInvalidate);
+        }
+    }];
+}
+
 
 - (BOOL)isComponentEnabled {
     return self.disableHelper.enabled;

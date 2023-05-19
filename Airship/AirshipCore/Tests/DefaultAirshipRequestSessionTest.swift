@@ -307,9 +307,7 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 }
 
 
-@MainActor
-final class TestAuthTokenProvider: AuthTokenProvider {
-
+final class TestAuthTokenProvider: AuthTokenProvider, @unchecked Sendable {
 
     public var resolveAuthCount: Int = 0
     public var expiredTokens: [String] = []

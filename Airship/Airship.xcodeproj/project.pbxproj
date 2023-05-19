@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -80,7 +80,7 @@
 		32B5BE4928F8B66500F2254B /* MessageCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */; };
 		32B632882906CA17000D3E34 /* MessageCenterThemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */; };
 		32B632892906CA17000D3E34 /* MessageCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B632872906CA17000D3E34 /* MessageCenterTheme.swift */; };
-		32C68D0529424449006BBB29 /* RemoteDataManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C68D0429424449006BBB29 /* RemoteDataManagerTest.swift */; };
+		32C68D0529424449006BBB29 /* RemoteDataTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C68D0429424449006BBB29 /* RemoteDataTest.swift */; };
 		32CF81E2275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */; };
 		32D1D738290C0CD3008788E1 /* JSONValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */; };
@@ -235,10 +235,10 @@
 		6E15B71926CEB4190099C92D /* RemoteDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B70C26CEB4190099C92D /* RemoteDataStore.swift */; };
 		6E15B72326CEC7030099C92D /* RemoteDataPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72026CEC7030099C92D /* RemoteDataPayload.swift */; };
 		6E15B72426CEC7030099C92D /* RemoteDataPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72026CEC7030099C92D /* RemoteDataPayload.swift */; };
-		6E15B72A26CEDBA50099C92D /* RemoteDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72926CEDBA50099C92D /* RemoteDataManager.swift */; };
-		6E15B72B26CEDBA50099C92D /* RemoteDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72926CEDBA50099C92D /* RemoteDataManager.swift */; };
-		6E15B72D26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */; };
-		6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */; };
+		6E15B72A26CEDBA50099C92D /* RemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72926CEDBA50099C92D /* RemoteData.swift */; };
+		6E15B72B26CEDBA50099C92D /* RemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72926CEDBA50099C92D /* RemoteData.swift */; };
+		6E15B72D26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProviderDelegate.swift */; };
+		6E15B72E26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProviderDelegate.swift */; };
 		6E15B73026CF4F6B0099C92D /* TestRemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72F26CF4F6B0099C92D /* TestRemoteDataAPIClient.swift */; };
 		6E15B73D26D43F120099C92D /* NSURLValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73A26D43F110099C92D /* NSURLValueTransformer.swift */; };
 		6E15B73E26D43F120099C92D /* NSURLValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B73A26D43F110099C92D /* NSURLValueTransformer.swift */; };
@@ -253,7 +253,6 @@
 		6E1892B1268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E1892B2268CE8FE00417887 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* Lock.swift */; };
 		6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */; };
-		6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */; };
 		6E1892D1268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892D0268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift */; };
 		6E1892D5268E3D8500417887 /* PreferenceCenterDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892D4268E3D8500417887 /* PreferenceCenterDecoder.swift */; };
 		6E1892D7268E3F1800417887 /* PreferenceCenterConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892D6268E3F1800417887 /* PreferenceCenterConfigTest.swift */; };
@@ -304,6 +303,9 @@
 		6E3B32CD27559D8B00B89C7B /* FormInputViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */; };
 		6E3B32CF2755D8C700B89C7B /* LayoutState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CE2755D8C700B89C7B /* LayoutState.swift */; };
 		6E3B32D02755D8C700B89C7B /* LayoutState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CE2755D8C700B89C7B /* LayoutState.swift */; };
+		6E4007142A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4007132A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift */; };
+		6E4007162A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4007152A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift */; };
+		6E4007182A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4007172A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift */; };
 		6E4116872135C4E4005CC871 /* UARetriablePipelineTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */; };
 		6E411B702538C4E600FEE4E8 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */; };
 		6E411B712538C4E600FEE4E8 /* UADefaultActions.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */; };
@@ -464,7 +466,6 @@
 		6E590E6E29A94CA90036DFAB /* AppStateTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E590E6D29A94CA90036DFAB /* AppStateTrackerTest.swift */; };
 		6E5F723620169A6600D684B7 /* UADeepLinkActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */; };
 		6E60EF6629DF4BB5003F7A8D /* ApplicationMetricsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */; };
-		6E60EF6829DF5106003F7A8D /* TestExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6729DF5106003F7A8D /* TestExtensions.swift */; };
 		6E60EF6A29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
 		6E60EF6B29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
 		6E60EF6C29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
@@ -545,7 +546,6 @@
 		6E698E01267A78CA00654DB2 /* AirshipLegacyRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698DFB267A78CA00654DB2 /* AirshipLegacyRequestSession.swift */; };
 		6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E02267A799500654DB2 /* AirshipErrors.swift */; };
 		6E698E04267A799500654DB2 /* AirshipErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E02267A799500654DB2 /* AirshipErrors.swift */; };
-		6E698E06267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
 		6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */; };
 		6E698E0A267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */; };
 		6E698E0C267A88D600654DB2 /* EventAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E0B267A88D600654DB2 /* EventAPIClient.swift */; };
@@ -1018,7 +1018,6 @@
 		6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
 		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
-		6EB1B42626EAA6E2000421B9 /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
 		6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */; };
 		6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */; };
 		6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */; };
@@ -1094,6 +1093,32 @@
 		6EE49BDD2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE49BDE2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE49BDF2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
+		6EE49BE12A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */; };
+		6EE49BE22A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */; };
+		6EE49BE32A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */; };
+		6EE49C082A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */; };
+		6EE49C092A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */; };
+		6EE49C0A2A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */; };
+		6EE49C0C2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C0B2A0C141800AB1CF4 /* RemoteDataSource.swift */; };
+		6EE49C0D2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C0B2A0C141800AB1CF4 /* RemoteDataSource.swift */; };
+		6EE49C0E2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C0B2A0C141800AB1CF4 /* RemoteDataSource.swift */; };
+		6EE49C102A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C0F2A0C142F00AB1CF4 /* RemoteDataInfo.swift */; };
+		6EE49C112A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C0F2A0C142F00AB1CF4 /* RemoteDataInfo.swift */; };
+		6EE49C122A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C0F2A0C142F00AB1CF4 /* RemoteDataInfo.swift */; };
+		6EE49C142A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C132A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift */; };
+		6EE49C152A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C132A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift */; };
+		6EE49C162A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C132A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift */; };
+		6EE49C182A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C172A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift */; };
+		6EE49C192A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C172A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift */; };
+		6EE49C1A2A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C172A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift */; };
+		6EE49C1D2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C1C2A0D9D8000AB1CF4 /* RemoteDataProvider.swift */; };
+		6EE49C1E2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C1C2A0D9D8000AB1CF4 /* RemoteDataProvider.swift */; };
+		6EE49C1F2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C1C2A0D9D8000AB1CF4 /* RemoteDataProvider.swift */; };
+		6EE49C202A0EC51B00AB1CF4 /* MockRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892CC268D17D200417887 /* MockRemoteDataProvider.swift */; };
+		6EE49C222A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C212A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift */; };
+		6EE49C232A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C212A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift */; };
+		6EE49C242A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C212A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift */; };
+		6EE49C262A1446B100AB1CF4 /* RemoteDataTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49C252A1446B100AB1CF4 /* RemoteDataTestUtils.swift */; };
 		6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */; };
 		6EE6529322A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */; };
 		6EE7725B238F179300E79944 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
@@ -1106,6 +1131,8 @@
 		6EEE8BA3290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */; };
 		6EEE8BA4290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */; };
 		6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF02DEF2714EB500008B6C9 /* Thomas.swift */; };
+		6EF13FFD2A16F390009A125D /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
+		6EF13FFE2A16F391009A125D /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		6EF1933C2838062B005F192A /* AirshipLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933B2838062B005F192A /* AirshipLogHandler.swift */; };
 		6EF1933E28380644005F192A /* DefaultLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933D28380644005F192A /* DefaultLogHandler.swift */; };
 		6EF1933F28380644005F192A /* DefaultLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933D28380644005F192A /* DefaultLogHandler.swift */; };
@@ -1138,6 +1165,7 @@
 		6EFAFB8429561F23008AD187 /* ModifyAttributesActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFAFB8329561F23008AD187 /* ModifyAttributesActionTest.swift */; };
 		6EFAFB8A29562474008AD187 /* AddTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFAFB8929562474008AD187 /* AddTagsActionTest.swift */; };
 		6EFAFB8C29562866008AD187 /* RemoveTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFAFB8B29562866008AD187 /* RemoveTagsActionTest.swift */; };
+		6EFB7B342A14A0F400133115 /* RemoteDataProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFB7B322A14A0EC00133115 /* RemoteDataProviderTest.swift */; };
 		6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
 		6EFD6D4C27272333005B26F1 /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D4A27272333005B26F1 /* EmptyView.swift */; };
 		6EFD6D5C27273257005B26F1 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D5B27273257005B26F1 /* Shapes.swift */; };
@@ -1399,12 +1427,11 @@
 		A6722A94281A9EDA0033F54D /* RemoteConfigModuleAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6DF26CC779A0099C92D /* RemoteConfigModuleAdapter.swift */; };
 		A6722A95281A9EDA0033F54D /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */; };
 		A6722A96281A9EDA0033F54D /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */; };
-		A6722A97281A9EDA0033F54D /* RemoteDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72926CEDBA50099C92D /* RemoteDataManager.swift */; };
-		A6722A98281A9EDA0033F54D /* RemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */; };
+		A6722A97281A9EDA0033F54D /* RemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72926CEDBA50099C92D /* RemoteData.swift */; };
+		A6722A98281A9EDA0033F54D /* RemoteDataProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72C26CF13BC0099C92D /* RemoteDataProviderDelegate.swift */; };
 		A6722A99281A9EDA0033F54D /* RemoteDataPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B72026CEC7030099C92D /* RemoteDataPayload.swift */; };
 		A6722A9A281A9EDA0033F54D /* RemoteDataStorePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B70A26CEB4190099C92D /* RemoteDataStorePayload.swift */; };
 		A6722A9B281A9EDA0033F54D /* RemoteDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B70C26CEB4190099C92D /* RemoteDataStore.swift */; };
-		A6722A9C281A9EDA0033F54D /* RemoteDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */; };
 		A6722A9D281A9EDA0033F54D /* RemoteDataAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */; };
 		A6722A9E281A9EDA0033F54D /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
 		A6722A9F281A9EDA0033F54D /* TagGroupsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E3C267BEDC300654DB2 /* TagGroupsEditor.swift */; };
@@ -1846,7 +1873,7 @@
 		32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterViewController.swift; sourceTree = "<group>"; };
 		32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterThemeLoader.swift; sourceTree = "<group>"; };
 		32B632872906CA17000D3E34 /* MessageCenterTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterTheme.swift; sourceTree = "<group>"; };
-		32C68D0429424449006BBB29 /* RemoteDataManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataManagerTest.swift; sourceTree = "<group>"; };
+		32C68D0429424449006BBB29 /* RemoteDataTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataTest.swift; sourceTree = "<group>"; };
 		32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncImage.swift; sourceTree = "<group>"; };
 		32D1D736290C05D7008788E1 /* JSONValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueTransformer.swift; sourceTree = "<group>"; };
 		32D6E87A2727F7060077C784 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -2012,8 +2039,8 @@
 		6E15B70A26CEB4190099C92D /* RemoteDataStorePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataStorePayload.swift; sourceTree = "<group>"; };
 		6E15B70C26CEB4190099C92D /* RemoteDataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataStore.swift; sourceTree = "<group>"; };
 		6E15B72026CEC7030099C92D /* RemoteDataPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataPayload.swift; sourceTree = "<group>"; };
-		6E15B72926CEDBA50099C92D /* RemoteDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataManager.swift; sourceTree = "<group>"; };
-		6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataProvider.swift; sourceTree = "<group>"; };
+		6E15B72926CEDBA50099C92D /* RemoteData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteData.swift; sourceTree = "<group>"; };
+		6E15B72C26CF13BC0099C92D /* RemoteDataProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataProviderDelegate.swift; sourceTree = "<group>"; };
 		6E15B72F26CF4F6B0099C92D /* TestRemoteDataAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRemoteDataAPIClient.swift; sourceTree = "<group>"; };
 		6E15B73A26D43F110099C92D /* NSURLValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSURLValueTransformer.swift; sourceTree = "<group>"; };
 		6E15B73B26D43F120099C92D /* NSArrayValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSArrayValueTransformer.swift; sourceTree = "<group>"; };
@@ -2068,6 +2095,9 @@
 		6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewExtensions.swift; sourceTree = "<group>"; };
 		6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormInputViewModifier.swift; sourceTree = "<group>"; };
 		6E3B32CE2755D8C700B89C7B /* LayoutState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutState.swift; sourceTree = "<group>"; };
+		6E4007132A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRemoteDataProviderDelegateTest.swift; sourceTree = "<group>"; };
+		6E4007152A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRemoteDataProviderTest.swift; sourceTree = "<group>"; };
+		6E4007172A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataURLFactoryTest.swift; sourceTree = "<group>"; };
 		6E4116862135C4E4005CC871 /* UARetriablePipelineTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UARetriablePipelineTest.m; sourceTree = "<group>"; };
 		6E411B6A2538C4E500FEE4E8 /* UADefaultActions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActions.plist; sourceTree = "<group>"; };
 		6E411B6B2538C4E500FEE4E8 /* UADefaultActionsTvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UADefaultActionsTvOS.plist; sourceTree = "<group>"; };
@@ -2203,7 +2233,6 @@
 		6E5C32D527C9A54A005B2DDE /* AirshipRelease_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipRelease_tvOS.h; sourceTree = "<group>"; };
 		6E5F723520169A6600D684B7 /* UADeepLinkActionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UADeepLinkActionTest.m; sourceTree = "<group>"; };
 		6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMetricsTest.swift; sourceTree = "<group>"; };
-		6E60EF6729DF5106003F7A8D /* TestExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestExtensions.swift; sourceTree = "<group>"; };
 		6E60EF6929DF542B003F7A8D /* AnonContactData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnonContactData.swift; sourceTree = "<group>"; };
 		6E6363E129DCD0CF009C358A /* ContactSubscriptionListClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSubscriptionListClient.swift; sourceTree = "<group>"; };
 		6E6363E529DCE9A2009C358A /* ContactSubscriptionListAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSubscriptionListAPIClientTest.swift; sourceTree = "<group>"; };
@@ -2243,7 +2272,6 @@
 		6E698DEB26790AC300654DB2 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
 		6E698DFB267A78CA00654DB2 /* AirshipLegacyRequestSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLegacyRequestSession.swift; sourceTree = "<group>"; };
 		6E698E02267A799500654DB2 /* AirshipErrors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipErrors.swift; sourceTree = "<group>"; };
-		6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataResponse.swift; sourceTree = "<group>"; };
 		6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClient.swift; sourceTree = "<group>"; };
 		6E698E0B267A88D600654DB2 /* EventAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventAPIClient.swift; sourceTree = "<group>"; };
 		6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAPIClient.swift; sourceTree = "<group>"; };
@@ -2480,6 +2508,16 @@
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FAC1FEB5044003B652A /* UATagSelector+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UATagSelector+Internal.h"; sourceTree = "<group>"; };
 		6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNotificationStatus.swift; sourceTree = "<group>"; };
+		6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRemoteDataProviderDelegate.swift; sourceTree = "<group>"; };
+		6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataURLFactory.swift; sourceTree = "<group>"; };
+		6EE49C0B2A0C141800AB1CF4 /* RemoteDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataSource.swift; sourceTree = "<group>"; };
+		6EE49C0F2A0C142F00AB1CF4 /* RemoteDataInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataInfo.swift; sourceTree = "<group>"; };
+		6EE49C132A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAutomationAccess.swift; sourceTree = "<group>"; };
+		6EE49C172A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRemoteDataProviderDelegate.swift; sourceTree = "<group>"; };
+		6EE49C1B2A0D544B00AB1CF4 /* UARemoteData 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 3.xcdatamodel"; sourceTree = "<group>"; };
+		6EE49C1C2A0D9D8000AB1CF4 /* RemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataProvider.swift; sourceTree = "<group>"; };
+		6EE49C212A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataProviderProtocol.swift; sourceTree = "<group>"; };
+		6EE49C252A1446B100AB1CF4 /* RemoteDataTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataTestUtils.swift; sourceTree = "<group>"; };
 		6EE6529022A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageHTMLStyleTest.m; sourceTree = "<group>"; };
 		6EE6529222A7E3B800F7D54D /* Valid-UAInAppMessageHTMLStyle.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageHTMLStyle.plist"; sourceTree = "<group>"; };
 		6EEAE7F724C8F9B30046E311 /* UAScheduleTriggerContextTransformer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAScheduleTriggerContextTransformer+Internal.h"; sourceTree = "<group>"; };
@@ -2509,6 +2547,7 @@
 		6EFAFB8329561F23008AD187 /* ModifyAttributesActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyAttributesActionTest.swift; sourceTree = "<group>"; };
 		6EFAFB8929562474008AD187 /* AddTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTagsActionTest.swift; sourceTree = "<group>"; };
 		6EFAFB8B29562866008AD187 /* RemoveTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveTagsActionTest.swift; sourceTree = "<group>"; };
+		6EFB7B322A14A0EC00133115 /* RemoteDataProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataProviderTest.swift; sourceTree = "<group>"; };
 		6EFD6D4A27272333005B26F1 /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		6EFD6D5B27273257005B26F1 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		6EFD6D6D27290C0B005B26F1 /* FormController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormController.swift; sourceTree = "<group>"; };
@@ -3564,13 +3603,20 @@
 		6E411D0C2538CD6400FEE4E8 /* Remote Data */ = {
 			isa = PBXGroup;
 			children = (
-				6E15B72926CEDBA50099C92D /* RemoteDataManager.swift */,
-				6E15B72C26CF13BC0099C92D /* RemoteDataProvider.swift */,
-				6E15B72026CEC7030099C92D /* RemoteDataPayload.swift */,
-				6E15B70A26CEB4190099C92D /* RemoteDataStorePayload.swift */,
-				6E15B70C26CEB4190099C92D /* RemoteDataStore.swift */,
-				6E698E05267A7D5300654DB2 /* RemoteDataResponse.swift */,
+				6E15B72926CEDBA50099C92D /* RemoteData.swift */,
 				6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */,
+				6EE49C132A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift */,
+				6EE49C0F2A0C142F00AB1CF4 /* RemoteDataInfo.swift */,
+				6E15B72026CEC7030099C92D /* RemoteDataPayload.swift */,
+				6EE49C1C2A0D9D8000AB1CF4 /* RemoteDataProvider.swift */,
+				6EE49C212A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift */,
+				6E15B72C26CF13BC0099C92D /* RemoteDataProviderDelegate.swift */,
+				6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */,
+				6EE49C172A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift */,
+				6EE49C0B2A0C141800AB1CF4 /* RemoteDataSource.swift */,
+				6E15B70C26CEB4190099C92D /* RemoteDataStore.swift */,
+				6E15B70A26CEB4190099C92D /* RemoteDataStorePayload.swift */,
+				6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */,
 			);
 			name = "Remote Data";
 			sourceTree = "<group>";
@@ -4608,7 +4654,7 @@
 				A63A567528F449D8004B8951 /* TestWorkManager.swift */,
 				A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */,
 				6E6363E929DCECA1009C358A /* TestContactSubscriptionListAPIClient.swift */,
-				6E60EF6729DF5106003F7A8D /* TestExtensions.swift */,
+				6EE49C252A1446B100AB1CF4 /* RemoteDataTestUtils.swift */,
 			);
 			name = TestUtils;
 			sourceTree = "<group>";
@@ -4919,9 +4965,13 @@
 		DF17A10E1F57614800DC39E0 /* RemoteData */ = {
 			isa = PBXGroup;
 			children = (
-				32C68D0429424449006BBB29 /* RemoteDataManagerTest.swift */,
+				32C68D0429424449006BBB29 /* RemoteDataTest.swift */,
 				3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */,
 				3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */,
+				6EFB7B322A14A0EC00133115 /* RemoteDataProviderTest.swift */,
+				6E4007132A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift */,
+				6E4007152A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift */,
+				6E4007172A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift */,
 			);
 			name = RemoteData;
 			sourceTree = "<group>";
@@ -5534,8 +5584,9 @@
 		494DD94E1B0EB677009C134E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
 					3CA0E298237CCE2600EE76CF = {
@@ -5974,7 +6025,6 @@
 				6E6ED15F2683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
 				6E87BE0126E283850005D20D /* Airship.swift in Sources */,
 				6E6363E229DCD0CF009C358A /* ContactSubscriptionListClient.swift in Sources */,
-				6E698E06267A7D5300654DB2 /* RemoteDataResponse.swift in Sources */,
 				6E3B32CC27559D8B00B89C7B /* FormInputViewModifier.swift in Sources */,
 				6E46A27F272B68660089CDE3 /* ThomasDelegate.swift in Sources */,
 				6EC7E48226A60C060038CFDD /* ChannelProtocol.swift in Sources */,
@@ -5990,6 +6040,7 @@
 				6E1C9C47271F76E9009EF9EF /* ViewConstraintsViewModifier.swift in Sources */,
 				6E57CE3728DBBD9A00287601 /* LiveActivityRegistry.swift in Sources */,
 				6E96ED0A294135500053CC91 /* EventManager.swift in Sources */,
+				6EE49C102A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */,
 				6E15B71826CEB4190099C92D /* RemoteDataStore.swift in Sources */,
 				6E87BDBD26E01FF40005D20D /* ModuleLoader.swift in Sources */,
 				6E91B4482688335000DDB1A8 /* ScreenTrackingEvent.swift in Sources */,
@@ -6051,7 +6102,7 @@
 				6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */,
 				6E698E3D267BEDC300654DB2 /* AirshipContact.swift in Sources */,
 				A658DE192728498900007672 /* AirshipWebview.swift in Sources */,
-				6E15B72D26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
+				6E15B72D26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */,
 				6E07688829F9D28A0014E2A9 /* AirshipNotificationCenter.swift in Sources */,
 				6E6ED1402683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
@@ -6064,6 +6115,7 @@
 				C02D0B6626C1A3E200F673E6 /* ChannelCapture.swift in Sources */,
 				6E15B74126D43F120099C92D /* NSDictionaryValueTransformer.swift in Sources */,
 				6EFD6D78272A1F26005B26F1 /* NpsController.swift in Sources */,
+				6EE49C222A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
@@ -6079,6 +6131,7 @@
 				6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */,
 				6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
 				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
+				6EE49C0C2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				6E91B4692689327D00DDB1A8 /* CustomEvent.swift in Sources */,
 				6E49D7C628401D2E00C7BB9D /* Badger.swift in Sources */,
 				6E96ECF6293FCE080053CC91 /* EventUploadScheduler.swift in Sources */,
@@ -6111,6 +6164,7 @@
 				6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6E91B45426883B6E00DDB1A8 /* AppForegroundEvent.swift in Sources */,
 				6EF27DE32730E6F900548DA3 /* RadioInputController.swift in Sources */,
+				6EE49C1D2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */,
 				6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
 				A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
 				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
@@ -6120,7 +6174,7 @@
 				6E15B6E426CC779A0099C92D /* RemoteConfigModuleAdapter.swift in Sources */,
 				6E46A27C272B63680089CDE3 /* ThomasEnvironment.swift in Sources */,
 				6E1D8AD126CC5D490049DACB /* RemoteConfig.swift in Sources */,
-				6E15B72A26CEDBA50099C92D /* RemoteDataManager.swift in Sources */,
+				6E15B72A26CEDBA50099C92D /* RemoteData.swift in Sources */,
 				A69C988127E4ECAA0063A101 /* SubscriptionListActionPredicate.swift in Sources */,
 				6ED6ECA726AE05B700973364 /* EmptyAction.swift in Sources */,
 				6E92EC8A284933750038802D /* PromptPermissionAction.swift in Sources */,
@@ -6171,6 +6225,7 @@
 				6EF27DE92730E85700548DA3 /* RadioInput.swift in Sources */,
 				6E49D7B828401D2E00C7BB9D /* Atomic.swift in Sources */,
 				3CA84AB826DE257200A59685 /* Analytics.swift in Sources */,
+				6EE49C142A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */,
 				6E94760F29BA8FA30025F364 /* ContactManager.swift in Sources */,
 				6E49D7B428401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
 				6E71129B2880DACB004942E4 /* ViewState.swift in Sources */,
@@ -6190,6 +6245,7 @@
 				6ED735DA26C73DC5003B0A7D /* Channel.swift in Sources */,
 				6E1BACDB2719ED7D0038399E /* ScrollLayout.swift in Sources */,
 				6E49D7C028401D2E00C7BB9D /* UNNotificationRegistrar.swift in Sources */,
+				6EE49BE12A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */,
 				C00ED4CF26C729390040C5D0 /* URLAllowList.swift in Sources */,
 				6E07689229FB39440014E2A9 /* AirshipUnsafeSendableWrapper.swift in Sources */,
 				6E6ED1492683D8E200A2CBD0 /* LocaleManager.swift in Sources */,
@@ -6204,6 +6260,7 @@
 				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
+				6EE49C082A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				A67EC24B279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */,
 				A684939D273436370021675E /* FontViewModifier.swift in Sources */,
@@ -6249,6 +6306,7 @@
 				6EFD6D752729D862005B26F1 /* FormState.swift in Sources */,
 				6E739D6826B9DB9000BC6F6D /* AttributeMutations.swift in Sources */,
 				6E6ED13B2683A58D00A2CBD0 /* Dispatcher.swift in Sources */,
+				6EE49C182A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				32D6E87B2727F7060077C784 /* Image.swift in Sources */,
 				6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */,
 				6E15B72326CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
@@ -6328,6 +6386,7 @@
 				32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */,
 				32F615A828F708AD0015696D /* TestChannel.swift in Sources */,
 				32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */,
+				6EF13FFD2A16F390009A125D /* AirshipBaseTest.swift in Sources */,
 				6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */,
 				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 			);
@@ -6453,7 +6512,6 @@
 				6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */,
 				6E9B488F2891B57300C905B1 /* CommonSectionView.swift in Sources */,
 				6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */,
-				6E1892CD268D17D200417887 /* MockRemoteDataProvider.swift in Sources */,
 				6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */,
 				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
 				6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */,
@@ -6475,7 +6533,9 @@
 				6E1892D1268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift in Sources */,
 				6E1892D7268E3F1800417887 /* PreferenceCenterConfigTest.swift in Sources */,
 				6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */,
+				6EF13FFE2A16F391009A125D /* AirshipBaseTest.swift in Sources */,
 				6EB5158D28A5AF3100870C5A /* PreferenceCenterThemeObjcTest.swift in Sources */,
+				6EE49C202A0EC51B00AB1CF4 /* MockRemoteDataProvider.swift in Sources */,
 				6EB5159528A5B96300870C5A /* PreferenceThemeLoaderTest.swift in Sources */,
 				6EB515A328A5F1C600870C5A /* PreferenceCenterStateTest.swift in Sources */,
 			);
@@ -6548,15 +6608,14 @@
 				A6722A95281A9EDA0033F54D /* RemoteConfigManager.swift in Sources */,
 				A6722A96281A9EDA0033F54D /* RemoteConfig.swift in Sources */,
 				32F01B0829E83C7A007A2131 /* PagerGestureMap.swift in Sources */,
-				A6722A97281A9EDA0033F54D /* RemoteDataManager.swift in Sources */,
+				A6722A97281A9EDA0033F54D /* RemoteData.swift in Sources */,
 				6E96ECF4293EB7900053CC91 /* AirshipEventData.swift in Sources */,
-				A6722A98281A9EDA0033F54D /* RemoteDataProvider.swift in Sources */,
+				A6722A98281A9EDA0033F54D /* RemoteDataProviderDelegate.swift in Sources */,
 				6E57CE3428DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
 				A6722A99281A9EDA0033F54D /* RemoteDataPayload.swift in Sources */,
 				A6722A9A281A9EDA0033F54D /* RemoteDataStorePayload.swift in Sources */,
 				6E7112A82881D123004942E4 /* StateController.swift in Sources */,
 				A6722A9B281A9EDA0033F54D /* RemoteDataStore.swift in Sources */,
-				A6722A9C281A9EDA0033F54D /* RemoteDataResponse.swift in Sources */,
 				A6722A9D281A9EDA0033F54D /* RemoteDataAPIClient.swift in Sources */,
 				6E07688A29F9D28A0014E2A9 /* AirshipNotificationCenter.swift in Sources */,
 				6E91E43F28EF423400B6F25E /* WorkConditionsMonitor.swift in Sources */,
@@ -6588,8 +6647,10 @@
 				A6722A41281A9EB80033F54D /* AccountEventTemplate.swift in Sources */,
 				A6722A42281A9EB80033F54D /* AppBackgroundEvent.swift in Sources */,
 				A6722A43281A9EB80033F54D /* AppExitEvent.swift in Sources */,
+				6EE49C122A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */,
 				A6722A44281A9EB80033F54D /* AppForegroundEvent.swift in Sources */,
 				A6722A45281A9EB80033F54D /* AppInitEvent.swift in Sources */,
+				6EE49C1F2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */,
 				A6722A46281A9EB80033F54D /* AssociatedIdentifiers.swift in Sources */,
 				A6722A47281A9EB80033F54D /* AssociateIdentifiersEvent.swift in Sources */,
 				A6722A48281A9EB80033F54D /* CircularRegion.swift in Sources */,
@@ -6689,14 +6750,17 @@
 				A6722A0C281A9E820033F54D /* PreferenceDataStore.swift in Sources */,
 				A6722A0D281A9E820033F54D /* UAPrivacyManager.swift in Sources */,
 				A6722A0E281A9E820033F54D /* AirshipTask.swift in Sources */,
+				6EE49C242A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
 				6ECDDE7629B80462009D79DB /* ChannelAuthTokenProvider.swift in Sources */,
 				A6722A10281A9E820033F54D /* TaskManager.swift in Sources */,
 				A6722A11281A9E820033F54D /* TaskRequestOptions.swift in Sources */,
 				A6722A12281A9E820033F54D /* TaskManagerProtocol.swift in Sources */,
 				A6722A14281A9E820033F54D /* ActionRegistry.swift in Sources */,
 				A6722A15281A9E820033F54D /* ActionRunner.swift in Sources */,
+				6EE49C162A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */,
 				A6722A16281A9E820033F54D /* ActivityViewController.swift in Sources */,
 				6ECDDE7B29B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */,
+				6EE49C0A2A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
 				A6722A17281A9E830033F54D /* AddCustomEventAction.swift in Sources */,
 				6E299FD928D13E54001305A7 /* AirshipRequest.swift in Sources */,
 				A6722A18281A9E830033F54D /* AddCustomEventActionPredicate.swift in Sources */,
@@ -6704,6 +6768,7 @@
 				6E82483A29A6E1BE00136EA0 /* AirshipCancellable.swift in Sources */,
 				A6722A19281A9E830033F54D /* AddTagsAction.swift in Sources */,
 				A6722A1A281A9E830033F54D /* AggregateActionResult.swift in Sources */,
+				6EE49C1A2A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				A6722A1B281A9E830033F54D /* AttributesActionPredicate.swift in Sources */,
 				6E75F50729C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
 				A6722A1C281A9E830033F54D /* BlockAction.swift in Sources */,
@@ -6716,6 +6781,7 @@
 				A67229C5281A9E630033F54D /* AirshipImageLoader.swift in Sources */,
 				A67229C6281A9E630033F54D /* AirshipImageProvider.swift in Sources */,
 				A67229C7281A9E630033F54D /* Thomas.swift in Sources */,
+				6EE49BE32A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */,
 				A67229C8281A9E630033F54D /* ThomasDelegate.swift in Sources */,
 				A67229C9281A9E630033F54D /* ThomasViewController.swift in Sources */,
 				A67229CA281A9E630033F54D /* (null) in Sources */,
@@ -6740,6 +6806,7 @@
 				A67229DA281A9E640033F54D /* MarginViewModifier.swift in Sources */,
 				A67229DD281A9E640033F54D /* ViewExtensions.swift in Sources */,
 				6EB5158828A5AA6800870C5A /* SubscriptionListEdit.swift in Sources */,
+				6EE49C0E2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				A67229DE281A9E640033F54D /* TextInput.swift in Sources */,
 				A67229DF281A9E640033F54D /* Checkbox.swift in Sources */,
 				A67229E0281A9E640033F54D /* CheckboxController.swift in Sources */,
@@ -6805,7 +6872,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */,
-				32C68D0529424449006BBB29 /* RemoteDataManagerTest.swift in Sources */,
+				32C68D0529424449006BBB29 /* RemoteDataTest.swift in Sources */,
 				CC64F0E11D8B781C009CEF27 /* UAAddCustomEventActionTest.m in Sources */,
 				6E1767F729B923D100D65F60 /* ChannelAuthTokenAPIClientTest.swift in Sources */,
 				CC64F0DF1D8B781C009CEF27 /* UAActionRunnerTest.m in Sources */,
@@ -6822,6 +6889,8 @@
 				CC64F0E71D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m in Sources */,
 				DFFCF5AF1FCF53100014DE2E /* UAInAppRemoteDataClientTest.m in Sources */,
 				CC64F0DE1D8B781C009CEF27 /* UAActionResultTest.m in Sources */,
+				6E4007182A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift in Sources */,
+				6E4007142A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift in Sources */,
 				6E1767F829B923D100D65F60 /* TestChannelAuthTokenAPIClient.swift in Sources */,
 				6E92ECA1284A79AB0038802D /* PromptPermissionActionTest.swift in Sources */,
 				6E6363EA29DCECA1009C358A /* TestContactSubscriptionListAPIClient.swift in Sources */,
@@ -6830,6 +6899,7 @@
 				6E15B70326CDE40E0099C92D /* RemoteConfigManagerTest.swift in Sources */,
 				CC64F1091D8B781C009CEF27 /* UAJSONMatcherTests.m in Sources */,
 				A62C3354299FD509004DB0DA /* ShareActionTest.swift in Sources */,
+				6EE49C262A1446B100AB1CF4 /* RemoteDataTestUtils.swift in Sources */,
 				6E7DB38E28ECFCED002725F6 /* AirshipJSONTest.swift in Sources */,
 				6E96ED1429417A600053CC91 /* EventStoreTest.swift in Sources */,
 				6E299FD528D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift in Sources */,
@@ -6847,7 +6917,6 @@
 				CC64F1001D8B781C009CEF27 /* UALegacyInAppMessagingTest.m in Sources */,
 				DF702D811FABA38400E7A3DC /* UAVersionMatcherTests.m in Sources */,
 				6EFAFB8429561F23008AD187 /* ModifyAttributesActionTest.swift in Sources */,
-				6E60EF6829DF5106003F7A8D /* TestExtensions.swift in Sources */,
 				6E20BF6724F5C21D005347EC /* UAScheduleTriggerContextTest.m in Sources */,
 				CC64F1181D8B781C009CEF27 /* UAOpenExternalURLActionTest.m in Sources */,
 				6E92ECAC284EA7DB0038802D /* AnalyticsTest.swift in Sources */,
@@ -6915,6 +6984,7 @@
 				6E15B70526CE07180099C92D /* TestRemoteDataProvider.swift in Sources */,
 				6EFAFB7A295525CD008AD187 /* ChannelCaptureTest.swift in Sources */,
 				6E4627CC1E64E0C300A5BF3B /* UAScheduleDelayTests.m in Sources */,
+				6EFB7B342A14A0F400133115 /* RemoteDataProviderTest.swift in Sources */,
 				6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */,
 				6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */,
 				CC64F12D1D8B781C009CEF27 /* UAURLAllowListTest.m in Sources */,
@@ -6946,6 +7016,7 @@
 				3CF5E8C6255E28980074B2A0 /* UAFrequencyLimitManagerTest.m in Sources */,
 				CC64F0EC1D8B781C009CEF27 /* UACancelSchedulesActionTests.m in Sources */,
 				6E6C3F8D27A26992007F55C7 /* CachedValueTest.swift in Sources */,
+				6E4007162A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift in Sources */,
 				DF4E49A5221F487500F306A5 /* UAInAppMessageAssetManagerTest.m in Sources */,
 				DFECEA871E662E25006AA8EA /* UANativeBridgeTest.m in Sources */,
 				991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */,
@@ -6989,7 +7060,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EB1B42626EAA6E2000421B9 /* RemoteDataResponse.swift in Sources */,
 				6E7112A22880DACB004942E4 /* EnableBehaviorModifiers.swift in Sources */,
 				6E12539229A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */,
 				C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */,
@@ -7013,6 +7083,7 @@
 				6E7DB37F28ECDB13002725F6 /* LiveActivityRegistry.swift in Sources */,
 				6E96ED0B294135500053CC91 /* EventManager.swift in Sources */,
 				6EC7E48326A60C060038CFDD /* ChannelProtocol.swift in Sources */,
+				6EE49C112A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */,
 				6E6541E12758976D009676CA /* AirshipProgressView.swift in Sources */,
 				A6A5530B26D548AF002B20F6 /* NativeBridge.swift in Sources */,
 				6E91B4492688335000DDB1A8 /* ScreenTrackingEvent.swift in Sources */,
@@ -7068,7 +7139,7 @@
 				6E91E45628EF423400B6F25E /* AirshipWorkContinuation.swift in Sources */,
 				6E92ECB2284ECE590038802D /* CachedList.swift in Sources */,
 				A658DE2C272AFB0400007672 /* AirshipImageLoader.swift in Sources */,
-				6E15B72E26CF13BC0099C92D /* RemoteDataProvider.swift in Sources */,
+				6E15B72E26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */,
 				6EA5202427D1364E003011CA /* AirshipDateFormatter.swift in Sources */,
 				6E7DB38428ECDC41002725F6 /* LiveActivity.swift in Sources */,
 				6E952924268B812000398B54 /* AccountEventTemplate.swift in Sources */,
@@ -7087,6 +7158,7 @@
 				6E6ED1412683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6EFD6D79272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
+				6EE49C232A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
 				A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */,
 				6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */,
 				6EFD6D8C272A53FB005B26F1 /* PagerController.swift in Sources */,
@@ -7102,6 +7174,7 @@
 				6E510C232721DA86006D9126 /* BorderViewModifier.swift in Sources */,
 				6E510C1E2721DA77006D9126 /* ViewConstraints.swift in Sources */,
 				6E91B44126868C3400DDB1A8 /* RegionEvent.swift in Sources */,
+				6EE49C0D2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				6E49D7C728401D2E00C7BB9D /* Badger.swift in Sources */,
 				32F01B0729E83C7A007A2131 /* PagerGestureMap.swift in Sources */,
 				6E96ECF7293FCE080053CC91 /* EventUploadScheduler.swift in Sources */,
@@ -7134,6 +7207,7 @@
 				6E692B0729E0DA5200D96CCC /* JavaScriptCommand.swift in Sources */,
 				6E152BCB2743235800788402 /* Icons.swift in Sources */,
 				6E510C1C2721DA6A006D9126 /* ViewFactory.swift in Sources */,
+				6EE49C1E2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */,
 				6EF1934028380648005F192A /* AirshipLogHandler.swift in Sources */,
 				6EF27DE42730E6F900548DA3 /* RadioInputController.swift in Sources */,
 				6E6ED1582683DBC300A2CBD0 /* ViewUtils.swift in Sources */,
@@ -7141,7 +7215,7 @@
 				6E698E5A267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6E15B6E526CC779A0099C92D /* RemoteConfigModuleAdapter.swift in Sources */,
 				6E7112A42880DACB004942E4 /* VisibilityViewModifier.swift in Sources */,
-				6E15B72B26CEDBA50099C92D /* RemoteDataManager.swift in Sources */,
+				6E15B72B26CEDBA50099C92D /* RemoteData.swift in Sources */,
 				6EC7E46B269E0E3E0038CFDD /* AudienceUtils.swift in Sources */,
 				6E46A27D272B63680089CDE3 /* ThomasEnvironment.swift in Sources */,
 				6E87BE0426E283850005D20D /* LogLevel.swift in Sources */,
@@ -7194,6 +7268,7 @@
 				6E510C202721DA7C006D9126 /* Label.swift in Sources */,
 				6EF27DEA2730E85700548DA3 /* RadioInput.swift in Sources */,
 				6E91E45328EF423400B6F25E /* AirshipWorkManager.swift in Sources */,
+				6EE49C152A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */,
 				6E49D7B928401D2E00C7BB9D /* Atomic.swift in Sources */,
 				3CA84AB926DE257200A59685 /* Analytics.swift in Sources */,
 				6E71129C2880DACB004942E4 /* ViewState.swift in Sources */,
@@ -7213,6 +7288,7 @@
 				6E6C3F8027A20EEC007F55C7 /* ChannelScope.swift in Sources */,
 				6E49D7C128401D2E00C7BB9D /* UNNotificationRegistrar.swift in Sources */,
 				6EFD6D7227290C16005B26F1 /* TextInput.swift in Sources */,
+				6EE49BE22A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */,
 				6ED735DB26C73DC9003B0A7D /* Channel.swift in Sources */,
 				6E07689329FB39440014E2A9 /* AirshipUnsafeSendableWrapper.swift in Sources */,
 				6E96ECF3293EB7900053CC91 /* AirshipEventData.swift in Sources */,
@@ -7227,6 +7303,7 @@
 				6E692B0829E0DA5200D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
+				6EE49C092A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
 				6E510C242721DA86006D9126 /* ViewConstraintsViewModifier.swift in Sources */,
 				3CC8AA0726BB3C7900405614 /* Push.swift in Sources */,
 				A684939E273436370021675E /* FontViewModifier.swift in Sources */,
@@ -7272,6 +7349,7 @@
 				6EFD6D5D27273257005B26F1 /* Shapes.swift in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* AppBackgroundEvent.swift in Sources */,
 				6EFD6D762729D862005B26F1 /* FormState.swift in Sources */,
+				6EE49C192A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				6E15B72426CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
 				6E664BB226C46BC600A2C8E5 /* FetchDeviceInfoActionPredicate.swift in Sources */,
@@ -7792,11 +7870,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = PGJV57GD94;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -7815,6 +7893,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAutomationSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7836,10 +7915,10 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = PGJV57GD94;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -7857,6 +7936,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAutomationSwift;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -7877,6 +7957,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -7892,7 +7973,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -7908,6 +7988,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
@@ -7921,7 +8002,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -7932,7 +8012,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -7947,6 +8029,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALID_ARCHS = "$(inherited) x86_64";
@@ -7960,7 +8043,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -7974,6 +8059,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
@@ -8051,6 +8137,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -8071,7 +8158,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -8087,6 +8173,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGJV57GD94;
@@ -8103,7 +8190,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = airship.AirshipMessageCenterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -8215,10 +8301,11 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 14.5.0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -8234,6 +8321,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipPreferenceCenter;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -8253,9 +8341,10 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 14.5.0;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -8270,6 +8359,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipPreferenceCenter;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -8288,6 +8378,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = PGJV57GD94;
@@ -8306,7 +8397,6 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -8322,6 +8412,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -8336,7 +8427,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Airship.AirshipPreferenceCenterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -8530,6 +8620,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_TESTABILITY = YES;
@@ -8570,6 +8661,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -8883,10 +8975,11 @@
 		6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				6EE49C1B2A0D544B00AB1CF4 /* UARemoteData 3.xcdatamodel */,
 				6E411CA52538C6A500FEE4E8 /* UARemoteData.xcdatamodel */,
 				6E411CA62538C6A500FEE4E8 /* UARemoteData 2.xcdatamodel */,
 			);
-			currentVersion = 6E411CA62538C6A500FEE4E8 /* UARemoteData 2.xcdatamodel */;
+			currentVersion = 6EE49C1B2A0D544B00AB1CF4 /* UARemoteData 3.xcdatamodel */;
 			path = UARemoteData.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

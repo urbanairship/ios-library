@@ -4,7 +4,24 @@ import Combine
 @testable import AirshipCore
 
 @objc(UATestContact)
-class TestContact: NSObject, AirshipContactProtocol, Component {
+class TestContact: NSObject, InternalAirshipContactProtocol, Component, @unchecked Sendable {
+
+    var contactIDInfo: AirshipCore.ContactIDInfo? = nil
+
+    let contactIDUpdatesSubject = PassthroughSubject<ContactIDInfo, Never>()
+    var contactIDUpdates: AnyPublisher<ContactIDInfo, Never>  {
+        contactIDUpdatesSubject.eraseToAnyPublisher()
+    }
+
+    var contactID: String? = nil
+
+    var authTokenProvider: AuthTokenProvider = TestAuthTokenProvider { id in
+        return ""
+    }
+
+    func getStableContactID() async -> String {
+        return contactID ?? ""
+    }
 
     @objc
     public static let contactConflictEvent = NSNotification.Name(

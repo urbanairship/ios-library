@@ -22,33 +22,34 @@ public class AirshipDebugManager: NSObject, Component {
     private var currentDisplay: Disposable?
     private let pushDataManager: PushDataManager
     private let eventDataManager: EventDataManager
-    private let remoteData: RemoteDataManager
+    private let remoteData: RemoteDataProtocol
     private var eventUpdates: AnyCancellable? = nil
 
     var preferenceFormsPublisher: AnyPublisher<[String], Never> {
         self.remoteData.publisher(types: ["preference_forms"])
             .map { payloads -> [String] in
-                guard
-                    let data = payloads.first?.data["preference_forms"]
-                        as? [[String: Any]]
-                else {
-                    return []
-                }
-                return
-                    data
-                    .compactMap { $0["form"] as? [String: Any] }
-                    .compactMap { $0["id"] as? String }
+                return payloads.compactMap { payload in
+                    if let data = payload.data["preference_forms"] as? [[String: Any]] {
+                        return data.compactMap { $0["form"] as? [String: Any] }
+                            .compactMap { $0["id"] as? String }
+                    } else {
+                        return []
+                    }
+                }.reduce([], +)
             }
+            .removeDuplicates()
             .eraseToAnyPublisher()
     }
 
     var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never>
     {
         self.remoteData.publisher(types: ["in_app_messages"])
-            .compactMap { payloads -> [[String: AnyHashable]] in
-                return payloads.first?.data["in_app_messages"]
-                    as? [[String: AnyHashable]] ?? []
+            .map { payloads -> [[String: AnyHashable]] in
+                return payloads.compactMap { payload in
+                    payload.data["in_app_messages"] as? [[String: AnyHashable]]
+                }.reduce([], +)
             }
+            .removeDuplicates()
             .eraseToAnyPublisher()
     }
 
@@ -68,7 +69,7 @@ public class AirshipDebugManager: NSObject, Component {
     init(
         config: RuntimeConfig,
         analytics: AirshipAnalytics,
-        remoteData: RemoteDataManager
+        remoteData: RemoteDataProtocol
     ) {
         self.remoteData = remoteData
         self.pushDataManager = PushDataManager(appKey: config.appKey)

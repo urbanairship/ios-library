@@ -44,7 +44,7 @@ public class PreferenceCenter: NSObject, Component {
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
-    private let remoteDataProvider: RemoteDataProvider
+    private let remoteData: RemoteDataProtocol
     private var currentDisplay: Disposable?
 
     /**
@@ -76,11 +76,11 @@ public class PreferenceCenter: NSObject, Component {
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
-        remoteDataProvider: RemoteDataProvider
+        remoteData: RemoteDataProtocol
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
-        self.remoteDataProvider = remoteDataProvider
+        self.remoteData = remoteData
         self.theme = PreferenceCenterThemeLoader.defaultPlist()
         self.disableHelper = ComponentDisableHelper(
             dataStore: dataStore,
@@ -130,99 +130,42 @@ public class PreferenceCenter: NSObject, Component {
     }
 
     /**
-     * Returns the configuration of the Preference Center with the given ID trough a callback method.
-     * - Parameters:
-     *   - preferenceCenterID: The preference center ID.
-     *   - completionHandler: The completion handler that will receive the requested PreferenceCenterConfig
-     */
-    @objc(configForPreferenceCenterID:completionHandler:)
-    @discardableResult
-    public func config(
-        preferenceCenterID: String,
-        completionHandler: @escaping (PreferenceCenterConfig?) -> Void
-    ) -> Disposable {
-        var disposable: Disposable!
-        disposable = self.remoteDataProvider.subscribe(types: [
-            PreferenceCenter.payloadType
-        ]) { payloads in
-
-            guard
-                let preferences =
-                    payloads.first?.data[PreferenceCenter.preferenceFormsKey]
-                    as? [[AnyHashable: Any]]
-            else {
-                disposable.dispose()
-                completionHandler(nil)
-                return
-            }
-
-            let responses: [PrefrenceCenterResponse] = preferences.compactMap {
-                do {
-                    return try PreferenceCenterDecoder.decodeConfig(object: $0)
-                } catch {
-                    AirshipLogger.error(
-                        "Failed to parse preference center config \(error)"
-                    )
-                    return nil
-                }
-            }
-
-            let config = responses.first {
-                $0.config.identifier == preferenceCenterID
-            }?
-            .config
-            disposable.dispose()
-            completionHandler(config)
-        }
-
-        return disposable
-    }
-
-    /**
      * Returns the configuration of the Preference Center with the given ID.
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
      */
-    public func config(preferenceCenterID: String) async throws
-        -> PreferenceCenterConfig
-    {
-        return try await withCheckedThrowingContinuation { continuation in
-            self.config(preferenceCenterID: preferenceCenterID) { config in
-                guard let config = config else {
-                    continuation.resume(
-                        throwing: AirshipErrors.error("Config not available")
-                    )
-                    return
-                }
-
-                continuation.resume(returning: config)
-            }
-        }
+    @objc
+    public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
+        let data = try await jsonConfig(preferenceCenterID: preferenceCenterID)
+        return try PreferenceCenterDecoder.decodeConfig(data: data)
     }
 
     /**
-     * Returns the raw json of the Preference Center configuration with the given ID through a callback method.
+     * Returns the configuration of the Preference Center as JSON data with the given ID.
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
-     *   - completionHandler: The completion handler that will receive the requested PreferenceCenterConfig
      */
-    @objc(jsonConfigForPreferenceCenterID:completionHandler:)
-    @discardableResult
-    public func jsonConfig(
-        preferenceCenterID: String,
-        completionHandler: @escaping ([String: Any]) -> Void
-    ) -> Disposable {
-        return self.remoteDataProvider.subscribe(types: [
-            PreferenceCenter.payloadType
-        ]) { payloads in
-            let data =
-                payloads.first?.data["preference_forms"] as? [[String: Any]]
-            let config = data?
-                .compactMap { $0["form"] as? [String: Any] }
+    @objc
+    public func jsonConfig(preferenceCenterID: String) async throws -> Data {
+        await remoteData.refresh()
+
+        let payloads = await self.remoteData.payloads(types: ["preference_forms"])
+        for payload in payloads {
+            let config = payload.data["preference_forms"] as? [[AnyHashable: Any]]
+
+            let form = config?
+                .compactMap { $0["form"] as? [AnyHashable: Any] }
                 .first(where: { $0["id"] as? String == preferenceCenterID })
 
-            completionHandler(config ?? [:])
+            if let form = form {
+                return try JSONSerialization.data(
+                    withJSONObject: form,
+                    options: []
+                )
+            }
         }
+
+        throw AirshipErrors.error("Preference center not found \(preferenceCenterID)")
     }
 
     // NOTE: For internal use only. :nodoc:

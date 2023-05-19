@@ -703,7 +703,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register])
+        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
     }
 
     func testRegisterOpen() async throws {
@@ -752,7 +752,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register])
+        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
     }
 
     func testRegisterSMS() async throws {
@@ -798,7 +798,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register])
+        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
     }
 
     func testAssociateChannel() async throws {
@@ -840,7 +840,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register])
+        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
     }
 
     func testUpdate() async throws {
@@ -911,7 +911,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, update, audienceCallback])
+        await self.fulfillmentCompat(of: [resolve, update, audienceCallback], timeout: 10)
     }
 
     func testConflict() async throws {

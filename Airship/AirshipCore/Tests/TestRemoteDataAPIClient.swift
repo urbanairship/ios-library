@@ -3,34 +3,20 @@ import Foundation
 @testable
 import AirshipCore
 
-class TestRemoteDataAPIClient: RemoteDataAPIClientProtocol {
-    
-    @objc
-    public var metdataCallback: ((Locale, String?) -> [AnyHashable: String])?
-    
-    public var fetchData:
-    (
-        (Locale, String?) async throws -> AirshipHTTPResponse<RemoteDataResponse>
+final class TestRemoteDataAPIClient: RemoteDataAPIClientProtocol, @unchecked Sendable {
+
+    public var fetchData: (
+        (URL, AirshipRequestAuth, String?, RemoteDataInfo) async throws -> AirshipHTTPResponse<RemoteDataResult>
     )?
-    
-    public func fetchRemoteData(
-        locale: Locale,
-        randomValue: Int,
-        lastModified: String?
-    ) async throws -> AirshipHTTPResponse<RemoteDataResponse> {
-        guard let block = fetchData else {
-            throw AirshipErrors.error("Request block not set")
-        }
-        
-        return try await block(locale, lastModified)
-    }
-    
-    public func metadata(
-        locale: Locale,
-        randomValue: Int,
-        lastModified: String?
-    ) -> [AnyHashable: Any]
-    {
-        return self.metdataCallback?(locale, lastModified) ?? [:]
+
+    public var lastModified: String? = nil
+
+    func fetchRemoteData(
+        url: URL,
+        auth: AirshipRequestAuth,
+        lastModified: String?,
+        remoteDataInfoBlock: @escaping @Sendable (String?) throws -> AirshipCore.RemoteDataInfo
+    ) async throws -> AirshipCore.AirshipHTTPResponse<AirshipCore.RemoteDataResult> {
+        try await fetchData!(url, auth, lastModified, try remoteDataInfoBlock(self.lastModified))
     }
 }

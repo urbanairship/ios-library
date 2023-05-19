@@ -221,7 +221,7 @@ class EventTest: XCTestCase {
     }
 }
 
-private class EventTestPush: PushProtocol {
+private final class EventTestPush: PushProtocol, @unchecked Sendable {
     var notificationStatusPublisher: AnyPublisher<AirshipCore.AirshipNotificationStatus, Never> {
         fatalError("not implemented")
     }

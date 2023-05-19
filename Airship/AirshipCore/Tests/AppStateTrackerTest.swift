@@ -25,7 +25,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .didBecomeActive)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -36,7 +36,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .willEnterForeground)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -47,7 +47,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .didEnterBackground)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -58,7 +58,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .willResignActive)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
 
@@ -70,7 +70,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .willTerminate)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
 
@@ -85,7 +85,7 @@ final class AppStateTrackerTest: XCTestCase {
         adapter.dispatchEvent(event: .didEnterBackground)
         adapter.dispatchEvent(event: .didBecomeActive)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -99,7 +99,7 @@ final class AppStateTrackerTest: XCTestCase {
         adapter.dispatchEvent(event: .didBecomeActive)
         adapter.dispatchEvent(event: .didEnterBackground)
 
-        self.wait(for: expectations, timeout: 1.0)
+        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
     }
 
     private func expectNotification(name: Notification.Name) -> XCTestExpectation {

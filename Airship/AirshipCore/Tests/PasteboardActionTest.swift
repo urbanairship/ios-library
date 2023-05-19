@@ -38,7 +38,7 @@ final class PasteboardActionTest: XCTestCase {
             XCTAssertTrue(self.action.acceptsArguments(validArgs))
 
             let invalidArgs = ActionArguments(
-                value: [[:]],
+                value: nil,
                 with: situation
             )
             XCTAssertFalse(self.action.acceptsArguments(invalidArgs))

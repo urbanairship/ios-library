@@ -2,7 +2,7 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestChannel: NSObject, BaseAirshipChannelProtocol, Component {
+class TestChannel: NSObject, BaseAirshipChannelProtocol, Component, @unchecked Sendable {
 
     public var isComponentEnabled: Bool = true
 

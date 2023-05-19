@@ -493,7 +493,7 @@ class ValidEvent: NSObject, Event {
     }
 }
 
-class TestEventManager: EventManagerProtocol {
+final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
     var uploadsEnabled: Bool = false
 
     var addEventCallabck: ((AirshipEventData) -> Void)?
@@ -537,7 +537,7 @@ class TestEventManager: EventManagerProtocol {
 }
 
 
-class TestLifecyleEventFactory: LifeCycleEventFactoryProtocol {
+final class TestLifecyleEventFactory: LifeCycleEventFactoryProtocol, @unchecked Sendable {
     func make(type: LifeCycleEventType) -> Event {
         return TestLifeCycleEvent(type: type)
     }

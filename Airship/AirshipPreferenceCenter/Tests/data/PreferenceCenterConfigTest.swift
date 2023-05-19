@@ -9,11 +9,7 @@ class PreferenceCenterDecoderTest: XCTestCase {
 
     func testForm() throws {
         let form = """
-            {
-                "created": "2017-10-10T12:13:14.023",
-                "last_updated": "2017-10-10T12:13:14.023",
-                "form_id": "031de218-9fff-44d4-b348-de4b724bb924",
-                "form": {
+                {
                     "id": "preference_center_1",
                     "display": {
                         "name": "Notification Preferences"
@@ -89,7 +85,6 @@ class PreferenceCenterDecoderTest: XCTestCase {
                         }
                     ]
                 }
-            }
             """
 
         let expected = PreferenceCenterConfig(
@@ -184,6 +179,6 @@ class PreferenceCenterDecoderTest: XCTestCase {
         let response = try! PreferenceCenterDecoder.decodeConfig(
             data: form.data(using: .utf8)!
         )
-        XCTAssertEqual(expected, response.config)
+        XCTAssertEqual(expected, response)
     }
 }

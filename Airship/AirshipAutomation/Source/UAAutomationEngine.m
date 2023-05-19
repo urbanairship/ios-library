@@ -1168,59 +1168,77 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     }
 
     // Execution state must be read and written on the context's private queue
-    __block UAScheduleState nextExecutionState = UAScheduleStateWaitingScheduleConditions;
+    __block UAAutomationScheduleReadyResult readyResult = UAAutomationScheduleReadyResultNotReady;
 
-    // Conditions and action executions must be run on the main queue.
+
     UA_WEAKIFY(self)
-    [self.dispatcher doSync:^{
+
+    // Precheck
+    UASemaphore *semaphore = [[UASemaphore alloc] init];
+    [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
 
         if (self.paused) {
+            [semaphore signal];
             return;
         }
 
-        if (![self isScheduleConditionsSatisfied:schedule.delay]) {
-            UA_LDEBUG(@"Schedule %@ is not ready to execute. Conditions not satisfied", schedule.identifier);
-            return;
-        }
+        [self.delegate isScheduleReadyPrecheck:schedule completionHandler:^(UAAutomationScheduleReadyResult result) {
+            readyResult = result;
+            [semaphore signal];
+        }];
+    }];
 
-        id<UAAutomationEngineDelegate> delegate = self.delegate;
+    [semaphore wait];
 
-        switch ([delegate isScheduleReadyToExecute:schedule]) {
-            case UAAutomationScheduleReadyResultInvalidate: {
-                UA_LTRACE(@"Attempted to execute an invalid schedule %@", schedule.identifier);
-                nextExecutionState = UAScheduleStatePreparingSchedule;
-                [self prepareScheduleWithIdentifier:schedule.identifier];
-                break;
+    // Conditions and action executions must be run on the main queue.
+    if (readyResult == UAAutomationScheduleReadyResultContinue) {
+        readyResult = UAAutomationScheduleReadyResultNotReady;
+        [self.dispatcher doSync:^{
+            UA_STRONGIFY(self)
+
+
+            if (![self isScheduleConditionsSatisfied:schedule.delay]) {
+                UA_LDEBUG(@"Schedule %@ is not ready to execute. Conditions not satisfied", schedule.identifier);
+                return;
             }
-            case UAAutomationScheduleReadyResultContinue: {
-                UA_LTRACE(@"Executing schedule %@", schedule.identifier);
-                [delegate executeSchedule:schedule completionHandler:^{
+
+            readyResult = [self.delegate isScheduleReadyToExecute:schedule];
+
+            if (readyResult == UAAutomationScheduleReadyResultContinue) {
+                [self.delegate executeSchedule:schedule completionHandler:^{
                     UA_STRONGIFY(self)
                     [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
                         UA_STRONGIFY(self)
                         [self scheduleFinishedExecuting:scheduleData];
                     }];
                 }];
+            }
+        }];
+    }
 
-                nextExecutionState = UAScheduleStateExecuting;
-                break;
-            }
-            case UAAutomationScheduleReadyResultNotReady: {
-                UA_LTRACE(@"Schedule %@ not ready for execution", schedule.identifier);
-                break;
-            }
-            case UAAutomationScheduleReadyResultSkip: {
-                UA_LTRACE(@"Schedule %@ not ready for execution, resetting to idle", schedule.identifier);
-                nextExecutionState = UAScheduleStateIdle;
-                break;
-            }
+    switch (readyResult) {
+        case UAAutomationScheduleReadyResultInvalidate: {
+            UA_LTRACE(@"Attempted to execute an invalid schedule %@", schedule.identifier);
+            [scheduleData updateState:UAScheduleStatePreparingSchedule];
+            [self prepareScheduleWithIdentifier:schedule.identifier];
+            break;
         }
-    }];
 
-    // Update execution state if necessary
-    if (nextExecutionState != UAScheduleStateWaitingScheduleConditions) {
-        [scheduleData updateState:nextExecutionState];
+        case UAAutomationScheduleReadyResultContinue: {
+            UA_LTRACE(@"Schedule executing schedule %@", schedule.identifier);
+            [scheduleData updateState:UAScheduleStateExecuting];
+            break;
+        }
+        case UAAutomationScheduleReadyResultNotReady: {
+            UA_LTRACE(@"Schedule %@ not ready for execution", schedule.identifier);
+            break;
+        }
+        case UAAutomationScheduleReadyResultSkip: {
+            UA_LTRACE(@"Schedule %@ not ready for execution, resetting to idle", schedule.identifier);
+            [scheduleData updateState:UAScheduleStateIdle];
+            break;
+        }
     }
 }
 

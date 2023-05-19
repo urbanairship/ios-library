@@ -13,7 +13,8 @@ class TestWorkManager: AirshipWorkManagerProtocol {
     var rateLimits: [String: RateLimit] = [:]
     var workRequests: [AirshipWorkRequest] = []
     private var workHandler: ((AirshipWorkRequest) async throws -> AirshipWorkResult?)? = nil
-    
+
+    var autoLaunchRequests: Bool = false
     var workers: [Worker] = []
     func registerWorker(
         _ workID: String,
@@ -40,6 +41,12 @@ class TestWorkManager: AirshipWorkManagerProtocol {
 
     func dispatchWorkRequest(_ request: AirshipWorkRequest) {
         workRequests.append(request)
+        if (autoLaunchRequests) {
+            Task {
+                try await workHandler?(request)
+            }
+        }
+
     }
     
     func launchTask(request: AirshipWorkRequest) async throws -> AirshipWorkResult? {

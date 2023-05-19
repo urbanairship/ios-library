@@ -56,13 +56,6 @@
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
 
-    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(void) =  (__bridge void (^)(void))arg;
-        callback();
-    }] attemptRemoteDataRefreshWithForce:NO completionHandler:OCMOCK_ANY];
-
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:2];
@@ -114,8 +107,12 @@
         builder.frequencyConstraintIDs = @[@"barConstraint", @"fooConstraint"];
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -157,8 +154,12 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -204,8 +205,12 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -246,8 +251,12 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -272,8 +281,13 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -303,8 +317,12 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -351,8 +369,6 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -369,6 +385,13 @@
      campaigns:@{@"some": @"campaigns object"}
      reportingContext:@{}
      completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
@@ -423,8 +446,12 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
@@ -487,8 +514,12 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager reject] prepareMessage:OCMOCK_ANY scheduleID:OCMOCK_ANY campaigns:OCMOCK_ANY reportingContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -536,6 +567,7 @@
         builder.identifier = @"schedule ID";
     }];
 
+    
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAAutomationAudienceOverrides *);
@@ -543,8 +575,12 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -589,6 +625,13 @@
         builder.identifier = @"schedule ID";
     }];
 
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAAutomationAudienceOverrides *);
@@ -596,20 +639,12 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
-
     [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(void);
-        [invocation getArgument:&block atIndex:2];
-        block();
-    }] notifyOnUpdate:OCMOCK_ANY];
-
-    [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(void);
-        [invocation getArgument:&block atIndex:3];
-        block();
-    }] attemptRemoteDataRefreshWithForce:YES completionHandler:OCMOCK_ANY];
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(void) =  (__bridge void (^)(void))arg;
+        callback();
+    }] invalidateAndRefreshSchedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -662,8 +697,6 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -714,8 +747,6 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -767,8 +798,6 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -819,8 +848,6 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -876,8 +903,12 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -931,8 +962,13 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -963,14 +999,12 @@
 - (void)testPrepareScheduleInvalid {
     UASchedule *schedule = [[UASchedule alloc] init];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(NO)] isScheduleUpToDate:schedule];
-
-    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
-        void (^block)(void);
-        [invocation getArgument:&block atIndex:2];
-        block();
-    }] notifyOnUpdate:OCMOCK_ANY];
+    [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] refreshAndCheckScheduleUpToDate:schedule completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -989,8 +1023,12 @@
         }];
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1028,8 +1066,12 @@
         }];
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1066,8 +1108,13 @@
         }];
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1104,8 +1151,12 @@
         }];
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1140,8 +1191,6 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
 
@@ -1154,8 +1203,14 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1189,8 +1244,12 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
@@ -1235,8 +1294,6 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1253,8 +1310,6 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1273,8 +1328,6 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultNotReady)] isReadyToDisplay:@"schedule ID"];
 
@@ -1291,9 +1344,6 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
-
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultNotReady)] isReadyToDisplay:@"schedule ID"];
 
     UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
@@ -1309,12 +1359,24 @@
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(NO)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] isScheduleUpToDate:schedule completionHandler:OCMOCK_ANY];
+
     [[self.mockInAppMessageManager expect] scheduleExecutionAborted:schedule.identifier];
 
-    UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
-    XCTAssertEqual(UAAutomationScheduleReadyResultInvalidate, result);
+    XCTestExpectation *precheckFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate isScheduleReadyPrecheck:schedule completionHandler:^(UAAutomationScheduleReadyResult result) {
+        XCTAssertEqual(UAAutomationScheduleReadyResultInvalidate, result);
+        [precheckFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [self.engineDelegate isScheduleReadyToExecute:schedule];
     [self.mockInAppMessageManager verify];
 }
 
@@ -1323,8 +1385,6 @@
 
     UASchedule *schedule = [[UASchedule alloc] init];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
     XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, result);
@@ -1342,8 +1402,13 @@
         builder.reportingContext = @{@"something": @"something"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1396,8 +1461,12 @@
         builder.campaigns = @{@"some": @"campaigns object"};
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1485,8 +1554,6 @@
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1500,6 +1567,13 @@
             return YES;
         }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -1568,8 +1642,13 @@
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1629,8 +1708,6 @@
         builder.identifier = @"schedule ID";
     }];
 
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(void) = obj;
@@ -1654,9 +1731,6 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
     }];
-
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isRemoteSchedule:schedule];
-    [[[self.mockRemoteDataClient stub] andReturnValue:@(YES)] isScheduleUpToDate:schedule];
 
     [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(void) = obj;
@@ -1837,7 +1911,7 @@
     [self.mockAutomationEngine verify];
 
     // test enable
-    [[self.mockAutomationEngine expect] resume];
+    [(UAAutomationEngine *)[self.mockAutomationEngine expect] resume];
     self.inAppAutomation.componentEnabled = YES;
 
     // verify
@@ -1858,7 +1932,7 @@
     [self.mockRemoteDataClient verify];
 
     // test enable
-    [[self.mockAutomationEngine expect] resume];
+    [(UAAutomationEngine *) [self.mockAutomationEngine expect] resume];
     [[self.mockRemoteDataClient expect] subscribe];
 
     self.privacyManager.enabledFeatures = UAFeaturesInAppAutomation;

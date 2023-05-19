@@ -85,7 +85,7 @@ class FormStateTest: XCTestCase {
                     "some-toggle-input": [
                         "type": "toggle",
                         "value": true,
-                    ],
+                    ] as [String: Any],
                     "some-score-input": [
                         "type": "score",
                         "value": 7,
@@ -103,7 +103,7 @@ class FormStateTest: XCTestCase {
                                 "value": "some child text",
                             ]
                         ],
-                    ],
+                    ] as [String : Any],
                     "some-child-nps": [
                         "type": "nps",
                         "score_id": "some-child-score",
@@ -112,11 +112,11 @@ class FormStateTest: XCTestCase {
                             "some-child-score": [
                                 "type": "score",
                                 "value": 8,
-                            ]
+                            ] as [String : Any]
                         ],
                     ],
                 ],
-            ]
+            ] as [String : Any]
         ]
 
         XCTAssertEqual(

@@ -80,7 +80,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     }
 }
 
-class TestPush: InternalPushProtocol, PushProtocol {
+final class TestPush: InternalPushProtocol, PushProtocol, @unchecked Sendable {
 
     let notificationStatusSubject: PassthroughSubject<AirshipNotificationStatus, Never> = PassthroughSubject()
 
@@ -205,7 +205,7 @@ class TestPushableComponent: PushableComponent {
     }
 }
 
-class InternalTestAnalytics: InternalAnalyticsProtocol {
+final class InternalTestAnalytics: InternalAnalyticsProtocol, @unchecked Sendable {
     func addHeaderProvider(_ headerProvider: @escaping () async -> [String : String]) {
 
     }

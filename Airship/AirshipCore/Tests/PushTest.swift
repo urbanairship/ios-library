@@ -81,7 +81,7 @@ class PushTest: XCTestCase {
         completed.fulfill()
 
 
-        self.wait(for: [completed], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
         XCTAssertTrue(self.push.userPromptedForNotifications)
     }
 
@@ -97,7 +97,7 @@ class PushTest: XCTestCase {
         completed.fulfill()
 
 
-        self.wait(for: [completed], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
         XCTAssertTrue(self.push.userPromptedForNotifications)
     }
 
@@ -112,7 +112,7 @@ class PushTest: XCTestCase {
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
         completed.fulfill()
 
-        self.wait(for: [completed], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
         XCTAssertFalse(self.push.userPromptedForNotifications)
     }
 
@@ -127,7 +127,7 @@ class PushTest: XCTestCase {
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
         completed.fulfill()
 
-        self.wait(for: [completed], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
         XCTAssertFalse(self.push.userPromptedForNotifications)
     }
 
@@ -144,7 +144,7 @@ class PushTest: XCTestCase {
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
         completed.fulfill()
 
-        self.wait(for: [completed], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
 
         self.notificationRegistrar.onCheckStatus = {
             return(.notDetermined, [])
@@ -155,7 +155,7 @@ class PushTest: XCTestCase {
         completedAgain.fulfill()
 
 
-        self.wait(for: [completedAgain], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completedAgain], timeout: 10.0)
 
         XCTAssertTrue(self.push.userPromptedForNotifications)
     }
@@ -186,7 +186,7 @@ class PushTest: XCTestCase {
 
         self.push.userPushNotificationsEnabled = true
         await self.serialQueue.waitForCurrentOperations()
-        self.wait(for: [permissionsManagerCalled, updated], timeout: 20.0)
+        await self.fulfillmentCompat(of: [permissionsManagerCalled, updated], timeout: 20.0)
     }
 
     func testUserPushNotificationsDisabled() async throws {
@@ -200,7 +200,7 @@ class PushTest: XCTestCase {
         }
 
         self.push.userPushNotificationsEnabled = true
-        self.wait(for: [enabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [enabled], timeout: 10.0)
 
         let disabled = self.expectation(description: "Registration updated")
         self.notificationRegistrar.onUpdateRegistration = {
@@ -212,7 +212,7 @@ class PushTest: XCTestCase {
         }
 
         self.push.userPushNotificationsEnabled = false
-        self.wait(for: [disabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [disabled], timeout: 10.0)
     }
 
     /// Test that we always ephemeral when disabling notifications
@@ -229,7 +229,7 @@ class PushTest: XCTestCase {
 
         self.push.userPushNotificationsEnabled = true
         await self.serialQueue.waitForCurrentOperations()
-        self.wait(for: [enabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [enabled], timeout: 10.0)
 
         let disabled = self.expectation(description: "Registration updated")
         self.notificationRegistrar.onUpdateRegistration = { options, skipIfEphemeral in
@@ -240,7 +240,7 @@ class PushTest: XCTestCase {
 
         self.push.userPushNotificationsEnabled = false
         await self.serialQueue.waitForCurrentOperations()
-        self.wait(for: [disabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [disabled], timeout: 10.0)
     }
 
     func testEnableUserNotificationsAuthorized() async throws {
@@ -274,7 +274,7 @@ class PushTest: XCTestCase {
         let success = await self.push.enableUserPushNotifications()
         XCTAssertTrue(success)
 
-        self.wait(for: [permissionsManagerCalled, updated], timeout: 10.0)
+        await self.fulfillmentCompat(of: [permissionsManagerCalled, updated], timeout: 10.0)
     }
 
     func testEnableUserNotificationsDenied() async throws {
@@ -287,7 +287,7 @@ class PushTest: XCTestCase {
         enabled.fulfill()
         XCTAssertFalse(success)
 
-        self.wait(for: [enabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [enabled], timeout: 10.0)
     }
 
     func testSkipWhenEphemeralDisabled() async throws {
@@ -307,7 +307,7 @@ class PushTest: XCTestCase {
 
         self.push.userPushNotificationsEnabled = true
 
-        self.wait(for: [updated], timeout: 10.0)
+        await self.fulfillmentCompat(of: [updated], timeout: 10.0)
     }
 
     @MainActor
@@ -421,7 +421,7 @@ class PushTest: XCTestCase {
         enabled.fulfill()
         XCTAssertEqual(.granted, status)
 
-        self.wait(for: [enabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [enabled], timeout: 10.0)
 
         let payload = await self.channel.channelPayload
 
@@ -521,7 +521,7 @@ class PushTest: XCTestCase {
         )
         enabled.fulfill()
         XCTAssertEqual(.granted, status)
-        self.wait(for: [enabled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [enabled], timeout: 10.0)
 
         let expected = [
             "X-UA-Channel-Opted-In": "true",
@@ -628,7 +628,7 @@ class PushTest: XCTestCase {
         await self.serialQueue.waitForCurrentOperations()
 
         XCTAssertEqual(.authorized, self.push.authorizationStatus)
-        let settings = await self.push.authorizedNotificationSettings
+        let settings = self.push.authorizedNotificationSettings
         XCTAssertEqual([.alert], settings)
         XCTAssertTrue(self.push.userPromptedForNotifications)
     }
@@ -662,7 +662,7 @@ class PushTest: XCTestCase {
 
 
         self.push.userPushNotificationsEnabled = true
-        self.wait(for: [completed], timeout: 10.0)
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
 
         XCTAssertEqual(
             [.alert, .badge, .sound, .provisional],
@@ -686,7 +686,7 @@ class PushTest: XCTestCase {
         }
 
         self.push.isComponentEnabled = true
-        self.wait(for: [permissionsManagerCalled], timeout: 10.0)
+        await self.fulfillmentCompat(of: [permissionsManagerCalled], timeout: 10.0)
     }
 
     @MainActor
@@ -972,7 +972,7 @@ class PushTest: XCTestCase {
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
         completionHandlerCalled.fulfill()
 
-        self.waitForExpectations(timeout: 10)
+        await self.fulfillmentCompat(of: [updated, completionHandlerCalled], timeout: 10)
     }
 
     @MainActor
@@ -1174,7 +1174,7 @@ class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
     }
 }
 
-class TestNotificationRegistrar: NotificationRegistrar {
+final class TestNotificationRegistrar: NotificationRegistrar, @unchecked Sendable {
     var categories: Set<UNNotificationCategory>?
     var onCheckStatus:
         (() -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings))?
@@ -1204,7 +1204,7 @@ class TestNotificationRegistrar: NotificationRegistrar {
     }
 }
 
-class TestAPNSRegistrar: APNSRegistrar {
+final class TestAPNSRegistrar: APNSRegistrar, @unchecked Sendable {
     var isRegisteredForRemoteNotifications: Bool = false
     var isBackgroundRefreshStatusAvailable: Bool = false
     var isRemoteNotificationBackgroundModeEnabled: Bool = false
@@ -1215,6 +1215,6 @@ class TestAPNSRegistrar: APNSRegistrar {
     }
 }
 
-class TestBadger: Badger {
+final class TestBadger: Badger, @unchecked Sendable {
     var applicationIconBadgeNumber: Int = 0
 }

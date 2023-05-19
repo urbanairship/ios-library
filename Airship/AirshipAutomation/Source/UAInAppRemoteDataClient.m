@@ -20,12 +20,26 @@
 #else
 @import AirshipCore;
 #endif
-static NSString * const UAInAppMessagesLastPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
+
+
+// app
+static NSString * const UAInAppMessagesLastAppPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp";
+static NSString * const UAInAppMessagesLastAppPayloadInfoKey = @"UAInAppRemoteDataClient.LastRemoteDataInfo";
+static NSString * const UAInAppMessagesLastAppSDKVersionKey = @"UAInAppRemoteDataClient.LastSDKVersion";
+
+// Old
 static NSString * const UAInAppMessagesLastPayloadMetadataKey = @"UAInAppRemoteDataClient.LastPayloadMetadata";
-static NSString * const UAInAppMessagesLastSDKVersionKey = @"UAInAppRemoteDataClient.LastSDKVersion";
+
+
+// contact
+static NSString * const UAInAppMessagesLastContactPayloadTimeStampKey = @"UAInAppRemoteDataClient.LastPayloadTimeStamp.Contact";
+static NSString * const UAInAppMessagesLastContactPayloadInfoKey = @"UAInAppRemoteDataClient.LasteRemoteDataInfo.Contact";
+static NSString * const UAInAppMessagesLastContactSDKVersionKey = @"UAInAppRemoteDataClient.LastSDKVersion.Contact";
+
 
 static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
+static NSString * const UAInAppRemoteDataClientInfoKey = @"com.urbanairship.iaa.REMOTE_DATA_INFO";
 
 static NSString * const UAFrequencyConstraintsKey = @"frequency_constraints";
 static NSString * const UAFrequencyConstraintPeriodKey = @"period";
@@ -68,8 +82,8 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(atomic, strong) UADisposable *remoteDataSubscription;
-@property(nonatomic, strong) NSOperationQueue *operationQueue;
-@property(nonatomic, strong) id<UARemoteDataProvider> remoteDataProvider;
+@property(nonatomic, strong) UADispatcher *schedulerDispatcher;
+@property(nonatomic, strong) UARemoteDataAutomationAccess *remoteData;
 @property(nonatomic, copy) NSDate *scheduleNewUserCutOffTime;
 @property(nonatomic, copy) NSDictionary *lastPayloadMetadata;
 @property(nonatomic, strong) UAChannel *channel;
@@ -79,17 +93,17 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
 @implementation UAInAppRemoteDataClient
 
-- (instancetype)initWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                 dataStore:(UAPreferenceDataStore *)dataStore
-                                   channel:(UAChannel *)channel
-                            operationQueue:(NSOperationQueue *)operationQueue
-                                SDKVersion:(NSString *)SDKVersion {
+- (instancetype)initWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
+                         dataStore:(UAPreferenceDataStore *)dataStore
+                           channel:(UAChannel *)channel
+               schedulerDispatcher:(UADispatcher *)schedulerDispatcher
+                        SDKVersion:(NSString *)SDKVersion {
 
     self = [super init];
 
     if (self) {
-        self.operationQueue = operationQueue;
-        self.remoteDataProvider = remoteDataProvider;
+        self.schedulerDispatcher = schedulerDispatcher;
+        self.remoteData = remoteData;
         self.dataStore = dataStore;
         self.channel = channel;
         self.SDKVersion = SDKVersion;
@@ -98,31 +112,29 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return self;
 }
 
-+ (instancetype)clientWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                     channel:(UAChannel *)channel {
++ (instancetype)clientWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                             channel:(UAChannel *)channel {
 
-    NSOperationQueue *operationQueue = [[NSOperationQueue alloc] init];
-    operationQueue.maxConcurrentOperationCount = 1;
 
-    return [[UAInAppRemoteDataClient alloc] initWithRemoteDataProvider:remoteDataProvider
-                                                             dataStore:dataStore
-                                                               channel:channel
-                                                        operationQueue:operationQueue
-                                                            SDKVersion:[UAirshipVersion get]];
+    return [[UAInAppRemoteDataClient alloc] initWithRemoteData:remoteData
+                                                     dataStore:dataStore
+                                                       channel:channel
+                                           schedulerDispatcher:[UADispatcher serialUtility]
+                                                    SDKVersion:[UAirshipVersion get]];
 }
 
-+ (instancetype)clientWithRemoteDataProvider:(id<UARemoteDataProvider>)remoteDataProvider
-                                   dataStore:(UAPreferenceDataStore *)dataStore
-                                     channel:(UAChannel *)channel
-                              operationQueue:(NSOperationQueue *)operationQueue
-                                  SDKVersion:(NSString *)SDKVersion {
++ (instancetype)clientWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
+                           dataStore:(UAPreferenceDataStore *)dataStore
+                             channel:(UAChannel *)channel
+                 schedulerDispatcher:(UADispatcher *)schedulerDispatcher
+                          SDKVersion:(NSString *)SDKVersion {
 
-    return [[UAInAppRemoteDataClient alloc] initWithRemoteDataProvider:remoteDataProvider
-                                                              dataStore:dataStore
-                                                                channel:channel
-                                                         operationQueue:operationQueue
-                                                            SDKVersion:SDKVersion];
+    return [[UAInAppRemoteDataClient alloc] initWithRemoteData:remoteData
+                                                     dataStore:dataStore
+                                                       channel:channel
+                                           schedulerDispatcher:schedulerDispatcher
+                                                   SDKVersion:SDKVersion];
 }
 
 - (void)subscribe {
@@ -143,12 +155,12 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         }
 
         UA_WEAKIFY(self);
-        self.remoteDataSubscription = [self.remoteDataProvider subscribeWithTypes:@[UAInAppMessages]
-                                                                            block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
+        self.remoteDataSubscription = [self.remoteData subscribeWithTypes:@[UAInAppMessages]
+                                                                    block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
             UA_STRONGIFY(self);
-            [self.operationQueue addOperationWithBlock:^{
+            [self.schedulerDispatcher dispatchAsync:^{
                 UA_STRONGIFY(self);
-                [self processInAppMessageData:[messagePayloads firstObject]];
+                [self onReceiveRemoteData:messagePayloads];
             }];
         }];
     }
@@ -165,42 +177,117 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     [self unsubscribe];
 }
 
-- (void)notifyOnUpdate:(void (^)(void))completionHandler {
-    [self.operationQueue addOperationWithBlock:^{
-        if ([self.remoteDataProvider isMetadataCurrent:self.lastPayloadMetadata]) {
-            completionHandler();
-        } else {
-            // Otherwise wait until change to lastPayloadMetadata to invalidate
-            __block UADisposable *disposable = [self observeAtKeyPath:@"lastPayloadMetadata" withBlock:^(id  _Nonnull value) {
-                completionHandler();
-                [disposable dispose];
-            }];
+- (UARemoteDataPayload *)firstPayloadWithArray:(NSArray<UARemoteDataPayload *> *)payloads withSource:(UARemoteDataSource)source {
+    for (UARemoteDataPayload *payload in payloads) {
+        if (payload.remoteDataInfo.source == source) {
+            return payload;
         }
-    }];
+    }
+
+    return nil;
 }
 
-- (void)processInAppMessageData:(UARemoteDataPayload *)messagePayload {
+- (void)onReceiveRemoteData:(NSArray<UARemoteDataPayload *> *)payloads {
+    [self processAppRemoteData:[self firstPayloadWithArray:payloads withSource:UARemoteDataSourceApp]];
+    [self processContactRemoteData:[self firstPayloadWithArray:payloads withSource:UARemoteDataSourceContact]];
+}
+
+- (void)processContactRemoteData:(UARemoteDataPayload *)messagePayload {
+    if (!messagePayload) {
+        // If we have data, stop all IAA and delete the keys
+        if ([self.dataStore objectForKey:UAInAppMessagesLastContactPayloadTimeStampKey]) {
+            [self stopAllForSource:UARemoteDataSourceContact];
+            [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadInfoKey];
+            [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadTimeStampKey];
+            [self.dataStore removeObjectForKey:UAInAppMessagesLastContactSDKVersionKey];
+        }
+        return;
+    }
+
+    // Load state
+    NSDate *lastPayloadTimestamp = [self.dataStore objectForKey:UAInAppMessagesLastContactPayloadTimeStampKey] ?: [NSDate distantPast];
+    NSString *lastSDKVersion = [self.dataStore stringForKey:UAInAppMessagesLastContactSDKVersionKey];
+    NSString *lastRemoteInfoString = [self.dataStore stringForKey:UAInAppMessagesLastContactPayloadInfoKey] ?: @"";
+    UARemoteDataInfo *lastRemoteInfo = [UARemoteDataInfo fromJSONWithString:lastRemoteInfoString error:nil];
+
+    BOOL processed = [self processRemoteData:messagePayload
+                                      source:UARemoteDataSourceContact
+                        lastPayloadTimestamp:lastPayloadTimestamp
+                              lastRemoteInfo:lastRemoteInfo
+                              lastSDKVersion:lastSDKVersion];
+
+    // Save state
+    if (processed) {
+        [self.dataStore setObject:[messagePayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil]
+                           forKey:UAInAppMessagesLastContactPayloadTimeStampKey];
+        [self.dataStore setObject:messagePayload.timestamp forKey:UAInAppMessagesLastContactPayloadTimeStampKey];
+        [self.dataStore setObject:self.SDKVersion forKey:UAInAppMessagesLastContactSDKVersionKey];
+    }
+}
+
+- (void)processAppRemoteData:(UARemoteDataPayload *)messagePayload {
+    // Fixes issue with 17.x -> 16.x -> 17.x
+    if ([self.dataStore objectForKey:UAInAppMessagesLastPayloadMetadataKey]) {
+        [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadTimeStampKey];
+        [self.dataStore removeObjectForKey:UAInAppMessagesLastPayloadMetadataKey];
+    }
+
+    if (!messagePayload) {
+        // If we have data, stop all IAA and delete the keys
+        if ([self.dataStore objectForKey:UAInAppMessagesLastAppPayloadTimeStampKey]) {
+            [self stopAllForSource:UARemoteDataSourceApp];
+            [self.dataStore removeObjectForKey:UAInAppMessagesLastAppPayloadInfoKey];
+            [self.dataStore removeObjectForKey:UAInAppMessagesLastAppPayloadTimeStampKey];
+            [self.dataStore removeObjectForKey:UAInAppMessagesLastAppSDKVersionKey];
+        }
+        return;
+    }
+
+    // Load state
+    NSDate *lastPayloadTimestamp = [self.dataStore objectForKey:UAInAppMessagesLastAppPayloadTimeStampKey] ?: [NSDate distantPast];
+    NSString *lastSDKVersion = [self.dataStore stringForKey:UAInAppMessagesLastAppSDKVersionKey];
+    NSString *lastRemoteInfoString = [self.dataStore stringForKey:UAInAppMessagesLastAppPayloadInfoKey] ?: @"";
+    UARemoteDataInfo *lastRemoteInfo = [UARemoteDataInfo fromJSONWithString:lastRemoteInfoString error:nil];
+
+    BOOL processed = [self processRemoteData:messagePayload
+                                      source:UARemoteDataSourceApp
+                        lastPayloadTimestamp:lastPayloadTimestamp
+                              lastRemoteInfo:lastRemoteInfo
+                              lastSDKVersion:lastSDKVersion];
+
+    // Save state
+    if (processed) {
+        [self.dataStore setObject:[messagePayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil] forKey:UAInAppMessagesLastAppPayloadInfoKey];
+        [self.dataStore setObject:messagePayload.timestamp forKey:UAInAppMessagesLastAppPayloadTimeStampKey];
+        [self.dataStore setObject:self.SDKVersion forKey:UAInAppMessagesLastAppSDKVersionKey];
+    }
+}
+
+- (BOOL)processRemoteData:(UARemoteDataPayload *)messagePayload
+                   source:(UARemoteDataSource)source
+     lastPayloadTimestamp:(NSDate *) lastPayloadTimestamp
+           lastRemoteInfo:(UARemoteDataInfo *)lastRemoteInfo
+           lastSDKVersion:(NSString *)lastSDKVersion {
+
     NSDate *payloadTimestamp = messagePayload.timestamp;
-    NSDictionary *payloadMetadata = messagePayload.metadata ?: @{};
+    UARemoteDataInfo *payloadInfo = messagePayload.remoteDataInfo;
 
-    NSDate *lastPayloadTimestamp = [self.dataStore objectForKey:UAInAppMessagesLastPayloadTimeStampKey] ?: [NSDate distantPast];
-    NSDictionary *lastPayloadMetadata = self.lastPayloadMetadata;
+    NSDictionary *scheduleMetadata = @{
+        UAInAppRemoteDataClientMetadataKey: @{},
+        UAInAppRemoteDataClientInfoKey: [payloadInfo toEncodedJSONStringAndReturnError:nil] ?: @""
+    };
 
-    NSDictionary *scheduleMetadata = @{ UAInAppRemoteDataClientMetadataKey: payloadMetadata };
-
-    BOOL isMetadataCurrent = [lastPayloadMetadata isEqualToDictionary:payloadMetadata];
+    BOOL isMetadataCurrent = [lastRemoteInfo isEqual:messagePayload.remoteDataInfo];
 
     // Skip if the payload timestamp is same as the last updated timestamp and metadata is current
     if ([payloadTimestamp isEqualToDate:lastPayloadTimestamp] && isMetadataCurrent) {
-        return;
+        return NO;
     }
-    
-    NSString *lastSDKVersion = [self.dataStore stringForKey:UAInAppMessagesLastSDKVersionKey];
     
     NSArray *messageJSONList = [messagePayload.data arrayForKey:UAInAppMessages defaultValue:@[]];
     NSArray *constraintJSONList = [messagePayload.data arrayForKey:UAFrequencyConstraintsKey defaultValue:@[]];
 
-    NSArray<NSString *> *currentScheduleIDs = [self getCurrentRemoteScheduleIDs];
+    NSArray<NSString *> *currentScheduleIDs = [self getCurrentRemoteScheduleIDForSource:source];
     NSMutableArray<NSString *> *scheduleIDs = [NSMutableArray array];
     NSMutableArray<UASchedule *> *newSchedules = [NSMutableArray array];
 
@@ -312,21 +399,39 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
     // Wait for everything to finish
     dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
-
-    // Save state
-    self.lastPayloadMetadata = payloadMetadata;
-    [self.dataStore setObject:payloadTimestamp forKey:UAInAppMessagesLastPayloadTimeStampKey];
-    [self.dataStore setObject:self.SDKVersion forKey:UAInAppMessagesLastSDKVersionKey];
+    return YES;
 }
 
-- (NSDictionary *)lastPayloadMetadata {
-    return [self.dataStore objectForKey:UAInAppMessagesLastPayloadMetadataKey] ?: @{};
-}
 
-- (void)setLastPayloadMetadata:(NSDictionary *)metadata {
-    [self willChangeValueForKey:@"lastPayloadMetadata"];
-    [self.dataStore setObject:metadata forKey:UAInAppMessagesLastPayloadMetadataKey];
-    [self didChangeValueForKey:@"lastPayloadMetadata"];
+- (void)stopAllForSource:(UARemoteDataSource)source {
+    // Dispatch group
+    dispatch_group_t dispatchGroup = dispatch_group_create();
+    NSArray<NSString *> *scheduleIDs = [self getCurrentRemoteScheduleIDForSource:source];
+
+    NSDate *date = [NSDate date];
+    if (scheduleIDs.count) {
+        /* To cancel, set the end time to the payload's to now. To avoid validation errors,
+         The start must be equal to or before the end time. If the schedule comes back, we will reset the start and end time
+         from the schedule edits. */
+        UAScheduleEdits *edits = [UAScheduleEdits editsWithBuilderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
+            builder.end = date;
+            builder.start = date;
+        }];
+
+        for (NSString *scheduleID in scheduleIDs) {
+            dispatch_group_enter(dispatchGroup);
+            [self.delegate editScheduleWithID:scheduleID
+                                        edits:edits
+                            completionHandler:^(BOOL result) {
+                dispatch_group_leave(dispatchGroup);
+                if (result) {
+                    UA_LTRACE(@"Ended in-app automation: %@", scheduleID);
+                }
+            }];
+        }
+    }
+    // Wait for everything to finish
+    dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
 }
 
 - (BOOL)checkSchedule:(UASchedule *)schedule createdTimeStamp:(NSDate *)createdTimeStamp {
@@ -375,7 +480,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     [self.dataStore setObject:time forKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
 }
 
-- (NSArray<NSString *> *)getCurrentRemoteScheduleIDs {
+- (NSArray<NSString *> *)getCurrentRemoteScheduleIDForSource:(UARemoteDataSource)source {
     NSMutableArray *currentScheduleIDs = [NSMutableArray array];
 
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -383,7 +488,12 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     [self.delegate getSchedules:^(NSArray<UASchedule *> *schedules) {
         UA_STRONGIFY(self)
         for (UASchedule *schedule in schedules) {
-            if ([self isRemoteSchedule:schedule]) {
+            if (![self isRemoteSchedule:schedule]) {
+                continue;
+            }
+
+            UARemoteDataInfo *info = [self remoteDataInfoFromSchedule:schedule];
+            if ((!info && source == UARemoteDataSourceApp) || info.source == source) {
                 [currentScheduleIDs addObject:schedule.identifier];
             }
         }
@@ -397,7 +507,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
 
 - (BOOL)isRemoteSchedule:(UASchedule *)schedule {
-    if (schedule.metadata[UAInAppRemoteDataClientMetadataKey]) {
+    if (schedule.metadata[UAInAppRemoteDataClientMetadataKey] || schedule.metadata[UAInAppRemoteDataClientInfoKey]) {
         return YES;
     }
 
@@ -410,20 +520,71 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return NO;
 }
 
-- (BOOL)isScheduleUpToDate:(UASchedule *)schedule {
-    if (!schedule.metadata) {
-        return NO;
+- (void)isScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
+    if (![self isRemoteSchedule:schedule]) {
+        completionHandler(YES);
+        return;
     }
 
-    return [self.remoteDataProvider isMetadataCurrent:schedule.metadata[UAInAppRemoteDataClientMetadataKey]];
+    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
+    [self.remoteData isCurrentWithRemoteDataInfo:remoteDataInfo
+                               completionHandler:completionHandler];
 }
 
-- (void)attemptRemoteDataRefreshWithForce:(BOOL)forceRefresh
-                        completionHandler:(void (^)(void))completionHandler {
-    [self.remoteDataProvider refreshWithForce:forceRefresh completionHandler:^(BOOL result) {
-        completionHandler();
+
+
+- (void)refreshAndCheckScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
+    if (![self isRemoteSchedule:schedule]) {
+        completionHandler(YES);
+        return;
+    }
+
+    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
+    [self.remoteData refreshAndCheckCurrentWithRemoteDataInfo:remoteDataInfo completionHandler:^(BOOL result) {
+        if (result) {
+            completionHandler(YES);
+            return;
+        }
+
+        [self invalidateAndRefreshSchedule:schedule completionHandler:^{
+            completionHandler(NO);
+        }];
     }];
 }
+
+- (void)invalidateAndRefreshSchedule:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
+    if (![self isRemoteSchedule:schedule]) {
+        completionHandler();
+        return;
+    }
+
+    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
+    [self.remoteData refreshOutdatedWithRemoteDataInfo:remoteDataInfo completionHandler:^{
+        [self.schedulerDispatcher dispatchAsync:^{
+            completionHandler();
+        }];
+    }];
+}
+
+
+- (UARemoteDataInfo *)remoteDataInfoFromSchedule:(UASchedule *)schedule {
+    if (![self isRemoteSchedule:schedule]) {
+        return nil;
+    }
+
+
+    if (!schedule.metadata) {
+        return nil;
+    }
+
+    NSString *remoteDataInfoString = schedule.metadata[UAInAppRemoteDataClientInfoKey];
+    if (!remoteDataInfoString.length) {
+        return nil;
+    }
+
+    return [UARemoteDataInfo fromJSONWithString:remoteDataInfoString error:nil];
+}
+
 
 + (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {
     NSString *ID = [JSON stringForKey:UAFrequencyConstraintIDKey defaultValue:nil];

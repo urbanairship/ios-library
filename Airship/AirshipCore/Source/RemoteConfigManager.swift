@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
+import Combine
+
 // NOTE: For internal use only. :nodoc:
-class RemoteConfigManager {
+final class RemoteConfigManager: @unchecked Sendable {
 
     @objc
     public static let remoteConfigUpdatedEvent = Notification.Name(
@@ -12,53 +14,36 @@ class RemoteConfigManager {
     public static let remoteConfigKey = "remote_config"
 
     private let decoder = JSONDecoder()
-    private var remoteDataSubscription: Disposable?
+    private var subscription: AnyCancellable?
     private let moduleAdapter: RemoteConfigModuleAdapterProtocol
-    private let remoteDataManager: RemoteDataProvider
+    private let remoteData: InternalRemoteDataProtocol
     private let privacyManager: AirshipPrivacyManager
-    private let versionBlock: (() -> String)
+    private let appVersion: String
     private let notificationCenter: AirshipNotificationCenter
-
-    convenience init(
-        remoteDataManager: RemoteDataProvider,
-        privacyManager: AirshipPrivacyManager
-    ) {
-
-        self.init(
-            remoteDataManager: remoteDataManager,
-            privacyManager: privacyManager,
-            moduleAdapter: RemoteConfigModuleAdapter(),
-            notificationCenter: AirshipNotificationCenter.shared,
-            versionBlock: { return AirshipUtils.bundleShortVersionString() ?? "" }
-        )
-    }
+    private let lock = AirshipLock()
 
     init(
-        remoteDataManager: RemoteDataProvider,
+        remoteData: InternalRemoteDataProtocol,
         privacyManager: AirshipPrivacyManager,
-        moduleAdapter: RemoteConfigModuleAdapterProtocol,
-        notificationCenter: AirshipNotificationCenter,
-        versionBlock: @escaping () -> String
+        moduleAdapter: RemoteConfigModuleAdapterProtocol = RemoteConfigModuleAdapter(),
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
+        appVersion: String = AirshipUtils.bundleShortVersionString() ?? ""
     ) {
-
-        self.remoteDataManager = remoteDataManager
+        self.remoteData = remoteData
         self.privacyManager = privacyManager
         self.moduleAdapter = moduleAdapter
-        self.versionBlock = versionBlock
+        self.appVersion = appVersion
         self.notificationCenter = notificationCenter
-        updateRemoteConfigSubscription()
-
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateRemoteConfigSubscription),
             name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
+
+        self.updateRemoteConfigSubscription()
     }
 
-    deinit {
-        remoteDataSubscription?.dispose()
-    }
 
     func processRemoteConfig(_ payloads: [RemoteDataPayload]?) {
         var combinedData: [AnyHashable: Any] = [:]
@@ -82,7 +67,7 @@ class RemoteConfigManager {
 
     func applyDisableInfos(_ data: [AnyHashable: Any]) {
         let disableJSONArray = data["disable_features"] as? [[AnyHashable: Any]]
-        let versionObject = ["ios": ["version": versionBlock()]]
+        let versionObject = ["ios": ["version": self.appVersion]]
 
         let disableInfos = disableJSONArray?
             .compactMap { return RemoteConfigDisableInfo(json: $0) }
@@ -104,8 +89,7 @@ class RemoteConfigManager {
             }
 
         var disableModules: [RemoteConfigModule] = []
-        var remoteDataRefreshInterval: TimeInterval = RemoteDataManager
-            .defaultRefreshInterval
+        var remoteDataRefreshInterval: TimeInterval = RemoteData.defaultRefreshInterval
 
         disableInfos?
             .forEach {
@@ -124,7 +108,7 @@ class RemoteConfigManager {
         let enabled = Set(RemoteConfigModule.allCases).subtracting(disabled)
         enabled.forEach { moduleAdapter.setComponentsEnabled(true, module: $0) }
 
-        remoteDataManager.remoteDataRefreshInterval = remoteDataRefreshInterval
+        remoteData.remoteDataRefreshInterval = remoteDataRefreshInterval
     }
 
     func applyConfigs(_ data: [AnyHashable: Any]) {
@@ -136,6 +120,10 @@ class RemoteConfigManager {
     func applyRemoteConfig(_ data: [AnyHashable: Any]) {
         guard let remoteConfigData = data["airship_config"] else {
             return
+        }
+
+        if let fetchContactData = data["fetch_contact_remote_data"] as? Bool {
+            remoteData.setContactSourceEnabled(enabled: fetchContactData)
         }
 
         var parsedConfig: RemoteConfig?
@@ -166,18 +154,19 @@ class RemoteConfigManager {
 
     @objc
     func updateRemoteConfigSubscription() {
-        if self.privacyManager.isAnyFeatureEnabled()
-            && self.remoteDataSubscription == nil
-        {
-            self.remoteDataSubscription = self.remoteDataManager.subscribe(
-                types: ["app_config", "app_config:ios"],
-                block: { [weak self] remoteConfig in
+        lock.sync {
+            if self.privacyManager.isAnyFeatureEnabled() && self.subscription == nil {
+                self.subscription = self.remoteData.publisher(
+                    types: ["app_config", "app_config:ios"]
+                )
+                .removeDuplicates()
+                .sink { [weak self] remoteConfig in
                     self?.processRemoteConfig(remoteConfig)
                 }
-            )
-        } else {
-            remoteDataSubscription?.dispose()
-            remoteDataSubscription = nil
+            } else {
+                self.subscription?.cancel()
+                self.subscription = nil
+            }
         }
     }
 }

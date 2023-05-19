@@ -87,6 +87,17 @@ typedef NS_ENUM(NSInteger, UAAutomationScheduleReadyResult) {
          triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
       completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 
+
+/**
+ * Does a precheck if the schedule is ready. This is called before doing any conditions checks  and will
+ * block the pipeline to ensure execution order.
+ *
+ * @param schedule The schedule.
+ * @param completionHandler Completion handler with the result.
+ */
+- (void)isScheduleReadyPrecheck:(UASchedule *)schedule
+              completionHandler:(void (^)(UAAutomationScheduleReadyResult))completionHandler;
+
 /**
  * Checks if a schedule is ready to execute.
  *

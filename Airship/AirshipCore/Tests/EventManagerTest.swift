@@ -250,7 +250,7 @@ final class EventManagerTest: XCTestCase {
     }
 }
 
-class TestEventAPIClient: EventAPIClientProtocol {
+final class TestEventAPIClient: EventAPIClientProtocol, @unchecked Sendable {
     var requestBlock: (([AirshipEventData], [String: String]) async throws -> AirshipHTTPResponse<EventUploadTuningInfo>)?
 
     func uploadEvents(_ events: [AirshipEventData], headers: [String : String]) async throws -> AirshipHTTPResponse<EventUploadTuningInfo> {
@@ -263,7 +263,7 @@ class TestEventAPIClient: EventAPIClientProtocol {
     }
 }
 
-class TestEventUploadScheduler: EventUploadSchedulerProtocol {
+final class TestEventUploadScheduler: EventUploadSchedulerProtocol, @unchecked Sendable {
     var workBlock: (() async throws -> AirshipWorkResult)?
 
     var lastScheduleUploadPriority: EventPriority?

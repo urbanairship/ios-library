@@ -119,16 +119,12 @@ class AirshipInstance: AirshipInstanceProtocol {
         )
         requestSession.contactAuthTokenProvider = contact.authTokenProvider
 
-        let remoteDataManager = RemoteDataManager(
+        let remoteData = RemoteData(
             config: self.config,
             dataStore: dataStore,
             localeManager: self.localeManager,
-            privacyManager: self.privacyManager
-        )
-
-        self.remoteConfigManager = RemoteConfigManager(
-            remoteDataManager: remoteDataManager,
-            privacyManager: self.privacyManager
+            privacyManager: self.privacyManager,
+            contact: contact
         )
 
         #if !os(tvOS) && !os(watchOS)
@@ -144,26 +140,28 @@ class AirshipInstance: AirshipInstanceProtocol {
             channel: channel,
             contact: contact,
             push: push,
-            remoteData: remoteDataManager,
+            remoteData: remoteData,
             analytics: analytics,
             privacyManager: self.privacyManager,
             permissionsManager: self.permissionsManager,
-            automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider(
-                audienceOverridesProvider: audienceOverridesProvider
-            )
+            audienceOverrides: audienceOverridesProvider
         )
 
         var components: [Component] = [
-            contact, channel, analytics, remoteDataManager, push,
+            contact, channel, analytics, remoteData, push,
         ]
         components.append(contentsOf: moduleLoader.components)
 
         self.components = components
 
+        self.remoteConfigManager = RemoteConfigManager(
+            remoteData: remoteData,
+            privacyManager: self.privacyManager
+        )
+
         moduleLoader.actionPlists.forEach {
             self.actionRegistry.registerActions($0)
-        }
-        
+        }        
     }
 
     public func component(forClassName className: String) -> Component? {

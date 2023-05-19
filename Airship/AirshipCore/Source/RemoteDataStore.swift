@@ -2,17 +2,14 @@
 
 import CoreData
 
-actor RemoteDataStore {
+final class RemoteDataStore: Sendable {
     
     private static let remoteDataEntity = "UARemoteDataStorePayload"
     
     private let coreData: UACoreData
-    private nonisolated let inMemory: Bool
+    private let inMemory: Bool
     
-    public init(
-        storeName: String,
-        inMemory: Bool
-    ) {
+    public init(storeName: String, inMemory: Bool) {
         self.inMemory = inMemory
         let modelURL = AirshipCoreResources.bundle.url(
             forResource: "UARemoteData",
@@ -25,38 +22,78 @@ actor RemoteDataStore {
         )
     }
     
-    init(
-        storeName: String
-    ) {
+    convenience init(storeName: String) {
         self.init(storeName: storeName, inMemory: false)
     }
-    
-    public func fetchRemoteDataFromCache(
-        predicate: AirshipCoreDataPredicate?
-    ) async throws -> [RemoteDataPayload] {
-        
-        AirshipLogger.trace(
-            "Fetching remote data from cache with predicate: \(String(describing: predicate))"
-        )
-        
-        
+
+    func hasData() async throws -> Bool {
         return try await self.coreData.performWithResult { context in
             let request = NSFetchRequest<NSFetchRequestResult>(
                 entityName: RemoteDataStore.remoteDataEntity
             )
-            request.predicate = predicate?.toNSPredicate()
+            return try context.count(for: request) > 0
+        }
+    }
+
+    public func fetchRemoteDataFromCache(
+        types: [String]? = nil
+    ) async throws -> [RemoteDataPayload] {
+
+
+        AirshipLogger.trace(
+            "Fetching remote data from cache with types: \(String(describing: types))"
+        )
+
+        return try await self.coreData.performWithResult { context in
+            let request = NSFetchRequest<NSFetchRequestResult>(
+                entityName: RemoteDataStore.remoteDataEntity
+            )
+
+            if let types = types {
+                let predicate = AirshipCoreDataPredicate(format: "(type IN %@)", args: [types])
+                request.predicate = predicate.toNSPredicate()
+            }
+
             let result = try context.fetch(request) as? [RemoteDataStorePayload] ?? []
             return result.compactMap {
+
+                var remoteDataInfo: RemoteDataInfo? = nil
+                do {
+                    if let data = $0.remoteDataInfo {
+                        remoteDataInfo = try RemoteDataInfo.fromJSON(data: data)
+                    }
+                } catch {
+                    AirshipLogger.error("Unable to parse remote-data info from data \(error)")
+                }
+
+                var data: AirshipJSON = AirshipJSON.null
+
+
+                do {
+                    data = try AirshipJSON.wrap($0.data)
+                } catch {
+                    AirshipLogger.error("Unable to parse remote-data data \(error)")
+                }
+
+
                 return RemoteDataPayload(
                     type: $0.type,
                     timestamp: $0.timestamp,
-                    data: $0.data,
-                    metadata: $0.metadata
+                    data: data,
+                    remoteDataInfo: remoteDataInfo
                 )
             }
         }
     }
-    
+
+
+    public func clear() async throws {
+        try await self.coreData.perform({ context in
+            try self.deleteAll(context: context)
+            UACoreData.safeSave(context)
+        })
+    }
+
     public func overwriteCachedRemoteData(
         _ payloads: [RemoteDataPayload]
     ) async throws {
@@ -67,11 +104,12 @@ actor RemoteDataStore {
             payloads.forEach {
                 self.addPayload($0, context: context)
             }
+            UACoreData.safeSave(context)
         })
         
     }
     
-    nonisolated private func deleteAll(
+    private func deleteAll(
         context: NSManagedObjectContext
     ) throws {
         
@@ -109,6 +147,12 @@ actor RemoteDataStore {
         remoteDataStorePayload.type = payload.type
         remoteDataStorePayload.timestamp = payload.timestamp
         remoteDataStorePayload.data = payload.data
-        remoteDataStorePayload.metadata = payload.metadata
+        do {
+            remoteDataStorePayload.remoteDataInfo = try payload.remoteDataInfo?.toEncodedJSONData()
+        } catch {
+            AirshipLogger.error("Unable to transform remote-data info to data \(error)")
+        }
     }
 }
+
+

@@ -19,9 +19,7 @@ class RemoteDataStorePayload: NSManagedObject {
     @objc
     @NSManaged public var data: [AnyHashable: Any]
 
-    /// The metadata associated with this payload
-    ///
-    /// Contains important metadata such as locale.
+    /// The remote data info as json encoded data.
     @objc
-    @NSManaged public var metadata: [AnyHashable: Any]?
+    @NSManaged public var remoteDataInfo: Data?
 }

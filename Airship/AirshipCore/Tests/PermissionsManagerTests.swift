@@ -86,7 +86,7 @@ class PermissionsManagerTests: XCTestCase {
             .displayNotifications,
             enableAirshipUsageOnGrant: true
         )
-        wait(for: [enablerCalled], timeout: 1)
+        await self.fulfillmentCompat(of: [enablerCalled], timeout: 1)
     }
 
     func testRequestExtender() async throws {
@@ -109,8 +109,8 @@ class PermissionsManagerTests: XCTestCase {
         let status = await self.permissionsManager.requestPermission(.location) 
 
         XCTAssertEqual(AirshipPermissionStatus.denied, status)
-        wait(
-            for: [listener1, listener2],
+        await self.fulfillmentCompat(
+            of: [listener1, listener2],
             timeout: 1,
             enforceOrder: true
         )

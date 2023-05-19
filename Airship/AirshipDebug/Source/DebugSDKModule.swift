@@ -24,7 +24,7 @@ public class DebugSDKModule: NSObject, SDKModule {
     {
         let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalytics
         let remoteData =
-            dependencies[SDKDependencyKeys.remoteData] as! RemoteDataManager
+            dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
         let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
 
         let debugManager = AirshipDebugManager(

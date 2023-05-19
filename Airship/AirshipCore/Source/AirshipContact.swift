@@ -62,7 +62,7 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
     }
 
     private let contactIDUpdatesSubject = PassthroughSubject<ContactIDInfo?, Never>()
-    private var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> {
+    var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> {
         let contactManager = self.contactManager
         return self.contactIDUpdatesSubject
             .prepend(Future { promise in
@@ -495,7 +495,7 @@ public final class AirshipContact: NSObject, Component, AirshipContactProtocol, 
         editor.apply()
     }
 
-    private func getStableContactID() async -> String {
+    public func getStableContactID() async -> String {
         // Stableness is determined by a reset or identify operation.  Since
         // pending operations are added throught the serialQueue to ensure order, some might still
         // be in the queue. To avoid ignoring any of those, wait for current operations on the queue
@@ -732,6 +732,12 @@ extension String {
 }
 
 extension AirshipContact : InternalAirshipContactProtocol {
+    var contactIDInfo: ContactIDInfo? {
+        get async {
+            return await self.contactManager.currentContactIDInfo()
+        }
+    }
+
 
     var authTokenProvider: AuthTokenProvider {
         return self.contactManager

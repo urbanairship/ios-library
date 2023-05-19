@@ -14,6 +14,8 @@ public class SDKDependencyKeys: NSObject {
     @objc
     public static let remoteData = "remote_data"
     @objc
+    public static let remoteDataAutomation = "remote_data_automation"
+    @objc
     public static let config = "config"
     @objc
     public static let dataStore = "dataStore"
@@ -38,27 +40,23 @@ enum SDKModuleNames: String, CaseIterable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UAModuleLoader)
-public class ModuleLoader: NSObject {
+class ModuleLoader: NSObject {
 
-    @objc
     public let components: [Component]
 
-    @objc
     public let actionPlists: [String]
 
-    @objc
-    public init(
+    init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: AirshipChannel,
         contact: AirshipContact,
         push: AirshipPush,
-        remoteData: RemoteDataManager,
+        remoteData: RemoteDataProtocol,
         analytics: AirshipAnalytics,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider
+        audienceOverrides: AudienceOverridesProvider
     ) {
 
         let dependencies: [String: Any] = [
@@ -68,11 +66,16 @@ public class ModuleLoader: NSObject {
             SDKDependencyKeys.contact: contact,
             SDKDependencyKeys.push: push,
             SDKDependencyKeys.remoteData: remoteData,
+            SDKDependencyKeys.remoteDataAutomation: _RemoteDataAutomationAccess(
+                remoteData: remoteData
+            ),
             SDKDependencyKeys.analytics: analytics,
             SDKDependencyKeys.privacyManager: privacyManager,
             SDKDependencyKeys.permissionsManager: permissionsManager,
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
-            SDKDependencyKeys.automationAudienceOverridesProvider: automationAudienceOverridesProvider
+            SDKDependencyKeys.automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider(
+                audienceOverridesProvider: audienceOverrides
+            )
         ]
 
         let modules = ModuleLoader.loadModules(dependencies)

@@ -32,3 +32,13 @@ class AirshipBaseTest: XCTestCase {
     }()
     
 }
+
+
+extension XCTestCase {
+    
+    func fulfillmentCompat(of: [XCTestExpectation], timeout: TimeInterval? = nil, enforceOrder: Bool = false) async {
+        await fulfillment(of: of, timeout: timeout ?? 10.0, enforceOrder: enforceOrder)
+    }
+
+    
+}

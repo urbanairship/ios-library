@@ -6,7 +6,7 @@ import Combine
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContactProtocol)
-public protocol AirshipContactBaseProtocol {
+public protocol AirshipContactBaseProtocol: Sendable {
     // NSNotification event name when a conflict event is emitted. The `ContactConflictEvent`
     // will be available in the userInfo under the key `contactConflictEventKey`.
     @objc
@@ -146,5 +146,10 @@ public protocol AirshipContactProtocol: AirshipContactBaseProtocol {
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {
     var contactID: String? { get async }
     var authTokenProvider: AuthTokenProvider { get }
+
+    func getStableContactID() async -> String
+
+    var contactIDInfo: ContactIDInfo? { get async }
+    var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> { get }
 }
 

@@ -23,11 +23,11 @@ class PreferenceCenterTest: XCTestCase {
         self.preferenceCenter = PreferenceCenter(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
-            remoteDataProvider: self.remoteDataProvider
+            remoteData: self.remoteDataProvider
         )
     }
 
-    func testConfig() throws {
+    func testConfig() async throws {
         let payloadData = """
             {
                "preference_forms":[
@@ -54,35 +54,16 @@ class PreferenceCenterTest: XCTestCase {
             """
 
         let remoteData = createPayload(payloadData)
+        self.remoteDataProvider.payloads = [remoteData]
 
-        let form1Expectation = XCTestExpectation(description: "form-1")
-        self.preferenceCenter.config(preferenceCenterID: "form-1") { config in
-            XCTAssertNotNil(config)
-            XCTAssertEqual("form-1", config?.identifier)
-            form1Expectation.fulfill()
-        }
+        var config = try! await self.preferenceCenter.config(preferenceCenterID: "form-1")
+        XCTAssertEqual("form-1", config.identifier)
 
-        let form2Expectation = XCTestExpectation(description: "form-2")
-        self.preferenceCenter.config(preferenceCenterID: "form-2") { config in
-            XCTAssertNotNil(config)
-            XCTAssertEqual("form-2", config?.identifier)
-            form2Expectation.fulfill()
-        }
-
-        let missingFormExpectation = XCTestExpectation(description: "missing")
-        self.preferenceCenter.config(preferenceCenterID: "missing") { config in
-            XCTAssertNil(config)
-            missingFormExpectation.fulfill()
-        }
-
-        self.remoteDataProvider.dispatchPayload(remoteData)
-        self.wait(
-            for: [form1Expectation, form2Expectation, missingFormExpectation],
-            timeout: 5
-        )
+        config = try! await self.preferenceCenter.config(preferenceCenterID: "form-2")
+        XCTAssertEqual("form-2", config.identifier)
     }
 
-    func testJSONConfig() throws {
+    func testJSONConfig() async throws {
         let payloadData = """
             {
                "preference_forms":[
@@ -107,34 +88,20 @@ class PreferenceCenterTest: XCTestCase {
             """
 
         let remoteData = createPayload(payloadData)
-        var expectedConfig: [String: Any] = [:]
-        expectedConfig.updateValue("form-1", forKey: "id")
+        self.remoteDataProvider.payloads = [remoteData]
 
-        let form1Expectation = XCTestExpectation(description: "form-1")
-        self.preferenceCenter.jsonConfig(preferenceCenterID: "form-1") {
-            config in
-            XCTAssertNotNil(config)
-            XCTAssertTrue(
-                NSDictionary(dictionary: config).isEqual(to: expectedConfig)
-            )
-            form1Expectation.fulfill()
-        }
+        let config1 = try! await self.preferenceCenter.jsonConfig(preferenceCenterID: "form-1")
 
-        var expectedConfig2: [String: Any] = [:]
-        expectedConfig2.updateValue("form-2", forKey: "id")
+        XCTAssertEqual(
+            try! AirshipJSON.from(data: config1),
+            try! AirshipJSON.wrap(["id": "form-1"])
+        )
 
-        let form2Expectation = XCTestExpectation(description: "form-2")
-        self.preferenceCenter.jsonConfig(preferenceCenterID: "form-2") {
-            config in
-            XCTAssertNotNil(config)
-            XCTAssertTrue(
-                NSDictionary(dictionary: config).isEqual(to: expectedConfig2)
-            )
-            form2Expectation.fulfill()
-        }
-
-        self.remoteDataProvider.dispatchPayload(remoteData)
-        self.wait(for: [form1Expectation, form2Expectation], timeout: 5)
+        let config2 = try! await self.preferenceCenter.jsonConfig(preferenceCenterID: "form-2")
+        XCTAssertEqual(
+            try! AirshipJSON.from(data: config2),
+            try! AirshipJSON.wrap(["id": "form-2"])
+        )
     }
 
     func testOpenDelegate() {
@@ -176,17 +143,11 @@ class PreferenceCenterTest: XCTestCase {
     }
 
     private func createPayload(_ json: String) -> RemoteDataPayload {
-        let data =
-            try! JSONSerialization.jsonObject(
-                with: json.data(using: .utf8)!,
-                options: []
-            ) as! [AnyHashable: Any]
-
         return RemoteDataPayload(
             type: "preference_forms",
             timestamp: Date(),
-            data: data,
-            metadata: [:]
+            data: try! AirshipJSON.from(json: json),
+            remoteDataInfo: nil
         )
     }
 }

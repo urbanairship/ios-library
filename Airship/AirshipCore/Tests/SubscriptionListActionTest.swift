@@ -48,12 +48,12 @@ class SubscriptionListActionTests: XCTestCase {
         ]
 
         validSituations.forEach { (situation) in
-            let args = ActionArguments(value: [[:]], with: situation)
+            let args = ActionArguments(value: [[:]] as [[String: Any]], with: situation)
             XCTAssertTrue(self.action.acceptsArguments(args))
         }
 
         rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: [[:]], with: situation)
+            let args = ActionArguments(value: [[:]] as [[String: Any]], with: situation)
             XCTAssertFalse(self.action.acceptsArguments(args))
         }
     }
@@ -70,7 +70,7 @@ class SubscriptionListActionTests: XCTestCase {
     }
 
     func testPerformWithValidPayload() async throws {
-        let actionValue = [
+        let actionValue: [[String: String]] = [
             [
                 "type": "channel",
                 "action": "subscribe",
@@ -108,7 +108,7 @@ class SubscriptionListActionTests: XCTestCase {
     }
 
     func testPerformWithAltValidPayload() async throws {
-        let actionValue = [
+        let actionValue: [String: Any] = [
             "edits": [
                 [
                     "type": "channel",
@@ -148,7 +148,7 @@ class SubscriptionListActionTests: XCTestCase {
     }
 
     func testPerformWithInvalidPayload() async throws {
-        let actionValue = [
+        let actionValue: [String: Any] = [
             "edits": [
                 [
                     "type": "channel",

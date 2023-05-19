@@ -27,13 +27,13 @@ public class PreferenceCenterSDKModule: NSObject, SDKModule {
             dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
         let privacyManager =
             dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
-        let remoteDataProvider =
-            dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProvider
+        let remoteData =
+            dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
 
         let preferenceCenter = PreferenceCenter(
             dataStore: dataStore,
             privacyManager: privacyManager,
-            remoteDataProvider: remoteDataProvider
+            remoteData: remoteData
         )
         return PreferenceCenterSDKModule(preferenceCenter)
     }

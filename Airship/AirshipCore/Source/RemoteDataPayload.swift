@@ -20,28 +20,20 @@ public final class RemoteDataPayload: NSObject, Sendable {
         return _data.unWrap() as? [AnyHashable: Any] ?? [:]
     }
 
-    
-    public let _metadata: AirshipJSON
-    
-    /// The metadata associated with this payload
-    ///
-    /// Contains important metadata such as locale.
-    @objc(metadata)
-    public var metadata: [AnyHashable: Any]? {
-        return _metadata.unWrap() as? [AnyHashable: Any]
-    }
-
     @objc
+    public let remoteDataInfo: RemoteDataInfo?
+
+
     public init(
         type: String,
         timestamp: Date,
-        data: [AnyHashable: Any],
-        metadata: [AnyHashable: Any]?
+        data: AirshipJSON,
+        remoteDataInfo: RemoteDataInfo?
     ) {
         self.type = type
         self.timestamp = timestamp
-        self._data = (try? AirshipJSON.wrap(data)) ?? AirshipJSON.null
-        self._metadata = (try? AirshipJSON.wrap(metadata)) ?? AirshipJSON.null
+        self._data = data
+        self.remoteDataInfo = remoteDataInfo
         super.init()
     }
 
@@ -62,7 +54,7 @@ public final class RemoteDataPayload: NSObject, Sendable {
             type == other.type,
             timestamp == other.timestamp,
             _data == other._data,
-            _metadata == other._metadata
+            remoteDataInfo == other.remoteDataInfo
         else {
             return false
         }
@@ -75,12 +67,11 @@ public final class RemoteDataPayload: NSObject, Sendable {
         result = 31 * result + self.type.hashValue
         result = 31 * result + timestamp.hashValue
         result = 31 * result + self._data.hashValue
-        result = 31 * result + self._metadata.hashValue
+        result = 31 * result + self.remoteDataInfo.hashValue
         return result
     }
 
     public override var description: String {
-        return
-            "RemoteDataPayload(type=\(type), timestamp = \(timestamp), data = \(_data), metadata = \(_metadata)"
+        return "RemoteDataPayload(type=\(type), timestamp=\(timestamp), data=\(_data), remoteDataInfo=\(String(describing: remoteDataInfo)))"
     }
 }

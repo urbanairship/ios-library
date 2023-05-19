@@ -34,7 +34,7 @@ final class FetchDeviceInfoActionTest: XCTestCase {
         ]
 
         validSituations.forEach { (situation) in
-            let args = ActionArguments(value: [[:]], with: situation)
+            let args = ActionArguments(value: nil, with: situation)
             XCTAssertTrue(self.action.acceptsArguments(args))
         }
     }

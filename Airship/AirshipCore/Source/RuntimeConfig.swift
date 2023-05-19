@@ -256,6 +256,22 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         )
     }
 
+    convenience init(
+        config: AirshipConfig,
+        dataStore: PreferenceDataStore,
+        notificationCenter: NotificationCenter = NotificationCenter.default
+    ) {
+        self.init(
+            config: config,
+            dataStore: dataStore,
+            requestSession: DefaultAirshipRequestSession(
+                appKey: config.appKey,
+                appSecret: config.appSecret
+            ),
+            notificationCenter: notificationCenter
+        )
+    }
+
     init(
         config: AirshipConfig,
         dataStore: PreferenceDataStore,

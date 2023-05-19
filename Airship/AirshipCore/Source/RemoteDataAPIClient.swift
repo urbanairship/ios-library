@@ -1,23 +1,31 @@
 /* Copyright Airship and Contributors */
 
-protocol RemoteDataAPIClientProtocol {
+protocol RemoteDataAPIClientProtocol: Sendable {
     func fetchRemoteData(
-        locale: Locale,
-        randomValue: Int,
-        lastModified: String?
-    ) async throws -> AirshipHTTPResponse<RemoteDataResponse>
-
-    func metadata(locale: Locale, randomValue: Int, lastModified: String?)
-        -> [AnyHashable: Any]
+        url: URL,
+        auth: AirshipRequestAuth,
+        lastModified: String?,
+        remoteDataInfoBlock: @Sendable @escaping (String?) throws -> RemoteDataInfo
+    ) async throws -> AirshipHTTPResponse<RemoteDataResult>
 }
 
-class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
-    private static let urlMetadataKey = "url"
-    private static let lastModifiedMetadataKey = "last_modified"
-
-    private let path = "api/remote-data/app"
+final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
     private let session: AirshipRequestSession
     private let config: RuntimeConfig
+
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+            let container = try decoder.singleValueContainer()
+            let dateStr = try container.decode(String.self)
+
+            guard let date = AirshipUtils.parseISO8601Date(from: dateStr) else {
+                throw AirshipErrors.error("Invalid date \(dateStr)")
+            }
+            return date
+        })
+        return decoder
+    }()
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
@@ -25,168 +33,68 @@ class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
     }
 
     convenience init(config: RuntimeConfig) {
-        self.init(
-            config: config,
-            session: config.requestSession
-        )
+        self.init(config: config, session: config.requestSession)
     }
 
     func fetchRemoteData(
-        locale: Locale,
-        randomValue: Int,
-        lastModified: String?
-    ) async throws -> AirshipHTTPResponse<RemoteDataResponse> {
-        
-        let url = remoteDataURL(locale: locale, randomValue: randomValue)
-        let headers = ["Content-Type" : "application/json"]
+        url: URL,
+        auth: AirshipRequestAuth,
+        lastModified: String?,
+        remoteDataInfoBlock: @Sendable @escaping (String?) throws -> RemoteDataInfo
+    ) async throws -> AirshipHTTPResponse<RemoteDataResult> {
+        var headers: [String: String] = [
+            "Content-Type" : "application/json",
+            "X-UA-Appkey": self.config.appKey
+        ]
+
+        if let lastModified = lastModified {
+            headers["If-Modified-Since"] = lastModified
+        }
+
         let request = AirshipRequest(
             url: url,
             headers: headers,
-            method: "GET"
+            method: "GET",
+            auth: auth
         )
+
         AirshipLogger.debug("Request to update remote data: \(request)")
 
-        return try await self.session.performHTTPRequest(request) { data , response in
-            guard response.statusCode == 200 else {
+        return try await self.session.performHTTPRequest(request) { data, response in
+            guard response.statusCode == 200, let data = data else {
                 return nil
             }
 
-            let lastModified = response.allHeaderFields["Last-Modified"] as? String
-            let metadata = self.metadata(
-                url: url,
-                lastModified: lastModified
-            )
-            let payloads = try self.parseResponse(
-                data: data,
-                metadata: metadata
-            )
-            return RemoteDataResponse(
-                metadata: metadata,
-                payloads: payloads,
-                lastModified: lastModified
-            )
+
+            let remoteDataResponse = try self.decoder.decode(RemoteDataResponse.self, from: data)
+            let remoteDataInfo = try remoteDataInfoBlock(response.value(forHTTPHeaderField: "Last-Modified"))
+
+            let payloads = (remoteDataResponse.payloads ?? [])
+                .map { payload in
+                    RemoteDataPayload(
+                        type: payload.type,
+                        timestamp: payload.timestamp,
+                        data: payload.data,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                }
+            return RemoteDataResult(payloads: payloads, remoteDataInfo: remoteDataInfo)
         }
-    }
-
-    private func remoteDataURL(locale: Locale, randomValue: Int) -> URL? {
-        let languageItem = URLQueryItem(
-            name: "language",
-            value: locale.languageCode
-        )
-        let countryItem = URLQueryItem(
-            name: "country",
-            value: locale.regionCode
-        )
-        let versionItem = URLQueryItem(
-            name: "sdk_version",
-            value: AirshipVersion.get()
-        )
-        let randomValue = URLQueryItem(
-            name: "random_value",
-            value: String(randomValue)
-        )
-
-        var components = URLComponents(string: config.remoteDataAPIURL ?? "")
-
-        // api/remote-data/app/{appkey}/{platform}?sdk_version={version}&language={language}&country={country}
-        components?.path = "/\(path)/\(config.appKey)/\("ios")"
-
-        var queryItems = [versionItem]
-
-        if languageItem.value != nil && (languageItem.value?.count ?? 0) != 0 {
-            queryItems.append(languageItem)
-        }
-
-        if countryItem.value != nil && (countryItem.value?.count ?? 0) != 0 {
-            queryItems.append(countryItem)
-        }
-
-        if randomValue.value != nil && (randomValue.value?.count ?? 0) != 0 {
-            queryItems.append(randomValue)
-        }
-
-        components?.queryItems = queryItems as [URLQueryItem]
-        return components?.url
-    }
-
-    public func metadata(
-        locale: Locale,
-        randomValue: Int,
-        lastModified: String?
-    )
-        -> [AnyHashable: Any]
-    {
-        guard let url = remoteDataURL(locale: locale, randomValue: randomValue)
-        else {
-            return [:]
-        }
-
-        return self.metadata(url: url, lastModified: lastModified)
-    }
-
-    private func metadata(url: URL?, lastModified: String?) -> [AnyHashable:
-        Any]
-    {
-        return [
-            RemoteDataAPIClient.urlMetadataKey: url?.absoluteString ?? "",
-            RemoteDataAPIClient.lastModifiedMetadataKey: lastModified ?? "",
-        ]
-    }
-
-    private func parseResponse(data: Data?, metadata: [AnyHashable: Any]) throws
-        -> [RemoteDataPayload]
-    {
-        guard let data = data else {
-            throw AirshipErrors.parseError(
-                "Refresh remote data missing response body."
-            )
-        }
-
-        guard
-            let jsonResponse = try JSONSerialization.jsonObject(
-                with: data,
-                options: .allowFragments
-            ) as? [AnyHashable: Any],
-            let payloads = jsonResponse["payloads"] as? [Any]
-        else {
-            return []
-        }
-
-        return payloads.compactMap { self.parsePayload($0, metadata: metadata) }
-    }
-
-    private func parsePayload(_ payload: Any, metadata: [AnyHashable: Any])
-        -> RemoteDataPayload?
-    {
-        guard let payload = payload as? [AnyHashable: Any] else {
-            AirshipLogger.error("Invalid payload.")
-            return nil
-        }
-
-        guard let type = payload["type"] as? String, !type.isEmpty else {
-            AirshipLogger.error("Invalid payload: \(payload). Missing type.")
-            return nil
-        }
-
-        guard let timestampString = payload["timestamp"] as? String,
-            let timestamp = AirshipUtils.parseISO8601Date(from: timestampString)
-        else {
-            AirshipLogger.error(
-                "Invalid payload: \(payload). Missing or invalid timestamp."
-            )
-            return nil
-        }
-
-        guard let data = payload["data"] as? [AnyHashable: Any] else {
-            AirshipLogger.error("Invalid payload: \(payload). Missing data.")
-            return nil
-        }
-
-        return RemoteDataPayload(
-            type: type,
-            timestamp: timestamp,
-            data: data,
-            metadata: metadata
-        )
     }
 }
+
+struct RemoteDataResult: Equatable {
+    let payloads: [RemoteDataPayload]
+    let remoteDataInfo: RemoteDataInfo
+}
+
+fileprivate struct RemoteDataResponse: Codable {
+    let payloads: [Payload]?
+    
+    struct Payload: Codable {
+        let type: String
+        let timestamp: Date
+        let data: AirshipJSON
+    }
+}
+

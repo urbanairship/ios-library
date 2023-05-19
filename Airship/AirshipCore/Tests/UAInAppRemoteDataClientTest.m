@@ -9,15 +9,15 @@
 #import "UAInappMessageSchedule.h"
 #import "UADeferredSchedule+Internal.h"
 #import "UAInAppMessageCustomDisplayContent.h"
+#import "AirshipTests-Swift.h"
 
 @import AirshipCore;
 
 @interface UAInAppRemoteDataClientTest : UAAirshipBaseTest
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
 @property (nonatomic, copy) void (^publishBlock)(NSArray<UARemoteDataPayload *> *);
-@property (nonatomic, strong) NSOperationQueue *queue;
 
-@property (nonatomic, strong) id mockRemoteDataProvider;
+@property (nonatomic, strong) id mockRemoteData;
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockChannel;
 
@@ -30,8 +30,8 @@
     [super setUp];
 
     // mock remote data
-    self.mockRemoteDataProvider = [self mockForProtocol:@protocol(UARemoteDataProvider)];
-    [[[self.mockRemoteDataProvider stub] andDo:^(NSInvocation *invocation) {
+    self.mockRemoteData = [self mockForClass:[UARemoteDataAutomationAccess class]];
+    [[[self.mockRemoteData stub] andDo:^(NSInvocation *invocation) {
         void *arg;
 
         // verify payload types
@@ -59,15 +59,11 @@
         completionHandler(self.allSchedules);
     }] getSchedules:OCMOCK_ANY];
 
-
-    self.queue = [[NSOperationQueue alloc] init];
-    self.queue.maxConcurrentOperationCount = 1;
-
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
-                                                                        dataStore:self.dataStore
-                                                                          channel:self.mockChannel
-                                                                   operationQueue:self.queue
-                                                                       SDKVersion:@"0.0.0"];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteData:self.mockRemoteData
+                                                                dataStore:self.dataStore
+                                                                  channel:self.mockChannel
+                                                      schedulerDispatcher:[[UATestDispatcher alloc] init]
+                                                               SDKVersion:@"0.0.0"];
     self.remoteDataClient.delegate = self.mockDelegate;
 
     [self.remoteDataClient subscribe];
@@ -75,12 +71,15 @@
 }
 
 - (void)testMetadataChange {
-    NSDictionary *metadataA = @{@"cool":@"story"};
-    NSDictionary *metadataB = @{@"millennial":@"potato"};
+    NSDictionary *expectedSceduleMetadataA = @{
+        @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
+        @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0,\"lastModifiedTime\":\"last modified a\"}"
+    };
 
-    NSDictionary *expectedSceduleMetadataA = @{@"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadataA};
-    NSDictionary *expectedSceduleMetadataB = @{@"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadataB};
-
+    NSDictionary *expectedSceduleMetadataB = @{
+        @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
+        @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0,\"lastModifiedTime\":\"last modified b\"}"
+    };
     // setup
     NSString *messageID = [NSUUID UUID].UUIDString;
     NSDictionary *simpleMessage = @{@"message": @{
@@ -105,10 +104,11 @@
 
     NSArray *inAppMessages = @[simpleMessage];
     NSUInteger expectedNumberOfSchedules = inAppMessages.count;
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:metadataA];
+                                                                                   source:UARemoteDataSourceApp
+                                                                                  lastModified:@"last modified a"];
 
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -133,7 +133,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -152,10 +151,11 @@
     }] completionHandler:OCMOCK_ANY];
 
     // setup to same message with metadata B
-    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
                                                                   data:@{@"in_app_messages":inAppMessages}
-                                                              metadata:metadataB];
+                                                              source:UARemoteDataSourceApp
+                                                             lastModified:@"last modified b"];
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
 
@@ -169,21 +169,18 @@
 
 - (void)testMissingInAppMessageRemoteData {
     [[self.mockDelegate reject] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
     self.publishBlock(@[]);
-    [self.queue waitUntilAllOperationsAreFinished];
 }
 
 - (void)testEmptyInAppMessageList {
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":@[]}
-                                                                                   metadata:@{@"cool" : @"story"}];
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                     timestamp:[NSDate date]
+                                                                                          data:@{@"in_app_messages":@[]}
+                                                                                      source:UARemoteDataSourceApp];
 
     [[self.mockDelegate reject] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 }
 
 
@@ -210,10 +207,10 @@
                                     ]
     };
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":@[simpleMessage]}
-                                                                                   metadata:@{@"cool" : @"story"}];
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                     timestamp:[NSDate date]
+                                                                                          data:@{@"in_app_messages":@[simpleMessage]}
+                                                                                        source:UARemoteDataSourceApp];
 
 
     // expectations
@@ -236,7 +233,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -269,10 +265,10 @@
 
     NSArray *inAppMessages = @[simpleMessage];
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                        source:UARemoteDataSourceApp];
 
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -294,7 +290,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -333,10 +328,10 @@
     };
     NSArray *inAppMessages = @[simpleMessage];
     NSUInteger expectedNumberOfScheduleInfos = inAppMessages.count;
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                        source:UARemoteDataSourceApp];
 
     // expectations
     __block NSUInteger callsToScheduleMessages = 0;
@@ -360,21 +355,13 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
     XCTAssertEqual(callsToScheduleMessages,1);
 
-    // setup to send same message again
-    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
-                                                             timestamp:[NSDate date]
-                                                                  data:@{@"in_app_messages":inAppMessages}
-                                                              metadata:@{@"cool" : @"story"}];
-
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -427,10 +414,10 @@
     };
     NSArray *inAppMessages = @[message1,message2];
 
-    __block UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    __block UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                           timestamp:[NSDate date]
                                                                                                data:@{@"in_app_messages":inAppMessages}
-                                                                                           metadata:@{@"cool" : @"story"}];
+                                                                                           source:UARemoteDataSourceApp];
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
     __block NSUInteger editedMessages = 0;
@@ -471,7 +458,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -486,14 +472,13 @@
 
     inAppMessages = @[message2];
 
-    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
                                                                   data:@{@"in_app_messages":inAppMessages}
-                                                              metadata:@{@"cool" : @"story"}];
+                                                              source:UARemoteDataSourceApp];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -547,10 +532,10 @@
                                ]
     };
     NSArray *inAppMessages = @[message1,message2];
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[UAUtils parseISO8601DateFromString:@"2017-12-04T19:07:54.564"] // REVISIT - change this everywhere?
                                                                                        data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                   source:UARemoteDataSourceApp];
 
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
@@ -597,7 +582,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -617,14 +601,13 @@
     changedMessage2[@"last_updated"] = now;
 
     inAppMessages = @[message1, changedMessage2];
-    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
                                                                   data:@{@"in_app_messages":inAppMessages}
-                                                              metadata:@{@"cool" : @"story"}];
+                                                              source:UARemoteDataSourceApp];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -665,10 +648,10 @@
     };
 
     NSArray *inAppMessages = @[message];
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[UAUtils parseISO8601DateFromString:@"2017-12-04T19:07:54.564"] // REVISIT - change this everywhere?
                                                                                        data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                   source:UARemoteDataSourceApp];
 
     [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -682,8 +665,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
-
 
     NSDateFormatter *formatter = [UAUtils ISODateFormatterUTCWithDelimiter];
     NSString *now = [formatter stringFromDate:[NSDate date]];
@@ -708,10 +689,10 @@
     };
 
     inAppMessages = @[message];
-    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
                                                                   data:@{@"in_app_messages":inAppMessages}
-                                                              metadata:@{@"cool" : @"story"}];
+                                                              source:UARemoteDataSourceApp];
 
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -732,12 +713,10 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
 }
-
 
 - (void)testEmptyInAppMessageListAfterNonEmptyList {
     // setup to add messages
@@ -784,10 +763,10 @@
                                ]
     };
     NSArray *inAppMessages = @[message1,message2];
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":inAppMessages}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                   source:UARemoteDataSourceApp];
 
     __block NSUInteger scheduledMessages = 0;
     __block NSUInteger cancelledMessages = 0;
@@ -818,7 +797,6 @@
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
@@ -826,67 +804,17 @@
     XCTAssertEqual(cancelledMessages, 0);
 
     // setup empty payload
-    UARemoteDataPayload *emptyInAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
-                                                                                       timestamp:[NSDate date]
-                                                                                            data:@{}
-                                                                                        metadata:@{}];
+    UARemoteDataPayload *emptyInAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                          timestamp:[NSDate date]
+                                                                                               data:@{}
+                                                                                               source:UARemoteDataSourceApp];
 
     // test
     self.publishBlock(@[emptyInAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     // verify
     [self.mockDelegate verify];
     XCTAssertEqual(cancelledMessages, 2);
-}
-
-- (void)testValidSchedule {
-    id remoteDataMetadata = @{@"neat": @"rad"};
-    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-        builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
-        };
-    }];
-
-    [[[self.mockRemoteDataProvider expect] andReturnValue:@(YES)] isMetadataCurrent:remoteDataMetadata];
-    XCTAssertTrue([self.remoteDataClient isScheduleUpToDate:schedule]);
-}
-
-- (void)testInvalidSchedule {
-    id remoteDataMetadata = @{@"neat": @"rad"};
-
-    UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-        builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
-        };
-    }];
-
-    [[[self.mockRemoteDataProvider expect] andReturnValue:@(NO)] isMetadataCurrent:remoteDataMetadata];
-    XCTAssertFalse([self.remoteDataClient isScheduleUpToDate:schedule]);
-}
-
-- (void)testRemoteSchedule {
-    id remoteDataMetadata = @{@"neat": @"rad"};
-
-    UASchedule *remote = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-        builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": remoteDataMetadata
-        };
-    }];
-
-    UASchedule *notRemote = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-    }];
-
-    UAInAppMessage *remoteMessage = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder * _Nonnull builder) {
-        builder.source = UAInAppMessageSourceRemoteData;
-    }];
-
-    UASchedule *legacyRemote = [UAInAppMessageSchedule scheduleWithMessage:remoteMessage builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-    }];
-
-    XCTAssertFalse([self.remoteDataClient isRemoteSchedule:notRemote]);
-    XCTAssertTrue([self.remoteDataClient isRemoteSchedule:remote]);
-    XCTAssertTrue([self.remoteDataClient isRemoteSchedule:legacyRemote]);
 }
 
 - (void)testLegacyMessage {
@@ -927,9 +855,6 @@
         @"priority": @(-30)
     };
 
-    id metadata = @{@"metadata" : @"so meta"};
-
-
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"custom": @"stuff"}];
         builder.name = @"Simple Message";
@@ -944,7 +869,8 @@
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
         };
 
         // Edit grace period should be converted to seconds
@@ -959,10 +885,10 @@
         builder.priority = -30;
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":@[payload]}
-                                                                                   metadata:metadata];
+                                                                                        source:UARemoteDataSourceApp];
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1011,8 +937,6 @@
         @"priority": @(-30)
     };
 
-    id metadata = @{@"metadata" : @"so meta"};
-
     UASchedule *expected = [UAActionSchedule scheduleWithActions:@{@"some action name": @"some action value"}
                                                     builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
@@ -1021,7 +945,8 @@
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
         };
 
         // Edit grace period should be converted to seconds
@@ -1036,10 +961,10 @@
         builder.priority = -30;
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":@[payload]}
-                                                                                   metadata:metadata];
+                                                                                   source:UARemoteDataSourceApp];
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1076,7 +1001,6 @@
         }
     };
 
-    id metadata = @{@"metadata" : @"so meta"};
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com/example"]
                                                                 retriableOnTimeout:YES];
@@ -1089,14 +1013,15 @@
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
         };
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":@[payload]}
-                                                                                   metadata:metadata];
+                                                                                        source:UARemoteDataSourceApp];
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1115,30 +1040,24 @@
 - (void)testMinSDKVersion {
     NSDate *date = [NSDate date];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
-                                                                                  timestamp:date
-                                                                                       data:@{@"in_app_messages":@[@{}]}
-                                                                                   metadata:@{@"metadata" : @"so meta"}];
-    
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                     timestamp:date
+                                                                                          data:@{@"in_app_messages":@[@{}]}
+                                                                                        source:UARemoteDataSourceApp];
+
     self.publishBlock(@[inAppRemoteDataPayload]);
-    XCTestExpectation *finished = [self expectationWithDescription:@"finished"];
-    [self.queue addOperationWithBlock:^{
-        [finished fulfill];
-    }];
-    
-    [self waitForTestExpectations];
-    
+
     [self.remoteDataClient unsubscribe];
-    
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteDataProvider:self.mockRemoteDataProvider
-                                                                        dataStore:self.dataStore
-                                                                          channel:self.mockChannel
-                                                                   operationQueue:self.queue
-                                                                       SDKVersion:@"1.0.0"];
+
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteData:self.mockRemoteData
+                                                                dataStore:self.dataStore
+                                                                  channel:self.mockChannel
+                                                      schedulerDispatcher:[[UATestDispatcher alloc] init]
+                                                               SDKVersion:@"1.0.0"];
     self.remoteDataClient.delegate = self.mockDelegate;
 
     [self.remoteDataClient subscribe];
-    
+
     id payload = @{
         @"min_sdk_version": @"1.0.0",
         @"message": @{
@@ -1166,15 +1085,14 @@
         },
         @"frequency_constraint_ids": @[@"constraint-one"],
     };
-    
-    
-    
-    inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+
+    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                              timestamp:[date dateByAddingTimeInterval:1000]
                                                                   data:@{@"in_app_messages":@[payload]}
-                                                              metadata:@{@"metadata" : @"so very meta"}];
+                                                                   source:UARemoteDataSourceApp
+                                                                lastModified:@"some timestamp"];
 
-    
+
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1183,12 +1101,11 @@
         completionHandler(YES);
         [scheduled fulfill];
     }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-    
+
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self waitForTestExpectations];
     [self.mockDelegate verify];
 }
-
 
 - (void)testInAppMessageSchedule {
     id payload = @{
@@ -1218,7 +1135,6 @@
         @"frequency_constraint_ids": @[@"constraint-one"],
     };
 
-    id metadata = @{@"metadata" : @"so meta"};
 
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{@"custom": @"stuff"}];
@@ -1235,16 +1151,17 @@
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
-            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": metadata
+            @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
         };
         builder.campaigns = @{ @"categories": @[@"cool"] };
         builder.frequencyConstraintIDs = @[@"constraint-one"];
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":@[payload]}
-                                                                                   metadata:metadata];
+                                                                                        source:UARemoteDataSourceApp];
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1263,12 +1180,11 @@
 - (void)testEmptyConstraints {
     [[self.mockDelegate expect] updateConstraints:@[]];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                   source:UARemoteDataSourceApp];
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
 
     [self.mockDelegate verify];
 }
@@ -1307,12 +1223,11 @@
 
     [[self.mockDelegate expect] updateConstraints:expectedConstraints];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"frequency_constraints": constraintPayloads}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                   source:UARemoteDataSourceApp];
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
     [self.mockDelegate verify];
 }
 
@@ -1343,12 +1258,11 @@
 
     [[self.mockDelegate expect] updateConstraints:@[expected]];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"frequency_constraints": constraintPayloads}
-                                                                                   metadata:@{@"cool" : @"story"}];
+                                                                                   source:UARemoteDataSourceApp];
     self.publishBlock(@[inAppRemoteDataPayload]);
-    [self.queue waitUntilAllOperationsAreFinished];
     [self.mockDelegate verify];
 }
 
@@ -1362,7 +1276,4 @@
 }
 
 @end
-
-
-
 

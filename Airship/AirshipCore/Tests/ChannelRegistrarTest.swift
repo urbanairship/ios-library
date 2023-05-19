@@ -102,7 +102,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
 
-        await self.waitForExpectations(timeout: 10.0)
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
     }
 
     func testCreateChannelExisting() async throws {
@@ -144,7 +144,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
 
-        await self.waitForExpectations(timeout: 10.0)
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
     }
 
     func testCreateChannelError() async throws {
@@ -266,7 +266,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.waitForExpectations(timeout: 10)
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateChannelError() async throws {
@@ -418,7 +418,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.waitForExpectations(timeout: 10)
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateLocationChanged() async throws {
@@ -467,7 +467,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.waitForExpectations(timeout: 10)
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateMinPayload() async throws {
@@ -519,7 +519,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.waitForExpectations(timeout: 10)
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateAfter24Hours() async throws {
@@ -621,7 +621,7 @@ internal class TestChannelRegistrationClient: ChannelAPIClientProtocol {
 
     func updateChannel(
         _ channelID: String,
-        payload payload: ChannelRegistrationPayload
+        payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
         return try await updateCallback!(channelID, payload)
     }

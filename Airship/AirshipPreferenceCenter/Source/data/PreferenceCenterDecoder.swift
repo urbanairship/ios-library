@@ -13,17 +13,17 @@ class PreferenceCenterDecoder {
         return decoder
     }()
 
-    class func decodeConfig(object: [AnyHashable: Any]) throws
-        -> PrefrenceCenterResponse
-    {
+    class func decodeConfig(
+        jsonConfig: [AnyHashable: Any]
+    ) throws -> PreferenceCenterConfig {
         let data = try JSONSerialization.data(
-            withJSONObject: object,
+            withJSONObject: jsonConfig,
             options: []
         )
         return try decodeConfig(data: data)
     }
 
-    class func decodeConfig(data: Data) throws -> PrefrenceCenterResponse {
-        return try self.decoder.decode(PrefrenceCenterResponse.self, from: data)
+    class func decodeConfig(data: Data) throws -> PreferenceCenterConfig {
+        return try self.decoder.decode(PreferenceCenterConfig.self, from: data)
     }
 }

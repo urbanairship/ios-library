@@ -5,14 +5,13 @@ import XCTest
 class RemoteConfigManagerTest: XCTestCase {
 
     let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    let testRemoteDataProvider = TestRemoteDataProvider()
+    let testRemoteData = TestRemoteData()
     let testModuleAdapter = TestRemoteConfigModuleAdapter()
     let notificationCenter = AirshipNotificationCenter.shared
 
     var privacyManager: AirshipPrivacyManager!
     var remoteConfigManager: RemoteConfigManager!
 
-    var appVersion = ""
 
     override func setUpWithError() throws {
         self.privacyManager = AirshipPrivacyManager(
@@ -22,23 +21,13 @@ class RemoteConfigManagerTest: XCTestCase {
         )
 
         self.remoteConfigManager = RemoteConfigManager(
-            remoteDataManager: self.testRemoteDataProvider,
+            remoteData: self.testRemoteData,
             privacyManager: self.privacyManager,
             moduleAdapter: self.testModuleAdapter,
             notificationCenter: self.notificationCenter,
-            versionBlock: { [weak self] in return self?.appVersion ?? "" }
+            appVersion: "0.0.0"
         )
 
-    }
-
-    func testSusbcription() throws {
-        XCTAssertEqual(2, self.testRemoteDataProvider.subscribers.count)
-
-        self.privacyManager.enabledFeatures = []
-        XCTAssertEqual(0, self.testRemoteDataProvider.subscribers.count)
-
-        self.privacyManager.enabledFeatures = .analytics
-        XCTAssertEqual(2, self.testRemoteDataProvider.subscribers.count)
     }
 
     func testDisableModules() throws {
@@ -53,10 +42,10 @@ class RemoteConfigManagerTest: XCTestCase {
         let payload = RemoteDataPayload(
             type: "app_config",
             timestamp: Date(),
-            data: data,
-            metadata: nil
+            data: try AirshipJSON.wrap(data),
+            remoteDataInfo: nil
         )
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.testRemoteData.payloads = [payload]
 
         let expectedDisabled: Set<RemoteConfigModule> = Set([
             RemoteConfigModule.messageCenter, RemoteConfigModule.channel,
@@ -73,10 +62,10 @@ class RemoteConfigManagerTest: XCTestCase {
         let payload = RemoteDataPayload(
             type: "app_config",
             timestamp: Date(),
-            data: [:],
-            metadata: nil
+            data: AirshipJSON.null,
+            remoteDataInfo: nil
         )
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.testRemoteData.payloads = [payload]
 
         XCTAssertEqual(
             Set(RemoteConfigModule.allCases),
@@ -92,7 +81,7 @@ class RemoteConfigManagerTest: XCTestCase {
         }
         XCTAssertEqual(
             10,
-            self.testRemoteDataProvider.remoteDataRefreshInterval
+            self.testRemoteData.remoteDataRefreshInterval
         )
     }
 
@@ -108,13 +97,13 @@ class RemoteConfigManagerTest: XCTestCase {
         let payload = RemoteDataPayload(
             type: "app_config",
             timestamp: Date(),
-            data: data,
-            metadata: nil
+            data: try! AirshipJSON.wrap(data),
+            remoteDataInfo: nil
         )
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.testRemoteData.payloads = [payload]
         XCTAssertEqual(
             100.0,
-            self.testRemoteDataProvider.remoteDataRefreshInterval
+            self.testRemoteData.remoteDataRefreshInterval
         )
     }
 
@@ -127,10 +116,10 @@ class RemoteConfigManagerTest: XCTestCase {
         let payload = RemoteDataPayload(
             type: "app_config:ios",
             timestamp: Date(),
-            data: data,
-            metadata: nil
+            data: try! AirshipJSON.wrap(data),
+            remoteDataInfo: nil
         )
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.testRemoteData.payloads = [payload]
 
         XCTAssertEqual(
             "some-config",
@@ -174,10 +163,10 @@ class RemoteConfigManagerTest: XCTestCase {
         let payload = RemoteDataPayload(
             type: "app_config:ios",
             timestamp: Date(),
-            data: data,
-            metadata: nil
+            data: try! AirshipJSON.wrap(data),
+            remoteDataInfo: nil
         )
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.testRemoteData.payloads = [payload]
 
         XCTAssertEqual(remoteConfig, fromNotification)
     }
@@ -195,19 +184,19 @@ class RemoteConfigManagerTest: XCTestCase {
         let platformPayload = RemoteDataPayload(
             type: "app_config:ios",
             timestamp: Date(),
-            data: platformData,
-            metadata: nil
+            data: try! AirshipJSON.wrap(platformData),
+            remoteDataInfo: nil
         )
         let commonPayload = RemoteDataPayload(
             type: "app_config",
             timestamp: Date(),
-            data: commonData,
-            metadata: nil
+            data: try! AirshipJSON.wrap(commonData),
+            remoteDataInfo: nil
         )
 
-        self.testRemoteDataProvider.dispatchPayloads([
+        self.testRemoteData.payloads = [
             commonPayload, platformPayload,
-        ])
+        ]
 
         XCTAssertEqual(
             "some-config",
@@ -238,13 +227,13 @@ class RemoteConfigManagerTest: XCTestCase {
                 [
                     "modules": ["message_center"],
                     "sdk_versions": [AirshipVersion.get()],
-                ],
+                ] as [String : Any],
                 [
                     "modules": ["contact"],
                     "app_versions": [
                         "value": ["version_matches": "[1.0, 8.0]"],
                         "scope": ["ios", "version"],
-                    ],
+                    ] as [String : Any],
                     "remote_data_refresh_interval": 200.0,
                 ],
                 [
@@ -257,12 +246,11 @@ class RemoteConfigManagerTest: XCTestCase {
         let payload = RemoteDataPayload(
             type: "app_config",
             timestamp: Date(),
-            data: data,
-            metadata: nil
+            data: try! AirshipJSON.wrap(data),
+            remoteDataInfo: nil
         )
 
-        self.appVersion = "0.0.0"
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.testRemoteData.payloads = [payload]
 
         var expectedDisable: [RemoteConfigModule] = [
             .analytics, .messageCenter, .inAppAutomation,
@@ -273,11 +261,18 @@ class RemoteConfigManagerTest: XCTestCase {
         )
         XCTAssertEqual(
             100.0,
-            self.testRemoteDataProvider.remoteDataRefreshInterval
+            self.testRemoteData.remoteDataRefreshInterval
         )
 
-        self.appVersion = "2.0.0"
-        self.testRemoteDataProvider.dispatchPayload(payload)
+        self.remoteConfigManager = RemoteConfigManager(
+            remoteData: self.testRemoteData,
+            privacyManager: self.privacyManager,
+            moduleAdapter: self.testModuleAdapter,
+            notificationCenter: self.notificationCenter,
+            appVersion: "2.0.0"
+        )
+
+        self.testRemoteData.payloads = [payload]
         expectedDisable = [
             .analytics, .contact, .messageCenter, .inAppAutomation,
         ]
@@ -287,7 +282,7 @@ class RemoteConfigManagerTest: XCTestCase {
         )
         XCTAssertEqual(
             200.0,
-            self.testRemoteDataProvider.remoteDataRefreshInterval
+            self.testRemoteData.remoteDataRefreshInterval
         )
     }
 }
