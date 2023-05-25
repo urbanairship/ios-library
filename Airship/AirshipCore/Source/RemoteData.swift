@@ -49,7 +49,7 @@ final class RemoteData: NSObject, Component, InternalRemoteDataProtocol {
     private let privacyManager: AirshipPrivacyManager
     private let appVersion: String
     private let refreshSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
-    private let lastActiveDate: AirshipMainActorWrapper<Date> = AirshipMainActorWrapper(Date.distantPast)
+    private let lastActiveRefreshDate: AirshipMainActorWrapper<Date> = AirshipMainActorWrapper(Date.distantPast)
     private let changeTokenLock: AirshipLock = AirshipLock()
     private let contactSubscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
     private let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
@@ -236,16 +236,15 @@ final class RemoteData: NSObject, Component, InternalRemoteDataProtocol {
     private func applicationDidForeground() {
         let now = self.date.now
 
-        let nextUpdate = self.lastActiveDate.value.addingTimeInterval(
+        let nextUpdate = self.lastActiveRefreshDate.value.addingTimeInterval(
             self.remoteDataRefreshInterval
         )
 
         if now >= nextUpdate {
             updateChangeToken()
             self.enqueueRefreshTask()
+            self.lastActiveRefreshDate.value = now
         }
-
-        self.lastActiveDate.value = now
     }
 
     @objc

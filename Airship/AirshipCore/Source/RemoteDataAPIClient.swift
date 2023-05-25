@@ -43,7 +43,6 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
         remoteDataInfoBlock: @Sendable @escaping (String?) throws -> RemoteDataInfo
     ) async throws -> AirshipHTTPResponse<RemoteDataResult> {
         var headers: [String: String] = [
-            "Content-Type" : "application/json",
             "X-UA-Appkey": self.config.appKey
         ]
 

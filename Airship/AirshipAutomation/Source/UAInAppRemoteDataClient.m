@@ -188,6 +188,13 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 }
 
 - (void)onReceiveRemoteData:(NSArray<UARemoteDataPayload *> *)payloads {
+    // Fixes issue with 17.x -> 16.x -> 17.x
+    if ([self.dataStore objectForKey:UAInAppMessagesLastPayloadMetadataKey]) {
+        [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadInfoKey];
+        [self.dataStore removeObjectForKey:UAInAppMessagesLastAppPayloadInfoKey];
+        [self.dataStore removeObjectForKey:UAInAppMessagesLastPayloadMetadataKey];
+    }
+
     [self processAppRemoteData:[self firstPayloadWithArray:payloads withSource:UARemoteDataSourceApp]];
     [self processContactRemoteData:[self firstPayloadWithArray:payloads withSource:UARemoteDataSourceContact]];
 }
@@ -195,18 +202,23 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 - (void)processContactRemoteData:(UARemoteDataPayload *)messagePayload {
     if (!messagePayload) {
         // If we have data, stop all IAA and delete the keys
-        if ([self.dataStore objectForKey:UAInAppMessagesLastContactPayloadTimeStampKey]) {
+        if ([self.dataStore objectForKey:UAInAppMessagesLastContactPayloadInfoKey]) {
             [self stopAllForSource:UARemoteDataSourceContact];
             [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadInfoKey];
-            [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadTimeStampKey];
-            [self.dataStore removeObjectForKey:UAInAppMessagesLastContactSDKVersionKey];
         }
         return;
     }
 
-    // Load state
-    NSDate *lastPayloadTimestamp = [self.dataStore objectForKey:UAInAppMessagesLastContactPayloadTimeStampKey] ?: [NSDate distantPast];
-    NSString *lastSDKVersion = [self.dataStore stringForKey:UAInAppMessagesLastContactSDKVersionKey];
+    // We store the last update and the last SDK version with the contact ID in the key so we can
+    // probably detect new schedules across contact ID changes. We continue to store the last payload
+    // info without the contact Id so we can detect when we should process the listing again
+    NSString *contactID = (messagePayload.remoteDataInfo.contactID) ?: @"";
+    NSString *lastPayloadTimestampKey = [UAInAppMessagesLastContactPayloadTimeStampKey stringByAppendingString:contactID];
+    NSString *lastSDKVersionKey = [UAInAppMessagesLastContactSDKVersionKey stringByAppendingString:contactID];
+
+    NSDate *lastPayloadTimestamp = [self.dataStore objectForKey:lastPayloadTimestampKey] ?: [NSDate distantPast];
+    NSString *lastSDKVersion = [self.dataStore stringForKey:lastSDKVersionKey];
+
     NSString *lastRemoteInfoString = [self.dataStore stringForKey:UAInAppMessagesLastContactPayloadInfoKey] ?: @"";
     UARemoteDataInfo *lastRemoteInfo = [UARemoteDataInfo fromJSONWithString:lastRemoteInfoString error:nil];
 
@@ -219,26 +231,18 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     // Save state
     if (processed) {
         [self.dataStore setObject:[messagePayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil]
-                           forKey:UAInAppMessagesLastContactPayloadTimeStampKey];
-        [self.dataStore setObject:messagePayload.timestamp forKey:UAInAppMessagesLastContactPayloadTimeStampKey];
-        [self.dataStore setObject:self.SDKVersion forKey:UAInAppMessagesLastContactSDKVersionKey];
+                           forKey:UAInAppMessagesLastContactPayloadInfoKey];
+        [self.dataStore setObject:messagePayload.timestamp forKey:lastPayloadTimestampKey];
+        [self.dataStore setObject:self.SDKVersion forKey:lastSDKVersionKey];
     }
 }
 
 - (void)processAppRemoteData:(UARemoteDataPayload *)messagePayload {
-    // Fixes issue with 17.x -> 16.x -> 17.x
-    if ([self.dataStore objectForKey:UAInAppMessagesLastPayloadMetadataKey]) {
-        [self.dataStore removeObjectForKey:UAInAppMessagesLastContactPayloadTimeStampKey];
-        [self.dataStore removeObjectForKey:UAInAppMessagesLastPayloadMetadataKey];
-    }
-
     if (!messagePayload) {
         // If we have data, stop all IAA and delete the keys
-        if ([self.dataStore objectForKey:UAInAppMessagesLastAppPayloadTimeStampKey]) {
+        if ([self.dataStore objectForKey:UAInAppMessagesLastAppPayloadInfoKey]) {
             [self stopAllForSource:UARemoteDataSourceApp];
             [self.dataStore removeObjectForKey:UAInAppMessagesLastAppPayloadInfoKey];
-            [self.dataStore removeObjectForKey:UAInAppMessagesLastAppPayloadTimeStampKey];
-            [self.dataStore removeObjectForKey:UAInAppMessagesLastAppSDKVersionKey];
         }
         return;
     }

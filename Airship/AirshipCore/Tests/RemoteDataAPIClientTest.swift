@@ -79,7 +79,6 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
         )
 
         let expectedHeaders = [
-            "Content-Type": "application/json",
             "X-UA-Appkey": "test-app-key",
             "If-Modified-Since": "current last modified"
         ]
@@ -174,7 +173,6 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
         )
 
         let expectedHeaders = [
-            "Content-Type": "application/json",
             "X-UA-Appkey": "test-app-key"
         ]
 
