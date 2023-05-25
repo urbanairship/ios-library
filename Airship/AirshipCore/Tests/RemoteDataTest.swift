@@ -237,7 +237,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let expectation = XCTestExpectation()
-        expectation.expectedFulfillmentCount = 2
+        expectation.expectedFulfillmentCount = 3
         let subscription = self.remoteData.publisher(types: ["foo"])
             .sink { payloads in
                 expectation.fulfill()

@@ -383,12 +383,8 @@ final class RemoteData: NSObject, Component, InternalRemoteDataProtocol {
         // We use the refresh subject to know when to update
         // the current values by listening for a `newData` result
         return self.refreshSubject
-            .collect(self.providers.count)
-            .filter { results in
-                // Filter only new data
-                results.contains { result in
-                    result.result == .newData
-                }
+            .filter { result in
+                result.result == .newData
             }
             .flatMap { _ in
                 // Fetch data
