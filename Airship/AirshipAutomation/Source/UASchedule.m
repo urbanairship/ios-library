@@ -31,6 +31,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @property(nonatomic, assign) NSTimeInterval editGracePeriod;
 @property(nonatomic, copy) NSDictionary *metadata;
 @property(nonatomic, strong) UAScheduleAudience *audience;
+@property(nonatomic, strong) NSDate *triggeredTime;
 @end
 
 @implementation UASchedule
@@ -78,6 +79,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         self.interval = builder.interval;
         self.metadata = builder.metadata ?: @{};
         self.audience = builder.audience;
+        self.triggeredTime = builder.triggeredTime ?: [NSDate distantPast];
         _campaigns = [builder.campaigns copy] ?: @{};
         _reportingContext = [builder.reportingContext copy] ?: @{};
         _frequencyConstraintIDs = [builder.frequencyConstraintIDs copy] ?: @[];
@@ -159,6 +161,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         return NO;
     }
 
+    if (![self.triggeredTime isEqualToDate:schedule.triggeredTime]) {
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -196,6 +202,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + self.type;
     result = 31 * result + self.limit;
     result = 31 * result + self.priority;
+    result = 31 * result + [self.triggeredTime hash];
     return result;
 }
 

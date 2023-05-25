@@ -210,7 +210,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     [self.automationStore getSchedulesWithStates:@[@(UAScheduleStatePreparingSchedule)]
                                completionHandler:^(NSArray<UAScheduleData *> *schedules) {
         UA_STRONGIFY(self)
-        [self prepareSchedules:[self sortedScheduleDataByPriority:schedules]];
+        [self prepareSchedules:schedules];
     }];
 
     self.isStarted = YES;
@@ -640,14 +640,18 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 #pragma mark -
 #pragma mark Event processing
 
-- (NSArray<UAScheduleData *> *)sortedScheduleDataByPriority:(NSArray<UAScheduleData *> *)scheduleData {
-    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
-    return [scheduleData sortedArrayUsingDescriptors:@[ascending]];
+// Sort pending schedules, first by triggeredTime and then by priority.
+- (NSArray<UAScheduleData *> *)sortedScheduleData:(NSArray<UAScheduleData *> *)scheduleData {
+    NSSortDescriptor *triggeredTimeDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"triggeredTime" ascending:YES];
+    NSSortDescriptor *priorityDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"priority" ascending:YES];
+    return [scheduleData sortedArrayUsingDescriptors:@[triggeredTimeDescriptor, priorityDescriptor]];
 }
 
-- (NSArray<UASchedule *> *)sortedSchedulesByPriority:(NSArray<UASchedule *> *)schedules {
-    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:@"priority" ascending:YES];
-    return [schedules sortedArrayUsingDescriptors:@[ascending]];
+// Sort pending schedules, first by triggeredTime and then by priority.
+- (NSArray<UASchedule *> *)sortedSchedules:(NSArray<UASchedule *> *)schedules {
+    NSSortDescriptor *triggeredTimeDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"triggeredTime" ascending:YES];
+    NSSortDescriptor *priorityDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"priority" ascending:YES];
+    return [schedules sortedArrayUsingDescriptors:@[triggeredTimeDescriptor, priorityDescriptor]];
 }
 
 - (void)updateTriggersWithScheduleID:(NSString *)scheduleID
@@ -928,7 +932,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 /**
- * Sorts provided schedules in ascending prioirty order and checks whether any compound triggers
+ * Sorts provided schedules, first by triggeredTime and then by priority in ascending order and checks whether any compound triggers
  * assigned to those schedules have currently valid state conditions, updating them if necessary.
  *
  * @param schedules The schedules.
@@ -938,15 +942,15 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 /**
- * Sorts provided schedules in ascending prioirty order and checks whether any compound triggers
+ * Sorts provided schedules, first by triggeredTime and then by priority in ascending order and checks whether any compound triggers
  * assigned to those schedules have currently valid state conditions, updating them if necessary.
  *
  * @param schedules The schedules.
  * @param date Filters out state triggers based on the state change date.
  */
 - (void)checkCompoundTriggerState:(NSArray<UASchedule *> *)schedules forStateNewerThanDate:(NSDate *)date {
-    // Sort schedules by priority in ascending order
-    schedules = [self sortedSchedulesByPriority:schedules];
+    // Sort pending schedules, first by triggeredTime and then by priority.
+    schedules = [self sortedSchedules:schedules];
 
     for (UASchedule *schedule in schedules) {
         NSMutableArray *checkedTriggerTypes = [NSMutableArray array];
@@ -980,7 +984,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     [self.automationStore getSchedulesWithStates:@[@(UAScheduleStateWaitingScheduleConditions)]
                                completionHandler:^(NSArray<UAScheduleData *> *schedulesData) {
         UA_STRONGIFY(self);
-        schedulesData = [self sortedScheduleDataByPriority:schedulesData];
+        schedulesData = [self sortedScheduleData:schedulesData];
         for (UAScheduleData *scheduleData in schedulesData) {
             [self attemptExecution:scheduleData];
         }
@@ -1071,8 +1075,8 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         return;
     }
 
-    // Sort schedules by priority in ascending order
-    schedules = [self sortedScheduleDataByPriority:schedules];
+    // Sort schedules, first by triggeredTime and then by priority, in ascending order
+    schedules = [self sortedScheduleData:schedules];
 
     for (UAScheduleData *scheduleData in schedules) {
         NSString *scheduleID = scheduleData.identifier;
@@ -1206,6 +1210,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
             readyResult = [self.delegate isScheduleReadyToExecute:schedule];
 
             if (readyResult == UAAutomationScheduleReadyResultContinue) {
+                [scheduleData setTriggeredTime:self.date.now];
                 [self.delegate executeSchedule:schedule completionHandler:^{
                     UA_STRONGIFY(self)
                     [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {
@@ -1388,6 +1393,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.campaigns= scheduleData.campaigns;
         builder.reportingContext = scheduleData.reportingContext;
         builder.frequencyConstraintIDs = scheduleData.frequencyConstraintIDs;
+        builder.triggeredTime = scheduleData.triggeredTime;
     }];
 
     if (![schedule isValid]) {
@@ -1539,6 +1545,10 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
     if (edits.frequencyConstraintIDs) {
         scheduleData.frequencyConstraintIDs = edits.frequencyConstraintIDs;
+    }
+    
+    if (edits.triggeredTime) {
+        scheduleData.triggeredTime = edits.triggeredTime;
     }
 }
 

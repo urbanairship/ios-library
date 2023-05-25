@@ -114,6 +114,14 @@ NS_SWIFT_NAME(ScheduleBuilder)
  */
 @property(nonatomic, strong, nullable) UAScheduleAudience *audience;
 
+
+/**
+ * The schedule's triggered time.
+ *
+ * optional.
+ */
+@property(nonatomic, strong, nullable) NSDate *triggeredTime;
+
 @end
 
 
@@ -191,6 +199,11 @@ NS_SWIFT_NAME(ScheduleBuilder)
  * The schedule's interval.
  */
 @property(nonatomic, readonly) NSTimeInterval interval;
+
+/**
+ * The schedule's triggered time.
+ */
+@property(nonatomic, nullable, readonly) NSDate *triggeredTime;
 
 /**
  * Checks if the schedule info is valid. A valid schedule

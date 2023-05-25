@@ -299,7 +299,8 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
     scheduleData.campaigns = schedule.campaigns;
     scheduleData.reportingContext = schedule.reportingContext;
     scheduleData.frequencyConstraintIDs = schedule.frequencyConstraintIDs;
-
+    scheduleData.triggeredTime = schedule.triggeredTime;
+    
     if (schedule.audience) {
         scheduleData.audience = [UAJSONUtils stringWithObject:[schedule.audience toJSON]];
     }

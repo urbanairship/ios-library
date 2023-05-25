@@ -186,6 +186,11 @@ extern NSUInteger const UAScheduleDataVersion;
 @property (nullable, nonatomic, copy) NSArray<NSString *> *frequencyConstraintIDs;
 
 /**
+ * The trigger time.
+ */
+@property (nullable, nonatomic, strong) NSDate *triggeredTime;
+
+/**
  * Whether the schedule has exceeded its limit.
  */
 - (BOOL)isOverLimit;

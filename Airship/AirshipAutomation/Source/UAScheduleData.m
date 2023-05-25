@@ -35,6 +35,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 @dynamic campaigns;
 @dynamic reportingContext;
 @dynamic frequencyConstraintIDs;
+@dynamic triggeredTime;
 
 -(void)setExecutionState:(NSNumber *)executionState {
     [self willChangeValueForKey:@"executionState"];

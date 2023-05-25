@@ -64,6 +64,7 @@ static NSString *const UAScheduleInfoAudienceKey = @"audience";
 static NSString *const UAScheduleInfoIDKey = @"id";
 static NSString *const UAScheduleInfoLegacyIDKey = @"message_id";
 static NSString *const UAScheduleInfoTypeKey = @"type";
+static NSString *const UAScheduleInfoTriggeredTimeKey = @"triggered_time";
 
 static NSString *const UAScheduleInfoTypeActions = @"actions";
 static NSString *const UAScheduleInfoTypeDeferred = @"deferred";
@@ -719,6 +720,12 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
             builder.end = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
         } else {
             builder.end = [NSDate distantFuture];
+        }
+        
+        if (JSON[UAScheduleInfoTriggeredTimeKey]) {
+            builder.triggeredTime = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoTriggeredTimeKey defaultValue:@""]];
+        } else {
+            builder.triggeredTime = [NSDate distantPast];
         }
     }];
 }

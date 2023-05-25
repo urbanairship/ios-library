@@ -205,25 +205,50 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     [self waitForTestExpectations];
 }
 
-- (void)testPriority {
-    NSArray *testPriorityLevels = @[@5, @-2, @0, @-10];
+- (void)testSortSchedule {
+    NSArray *testSchedules = @[
+        @{
+            @"id": @"1",
+            @"triggeredTime": [NSDate dateWithTimeIntervalSince1970:200],
+            @"priority": @5
+            
+        },
+        @{
+            @"id": @"2",
+            @"triggeredTime": [NSDate dateWithTimeIntervalSince1970:200],
+            @"priority": @-2
+            
+        },
+        @{
+            @"id": @"3",
+            @"triggeredTime": [NSDate dateWithTimeIntervalSince1970:100],
+            @"priority": @0
+            
+        },
+        @{
+            @"id": @"4",
+            @"triggeredTime": [NSDate dateWithTimeIntervalSince1970:500],
+            @"priority": @-10
+        }
+    ];
 
-    // Sort the test priority levels to give us the expected priority level
-    NSSortDescriptor *ascending = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES];
-    NSArray *expectedPriorityLevel = [testPriorityLevels sortedArrayUsingDescriptors:@[ascending]];
-
-    // Executed priority level will hold the actual action execution order
-    NSMutableArray *executedPriorityLevel = [NSMutableArray array];
+    // Sort the test schedule array to give us the expected order
+    NSSortDescriptor *triggeredTimeDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"triggeredTime" ascending:YES];
+    NSSortDescriptor *priorityDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"priority" ascending:YES];
+    NSArray *expectedSortedArray = [testSchedules sortedArrayUsingDescriptors:@[triggeredTimeDescriptor, priorityDescriptor]];
+    
+    // Executed schedules will hold the actual action execution order
+    NSMutableArray *executedSortedArray = [NSMutableArray array];
 
     NSMutableArray *runExpectations = [NSMutableArray array];
-    for (int i = 0; i < testPriorityLevels.count; i++) {
-        XCTestExpectation *expectation = [self expectationWithDescription:[NSString stringWithFormat:@"Wait for priority-%@ to execute", testPriorityLevels[i]]];
+    for (int i = 0; i < testSchedules.count; i++) {
+        XCTestExpectation *expectation = [self expectationWithDescription:[NSString stringWithFormat:@"Wait for priority-%@ to execute", testSchedules[i]]];
 
         [runExpectations addObject:expectation];
 
         [[[self.mockDelegate expect] andReturnValue:OCMOCK_VALUE(YES)] isScheduleReadyToExecute:[OCMArg checkWithBlock:^BOOL(id obj) {
             UASchedule *schedule = obj;
-            return schedule.priority == [testPriorityLevels[i] intValue];
+            return schedule.identifier == testSchedules[i][@"id"];
         }]];
 
         [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -234,11 +259,11 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
         }] prepareSchedule:OCMOCK_ANY triggerContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
         [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
-            [executedPriorityLevel addObject:testPriorityLevels[i]];
+            [executedSortedArray addObject:testSchedules[i]];
             [expectation fulfill];
         }] executeSchedule:[OCMArg checkWithBlock:^BOOL(id obj) {
             UASchedule *schedule = obj;
-            return schedule.priority == [testPriorityLevels[i] intValue];
+            return schedule.identifier == testSchedules[i][@"id"];
         }] completionHandler:OCMOCK_ANY];
 
         // Give all the schedules the same trigger
@@ -246,7 +271,9 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
         UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{}
                                                         builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-            builder.priority = [testPriorityLevels[i] integerValue];
+            builder.identifier = testSchedules[i][@"id"];
+            builder.priority = [testSchedules[i][@"priority"] integerValue];
+            builder.triggeredTime = testSchedules[i][@"triggeredTime"];
             builder.triggers = @[trigger];
         }];
 
@@ -259,7 +286,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 
     [self waitForTestExpectations:runExpectations];
 
-    XCTAssertEqualObjects(executedPriorityLevel, expectedPriorityLevel);
+    XCTAssertEqualObjects(executedSortedArray, expectedSortedArray);
 }
 
 - (void)testGetGroups {
@@ -1048,6 +1075,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 }
 
 - (void)testInterrupted {
+    
     // Schedule the action
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:@"purchase"];
@@ -1105,7 +1133,9 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     XCTestExpectation *interruptedCalled = [self expectationWithDescription:@"interruptedCalled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         [interruptedCalled fulfill];
-    }] onExecutionInterrupted:schedule];
+    }] onExecutionInterrupted:[OCMArg checkWithBlock:^BOOL(id obj) {
+        return  [schedule.identifier isEqualToString:schedule.identifier];
+    }]];
 
     [self.automationEngine stop];
     [self.automationEngine start];

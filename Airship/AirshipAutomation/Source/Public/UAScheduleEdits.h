@@ -63,6 +63,11 @@ NS_SWIFT_NAME(ScheduleEditsBuilder)
 @property(nonatomic, strong, nullable) UAScheduleAudience *audience;
 
 
+/**
+ * The schedule's triggeredTime.
+ */
+@property(nonatomic, strong, nullable) NSDate *triggeredTime;
+
 @end
 
 /**
@@ -118,6 +123,11 @@ NS_SWIFT_NAME(ScheduleEdits)
  * The audience conditions for the message.
 */
 @property(nonatomic, readonly, nullable) UAScheduleAudience *audience;
+
+/**
+ * The schedule's triggeredTime.
+ */
+@property(nonatomic, strong, nullable) NSDate *triggeredTime;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Edit Methods
