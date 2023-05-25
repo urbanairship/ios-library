@@ -69,7 +69,10 @@ public class MessageCenterTheme: NSObject {
 
     /// The title color for the "Mark Read" button.
     public var markAsReadButtonTitleColor: Color? = nil
-
+    
+    /// Whether the delete message button from the message view is enabled. Defaults to `NO`.
+    public var hideDeleteButton: Bool? = false
+    
     /// The title color for the "Edit" button.
     public var editButtonTitleColor: Color? = nil
 

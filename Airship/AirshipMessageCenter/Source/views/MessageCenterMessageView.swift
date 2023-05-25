@@ -265,6 +265,9 @@ private struct MessageCenterMessageContentView: View {
     @Environment(\.presentationMode)
     private var presentationMode: Binding<PresentationMode>
 
+    @Environment(\.airshipMessageCenterTheme)
+    private var theme
+    
     @State
     private var webViewPhase: MessageCenterWebView.Phase = .loading
 
@@ -404,6 +407,18 @@ private struct MessageCenterMessageContentView: View {
         .navigationTitle(
             Text(title ?? self.message?.title ?? "")
         )
+        .toolbar {
+            if theme.hideDeleteButton != true {
+                Button("ua_delete_message".messageCenterlocalizedString) {
+                    Task {
+                        await MessageCenter.shared.inbox.delete(
+                            messageIDs: [self.messageID]
+                        )
+                    }
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
+        }
         .navigationBarTitleDisplayMode(.inline)
     }
 }

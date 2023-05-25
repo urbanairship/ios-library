@@ -75,6 +75,7 @@ struct MessageCenterThemeLoader {
         let selectAllButtonTitleColor: String?
         let deleteButtonTitleColor: String?
         let markAsReadButtonTitleColor: String?
+        let hideDeleteButton: Bool?
         let editButtonTitleColor: String?
         let cancelButtonTitleColor: String?
         let backButtonColor: String?
@@ -151,6 +152,7 @@ extension MessageCenterThemeLoader.Config {
         theme.deleteButtonTitleColor = self.deleteButtonTitleColor?.toColor()
         theme.markAsReadButtonTitleColor = self.markAsReadButtonTitleColor?
             .toColor()
+        theme.hideDeleteButton = self.hideDeleteButton ?? false
         theme.editButtonTitleColor = self.editButtonTitleColor?.toColor()
         theme.cancelButtonTitleColor = self.cancelButtonTitleColor?.toColor()
         theme.backButtonColor = self.backButtonColor?.toColor()
