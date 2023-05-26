@@ -41,6 +41,7 @@ class AirshipInstance: AirshipInstanceProtocol {
     public let privacyManager: AirshipPrivacyManager
     public let components: [Component]
     private let remoteConfigManager: RemoteConfigManager
+    private let experimentManager: ExperimentDataProvider
     private var componentMap: [String: Component] = [:]
     private var lock = AirshipLock()
 
@@ -126,6 +127,12 @@ class AirshipInstance: AirshipInstanceProtocol {
             privacyManager: self.privacyManager,
             contact: contact
         )
+        
+        self.experimentManager = ExperimentManager(
+            dataStore: dataStore,
+            remoteData: remoteData,
+            channelIdFetcher: { channel.identifier },
+            stableContactIdFetcher: contact.getStableContactID)
 
         #if !os(tvOS) && !os(watchOS)
         self.channelCapture = ChannelCapture(

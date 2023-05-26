@@ -2,7 +2,7 @@
 
 /// Defines a JSON value matcher.
 @objc(UAJSONValueMatcher)
-public class JSONValueMatcher: NSObject {
+public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     private static let atMostKey = "at_most"
     private static let atLeastKey = "at_least"
     private static let equalsKey = "equals"

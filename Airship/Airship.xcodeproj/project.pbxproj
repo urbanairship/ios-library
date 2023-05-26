@@ -169,6 +169,23 @@
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
+		607951222A1CD1A50086578F /* ExperimentManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */; };
+		6079513B2A1E6BEB0086578F /* MockRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6079513A2A1E6BEB0086578F /* MockRemoteDataProvider.swift */; };
+		6079513C2A1E74A40086578F /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCB2A153C0700E07524 /* Experiment.swift */; };
+		6079513D2A1E74A40086578F /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCB2A153C0700E07524 /* Experiment.swift */; };
+		6079513E2A1E74A80086578F /* AudienceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCD2A15471C00E07524 /* AudienceSelector.swift */; };
+		6079513F2A1E74A90086578F /* AudienceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCD2A15471C00E07524 /* AudienceSelector.swift */; };
+		607951402A1E74AC0086578F /* MessageCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */; };
+		607951412A1E74AC0086578F /* MessageCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */; };
+		60D3BCC42A1529D800E07524 /* ExperimentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */; };
+		60D3BCC62A152A0D00E07524 /* ExperimentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */; };
+		60D3BCC72A152A1700E07524 /* ExperimentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */; };
+		60D3BCC82A152A1700E07524 /* ExperimentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */; };
+		60D3BCC92A152A1800E07524 /* ExperimentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */; };
+		60D3BCCA2A152A1800E07524 /* ExperimentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */; };
+		60D3BCCC2A153C0700E07524 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCB2A153C0700E07524 /* Experiment.swift */; };
+		60D3BCCE2A15471C00E07524 /* AudienceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCD2A15471C00E07524 /* AudienceSelector.swift */; };
+		60D3BCD02A154D9400E07524 /* MessageCriteria.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */; };
 		6E062D03271656DE001A74A1 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
 		6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D04271656F8001A74A1 /* LinearLayout.swift */; };
 		6E062D0727165709001A74A1 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0627165709001A74A1 /* Label.swift */; };
@@ -1989,6 +2006,13 @@
 		45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipAccengageTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentManagerTest.swift; sourceTree = "<group>"; };
+		6079513A2A1E6BEB0086578F /* MockRemoteDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRemoteDataProvider.swift; sourceTree = "<group>"; };
+		60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentDataProvider.swift; sourceTree = "<group>"; };
+		60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentManager.swift; sourceTree = "<group>"; };
+		60D3BCCB2A153C0700E07524 /* Experiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
+		60D3BCCD2A15471C00E07524 /* AudienceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceSelector.swift; sourceTree = "<group>"; };
+		60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCriteria.swift; sourceTree = "<group>"; };
 		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
 		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E062D02271656DE001A74A1 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
@@ -3283,6 +3307,27 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		6079511E2A1CD1880086578F /* Experiments */ = {
+			isa = PBXGroup;
+			children = (
+				6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */,
+				6079513A2A1E6BEB0086578F /* MockRemoteDataProvider.swift */,
+			);
+			name = Experiments;
+			sourceTree = "<group>";
+		};
+		60D3BCC22A1528F100E07524 /* Experimentation */ = {
+			isa = PBXGroup;
+			children = (
+				60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */,
+				60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */,
+				60D3BCCB2A153C0700E07524 /* Experiment.swift */,
+				60D3BCCD2A15471C00E07524 /* AudienceSelector.swift */,
+				60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */,
+			);
+			name = Experimentation;
+			sourceTree = "<group>";
+		};
 		6E062CFF27165642001A74A1 /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
@@ -4342,6 +4387,7 @@
 				6E411D362538CF3900FEE4E8 /* Push */,
 				6E411D0B2538CD4B00FEE4E8 /* Remote Config */,
 				6E411D0C2538CD6400FEE4E8 /* Remote Data */,
+				60D3BCC22A1528F100E07524 /* Experimentation */,
 				6E411D372538CF5300FEE4E8 /* Tag Groups */,
 				6E411D5F2538D26200FEE4E8 /* Utils */,
 				6E9B4873288F0CE000C905B1 /* RateAppAction.swift */,
@@ -4878,6 +4924,7 @@
 		CC64F0551D8B77E3009CEF27 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6079511E2A1CD1880086578F /* Experiments */,
 				6E7DB38C28ECFCDB002725F6 /* JSON */,
 				6E49D7CB284028A900C7BB9D /* PermissionsManager */,
 				6E1C9C38271E90D1009EF9EF /* Thomas */,
@@ -6031,6 +6078,7 @@
 				6E75F50529C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
 				6E91E44F28EF423400B6F25E /* AirshipWorkerType.swift in Sources */,
 				6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */,
+				60D3BCD02A154D9400E07524 /* MessageCriteria.swift in Sources */,
 				6E94761529BBC0240025F364 /* AirshipButton.swift in Sources */,
 				3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */,
 				6EC82DB2281304CF00642596 /* RateLimiter.swift in Sources */,
@@ -6100,6 +6148,7 @@
 				6E91B45B268904D900DDB1A8 /* PushReceivedEvent.swift in Sources */,
 				6E062D0D2718B505001A74A1 /* ViewConstraints.swift in Sources */,
 				6E698E3D267BEDC300654DB2 /* AirshipContact.swift in Sources */,
+				60D3BCCC2A153C0700E07524 /* Experiment.swift in Sources */,
 				A658DE192728498900007672 /* AirshipWebview.swift in Sources */,
 				6E15B72D26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */,
 				6E07688829F9D28A0014E2A9 /* AirshipNotificationCenter.swift in Sources */,
@@ -6126,6 +6175,7 @@
 				6E299FDB28D14208001305A7 /* AirshipResponse.swift in Sources */,
 				6E87BD9226D963B60005D20D /* DefaultAppIntegrationDelegate.swift in Sources */,
 				6E91B44026868C3400DDB1A8 /* RegionEvent.swift in Sources */,
+				60D3BCC42A1529D800E07524 /* ExperimentDataProvider.swift in Sources */,
 				6E87BD8D26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */,
 				6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
@@ -6239,6 +6289,7 @@
 				6E49D7C428401D2E00C7BB9D /* PushNotificationDelegate.swift in Sources */,
 				3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */,
 				3CC8AA0626BB3C7900405614 /* Push.swift in Sources */,
+				60D3BCCE2A15471C00E07524 /* AudienceSelector.swift in Sources */,
 				6E6ED1672683DBC300A2CBD0 /* UACoreData.swift in Sources */,
 				6E87BD8326D757CA0005D20D /* CloudSite.swift in Sources */,
 				6ED735DA26C73DC5003B0A7D /* Channel.swift in Sources */,
@@ -6308,6 +6359,7 @@
 				6EE49C182A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				32D6E87B2727F7060077C784 /* Image.swift in Sources */,
 				6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */,
+				60D3BCC62A152A0D00E07524 /* ExperimentManager.swift in Sources */,
 				6E15B72326CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				6E664BB126C46BC600A2C8E5 /* FetchDeviceInfoActionPredicate.swift in Sources */,
 				6E91E43A28EF423400B6F25E /* WorkBackgroundTasks.swift in Sources */,
@@ -6570,6 +6622,7 @@
 				A68C7496285CAF5C00EEA2F4 /* PermissionsManager.swift in Sources */,
 				A6722AB8281A9F220033F54D /* UAEvents.xcdatamodeld in Sources */,
 				A6722AB9281A9F220033F54D /* UARemoteData.xcdatamodeld in Sources */,
+				607951412A1E74AC0086578F /* MessageCriteria.swift in Sources */,
 				A6722A7C281A9EDA0033F54D /* LocaleManager.swift in Sources */,
 				6E91E44E28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
 				6E75F50F29CA7FD000E3585A /* AutomationAudienceOverridesProvider.swift in Sources */,
@@ -6584,6 +6637,7 @@
 				32F01B0A29E83C88007A2131 /* StoryIndicator.swift in Sources */,
 				A6722A88281A9EDA0033F54D /* OpenRegistrationOptions.swift in Sources */,
 				A6722A89281A9EDA0033F54D /* NativeBridgeDelegate.swift in Sources */,
+				6079513D2A1E74A40086578F /* Experiment.swift in Sources */,
 				A6722A8A281A9EDA0033F54D /* NativeBridge.swift in Sources */,
 				6E0B8764294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
 				6E299FDD28D14208001305A7 /* AirshipResponse.swift in Sources */,
@@ -6704,6 +6758,7 @@
 				A6722A78281A9EB90033F54D /* JSONPredicate.swift in Sources */,
 				A6722A79281A9EB90033F54D /* JSONUtils.swift in Sources */,
 				A6722A7A281A9EB90033F54D /* JSONValueMatcher.swift in Sources */,
+				60D3BCC92A152A1800E07524 /* ExperimentDataProvider.swift in Sources */,
 				A6722A7B281A9EB90033F54D /* AirshipJSON.swift in Sources */,
 				A6722A23281A9EA00033F54D /* ModifyAttributesAction.swift in Sources */,
 				A6722A24281A9EA00033F54D /* ModifyTagsAction.swift in Sources */,
@@ -6784,9 +6839,11 @@
 				A67229C8281A9E630033F54D /* ThomasDelegate.swift in Sources */,
 				A67229C9281A9E630033F54D /* ThomasViewController.swift in Sources */,
 				A67229CA281A9E630033F54D /* (null) in Sources */,
+				6079513F2A1E74A90086578F /* AudienceSelector.swift in Sources */,
 				A67229CB281A9E640033F54D /* ThomasViewModels.swift in Sources */,
 				A67229CC281A9E640033F54D /* ThomasViewModelExtensions.swift in Sources */,
 				A67229CD281A9E640033F54D /* LayoutState.swift in Sources */,
+				60D3BCCA2A152A1800E07524 /* ExperimentManager.swift in Sources */,
 				A67229CE281A9E640033F54D /* ThomasEnvironment.swift in Sources */,
 				A67229CF281A9E640033F54D /* FormState.swift in Sources */,
 				A67229D0281A9E640033F54D /* PagerState.swift in Sources */,
@@ -6992,6 +7049,7 @@
 				6E18E6EF23207B57004E09DF /* UAInAppMessageSceneManagerTest.m in Sources */,
 				6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */,
 				CC64F10D1D8B781C009CEF27 /* UALandingPageActionTest.m in Sources */,
+				6079513B2A1E6BEB0086578F /* MockRemoteDataProvider.swift in Sources */,
 				6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */,
 				CC64F1151D8B781C009CEF27 /* UANotificationCategoriesTest.m in Sources */,
 				A6AF8D2D27E8D4910068C7EE /* SubscriptionListActionTest.swift in Sources */,
@@ -7002,6 +7060,7 @@
 				6ED735E626CAEABC003B0A7D /* TestLocaleManager.swift in Sources */,
 				6E15B70726CE07BD0099C92D /* TestRemoteConfigModuleAdapter.swift in Sources */,
 				CC64F0EB1D8B781C009CEF27 /* UABase64Test.m in Sources */,
+				607951222A1CD1A50086578F /* ExperimentManagerTest.swift in Sources */,
 				6E96ED1A2941A0EC0053CC91 /* EventTestUtils.swift in Sources */,
 				CC64F0F11D8B781C009CEF27 /* UACircularRegionTest.m in Sources */,
 				997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */,
@@ -7085,6 +7144,7 @@
 				6EE49C112A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */,
 				6E6541E12758976D009676CA /* AirshipProgressView.swift in Sources */,
 				A6A5530B26D548AF002B20F6 /* NativeBridge.swift in Sources */,
+				607951402A1E74AC0086578F /* MessageCriteria.swift in Sources */,
 				6E91B4492688335000DDB1A8 /* ScreenTrackingEvent.swift in Sources */,
 				32CF81E3275627F4003009D1 /* AirshipAsyncImage.swift in Sources */,
 				6E664BD126C4916600A2C8E5 /* AddTagsAction.swift in Sources */,
@@ -7139,6 +7199,7 @@
 				6E92ECB2284ECE590038802D /* CachedList.swift in Sources */,
 				A658DE2C272AFB0400007672 /* AirshipImageLoader.swift in Sources */,
 				6E15B72E26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */,
+				6079513C2A1E74A40086578F /* Experiment.swift in Sources */,
 				6EA5202427D1364E003011CA /* AirshipDateFormatter.swift in Sources */,
 				6E7DB38428ECDC41002725F6 /* LiveActivity.swift in Sources */,
 				6E952924268B812000398B54 /* AccountEventTemplate.swift in Sources */,
@@ -7169,6 +7230,7 @@
 				6E698E60267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				6EAD7CE626B216DB00B88EA7 /* DeepLinkAction.swift in Sources */,
 				6E664BBA26C46BC600A2C8E5 /* AttributesActionPredicate.swift in Sources */,
+				60D3BCC72A152A1700E07524 /* ExperimentDataProvider.swift in Sources */,
 				6E87BD9A26DD78180005D20D /* DefaultAppIntegrationDelegate.swift in Sources */,
 				6E510C232721DA86006D9126 /* BorderViewModifier.swift in Sources */,
 				6E510C1E2721DA77006D9126 /* ViewConstraints.swift in Sources */,
@@ -7245,6 +7307,7 @@
 				6E7112A62880DACB004942E4 /* StateController.swift in Sources */,
 				6E664BBE26C46BC600A2C8E5 /* TagsActionPredicate.swift in Sources */,
 				6E88739B2763D8B200AC248A /* AirshipImageProvider.swift in Sources */,
+				6079513E2A1E74A80086578F /* AudienceSelector.swift in Sources */,
 				6E952930268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
 				6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */,
 				6E91E43E28EF423400B6F25E /* WorkConditionsMonitor.swift in Sources */,
@@ -7351,6 +7414,7 @@
 				6EE49C192A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				6E15B72426CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
+				60D3BCC82A152A1700E07524 /* ExperimentManager.swift in Sources */,
 				6E664BB226C46BC600A2C8E5 /* FetchDeviceInfoActionPredicate.swift in Sources */,
 				6E6ED13C2683A58D00A2CBD0 /* Dispatcher.swift in Sources */,
 				3C63556126CDD4F8006E9916 /* PushProtocol.swift in Sources */,

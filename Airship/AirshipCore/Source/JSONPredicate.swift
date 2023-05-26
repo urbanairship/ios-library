@@ -2,15 +2,15 @@
 
 /// Predicate for JSON payloads.
 @objc(UAJSONPredicate)
-public class JSONPredicate: NSObject {
+public final class JSONPredicate: NSObject, Sendable {
     private static let andTypeKey = "and"
     private static let orTypeKey = "or"
     private static let notTypeKey = "not"
     private static let errorDomainKey = "com.urbanairship.json_predicate"
 
-    private var type: String?
-    private var subpredicates: [JSONPredicate]?
-    private var jsonMatcher: JSONMatcher?
+    private let type: String?
+    private let subpredicates: [JSONPredicate]?
+    private let jsonMatcher: JSONMatcher?
 
     @objc
     required init(
@@ -19,10 +19,10 @@ public class JSONPredicate: NSObject {
         subpredicates: [JSONPredicate]?
     ) {
 
-        super.init()
         self.type = type
         self.jsonMatcher = jsonMatcher
         self.subpredicates = subpredicates
+        super.init()
     }
 
     /**

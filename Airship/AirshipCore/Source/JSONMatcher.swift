@@ -2,7 +2,7 @@
 
 /// Matcher for a JSON payload.
 @objc(UAJSONMatcher)
-public class JSONMatcher: NSObject {
+public final class JSONMatcher: NSObject, Sendable {
 
     private static let keyKey = "key"
     private static let scopeKey = "scope"
@@ -10,10 +10,10 @@ public class JSONMatcher: NSObject {
     private static let ignoreCaseKey = "ignore_case"
     private static let errorDomainKey = "com.urbanairship.json_matcher"
 
-    private var key: String?
-    private var scope: [String]?
-    private var valueMatcher: JSONValueMatcher
-    private var ignoreCase: Bool?
+    private let key: String?
+    private let scope: [String]?
+    private let valueMatcher: JSONValueMatcher
+    private let ignoreCase: Bool?
 
     private
         init(
