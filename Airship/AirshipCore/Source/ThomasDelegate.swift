@@ -28,9 +28,11 @@ public protocol ThomasDelegate {
     /// Called when a button is tapped.
     /// - Parameters:
     ///     - buttonIdentifier: The button id.
+    ///     - metadata: the reporting metadata.
     ///     - layoutContext: The layout context.
     func onButtonTapped(
         buttonIdentifier: String,
+        metadata: Any?,
         layoutContext: ThomasLayoutContext
     )
 
@@ -69,18 +71,22 @@ public protocol ThomasDelegate {
     /// Called when a pager page has a gesture.
     /// - Parameters:
     ///     - identifier: The pager gesture identifier.
+    ///     - metadata: the reporting metadata.
     ///     - layoutContext: The layout context.
     func onPageGesture(
         identifier: String,
+        metadata: Any?,
         layoutContext: ThomasLayoutContext
     )
 
     /// Called when a pager page changed automatically after a delay.
     /// - Parameters:
     ///     - identifier: The automated action identifier.
+    ///     - metadata: the reporting metadata.
     ///     - layoutContext: The layout context.
     func onPageAutomatedAction(
         identifier: String,
+        metadata: Any?,
         layoutContext: ThomasLayoutContext
     )
     

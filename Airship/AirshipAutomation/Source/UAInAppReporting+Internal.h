@@ -41,6 +41,7 @@ NS_SWIFT_NAME(InAppReporting)
 
 + (instancetype)buttonTapEventWithScheduleID:(NSString *)scheduleID
                                      message:(UAInAppMessage *)message
+                                    metadata:(id)metadata
                                     buttonID:(NSString *)buttonID;
 
 + (instancetype)pageViewEventWithScheduleID:(NSString *)scheduleID
@@ -50,10 +51,12 @@ NS_SWIFT_NAME(InAppReporting)
 
 + (instancetype)pageGestureEventWithScheduleID:(NSString *)scheduleID
                                     identifier:(NSString *)identifier
+                                      metadata:(id)metadata
                                        message:(UAInAppMessage *)message;
     
 + (instancetype)pageAutomatedActionEventWithScheduleID:(NSString *)scheduleID
                                             identifier:(NSString *)identifier
+                                              metadata:(id)metadata
                                                message:(UAInAppMessage *)message;
 
 + (instancetype)pageSwipeEventWithScheduleID:(NSString *)scheduleID

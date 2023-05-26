@@ -9,7 +9,7 @@ struct LabelButton : View {
     let model: LabelButtonModel
     let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
-
+    
     init(model: LabelButtonModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
@@ -18,6 +18,7 @@ struct LabelButton : View {
     var body: some View {
         AirshipButton(
             identifier: self.model.identifier,
+            reportingMetadata: self.model.reportingMetadata?.unWrap(),
             description: self.model.contentDescription ?? self.model.label.text,
             clickBehaviors: self.model.clickBehaviors,
             actions: self.model.actions

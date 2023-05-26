@@ -17,8 +17,8 @@ struct Pager: View {
     ]
 
     private enum PageTransition {
-        case gesture(identifier: String)
-        case automated(identifier: String)
+        case gesture(identifier: String, reportingMetadata: Any?)
+        case automated(identifier: String, reportingMetadata: Any?)
         case defaultSwipe
     }
 
@@ -310,7 +310,10 @@ struct Pager: View {
                 .forEach { gesture in
                     handleGestureBehavior(
                         gesture.behavior,
-                        transition: .gesture(identifier: gesture.identifier),
+                        transition: .gesture(
+                            identifier: gesture.identifier,
+                            reportingMetadata: gesture.reportingMetadata?.unWrap()
+                        ),
                         index: index
                     )
                 }
@@ -326,7 +329,10 @@ struct Pager: View {
             .forEach { gesture in
                 handleGestureBehavior(
                     gesture.behavior,
-                    transition: .gesture(identifier: gesture.identifier),
+                    transition: .gesture(
+                        identifier: gesture.identifier,
+                        reportingMetadata: gesture.reportingMetadata?.unWrap()
+                    ),
                     index: index
                 )
             }
@@ -337,7 +343,10 @@ struct Pager: View {
             let behavior = isPressed ? gesture.pressBehavior : gesture.releaseBehavior
             handleGestureBehavior(
                 behavior,
-                transition: .gesture(identifier: gesture.identifier),
+                transition: .gesture(
+                    identifier: gesture.identifier,
+                    reportingMetadata: gesture.reportingMetadata?.unWrap()
+                ),
                 index: index
             )
         }
@@ -382,7 +391,10 @@ struct Pager: View {
                 handleActions(automatedAction.actions)
                 handleBehavior(
                     automatedAction.behaviors,
-                    transition: .automated(identifier: automatedAction.identifier),
+                    transition: .automated(
+                        identifier: automatedAction.identifier,
+                        reportingMetadata: automatedAction.reportingMetadata?.unWrap()
+                    ),
                     index: index
                 )
                 pagerState.markAutomatedActionExecuted(automatedAction.identifier)
@@ -465,14 +477,16 @@ struct Pager: View {
                 toIndex: pageIndex,
                 layoutState: layoutState
             )
-        case .gesture(let identifier):
+        case .gesture(let identifier, let reportingMetadata):
             thomasEnvironment.pageGesture(
                 identifier: identifier,
+                reportingMetatda: reportingMetadata,
                 layoutState: layoutState
             )
-        case .automated(let identifier):
+        case .automated(let identifier, let reportingMetadata):
             thomasEnvironment.pageAutomated(
                 identifier: identifier,
+                reportingMetatda: reportingMetadata,
                 layoutState: layoutState
             )
         }
@@ -577,7 +591,6 @@ struct Pager: View {
 
         }
     }
-    
 }
 
 

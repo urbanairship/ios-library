@@ -243,10 +243,13 @@
 }
 
 - (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier
-                             layoutContext:(UAThomasLayoutContext * _Nonnull)layoutContext {
+                                  metadata:(id)metadata
+                             layoutContext:(UAThomasLayoutContext * _Nonnull)layoutContext
+{
 
     UAInAppReporting *reporting = [UAInAppReporting buttonTapEventWithScheduleID:self.scheduleID
                                                                          message:self.message
+                                                                        metadata: metadata
                                                                         buttonID:buttonIdentifier];
     reporting.layoutContext = layoutContext;
     
@@ -312,14 +315,26 @@
     }
 }
 
--(void)onPageGestureWithIdentifier:(NSString *)identifier layoutContext:(UAThomasLayoutContext *)layoutContext {
-    UAInAppReporting *reporting = [UAInAppReporting pageGestureEventWithScheduleID:self.scheduleID identifier:identifier message:self.message];
+-(void)onPageGestureWithIdentifier:(NSString *)identifier
+                          metadata:(id)metadata
+                     layoutContext:(UAThomasLayoutContext *)layoutContext
+{
+    UAInAppReporting *reporting = [UAInAppReporting pageGestureEventWithScheduleID:self.scheduleID
+                                                                        identifier:identifier
+                                                                          metadata:metadata
+                                                                           message:self.message];
     reporting.layoutContext = layoutContext;
     [self record:reporting];
 }
 
--(void)onPageAutomatedActionWithIdentifier:(NSString *)identifier layoutContext:(UAThomasLayoutContext *)layoutContext {
-    UAInAppReporting *reporting = [UAInAppReporting pageAutomatedActionEventWithScheduleID:self.scheduleID identifier:identifier message:self.message];
+-(void)onPageAutomatedActionWithIdentifier:(NSString *)identifier
+                                  metadata:(id)metadata
+                             layoutContext:(UAThomasLayoutContext *)layoutContext
+{
+    UAInAppReporting *reporting = [UAInAppReporting pageAutomatedActionEventWithScheduleID:self.scheduleID
+                                                                                identifier:identifier
+                                                                                  metadata:metadata
+                                                                                   message:self.message];
     reporting.layoutContext = layoutContext;
     [self record:reporting];
 }

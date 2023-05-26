@@ -722,6 +722,7 @@ struct LabelButtonModel: BaseModel, Accessible {
     let contentDescription: String?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    let reportingMetadata: AirshipJSON?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -734,6 +735,7 @@ struct LabelButtonModel: BaseModel, Accessible {
         case contentDescription = "content_description"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
+        case reportingMetadata = "reporting_metadata"
     }
 }
 
@@ -820,6 +822,7 @@ struct ImageButtonModel: BaseModel, Accessible {
     let contentDescription: String?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    let reportingMetadata: AirshipJSON?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -832,6 +835,7 @@ struct ImageButtonModel: BaseModel, Accessible {
         case contentDescription = "content_description"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
+        case reportingMetadata = "reporting_metadata"
     }
 }
 
@@ -874,6 +878,7 @@ enum PagerGestureType: String, Decodable, Equatable {
 }
 
 protocol PagerGesture: Decodable, Equatable {
+    var reportingMetadata: AirshipJSON? { get }
     var type: PagerGestureType { get }
     var identifier: String { get }
 }
@@ -881,11 +886,13 @@ protocol PagerGesture: Decodable, Equatable {
 struct PagerDragGesture: PagerGesture {
     var type = PagerGestureType.swipe
     var identifier: String
+    var reportingMetadata: AirshipJSON?
     let direction: PagerGestureDirection
     let behavior: PagerGestureBehavior
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
+        case reportingMetadata = "reporting_metadata"
         case direction = "direction"
         case behavior = "behavior"
     }
@@ -894,6 +901,7 @@ struct PagerDragGesture: PagerGesture {
 struct PagerTapGesture: PagerGesture {
     var type = PagerGestureType.tap
     var identifier: String
+    var reportingMetadata: AirshipJSON?
     let location: PagerGestureLocation
     let behavior: PagerGestureBehavior
     
@@ -907,6 +915,7 @@ struct PagerTapGesture: PagerGesture {
 struct PagerHoldGesture: PagerGesture {
     var type = PagerGestureType.hold
     var identifier: String
+    var reportingMetadata: AirshipJSON?
     let pressBehavior: PagerGestureBehavior
     let releaseBehavior: PagerGestureBehavior
     
@@ -956,12 +965,14 @@ struct AutomatedAction: Decodable, Equatable {
     let delay: Double?
     let actions: [ActionsPayload]?
     let behaviors: [ButtonClickBehavior]?
+    let reportingMetadata: AirshipJSON?
     
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
         case delay = "delay"
         case actions = "actions"
         case behaviors = "behaviors"
+        case reportingMetadata = "reporting_metadata"
     }
 }
 

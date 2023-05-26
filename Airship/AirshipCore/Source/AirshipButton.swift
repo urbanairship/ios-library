@@ -13,6 +13,7 @@ struct AirshipButton<Label> : View  where Label : View {
     @Environment(\.layoutState) private var layoutState
 
     let identifier: String
+    let reportingMetadata: Any?
     let description: String
     let clickBehaviors:[ButtonClickBehavior]?
     let actions: ActionsPayload?
@@ -32,6 +33,7 @@ struct AirshipButton<Label> : View  where Label : View {
     private func doButtonActions() {
         thomasEnvironment.buttonTapped(
             buttonIdentifier: self.identifier,
+            reportingMetatda: self.reportingMetadata,
             layoutState: layoutState
         )
 

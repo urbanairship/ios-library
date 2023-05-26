@@ -90,6 +90,9 @@ view:
             - add_tags_action: 'pager-page-1y-automated'
           - delay: 4
             identifier: "automated-action-1-delay4-id"
+            reporting_metadata:
+              "key1": "value1"
+              "key2": "value2"
             behaviors:
             - pager_next
           display_actions:

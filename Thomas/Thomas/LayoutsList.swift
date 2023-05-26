@@ -143,10 +143,11 @@ class Delegate: ThomasDelegate {
 
     func onButtonTapped(
         buttonIdentifier: String,
-        layoutContext: ThomasLayoutContext
-    ) {
+        metadata: [String : Any],
+        layoutContext: ThomasLayoutContext)
+    {
         print(
-            "Thomas.onButtonTapped{buttonIdentifier=\(buttonIdentifier), context=\(layoutContext)"
+            "Thomas.onButtonTapped{buttonIdentifier=\(buttonIdentifier)\n, metadata=\(metadata)\n, context=\(layoutContext)"
         )
     }
 
@@ -180,17 +181,25 @@ class Delegate: ThomasDelegate {
         )
     }
     
-    func onPageGesture(identifier: String, layoutContext: AirshipCore.ThomasLayoutContext) {
+    func onPageGesture(
+        identifier: String,
+        metadata: [String : Any],
+        layoutContext: ThomasLayoutContext)
+    {
         print(
-            "Thomas.onPageGesture{context=\(layoutContext)}"
+            "Thomas.onPageGesture{identifier=\(identifier)\n, metadata=\(metadata)\n, layoutContext=\(layoutContext)}"
         )
     }
     
-    func onPageAutomatedAction(identifier: String, layoutContext: AirshipCore.ThomasLayoutContext) {
-        print(
-            "Thomas.onPageAutomatedAction{context=\(layoutContext)}"
-        )
-    }
+    func onPageAutomatedAction(
+        identifier: String,
+        metadata: [String : Any],
+        layoutContext: ThomasLayoutContext)
+    {
+            print(
+                "Thomas.onPageAutomatedAction{identifier=\(identifier)\n, metadata=\(metadata)\n, layoutContext=\(layoutContext)}"
+            )
+        }
     
     func onPageSwiped(
         from: ThomasPagerInfo,

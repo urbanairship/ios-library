@@ -85,11 +85,13 @@
         @"conversion_metadata": self.analytics.conversionPushMetadata,
         @"locale": self.message.renderedLocale,
         @"source": @"urban-airship",
-        @"pager_gesture_identifier": @"pager_gesture_id"
+        @"gesture_identifier": @"pager_gesture_id",
+        @"reporting_metadata" : @{ @"key": @"value"}
     };
     
     UAInAppReporting *reporting = [UAInAppReporting pageGestureEventWithScheduleID:self.scheduleID
                                                                         identifier:@"pager_gesture_id"
+                                                                          metadata:@{ @"key": @"value"}
                                                                            message:self.message];
     
     [reporting record:self.analytics];
@@ -111,11 +113,13 @@
         @"conversion_metadata": self.analytics.conversionPushMetadata,
         @"locale": self.message.renderedLocale,
         @"source": @"urban-airship",
-        @"page_automated_action_identifier": @"page_automated_action_id"
+        @"action_identifier": @"page_automated_action_id",
+        @"reporting_metadata": @{ @"key": @"value"}
     };
     
     UAInAppReporting *reporting = [UAInAppReporting pageAutomatedActionEventWithScheduleID:self.scheduleID
                                                                                 identifier:@"page_automated_action_id"
+                                                                                  metadata:@{ @"key": @"value"}
                                                                                    message:self.message];
     
     [reporting record:self.analytics];
@@ -291,12 +295,14 @@
         @"conversion_metadata": self.analytics.conversionPushMetadata,
         @"locale": self.message.renderedLocale,
         @"source": @"urban-airship",
-        @"button_identifier": @"some-button"
+        @"button_identifier": @"some-button",
+        @"reporting_metadata": @{ @"key": @"value"}
     };
 
     UAInAppReporting *reporting = [UAInAppReporting buttonTapEventWithScheduleID:self.scheduleID
                                                                          message:self.message
-                                                                          buttonID:@"some-button"];
+                                                                        metadata:@{ @"key": @"value"}
+                                                                        buttonID:@"some-button"];
     
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];

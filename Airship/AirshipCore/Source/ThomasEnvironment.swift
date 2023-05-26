@@ -91,9 +91,14 @@ class ThomasEnvironment: ObservableObject {
         )
     }
 
-    func buttonTapped(buttonIdentifier: String, layoutState: LayoutState) {
+    func buttonTapped(
+        buttonIdentifier: String,
+        reportingMetatda: Any?,
+        layoutState: LayoutState
+    ) {
         self.delegate.onButtonTapped(
             buttonIdentifier: buttonIdentifier,
+            metadata: reportingMetatda,
             layoutContext: layoutState.toLayoutContext()
         )
     }
@@ -139,11 +144,13 @@ class ThomasEnvironment: ObservableObject {
     
     func pageGesture(
         identifier: String?,
+        reportingMetatda: Any?,
         layoutState: LayoutState
     ) {
         if let identifier {
             self.delegate.onPageGesture(
                 identifier: identifier,
+                metadata: reportingMetatda,
                 layoutContext: layoutState.toLayoutContext()
             )
         }
@@ -151,11 +158,13 @@ class ThomasEnvironment: ObservableObject {
     
     func pageAutomated(
         identifier: String?,
+        reportingMetatda: Any?,
         layoutState: LayoutState
     ) {
         if let identifier {
             self.delegate.onPageAutomatedAction(
                 identifier: identifier,
+                metadata: reportingMetatda,
                 layoutContext: layoutState.toLayoutContext()
             )
         }
