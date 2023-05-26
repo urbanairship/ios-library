@@ -147,8 +147,6 @@ public class PreferenceCenter: NSObject, Component {
      */
     @objc
     public func jsonConfig(preferenceCenterID: String) async throws -> Data {
-        await remoteData.refresh()
-
         let payloads = await self.remoteData.payloads(types: ["preference_forms"])
         for payload in payloads {
             let config = payload.data["preference_forms"] as? [[AnyHashable: Any]]

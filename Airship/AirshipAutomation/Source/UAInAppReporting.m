@@ -261,7 +261,7 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
                                     buttonID:(NSString *)buttonID {
     NSDictionary *baseData = @{
         UAInAppMessageButtonTapEventButtonIDKey: buttonID ?: @"",
-        UAInAppMessageEventReportingMetadataKey: metadata
+        UAInAppMessageEventReportingMetadataKey: metadata ?: @{},
     };
     
     return [[self alloc] initWithEventType:UAInAppMessageButtonTapEventType
@@ -349,7 +349,7 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
     
     NSDictionary *baseData = @{
         UAInAppMessagePageEventGestureIDKey: identifier,
-        UAInAppMessageEventReportingMetadataKey: metadata
+        UAInAppMessageEventReportingMetadataKey: metadata ?: @{},
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePagerGestureEventType
@@ -364,9 +364,9 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
                                                message:(UAInAppMessage *)message
 {
     
-    NSDictionary *baseData = @{
+    NSMutableDictionary *baseData = @{
         UAInAppMessagePageEventActionIDKey: identifier,
-        UAInAppMessageEventReportingMetadataKey: metadata
+        UAInAppMessageEventReportingMetadataKey: metadata ?: @{},
     };
     
     return [[self alloc] initWithEventType:UAInAppMessagePagerAutomatedActionEventType
