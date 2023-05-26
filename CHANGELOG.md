@@ -3,6 +3,22 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.0.0-beta May 26, 2023
+First beta for SDK 17. This release brings several breaking changes throughout the codebase as we continue the transition from Objective-C to Swift. This version is not suitable for a production app, but we encourage testing out the new APIs and providing us feedback so we can make changes before the final SDK 17 release.
+
+### Changes
+- Airship SDK now requires iOS 14+ as the target SDK version and Xcode 14+
+- Message Center module has been rewritten in Swift
+- The provided Message Center UI has been rewritten in Swift & SwiftUI
+- The provided Preference Center UI has been rewritten in SwiftUI
+- Accengage, Chat, and Location modules have been removed
+- ExtendedActions module has been removed, the actions have been merged into other modules
+- Majority of the completionHandler APIs have been replaced with async functions
+- Renamed several classes throughout the SDK to prevent API collisions for simple classes, e.g. Config -> AirshipConfig, Channel -> AirshipChannel, etc...
+- Fixed several `sendable` warnings throughout codebase
+- Video improvements for Scenes & Surveys
+- Added new PushNotificationStatus that provides the current status of push notifications
+
 ## Version 16.11.3 March 24, 2023
 Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
 

@@ -21,7 +21,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
         _ name: String,
         expirationHandler: (@Sendable () -> Void)? = nil
     ) throws -> AirshipCancellable {
-        AirshipLogger.error("Requesting task: \(name)")
+        AirshipLogger.trace("Requesting task: \(name)")
 
         let requestID = nextRequestID.value
         nextRequestID.value += 1
@@ -39,7 +39,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
 
         let application = UIApplication.shared
         self.requestMap.value[requestID] = application.beginBackgroundTask(withName: name) {
-            AirshipLogger.error("Task expired: \(name)")
+            AirshipLogger.trace("Task expired: \(name)")
             self.cancel(requestID: requestID)
             expirationHandler?()
         }
@@ -48,7 +48,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
             throw AirshipErrors.error("Unable to request background time.")
         }
 
-        AirshipLogger.error("Task granted: \(name)")
+        AirshipLogger.trace("Task granted: \(name)")
         return cancellable
         #endif
     }

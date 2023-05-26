@@ -364,7 +364,7 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
                                                message:(UAInAppMessage *)message
 {
     
-    NSMutableDictionary *baseData = @{
+    NSDictionary *baseData = @{
         UAInAppMessagePageEventActionIDKey: identifier,
         UAInAppMessageEventReportingMetadataKey: metadata ?: @{},
     };

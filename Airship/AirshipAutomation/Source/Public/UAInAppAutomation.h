@@ -21,9 +21,9 @@ NS_SWIFT_NAME(InAppAutomation)
 @interface UAInAppAutomation : NSObject<UAComponent>
 
 /**
- * The shared InAppAutomation instance.
+ * The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
  */
-@property (class, nonatomic, readonly, null_unspecified) UAInAppAutomation *shared;
+@property (class, nonatomic, readonly, nonnull) UAInAppAutomation *shared;
 
 /**
  * In-app automation pause flag.

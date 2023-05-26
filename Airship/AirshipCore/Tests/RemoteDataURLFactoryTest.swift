@@ -24,8 +24,10 @@ final class RemoteDataURLFactoryTest: XCTestCase {
             locale: Locale(identifier: "en-US"),
             randomValue: 100
         )
+
+        let sdkVersion = AirshipVersion.get()
         XCTAssertEqual(
-            "https://example.com/some-path?language=en&country=US&sdk_version=17.0.0&random_value=100",
+            "https://example.com/some-path?language=en&country=US&sdk_version=\(sdkVersion)&random_value=100",
             remoteDataURL.absoluteString
         )
     }
@@ -37,8 +39,10 @@ final class RemoteDataURLFactoryTest: XCTestCase {
             locale: Locale(identifier: "br"),
             randomValue: 100
         )
+
+        let sdkVersion = AirshipVersion.get()
         XCTAssertEqual(
-            "https://example.com/some-path?language=br&sdk_version=17.0.0&random_value=100",
+            "https://example.com/some-path?language=br&sdk_version=\(sdkVersion)&random_value=100",
             remoteDataURL.absoluteString
         )
     }
