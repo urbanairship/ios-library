@@ -155,23 +155,6 @@ jobs:
           job_name: "Deploy iOS SDK to Github :octocat:"
           url: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: Prepare Carthage
-        shell: bash
-        run: |
-          mkdir -p Carthage/build
-          unzip build/Airship.zip Carthage/build
-          cp -R build/*.xcframework Carthage/build
-          zip -r Airship.xcframeworks.zip Carthage -x "*.DS_Store"
-      - name: Upload carthage distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Airship.xcframeworks.zip
-          asset_name: Airship.xcframeworks.zip
-          asset_content_type: application/zip
-
       - uses: google-github-actions/setup-gcloud@v0
         with:
           version: "270.0.0"
