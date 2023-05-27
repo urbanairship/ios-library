@@ -7,7 +7,8 @@
 set -o pipefail
 set -e
 
-ZIP=$(realpath "$1")
+
+ZIP="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 
 package() {
   if [ -d "$1" ]
