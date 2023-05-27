@@ -22,7 +22,7 @@ enum AppLifeCycleEvent: Sendable {
 
 
 #if os(watchOS)
-final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
+final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
     var state: ApplicationState {
         let appState = WKExtension.shared().applicationState
         switch appState {
@@ -49,7 +49,7 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.didBecomeActive)
                 }
             }
@@ -61,7 +61,7 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.willResignActive)
                 }
             }
@@ -73,7 +73,7 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.willEnterForeground)
                 }
             }
@@ -85,11 +85,16 @@ final class DefaultAppStateTrackerAdapter: ApplicationStateProvider, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                MainActor.runUnsafe {
+                DefaultAppStateTrackerAdapter.runUnsafe {
                     eventHandler(.didEnterBackground)
                 }
             }
         )
+    }
+
+    @MainActor(unsafe)
+    static func runUnsafe(_ block: @MainActor () -> Void) {
+        block()
     }
 }
 #else

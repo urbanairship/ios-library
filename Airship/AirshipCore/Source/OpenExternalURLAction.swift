@@ -64,6 +64,7 @@ public class OpenExternalURLAction: NSObject, Action {
             
     #else
             WKExtension.shared().openSystemURL(url)
+            return ActionResult(value: url.absoluteString)
     #endif
     }
 

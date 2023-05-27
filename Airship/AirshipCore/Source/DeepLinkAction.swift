@@ -73,6 +73,7 @@ public class DeepLinkAction: NSObject, Action {
             
     #else
             WKExtension.shared().openSystemURL(url)
+            return ActionResult.empty()
     #endif
             
     }

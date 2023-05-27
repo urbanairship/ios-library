@@ -271,6 +271,7 @@ public class Airship: NSObject {
     /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
 
     @objc
+    @MainActor
     public class func takeOff() {
         takeOff(nil)
     }
@@ -279,7 +280,8 @@ public class Airship: NSObject {
     /// - Parameters:
     ///     - config: The Airship config.
     @objc
-    public class func takeOff(_ config: Config?) {
+    @MainActor
+    public class func takeOff(_ config: AirshipConfig?) {
 
         guard Thread.isMainThread else {
             fatalError("TakeOff must be called on the main thread.")
@@ -304,7 +306,7 @@ public class Airship: NSObject {
             }
         }
 
-        let resolvedConfig = config?.copy() as? Config ?? Config.default()
+        let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
 
         guard resolvedConfig.validate() else {
             AirshipLogger.impError("Config is invalid. Unable to takeOff.")

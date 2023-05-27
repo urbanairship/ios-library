@@ -602,7 +602,7 @@ fileprivate extension View {
         action: @escaping ([PagerGestureLocation]) -> Void
     ) -> some View {
 #if !os(tvOS)
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, watchOS 9.0, *) {
             let pagerGestureEplorer = PagerGestureMapExplorer(
                 CGRect(
                     x: 0,

@@ -13,14 +13,22 @@ protocol WorkBackgroundTasksProtocol: Sendable {
 
 final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
 
+    #if !os(watchOS)
     private let requestMap: AirshipMainActorWrapper<[UInt: UIBackgroundTaskIdentifier]> = AirshipMainActorWrapper([:])
     private let nextRequestID: AirshipMainActorWrapper<UInt> = AirshipMainActorWrapper(0)
+    #endif
 
     @MainActor
     func beginTask(
         _ name: String,
         expirationHandler: (@Sendable () -> Void)? = nil
     ) throws -> AirshipCancellable {
+        #if os(watchOS)
+        let cancellable: CancellabelValueHolder<UInt> = CancellabelValueHolder(value: 0) { _ in
+        }
+        return cancellable
+        #else
+
         AirshipLogger.trace("Requesting task: \(name)")
 
         let requestID = nextRequestID.value
@@ -31,11 +39,6 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
                 self.cancel(requestID: requestID)
             }
         }
-
-        #if os(watchOS)
-        return cancellable
-        #else
-
 
         let application = UIApplication.shared
         self.requestMap.value[requestID] = application.beginBackgroundTask(withName: name) {
@@ -56,7 +59,6 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
     @MainActor
     private func cancel(requestID: UInt) {
 #if !os(watchOS)
-
         guard let taskID = self.requestMap.value.removeValue(forKey: requestID),
               taskID != UIBackgroundTaskIdentifier.invalid
         else {
