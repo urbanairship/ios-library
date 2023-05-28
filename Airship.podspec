@@ -61,7 +61,6 @@ Pod::Spec.new do |s|
    s.subspec "PreferenceCenter" do |preferenceCenter|
       preferenceCenter.ios.source_files              = "Airship/AirshipPreferenceCenter/Source/**/*.{h,m,swift}"
       preferenceCenter.ios.exclude_files             = "Airship/AirshipPreferenceCenter/Source/AirshipPreferenceCenter.h"
-      preferenceCenter.ios.resource_bundle           = { 'AirshipPreferenceCenterResources' => "Airship/AirshipPreferenceCenter/Resources/**/*" }
       preferenceCenter.dependency                      "Airship/Core"
    end
 end
