@@ -20,6 +20,9 @@ enum MessageCenterStoreLevel: Int {
 
 actor MessageCenterStore {
 
+    /// User defualts key to clear the keychain of Airship values for one app run. Used for testing. :nodoc:
+    private static let resetKeychainKey = "com.urbanairship.reset_keychain"
+
     private static let coreDataStoreName = "Inbox-%@.sqlite"
     private static let lastMessageListModifiedTime =
         "UALastMessageListModifiedTime"
@@ -29,10 +32,9 @@ actor MessageCenterStore {
     private let coreData: UACoreData?
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let keychainAccess: AirshipKeychainAccess
+    private let keychainAccess: AirshipKeychainAccessProtocol
 
     private nonisolated let inMemory: Bool
-
     
     var registeredChannelID: String? {
         return self.dataStore.string(
@@ -42,21 +44,33 @@ actor MessageCenterStore {
 
     private var _user: MessageCenterUser? = nil
     var user: MessageCenterUser? {
-        if let user = _user {
-            return user
-        }
+        get async {
+            // Clearing the keychain
+            if UserDefaults.standard.bool(forKey: MessageCenterStore.resetKeychainKey) == true {
+                AirshipLogger.debug("Deleting the keychain credentials")
+                await resetUser()
+                UserDefaults.standard.removeObject(
+                    forKey: MessageCenterStore.resetKeychainKey
+                )
+            }
 
-        let credentials = self.keychainAccess.readCredentialsSync(
-            identifier: self.config.appKey
-        )
+            if let user = _user {
+                return user
+            }
 
-        if let credentials = credentials {
-            _user = MessageCenterUser(
-                username: credentials.username,
-                password: credentials.password
+            let credentials = await self.keychainAccess.readCredentails(
+                identifier: self.config.appKey,
+                appKey: self.config.appKey
             )
+
+            if let credentials = credentials {
+                _user = MessageCenterUser(
+                    username: credentials.username,
+                    password: credentials.password
+                )
+            }
+            return _user
         }
-        return _user
     }
 
     var userRequiredUpdate: Bool {
@@ -88,7 +102,7 @@ actor MessageCenterStore {
     ) {
         self.config = config
         self.dataStore = dataStore
-        self.keychainAccess = AirshipKeychainAccess(appKey: config.appKey)
+        self.keychainAccess = AirshipKeychainAccess.shared
         let modelURL = MessageCenterResources.bundle?
             .url(
                 forResource: "UAInbox",
@@ -119,7 +133,7 @@ actor MessageCenterStore {
         self.config = config
         self.dataStore = dataStore
         self.coreData = coreData
-        self.keychainAccess = AirshipKeychainAccess(appKey: config.appKey)
+        self.keychainAccess = AirshipKeychainAccess.shared
     }
 
     var unreadCount: Int {
@@ -254,25 +268,30 @@ actor MessageCenterStore {
         return try await fetchMessages(withPredicate: predicate)
     }
 
-    func saveUser(_ user: MessageCenterUser, channelID: String) {
-        self.keychainAccess.writeCredentials(
+    func saveUser(_ user: MessageCenterUser, channelID: String) async {
+        let result = await self.keychainAccess.writeCredentials(
             AirshipKeychainCredentials(
                 username: user.username,
                 password: user.password
             ),
-            identifier: self.config.appKey
-        ) { result in
-            if !result {
-                AirshipLogger.error("Failed to write user credentials")
-            }
+            identifier: self.config.appKey,
+            appKey: self.config.appKey
+        )
+
+        if !result {
+            AirshipLogger.error("Failed to write user credentials")
         }
+
         setUserRegisteredChannelID(channelID)
         _user = user
     }
 
-    func resetUser() {
+    func resetUser() async {
         _user = nil
-        self.keychainAccess.deleteCredentials(identifier: self.config.appKey)
+        await self.keychainAccess.deleteCredentials(
+            identifier: self.config.appKey,
+            appKey: self.config.appKey
+        )
     }
 
     func setUserRequireUpdate(_ value: Bool) {

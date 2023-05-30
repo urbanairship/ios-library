@@ -19,6 +19,9 @@ open class UADispatcher: NSObject {
     )
 
     @objc
+    public static let sharedSerialUtility: UADispatcher = UADispatcher.serial(.utility)
+
+    @objc
     public static let global: UADispatcher = UADispatcher.globalDispatcher(
         .background
     )

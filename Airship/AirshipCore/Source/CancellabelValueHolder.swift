@@ -4,7 +4,7 @@
 /// on the holder will cause it to immediately be cancelled witht he block and the value to be
 /// cleared.
 /// - Note: for internal use only.  :nodoc:
-class CancellabelValueHolder<T: Sendable>: AirshipCancellable, @unchecked Sendable {
+final class CancellabelValueHolder<T: Sendable>: AirshipCancellable, @unchecked Sendable {
     private let lock: AirshipLock = AirshipLock()
     private let onCancel: (T) -> Void
     private var isCancelled: Bool = false

@@ -1150,6 +1150,11 @@
 		6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF02DEF2714EB500008B6C9 /* Thomas.swift */; };
 		6EF13FFD2A16F390009A125D /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		6EF13FFE2A16F391009A125D /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
+		6EF1401B2A2671ED009A125D /* AirshipDeviceID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */; };
+		6EF1401C2A2671ED009A125D /* AirshipDeviceID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */; };
+		6EF1401D2A2671ED009A125D /* AirshipDeviceID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */; };
+		6EF1401F2A268CE6009A125D /* TestKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401E2A268CE6009A125D /* TestKeychainAccess.swift */; };
+		6EF140212A269074009A125D /* AirshipDeviceIDTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */; };
 		6EF1933C2838062B005F192A /* AirshipLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933B2838062B005F192A /* AirshipLogHandler.swift */; };
 		6EF1933E28380644005F192A /* DefaultLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933D28380644005F192A /* DefaultLogHandler.swift */; };
 		6EF1933F28380644005F192A /* DefaultLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1933D28380644005F192A /* DefaultLogHandler.swift */; };
@@ -2550,6 +2555,9 @@
 		6EEAE81724CF9FBF0046E311 /* UAScheduleDeferredDataTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDeferredDataTest.m; sourceTree = "<group>"; };
 		6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipKeychainAccess.swift; sourceTree = "<group>"; };
 		6EF02DEF2714EB500008B6C9 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
+		6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceID.swift; sourceTree = "<group>"; };
+		6EF1401E2A268CE6009A125D /* TestKeychainAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestKeychainAccess.swift; sourceTree = "<group>"; };
+		6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceIDTest.swift; sourceTree = "<group>"; };
 		6EF1933B2838062B005F192A /* AirshipLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLogHandler.swift; sourceTree = "<group>"; };
 		6EF1933D28380644005F192A /* DefaultLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogHandler.swift; sourceTree = "<group>"; };
 		6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UALegacyLoggingBridge.m; path = Internal/UALegacyLoggingBridge.m; sourceTree = "<group>"; };
@@ -4393,6 +4401,7 @@
 				6E9B4873288F0CE000C905B1 /* RateAppAction.swift */,
 				6E75F50429C4EAF600E3585A /* AudienceOverridesProvider.swift */,
 				6E75F50C29CA7FD000E3585A /* AutomationAudienceOverridesProvider.swift */,
+				6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4700,6 +4709,7 @@
 				A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */,
 				6E6363E929DCECA1009C358A /* TestContactSubscriptionListAPIClient.swift */,
 				6EE49C252A1446B100AB1CF4 /* RemoteDataTestUtils.swift */,
+				6EF1401E2A268CE6009A125D /* TestKeychainAccess.swift */,
 			);
 			name = TestUtils;
 			sourceTree = "<group>";
@@ -4960,6 +4970,7 @@
 				CC64F0A31D8B781C009CEF27 /* UAirshipTest.m */,
 				3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
+				6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -6164,6 +6175,7 @@
 				6E15B74126D43F120099C92D /* NSDictionaryValueTransformer.swift in Sources */,
 				6EFD6D78272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6EE49C222A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
+				6EF1401B2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
@@ -6814,6 +6826,7 @@
 				6EE49C162A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift in Sources */,
 				A6722A16281A9E820033F54D /* ActivityViewController.swift in Sources */,
 				6ECDDE7B29B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */,
+				6EF1401D2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
 				6EE49C0A2A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
 				A6722A17281A9E830033F54D /* AddCustomEventAction.swift in Sources */,
 				6E299FD928D13E54001305A7 /* AirshipRequest.swift in Sources */,
@@ -6998,6 +7011,7 @@
 				459D4051209245E500C40E2D /* UAInAppMessageBannerStyleTest.m in Sources */,
 				DF0C1B29244E562B0011ACCA /* UAAirshipBaseTest.m in Sources */,
 				6EC7E46E269E2A4C0038CFDD /* AttributeEditorTest.swift in Sources */,
+				6EF140212A269074009A125D /* AirshipDeviceIDTest.swift in Sources */,
 				6EE6529122A7E2DA00F7D54D /* UAInAppMessageHTMLStyleTest.m in Sources */,
 				A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */,
 				6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */,
@@ -7033,6 +7047,7 @@
 				DFB1EA1E22274F2700CDBD7E /* UAInAppMessageDefaultPrepareAssetsDelegateTest.m in Sources */,
 				6E07688C29F9F0830014E2A9 /* AirshipLocaleManagerTest.swift in Sources */,
 				6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */,
+				6EF1401F2A268CE6009A125D /* TestKeychainAccess.swift in Sources */,
 				6E96ED1029416E8F0053CC91 /* EventAPIClientTest.swift in Sources */,
 				6E92ECB6284ED7330038802D /* CachedListTest.swift in Sources */,
 				CC64F11B1D8B781C009CEF27 /* UAPreferenceDataStoreTest.m in Sources */,
@@ -7219,6 +7234,7 @@
 				6EFD6D79272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
 				6EE49C232A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
+				6EF1401C2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
 				A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */,
 				6E87BD8E26D815780005D20D /* AppIntegration.swift in Sources */,
 				6EFD6D8C272A53FB005B26F1 /* PagerController.swift in Sources */,

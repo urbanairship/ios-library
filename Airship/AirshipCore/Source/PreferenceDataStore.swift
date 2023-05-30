@@ -17,43 +17,42 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
     private var cache: [String: Cached] = [:]
     private let lock = AirshipLock()
     private let dispatcher: UADispatcher
-    private var keychainAccess: PreferenceDataStoreKeychainAccessProtocol
+    private var deviceID: AirshipDeviceIDProtocol
 
-    lazy var isAppRestore: Bool = {
-        var deviceID = self.keychainAccess.deviceID
-        if (deviceID == nil) {
-            deviceID = UUID().uuidString
-            self.keychainAccess.deviceID = deviceID
-        }
-        
-        let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
-        if (deviceID == previousDeviceID) {
-            return false
-        }
+    var isAppRestore: Bool {
+        get async {
+            let deviceIDValue = await deviceID.value
 
-        var restored = previousDeviceID != nil
-        if restored {
-            AirshipLogger.info("App restored")
-        }
+            var restored: Bool = false
+            lock.sync {
+                let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
+                if (deviceIDValue != previousDeviceID) {
+                    restored = previousDeviceID != nil
+                    self.setObject(deviceIDValue, forKey: PreferenceDataStore.deviceIDKey)
+                }
+            }
 
-        self.setObject(deviceID, forKey: PreferenceDataStore.deviceIDKey)
-        return restored
-    }()
+            if (restored) {
+                AirshipLogger.info("App restored")
+            }
+            return restored
+        }
+    }
 
     @objc
     public convenience init(appKey: String) {
         self.init(
             appKey: appKey,
             dispatcher: UADispatcher.serial(),
-            keychainAccess: AirshipKeychainAccess(appKey: appKey)
+            deviceID: AirshipDeviceID(appKey: appKey)
         )
     }
 
-    init(appKey: String, dispatcher: UADispatcher, keychainAccess: PreferenceDataStoreKeychainAccessProtocol) {
+    init(appKey: String, dispatcher: UADispatcher, deviceID: AirshipDeviceIDProtocol) {
         self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
         self.appKey = appKey
         self.dispatcher = dispatcher
-        self.keychainAccess = keychainAccess
+        self.deviceID = deviceID
         super.init()
         mergeKeys()
     }
@@ -327,41 +326,4 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
 
 private struct Cached {
     let value: Any?
-}
-
-
-protocol PreferenceDataStoreKeychainAccessProtocol {
-    var deviceID: String? { get set }
-}
-
-extension AirshipKeychainAccess : PreferenceDataStoreKeychainAccessProtocol {
-    private static let deviceKeychainID = "com.urbanairship.deviceID"
-    var deviceID: String? {
-        get {
-            self.readCredentialsSync(
-                identifier: AirshipKeychainAccess.deviceKeychainID
-            )?.password
-        }
-        set {
-            if let newValue = newValue {
-                self.writeCredentials(
-                    AirshipKeychainCredentials(
-                        username: "airship",
-                        password: newValue
-                    ),
-                    identifier:  AirshipKeychainAccess.deviceKeychainID
-                ) { result in
-                    if (!result) {
-                        AirshipLogger.error("Unable to save device ID")
-                    }
-                }
-            } else {
-                self.deleteCredentials(
-                    identifier: AirshipKeychainAccess.deviceKeychainID
-                )
-            }
-            
-        }
-    }
-    
 }

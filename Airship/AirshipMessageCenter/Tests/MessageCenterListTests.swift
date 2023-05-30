@@ -149,7 +149,7 @@ final class MessageCenterListTest: XCTestCase {
             lastModifiedTime: ""
         )
 
-        await waitForExpectations(timeout: 3)
+        await fulfillment(of: [expectation], timeout: 3.0)
 
         let updatedMessage = await self.inbox.message(forID: message.id)
         XCTAssertNotNil(updatedMessage)

@@ -94,7 +94,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
 
         if self.channelID != nil {
             checkAppRestoreTask = Task {
-                if self.dataStore.isAppRestore {
+                if await self.dataStore.isAppRestore {
                     self.clearChannelData()
                 }
             }

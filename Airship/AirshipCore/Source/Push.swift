@@ -234,12 +234,14 @@ public final class AirshipPush: NSObject, Component, PushProtocol, @unchecked Se
         self.waitForDeviceToken = self.channel.identifier == nil
         self.observeNotificationCenterEvents()
 
-        var checkedAppRestore = false
-        self.channel.addRegistrationExtender { payload in
-            if !checkedAppRestore && self.dataStore.isAppRestore {
+        let checkAppRestoreTask = Task {
+            if await self.dataStore.isAppRestore {
                 self.resetDeviceToken()
             }
-            checkedAppRestore = true
+        }
+
+        self.channel.addRegistrationExtender { payload in
+            await checkAppRestoreTask.value
             return await self.extendChannelRegistrationPayload(
                 payload
             )
