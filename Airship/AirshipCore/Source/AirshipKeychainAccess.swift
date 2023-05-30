@@ -178,7 +178,7 @@ private struct Keychain {
         deleteCredentials(identifier: identifier, service: service)
 
         let addquery: [String: Any] = [
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrGeneric as String: identifierData,
@@ -224,6 +224,7 @@ private struct Keychain {
             kSecReturnAttributes as String: true,
             kSecReturnData as String: true,
         ]
+        
 
         var item: CFTypeRef?
         let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
@@ -231,20 +232,53 @@ private struct Keychain {
             return nil
         }
 
-        guard let existingItem = item as? [String: Any],
-            let passwordData = existingItem[kSecValueData as String] as? Data,
-            let password = String(
+        guard let existingItem = item as? [String: Any] else {
+            return nil
+        }
+
+        guard let passwordData = existingItem[kSecValueData as String] as? Data,
+              let password = String(
                 data: passwordData,
                 encoding: String.Encoding.utf8
-            ),
-            let username = existingItem[kSecAttrAccount as String] as? String
+              ),
+              let username = existingItem[kSecAttrAccount as String] as? String
         else {
             return nil
+        }
+
+        let attrAccessible = existingItem[kSecAttrAccessible as String] as? String
+        if attrAccessible != (kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String) {
+            updateThisDeviceOnly(identifier: identifier, service: service)
         }
 
         return AirshipKeychainCredentials(
             username: username,
             password: password
         )
+    }
+
+    static func updateThisDeviceOnly(identifier: String, service: String) {
+        guard let identifierData = identifier.data(using: .utf8) else {
+            return
+        }
+
+        let updateQuery: [String: Any] = [
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+
+        let searchQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecAttrService as String: service,
+            kSecAttrGeneric as String: identifierData
+        ]
+
+        let updateStatus = SecItemUpdate(searchQuery as CFDictionary, updateQuery as CFDictionary)
+
+        if (updateStatus == errSecSuccess) {
+            AirshipLogger.trace("Updated keychain value \(identifier) to this device only")
+        } else {
+            AirshipLogger.error("Failed to update keychain value \(identifier) status:\(updateStatus)")
+        }
     }
 }
