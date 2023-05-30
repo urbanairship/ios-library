@@ -7,8 +7,8 @@ import AirshipCore
 
 final class ExperimentManagerTest: XCTestCase {
     
-    private var channelId: String? = nil
-    private var contactId = "contact-id"
+    private var channelId: String? = "channel-id"
+    private var contactId = "some-contact-id"
     
     private let remoteData = MockRemoteDataProvider()
     private var subject: ExperimentManager!
@@ -17,9 +17,17 @@ final class ExperimentManagerTest: XCTestCase {
         self.subject = ExperimentManager(
             dataStore: PreferenceDataStore(appKey: UUID().uuidString),
             remoteData: remoteData,
-            channelIdFetcher: { [id = channelId] in return id },
-            stableContactIdFetcher: { [id = contactId] in return id }
+            channelIdFetcher: getChannelId,
+            stableContactIdFetcher: getContactId
         )
+    }
+    
+    private func getChannelId() -> String? {
+        return channelId
+    }
+    
+    private func getContactId() -> String {
+        return contactId
     }
 
     func testManagerParseValidExperimentData() async throws {
@@ -84,6 +92,75 @@ final class ExperimentManagerTest: XCTestCase {
         XCTAssertNil(result)
     }
     
+    func testHoldoutGroupEvaluationWorks() async {
+        let json = generateExperiment(id: "fake-id", hashIdentifier: "channel")
+        self.remoteData.payloads = [createPayload([json])]
+        
+        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo.empty, contactId: nil)
+        XCTAssertNotNil(result)
+        XCTAssertEqual("fake-id", result?.experimentId)
+        XCTAssertEqual(contactId, result?.contactId)
+        XCTAssertEqual(channelId, result?.channelId)
+        XCTAssertEqual(["experiment_id": "fake-id"], result?.reportingMetadata)
+    }
+    
+    func testHoldoutGroupEvaluationRespectHashBuckets() async {
+        let activeContactId = "active-contact-id"
+        
+        self.remoteData.payloads = [createPayload([
+            generateExperiment(id: "unmatched", bucketMax: 1239),
+            generateExperiment(id: "matched", bucketMin: 1239)
+        ])]
+        
+        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo.empty, contactId: activeContactId)
+        
+        XCTAssertNotNil(result)
+        XCTAssertEqual("matched", result?.experimentId)
+        XCTAssertEqual(activeContactId, result?.contactId)
+    }
+    
+    func testHoldoutGroupEvaluationPicksFirstMatchingExperiment() async {
+        self.remoteData.payloads = [createPayload([
+            generateExperiment(id: "first"),
+            generateExperiment(id: "second")
+        ])]
+
+        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo.empty, contactId: nil)
+        XCTAssertNotNil(result)
+        XCTAssertEqual("first", result?.experimentId)
+    }
+
+    func testHoldoutEvaluationRespectsMessageExclusion() async {
+        self.remoteData.payloads = [createPayload([
+            generateExperiment(id: "unmatched"),
+            generateExperiment(id: "matched", messageTypeToExclude: "none")
+        ])]
+
+        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo(messageType: "Transactional"), contactId: nil)
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual("matched", result?.experimentId)
+    }
+
+    func testHoldoutEvaluationRespectOverridesForHash() async {
+        contactId = "default-contact-id"
+        
+        let unmatched = generateExperiment(
+            id: "unmatched",
+            hashOverrides: "{\"\(contactId)\": \"overriden\"}",
+            bucketMax: 2337)
+
+        self.remoteData.payloads = [createPayload([
+            unmatched,
+            generateExperiment(id: "matched", bucketMax: 2337)
+        ])]
+
+        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo(messageType: ""), contactId: nil)
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual("matched", result?.experimentId)
+    }
+    
     private func generateExperiment(
         id: String,
         hashIdentifier: String = "contact",
@@ -96,7 +173,7 @@ final class ExperimentManagerTest: XCTestCase {
         
         let overrides: String
         if let value = hashOverrides {
-            overrides = ",\"hash_identifier_overrides\": \"\(value)\""
+            overrides = ",\"hash_identifier_overrides\": \(value)"
         } else {
             overrides = ""
         }
@@ -153,4 +230,8 @@ final class ExperimentManagerTest: XCTestCase {
             remoteDataInfo: nil
         )
     }
+}
+
+private extension MessageInfo {
+    static let empty = MessageInfo(messageType: "")
 }

@@ -37,7 +37,7 @@ struct AudienceHash: Codable, Sendable {
     let property: Identifier
     let algorithm: Algorightm
     let seed: UInt?
-    let numberOfBuckets: Int
+    let numberOfBuckets: UInt64
     let overrides: [String: String]?
     
     enum CodingKeys: String, CodingKey {
@@ -51,11 +51,21 @@ struct AudienceHash: Codable, Sendable {
 }
 
 struct Bucket: Codable, Sendable {
-    let min: UInt
-    let max: UInt
+    let min: UInt64
+    let max: UInt64
     
     enum CodingKeys: String, CodingKey {
         case min = "min_hash_bucket"
         case max = "max_hash_bucket"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.min = try container.decodeIfPresent(UInt64.self, forKey: .min) ?? 0
+        self.max = try container.decodeIfPresent(UInt64.self, forKey: .max) ?? UInt64.max
+    }
+    
+    func contains(_ value: UInt64) -> Bool {
+        return value >= min && value < max
     }
 }
