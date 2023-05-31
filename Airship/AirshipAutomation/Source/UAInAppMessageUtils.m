@@ -372,12 +372,6 @@ static CGFloat const CloseButtonHeight = 30;
     NSURL *mediaURL = [NSURL URLWithString:media.url];
 
     if (media.type != UAInAppMessageMediaInfoTypeImage) {
-        if (![[UAirship shared].URLAllowList isAllowed:mediaURL scope:UAURLAllowListScopeOpenURL]) {
-            UA_LERR(@"URL %@ not allowed. Unable to display media.", mediaURL);
-            completionHandler(UAInAppMessagePrepareResultCancel, nil);
-            return;
-        }
-
         UAInAppMessageMediaView *mediaView = [UAInAppMessageMediaView mediaViewWithMediaInfo:media];
 
         completionHandler(UAInAppMessagePrepareResultSuccess, mediaView);

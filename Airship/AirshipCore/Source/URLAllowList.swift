@@ -106,10 +106,23 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
         allowList.addEntry("https://*.asnapieu.com")
 
         // Open only
-        allowList.addEntry("https://*.youtube.com", scope: .openURL)
         allowList.addEntry("mailto:", scope: .openURL)
         allowList.addEntry("sms:", scope: .openURL)
         allowList.addEntry("tel:", scope: .openURL)
+
+        if (!config.isURLAllowListSet && !config.isURLAllowListScopeOpenURLSet) {
+            AirshipLogger.impError(
+                "The Airship config options is missing URL allow list rules for SCOPE_OPEN " +
+                "that controls what external URLs are able to be opened externally or loaded " +
+                "in a web view by Airship. By default, all URLs will be allowed. " +
+                "To suppress this error, specify the config urlAllowListScopeOpenURL = [*] " +
+                "to keep the defaults, or by providing a list of rules that your app expects. " +
+                "See https://docs.airship.com/platform/mobile/setup/sdk/ios/#url-allow-list " +
+                "for more information."
+              )
+
+            allowList.addEntry("*", scope: .openURL)
+        }
 
         #if !os(watchOS)
         allowList.addEntry(

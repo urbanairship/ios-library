@@ -6,7 +6,7 @@ import Foundation
 /// - Note: for internal use only.  :nodoc:
 @objc(UAURLInfo)
 public class URLInfo: NSObject {
-    @objc
+    @objc(UAURLInfoURLType)
     public enum URLType: Int {
         case web
         case video

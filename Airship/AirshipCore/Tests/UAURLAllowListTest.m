@@ -45,22 +45,74 @@
  * Test the default allow list accepts Airship URLs.
  */
 - (void)testDefaultURLAllowList {
-    UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:self.config];
+    UAConfig *config = [[UAConfig alloc] init];
+    config.inProduction = NO;
+    config.developmentAppKey = @"test-app-key";
+    config.developmentAppSecret = @"test-app-secret";
+    config.URLAllowList = @[];
+
+    UARuntimeConfig *runtimeConfig = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
+
+    UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:runtimeConfig];
 
     for (NSNumber *number in self.scopes) {
         UInt8 scope = number.intValue;
 
         XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/"] scope:scope]);
 
-        // Starbucks
-        XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://sbux-dl.urbanairship.com/binary/token/"] scope:scope]);
+        // Landing Page
+        XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://dl.urbanairship.com/aaa/message_id"] scope:scope]);
+
+        // EU
+        XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://device-api.asnapieu.com/api/user/"] scope:scope]);
+        XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://dl.asnapieu.com/aaa/message_id"] scope:scope]);
+    }
+
+    // YouTube
+    XCTAssertFalse([URLAllowList isAllowed:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertFalse([URLAllowList isAllowed:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAURLAllowListScopeJavaScriptInterface]);
+    XCTAssertFalse([URLAllowList isAllowed:[NSURL URLWithString:@"https://*.youtube.com"] scope:UAURLAllowListScopeAll]);
+
+    // sms
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"sms:+18675309?body=Hi%20you"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"sms:8675309"] scope:UAURLAllowListScopeOpenURL]);
+
+    // tel
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"tel:+18675309"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"tel:867-5309"] scope:UAURLAllowListScopeOpenURL]);
+
+    // email
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com?subject=The%20subject%20of%20the%20mail"] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"mailto:name@example.com"] scope:UAURLAllowListScopeOpenURL]);
+
+    // System settings
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:UIApplicationOpenSettingsURLString] scope:UAURLAllowListScopeOpenURL]);
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"app-settings:"] scope:UAURLAllowListScopeOpenURL]);
+
+    // Reject others
+    XCTAssertFalse([URLAllowList isAllowed:[NSURL URLWithString:@"https://some-random-url.com"] scope:UAURLAllowListScopeOpenURL]);
+}
+
+- (void)testDefaultURLAllowListNoOpenScopeSet {
+    UAConfig *config = [[UAConfig alloc] init];
+    config.inProduction = NO;
+    config.developmentAppKey = @"test-app-key";
+    config.developmentAppSecret = @"test-app-secret";
+
+    UARuntimeConfig *runtimeConfig  = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
+
+    UAURLAllowList *URLAllowList = [UAURLAllowList allowListWithConfig:runtimeConfig];
+
+    for (NSNumber *number in self.scopes) {
+        UInt8 scope = number.intValue;
+
+        XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://device-api.urbanairship.com/api/user/"] scope:scope]);
 
         // Landing Page
         XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://dl.urbanairship.com/aaa/message_id"] scope:scope]);
 
         // EU
         XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://device-api.asnapieu.com/api/user/"] scope:scope]);
-        XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://sbux-dl.asnapieu.com/binary/token/"] scope:scope]);
         XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://dl.asnapieu.com/aaa/message_id"] scope:scope]);
     }
 
@@ -84,6 +136,10 @@
     // System settings
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:UIApplicationOpenSettingsURLString] scope:UAURLAllowListScopeOpenURL]);
     XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"app-settings:"] scope:UAURLAllowListScopeOpenURL]);
+
+    // Any
+    XCTAssertTrue([URLAllowList isAllowed:[NSURL URLWithString:@"https://some-random-url.com"] scope:UAURLAllowListScopeOpenURL]);
+
 }
 
 /**

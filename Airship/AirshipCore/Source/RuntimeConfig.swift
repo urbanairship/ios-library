@@ -62,6 +62,9 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc(URLAllowList)
     public let urlAllowList: [String]?
 
+    let isURLAllowListSet: Bool
+    let isURLAllowListScopeOpenURLSet: Bool
+
     /// An array of UAURLAllowList entry strings.
     /// This url allow list is used for validating which URLs can load the JavaScript native bridge.
     /// It affects Landing Pages, Message Center and HTML In-App Messages.
@@ -79,11 +82,6 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc(URLAllowListScopeOpenURL)
     public let urlAllowListScopeOpenURL: [String]?
 
-    /// Whether to suppress console error messages about missing allow list entries during takeOff.
-    ///
-    /// Defaults to `false`.
-    @objc
-    public let suppressAllowListError: Bool
 
     /// Toggles Airship analytics. Defaults to `true`. If set to `false`, many Airship features will not be
     /// available to this application.
@@ -294,7 +292,8 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.urlAllowListScopeJavaScriptInterface =
             config.urlAllowListScopeJavaScriptInterface
         self.urlAllowListScopeOpenURL = config.urlAllowListScopeOpenURL
-        self.suppressAllowListError = config.suppressAllowListError
+        self.isURLAllowListSet = config.isURLAllowListSet
+        self.isURLAllowListScopeOpenURLSet = config.isURLAllowListScopeOpenURLSet
         self.clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore
         self.isChannelCaptureEnabled = config.isChannelCaptureEnabled
         self.isChannelCreationDelayEnabled =

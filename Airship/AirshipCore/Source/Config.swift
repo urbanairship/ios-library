@@ -164,7 +164,13 @@ public class AirshipConfig: NSObject, NSCopying {
     ///
     /// - NOTE: See `UAURLAllowList` for pattern entry syntax.
     @objc(URLAllowList)
-    public var urlAllowList: [String] = []
+    public var urlAllowList: [String] = [] {
+        didSet {
+            isURLAllowListSet = true
+        }
+    }
+
+    var isURLAllowListSet: Bool = false
 
     /// An array of` UAURLAllowList` entry strings.
     /// This url allow list is used for validating which URLs can load the JavaScript native bridge,
@@ -181,13 +187,14 @@ public class AirshipConfig: NSObject, NSCopying {
     ///
     /// - NOTE: See `UAURLAllowList` for pattern entry syntax.
     @objc(URLAllowListScopeOpenURL)
-    public var urlAllowListScopeOpenURL: [String] = []
+    public var urlAllowListScopeOpenURL: [String] = [] {
+        didSet {
+            isURLAllowListScopeOpenURLSet = true
+        }
+    }
 
-    /// Whether to suppress console error messages about missing allow list entries during takeOff.
-    ///
-    /// Defaults to `false`.
-    @objc
-    public var suppressAllowListError = false
+    var isURLAllowListScopeOpenURLSet: Bool = false
+
 
     /// The iTunes ID used for Rate App Actions.
     @objc
@@ -398,7 +405,6 @@ public class AirshipConfig: NSObject, NSCopying {
         enabledFeatures = config.enabledFeatures
         requestAuthorizationToUseNotifications =
             config.requestAuthorizationToUseNotifications
-        suppressAllowListError = config.suppressAllowListError
         requireInitialRemoteConfigEnabled =
             config.requireInitialRemoteConfigEnabled
         isAutomaticSetupEnabled = config.isAutomaticSetupEnabled
@@ -442,7 +448,6 @@ public class AirshipConfig: NSObject, NSCopying {
                 Production Log Level: %ld\n\
                 Detect Provisioning Mode: %d\n\
                 Request Authorization To Use Notifications: %@\n\
-                Suppress Allow List Error: %@\n\
                 Require initial remote config: %@\n\
                 Analytics Enabled: %d\n\
                 Analytics URL: %@\n\
@@ -478,7 +483,6 @@ public class AirshipConfig: NSObject, NSCopying {
             productionLogLevel.rawValue,
             detectProvisioningMode,
             requestAuthorizationToUseNotifications ? "YES" : "NO",
-            suppressAllowListError ? "YES" : "NO",
             requireInitialRemoteConfigEnabled ? "YES" : "NO",
             isAnalyticsEnabled,
             analyticsURL ?? "",
@@ -563,16 +567,6 @@ public class AirshipConfig: NSObject, NSCopying {
         if developmentAppSecret == productionAppSecret, logIssues {
             AirshipLogger.warn(
                 "Production App Secret matches Development App Secret."
-            )
-        }
-
-        if !self.suppressAllowListError,
-           self.urlAllowList.isEmpty,
-           self.urlAllowListScopeOpenURL.isEmpty,
-           logIssues
-        {
-            AirshipLogger.impError(
-                "The airship config options is missing URL allow list rules for SCOPE_OPEN. By default only Airship, YouTube, mailto, sms, and tel URLs will be allowed. To suppress this error, specify allow list rules by providing rules for URLAllowListScopeOpenURL or URLAllowList. Alternatively you can suppress this error and keep the default rules by using the flag suppressAllowListError. For more information, see https://docs.airship.com/platform/ios/getting-started/#url-allow-list."
             )
         }
 

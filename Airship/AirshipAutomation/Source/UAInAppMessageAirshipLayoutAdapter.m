@@ -109,7 +109,7 @@
     
     for (UAURLInfo *info in self.urlInfos) {
         NSURL *url = [NSURL URLWithString:info.url];
-        if (![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeOpenURL]) {
+        if (info.urlType == UAURLInfoURLTypeWeb && ![[UAirship shared].URLAllowList isAllowed:url scope:UAURLAllowListScopeOpenURL]) {
             UA_LERR(@"In-app message URL %@ is not allowed. Unable to display message.", url);
             return completionHandler(UAInAppMessagePrepareResultCancel);
         }
