@@ -9,7 +9,6 @@ class ContactAPIClientTest: XCTestCase {
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
     private var contactAPIClient: ContactAPIClient!
     private var config: RuntimeConfig!
-    private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let currentLocale = Locale(identifier: "fr-CA")
 
     override func setUpWithError() throws {
@@ -29,8 +28,7 @@ class ContactAPIClientTest: XCTestCase {
 
         self.contactAPIClient = ContactAPIClient(
             config: self.config,
-            session: self.session,
-            date: self.date
+            session: self.session
         )
     }
 
@@ -84,15 +82,12 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(expectedBody, requestBody)
         XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
         XCTAssertEqual(request.method, "POST")
+        XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
         XCTAssertEqual(
             request.headers,
             [
-                "X-UA-Timestamp": AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.urbanairship+json; version=3;",
-                "X-UA-Nonce": request.headers["X-UA-Nonce"],
-                "X-UA-Appkey": "",
-                "X-UA-Channel-ID": "test_channel"
             ]
         )
     }
@@ -146,15 +141,12 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(expectedBody, requestBody)
         XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
         XCTAssertEqual(request.method, "POST")
+        XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
         XCTAssertEqual(
             request.headers,
             [
-                "X-UA-Timestamp": AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.urbanairship+json; version=3;",
-                "X-UA-Nonce": request.headers["X-UA-Nonce"],
-                "X-UA-Appkey": "",
-                "X-UA-Channel-ID": "test_channel"
             ]
         )
     }
@@ -206,15 +198,12 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertEqual(expectedBody, requestBody)
         XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
         XCTAssertEqual(request.method, "POST")
+        XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
         XCTAssertEqual(
             request.headers,
             [
-                "X-UA-Timestamp": AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.urbanairship+json; version=3;",
-                "X-UA-Nonce": request.headers["X-UA-Nonce"],
-                "X-UA-Appkey": "",
-                "X-UA-Channel-ID": "test_channel"
             ]
         )
     }

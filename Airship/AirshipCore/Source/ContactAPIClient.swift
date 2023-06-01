@@ -58,7 +58,6 @@ protocol ContactsAPIClientProtocol {
 class ContactAPIClient: ContactsAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let date: AirshipDateProtocol
 
     private lazy var decoder: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -85,10 +84,9 @@ class ContactAPIClient: ContactsAPIClientProtocol {
         return encoder
     }()
 
-    init(config: RuntimeConfig, session: AirshipRequestSession, date: AirshipDateProtocol = AirshipDate.shared) {
+    init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
         self.session = session
-        self.date = date
     }
 
     convenience init(config: RuntimeConfig) {
@@ -261,7 +259,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "POST",
-            auth: .basicAppAuth,
+            auth: .generatedAppToken,
             body: try self.encoder.encode(requestBody)
         )
 
@@ -296,30 +294,14 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
         AirshipLogger.debug("Identifying contact for channel ID \(channelID) request \(identifyRequest)")
 
-        let nonce = UUID().uuidString
-        let timestamp = AirshipUtils.ISODateFormatterUTC().string(from: date.now)
-        let token = try AirshipUtils.generateSignedToken(
-            secret: config.appSecret,
-            tokenParams: [
-                config.appKey,
-                channelID,
-                nonce,
-                timestamp
-            ]
-        )
-
         let request = AirshipRequest(
             url: try makeURL(path: "/api/contacts/identify/v2"),
             headers: [
                 "Accept": "application/vnd.urbanairship+json; version=3;",
                 "Content-Type": "application/json",
-                "X-UA-Channel-ID": channelID,
-                "X-UA-Appkey": self.config.appKey,
-                "X-UA-Nonce": nonce,
-                "X-UA-Timestamp": timestamp
             ],
             method: "POST",
-            auth: .bearer(token: token),
+            auth: .generatedChannelToken(identifier: channelID),
             body: try self.encoder.encode(identifyRequest)
         )
 

@@ -49,12 +49,15 @@ final class EventAPIClientTest: XCTestCase {
 
         let response = try await self.client.uploadEvents(
             self.eventData,
+            channelID: "some channel",
             headers: self.headers
         )
 
         XCTAssertEqual(100, response.result!.maxBatchSizeKB)
         XCTAssertEqual(200, response.result!.maxTotalStoreSizeKB)
         XCTAssertEqual(10.4, response.result!.minBatchInterval)
+        XCTAssertEqual(self.requestSession.lastRequest?.auth, .channelAuthToken(identifier: "some channel"))
+
 
     }
 
@@ -73,6 +76,7 @@ final class EventAPIClientTest: XCTestCase {
 
         let response = try await self.client.uploadEvents(
             self.eventData,
+            channelID: "some channel",
             headers: self.headers
         )
 
@@ -92,6 +96,7 @@ final class EventAPIClientTest: XCTestCase {
 
         let response = try await self.client.uploadEvents(
             self.eventData,
+            channelID: "some channel",
             headers: self.headers
         )
 

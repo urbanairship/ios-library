@@ -4,6 +4,7 @@ import Foundation
 protocol EventAPIClientProtocol: Sendable {
     func uploadEvents(
         _ events: [AirshipEventData],
+        channelID: String,
         headers: [String: String]
     ) async throws -> AirshipHTTPResponse<EventUploadTuningInfo>
 }
@@ -27,6 +28,7 @@ final class EventAPIClient: EventAPIClientProtocol {
 
     func uploadEvents(
         _ events: [AirshipEventData],
+        channelID: String,
         headers: [String: String]
     ) async throws -> AirshipHTTPResponse<EventUploadTuningInfo> {
 
@@ -42,6 +44,7 @@ final class EventAPIClient: EventAPIClientProtocol {
             url: URL(string: "\(analyticsURL)/warp9/"),
             headers: allHeaders,
             method: "POST",
+            auth: .channelAuthToken(identifier: channelID),
             body: try self.requestBody(fromEvents: events),
             compressBody: true
         )

@@ -60,7 +60,7 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "POST",
-            auth: .basicAppAuth,
+            auth: .generatedAppToken,
             body: data
         )
 
@@ -115,7 +115,7 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "PUT",
-            auth: .basicAppAuth,
+            auth: .channelAuthToken(identifier: channelID),
             body: data
         )
 

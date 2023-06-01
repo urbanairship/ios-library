@@ -8,14 +8,11 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
     
     private var client: ChannelAuthTokenAPIClient!
     private let session = TestAirshipRequestSession()
-    private let date = UATestDate()
-    
+
     override func setUpWithError() throws {
-        date.dateOverride = Date()
         self.client = ChannelAuthTokenAPIClient(
             config: self.config,
-            session: self.session,
-            date: self.date
+            session: self.session
         )
     }
     
@@ -38,28 +35,10 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
         XCTAssertEqual(request.method, "GET")
         XCTAssertEqual(request.url!.absoluteString, "\(self.config.deviceAPIURL!)/api/auth/device")
         XCTAssertEqual(
-            AirshipRequestAuth.bearer(
-                token: try! AirshipUtils.generateSignedToken(
-                    secret: config.appSecret,
-                    tokenParams: [
-                        config.appKey,
-                        "channel ID",
-                        request.headers["X-UA-Nonce"]!,
-                        request.headers["X-UA-Timestamp"]!
-                    ]
-                )
-            ),
+            AirshipRequestAuth.generatedChannelToken(identifier: "channel ID"),
             request.auth
         )
-        XCTAssertEqual(request.headers["X-UA-Channel-ID"], "channel ID")
-        XCTAssertEqual(request.headers["X-UA-Appkey"], self.config.appKey)
         XCTAssertEqual(request.headers["Accept"], "application/vnd.urbanairship+json; version=3;")
-        XCTAssertEqual(
-            AirshipUtils.ISODateFormatterUTC().string(from: self.date.now),
-            request.headers["X-UA-Timestamp"]
-        )
-        XCTAssertNotNil(UUID(uuidString: request.headers["X-UA-Nonce"]!))
-
     }
     
     func testTokenWithChannelIDMalformedPayload() async throws {

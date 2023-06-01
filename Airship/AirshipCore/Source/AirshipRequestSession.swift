@@ -56,6 +56,8 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     private let defaultHeaders: [String: String]
     private let appSecret: String
     private let appKey: String
+    private let date: AirshipDateProtocol
+    private let nonceFactory: () -> String
 
     private var authTasks: [AirshipRequestAuth: Task<ResolvedAuth, Error>] = [:]
 
@@ -81,12 +83,15 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     init(
         appKey: String,
         appSecret: String,
-        session: URLRequestSessionProtocol = DefaultAirshipRequestSession.sharedURLSession
-
+        session: URLRequestSessionProtocol = DefaultAirshipRequestSession.sharedURLSession,
+        date: AirshipDateProtocol = AirshipDate.shared,
+        nonceFactory: @Sendable @escaping () -> String = { return UUID().uuidString }
     ) {
         self.appKey = appKey
         self.appSecret = appSecret
         self.session = session
+        self.date = date
+        self.nonceFactory = nonceFactory
         self.defaultHeaders = [
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
             "User-Agent": "(UALib \(AirshipVersion.get()); \(appKey))",
@@ -173,8 +178,8 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
         }
 
         let resolvedAuth = try await resolveAuth(requestAuth: request.auth)
-        if let authorization = resolvedAuth?.headerValue {
-            headers["Authorization"] = authorization
+        if let authHeaders = resolvedAuth?.headers {
+            headers.merge(authHeaders) { (current, _) in current }
         }
 
         if request.compressBody == true {
@@ -261,27 +266,32 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
 
         switch (requestAuth) {
         case .basic(let username, let password):
+            let token = try DefaultAirshipRequestSession.basicAuthValue(
+                username: username,
+                password: password
+            )
             return ResolvedAuth(
-                value: try DefaultAirshipRequestSession.basicAuthValue(
-                    username: username,
-                    password: password
-                ),
-                headerPrefix: "Basic"
+                headers: [
+                    "Authorization": "Basic \(token)"
+                ]
             )
 
         case .basicAppAuth:
+            let token = try DefaultAirshipRequestSession.basicAuthValue(
+                username: appKey,
+                password: appSecret
+            )
             return ResolvedAuth(
-                value: try DefaultAirshipRequestSession.basicAuthValue(
-                    username: appKey,
-                    password: appSecret
-                ),
-                headerPrefix: "Basic"
+                headers: [
+                    "Authorization": "Basic \(token)"
+                ]
             )
 
         case .bearer(let token):
             return ResolvedAuth(
-                value: token,
-                headerPrefix: "Bearer"
+                headers: [
+                    "Authorization": "Bearer \(token)"
+                ]
             )
 
         case .channelAuthToken(let identifier):
@@ -296,6 +306,50 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
                 requestAuth: requestAuth,
                 identifier: identifier,
                 provider: self.contactAuthTokenProvider
+            )
+
+        case .generatedChannelToken(let channelID):
+            let nonce = self.nonceFactory()
+            let timestamp = AirshipUtils.ISODateFormatterUTC().string(from: self.date.now)
+            let token = try AirshipUtils.generateSignedToken(
+                secret: self.appSecret,
+                tokenParams: [
+                    self.appKey,
+                    channelID,
+                    nonce,
+                    timestamp
+                ]
+            )
+
+            return ResolvedAuth(
+                headers: [
+                    "Authorization": "Bearer \(token)",
+                    "X-UA-Appkey": self.appKey,
+                    "X-UA-Channel-ID": channelID,
+                    "X-UA-Nonce": nonce,
+                    "X-UA-Timestamp": timestamp
+                ]
+            )
+
+        case .generatedAppToken:
+            let nonce = self.nonceFactory()
+            let timestamp = AirshipUtils.ISODateFormatterUTC().string(from: self.date.now)
+            let token = try AirshipUtils.generateSignedToken(
+                secret: self.appSecret,
+                tokenParams: [
+                    self.appKey,
+                    nonce,
+                    timestamp
+                ]
+            )
+
+            return ResolvedAuth(
+                headers: [
+                    "Authorization": "Bearer \(token)",
+                    "X-UA-Appkey": self.appKey,
+                    "X-UA-Nonce": nonce,
+                    "X-UA-Timestamp": timestamp
+                ]
             )
         }
     }
@@ -336,8 +390,10 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
             )
             
             return ResolvedAuth(
-                value: token,
-                headerPrefix: "Bearer"
+                headers: [
+                    "Authorization": "Bearer \(token)",
+                    "X-UA-Appkey": self.appKey
+                ]
             ) {
                 await provider.authTokenExpired(token: token)
             }
@@ -375,22 +431,18 @@ public enum AirshipRequestAuth: Sendable, Equatable, Hashable {
     case basicAppAuth
     case channelAuthToken(identifier: String)
     case contactAuthToken(identifier: String)
+    case generatedChannelToken(identifier: String)
+    case generatedAppToken
 }
 
 
 fileprivate struct ResolvedAuth: Sendable {
-    let value: String
-    let headerPrefix: String
+    let headers: [String: String]
     let onExpire: (@Sendable () async -> Void)?
 
-    init(value: String, headerPrefix: String, onExpire: (@Sendable () async -> Void)? = nil) {
-        self.value = value
-        self.headerPrefix = headerPrefix
+    init(headers: [String: String], onExpire: (@Sendable () async -> Void)? = nil) {
+        self.headers = headers
         self.onExpire = onExpire
-    }
-
-    var headerValue: String {
-        return "\(headerPrefix) \(value)"
     }
 }
 

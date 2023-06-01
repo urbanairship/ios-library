@@ -9,6 +9,8 @@ final class EventManagerTest: XCTestCase {
 
     private let eventAPIClient = TestEventAPIClient()
     private let eventScheduler = TestEventUploadScheduler()
+    private let channel = TestChannel()
+
     private let eventStore = EventStore(
         appKey: UUID().uuidString,
         inMemory: true
@@ -21,10 +23,12 @@ final class EventManagerTest: XCTestCase {
     override func setUpWithError() throws {
         self.eventManager = EventManager(
             dataStore: dataStore,
+            channel: channel,
             eventStore: eventStore,
             eventAPIClient: eventAPIClient,
             eventScheduler: eventScheduler
         )
+        channel.identifier = "some channel"
     }
 
     func testAddEvent() async throws {
@@ -90,10 +94,11 @@ final class EventManagerTest: XCTestCase {
             try await self.eventStore.save(event: event)
         }
 
-        self.eventAPIClient.requestBlock = { reqEvents, reqHeaders in
+        self.eventAPIClient.requestBlock = { reqEvents, channelID, reqHeaders in
             requestCalled = true
             XCTAssertEqual(events, reqEvents)
             XCTAssertEqual(headers, reqHeaders)
+            XCTAssertEqual(channelID, "some channel")
 
             let tuningInfo = EventUploadTuningInfo(
                 maxTotalStoreSizeKB: nil,
@@ -125,7 +130,7 @@ final class EventManagerTest: XCTestCase {
             event: AirshipEventData.makeTestData()
         )
 
-        self.eventAPIClient.requestBlock = { reqEvents, reqHeaders in
+        self.eventAPIClient.requestBlock = { reqEvents, _, reqHeaders in
             return AirshipHTTPResponse(
                 result: nil,
                 statusCode: 400,
@@ -149,7 +154,7 @@ final class EventManagerTest: XCTestCase {
             event: AirshipEventData.makeTestData()
         )
 
-        self.eventAPIClient.requestBlock = { reqEvents, reqHeaders in
+        self.eventAPIClient.requestBlock = { reqEvents, _, reqHeaders in
             return AirshipHTTPResponse(
                 result: nil,
                 statusCode: 200,
@@ -177,7 +182,7 @@ final class EventManagerTest: XCTestCase {
             event: AirshipEventData.makeTestData()
         )
 
-        self.eventAPIClient.requestBlock = { reqEvents, reqHeaders in
+        self.eventAPIClient.requestBlock = { reqEvents, _, reqHeaders in
             let expectedHeaders = [
                 "foo": "2",
                 "bar": "2",
@@ -204,7 +209,7 @@ final class EventManagerTest: XCTestCase {
             event: AirshipEventData.makeTestData()
         )
 
-        self.eventAPIClient.requestBlock = { reqEvents, reqHeaders in
+        self.eventAPIClient.requestBlock = { reqEvents, _, reqHeaders in
             XCTFail("Should not be called")
 
             return AirshipHTTPResponse(
@@ -225,7 +230,7 @@ final class EventManagerTest: XCTestCase {
             event: AirshipEventData.makeTestData()
         )
 
-        self.eventAPIClient.requestBlock = { reqEvents, reqHeaders in
+        self.eventAPIClient.requestBlock = { reqEvents, _, reqHeaders in
             let tuningInfo = EventUploadTuningInfo(
                 maxTotalStoreSizeKB: nil,
                 maxBatchSizeKB: nil,
@@ -251,15 +256,15 @@ final class EventManagerTest: XCTestCase {
 }
 
 final class TestEventAPIClient: EventAPIClientProtocol, @unchecked Sendable {
-    var requestBlock: (([AirshipEventData], [String: String]) async throws -> AirshipHTTPResponse<EventUploadTuningInfo>)?
+    var requestBlock: (([AirshipEventData], String, [String: String]) async throws -> AirshipHTTPResponse<EventUploadTuningInfo>)?
 
-    func uploadEvents(_ events: [AirshipEventData], headers: [String : String]) async throws -> AirshipHTTPResponse<EventUploadTuningInfo> {
+    func uploadEvents(_ events: [AirshipEventData], channelID: String, headers: [String : String]) async throws -> AirshipHTTPResponse<EventUploadTuningInfo> {
 
         guard let block = requestBlock else {
             throw AirshipErrors.error("Request block not set")
         }
 
-        return try await block(events, headers)
+        return try await block(events, channelID, headers)
     }
 }
 

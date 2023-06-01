@@ -147,7 +147,11 @@ public final class AirshipAnalytics: NSObject, Component, AnalyticsProtocol, @un
             localeManager: localeManager,
             privacyManager: privacyManager,
             permissionsManager: permissionsManager,
-            eventManager: EventManager(config: config, dataStore: dataStore)
+            eventManager: EventManager(
+                config: config,
+                dataStore: dataStore,
+                channel: channel
+            )
         )
     }
 

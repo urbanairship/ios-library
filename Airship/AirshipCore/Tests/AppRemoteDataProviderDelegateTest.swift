@@ -106,7 +106,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
         client.lastModified = "some other time"
         client.fetchData = { url, auth, lastModified, info in
             XCTAssertEqual(remoteDatInfo.url, url)
-            XCTAssertEqual(AirshipRequestAuth.basicAppAuth, auth)
+            XCTAssertEqual(AirshipRequestAuth.generatedAppToken, auth)
             XCTAssertEqual("some time", lastModified)
 
             XCTAssertEqual(

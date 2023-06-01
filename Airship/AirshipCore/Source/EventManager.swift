@@ -27,13 +27,16 @@ final class EventManager: EventManagerProtocol {
     private let eventAPIClient: EventAPIClientProtocol
     private let eventScheduler: EventUploadSchedulerProtocol
     private let state: EventManagerState
+    private let channel: AirshipChannelProtocol
 
     convenience init(
         config: RuntimeConfig,
-        dataStore: PreferenceDataStore
+        dataStore: PreferenceDataStore,
+        channel: AirshipChannelProtocol
     ) {
         self.init(
             dataStore: dataStore,
+            channel: channel,
             eventStore: EventStore(appKey: config.appKey),
             eventAPIClient: EventAPIClient(config: config)
         )
@@ -41,10 +44,12 @@ final class EventManager: EventManagerProtocol {
 
     init(
         dataStore: PreferenceDataStore,
+        channel: AirshipChannelProtocol,
         eventStore: EventStore,
         eventAPIClient: EventAPIClientProtocol,
         eventScheduler: EventUploadSchedulerProtocol = EventUploadScheduler()
     ) {
+        self.channel = channel
         self.eventStore = eventStore
         self.eventAPIClient = eventAPIClient
         self.eventScheduler = eventScheduler
@@ -87,6 +92,10 @@ final class EventManager: EventManagerProtocol {
             return .success
         }
 
+        guard let channelID = channel.identifier else {
+            return .success
+        }
+
         let events = try await self.prepareEvents()
         guard !events.isEmpty else {
             AirshipLogger.trace(
@@ -98,6 +107,7 @@ final class EventManager: EventManagerProtocol {
         let headers = await self.state.prepareHeaders()
         let response = try await self.eventAPIClient.uploadEvents(
             events,
+            channelID: channelID,
             headers: headers
         )
 

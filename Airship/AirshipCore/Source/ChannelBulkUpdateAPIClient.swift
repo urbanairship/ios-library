@@ -46,7 +46,7 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
                 "Content-Type": "application/json"
             ],
             method: "PUT",
-            auth: .basicAppAuth,
+            auth: .channelAuthToken(identifier: channelID),
             body: try? encoder.encode(payload)
         )
         return try await session.performHTTPRequest(request)

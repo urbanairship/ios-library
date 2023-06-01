@@ -46,7 +46,7 @@ final class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
                 "Accept":  "application/vnd.urbanairship+json; version=3;"
             ],
             method: "GET",
-            auth: .basicAppAuth
+            auth: .channelAuthToken(identifier: channelID)
         )
 
         return try await session.performHTTPRequest(request) { data, response in

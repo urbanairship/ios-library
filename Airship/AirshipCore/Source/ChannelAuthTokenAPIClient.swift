@@ -5,16 +5,13 @@ final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendab
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
     private let decoder: JSONDecoder = JSONDecoder()
-    private let date: AirshipDateProtocol
 
     init(
         config: RuntimeConfig,
-        session: AirshipRequestSession,
-        date: AirshipDateProtocol = AirshipDate.shared
+        session: AirshipRequestSession
     ) {
         self.config = config
         self.session = session
-        self.date = date
     }
 
     convenience init(config: RuntimeConfig) {
@@ -47,46 +44,26 @@ final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendab
     func fetchToken(
         channelID: String
     ) async throws -> AirshipHTTPResponse<ChannelAuthTokenResponse> {
-        let nonce = UUID().uuidString
-        let timestamp = AirshipUtils.ISODateFormatterUTC().string(from: date.now)
-
         let url = try makeURL(path: self.tokenPath)
-        let token = try AirshipUtils.generateSignedToken(
-            secret: config.appSecret,
-            tokenParams: [
-                config.appKey,
-                channelID,
-                nonce,
-                timestamp
-            ]
-        )
-
         let request = AirshipRequest(
             url: url,
             headers: [
                 "Accept": "application/vnd.urbanairship+json; version=3;",
-                "X-UA-Channel-ID": channelID,
-                "X-UA-Appkey": self.config.appKey,
-                "X-UA-Nonce": nonce,
-                "X-UA-Timestamp": timestamp
             ],
             method: "GET",
-            auth: .bearer(token: token)
+            auth: .generatedChannelToken(identifier: channelID)
         )
 
-
-        return try await session.performHTTPRequest(
-            request
-        ) { data, response in
-
-            AirshipLogger.trace("Channel auth token request finished with status: \(response.statusCode)");
+        return try await session.performHTTPRequest(request) { data, response in
+            AirshipLogger.trace(
+                "Channel auth token request finished with status: \(response.statusCode)"
+            );
 
             guard response.statusCode == 200 else {
                 return nil
             }
 
-            let responseBody: ChannelAuthTokenResponse = try JSONUtils.decode(data: data)
-            return responseBody
+            return try JSONUtils.decode(data: data)
         }
     }
 }

@@ -44,7 +44,7 @@ struct AppRemoteDataProviderDelegate: RemoteDataProviderDelegate {
 
         return try await self.apiClient.fetchRemoteData(
             url: url,
-            auth: .basicAppAuth,
+            auth: .generatedAppToken,
             lastModified: lastModified
         ) { newLastModified in
             return RemoteDataInfo(

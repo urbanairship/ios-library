@@ -8,13 +8,19 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
     private let testURLSession = TestURLRequestSession()
     private var airshipSession: DefaultAirshipRequestSession!
+    private var nonce: String = UUID().uuidString
+
+    private var date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
 
     override func setUpWithError() throws {
         self.airshipSession = DefaultAirshipRequestSession(
             appKey: "testAppKey",
             appSecret: "testAppSecret",
-            session: self.testURLSession
-        )
+            session: self.testURLSession,
+            date: date
+        ) {
+            return self.nonce
+        }
     }
 
     func testDefaultHeaders() async throws {
@@ -97,10 +103,73 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
         let _ = try? await self.airshipSession.performHTTPRequest(request)
 
-        let auth = testURLSession.requests.last?.allHTTPHeaderFields?[
-            "Authorization"
+        let authHeaders = [
+            "Authorization": "Bearer some auth token",
+            "X-UA-Appkey": "testAppKey"
         ]
-        XCTAssertEqual("Bearer some auth token", auth)
+
+        let headers = testURLSession.requests.last?.allHTTPHeaderFields?.filter({ (key: String, value: String) in
+            authHeaders[key] != nil
+        })
+
+        XCTAssertEqual(authHeaders, headers)
+    }
+
+    func testGeneratedAppToken() async throws {
+        let request = AirshipRequest(
+            url: URL(string: "http://neat.com"),
+            auth: .generatedAppToken
+        )
+
+        let _ = try? await self.airshipSession.performHTTPRequest(request)
+        let timeStamp = AirshipUtils.ISODateFormatterUTC().string(from: self.date.now)
+
+        let token = try AirshipUtils.generateSignedToken(
+            secret: "testAppSecret",
+            tokenParams: ["testAppKey", nonce, timeStamp]
+        )
+
+        let authHeaders = [
+            "Authorization": "Bearer \(token)",
+            "X-UA-Appkey": "testAppKey",
+            "X-UA-Nonce": nonce,
+            "X-UA-Timestamp": timeStamp
+        ]
+
+        let headers = testURLSession.requests.last?.allHTTPHeaderFields?.filter({ (key: String, value: String) in
+            authHeaders[key] != nil
+        })
+
+        XCTAssertEqual(authHeaders, headers)
+    }
+
+    func testGeneratedChannelToken() async throws {
+        let request = AirshipRequest(
+            url: URL(string: "http://neat.com"),
+            auth: .generatedChannelToken(identifier: "some channel")
+        )
+
+        let _ = try? await self.airshipSession.performHTTPRequest(request)
+        let timeStamp = AirshipUtils.ISODateFormatterUTC().string(from: self.date.now)
+
+        let token = try AirshipUtils.generateSignedToken(
+            secret: "testAppSecret",
+            tokenParams: ["testAppKey", "some channel", nonce, timeStamp]
+        )
+
+        let authHeaders = [
+            "Authorization": "Bearer \(token)",
+            "X-UA-Appkey": "testAppKey",
+            "X-UA-Channel-ID": "some channel",
+            "X-UA-Nonce": nonce,
+            "X-UA-Timestamp": timeStamp
+        ]
+
+        let headers = testURLSession.requests.last?.allHTTPHeaderFields?.filter({ (key: String, value: String) in
+            authHeaders[key] != nil
+        })
+
+        XCTAssertEqual(authHeaders, headers)
     }
 
     @MainActor
