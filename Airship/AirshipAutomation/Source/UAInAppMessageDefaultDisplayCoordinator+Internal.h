@@ -4,7 +4,7 @@
 #import "UAInAppMessageDefaultDisplayCoordinator.h"
 #import "UAAirshipAutomationCoreImport.h"
 
-#define kUAInAppMessageDefaultDisplayInterval 30
+#define kUAInAppMessageDefaultDisplayInterval 0
 
 @class UADispatcher;
 
