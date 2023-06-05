@@ -5,13 +5,13 @@ import Foundation
 class TestContactAPIClient: ContactsAPIClientProtocol {
 
     var resolveCallback:
-        ((String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+        ((String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
 
     var identifyCallback:
-        ((String, String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+        ((String, String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
 
     var resetCallback:
-        ((String) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+        ((String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
 
     var updateCallback:
         ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
@@ -32,23 +32,26 @@ class TestContactAPIClient: ContactsAPIClientProtocol {
 
     public func resolve(
         channelID: String,
-        contactID: String?
+        contactID: String?,
+        possiblyOrphanedContactID: String?
     ) async throws -> AirshipHTTPResponse<ContactIdentifyResult> {
-        return try await resolveCallback!(channelID, contactID)
+        return try await resolveCallback!(channelID, contactID, possiblyOrphanedContactID)
     }
 
     public func identify(
         channelID: String,
         namedUserID: String,
-        contactID: String?
+        contactID: String?,
+        possiblyOrphanedContactID: String?
     ) async throws -> AirshipHTTPResponse<ContactIdentifyResult> {
-        return try await identifyCallback!(channelID, namedUserID, contactID)
+        return try await identifyCallback!(channelID, namedUserID, contactID, possiblyOrphanedContactID)
     }
 
     public func reset(
-        channelID: String
+        channelID: String,
+        possiblyOrphanedContactID: String?
     ) async throws -> AirshipHTTPResponse<ContactIdentifyResult> {
-        return try await resetCallback!(channelID)
+        return try await resetCallback!(channelID, possiblyOrphanedContactID)
     }
 
     public func update(

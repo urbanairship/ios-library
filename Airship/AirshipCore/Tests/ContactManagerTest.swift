@@ -76,7 +76,7 @@ final class ContactManagerTest: XCTestCase {
         await self.contactManager.setEnabled(enabled: true)
         await self.contactManager.addOperation(.resolve)
 
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -114,7 +114,7 @@ final class ContactManagerTest: XCTestCase {
         await self.contactManager.addOperation(.resolve)
 
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             XCTAssertNil(contactID)
             resolve.fulfill()
@@ -146,7 +146,7 @@ final class ContactManagerTest: XCTestCase {
 
     func testResolvedFailed() async throws {
         await self.contactManager.addOperation(.resolve)
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 500,
@@ -165,7 +165,7 @@ final class ContactManagerTest: XCTestCase {
 
     func testResolvedFailedClientError() async throws {
         await self.contactManager.addOperation(.resolve)
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 400,
@@ -188,7 +188,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Resolve is called first if we do not have a valid token
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             XCTAssertNil(contactID)
             resolve.fulfill()
@@ -200,7 +200,7 @@ final class ContactManagerTest: XCTestCase {
         }
 
         let identify = XCTestExpectation()
-        self.apiClient.identifyCallback = { channelID, namedUserID, contactID in
+        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             XCTAssertEqual("some named user", namedUserID)
             XCTAssertEqual(self.anonIdentifyResponse.contact.contactID, contactID)
@@ -240,7 +240,7 @@ final class ContactManagerTest: XCTestCase {
         await self.contactManager.addOperation(.identify("some named user"))
 
         // Resolve is called first if we do not have a valid token
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             XCTAssertNil(contactID)
             return AirshipHTTPResponse(
@@ -250,7 +250,7 @@ final class ContactManagerTest: XCTestCase {
             )
         }
 
-        self.apiClient.identifyCallback = { channelID, namedUserID, contactID in
+        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.nonAnonIdentifyResponse,
                 statusCode: 500,
@@ -271,7 +271,7 @@ final class ContactManagerTest: XCTestCase {
         await self.contactManager.addOperation(.identify("some named user"))
 
         // Resolve is called first if we do not have a valid token
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             XCTAssertNil(contactID)
             return AirshipHTTPResponse(
@@ -281,7 +281,7 @@ final class ContactManagerTest: XCTestCase {
             )
         }
 
-        self.apiClient.identifyCallback = { channelID, namedUserID, contactID in
+        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.nonAnonIdentifyResponse,
                 statusCode: 400,
@@ -303,7 +303,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Resolve is called first if we do not have a valid token
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             XCTAssertNil(contactID)
             resolve.fulfill()
@@ -315,7 +315,7 @@ final class ContactManagerTest: XCTestCase {
         }
 
         let reset = XCTestExpectation()
-        self.apiClient.resetCallback = { channelID in
+        self.apiClient.resetCallback = { channelID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             reset.fulfill()
             return AirshipHTTPResponse(
@@ -348,7 +348,7 @@ final class ContactManagerTest: XCTestCase {
 
     func testAuthTokenNoContactInfo() async throws {
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             resolve.fulfill()
             return AirshipHTTPResponse(
@@ -373,7 +373,7 @@ final class ContactManagerTest: XCTestCase {
     }
 
     func testAuthTokenValidTokenMismatchContactID() async throws {
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -399,7 +399,7 @@ final class ContactManagerTest: XCTestCase {
 
     func testAuthTokenResolveMismatch() async throws {
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             resolve.fulfill()
             return AirshipHTTPResponse(
@@ -423,7 +423,7 @@ final class ContactManagerTest: XCTestCase {
         let resolve = XCTestExpectation(description: "resolve contact")
         resolve.expectedFulfillmentCount = 2
 
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             resolve.fulfill()
             return AirshipHTTPResponse(
@@ -449,7 +449,7 @@ final class ContactManagerTest: XCTestCase {
 
     func testAuthTokenFailed() async throws {
         let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             XCTAssertEqual(self.channel.identifier, channelID)
             resolve.fulfill()
             return AirshipHTTPResponse(
@@ -487,7 +487,7 @@ final class ContactManagerTest: XCTestCase {
 
     func testGenerateDefaultContactInfoAlreadySet() async throws {
         await self.contactManager.addOperation(.resolve)
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -670,7 +670,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Should resolve contact first
         let resolve = XCTestExpectation()
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             resolve.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -719,7 +719,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Should resolve contact first
         let resolve = XCTestExpectation()
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             resolve.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -765,7 +765,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Should resolve contact first
         let resolve = XCTestExpectation()
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             resolve.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -808,7 +808,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Should resolve contact first
         let resolve = XCTestExpectation()
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             resolve.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -872,7 +872,7 @@ final class ContactManagerTest: XCTestCase {
 
         // Should resolve contact first
         let resolve = XCTestExpectation()
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             resolve.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -937,7 +937,7 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // resolve
-        self.apiClient.resolveCallback = { channelID, contactID in
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -955,7 +955,7 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // identify
-        self.apiClient.identifyCallback = { channelID, namedUserID, contactID in
+        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.nonAnonIdentifyResponse,
                 statusCode: 200,

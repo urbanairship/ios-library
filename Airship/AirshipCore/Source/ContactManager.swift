@@ -71,6 +71,17 @@ actor ContactManager: ContactManagerProtocol {
             dataStore.setSafeCodable(newValue, forKey: ContactManager.contactInfoKey)
         }
     }
+    
+    private var possiblyOrphanedContactID: String? {
+           guard let lastContactInfo = self.lastContactInfo,
+                 lastContactInfo.isAnonymous,
+                 (anonData?.channels.isEmpty ?? true)
+           else {
+               return nil
+           }
+
+           return lastContactInfo.contactID
+    }
 
     init(
         dataStore: PreferenceDataStore,
@@ -365,10 +376,10 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func performResolveOperation() async throws -> Bool {
-
         let response = try await self.apiClient.resolve(
             channelID: try requireChannelID(),
-            contactID: nil
+            contactID: nil,
+            possiblyOrphanedContactID: possiblyOrphanedContactID
         )
 
         if let result = response.result, response.isSuccess{
@@ -380,7 +391,8 @@ actor ContactManager: ContactManagerProtocol {
 
     private func performResetOperation() async throws -> Bool {
         let response = try await self.apiClient.reset(
-            channelID: try requireChannelID()
+            channelID: try requireChannelID(),
+            possiblyOrphanedContactID: possiblyOrphanedContactID
         )
 
         if let result = response.result, response.isSuccess {
@@ -394,7 +406,8 @@ actor ContactManager: ContactManagerProtocol {
         let response = try await self.apiClient.identify(
             channelID: try requireChannelID(),
             namedUserID: identifier,
-            contactID: self.lastContactInfo?.contactID
+            contactID: self.lastContactInfo?.contactID,
+            possiblyOrphanedContactID: possiblyOrphanedContactID
         )
 
         if let result = response.result, response.isSuccess {

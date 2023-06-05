@@ -50,7 +50,8 @@ class ContactAPIClientTest: XCTestCase {
         let response = try await contactAPIClient.identify(
             channelID: "test_channel",
             namedUserID: "my-named-user",
-            contactID: nil
+            contactID: nil,
+            possiblyOrphanedContactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924c"
         )
 
         let expected = ContactIdentifyResult(
@@ -75,7 +76,8 @@ class ContactAPIClientTest: XCTestCase {
             ],
             "action": [
                 "type": "identify",
-                "named_user_id": "my-named-user"
+                "named_user_id": "my-named-user",
+                "possibly_orphaned_contact_id": "1a32e8c7-5a73-47c0-9716-99fd3d41924c"
               ]
             ]
 
@@ -109,7 +111,8 @@ class ContactAPIClientTest: XCTestCase {
 
         let response = try await contactAPIClient.resolve(
             channelID: "test_channel",
-            contactID: "some contact id"
+            contactID: "some contact id",
+            possiblyOrphanedContactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924c"
         )
 
         let expected = ContactIdentifyResult(
@@ -134,7 +137,8 @@ class ContactAPIClientTest: XCTestCase {
             ],
             "action": [
                 "type": "resolve",
-                "contact_id": "some contact id"
+                "contact_id": "some contact id",
+                "possibly_orphaned_contact_id": "1a32e8c7-5a73-47c0-9716-99fd3d41924c"
               ]
             ]
 
@@ -167,7 +171,8 @@ class ContactAPIClientTest: XCTestCase {
             .data(using: .utf8)
 
         let response = try await contactAPIClient.reset(
-            channelID: "test_channel"
+            channelID: "test_channel",
+            possiblyOrphanedContactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924c"
         )
 
         let expected = ContactIdentifyResult(
@@ -192,6 +197,7 @@ class ContactAPIClientTest: XCTestCase {
             ],
             "action": [
                 "type": "reset",
+                "possibly_orphaned_contact_id": "1a32e8c7-5a73-47c0-9716-99fd3d41924c"
               ]
             ]
 

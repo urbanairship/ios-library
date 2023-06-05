@@ -6,17 +6,20 @@ import Foundation
 protocol ContactsAPIClientProtocol {
     func resolve(
         channelID: String,
-        contactID: String?
+        contactID: String?,
+        possiblyOrphanedContactID: String?
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult>
 
     func identify(
         channelID: String,
         namedUserID: String,
-        contactID: String?
+        contactID: String?,
+        possiblyOrphanedContactID: String?
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult>
 
     func reset(
-        channelID: String
+        channelID: String,
+        possiblyOrphanedContactID: String?
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult>
 
     func update(
@@ -95,31 +98,34 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     
     func resolve(
         channelID: String,
-        contactID: String?
+        contactID: String?,
+        possiblyOrphanedContactID: String?
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
         return try await self.performIdentify(
             channelID: channelID,
-            identifyRequest: .resolve(contactID: contactID)
+            identifyRequest: .resolve(contactID: contactID, possiblyOrphanedContactID: possiblyOrphanedContactID)
         )
     }
 
     func reset(
-        channelID: String
+        channelID: String,
+        possiblyOrphanedContactID: String?
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
         return try await self.performIdentify(
             channelID: channelID,
-            identifyRequest: .reset()
+            identifyRequest: .reset(possiblyOrphanedContactID: possiblyOrphanedContactID)
         )
     }
 
     func identify(
         channelID: String,
         namedUserID: String,
-        contactID: String?
+        contactID: String?,
+        possiblyOrphanedContactID: String?
     ) async throws ->  AirshipHTTPResponse<ContactIdentifyResult> {
         return try await self.performIdentify(
             channelID: channelID,
-            identifyRequest: .identify(namedUserID: namedUserID, contactID: contactID)
+            identifyRequest: .identify(namedUserID: namedUserID, contactID: contactID, possiblyOrphanedContactID: possiblyOrphanedContactID)
         )
     }
 
@@ -444,21 +450,21 @@ fileprivate struct ContactIdentifyRequestBody: Encodable {
         self.action = action
     }
 
-    static func identify(namedUserID: String, contactID: String?) -> ContactIdentifyRequestBody {
+    static func identify(namedUserID: String, contactID: String?, possiblyOrphanedContactID: String?) -> ContactIdentifyRequestBody {
         return ContactIdentifyRequestBody(
-            action: RequestAction(type: "identify", namedUserID: namedUserID, contactID: contactID)
+            action: RequestAction(type: "identify", namedUserID: namedUserID, contactID: contactID, possiblyOrphanedContactID: possiblyOrphanedContactID)
         )
     }
 
-    static func reset() -> ContactIdentifyRequestBody {
+    static func reset(possiblyOrphanedContactID: String?) -> ContactIdentifyRequestBody {
         return ContactIdentifyRequestBody(
-            action: RequestAction(type: "reset", namedUserID: nil, contactID: nil)
+            action: RequestAction(type: "reset", namedUserID: nil, contactID: nil, possiblyOrphanedContactID: possiblyOrphanedContactID)
         )
     }
 
-    static func resolve(contactID: String?) -> ContactIdentifyRequestBody {
+    static func resolve(contactID: String?, possiblyOrphanedContactID: String?) -> ContactIdentifyRequestBody {
         return ContactIdentifyRequestBody(
-            action: RequestAction(type: "resolve", namedUserID: nil, contactID: contactID)
+            action: RequestAction(type: "resolve", namedUserID: nil, contactID: contactID, possiblyOrphanedContactID: possiblyOrphanedContactID)
         )
     }
 
@@ -479,11 +485,13 @@ fileprivate struct ContactIdentifyRequestBody: Encodable {
         let type: String
         let namedUserID: String?
         let contactID: String?
+        let possiblyOrphanedContactID: String?
 
         enum CodingKeys: String, CodingKey {
             case type = "type"
             case namedUserID = "named_user_id"
             case contactID = "contact_id"
+            case possiblyOrphanedContactID = "possibly_orphaned_contact_id"
         }
     }
 }
