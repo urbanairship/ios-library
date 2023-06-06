@@ -290,7 +290,11 @@ final class MessageCenterAPIClientTest: XCTestCase {
         XCTAssertEqual(response.result?.password, "some password")
         XCTAssertEqual(
             "https://device-api.urbanairship.com/api/user/",
-            request.url!.absoluteString
+            request.url?.absoluteString
+        )
+        XCTAssertEqual(
+            AirshipRequestAuth.channelAuthToken(identifier: "some channel"),
+            request.auth
         )
         XCTAssertEqual("POST", request.method)
 

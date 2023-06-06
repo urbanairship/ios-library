@@ -216,7 +216,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
-            auth: .basicAppAuth,
+            auth: .channelAuthToken(identifier: channelID),
             body: try JSONUtils.encode(object: body)
         )
 
