@@ -37,4 +37,28 @@ public final class OpenRegistrationOptions: NSObject, Codable, Sendable {
             identifiers: identifiers
         )
     }
+
+
+    func isEqual(to options: OpenRegistrationOptions) -> Bool {
+        return platformName == options.platformName && identifiers == options.identifiers
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let options = object as? OpenRegistrationOptions else {
+            return false
+        }
+
+        if self === options {
+            return true
+        }
+
+        return isEqual(to: options)
+    }
+
+    func hash() -> Int {
+        var result = 1
+        result = 31 * result + platformName.hashValue
+        result = 31 * result + (identifiers?.hashValue ?? 0)
+        return result
+    }
 }
