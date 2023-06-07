@@ -69,19 +69,12 @@ public class DeepLinkAction : NSObject, Action {
     }
     
     private func parseURL(_ arguments: ActionArguments) -> URL? {
-        if let value = arguments.value as? String {
-
-            if let url = Utils.parseURL(value) {
-                return url
-            }
-               
-        }
         
-        if let value = arguments.value as? URL {
-            return value
+        if let value = arguments.value as? String  {
+            return Utils.parseURL(value)
         }
+        return arguments.value as? URL
         
-        return nil
     }
 }
 

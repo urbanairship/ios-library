@@ -63,11 +63,12 @@ public class OpenExternalURLAction : NSObject, Action {
         #endif
     }
 
-    func parseURL(_ arguments: ActionArguments) -> URL? {
-        if let string = arguments.value as? String {
-            return URL(string: string)
-        }
+    private func parseURL(_ arguments: ActionArguments) -> URL? {
         
+        if let value = arguments.value as? String  {
+            return Utils.parseURL(value)
+        }
         return arguments.value as? URL
+        
     }
 }
