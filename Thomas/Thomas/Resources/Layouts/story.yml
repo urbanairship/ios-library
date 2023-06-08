@@ -339,7 +339,11 @@ view:
           direction: horizontal
           sizing: equal
           spacing: 4
-          color:
+          progress_color:
             default:
-              hex: "#ffffff"
+              hex: "#E6E6FA"
+              alpha: 1
+          track_color:
+            default:
+              hex: "#E6E6FA"
               alpha: 0.7

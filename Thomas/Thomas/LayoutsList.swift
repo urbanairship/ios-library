@@ -141,16 +141,6 @@ class Delegate: ThomasDelegate {
         )
     }
 
-    func onButtonTapped(
-        buttonIdentifier: String,
-        metadata: [String : Any],
-        layoutContext: ThomasLayoutContext)
-    {
-        print(
-            "Thomas.onButtonTapped{buttonIdentifier=\(buttonIdentifier)\n, metadata=\(metadata)\n, context=\(layoutContext)"
-        )
-    }
-
     func onDismissed(layoutContext: ThomasLayoutContext?) {
         print(
             "Thomas.onDismissed{context=\(String(describing: layoutContext))}"
@@ -181,25 +171,36 @@ class Delegate: ThomasDelegate {
         )
     }
     
-    func onPageGesture(
-        identifier: String,
-        metadata: [String : Any],
-        layoutContext: ThomasLayoutContext)
-    {
+    func onButtonTapped(
+        buttonIdentifier: String,
+        metadata: Any?,
+        layoutContext: AirshipCore.ThomasLayoutContext
+    ) {
         print(
-            "Thomas.onPageGesture{identifier=\(identifier)\n, metadata=\(metadata)\n, layoutContext=\(layoutContext)}"
+            "Thomas.onButtonTapped{buttonIdentifier=\(buttonIdentifier)\n, metadata=\(String(describing: metadata))\n, context=\(layoutContext)"
         )
     }
     
+    func onPageGesture(
+        identifier: String,
+        metadata: Any?,
+        layoutContext: AirshipCore.ThomasLayoutContext
+    ) {
+        print(
+            "Thomas.onPageGesture{identifier=\(identifier)\n, metadata=\(String(describing: metadata))\n, layoutContext=\(layoutContext)}"
+        )
+    }
+    
+    
     func onPageAutomatedAction(
         identifier: String,
-        metadata: [String : Any],
-        layoutContext: ThomasLayoutContext)
-    {
-            print(
-                "Thomas.onPageAutomatedAction{identifier=\(identifier)\n, metadata=\(metadata)\n, layoutContext=\(layoutContext)}"
-            )
-        }
+        metadata: Any?,
+        layoutContext: AirshipCore.ThomasLayoutContext
+    ) {
+        print(
+            "Thomas.onPageAutomatedAction{identifier=\(identifier)\n, metadata=\(String(describing: metadata))\n, layoutContext=\(layoutContext)}"
+        )
+    }
     
     func onPageSwiped(
         from: ThomasPagerInfo,

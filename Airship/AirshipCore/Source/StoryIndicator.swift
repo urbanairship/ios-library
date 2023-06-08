@@ -61,16 +61,13 @@ struct StoryIndicator: View {
     ) -> some View {
         if self.model.style.type == .linearProgress {
             Rectangle()
-                .applyIf(isPreviousIndicator(index)) { view in
-                    view
-                        .fill(model.style.color.toColor(colorScheme))
-                }
+                .fill(isPreviousIndicator(index) ? model.style.progressColor.toColor(colorScheme) : model.style.trackColor.toColor(colorScheme))
                 .overlay {
                     if let progressDelay = progressDelay {
                         GeometryReader { metrics in
                             Rectangle()
                                 .frame(width: metrics.size.width * progressDelay.wrappedValue)
-                                .foregroundColor(model.style.color.toColor(colorScheme))
+                                .foregroundColor(model.style.progressColor.toColor(colorScheme))
                                 .animation(.linear)
                         }
                     }

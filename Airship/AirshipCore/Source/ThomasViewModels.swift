@@ -1080,11 +1080,21 @@ struct StoryIndicatorModel: BaseModel {
     }
     
     struct LinearProgressStoryIndicatorStyle: Decodable, Equatable {
-      let type: ProgressType
-      let direction: LayoutDirection
-      let sizing: ProgressSizingType?
-      let spacing: Double?
-      let color: ThomasColor
+        let type: ProgressType
+        let direction: LayoutDirection
+        let sizing: ProgressSizingType?
+        let spacing: Double?
+        let progressColor: ThomasColor
+        let trackColor: ThomasColor
+        
+        enum CodingKeys: String, CodingKey {
+            case type = "type"
+            case direction = "direction"
+            case sizing = "sizing"
+            case spacing = "spacing"
+            case progressColor = "progress_color"
+            case trackColor = "track_color"
+        }
     }
     
     enum ProgressSizingType: String,Decodable, Equatable {
