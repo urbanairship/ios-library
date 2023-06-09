@@ -15,6 +15,7 @@ NSString *const UAHTMLDismissIconResourceKey = @"dismissIconResource";
 NSString *const UAHTMLAdditionalPaddingKey = @"additionalPadding";
 NSString *const UAHTMLMaxWidthKey = @"maxWidth";
 NSString *const UAHTMLMaxHeightKey = @"maxHeight";
+NSString *const UAHTMLAspectRatioKey = @"aspectRatio";
 NSString *const UAHTMLHideDismissIconKey = @"hideDismissIcon";
 NSString *const UAHTMLExtendFullScreenLargeDeviceKey = @"extendFullscreenLargeDevices";
 
@@ -67,6 +68,13 @@ NSString *const UAHTMLExtendFullScreenLargeDeviceKey = @"extendFullscreenLargeDe
             }
         }
 
+        id aspectObj = normalizedHTMLStyleDict[UAHTMLAspectRatioKey];
+        if (aspectObj) {
+            if ([aspectObj isKindOfClass:[NSNumber class]]) {
+                style.aspectRatio = (NSNumber *)aspectObj;
+            }
+        }
+        
         id hideDismissIconObj = normalizedHTMLStyleDict[UAHTMLHideDismissIconKey];
         if (hideDismissIconObj) {
             if ([hideDismissIconObj isKindOfClass:[NSNumber class]]) {

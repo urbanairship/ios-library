@@ -65,6 +65,11 @@ NS_SWIFT_NAME(InAppMessageHTMLStyle)
 @property(nonatomic, strong, nullable) NSNumber *maxHeight;
 
 /**
+ * The aspect ratio.
+ */
+@property(nonatomic, strong, nullable) NSNumber *aspectRatio;
+
+/**
  * Flag to hide the dismiss icon.
  */
 @property(nonatomic, assign) BOOL hideDismissIcon;

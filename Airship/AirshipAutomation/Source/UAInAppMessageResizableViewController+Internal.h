@@ -61,6 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSNumber *maxHeight;
 
 /**
+ * The aspect ratio.
+ */
+@property(nonatomic, strong, nullable) NSNumber *aspectRatio;
+
+/**
  * Flag indicating the resizable view should display as full screen on compact devices.
  * Defaults to `NO`.
  */

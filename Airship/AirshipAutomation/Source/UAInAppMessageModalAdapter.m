@@ -76,6 +76,7 @@ NSString *const UAModalStyleFileName = @"UAInAppMessageModalStyle";
     self.resizableContainerViewController.borderRadius = self.modalController.displayContent.borderRadiusPoints;
     self.resizableContainerViewController.maxWidth = self.modalController.style.maxWidth;
     self.resizableContainerViewController.maxHeight = self.modalController.style.maxHeight;
+    self.resizableContainerViewController.aspectRatio = self.modalController.style.aspectRatio;
 
     // Set weak link to parent
     self.modalController.resizableParent = self.resizableContainerViewController;
