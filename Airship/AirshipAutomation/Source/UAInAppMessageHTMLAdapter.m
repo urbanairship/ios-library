@@ -92,7 +92,8 @@ NSString *const UAHTMLStyleFileName = @"UAInAppMessageHTMLStyle";
     self.resizableContainerViewController.borderRadius = self.htmlViewController.displayContent.borderRadiusPoints;
     self.resizableContainerViewController.maxWidth = self.htmlViewController.style.maxWidth;
     self.resizableContainerViewController.maxHeight = self.htmlViewController.style.maxHeight;
-
+    self.resizableContainerViewController.aspectRatio = self.htmlViewController.style.aspectRatio;
+    
     self.resizableContainerViewController.allowMaxHeight = YES;
 
     // Set resizable parent

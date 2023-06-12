@@ -37,6 +37,10 @@ public class AirshipConfig: NSObject, NSCopying {
     /// The log level used for production apps. Defaults to `error`.
     @objc
     public var productionLogLevel: AirshipLogLevel = .error
+    
+    /// Auto pause InAppAutomation on launch. Defaults to `false`
+    @objc
+    public var autoPauseInAppAutomationOnLaunch: Bool = false
 
     /// The airship cloud site. Defaults to `us`.
     @objc
@@ -424,6 +428,7 @@ public class AirshipConfig: NSObject, NSCopying {
         _detectProvisioningMode = config.detectProvisioningMode
         _defaultProvisioningMode = config._defaultProvisioningMode
         _inProduction = config._inProduction
+        autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {

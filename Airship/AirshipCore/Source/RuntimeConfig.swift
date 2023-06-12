@@ -44,6 +44,10 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc
     public let inProduction: Bool
 
+    /// Auto pause InAppAutomation on launch.
+    @objc
+    public let autoPauseInAppAutomationOnLaunch: Bool
+
     /// If enabled, the Airship library automatically registers for remote notifications when push is enabled
     /// and intercepts incoming notifications in both the foreground and upon launch.
     ///
@@ -305,6 +309,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.site = config.site
         self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()
         self.defaultDeviceAPIURL = config.deviceAPIURL?.normalizeURLString()
+        self.autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
 
         if let initialConfigURL = config.initialConfigURL {
             self.defaultRemoteDataAPIURL = initialConfigURL.normalizeURLString()

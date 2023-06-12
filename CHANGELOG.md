@@ -19,6 +19,15 @@ First beta for SDK 17. This release brings several breaking changes throughout t
 - Video improvements for Scenes & Surveys
 - Added new PushNotificationStatus that provides the current status of push notifications
 
+## Version 16.12.0 June 12, 2023
+Minor release that adds `aspectRatio` to HTML and Modal IAA styles and a new config option `autoPauseInAppAutomationOnLaunch` to always pause IAA during app
+init to be enabled later.
+
+### Changes
+- Fixed channel restore from encrypted backups
+- Added aspectRatio to HTML and Modal IAA styles
+- Added `autoPauseInAppAutomationOnLaunch` config option
+
 ## Version 16.11.3 March 24, 2023
 Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
 

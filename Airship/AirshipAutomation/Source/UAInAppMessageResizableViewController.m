@@ -19,6 +19,9 @@
 
 static NSString *const ResizingViewControllerNibName = @"UAInAppMessageResizableViewController";
 
+static float ResizingViewControllerMaxWidth = 420.0;
+static float ResizingViewControllerMaxHeight = 720.0;
+
 
 /**
  * The in-app message resizing view interface necessary for rounded corners.
@@ -189,7 +192,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
         } else {
             return YES;
         }
-    }
+    }    
     return NO;
 }
 
@@ -230,31 +233,43 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
             constraint.priority = 999;
             constraint.active = YES;
         } else {
-            CGFloat maxWidth = self.maxWidth == nil ? 420.0 : self.maxWidth.floatValue;
+            CGFloat maxWidth = self.maxWidth == nil ? ResizingViewControllerMaxWidth : self.maxWidth.floatValue;
+            if (!self.aspectLock && self.aspectRatio) {
+                [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                             attribute:NSLayoutAttributeWidth
+                                             relatedBy:NSLayoutRelationEqual
+                                                toItem:self.resizingContainerView
+                                             attribute:NSLayoutAttributeHeight
+                                            multiplier:[self.aspectRatio doubleValue]
+                                              constant:0.0f].active = YES;
+            }
             [NSLayoutConstraint constraintWithItem:self.resizingContainerView
-                                         attribute:NSLayoutAttributeWidth
-                                         relatedBy:NSLayoutRelationLessThanOrEqual
-                                            toItem:nil
-                                         attribute:NSLayoutAttributeNotAnAttribute
-                                        multiplier:1
-                                          constant:maxWidth].active = YES;
+                                             attribute:NSLayoutAttributeWidth
+                                             relatedBy:NSLayoutRelationLessThanOrEqual
+                                                toItem:nil
+                                             attribute:NSLayoutAttributeNotAnAttribute
+                                            multiplier:1
+                                              constant:maxWidth].active = YES;
+            
         }
 
 
         if (self.size.height > 0) {
-            self.heightConstraint.active = NO;
-            NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
-                                                                          attribute:NSLayoutAttributeHeight
-                                                                          relatedBy:NSLayoutRelationEqual
-                                                                             toItem:nil
-                                                                          attribute:NSLayoutAttributeNotAnAttribute
-                                                                         multiplier:1
-                                                                           constant:self.size.height];
-
-            constraint.priority = 999;
-            constraint.active = YES;
+            if (!self.aspectRatio) {
+                self.heightConstraint.active = NO;
+                NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.resizingContainerView
+                                                                              attribute:NSLayoutAttributeHeight
+                                                                              relatedBy:NSLayoutRelationEqual
+                                                                                 toItem:nil
+                                                                              attribute:NSLayoutAttributeNotAnAttribute
+                                                                             multiplier:1
+                                                                               constant:self.size.height];
+                
+                constraint.priority = 999;
+                constraint.active = YES;
+            }
         } else {
-            CGFloat maxHeight = self.maxHeight == nil ? 720.0 : self.maxHeight.floatValue;
+            CGFloat maxHeight = self.maxHeight == nil ? ResizingViewControllerMaxHeight : self.maxHeight.floatValue;
 
             // Set max height
             [NSLayoutConstraint constraintWithItem:self.resizingContainerView

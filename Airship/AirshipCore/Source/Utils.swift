@@ -552,7 +552,7 @@ public class AirshipUtils: NSObject {
         /* Caracters reserved for url  */
         let reserved = "!*'();:@&=+$,/?%#[]"
         /* Caracters are not reserved for url but should not be encoded */
-        let unreserved = ":-._~/?"
+        let unreserved = ":-._~/? "
         let allowed = NSMutableCharacterSet.alphanumeric()
         allowed.addCharacters(in: reserved)
         allowed.addCharacters(in: unreserved)

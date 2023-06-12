@@ -67,7 +67,9 @@
     self.airship.privacyManager = self.privacyManager;
     [self.airship makeShared];
 
-    self.inAppAutomation = [UAInAppAutomation automationWithEngine:self.mockAutomationEngine
+
+    self.inAppAutomation = [UAInAppAutomation automationWithConfig:self.config
+                                                  automationEngine:self.mockAutomationEngine
                                          audienceOverridesProvider:self.mockAudienceOverridesProvider
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
@@ -78,6 +80,53 @@
                                                     privacyManager:self.privacyManager];
     XCTAssertNotNil(self.engineDelegate);
 }
+
+- (void)testAutoPauseEnabled {
+    UAConfig *config = [[UAConfig alloc] init];
+    config.inProduction = NO;
+    config.site = UACloudSiteUS;
+    config.developmentAppKey = @"test-app-key";
+    config.developmentAppSecret = @"test-app-secret";
+    config.autoPauseInAppAutomationOnLaunch = YES;
+
+    UARuntimeConfig *runtimeConfig = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
+    self.inAppAutomation = [UAInAppAutomation automationWithConfig:runtimeConfig
+                                                  automationEngine:self.mockAutomationEngine
+                                         audienceOverridesProvider:self.mockAudienceOverridesProvider
+                                                  remoteDataClient:self.mockRemoteDataClient
+                                                         dataStore:self.dataStore
+                                               inAppMessageManager:self.mockInAppMessageManager
+                                                           channel:self.mockChannel
+                                         deferredScheduleAPIClient:self.mockDeferredClient
+                                             frequencyLimitManager:self.mockFrequencyLimitManager
+                                                    privacyManager:self.privacyManager];
+
+    XCTAssertTrue(self.inAppAutomation.isPaused);
+}
+
+- (void)testAutoPauseDisabled {
+    UAConfig *config = [[UAConfig alloc] init];
+    config.inProduction = NO;
+    config.site = UACloudSiteUS;
+    config.developmentAppKey = @"test-app-key";
+    config.developmentAppSecret = @"test-app-secret";
+    config.autoPauseInAppAutomationOnLaunch = NO;
+    UARuntimeConfig *runtimeConfig = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
+
+    self.inAppAutomation = [UAInAppAutomation automationWithConfig:runtimeConfig
+                                                  automationEngine:self.mockAutomationEngine
+                                         audienceOverridesProvider:self.mockAudienceOverridesProvider
+                                                  remoteDataClient:self.mockRemoteDataClient
+                                                         dataStore:self.dataStore
+                                               inAppMessageManager:self.mockInAppMessageManager
+                                                           channel:self.mockChannel
+                                         deferredScheduleAPIClient:self.mockDeferredClient
+                                             frequencyLimitManager:self.mockFrequencyLimitManager
+                                                    privacyManager:self.privacyManager];
+
+    XCTAssertFalse(self.inAppAutomation.isPaused);
+}
+
 
 - (void)testCheckEmptyAudience {
     UAScheduleAudience *emptyAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {

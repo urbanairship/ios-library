@@ -19,6 +19,7 @@ NSString *const UAModalBodyStyleKey = @"bodyStyle";
 NSString *const UAModalMediaStyleKey = @"mediaStyle";
 NSString *const UAModalMaxWidthKey = @"maxWidth";
 NSString *const UAModalMaxHeightKey = @"maxHeight";
+NSString *const UAModalAspectRatioKey = @"aspectRatio";
 NSString *const UAModalExtendFullScreenLargeDeviceKey = @"extendFullscreenLargeDevices";
 
 
@@ -70,6 +71,14 @@ NSString *const UAModalExtendFullScreenLargeDeviceKey = @"extendFullscreenLargeD
                 maxHeightObj = (NSNumber *)maxHeightObj;
             }
             style.maxHeight = maxHeightObj;
+        }
+        
+        id aspectRatioObj = normalizedModalStyleDict[UAModalAspectRatioKey];
+        if (aspectRatioObj) {
+            if ([aspectRatioObj isKindOfClass:[NSNumber class]]) {
+                aspectRatioObj = (NSNumber *)aspectRatioObj;
+            }
+            style.aspectRatio = aspectRatioObj;
         }
 
         style.additionalPadding = [UAPadding paddingWithDictionary:normalizedModalStyleDict[UAModalAdditionalPaddingKey]];
