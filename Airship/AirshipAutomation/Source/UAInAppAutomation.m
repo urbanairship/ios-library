@@ -42,7 +42,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 @property(nonatomic, assign) dispatch_once_t engineStarted;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, NSURL *> *redirectURLs;
-
 @end
 
 @implementation UAInAppAutomation
@@ -51,7 +50,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     return (UAInAppAutomation *)[UAirship componentForClassName:NSStringFromClass([self class])];
 }
 
-+ (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
++ (instancetype)automationWithConfig:(UARuntimeConfig *)config
+                    automationEngine:(UAAutomationEngine *)automationEngine
                      audienceManager:(UAInAppAudienceManager *)audienceManager
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
@@ -61,15 +61,16 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager {
 
-    return [[self alloc] initWithAutomationEngine:automationEngine
-                                  audienceManager:audienceManager
-                                 remoteDataClient:remoteDataClient
-                                        dataStore:dataStore
-                              inAppMessageManager:inAppMessageManager
-                                          channel:channel
-                        deferredScheduleAPIClient:deferredScheduleAPIClient
-                            frequencyLimitManager:frequencyLimitManager
-                                   privacyManager:privacyManager];
+    return [[self alloc] initWithConfig:config
+                       automationEngine:automationEngine
+                        audienceManager:audienceManager
+                       remoteDataClient:remoteDataClient
+                              dataStore:dataStore
+                    inAppMessageManager:inAppMessageManager
+                                channel:channel
+              deferredScheduleAPIClient:deferredScheduleAPIClient
+                  frequencyLimitManager:frequencyLimitManager
+                         privacyManager:privacyManager];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -101,26 +102,28 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
 
-    return [[UAInAppAutomation alloc] initWithAutomationEngine:automationEngine
-                                               audienceManager:audienceManager
-                                              remoteDataClient:dataClient
-                                                     dataStore:dataStore
-                                           inAppMessageManager:inAppMessageManager
-                                                       channel:channel
-                                     deferredScheduleAPIClient:deferredScheduleAPIClient
-                                         frequencyLimitManager:frequencyLimitManager
+    return [[UAInAppAutomation alloc] initWithConfig:config
+                                    automationEngine:automationEngine
+                                     audienceManager:audienceManager
+                                    remoteDataClient:dataClient
+                                           dataStore:dataStore
+                                 inAppMessageManager:inAppMessageManager
+                                             channel:channel
+                           deferredScheduleAPIClient:deferredScheduleAPIClient
+                               frequencyLimitManager:frequencyLimitManager
                                                 privacyManager:privacyManager];
 }
 
-- (instancetype)initWithAutomationEngine:(UAAutomationEngine *)automationEngine
-                         audienceManager:(UAInAppAudienceManager *)audienceManager
-                        remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
-                               dataStore:(UAPreferenceDataStore *)dataStore
-                     inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
-                                 channel:(UAChannel *)channel
-               deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
-                   frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                          privacyManager:(UAPrivacyManager *)privacyManager {
+- (instancetype)initWithConfig:(UARuntimeConfig *)config
+              automationEngine:(UAAutomationEngine *)automationEngine
+               audienceManager:(UAInAppAudienceManager *)audienceManager
+              remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
+                     dataStore:(UAPreferenceDataStore *)dataStore
+           inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
+                       channel:(UAChannel *)channel
+     deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
+         frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+                privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super init];
 
@@ -149,6 +152,10 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
             UA_STRONGIFY(self)
             [self onComponentEnableChange];
         };
+
+        if (config.autoPauseInAppAutomationOnLaunch) {
+            self.paused = YES;
+        }
     }
 
     return self;
@@ -160,6 +167,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                                              selector:@selector(onEnabledFeaturesChanged)
                                                  name:UAPrivacyManager.changeEvent
                                                object:nil];
+
 
     [self updateSubscription];
     [self updateEnginePauseState];

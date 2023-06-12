@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Factory method. Use for testing.
  *
+ * @param config The UARuntimeConfigInstance.
  * @param automationEngine The automation engine.
  * @param audienceManager The audience manager.
  * @param remoteDataClient The remote data client.
@@ -39,7 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param privacyManager The privacy manager.
  * @return A in-app automation manager instance.
  */
-+ (instancetype)automationWithEngine:(UAAutomationEngine *)automationEngine
++ (instancetype)automationWithConfig:(UARuntimeConfig *)config
+                    automationEngine:(UAAutomationEngine *)automationEngine
                      audienceManager:(UAInAppAudienceManager *)audienceManager
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore

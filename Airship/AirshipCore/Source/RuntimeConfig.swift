@@ -41,6 +41,10 @@ open class RuntimeConfig: NSObject {
     /// Dictionary of custom config values.
     @objc
     public let customConfig: [AnyHashable : Any]?
+
+    /// Auto pause InAppAutomation on launch.
+    @objc
+    public let autoPauseInAppAutomationOnLaunch: Bool
     
     /// If enabled, the Airship library automatically registers for remote notifications when push is enabled
     /// and intercepts incoming notifications in both the foreground and upon launch.
@@ -275,6 +279,7 @@ open class RuntimeConfig: NSObject {
         self.site = config.site
         self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()
         self.defaultDeviceAPIURL = config.deviceAPIURL?.normalizeURLString()
+        self.autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
 
         if let initialConfigURL = config.initialConfigURL {
             self.defaultRemoteDataAPIURL = initialConfigURL.normalizeURLString()

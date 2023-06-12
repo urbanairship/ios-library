@@ -61,7 +61,7 @@ public class AirshipKeychainAccess: NSObject {
                 identifier: identifier,
                 service: self.service
             )
-            
+
             // Write to old location in case of a downgrade
             if let bundleID = Bundle.main.bundleIdentifier {
                 let _ = Keychain.writeCredentials(
@@ -70,7 +70,7 @@ public class AirshipKeychainAccess: NSObject {
                     service: bundleID
                 )
             }
-            
+
             completionHandler?(result)
         }
     }
@@ -124,8 +124,10 @@ public class AirshipKeychainAccess: NSObject {
     @objc
     public func readCredentials(
         identifier: String,
-        completionHandler: @escaping(AirshipKeychainCredentials?
-    ) -> Void) {
+        completionHandler: @escaping (
+            AirshipKeychainCredentials?
+        ) -> Void
+    ) {
         self.dispatcher.dispatchAsync {
             let credentials = self.readCredentialsHelper(
                 identifier: identifier
@@ -142,16 +144,16 @@ public class AirshipKeychainAccess: NSObject {
         ) {
             return credentials
         }
-        
+
         // If we do not have a new value, check
         // the old service location
         if let bundleID = Bundle.main.bundleIdentifier {
-            
+
             let old = Keychain.readCredentials(
                 identifier: identifier,
                 service: bundleID
             )
-            
+
             if let old = old {
                 // Migrate old data to new service location
                 let _ = Keychain.writeCredentials(
@@ -159,11 +161,11 @@ public class AirshipKeychainAccess: NSObject {
                     identifier: identifier,
                     service: self.service
                 )
-                
+
                 return old
             }
         }
-        
+
         return nil
     }
 }
@@ -176,9 +178,9 @@ fileprivate struct Keychain {
         service: String
     ) -> Bool {
         guard let identifierData = identifier.data(using: .utf8),
-              let passwordData = credentials.password.data(
+            let passwordData = credentials.password.data(
                 using: .utf8
-              )
+            )
         else {
             return false
         }
@@ -186,12 +188,12 @@ fileprivate struct Keychain {
         deleteCredentials(identifier: identifier, service: service)
 
         let addquery: [String: Any] = [
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrGeneric as String: identifierData,
             kSecAttrAccount as String: credentials.username,
-            kSecValueData as String: passwordData
+            kSecValueData as String: passwordData,
         ]
 
         let status = SecItemAdd(addquery as CFDictionary, nil)
@@ -230,8 +232,9 @@ fileprivate struct Keychain {
             kSecAttrService as String: service,
             kSecAttrGeneric as String: identifierData,
             kSecReturnAttributes as String: true,
-            kSecReturnData as String: true
+            kSecReturnData as String: true,
         ]
+
 
         var item: CFTypeRef?
         let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
@@ -239,17 +242,53 @@ fileprivate struct Keychain {
             return nil
         }
 
-        guard let existingItem = item as? [String : Any],
-              let passwordData = existingItem[kSecValueData as String] as? Data,
-              let password = String(data: passwordData, encoding: String.Encoding.utf8),
+        guard let existingItem = item as? [String: Any] else {
+            return nil
+        }
+
+        guard let passwordData = existingItem[kSecValueData as String] as? Data,
+              let password = String(
+                data: passwordData,
+                encoding: String.Encoding.utf8
+              ),
               let username = existingItem[kSecAttrAccount as String] as? String
         else {
             return nil
+        }
+
+        let attrAccessible = existingItem[kSecAttrAccessible as String] as? String
+        if attrAccessible != (kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String) {
+            updateThisDeviceOnly(identifier: identifier, service: service)
         }
 
         return AirshipKeychainCredentials(
             username: username,
             password: password
         )
+    }
+
+    static func updateThisDeviceOnly(identifier: String, service: String) {
+        guard let identifierData = identifier.data(using: .utf8) else {
+            return
+        }
+
+        let updateQuery: [String: Any] = [
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        ]
+
+        let searchQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+            kSecAttrService as String: service,
+            kSecAttrGeneric as String: identifierData
+        ]
+
+        let updateStatus = SecItemUpdate(searchQuery as CFDictionary, updateQuery as CFDictionary)
+
+        if (updateStatus == errSecSuccess) {
+            AirshipLogger.trace("Updated keychain value \(identifier) to this device only")
+        } else {
+            AirshipLogger.error("Failed to update keychain value \(identifier) status:\(updateStatus)")
+        }
     }
 }
