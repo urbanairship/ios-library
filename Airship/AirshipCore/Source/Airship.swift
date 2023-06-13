@@ -438,9 +438,20 @@ public class Airship: NSObject {
     ) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {
             guard handleAirshipDeeplink(deepLink) else {
-                _ = self.airshipInstance.components.first(where: {
+                let handled = self.airshipInstance.components.first(where: {
                     return $0.deepLink?(deepLink) == true
-                })
+                }) != nil
+
+                if handled {
+                    return true
+                }
+
+                if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
+                    await deepLinkDelegate.receivedDeepLink(deepLink)
+                    return true
+                }
+
+                AirshipLogger.debug("Unhandled deep link \(deepLink)")
                 return true
             }
            return true
@@ -449,6 +460,7 @@ public class Airship: NSObject {
         guard
             let deepLinkDelegate = self.airshipInstance.deepLinkDelegate
         else {
+            AirshipLogger.debug("Unhandled deep link \(deepLink)")
             return  false
         }
 
