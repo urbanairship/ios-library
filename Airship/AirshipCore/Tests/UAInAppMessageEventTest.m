@@ -98,7 +98,7 @@
     id<UAEvent> event = self.analytics.events[0];
     
     XCTAssertEqualObjects(event.data, expectedData);
-    XCTAssertEqualObjects(event.eventType, @"in_app_pager_gesture");
+    XCTAssertEqualObjects(event.eventType, @"in_app_gesture");
 }
 
 /**
@@ -126,7 +126,7 @@
     id<UAEvent> event = self.analytics.events[0];
     
     XCTAssertEqualObjects(event.data, expectedData);
-    XCTAssertEqualObjects(event.eventType, @"in_app_page_automated_action");
+    XCTAssertEqualObjects(event.eventType, @"in_app_page_action");
 }
 
 /**

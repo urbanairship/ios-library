@@ -94,8 +94,8 @@ NSString *const UAInAppMessagePageViewEventCompletedKey = @"completed";
 NSString *const UAInAppMessagePageViewEventViewedCountKey = @"viewed_count";
 
 // Page event type
-NSString *const UAInAppMessagePagerGestureEventType = @"in_app_pager_gesture";
-NSString *const UAInAppMessagePagerAutomatedActionEventType = @"in_app_page_automated_action";
+NSString *const UAInAppMessagePagerGestureEventType = @"in_app_gesture";
+NSString *const UAInAppMessagePagerAutomatedActionEventType = @"in_app_page_action";
 NSString *const UAInAppMessagePageSwipeEventType = @"in_app_page_swipe";
 
 // Page event keys
