@@ -101,19 +101,24 @@ public protocol ThomasDelegate {
         layoutContext: ThomasLayoutContext
     )
 
+
     /// Called when actions should be ran.
     /// - Parameters:
-    ///     - actions: The actions.
+    ///     - permission: The permission.
+    ///     - startingStatus: The starting status.
+    ///     - endingStatus: The ending status.
     ///     - layoutContext: The layout context.
-    func onRunActions(
-        actions: [String: Any],
+    func onPromptPermissionResult(
+        permission: AirshipPermission,
+        startingStatus: AirshipPermissionStatus,
+        endingStatus: AirshipPermissionStatus,
         layoutContext: ThomasLayoutContext
     )
 }
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasPagerInfo)
-public class ThomasPagerInfo: NSObject {
+public final class ThomasPagerInfo: NSObject, Sendable {
 
     @objc
     public let identifier: String
@@ -171,7 +176,7 @@ public class ThomasFormResult: NSObject {
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasButtonInfo)
-public class ThomasButtonInfo: NSObject {
+public final class ThomasButtonInfo: NSObject, Sendable {
     @objc
     public let identifier: String
 
@@ -187,7 +192,7 @@ public class ThomasButtonInfo: NSObject {
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasFormInfo)
-public class ThomasFormInfo: NSObject {
+public final class ThomasFormInfo: NSObject, Sendable {
     @objc
     public let identifier: String
 
@@ -220,7 +225,7 @@ public class ThomasFormInfo: NSObject {
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasLayoutContext)
-public class ThomasLayoutContext: NSObject {
+public final class ThomasLayoutContext: NSObject, Sendable {
     @objc
     public let formInfo: ThomasFormInfo?
 

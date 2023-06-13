@@ -16,8 +16,8 @@ class SubscriptionListActionTests: XCTestCase {
 
     override func setUp() {
         self.action = SubscriptionListAction(
-            channel: { return self.channel },
-            contact: { return self.contact }
+            channel: { [channel] in return channel },
+            contact: { [contact] in return contact }
         )
 
         self.channel.subscriptionListEditor = SubscriptionListEditor {
@@ -32,41 +32,40 @@ class SubscriptionListActionTests: XCTestCase {
         }
     }
 
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.foregroundPush,
-            Situation.backgroundInteractiveButton,
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.foregroundPush,
+            ActionSituation.backgroundInteractiveButton,
         ]
 
         let rejectedSituations = [
-            Situation.backgroundPush
+            ActionSituation.backgroundPush
         ]
 
-        validSituations.forEach { (situation) in
-            let args = ActionArguments(value: [[:]] as [[String: Any]], with: situation)
-            XCTAssertTrue(self.action.acceptsArguments(args))
+        for situation in validSituations {
+            let args = ActionArguments(situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: [[:]] as [[String: Any]], with: situation)
-            XCTAssertFalse(self.action.acceptsArguments(args))
+        for situation in rejectedSituations {
+            let args = ActionArguments(situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 
     func testPerformWithoutArgs() async throws {
-        let args = ActionArguments(value: nil, with: .manualInvocation)
-        let result = await action.perform(with: args)
-        XCTAssertNil(result.value)
-        XCTAssertNotNil(result.error)
-
-
-        XCTAssertTrue(self.channelEdits.isEmpty)
-        XCTAssertTrue(self.contactEdits.isEmpty)
+        let args = ActionArguments()
+        do {
+            _ = try await action.perform(arguments: args)
+            XCTFail("should throw")
+        } catch {}
     }
 
     func testPerformWithValidPayload() async throws {
@@ -84,12 +83,11 @@ class SubscriptionListActionTests: XCTestCase {
             ],
         ]
 
-        let args = ActionArguments(value: actionValue, with: .manualInvocation)
+        let args = ActionArguments(
+            value: try AirshipJSON.wrap(actionValue)
+        )
     
-        let result = await action.perform(with: args)
-        XCTAssertNil(result.value)
-        XCTAssertNil(result.error)
-
+        _ = try await action.perform(arguments: args)
 
         let expectedChannelEdits = [
             SubscriptionListUpdate(listId: "456", type: .subscribe)
@@ -124,12 +122,12 @@ class SubscriptionListActionTests: XCTestCase {
             ]
         ]
 
-        let args = ActionArguments(value: actionValue, with: .manualInvocation)
-        
-        let result = await action.perform(with: args)
-        XCTAssertNil(result.value)
-        XCTAssertNil(result.error)
 
+        let args = ActionArguments(
+            value: try AirshipJSON.wrap(actionValue)
+        )
+
+        _ = try await action.perform(arguments: args)
 
         let expectedChannelEdits = [
             SubscriptionListUpdate(listId: "456", type: .subscribe)
@@ -163,12 +161,16 @@ class SubscriptionListActionTests: XCTestCase {
             ]
         ]
 
-        let args = ActionArguments(value: actionValue, with: .manualInvocation)
-        
-        let result = await action.perform(with: args)
-        XCTAssertNil(result.value)
-        XCTAssertNotNil(result.error)
 
+        let args = ActionArguments(
+            value: try AirshipJSON.wrap(actionValue)
+        )
+
+
+        do {
+            _ = try await action.perform(arguments: args)
+            XCTFail("should throw")
+        } catch {}
 
         XCTAssertTrue(self.channelEdits.isEmpty)
         XCTAssertTrue(self.contactEdits.isEmpty)

@@ -203,43 +203,27 @@
     [self dimissWithResolution:resolution layoutContext:layoutContext];
 }
 
-- (void)onRunActionsWithActions:(NSDictionary<NSString *,id> *)actions
-                  layoutContext:(UAThomasLayoutContext *)layoutContext {
+- (void)onPromptPermissionResultWithPermission:(UAPermission)permission
+                                startingStatus:(UAPermissionStatus)startingStatus
+                                  endingStatus:(UAPermissionStatus)endingStatus
+                                 layoutContext:(UAThomasLayoutContext *)layoutContext {
 
-    // Capturing all the data we need to generate the event since the action block
-    // will be potentially long lived
-    void (^onEvent)(UAInAppReporting *) = self.onEvent;
-    id message = self.message;
-    id scheduleID = self.scheduleID;
 
-    id metadata = [UAPromptPermissionAction makePermissionReceiverMetadataWithResultReceiver:^(UAPermission permission, UAPermissionStatus start, UAPermissionStatus end) {
+    // We cant expose swift types in an obj-c interface so we stringify it before passing it over. We can
+    // do it the right way once we convert this module to swift.
+    id permissionString = [UAUtils permissionString:permission];
+    id startinStatuString = [UAUtils permissionStatusString:startingStatus];
+    id endingStatusString = [UAUtils permissionStatusString:endingStatus];
 
-        // We cant expose swift types in an obj-c interface so we stringify it before passing it over. We can
-        // do it the right way once we convert this module to swift.
-        id permissionString = [UAUtils permissionString:permission];
-        id startinStatuString = [UAUtils permissionStatusString:start];
-        id endingStatusString = [UAUtils permissionStatusString:end];
+    UAInAppReporting *event = [UAInAppReporting permissionResultEventWithScheduleID:self.scheduleID
+                                                                            message:self.message
+                                                                         permission:permissionString
+                                                                     startingStatus:startinStatuString
+                                                                       endingStatus:endingStatusString];
 
-        UAInAppReporting *event = [UAInAppReporting permissionResultEventWithScheduleID:scheduleID
-                                                                                message:message
-                                                                             permission:permissionString
-                                                                         startingStatus:startinStatuString
-                                                                           endingStatus:endingStatusString];
+    event.layoutContext = layoutContext;
 
-        event.layoutContext = layoutContext;
-
-        if (onEvent) {
-            onEvent(event);
-        }
-    }];
-
-    [UAActionRunner runActionsWithActionValues:actions
-                                     situation:UASituationManualInvocation
-                                      metadata:metadata
-                             completionHandler:^(UAActionResult *result) {
-        UA_LDEBUG(@"Finished running actions.");
-    }];
-
+    [self record:event];
 }
 
 - (void)onButtonTappedWithButtonIdentifier:(NSString * _Nonnull)buttonIdentifier

@@ -222,17 +222,12 @@ struct HomeView: View {
             UIPasteboard.general.string = Airship.channel.identifier
         }
 
+        @MainActor
         func togglePushEnabled() {
-            if (!self.pushEnabled) {
-                Task {
-                    let result = await ActionRunner.run("prompt_permission_action", value: [
-                        "enable_airship_usage": true,
-                        "fallback_system_settings": true,
-                        "permission": "display_notifications"
-                    ] as [String : Any], situation: .manualInvocation)
-
-                    print(result)
-                }
+            if (!pushEnabled) {
+                Airship.shared.privacyManager.enableFeatures(.push)
+                Airship.push.userPushNotificationsEnabled = true
+                Airship.push.backgroundPushNotificationsEnabled = true
             } else {
                 Airship.push.userPushNotificationsEnabled = false
             }

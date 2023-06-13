@@ -10,7 +10,7 @@ import WebKit
 @objc(UANativeBridgeExtensionDelegate)
 public protocol NativeBridgeExtensionDelegate {
 
-    /// Called when an action is triggered from the JavaScript Environment. This method should return the metadata used in the `ActionArguments`.
+    /// Called when an action is triggered from the JavaScript Environment. This method should return the metadata used in the `ActionArgument`.
     /// - Parameter command The JavaScript command.
     /// - Parameter webView The webview.
     /// @return The action metadata.
@@ -19,7 +19,7 @@ public protocol NativeBridgeExtensionDelegate {
     func actionsMetadata(
         for command: JavaScriptCommand,
         webView: WKWebView
-    ) -> [AnyHashable: Any]
+    ) -> [String: String]
 
     /// Called before the JavaScript environment is being injected into the web view.
     /// - Parameter js The JavaScript environment.

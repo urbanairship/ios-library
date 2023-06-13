@@ -23,7 +23,7 @@ public protocol PreferenceCenterOpenDelegate {
 
 /// Airship PreferenceCenter module.
 @objc(UAPreferenceCenter)
-public class PreferenceCenter: NSObject, Component {
+public class PreferenceCenter: NSObject, AirshipComponent {
 
     /// The shared PreferenceCenter instance.
     @objc

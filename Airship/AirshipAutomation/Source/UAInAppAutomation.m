@@ -533,12 +533,9 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     switch (schedule.type) {
         case UAScheduleTypeActions: {
             // Run the actions
-            [UAActionRunner runActionsWithActionValues:schedule.data
-                                             situation:UASituationAutomation
-                                              metadata:nil
-                                     completionHandler:^(UAActionResult *result) {
-                completionHandler();
-            }];
+            [UAActionRunner runActions:schedule.data
+                      situation:UAActionSituationAutomation
+              completionHandler:completionHandler];
             break;
         }
 

@@ -1,64 +1,56 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+import Foundation
 
-/// Subscribes to/unsubscribes from a subscription list. This Action is registered under the
-/// names ^sla, ^sl, and subscription_list_action.
+/// Subscribes to/unsubscribes from a subscription list.
 ///
-/// Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
-/// UASituationWebViewInvocation, UASituationForegroundInteractiveButton,
-/// UASituationBackgroundInteractiveButton, UASituationManualInvocation, and
-/// UASituationAutomation
-///
-/// Default predicate: Rejects foreground pushes with visible display options
-///
-/// Result value: nil
-///
-/// Error: nil
-///
-/// Fetch result: UAActionFetchResultNoData
-@objc(UASubscriptionListAction)
-public class SubscriptionListAction: NSObject, Action {
-    @objc
-    public static let name = "subscription_list_action"
+/// Valid situations: `ActionSituation.foregroundPush`, `ActionSituation.launchedFromPush`
+/// `ActionSituation.webViewInvocation`, `ActionSituation.foregroundInteractiveButton`,
+/// `ActionSituation.backgroundInteractiveButton`, `ActionSituation.manualInvocation`, and
+/// `ActionSituation.automation`
+public final class SubscriptionListAction: AirshipAction {
 
-    @objc
-    public static let altName = "edit_subscription_list_action"
+    /// Default names - "subscription_list_action", "^sl", "edit_subscription_list_action", "^sla"
+    public static let defaultNames = [
+        "subscription_list_action", "^sl", "edit_subscription_list_action", "^sla"
+    ]
+    
+    /// Default predicate - rejects foreground pushes with visible display options
+    public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
+        return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
+    }
 
-    @objc
-    public static let shortName = "^sla"
-
-    @objc
-    public static let altShortName = "^sl"
-
-    private let channel: () -> AirshipChannelProtocol
-    private let contact: () -> AirshipContactProtocol
-
-    private lazy var decoder: JSONDecoder = {
+    private let channel: @Sendable () -> AirshipChannelProtocol
+    private let contact: @Sendable () -> AirshipContactProtocol
+  
+    private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }()
+    
+    public var _decoder: JSONDecoder {
+        return decoder
+    }
 
-    @objc
-    public override convenience init() {
+    public convenience init() {
         self.init(
             channel: Airship.componentSupplier(),
             contact: Airship.componentSupplier()
         )
     }
 
+
     init(
-        channel: @escaping () -> AirshipChannelProtocol,
-        contact: @escaping () -> AirshipContactProtocol
+        channel: @escaping @Sendable () -> AirshipChannelProtocol,
+        contact: @escaping @Sendable () -> AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact
     }
 
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
-        guard arguments.situation != .backgroundPush,
-            arguments.value != nil
+    public func accepts(arguments: ActionArguments) async -> Bool {
+        guard arguments.situation != .backgroundPush
         else {
             return false
         }
@@ -66,22 +58,20 @@ public class SubscriptionListAction: NSObject, Action {
         return true
     }
 
-    public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
-        do {
-            let edits = try parse(args: arguments)
-            applyChannelEdits(edits)
-            applyContactEdits(edits)
-            return ActionResult.empty()
-        } catch {
-            return ActionResult(error: error)
-        }
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
+        
+        let edits = try parse(args: arguments)
+        applyChannelEdits(edits)
+        applyContactEdits(edits)
+        return arguments.value
+        
     }
 
     private func parse(args: ActionArguments) throws -> [Edit] {
-        var edits: Any? = args.value
+        var edits: Any? = args.value.unWrap()
 
-        if let value = args.value as? [String: Any] {
+        let unwrapped = args.value.unWrap()
+        if let value = unwrapped as? [String: Any] {
             edits = value["edits"]
         }
 

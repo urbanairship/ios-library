@@ -7,62 +7,34 @@ import AirshipCore
 
 final class ShareActionTest: XCTestCase {
 
-    private let value = "some valid text"
-    private let numericValue = 222
-    private var action: ShareAction!
-    private var arguments: ActionArguments!
+    private let action: ShareAction = ShareAction()
 
-    override func setUp() async throws {
-        action = ShareAction()
-        arguments = ActionArguments(value: value, with: .backgroundInteractiveButton)
-    }
-
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.foregroundPush
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.foregroundPush
         ]
 
         let rejectedSituations = [
-            Situation.backgroundPush,
-            Situation.backgroundInteractiveButton
+            ActionSituation.backgroundPush,
+            ActionSituation.backgroundInteractiveButton
         ]
 
-        validSituations.forEach { (situation) in
-            XCTAssertTrue(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: value,
-                        with: situation
-                    )
-                )
-            )
-        }
-        
-        validSituations.forEach { (situation) in
-            XCTAssertFalse(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: numericValue,
-                        with: situation
-                    )
-                )
-            )
+        for situation in validSituations {
+            let args = ActionArguments(value: AirshipJSON.string("some valid text"), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            XCTAssertFalse(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: value,
-                        with: situation
-                    )
-                )
-            )
+
+        for situation in rejectedSituations {
+            let args = ActionArguments(value: AirshipJSON.string("some valid text"), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 }

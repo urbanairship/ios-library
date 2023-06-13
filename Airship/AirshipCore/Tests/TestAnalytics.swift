@@ -3,7 +3,7 @@ import Foundation
 @testable import AirshipCore
 
 @objc(UATestAnalytics)
-public class TestAnalytics: NSObject, InternalAnalyticsProtocol, Component, @unchecked Sendable {
+public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
     public func onDeviceRegistration(token: String) {
 
     }

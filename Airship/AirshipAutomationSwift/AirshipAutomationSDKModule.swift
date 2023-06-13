@@ -10,15 +10,15 @@ import Foundation
 /// @note For internal use only. :nodoc:
 
 @objc(UAAutomationSDKModule)
-public class AirshipAutomationSDKModule: NSObject, SDKModule {
+public class AirshipAutomationSDKModule: NSObject, AirshipSDKModule {
 
-    public func components() -> [Component] {
-        return []
-    }
 
-    public static func load(
-        withDependencies dependencies: [AnyHashable: Any]
-    ) -> SDKModule? {
-       return nil
+    public var actionsManifest: ActionsManifest? = nil
+
+    public var components: [AirshipComponent] = []
+
+
+    public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
+        return nil
     }
 }

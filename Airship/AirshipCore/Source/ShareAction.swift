@@ -2,36 +2,33 @@
 
 /**
  * Shares text using ActivityViewController.
+ * *
+ * Expected argument value is a `String`.
  *
- * This action is registered under the names share_action and ^s.
- *
- * Expected argument value is an NSString.
- *
- * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
- * UASituationWebViewInvocation, UASituationManualInvocation,
- * UASituationForegroundInteractiveButton, and UASituationAutomation
- *
- * Default predicate: Rejects situation UASituationForegroundPush.
- *
- * Result value: nil
- *
+ * Valid situations: `ActionSituation.foregroundPush`, `ActionSituation.launchedFromPush`,
+ * `ActionSituation.webViewInvocation`, `ActionSituation.manualInvocation`,
+ * `ActionSituation.foregroundInteractiveButton`, and `ActionSituation.automation`
  */
 #if os(iOS)
-@objc(UAShareAction)
 
-public class ShareAction: NSObject, Action {
+public final class ShareAction: AirshipAction {
+    /// Default names - "share_action", "^s"
+    public static let defaultNames = ["share_action", "^s"]
 
+    /// Deafult predciate - rejects `ActionSituation.foregroundPush`
+    public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
+        return args.situation != .foregroundPush
+    }
+    
     @objc
     public static let name = "share_action"
 
     @objc
     public static let shortName = "^s"
-
-
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
+    
+    public func accepts(arguments: ActionArguments) async -> Bool {
         guard arguments.situation != .backgroundPush,
-            arguments.situation != .backgroundInteractiveButton,
-            arguments.value as? String != nil
+            arguments.situation != .backgroundInteractiveButton
         else {
             return false
         }
@@ -39,8 +36,7 @@ public class ShareAction: NSObject, Action {
     }
 
     @MainActor
-    public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
 
         AirshipLogger.debug("Running share action: \(arguments)")
 
@@ -82,7 +78,7 @@ public class ShareAction: NSObject, Action {
             animated: true
         )
 
-        return ActionResult.empty()
+        return nil
     }
 }
 #endif

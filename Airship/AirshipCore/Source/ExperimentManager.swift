@@ -3,8 +3,7 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-@objc(UAExperimentManager)
-public final class ExperimentManager: NSObject, Component, ExperimentDataProvider {
+final class ExperimentManager: ExperimentDataProvider {
     
     private static let payloadType = "experiments"
     
@@ -12,14 +11,6 @@ public final class ExperimentManager: NSObject, Component, ExperimentDataProvide
     private let remoteData: RemoteDataProtocol
     private let getChannelId: () -> String?
     private let getStableContactId: () async -> String
-    
-    private let disableHelper: ComponentDisableHelper
-
-    // NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get { return disableHelper.enabled }
-        set { disableHelper.enabled = newValue }
-    }
     
     init(
         dataStore: PreferenceDataStore,
@@ -31,13 +22,6 @@ public final class ExperimentManager: NSObject, Component, ExperimentDataProvide
         self.remoteData = remoteData
         self.getChannelId = channelIdFetcher
         self.getStableContactId = stableContactIdFetcher
-        
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "UAExperimentaManager"
-        )
-        
-        super.init()
     }
     
     public func evaluateGlobalHoldouts(info: MessageInfo, contactId: String?) async -> ExperimentResult? {

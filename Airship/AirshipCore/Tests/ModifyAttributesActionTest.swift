@@ -16,12 +16,12 @@ final class ModifyAttributesActionTest: XCTestCase {
     override func setUp() async throws {
         date.dateOverride = Date()
         action = ModifyAttributesAction(
-            channel: { return self.channel },
-            contact: { return self.contact }
+            channel: { [channel] in return channel },
+            contact: { [contact] in return contact }
         )
     }
 
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
         let validValue = [
             "channel": [
                 "set": ["name": "clive"],
@@ -29,37 +29,36 @@ final class ModifyAttributesActionTest: XCTestCase {
         ]
 
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.foregroundPush,
-            Situation.backgroundInteractiveButton,
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.foregroundPush,
+            ActionSituation.backgroundInteractiveButton,
         ]
 
         let rejectedSituations = [
-            Situation.backgroundPush
+            ActionSituation.backgroundPush
         ]
 
-        validSituations.forEach { (situation) in
-            let validArgs = ActionArguments(
-                value: validValue,
-                with: situation
-            )
-            XCTAssertTrue(self.action.acceptsArguments(validArgs))
 
-            let invalidArgs = ActionArguments(
-                value: nil,
-                with: situation
-            )
-            XCTAssertFalse(self.action.acceptsArguments(invalidArgs))
-
+        for situation in validSituations {
+            let args = ActionArguments(value: try AirshipJSON.wrap(validValue), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: validValue, with: situation)
-            XCTAssertFalse(self.action.acceptsArguments(args))
+        for situation in validSituations {
+            let args = ActionArguments(situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
+        }
+
+        for situation in rejectedSituations {
+            let args = ActionArguments(value: try AirshipJSON.wrap(validValue), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 
@@ -124,10 +123,10 @@ final class ModifyAttributesActionTest: XCTestCase {
         }
 
 
-        let _ = await self.action.perform(
-            with: ActionArguments(
-                value: value,
-                with: .manualInvocation
+        let _ = try await self.action.perform(arguments:
+            ActionArguments(
+                value: try AirshipJSON.wrap(value),
+                situation: .manualInvocation
             )
         )
 

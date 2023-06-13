@@ -8,7 +8,9 @@ class RateAppActionTest: XCTestCase {
     private var action: RateAppAction!
 
     override func setUpWithError() throws {
-        self.action = RateAppAction(appRater: self.testAppRater) {
+        self.action = RateAppAction(
+            appRater: self.testAppRater
+        ) {
             return self.configItunesID
         }
     }
@@ -19,13 +21,13 @@ class RateAppActionTest: XCTestCase {
             "itunes_id": "test id",
         ]
 
-        let result = await action.perform(
-            with: ActionArguments(
-                value: args,
-                with: .manualInvocation
+        let result = try await action.perform(arguments:
+            ActionArguments(
+                value: try AirshipJSON.wrap(args),
+                situation: .manualInvocation
             )
         )
-        XCTAssertNil(result.error)
+        XCTAssertNil(result)
         XCTAssertTrue(testAppRater.showPromptCalled)
         XCTAssertNil(testAppRater.openStoreItunesID)
     }
@@ -35,13 +37,13 @@ class RateAppActionTest: XCTestCase {
             "itunes_id": "test id"
         ]
 
-        let result = await action.perform(
-            with: ActionArguments(
-                value: args,
-                with: .manualInvocation
+        let result = try await action.perform(arguments:
+            ActionArguments(
+                value: try AirshipJSON.wrap(args),
+                situation: .manualInvocation
             )
         )
-        XCTAssertNil(result.error)
+        XCTAssertNil(result)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertEqual("test id", testAppRater.openStoreItunesID)
     }
@@ -50,13 +52,13 @@ class RateAppActionTest: XCTestCase {
         self.configItunesID = "config iTunes ID"
         let args: [String: Any] = [:]
 
-        let result = await action.perform(
-            with: ActionArguments(
-                value: args,
-                with: .manualInvocation
+        let result = try await action.perform(arguments:
+            ActionArguments(
+                value: try AirshipJSON.wrap(args),
+                situation: .manualInvocation
             )
         )
-        XCTAssertNil(result.error)
+        XCTAssertNil(result)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertEqual(configItunesID, testAppRater.openStoreItunesID)
     }
@@ -64,45 +66,50 @@ class RateAppActionTest: XCTestCase {
     func testNilConfig() async throws {
         self.configItunesID = "config iTunes ID"
 
-        let result = await action.perform(
-            with: ActionArguments(
-                value: nil,
-                with: .manualInvocation
+        let result = try await action.perform(arguments:
+            ActionArguments(
+                value: AirshipJSON.null,
+                situation: .manualInvocation
             )
         )
-        XCTAssertNil(result.error)
+        XCTAssertNil(result)
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertEqual(configItunesID, testAppRater.openStoreItunesID)
     }
 
     func testNoItunesID() async throws {
         self.configItunesID = nil
-        let result = await action.perform(
-            with: ActionArguments(
-                value: nil,
-                with: .manualInvocation
+
+        do {
+            _ = try await action.perform(arguments:
+                ActionArguments(
+                    value: AirshipJSON.null,
+                    situation: .manualInvocation
+                )
             )
-        )
-        XCTAssertNotNil(result.error)
+            XCTFail("should throw")
+        } catch {}
+
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertNil(testAppRater.openStoreItunesID)
     }
 
     func testInvalidArgs() async throws {
         self.configItunesID = "config id"
-        let result = await action.perform(
-            with: ActionArguments(
-                value: "invalid",
-                with: .manualInvocation
+        do {
+            _ = try await action.perform(arguments:
+                ActionArguments(
+                    string: "invalid"
+                )
             )
-        )
-        XCTAssertNotNil(result.error)
+            XCTFail("should throw")
+        } catch {}
         XCTAssertFalse(testAppRater.showPromptCalled)
         XCTAssertNil(testAppRater.openStoreItunesID)
     }
 
     func testAcceptsArguments() async throws {
-        let validSituations: [Situation] = [
+        let validSituations: [ActionSituation] = [
             .manualInvocation,
             .automation,
             .foregroundPush,
@@ -111,32 +118,28 @@ class RateAppActionTest: XCTestCase {
             .launchedFromPush,
         ]
 
-        validSituations.forEach {
-            let args = ActionArguments(value: nil, with: $0)
-            XCTAssertTrue(action.acceptsArguments(args))
+        for situation in validSituations {
+            let args = ActionArguments(situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
     }
 
     func testRejectsArguments() async throws {
-        let invalidSituations: [Situation] = [
+        let invalidSituations: [ActionSituation] = [
             .backgroundPush,
             .backgroundInteractiveButton,
         ]
 
-        invalidSituations.forEach {
-            let args = ActionArguments(value: nil, with: $0)
-            XCTAssertFalse(action.acceptsArguments(args))
+        for situation in invalidSituations {
+            let args = ActionArguments(situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
 
-    fileprivate class TestAppRater: AppRaterProtocol {
+    fileprivate class TestAppRater: AppRaterProtocol, @unchecked Sendable {
         var showPromptCalled = false
         var openStoreItunesID: String? = nil
 

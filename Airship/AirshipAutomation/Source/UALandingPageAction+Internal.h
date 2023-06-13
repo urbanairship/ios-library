@@ -9,6 +9,6 @@
 /**
  * Utility method for parsing a landing page URL from action arguments.
  */
-- (NSURL *)parseURLFromArguments:(UAActionArguments *)arguments;
+- (NSURL *)parseURLFromArguments:(UAActionArgument *)arguments;
 
 @end

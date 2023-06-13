@@ -9,13 +9,13 @@
  *
  * Expected argument values: NSDictionary representing a schedule info JSON.
  *
- * Valid situations: UASituationBackgroundPush, UASituationForegroundPush
- * UASituationWebViewInvocation, UASituationManualInvocation, and UASituationAutomation
+ * Valid situations: UAActionSituationBackgroundPush, UAActionSituationForegroundPush
+ * UAActionSituationWebViewInvocation, UAActionSituationManualInvocation, and UAActionSituationAutomation
  *
  * Result value: Schedule ID or nil if the schedule failed.
  */
 NS_SWIFT_NAME(ScheduleAction)
-@interface UAScheduleAction : NSObject<UAAction>
+@interface UAScheduleAction : NSObject<UALegacyAction>
 
 /**
  * Default registry name for schedule action.

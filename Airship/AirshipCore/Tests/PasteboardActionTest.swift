@@ -13,77 +13,69 @@ final class PasteboardActionTest: XCTestCase {
         action = PasteboardAction()
     }
 
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
         let validStringValue = "pasteboard string"
+        let validDictValue = ["text": "pasteboard string"]
 
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.backgroundInteractiveButton,
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.backgroundInteractiveButton,
         ]
 
         let rejectedSituations = [
-            Situation.foregroundPush,
-            Situation.backgroundPush
+            ActionSituation.foregroundPush,
+            ActionSituation.backgroundPush
         ]
 
-        validSituations.forEach { (situation) in
-            let validArgs = ActionArguments(
-                value: validStringValue,
-                with: situation
+        for situation in validSituations {
+            let args = ActionArguments(
+                string: validStringValue,
+                situation: situation
             )
-            XCTAssertTrue(self.action.acceptsArguments(validArgs))
-
-            let invalidArgs = ActionArguments(
-                value: nil,
-                with: situation
-            )
-            XCTAssertFalse(self.action.acceptsArguments(invalidArgs))
-
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: validStringValue, with: situation)
-            XCTAssertFalse(self.action.acceptsArguments(args))
-        }
-        
-        let validDictValue = ["text": "pasteboard string"]
-        
-        validSituations.forEach { (situation) in
-            let validArgs = ActionArguments(
-                value: validDictValue,
-                with: situation
+        for situation in validSituations {
+            let args = ActionArguments(
+                value: try AirshipJSON.wrap(validDictValue),
+                situation: situation
             )
-            XCTAssertTrue(self.action.acceptsArguments(validArgs))
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: validDictValue, with: situation)
-            XCTAssertFalse(self.action.acceptsArguments(args))
+        for situation in validSituations {
+            let args = ActionArguments(
+                situation: situation
+            )
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
+        }
+
+        for situation in rejectedSituations {
+            let args = ActionArguments(
+                string: validStringValue,
+                situation: situation
+            )
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
     
     func testPerformWithString() async throws {
-        let arguments = ActionArguments(value: "pasteboard_string", with: .manualInvocation)
-      
-        let result = await self.action.perform(
-            with: arguments
-        )
-        
-       XCTAssertEqual(result.value as! String, arguments.value as! String)
-        
+        let arguments = ActionArguments(string: "pasteboard_string")
+        let result = try await self.action.perform(arguments: arguments)
+        XCTAssertEqual(result, arguments.value)
     }
     
     func testPerformWithDictionary() async throws {
-        let arguments = ActionArguments(value: ["text": "pasteboard string"], with: .manualInvocation)
-        
-        let result = await self.action.perform(
-            with: arguments
-        )
-        
-        XCTAssertEqual(result.value as! [String : String], arguments.value as! [String : String])
+        let arguments = ActionArguments(value: try AirshipJSON.wrap(["text": "pasteboard string"]))
+        let result = try await self.action.perform(arguments: arguments)
+        XCTAssertEqual(result, arguments.value)
     }
 }

@@ -11,51 +11,62 @@
 #else
 @import AirshipCore;
 #endif
+
 NSString *const UACancelSchedulesActionAll = @"all";
 NSString *const UACancelSchedulesActionIDs = @"ids";
 NSString *const UACancelSchedulesActionGroups = @"groups";
+
 
 @implementation UACancelSchedulesAction
 
 NSString * const UACancelSchedulesActionDefaultRegistryName = @"cancel_scheduled_actions";
 NSString * const UACancelSchedulesActionDefaultRegistryAlias = @"^csa";
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    switch (arguments.situation) {
-        case UASituationManualInvocation:
-        case UASituationWebViewInvocation:
-        case UASituationBackgroundPush:
-        case UASituationForegroundPush:
-        case UASituationAutomation:
-            if ([arguments.value isKindOfClass:[NSDictionary class]]) {
-                return arguments.value[UACancelSchedulesActionIDs] != nil || arguments.value[UACancelSchedulesActionGroups] != nil;
-            }
 
-            if ([arguments.value isKindOfClass:[NSString class]]) {
-                return [arguments.value isEqualToString:UACancelSchedulesActionAll];
-            }
-
-            return NO;
-
-        case UASituationLaunchedFromPush:
-        case UASituationBackgroundInteractiveButton:
-        case UASituationForegroundInteractiveButton:
-            return NO;
-    }
+- (BOOL (^)(id _Nullable, NSInteger))defaultPredicate {
+    return nil;
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
+- (NSArray<NSString *> *)defaultNames {
+    return @[UACancelSchedulesActionDefaultRegistryAlias, UACancelSchedulesActionDefaultRegistryName];
+}
+
+
+- (BOOL)acceptsArgumentValue:(nullable id)arguments situation:(NSInteger)situation {
+    switch (situation) {
+        case UAActionSituationManualInvocation:
+        case UAActionSituationWebViewInvocation:
+        case UAActionSituationBackgroundPush:
+        case UAActionSituationForegroundPush:
+        case UAActionSituationAutomation:
+            if ([arguments isKindOfClass:[NSDictionary class]]) {
+                return arguments[UACancelSchedulesActionIDs] != nil || arguments[UACancelSchedulesActionGroups] != nil;
+            }
+
+            if ([arguments isKindOfClass:[NSString class]]) {
+                return [arguments isEqualToString:UACancelSchedulesActionAll];
+            }
+
+            return NO;
+    }
+
+    return NO;
+}
+
+- (void)performWithArgumentValue:(nullable id)argument
+                       situation:(NSInteger)situation
+                    pushUserInfo:(nullable NSDictionary *)pushUserInfo
+               completionHandler:(nonnull void (^)(void))completionHandler {
 
     // All
-    if ([UACancelSchedulesActionAll isEqualToString:arguments.value]) {
+    if ([UACancelSchedulesActionAll isEqualToString:argument]) {
         [[UAInAppAutomation shared] cancelSchedulesWithType:UAScheduleTypeActions completionHandler:nil];
-        completionHandler([UAActionResult emptyResult]);
+        completionHandler();
         return;
     }
 
     // Groups
-    id groups = arguments.value[UACancelSchedulesActionGroups];
+    id groups = argument[UACancelSchedulesActionGroups];
     if (groups) {
 
         // Single group
@@ -73,7 +84,7 @@ NSString * const UACancelSchedulesActionDefaultRegistryAlias = @"^csa";
     }
 
     // IDs
-    id ids = arguments.value[UACancelSchedulesActionIDs];
+    id ids = argument[UACancelSchedulesActionIDs];
     if (ids) {
 
         // Single ID
@@ -90,7 +101,8 @@ NSString * const UACancelSchedulesActionDefaultRegistryAlias = @"^csa";
         }
     }
 
-    completionHandler([UAActionResult emptyResult]);
+    completionHandler();
 }
+
 
 @end

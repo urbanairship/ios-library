@@ -13,7 +13,8 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     private let pushableComponent = TestPushableComponent()
     private let airshipInstance = TestAirshipInstance()
 
-    override func setUpWithError() throws {
+    @MainActor
+    override func setUp() async throws {
         self.airshipInstance.actionRegistry = ActionRegistry()
         self.airshipInstance.makeShared()
 

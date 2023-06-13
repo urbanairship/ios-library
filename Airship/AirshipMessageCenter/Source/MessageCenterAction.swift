@@ -6,11 +6,22 @@ import Foundation
 import AirshipCore
 #endif
 
-@objc(UAMessageCenterAction)
-public class MessageCenterAction: NSObject, Action {
+/// Message center action that launches the message center.
+///
+///
+/// Valid situations: `ActionSituation.manualInvocation`, `ActionSituation.launchedFromPush`
+/// `ActionSituation.webViewInvocation`, `ActionSituation.foregroundInteractiveButton`,
+/// `ActionSituation.manualInvocation`, and `ActionSituation.automation`
+///
+public final class MessageCenterAction: AirshipAction {
+
+    /// Default names - "_uamid", "overlay_inbox_action", "display_inbox_action", "^mc", "^mco"
+    public static let defaultNames = ["_uamid", "overlay_inbox_action", "display_inbox_action", "^mc", "^mco"]
+
+    /// Action value for the message ID place holder.
     public static let messageIDPlaceHolder = "auto"
 
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
+    public func accepts(arguments: ActionArguments) async -> Bool {
         switch arguments.situation {
         case .manualInvocation, .launchedFromPush, .webViewInvocation,
             .automation,
@@ -24,17 +35,17 @@ public class MessageCenterAction: NSObject, Action {
     }
 
     private func parseMessageID(arguments: ActionArguments) -> String? {
-        if let value = arguments.value as? String {
+        if let value = arguments.value.unWrap() as? String {
             guard value == MessageCenterAction.messageIDPlaceHolder else {
                 return value
             }
             if let messageID =
-                arguments.metadata?[UAActionMetadataInboxMessageIDKey]
+                arguments.metadata[ActionArguments.inboxMessageIDMetadataKey]
                 as? String
             {
                 return messageID
             } else if let payload =
-                arguments.metadata?[UAActionMetadataPushPayloadKey]
+                        (arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON)?.unWrap()
                 as? [AnyHashable: Any]
             {
                 return MessageCenterMessage.parseMessageID(userInfo: payload)
@@ -42,7 +53,7 @@ public class MessageCenterAction: NSObject, Action {
                 return nil
             }
 
-        } else if let value = arguments.value as? [String] {
+        } else if let value = arguments.value.unWrap() as? [String] {
             return value.first
         } else {
             return nil
@@ -50,7 +61,7 @@ public class MessageCenterAction: NSObject, Action {
     }
 
     @MainActor
-    public func perform(with arguments: ActionArguments) async -> ActionResult {
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         if let messageID = parseMessageID(arguments: arguments),
             !messageID.isEmpty
         {
@@ -59,6 +70,6 @@ public class MessageCenterAction: NSObject, Action {
             MessageCenter.shared.display()
         }
 
-        return .empty()
+        return nil
     }
 }

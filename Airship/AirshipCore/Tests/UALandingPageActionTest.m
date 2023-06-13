@@ -5,8 +5,6 @@
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageHTMLDisplayContent+Internal.h"
 #import "UASchedule+Internal.h"
-#import "UAActionResult.h"
-#import "UAActionArguments.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -18,8 +16,8 @@
 @property (nonatomic, strong) UALandingPageAction *action;
 @property (nonatomic, strong) UATestURLAllowList *URLAllowList;
 @property (nonatomic, strong) id mockInAppAutomation;
-
 @end
+
 
 @implementation UALandingPageActionTest
 
@@ -35,7 +33,7 @@
 
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
     [[[self.mockInAppAutomation stub] andReturn:self.mockInAppAutomation] shared];
-    
+
     self.airship = [[UATestAirshipInstance alloc] init];
     self.airship.components = @[self.mockInAppAutomation];
     self.airship.config = self.mockConfig;
@@ -90,33 +88,26 @@
     NSString *urlString = @"www.airship.com";
     // Expected URL String should be message ID with prepended message scheme.
     NSString *expectedURLString = [NSString stringWithFormat:@"%@%@", @"https://", urlString];
-    [self verifyPerformWithArgValue:urlString expectedURLString:expectedURLString metadata:nil];
+    [self verifyPerformWithArgValue:urlString expectedURLString:expectedURLString];
 }
 
 /**
  * Test perform with a message ID thats available in the message list is displayed
  * in a landing page controller.
  */
-- (void)verifyPerformWithArgValue:(id)value expectedURLString:(NSString *)expectedURLString metadata:(nullable NSDictionary *)metadata {
+- (void)verifyPerformWithArgValue:(id)value expectedURLString:(NSString *)expectedURLString {
     __block BOOL actionPerformed;
 
-    UASituation validSituations[6] = {
-        UASituationForegroundInteractiveButton,
-        UASituationLaunchedFromPush,
-        UASituationManualInvocation,
-        UASituationWebViewInvocation,
-        UASituationForegroundPush,
-        UASituationAutomation
+    UAActionSituation validSituations[6] = {
+        UAActionSituationForegroundInteractiveButton,
+        UAActionSituationLaunchedFromPush,
+        UAActionSituationManualInvocation,
+        UAActionSituationWebViewInvocation,
+        UAActionSituationForegroundPush,
+        UAActionSituationAutomation
     };
 
     for (int i = 0; i < 6; i++) {
-        UAActionArguments *arguments;
-
-        if (metadata) {
-            arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i] metadata:metadata];
-        } else {
-            arguments = [UAActionArguments argumentsWithValue:value withSituation:validSituations[i]];
-        }
 
         [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
             void *scheduleArg;
@@ -139,10 +130,8 @@
 
         }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-        [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+        [self.action performWithArgumentValue:value situation:validSituations[i] pushUserInfo:nil completionHandler:^{
             actionPerformed = YES;
-            XCTAssertNil(result.value);
-            XCTAssertNil(result.error);
         }];
 
         XCTAssertTrue(actionPerformed);
@@ -154,16 +143,13 @@
  * Helper method to verify accepts arguments
  */
 - (void)verifyAcceptsArgumentsWithValue:(id)value shouldAccept:(BOOL)shouldAccept {
-    NSArray *situations = @[[NSNumber numberWithInteger:UASituationWebViewInvocation],
-                                     [NSNumber numberWithInteger:UASituationForegroundPush],
-                                     [NSNumber numberWithInteger:UASituationLaunchedFromPush],
-                                     [NSNumber numberWithInteger:UASituationManualInvocation]];
+    NSArray *situations = @[[NSNumber numberWithInteger:UAActionSituationWebViewInvocation],
+                                     [NSNumber numberWithInteger:UAActionSituationForegroundPush],
+                                     [NSNumber numberWithInteger:UAActionSituationLaunchedFromPush],
+                                     [NSNumber numberWithInteger:UAActionSituationManualInvocation]];
 
     for (NSNumber *situationNumber in situations) {
-        UAActionArguments *args = [UAActionArguments argumentsWithValue:value
-                                                          withSituation:[situationNumber integerValue]];
-
-        BOOL accepts = [self.action acceptsArguments:args];
+        BOOL accepts = [self.action acceptsArgumentValue:value situation:situationNumber.intValue];
         if (shouldAccept) {
             XCTAssertTrue(accepts, @"landing page action should accept value %@ in situation %@", value, situationNumber);
         } else {

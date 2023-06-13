@@ -47,9 +47,9 @@ NS_SWIFT_NAME(LandingPageBuilderExtender)
 * ``aspect_lock``: Optional Boolean. Determines if aspect ratio is maintained during resizing
 * to fit screen size. Defaults to false.
 *
-* Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
-* UASituationWebViewInvocation, UASituationManualInvocation,
-* UASituationForegroundInteractiveButton, and UASituationAutomation
+* Valid situations: UAActionSituationForegroundPush, UAActionSituationLaunchedFromPush,
+* UAActionSituationWebViewInvocation, UAActionSituationManualInvocation,
+* UAActionSituationForegroundInteractiveButton, and UAActionSituationAutomation
 *
 * Result value: nil
 *
@@ -57,7 +57,7 @@ NS_SWIFT_NAME(LandingPageBuilderExtender)
 *
 */
 NS_SWIFT_NAME(LandingPageAction)
-@interface UALandingPageAction : NSObject<UAAction>
+@interface UALandingPageAction : NSObject<UALegacyAction>
 
 /**
  * Default registry name for landing page action.

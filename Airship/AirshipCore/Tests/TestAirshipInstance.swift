@@ -22,7 +22,6 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     public var permissionsManager: AirshipPermissionsManager = AirshipPermissionsManager()
 
     private var _actionRegistry: ActionRegistry?
-    @objc
     public var actionRegistry: ActionRegistry {
         get {
             return _actionRegistry!
@@ -94,11 +93,11 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     public var deepLinkDelegate: DeepLinkDelegate?
 
     @objc
-    public var components: [Component] = []
+    public var components: [AirshipComponent] = []
 
-    private var componentMap: [String: Component] = [:]
+    private var componentMap: [String: AirshipComponent] = [:]
 
-    public func component(forClassName className: String) -> Component? {
+    public func component(forClassName className: String) -> AirshipComponent? {
         let key = "Class:\(className)"
         if componentMap[key] == nil {
             self.componentMap[key] = self.components.first {

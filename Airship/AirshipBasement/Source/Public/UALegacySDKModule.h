@@ -2,6 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "UAComponent.h"
+#import "UALegacyAction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,22 +10,21 @@ NS_ASSUME_NONNULL_BEGIN
  * Internal protocol to load optional modules.
  * @note For internal use only. :nodoc:
  */
-NS_SWIFT_NAME(SDKModule)
-@protocol UASDKModule <NSObject>
+@protocol UALegacySDKModule <NSObject>
 
 /**
  * Called to create the module.
  * @param dependencies Module dependencies.
- * @return The UASDKModule.
+ * @return The UALegacySDKModule
  */
-+ (nullable id<UASDKModule>)loadWithDependencies:(NSDictionary *)dependencies;
++ (nullable id<UALegacySDKModule>)loadWithDependencies:(NSDictionary *)dependencies;
 
 @optional
 
 /**
- * Optional actions plist path.
+ * Optional legacy actions.
  */
-- (nullable NSString *)actionsPlist;
+- (NSArray<id<UALegacyAction>> *)actions;
 
 /**
  * Returns the components defined by the module.

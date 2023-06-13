@@ -2,29 +2,22 @@
 
 /// Sets the pasteboard's string.
 ///
-/// This action is registered under the names clipboard_action and ^c.
-///
-/// Expected argument values: NSString or an NSDictionary with the pasteboard's string
+/// Expected argument values: String or an Object with the pasteboard's string
 /// under the 'text' key.
 ///
-/// Valid situations: UASituationLaunchedFromPush,
-/// UASituationWebViewInvocation, UASituationManualInvocation,
-/// UASituationForegroundInteractiveButton, UASituationBackgroundInteractiveButton,
-/// and UASituationAutomation
+/// Valid situations: `ActionSituation.launchedFromPush`,
+/// `ActionSituation.webViewInvocation`, `ActionSituation.manualInvocation`,
+/// `ActionSituation.foregroundInteractiveButton`, `ActionSituation.backgroundInteractiveButton`,
+/// and `ActionSituation.automation`
 ///
 /// Result value: The arguments value.
 @available(tvOS, unavailable)
-@objc(UAPasteboardAction)
-public class PasteboardAction: NSObject, Action {
+public final class PasteboardAction: AirshipAction {
 
-    @objc
-    public static let name = "clipboard_action"
+    /// Default names - "clipboard_action", "^c"
+    public static let defaultNames = ["clipboard_action", "^c"]
 
-    @objc
-    public static let shortname = "^c"
-
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
-
+    public func accepts(arguments: ActionArguments) async -> Bool {
         switch arguments.situation {
         case .manualInvocation, .webViewInvocation, .launchedFromPush,
             .backgroundInteractiveButton, .foregroundInteractiveButton,
@@ -37,20 +30,19 @@ public class PasteboardAction: NSObject, Action {
         }
     }
 
-    public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         #if !os(watchOS)
         UIPasteboard.general.string = pasteboardString(arguments)
         #endif
-        return ActionResult(value: arguments.value)
+        return arguments.value
     }
 
     func pasteboardString(_ arguments: ActionArguments) -> String? {
-        if let value = arguments.value as? String {
+        if let value = arguments.value.unWrap() as? String {
             return value
         }
 
-        if let dict = arguments.value as? [AnyHashable: Any] {
+        if let dict = arguments.value.unWrap() as? [AnyHashable: Any] {
             return dict["text"] as? String
         }
 

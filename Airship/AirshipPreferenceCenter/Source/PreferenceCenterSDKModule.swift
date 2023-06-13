@@ -8,21 +8,11 @@ import AirshipCore
 /// @note For internal use only. :nodoc:
 
 @objc(UAPreferenceCenterSDKModule)
-public class PreferenceCenterSDKModule: NSObject, SDKModule {
+public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
+    public let actionsManifest: ActionsManifest? = nil
+    public let components: [AirshipComponent]
 
-    private let preferenceCenter: PreferenceCenter
-
-    public init(_ preferenceCenter: PreferenceCenter) {
-        self.preferenceCenter = preferenceCenter
-    }
-
-    public func components() -> [Component] {
-        return [self.preferenceCenter]
-    }
-
-    public static func load(withDependencies dependencies: [AnyHashable: Any])
-        -> SDKModule?
-    {
+    public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
         let dataStore =
             dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
         let privacyManager =
@@ -36,5 +26,10 @@ public class PreferenceCenterSDKModule: NSObject, SDKModule {
             remoteData: remoteData
         )
         return PreferenceCenterSDKModule(preferenceCenter)
+    }
+
+
+    private init(_ preferenceCenter: PreferenceCenter) {
+        self.components = [preferenceCenter]
     }
 }

@@ -63,7 +63,6 @@ public class Airship: NSObject {
     public var config: RuntimeConfig { return airshipInstance.config }
 
     /// Action registry.
-    @objc
     public var actionRegistry: ActionRegistry {
         return airshipInstance.actionRegistry
     }
@@ -135,7 +134,7 @@ public class Airship: NSObject {
 
     /// - NOTE: For internal use only. :nodoc:
     @objc
-    public var components: [Component] { return airshipInstance.components }
+    public var components: [AirshipComponent] { return airshipInstance.components }
 
     static var _shared: Airship?
 
@@ -398,7 +397,7 @@ public class Airship: NSObject {
 
     /// - NOTE: For internal use only. :nodoc:
     @objc
-    public class func component(forClassName className: String) -> Component? {
+    public class func component(forClassName className: String) -> AirshipComponent? {
         return shared.airshipInstance.component(forClassName: className)
     }
 
@@ -420,7 +419,7 @@ public class Airship: NSObject {
     }
 
     /// - NOTE: For internal use only. :nodoc:
-    public class func componentSupplier<E>() -> () -> E {
+    public class func componentSupplier<E>() -> @Sendable () -> E {
         return {
             return requireComponent(ofType: E.self)
         }

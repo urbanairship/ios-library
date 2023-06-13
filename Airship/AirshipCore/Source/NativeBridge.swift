@@ -54,8 +54,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     /// - Note: For internal use only. :nodoc:
     /// - Parameter actionHandler: An action handler.
     /// - Parameter javaScriptEnvironmentFactoryBlock: A factory block producing a JavaScript environment.
-    @objc(initWithActionHandler:javaScriptEnvironmentFactoryBlock:)
-    public init(
+    init(
         actionHandler: NativeBridgeActionHandlerProtocol,
         javaScriptEnvironmentFactoryBlock: @escaping () -> JavaScriptEnvironmentProtocol
     ) {
@@ -99,10 +98,12 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         if let requestURL = requestURL, isAirshipJSAllowed, requestURL.isAirshipCommand {
             if navigationType == .linkActivated || navigationType == .other {
                 let command = JavaScriptCommand(url: requestURL)
-                self.handleAirshipCommand(
-                    command: command,
-                    webView: webView
-                )
+                Task {
+                    await self.handleAirshipCommand(
+                        command: command,
+                        webView: webView
+                    )
+                }
             }
             decisionHandler(.cancel)
             return
@@ -352,7 +353,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     private func handleAirshipCommand(
         command: JavaScriptCommand,
         webView: WKWebView
-    ) {
+    ) async {
         switch command.name {
         case NativeBridge.closeCommand:
             self.nativeBridgeDelegate?.close()
@@ -369,21 +370,22 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             }
 
         case NativeBridge.multiCommand:
-            command.url.query?.components(separatedBy: "&")
+            let commands = command.url.query?.components(separatedBy: "&")
                 .compactMap {
                     URL(string: $0.removingPercentEncoding ?? "")
                 }
                 .filter {
                     $0.isAirshipCommand
-                }
-                .forEach {
-                    let command = JavaScriptCommand(url: $0)
-                    self.handleAirshipCommand(
-                        command: command,
-                        webView: webView
-                    )
-                }
+                }.compactMap { url in
+                    JavaScriptCommand(url: url)
+                } ?? []
 
+            for command in commands {
+                await self.handleAirshipCommand(
+                    command: command,
+                    webView: webView
+                )
+            }
         default:
             if NativeBridgeActionHandler.isActionCommand(command: command) {
                 let metadata = self.nativeBridgeExtensionDelegate?
@@ -391,25 +393,21 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
                         for: command,
                         webView: webView
                     )
-                self.actionHandler.runActionsForCommand(
+
+                let script = await self.actionHandler.runActionsForCommand(
                     command: command,
-                    metadata: metadata,
-                    completionHandler: { script in
-                        if let script = script {
-                            webView.evaluateJavaScript(
-                                script,
-                                completionHandler: nil
-                            )
-                        }
+                    metadata: metadata
+                )
+
+                do {
+                    if let script = script {
+                        try await webView.evaluateJavaScript(script)
                     }
-                )
+                } catch {
+                    AirshipLogger.error("JavaScript error: \(error) command: \(command)")
+                }
             } else if !forwardAirshipCommand(command, webView: webView) {
-                AirshipLogger.debug(
-                    String(
-                        format: "Unhandled JavaScript command: %@",
-                        command
-                    )
-                )
+                AirshipLogger.debug("Unhandled JavaScript command: \(command)")
             }
         }
     }

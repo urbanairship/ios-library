@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Base class for main SDK components.
  */
-NS_SWIFT_NAME(Component)
+NS_SWIFT_NAME(AirshipComponent)
 @protocol UAComponent <NSObject>
 
 /**

@@ -4,7 +4,6 @@
 #import "UABaseTest.h"
 
 #import "UAScheduleAction.h"
-#import "UAActionArguments+Internal.h"
 #import "UAInAppAutomation.h"
 #import "UASchedule+Internal.h"
 
@@ -35,23 +34,21 @@
 /**
  * Test accepts arguments.
  */
+
 - (void)testAcceptsArguments {
-    UASituation validSituations[5] = {
-        UASituationForegroundPush,
-        UASituationBackgroundPush,
-        UASituationManualInvocation,
-        UASituationWebViewInvocation,
-        UASituationAutomation
+    UAActionSituation validSituations[5] = {
+        UAActionSituationForegroundPush,
+        UAActionSituationBackgroundPush,
+        UAActionSituationManualInvocation,
+        UAActionSituationWebViewInvocation,
+        UAActionSituationAutomation
     };
 
-    UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.situation = UASituationBackgroundInteractiveButton;
-    arguments.value = @{ @"actions": @{ @"action_name": @"action_value" },
-                         @"triggers": @[ @{ @"type": @"foreground", @"goal": @(1) }] };
-
     for (int i = 0; i < 5; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
+        id value = @{ @"actions": @{ @"action_name": @"action_value" },
+                      @"triggers": @[ @{ @"type": @"foreground", @"goal": @(1) }] };
+
+        XCTAssertTrue([self.action acceptsArgumentValue:value situation:validSituations[i]]);
     }
 }
 
@@ -70,10 +67,6 @@
 
     __block BOOL actionPerformed = NO;
 
-    UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.situation = UASituationManualInvocation;
-    arguments.value = scheduleJSON;
-
     __block UASchedule *schedule;
     [[self.mockAutomation expect] schedule:[OCMArg checkWithBlock:^BOOL(id obj) {
         schedule = (UASchedule *)obj;
@@ -91,9 +84,8 @@
         return YES;
     }]];
 
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+    [self.action performWithArgumentValue:scheduleJSON situation:UAActionSituationManualInvocation pushUserInfo:nil completionHandler:^{
         actionPerformed = YES;
-        XCTAssertEqualObjects(schedule.identifier, result.value);
     }];
 
     XCTAssertTrue(actionPerformed);

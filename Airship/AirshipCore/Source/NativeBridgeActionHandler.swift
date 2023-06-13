@@ -4,30 +4,35 @@
 
 import Foundation
 
-@objc(UANativeBridgeActionHandlerProtocol)
-public protocol NativeBridgeActionHandlerProtocol {
-
+protocol NativeBridgeActionHandlerProtocol {
+    
     /**
      * Runs actions for a command.
      *  - Parameters:
      *    - command The action command.
      *    - metadata The action metadata.
-     *    - completionHandler The completion handler with optional script to evaluate in the web view..
+     *  - Returns: Returns the optional script to evaluate in the web view..
      */
-    @objc(runActionsForCommand:metadata:completionHandler:)
     func runActionsForCommand(
         command: JavaScriptCommand,
-        metadata: [AnyHashable: Any]?,
-        completionHandler: @escaping (String?) -> Void
-    )
-
+        metadata: [String: Sendable]?
+    ) async -> String?
 }
 
-@objc(NativeBridgeActionHandler)
-public class NativeBridgeActionHandler: NSObject,
-    NativeBridgeActionHandlerProtocol
-{
+class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
 
+
+    private let actionRunner: @Sendable (String, ActionArguments) async -> ActionResult
+
+    init(actionRunner: @escaping @Sendable (String, ActionArguments) async -> ActionResult) {
+        self.actionRunner = actionRunner
+    }
+
+    convenience init() {
+        self.init { name, args in
+            return await ActionRunner.run(actionName: name, arguments: args)
+        }
+    }
     /**
      * Runs actions for a command.
      *  - Parameters:
@@ -35,22 +40,12 @@ public class NativeBridgeActionHandler: NSObject,
      *   - metadata The action metadata.
      *   - completionHandler The completion handler with optional script to evaluate in the web view..
      */
-    @objc(runActionsForCommand:metadata:completionHandler:)
     public func runActionsForCommand(
         command: JavaScriptCommand,
-        metadata: [AnyHashable: Any]?,
-        completionHandler: @escaping (String?) -> Void
-    ) {
-
-        AirshipLogger.debug(
-            String(
-                format:
-                    "action js delegate name: %@ \n arguments: %@ \n options: %@",
-                command.name ?? "",
-                command.arguments,
-                command.options
-            )
-        )
+        metadata: [String: Sendable]?
+    ) async -> String? {
+        AirshipLogger.debug("Running actions for command: \(command)")
+        
         /*
          * run-action-cb performs a single action and calls the completion handler with
          * the result of the action. The action's value is JSON encoded.
@@ -67,10 +62,9 @@ public class NativeBridgeActionHandler: NSObject,
                         command.arguments
                     )
                 )
-                completionHandler(nil)
-                return
+                AirshipLogger.error("Unable to run-action-cb, wrong number of arguments")
             }
-
+            
             let actionName = command.arguments[0]
             let actionValue = NativeBridgeActionHandler.parse(
                 command.arguments[1]
@@ -78,16 +72,14 @@ public class NativeBridgeActionHandler: NSObject,
             let callbackID = command.arguments[2]
 
             /// Run the action
-            self.run(
+            return await self.run(
                 actionName,
                 actionValue,
-                metadata,
-                callbackID,
-                completionHandler
+                metadata ?? [:],
+                callbackID
             )
-            return
         }
-
+        
         /*
          * run-actions performs several actions with the values JSON encoded.
          *
@@ -95,16 +87,13 @@ public class NativeBridgeActionHandler: NSObject,
          * run-actions?<actionName>=<actionValue>&<anotherActionName>=<anotherActionValue>...
          */
         if command.name == "run-actions" {
-            Task {
-                await self.run(
-                    self.decodeActionValues(command, false),
-                    metadata: metadata
-                )
-                completionHandler(nil)
-                return
-            }
+            await self.run(
+                self.decodeActionValues(command, false),
+                metadata: metadata
+            )
+            return nil
         }
-
+        
         /*
          * run-basic-actions performs several actions with basic encoded action values.
          *
@@ -112,15 +101,14 @@ public class NativeBridgeActionHandler: NSObject,
          * run-basic-actions?<actionName>=<actionValue>&<anotherActionName>=<anotherActionValue>...
          */
         if command.name == "run-basic-actions" {
-            Task {
                 await self.run(
                     self.decodeActionValues(command, true),
                     metadata: metadata
                 )
-                completionHandler(nil)
-                return
-            }
+            return nil
         }
+        
+        return nil
     }
 
     /**
@@ -131,164 +119,93 @@ public class NativeBridgeActionHandler: NSObject,
      *   - metadata Optional metadata to pass to the action arguments.
      */
     private func run(
-        _ actionValues: [String: [Any?]],
-        metadata: [AnyHashable: Any]?
+        _ actionValues: [String: [AirshipJSON]],
+        metadata: [String: Sendable]?
     ) async {
         for (actionName, values) in actionValues {
-            for actionValue in values {
-                let result = await ActionRunner.run(
+            for value in values {
+                _ = await self.actionRunner(
                     actionName,
-                    value: actionValue,
-                    situation: .webViewInvocation,
-                    metadata: metadata)
-                
-                if result.status == .completed {
-                    AirshipLogger.debug(
-                        String(
-                            format:
-                                "action %@ completed successfully",
-                            actionName
-                        )
+                    ActionArguments(
+                        value: value,
+                        situation: .webViewInvocation,
+                        metadata: metadata ?? [:]
                     )
-                } else {
-                    AirshipLogger.debug(
-                        String(
-                            format:
-                                "action %@ completed with an error",
-                            actionName
-                        )
-                    )
-                }
+                )
             }
         }
     }
-
+    
     /**
-     * Runs an action with a given value and performs a callback on completion.
+     * Runs an action with a given value.
      *
      * - Parameters:
      *   - actionName The name of the action to perform
      *   - actionValue The action argument's value
      *   - metadata Optional metadata to pass to the action arguments.
      *   - callbackID A callback identifier generated in the JS layer. This can be `nil`.
-     *   - completionHandler The completion handler passed in the JS delegate call.
      */
     private func run(
         _ action: String,
-        _ actionValue: Any?,
-        _ metadata: [AnyHashable: Any]?,
-        _ callbackID: String,
-        _ completionHandler: @escaping (String?) -> Void
-    ) {
+        _ actionValue: AirshipJSON,
+        _ metadata: [String: Sendable],
+        _ callbackID: String
+    ) async -> String? {
+        
         let callbackID = try? JSONUtils.string(
             callbackID,
             options: .fragmentsAllowed
         )
         
-        Task {
-            let result = await ActionRunner.run(
-                action,
+        let result = await self.actionRunner(
+            action,
+            ActionArguments(
                 value: actionValue,
                 situation: .webViewInvocation,
                 metadata: metadata
             )
-            
-            AirshipLogger.debug(
-                String(
-                    format: "Action %@ finished executing with status %ld",
-                    action,
-                    result.status.rawValue
-                )
-            )
-            guard let callbackID = callbackID else {
-                completionHandler(nil)
-                return
-            }
-            
-            var script: String?
-            var resultString: String?
-            var errorMessage: String?
-            
-            switch result.status {
-            case .completed:
-                if result.value != nil {
-                    ///if the action completed with a result value, serialize into JSON
-                    ///accepting fragments so we can write lower level JSON values
-                    do {
-                        resultString = try JSONUtils.string(
-                            result.value!,
-                            options: .fragmentsAllowed
-                        )
-                    } catch {
-                        AirshipLogger.error(
-                            "Unable to serialize result value, falling back to string description"
-                        )
-                        /// JSONify the result string
-                        resultString = try? JSONUtils.string(
-                            String(describing: result.value!),
-                            options: .fragmentsAllowed
-                        )
-                    }
-                }
-                ///in the case where there is no result value, pass null
-                resultString = resultString ?? "null"
-                break
-            case .actionNotFound:
-                errorMessage = String(
-                    format:
-                        "No action found with name %@, skipping action.",
-                    action
-                )
-                break
-            case .error:
-                errorMessage = result.error?.localizedDescription
-                break
-            case .argumentsRejected:
-                errorMessage = String(
-                    format: "Action %@ rejected arguments.",
-                    action
-                )
-                break
-            @unknown default:
-                return
-            }
-            
-            if errorMessage != nil {
-                /// JSONify the error message
-                errorMessage = try? JSONUtils.string(
-                    errorMessage!,
-                    options: .fragmentsAllowed
-                )
-                script = String(
-                    format:
-                        "var error = new Error(); error.message = %@; UAirship.finishAction(error, null, %@);",
-                    errorMessage!,
-                    callbackID
-                )
-            } else if resultString != nil {
-                script = String(
-                    format: "UAirship.finishAction(null, %@, %@);",
-                    resultString!,
-                    callbackID
-                )
-            }
-            
-            completionHandler(script)
-        }
-    }
-
-    private class func parse(_ arguments: String) -> Any? {
-        /// allow the reading of fragments so we can parse lower level JSON values
-        let jsonDecodedArgs = try? JSONUtils.object(
-            arguments,
-            options: [.mutableContainers, .allowFragments]
         )
-        if jsonDecodedArgs == nil {
-            AirshipLogger.debug("unable to json decode action args")
+
+        guard let callbackID = callbackID else {
+            return nil
         }
-        return jsonDecodedArgs
+
+        switch result {
+        case .completed(let value):
+            return "UAirship.finishAction(null, \((try? value.toString()) ?? "null"), \(callbackID));"
+        case .actionNotFound:
+            return errorResponse(
+                errorMessage: "No action found with name \(action), skipping action.",
+                callbackID: callbackID
+            )
+        case .error(let error):
+            return errorResponse(
+                errorMessage: error.localizedDescription,
+                callbackID: callbackID
+            )
+        case .argumentsRejected:
+            return errorResponse(
+                errorMessage: "Action \(action) rejected arguments.",
+                callbackID: callbackID
+            )
+        }
+    }
+    
+    private class func parse(_ json: String) -> AirshipJSON {
+        do {
+            return try AirshipJSON.from(json: json)
+        } catch {
+            AirshipLogger.warn("Unableto json decode action args \(error), \(json)")
+            return AirshipJSON.null
+        }
     }
 
+    private func errorResponse(errorMessage: String, callbackID: String) -> String {
+        let json = (try? JSONUtils.string(errorMessage, options: .fragmentsAllowed)) ?? ""
+
+        return "var error = new Error(); error.message = \(json); UAirship.finishAction(error, null, \(callbackID));"
+    }
+    
     /**
      * Checks if a command defines an action.
      * - Parameters:
@@ -302,7 +219,7 @@ public class NativeBridgeActionHandler: NSObject,
             (name == "run-actions" || name == "run-basic-actions"
             || name == "run-action-cb")
     }
-
+    
     /**
      * Decodes options with basic URL or URL+json encoding
      *
@@ -314,41 +231,28 @@ public class NativeBridgeActionHandler: NSObject,
     private func decodeActionValues(
         _ command: JavaScriptCommand,
         _ basicEncoding: Bool
-    ) -> [String: [Any?]] {
-        guard !command.options.isEmpty else {
-            AirshipLogger.error("Error no options available to decode")
+    ) -> [String: [AirshipJSON]] {
+        var actionValues: [String: [AirshipJSON]] = [:]
+
+        do {
+            try command.options.forEach { (actionName, optionValues) in
+                actionValues[actionName] = try optionValues.compactMap { actionArg in
+                    if (actionArg.isEmpty) {
+                        return AirshipJSON.null
+                    }
+
+                    if basicEncoding{
+                        return AirshipJSON.string(actionArg)
+                    }
+                    
+                    return try AirshipJSON.from(json: actionArg)
+                }
+            }
+        } catch {
+            AirshipLogger.warn("Unableto json decode action args \(error) for command \(command)")
             return [:]
         }
 
-        var actionValues: [String: [Any?]] = [:]
-
-        for (actionName, optionValues) in command.options {
-            var values: [Any?] = []
-
-            for actionArg in optionValues {
-                var value: Any?
-
-                if basicEncoding || actionArg.count == 0 {
-                    value = actionArg
-                } else {
-                    value = NativeBridgeActionHandler.parse(_: actionArg)
-                }
-
-                if value == nil {
-                    AirshipLogger.error(
-                        String(
-                            format: "Error decoding arguments: %@",
-                            actionArg
-                        )
-                    )
-                    return [:]
-                }
-
-                values.append(value)
-            }
-
-            actionValues[actionName] = values
-        }
         return actionValues
     }
 }

@@ -2,52 +2,40 @@
 
 /// An action that adds a custom event.
 ///
-/// This action is registered under the name "add_custom_event_action".
-///
 /// Expected argument values: A dictionary of keys for the custom event. When a
 /// custom event action is triggered from a Message Center Rich Push Message,
 /// the interaction type and ID will automatically be filled for the message if
 /// they are left blank.
 ///
-/// Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush,
-/// UASituationWebViewInvocation, UASituationManualInvocation, UASituationBackgroundPush,
-/// UASituationForegroundInteractiveButton, UASituationBackgroundInteractiveButton,
-/// and UASituationAutomation
-///
+/// Valid situations: All.
 ///
 /// Result value: nil
-///
-/// Fetch result: UAActionFetchResultNoData
-///
-/// Default predicate: Only accepts UASituationWebViewInvocation and UASituationManualInvocation
-@objc(UAAddCustomEventAction)
-public class AddCustomEventAction: NSObject, Action {
+public final class AddCustomEventAction: AirshipAction {
 
-    @objc
-    public static let name = "add_custom_event_action"
 
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
-        guard let dict = arguments.value as? [AnyHashable: Any] else {
-            AirshipLogger.error(
-                "UAAddCustomEventAction requires a dictionary of event data."
-            )
+    /// Default names - "add_custom_event_action"
+    public static let defaultNames = ["add_custom_event_action"]
+    
+    /// Default predicate - rejects foreground pushes with visible display options and `ActionSituation.backgroundPush`
+    public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
+        if (args.situation == .backgroundPush) {
             return false
         }
+        return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
+    }
 
-        guard dict[CustomEvent.eventNameKey] is String else {
-            AirshipLogger.error(
-                "UAAddCustomEventAction requires an event name in the event data."
-            )
-            return false
-        }
-
+    public func accepts(arguments: ActionArguments) async -> Bool {
         return true
     }
 
-    public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
-        let dict = arguments.value as? [AnyHashable: Any]
-        let eventName = parseString(dict, key: CustomEvent.eventNameKey) ?? ""
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
+        guard let dict = arguments.value.unWrap() as? [AnyHashable: Any],
+              let eventName = parseString(dict, key: CustomEvent.eventNameKey)
+        else {
+            throw AirshipErrors.error("Invalid custom event argument: \(arguments.value)")
+        }
+
+
         let eventValue = parseString(dict, key: CustomEvent.eventValueKey)
         let interactionID = parseString(
             dict,
@@ -61,7 +49,7 @@ public class AddCustomEventAction: NSObject, Action {
             dict,
             key: CustomEvent.eventTransactionIDKey
         )
-        let properties = dict?[CustomEvent.eventPropertiesKey] as? [String: Any]
+        let properties = dict[CustomEvent.eventPropertiesKey] as? [String: Any]
 
         let event = CustomEvent(name: eventName, stringValue: eventValue)
 
@@ -72,28 +60,26 @@ public class AddCustomEventAction: NSObject, Action {
             event.interactionType = interactionType
             event.interactionID = interactionID
         } else if let messageID =
-            arguments.metadata?[UAActionMetadataInboxMessageIDKey] as? String
+                    arguments.metadata[ActionArguments.inboxMessageIDMetadataKey] as? String
         {
             event.setInteractionFromMessageCenterMessage(messageID)
         }
 
-        if let pushPaylaod = arguments.metadata?[UAActionMetadataPushPayloadKey]
-            as? [AnyHashable: Any]
+        if
+            let json = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON,
+            let unwrapped = json.unWrap() as? [String: AnyHashable]
         {
-            event.conversionSendID = pushPaylaod["_"] as? String
-            event.conversionPushMetadata =
-                pushPaylaod["com.urbanairship.metadata"] as? String
+            event.conversionSendID = unwrapped["_"] as? String
+            event.conversionPushMetadata = unwrapped["com.urbanairship.metadata"] as? String
         }
 
-        if event.isValid() {
-            event.track()
-            return ActionResult.empty()
-        } else {
-            let error = AirshipErrors.error(
-                "Invalid custom event \(arguments.value ?? "")"
-            )
-            return ActionResult(error: error)
+        guard event.isValid() else {
+            throw AirshipErrors.error("Invalid custom event: \(arguments.value)")
         }
+
+        event.track()
+
+        return nil
     }
 
     func parseString(_ dict: [AnyHashable: Any]?, key: String) -> String? {

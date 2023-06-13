@@ -25,9 +25,9 @@ public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtension
     public func actionsMetadata(
         for command: JavaScriptCommand,
         webView: WKWebView
-    ) -> [AnyHashable: Any] {
+    ) -> [String: String] {
         return [
-            UAActionMetadataInboxMessageIDKey: message.id
+            ActionArguments.inboxMessageIDMetadataKey: message.id
         ]
     }
 

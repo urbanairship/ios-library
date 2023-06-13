@@ -26,83 +26,52 @@ final class AddTagsActionTest: XCTestCase {
 
     override func setUp() async throws {
         action = AddTagsAction(
-            channel: { return self.channel },
-            contact: { return self.contact }
+            channel: { [channel] in return channel },
+            contact: { [contact] in return contact }
         )
     }
 
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.foregroundPush,
-            Situation.backgroundInteractiveButton,
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.foregroundPush,
+            ActionSituation.backgroundInteractiveButton,
         ]
 
         let rejectedSituations = [
-            Situation.backgroundPush
+            ActionSituation.backgroundPush
         ]
 
-        validSituations.forEach { (situation) in
-            XCTAssertTrue(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: simpleValue,
-                        with: situation
-                    )
-                )
-            )
-
-            XCTAssertTrue(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: complexValue,
-                        with: situation
-                    )
-                )
-            )
-
-            XCTAssertFalse(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: nil,
-                        with: situation
-                    )
-                )
-            )
+        for situation in validSituations {
+            let args = ActionArguments(value: try! AirshipJSON.wrap(simpleValue), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            XCTAssertFalse(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: simpleValue,
-                        with: situation
-                    )
-                )
-            )
+        for situation in validSituations {
+            let args = ActionArguments(value: try! AirshipJSON.wrap(complexValue), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
+        }
 
-            XCTAssertFalse(
-                self.action.acceptsArguments(
-                    ActionArguments(
-                        value: complexValue,
-                        with: situation
-                    )
-                )
-            )
+        for situation in rejectedSituations {
+            let args = ActionArguments(value: try! AirshipJSON.wrap(simpleValue), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 
     func testPerformSimple() async throws {
         self.channel.tags = ["foo", "bar"]
 
-        _ = await self.action.perform(
-            with: ActionArguments(
-                value: simpleValue,
-                with: .manualInvocation
+        _ = try await self.action.perform(arguments:
+            ActionArguments(
+                value: try! AirshipJSON.wrap(simpleValue),
+                situation: .manualInvocation
             )
         )
 
@@ -154,10 +123,10 @@ final class AddTagsActionTest: XCTestCase {
             tagGroupsSet.fulfill()
         }
 
-        _ = await self.action.perform(
-            with: ActionArguments(
-                value: complexValue,
-                with: .manualInvocation
+        _ = try await self.action.perform(arguments:
+            ActionArguments(
+                value: try! AirshipJSON.wrap(complexValue),
+                situation: .manualInvocation
             )
         )
 

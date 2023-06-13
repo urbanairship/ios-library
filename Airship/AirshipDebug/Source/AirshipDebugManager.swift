@@ -10,7 +10,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-public class AirshipDebugManager: NSObject, Component {
+public class AirshipDebugManager: NSObject, AirshipComponent {
     public var isComponentEnabled: Bool = true
 
     public static var shared: AirshipDebugManager {

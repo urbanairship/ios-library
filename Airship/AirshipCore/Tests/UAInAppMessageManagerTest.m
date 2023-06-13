@@ -256,7 +256,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     }] display:OCMOCK_ANY];
 
     [[self.mockActionRunner expect] runActionsWithActionValues:self.message.actions
-                                                     situation:UASituationManualInvocation
+                                                     situation:UAActionSituationManualInvocation
                                                       metadata:nil
                                              completionHandler:OCMOCK_ANY];
 
@@ -299,7 +299,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
 
     
     [[self.mockActionRunner expect] runActionsWithActionValues:self.message.actions
-                                                     situation:UASituationManualInvocation
+                                                     situation:UAActionSituationManualInvocation
                                                       metadata:nil
                                              completionHandler:OCMOCK_ANY];
 

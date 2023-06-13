@@ -15,30 +15,32 @@ class PromptPermissionActionTest: XCTestCase {
         }
     }
 
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
 
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.foregroundPush,
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.foregroundPush,
         ]
 
         let rejectedSituations = [
-            Situation.backgroundPush,
-            Situation.backgroundInteractiveButton,
+            ActionSituation.backgroundPush,
+            ActionSituation.backgroundInteractiveButton,
         ]
 
-        validSituations.forEach { (situation) in
-            let args = ActionArguments(value: "anything", with: situation)
-            XCTAssertTrue(self.action.acceptsArguments(args))
+        for situation in validSituations {
+            let args = ActionArguments(value: AirshipJSON.string("anything"), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
-            let args = ActionArguments(value: "anything", with: situation)
-            XCTAssertFalse(self.action.acceptsArguments(args))
+        for situation in rejectedSituations {
+            let args = ActionArguments(value: AirshipJSON.string("anything"), situation: situation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 
@@ -50,8 +52,7 @@ class PromptPermissionActionTest: XCTestCase {
         ]
 
         let arguments = ActionArguments(
-            value: actionValue,
-            with: .manualInvocation
+            value: try! AirshipJSON.wrap(actionValue)
         )
 
         let prompted = self.expectation(description: "Prompted")
@@ -66,9 +67,9 @@ class PromptPermissionActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-    
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNil(result.value)
+
+        let result = try await self.action.perform(arguments: arguments)
+        XCTAssertNil(result)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
@@ -77,8 +78,8 @@ class PromptPermissionActionTest: XCTestCase {
             "permission": AirshipPermission.displayNotifications.stringValue
         ]
         let arguments = ActionArguments(
-            value: actionValue,
-            with: .manualInvocation
+            value: try! AirshipJSON.wrap(actionValue),
+            situation: .manualInvocation
         )
 
         let prompted = self.expectation(description: "Prompted")
@@ -93,9 +94,9 @@ class PromptPermissionActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-      
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNil(result.value)
+
+        let result = try await self.action.perform(arguments: arguments)
+        XCTAssertNil(result)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
@@ -105,8 +106,8 @@ class PromptPermissionActionTest: XCTestCase {
         ]
 
         let arguments = ActionArguments(
-            value: actionValue,
-            with: .manualInvocation
+            value: try! AirshipJSON.wrap(actionValue),
+            situation: .manualInvocation
         )
 
         testPrompter.onPrompt = {
@@ -117,8 +118,10 @@ class PromptPermissionActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNotNil(result.error)
+        do {
+            _ = try await self.action.perform(arguments: arguments)
+            XCTFail("Should throw")
+        } catch {}
     }
 
     func testResultReceiver() async throws {
@@ -129,7 +132,7 @@ class PromptPermissionActionTest: XCTestCase {
         let resultReceived = self.expectation(description: "Result received")
 
         let resultRecevier:
-            (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
+            @Sendable (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
                 permission,
                 start,
                 end in
@@ -144,8 +147,8 @@ class PromptPermissionActionTest: XCTestCase {
         ]
 
         let arguments = ActionArguments(
-            value: actionValue,
-            with: .manualInvocation,
+            value: try! AirshipJSON.wrap(actionValue),
+            situation: .manualInvocation,
             metadata: metadata
         )
 
@@ -156,7 +159,7 @@ class PromptPermissionActionTest: XCTestCase {
             return (.notDetermined, .granted)
         }
 
-        _ = await self.action.perform(with: arguments)
+        _ = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [resultReceived], timeout: 10)
     }
 }

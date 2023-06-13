@@ -1,12 +1,14 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-
-/// - Note: for internal use only.  :nodoc:
+/**
+ * Airship JSON.
+ */
 public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
     public static let defaultEncoder = JSONEncoder()
     public static let defaultDecoder = JSONDecoder()
-    
+
+
     case string(String)
     case number(Double)
     case object([String: AirshipJSON])
@@ -98,14 +100,28 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         
         return try decoder.decode(AirshipJSON.self, from: data)
     }
-    
-    public static func wrap(_ value: Any?) throws -> AirshipJSON {
+
+    public static func wrap(_ value: Any?, encoder: JSONEncoder = AirshipJSON.defaultEncoder) throws -> AirshipJSON {
         guard let value = value else {
             return .null
         }
 
+        if let json = value as? AirshipJSON {
+            return json
+        }
+
         if let string = value as? String {
             return .string(string)
+        }
+
+        if let url = value as? URL {
+            return .string(url.absoluteString)
+        }
+
+        if let date = value as? Date {
+            return .string(
+                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+            )
         }
 
         if let number = value as? NSNumber {
@@ -129,7 +145,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
 
         if let array = value as? [Any?] {
             let mapped: [AirshipJSON] = try array.map { child in
-                try wrap(child)
+                try wrap(child, encoder: encoder)
             }
 
             return .array(mapped)
@@ -137,10 +153,17 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
 
         if let object = value as? [String: Any?] {
             let mapped: [String: AirshipJSON] = try object.mapValues { child in
-                try wrap(child)
+                try wrap(child, encoder: encoder)
             }
 
             return .object(mapped)
+        }
+
+        if let codable = value as? Encodable {
+            return try wrap(
+                JSONSerialization.jsonObject(with: try encoder.encode(codable), options: .fragmentsAllowed),
+                encoder: encoder
+            )
         }
 
         throw AirshipErrors.error("Invalid JSON \(value)")
@@ -155,5 +178,56 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
             decoding: try encoder.encode(self),
             as: UTF8.self
         )
+    }
+
+    public func decode<T: Decodable>(
+        decoder: JSONDecoder = AirshipJSON.defaultDecoder,
+        encoder: JSONEncoder = AirshipJSON.defaultEncoder
+    ) throws -> T {
+        let data = try toData(encoder: encoder)
+        return try decoder.decode(T.self, from: data)
+    }
+
+    public var isNull: Bool {
+        if case .null = self {
+            return true
+        }
+        return false
+    }
+
+    public var isObject: Bool {
+        if case .object(_) = self {
+            return true
+        }
+        return false
+    }
+
+
+    public var isArray: Bool {
+        if case .array(_) = self {
+            return true
+        }
+        return false
+    }
+
+    public var isNumber: Bool {
+        if case .number(_) = self {
+            return true
+        }
+        return false
+    }
+
+    public var isString: Bool {
+        if case .string(_) = self {
+            return true
+        }
+        return false
+    }
+
+    public var isBool: Bool {
+        if case .bool(_) = self {
+            return true
+        }
+        return false
     }
 }

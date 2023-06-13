@@ -17,9 +17,9 @@ protocol AirshipInstanceProtocol {
     var urlAllowList: URLAllowList { get }
     var localeManager: AirshipLocaleManager { get }
     var privacyManager: AirshipPrivacyManager { get }
-    var components: [Component] { get }
+    var components: [AirshipComponent] { get }
 
-    func component(forClassName className: String) -> Component?
+    func component(forClassName className: String) -> AirshipComponent?
     func component<E>(ofType componentType: E.Type) -> E?
 }
 
@@ -39,10 +39,10 @@ class AirshipInstance: AirshipInstanceProtocol {
     public let urlAllowList: URLAllowList
     public let localeManager: AirshipLocaleManager
     public let privacyManager: AirshipPrivacyManager
-    public let components: [Component]
+    public let components: [AirshipComponent]
     private let remoteConfigManager: RemoteConfigManager
     private let experimentManager: ExperimentDataProvider
-    private var componentMap: [String: Component] = [:]
+    private var componentMap: [String: AirshipComponent] = [:]
     private var lock = AirshipLock()
 
     @MainActor
@@ -58,7 +58,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             dataStore: dataStore,
             defaultEnabledFeatures: config.enabledFeatures
         )
-        self.actionRegistry = ActionRegistry.defaultRegistry()
+        self.actionRegistry = ActionRegistry()
         self.urlAllowList = URLAllowList.allowListWithConfig(self.config)
         self.applicationMetrics = ApplicationMetrics(
             dataStore: dataStore,
@@ -154,7 +154,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             audienceOverrides: audienceOverridesProvider
         )
 
-        var components: [Component] = [
+        var components: [AirshipComponent] = [
             contact, channel, analytics, remoteData, push,
         ]
         components.append(contentsOf: moduleLoader.components)
@@ -166,13 +166,13 @@ class AirshipInstance: AirshipInstanceProtocol {
             privacyManager: self.privacyManager
         )
 
-        moduleLoader.actionPlists.forEach {
-            self.actionRegistry.registerActions($0)
-        }        
+        self.actionRegistry.registerActions(
+            actionsManifests: moduleLoader.actionManifests + [DefaultActionsManifest()]
+        )
     }
 
-    public func component(forClassName className: String) -> Component? {
-        var component: Component?
+    public func component(forClassName className: String) -> AirshipComponent? {
+        var component: AirshipComponent?
         lock.sync {
             let key = "Class:\(className)"
             if componentMap[key] == nil {

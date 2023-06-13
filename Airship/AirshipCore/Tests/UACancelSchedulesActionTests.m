@@ -2,8 +2,9 @@
 
 #import "UABaseTest.h"
 #import "UACancelSchedulesAction.h"
-#import "UAActionArguments+Internal.h"
 #import "UAInAppAutomation+Internal.h"
+
+@import AirshipCore;
 
 @interface UACancelSchedulesActionTests : UABaseTest
 @property(nonatomic, strong) UACancelSchedulesAction *action;
@@ -25,44 +26,34 @@
  * Test accepts arguments.
  */
 - (void)testAcceptsArguments {
-    UASituation validSituations[5] = {
-        UASituationForegroundPush,
-        UASituationBackgroundPush,
-        UASituationManualInvocation,
-        UASituationWebViewInvocation,
-        UASituationAutomation
+    UAActionSituation validSituations[5] = {
+        UAActionSituationForegroundPush,
+        UAActionSituationBackgroundPush,
+        UAActionSituationManualInvocation,
+        UAActionSituationWebViewInvocation,
+        UAActionSituationAutomation
     };
-
-    UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.situation = UASituationBackgroundInteractiveButton;
 
 
     // Should accept all
-    arguments.value = UACancelSchedulesActionAll;
     for (int i = 0; i < 5; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
+        XCTAssertTrue([self.action acceptsArgumentValue:UACancelSchedulesActionAll situation:validSituations[i]]);
     }
 
     // Should accept an NSDictionary with "groups"
-    arguments.value = @{ @"groups": @"my group"};
     for (int i = 0; i < 5; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
+        XCTAssertTrue([self.action acceptsArgumentValue:@{ @"groups": @"my group"} situation:validSituations[i]]);
     }
 
     // Should accept an NSDictionary with "ids"
-    arguments.value = @{ @"ids": @"my id"};
     for (int i = 0; i < 5; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
+        XCTAssertTrue([self.action acceptsArgumentValue:@{ @"ids": @"my id"} situation:validSituations[i]]);
     }
 
     // Should accept an NSDictionary with "ids" and "groups"
-    arguments.value = @{ @"ids": @"my id", @"groups": @[@"group"]};
     for (int i = 0; i < 5; i++) {
-        arguments.situation = validSituations[i];
-        XCTAssertTrue([self.action acceptsArguments:arguments], @"action should accept situation %zd", validSituations[i]);
+        id value = @{ @"ids": @"my id", @"groups": @[@"group"]};
+        XCTAssertTrue([self.action acceptsArgumentValue:value situation:validSituations[i]]);
     }
 }
 
@@ -72,13 +63,9 @@
 - (void)testCancelAll {
     __block BOOL actionPerformed = NO;
 
-    UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.situation = UASituationManualInvocation;
-    arguments.value = UACancelSchedulesActionAll;
-
     [[self.mockAutomation expect] cancelSchedulesWithType:UAScheduleTypeActions completionHandler:OCMOCK_ANY];
 
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+    [self.action performWithArgumentValue:UACancelSchedulesActionAll situation:UAActionSituationManualInvocation pushUserInfo:nil completionHandler:^{
         actionPerformed = YES;
     }];
 
@@ -92,16 +79,17 @@
 - (void)testCancelGroups {
     __block BOOL actionPerformed = NO;
 
-    UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.situation = UASituationManualInvocation;
-    arguments.value = @{UACancelSchedulesActionGroups: @[@"group 1", @"group 2"] };
-
     [[self.mockAutomation expect] cancelActionSchedulesWithGroup:@"group 1" completionHandler:OCMOCK_ANY];
     [[self.mockAutomation expect] cancelActionSchedulesWithGroup:@"group 2" completionHandler:OCMOCK_ANY];
 
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+    id value = @{UACancelSchedulesActionGroups: @[@"group 1", @"group 2"] };
+    [self.action performWithArgumentValue:value
+                                situation:UAActionSituationManualInvocation
+                             pushUserInfo:nil
+                        completionHandler:^{
         actionPerformed = YES;
     }];
+
 
     XCTAssertTrue(actionPerformed);
     [self.mockAutomation verify];
@@ -113,14 +101,14 @@
 - (void)testCancelIDs {
     __block BOOL actionPerformed = NO;
 
-    UAActionArguments *arguments = [[UAActionArguments alloc] init];
-    arguments.situation = UASituationManualInvocation;
-    arguments.value = @{UACancelSchedulesActionIDs: @[@"ID 1", @"ID 2"] };
-
     [[self.mockAutomation expect] cancelScheduleWithID:@"ID 1" completionHandler:OCMOCK_ANY];
     [[self.mockAutomation expect] cancelScheduleWithID:@"ID 2" completionHandler:OCMOCK_ANY];
 
-    [self.action performWithArguments:arguments completionHandler:^(UAActionResult *result) {
+    id value = @{UACancelSchedulesActionIDs: @[@"ID 1", @"ID 2"] };
+    [self.action performWithArgumentValue:value
+                                situation:UAActionSituationManualInvocation
+                             pushUserInfo:nil
+                        completionHandler:^{
         actionPerformed = YES;
     }];
 

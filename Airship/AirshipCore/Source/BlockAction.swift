@@ -3,11 +3,10 @@
 import Foundation
 
 /// Action that runs a block.
-/// - Note: For internal use only. :nodoc:
-@objc(UABlockAction)
-public class BlockAction: NSObject, Action {
-    private let block: UAActionBlock
-    private let predicate: UAActionPredicate?
+public final class BlockAction: AirshipAction {
+
+    private let block: @Sendable (ActionArguments) async throws -> AirshipJSON?
+    private let predicate: (@Sendable(ActionArguments) async -> Bool)?
     
     /**
      * Block action constructor.
@@ -15,40 +14,18 @@ public class BlockAction: NSObject, Action {
      *    - predicate: Optional predicate.
      *    - block: The action block.
      */
-    @objc
-    public init(predicate: UAActionPredicate?, block: @escaping UAActionBlock) {
-        self.predicate = predicate
-        self.block = block
-        super.init()
-    }
-    
-    /**
-     * Block action constructor.
-     *  - Parameters:
-     *    - block: The action block.
-     */
-    @objc(initWithBlock:)
-    public convenience init(_ block: @escaping UAActionBlock) {
-        self.init(predicate: nil, block: block)
-    }
-    
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
-        return self.predicate?(arguments) ?? true
-    }
-    
-    private func performBlockAction(
-        with arguments: ActionArguments,
-        completionHandler: @escaping UAActionCompletionHandler
-    ) {
-        self.block(arguments, completionHandler)
-    }
-    
-    public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
-            await withCheckedContinuation { continuation in
-                performBlockAction(with: arguments) { result in
-                    continuation.resume(returning: result)
-                }
-            }
+    public init(
+        predicate:(@Sendable(ActionArguments) async -> Bool)? = nil,
+        block: @escaping @Sendable (ActionArguments) async throws -> AirshipJSON?) {
+            self.predicate = predicate
+            self.block = block
         }
+
+    public func accepts(arguments: ActionArguments) async -> Bool {
+        return (await self.predicate?(arguments)) ?? true
     }
+
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
+        return try await self.block(arguments)
+    }
+}

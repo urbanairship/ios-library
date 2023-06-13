@@ -5,7 +5,7 @@ import Foundation
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public final class AirshipAnalytics: NSObject, Component, AnalyticsProtocol, @unchecked Sendable {
+public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtocol, @unchecked Sendable {
 
     /// The shared Analytics instance.
     @objc

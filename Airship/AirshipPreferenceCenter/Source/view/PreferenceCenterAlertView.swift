@@ -149,16 +149,13 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                         if let button = item.button {
                             Button(
                                 action: {
-                                    if let actions = button.actionJSON.unWrap()
-                                        as? [String: Any]
-                                    {
-                                        Task {
-                                            await ActionRunner.run(
-                                                actionValues: actions,
-                                                situation: .manualInvocation,
-                                                metadata: nil
-                                            )
-                                        }
+                                    let actions = button.actionJSON
+                                    Task {
+                                        await ActionRunner.run(
+                                            actionsPayload: actions,
+                                            situation: .manualInvocation,
+                                            metadata: [:]
+                                        )
                                     }
                                 },
                                 label: {

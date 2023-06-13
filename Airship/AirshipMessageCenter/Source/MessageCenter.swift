@@ -190,7 +190,7 @@ public class MessageCenter: NSObject {
 
 }
 
-extension MessageCenter: Component, PushableComponent {
+extension MessageCenter: AirshipComponent, PushableComponent {
 
     private static let kUARichPushMessageIDKey = "_uamid"
 

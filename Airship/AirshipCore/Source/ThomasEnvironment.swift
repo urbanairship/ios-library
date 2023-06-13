@@ -197,16 +197,30 @@ class ThomasEnvironment: ObservableObject {
             return
         }
 
-        guard let actionValues = actionsPayload.value.unWrap() as? [String: Any]
-        else {
-            AirshipLogger.error("Invalid actions payload: \(actionsPayload)")
-            return
-        }
+        let layoutContext = layoutState.toLayoutContext()
 
-        self.delegate.onRunActions(
-            actions: actionValues,
-            layoutContext: layoutState.toLayoutContext()
-        )
+        let permissionReceiver: @Sendable (
+            AirshipPermission,
+            AirshipPermissionStatus,
+            AirshipPermissionStatus
+        ) -> Void = { permission, start, end in
+            self.delegate.onPromptPermissionResult(
+                permission: permission,
+                startingStatus: start,
+                endingStatus: end,
+                layoutContext: layoutContext
+            )
+        }
+        
+        Task {
+            await ActionRunner.run(
+                actionsPayload: actionsPayload.value,
+                situation: .manualInvocation,
+                metadata: [
+                    PromptPermissionAction.resultReceiverMetadataKey: permissionReceiver
+                ]
+            )
+        }
     }
 
     #if !os(tvOS) && !os(watchOS)

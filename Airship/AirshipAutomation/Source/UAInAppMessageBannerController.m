@@ -214,10 +214,9 @@ static double const MinimumSwipeVelocity = 100.0;
     self.bannerView.isBeingTapped = NO;
 
     if (self.displayContent.actions) {
-        [UAActionRunner runActionsWithActionValues:self.displayContent.actions
-                                         situation:UASituationManualInvocation
-                                          metadata:nil
-                                 completionHandler:^(UAActionResult *result) {
+        [UAActionRunner runActions:self.displayContent.actions
+                         situation:UAActionSituationManualInvocation
+                 completionHandler:^{
             UA_LTRACE(@"Message tap actions finished running.");
         }];
     }

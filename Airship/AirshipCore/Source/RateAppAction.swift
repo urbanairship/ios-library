@@ -16,35 +16,34 @@ import StoreKit
 /// - ``show_link_prompt``: Optional Boolean, true to show prompt, false to link to the app store.
 /// - ``itunes_id``: Optional String, the iTunes ID for the application to be rated.
 ///
-/// Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush, UASituationWebViewInvocation
-/// UASituationManualInvocation, UASituationForegroundInteractiveButton, and UASituationAutomation
+/// Valid situations: `ActionSituation.foregroundPush`, `ActionSituation.launchedFromPush`, `ActionSituation.webViewInvocation`
+/// `ActionSituation.manualInvocation`, `ActionSituation.foregroundInteractiveButton`, and `ActionSituation.automation`
 ///
 /// Result value: nil
-@objc(UARateAppAction)
-public class RateAppAction: NSObject, Action {
+public final class RateAppAction: AirshipAction, Sendable {
+    public static let defaultNames: [String] = ["rate_app_action", "^ra"]
+    public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
+        return args.situation != .foregroundPush
+    }
 
-    static let actionName = "rate_app_action"
-    static let actionShortName = "^ra"
-
-    let itunesID: () -> String?
+    let itunesID: @Sendable () -> String?
     let appRater: AppRaterProtocol
 
     init(
         appRater: AppRaterProtocol,
-        itunesID: @escaping () -> String?
+        itunesID: @escaping @Sendable () -> String?
     ) {
         self.appRater = appRater
         self.itunesID = itunesID
     }
 
-    @objc
-    public convenience override init() {
+    public convenience init() {
         self.init(appRater: DefaultAppRater()) {
             return Airship.shared.config.itunesID
         }
     }
 
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
+    public func accepts(arguments: ActionArguments) async -> Bool {
         switch arguments.situation {
         case .manualInvocation, .launchedFromPush, .foregroundPush,
             .webViewInvocation, .foregroundInteractiveButton, .automation:
@@ -55,46 +54,26 @@ public class RateAppAction: NSObject, Action {
         }
     }
 
-    public func perform(with arguments: ActionArguments) async
-        -> ActionResult
-    {
-        do {
-            let args = try Args.from(actionArguments: arguments)
-            if args.showPrompt == true {
-                try await appRater.showPrompt()
-            } else {
-                guard let itunesID = args.itunesID ?? self.itunesID() else {
-                    throw AirshipErrors.error("Missing itunes ID")
-                }
-                try await appRater.openStore(itunesID: itunesID)
-            }
-            return ActionResult.empty()
-        } catch {
-            return ActionResult(error: error)
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
+        var args: Args? = nil
+        if !arguments.value.isNull {
+            args = try arguments.value.decode()
         }
+
+        if args?.showPrompt == true {
+            try await appRater.showPrompt()
+        } else {
+            guard let itunesID = args?.itunesID ?? self.itunesID() else {
+                throw AirshipErrors.error("Missing itunes ID")
+            }
+            try await appRater.openStore(itunesID: itunesID)
+        }
+        return nil
     }
 
     private struct Args: Decodable {
         let itunesID: String?
         let showPrompt: Bool?
-
-        static func from(actionArguments: ActionArguments) throws -> Args {
-            guard let value = actionArguments.value else {
-                return Args(itunesID: nil, showPrompt: nil)
-            }
-
-            guard let value = value as? [String: Any],
-                let data = try? JSONSerialization.data(
-                    withJSONObject: value,
-                    options: []
-                ),
-                let args = try? JSONDecoder().decode(Args.self, from: data)
-            else {
-                throw AirshipErrors.error("Failed to parse args \(value)")
-            }
-
-            return args
-        }
 
         enum CodingKeys: String, CodingKey {
             case itunesID = "itunes_id"
@@ -103,7 +82,7 @@ public class RateAppAction: NSObject, Action {
     }
 }
 
-protocol AppRaterProtocol {
+protocol AppRaterProtocol: Sendable {
     func openStore(itunesID: String) async throws
     func showPrompt() async throws
 }
@@ -140,14 +119,6 @@ private struct DefaultAppRater: AppRaterProtocol {
         }
 
         return try? AirshipUtils.findWindowScene()
-    }
-}
-
-/// Default predicate for the rate app action. Rejects foreground push.
-@objc(UARateAppActionPredicate)
-public class RateAppActionPredicate: NSObject, ActionPredicateProtocol {
-    public func apply(_ args: ActionArguments) -> Bool {
-        return args.situation != .foregroundPush
     }
 }
 

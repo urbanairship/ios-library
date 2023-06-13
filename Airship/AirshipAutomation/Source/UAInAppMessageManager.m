@@ -468,10 +468,9 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         }
 
         if (message.actions) {
-            [UAActionRunner runActionsWithActionValues:message.actions
-                                             situation:UASituationManualInvocation
-                                              metadata:nil
-                                     completionHandler:^(UAActionResult *result) {
+            [UAActionRunner runActions:message.actions
+                      situation:UAActionSituationManualInvocation
+              completionHandler:^{
                 UA_LTRACE(@"Finished running actions for schedule %@", scheduleID);
             }];
         }

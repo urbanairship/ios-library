@@ -34,18 +34,23 @@ public class SDKDependencyKeys: NSObject {
 /// NOTE: For internal use only. :nodoc:
 enum SDKModuleNames: String, CaseIterable {
     case messageCenter = "UAMessageCenterSDKModule"
-    case automation = "UAAutomationSDKModule"
     case preferenceCenter = "UAPreferenceCenterSDKModule"
     case debug = "UADebugSDKModule"
 }
 
 /// NOTE: For internal use only. :nodoc:
-class ModuleLoader: NSObject {
+enum LegacySDKModuleNames: String, CaseIterable {
+    case automation = "UAAutomationSDKModule"
+}
 
-    public let components: [Component]
+/// NOTE: For internal use only. :nodoc:
+class ModuleLoader {
 
-    public let actionPlists: [String]
+    public let components: [AirshipComponent]
 
+    public let actionManifests: [ActionsManifest]
+
+    @MainActor
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -78,18 +83,46 @@ class ModuleLoader: NSObject {
             )
         ]
 
-        let modules = ModuleLoader.loadModules(dependencies)
-        self.components = modules.compactMap { $0.components?() }.reduce([], +)
-        self.actionPlists = modules.compactMap { $0.actionsPlist?() }
-        super.init()
+        let swiftModules = ModuleLoader.loadModules(dependencies)
+        let swiftComponents = swiftModules.compactMap { $0.components }.reduce([], +)
+        let swiftActionManifests = swiftModules.compactMap { $0.actionsManifest }
+
+        let objcModules = ModuleLoader.loadLegacyModules(dependencies)
+        let objcComponents = objcModules.compactMap { $0.components?() }.reduce([], +)
+        let objcActionManifests: [ActionsManifest] = objcModules.compactMap {
+            $0.actions?()
+        }.map {
+            LegacyActionsManifest(actions: $0)
+        }
+
+        self.components = swiftComponents + objcComponents
+        self.actionManifests = swiftActionManifests + objcActionManifests
     }
 
-    private class func loadModules(_ dependencies: [String: Any]) -> [SDKModule]
+    @MainActor
+    private class func loadModules(_ dependencies: [String: Any]) -> [AirshipSDKModule]
     {
-        return SDKModuleNames.allCases.compactMap {
+        let sdkModules: [AirshipSDKModule] = SDKModuleNames.allCases.compactMap {
             guard
-                let moduleClass = NSClassFromString($0.rawValue)
-                    as? SDKModule.Type
+                let moduleClass = NSClassFromString($0.rawValue) as? AirshipSDKModule.Type
+            else {
+                return nil
+            }
+
+            AirshipLogger.debug("Loading module \($0)")
+            return moduleClass.load(dependencies: dependencies)
+        }
+
+        return sdkModules
+    }
+
+
+    @MainActor
+    private class func loadLegacyModules(_ dependencies: [String: Any]) -> [UALegacySDKModule]
+    {
+        let sdkModules: [UALegacySDKModule] = LegacySDKModuleNames.allCases.compactMap {
+            guard
+                let moduleClass = NSClassFromString($0.rawValue) as? UALegacySDKModule.Type
             else {
                 return nil
             }
@@ -97,5 +130,69 @@ class ModuleLoader: NSObject {
             AirshipLogger.debug("Loading module \($0)")
             return moduleClass.load(withDependencies: dependencies)
         }
+
+        return sdkModules
+    }
+}
+
+
+fileprivate class LegacyActionsManifest: ActionsManifest, @unchecked Sendable {
+    let manifest: [[String] : () -> ActionEntry]
+
+    init(actions: [UALegacyAction]) {
+
+        var mapped: [[String] : () -> ActionEntry] = [:]
+
+        actions.forEach { action in
+            var predicate: (@Sendable (ActionArguments) async -> Bool)? = nil
+            if let actionPredicate = action.defaultPredicate {
+                predicate = { args in
+                    return actionPredicate(args.value.unWrap(), args.situation.rawValue)
+                }
+            }
+            
+            mapped[action.defaultNames] = {
+                ActionEntry(
+                    action: LegacyActionAdapter(action: action),
+                    predicate: predicate
+                )
+            }
+        }
+
+        self.manifest = mapped
+    }
+}
+
+
+fileprivate class LegacyActionAdapter: AirshipAction, @unchecked Sendable {
+    private let action: UALegacyAction
+
+    init(action: UALegacyAction) {
+        self.action = action
+    }
+
+    @MainActor
+    func accepts(arguments: ActionArguments) async -> Bool {
+        return action.acceptsArgumentValue(
+            arguments.value.unWrap(),
+            situation: arguments.situation.rawValue
+        )
+    }
+
+    @MainActor
+    func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
+        await withCheckedContinuation { continuation in
+
+            let push = (arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON)?.unWrap()
+            action.perform(
+                withArgumentValue: arguments.value.unWrap(),
+                situation: arguments.situation.rawValue,
+                pushUserInfo: push as? [AnyHashable : Any]
+            ) {
+                continuation.resume()
+            }
+        }
+
+        return nil
     }
 }

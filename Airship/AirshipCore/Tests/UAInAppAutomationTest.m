@@ -1804,7 +1804,7 @@
 
     id mockActionRunner = [self mockForClass:[UAActionRunner class]];
     [[mockActionRunner expect] runActionsWithActionValues:schedule.data
-                                                situation:UASituationAutomation
+                                                situation:UAActionSituationAutomation
                                                  metadata:[OCMArg any]
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void (^handler)(UAActionResult *) = obj;

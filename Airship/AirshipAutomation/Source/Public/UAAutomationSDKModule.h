@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * @note For internal use only. :nodoc:
  */
-@interface UAAutomationSDKModule : NSObject<UASDKModule>
+@interface UAAutomationSDKModule : NSObject<UALegacySDKModule>
 
 @end
 

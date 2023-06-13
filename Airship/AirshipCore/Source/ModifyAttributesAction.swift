@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
-/// Modifies attributes This Action is registered under the
-/// names ^a and "modify_attributes_action".
+/// Modifies attributes.
 ///
 /// An example JSON payload:
 ///
@@ -17,54 +16,49 @@
 /// }
 ///
 ///
-/// Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
-/// UASituationWebViewInvocation, UASituationForegroundInteractiveButton,
-/// UASituationBackgroundInteractiveButton, UASituationManualInvocation, and
-/// UASituationAutomation
-///
-/// Default predicate: Rejects foreground pushes with visible display options
-///
-/// Result value: nil
-///
-/// Error: nil
-///
-/// Fetch result: UAActionFetchResultNoData
-@objc(UAModifyAttributesAction)
-public class ModifyAttributesAction: NSObject, Action {
+/// Valid situations: `ActionSituation.foregroundPush`, `ActionSituation.launchedFromPush`
+/// `ActionSituation.webViewInvocation`, `ActionSituation.foregroundInteractiveButton`,
+/// `ActionSituation.backgroundInteractiveButton`, `ActionSituation.manualInvocation`, and
+/// `ActionSituation.automation`
+public final class ModifyAttributesAction: AirshipAction {
+
+    /// Default names - "modify_attributes_action", "^a"
+    public static let defaultNames = ["modify_attributes_action", "^a"]
+    
+    /// Default predicate - rejects foreground pushes with visible display options
+    public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
+        return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
+    }
+    
 
     private static let namedUserKey = "named_user"
     private static let channelsKey = "channel"
     private static let setActionKey = "set"
     private static let removeActionKey = "remove"
 
-    @objc
-    public static let name = "modify_attributes_action"
 
-    @objc
-    public static let shortName = "^a"
-
-    private let channel: () -> AirshipChannelProtocol
-    private let contact: () -> AirshipContactProtocol
-
-    @objc
-    public override convenience init() {
-        self.init(
-            channel: Airship.componentSupplier(),
-            contact: Airship.componentSupplier()
-        )
-    }
+    private let channel: @Sendable () -> AirshipChannelProtocol
+    private let contact: @Sendable () -> AirshipContactProtocol
 
     init(
-        channel: @escaping () -> AirshipChannelProtocol,
-        contact: @escaping () -> AirshipContactProtocol
+        channel: @escaping @Sendable () -> AirshipChannelProtocol,
+        contact: @escaping @Sendable () -> AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact
     }
 
-    public func acceptsArguments(_ arguments: ActionArguments) -> Bool {
+    public convenience init() {
+        self.init(
+            channel: Airship.componentSupplier(),
+            contact: Airship.componentSupplier()
+        )
+    }
+   
+    public func accepts(arguments: ActionArguments) async -> Bool {
+        let unwrapped = arguments.value.unWrap()
         guard arguments.situation != .backgroundPush,
-            let dict = arguments.value as? [String: [String: Any]]
+            let dict = unwrapped as? [String: [String: Any]]
         else {
             return false
         }
@@ -82,9 +76,9 @@ public class ModifyAttributesAction: NSObject, Action {
         return namedUserAttributes != nil || channelAttributes != nil
     }
 
-    public func perform(
-        with arguments: ActionArguments) async -> ActionResult {
-        let dict = arguments.value as? [String: [String: Any]]
+    public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
+        let unwrapped = arguments.value.unWrap()
+        let dict = unwrapped as? [String: [String: Any]]
         if let channelAttributes = dict?[ModifyAttributesAction.channelsKey] {
             applyEdits(channelAttributes, editor: channel().editAttributes())
         }
@@ -94,7 +88,7 @@ public class ModifyAttributesAction: NSObject, Action {
             applyEdits(namedUserAttributes, editor: contact().editAttributes())
         }
 
-        return .empty()
+        return nil
     }
 
     func applyEdits(

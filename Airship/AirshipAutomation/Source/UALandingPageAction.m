@@ -13,8 +13,10 @@
 #else
 @import AirshipCore;
 #endif
+
 NSString * const UALandingPageActionDefaultRegistryName = @"landing_page_action";
 NSString * const UALandingPageActionDefaultRegistryAlias = @"^p";
+NSString * const UAActionMetadataPushPayloadKey = @"com.urbanairship.payload";
 
 @implementation UALandingPageAction
 
@@ -25,6 +27,19 @@ NSString *const UALandingPageAspectLockKey = @"aspect_lock";
 NSString *const UALandingPageAspectLockLegacyKey = @"aspectLock";
 
 CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
+
+
+
+- (BOOL (^)(id _Nullable, NSInteger))defaultPredicate {
+    return ^BOOL(id args, NSInteger situation){
+        return (BOOL)(situation != UAActionSituationForegroundPush);
+    };
+}
+
+- (NSArray<NSString *> *)defaultNames {
+    return @[UALandingPageActionDefaultRegistryName, UALandingPageActionDefaultRegistryAlias];
+}
+
 
 - (NSURL *)parseURLFromValue:(id)value {
     NSURL *url;
@@ -57,7 +72,6 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
 }
 
 - (CGSize)parseSizeFromValue:(id)value {
-
     if ([value isKindOfClass:[NSDictionary class]]) {
         CGFloat widthValue = 0;
         CGFloat heightValue = 0;
@@ -95,23 +109,27 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
     return NO;
 }
 
-- (NSURL *)parseURLFromArguments:(UAActionArguments *)arguments {
-    NSURL *landingPageURL = [self parseURLFromValue:arguments.value];
+//return
+
+
+- (NSURL *)parseURLFromArguments:(nullable id)arguments {
+    NSURL *landingPageURL = [self parseURLFromValue:arguments];
 
     return landingPageURL;
 }
 
-- (UASchedule *)createScheduleWithActionArguments:(UAActionArguments *)arguments {
-    NSURL *landingPageURL = [self parseURLFromArguments:arguments];
-    CGSize landingPageSize = [self parseSizeFromValue:arguments.value];
+- (UASchedule *)createScheduleWithActionArgumentValue:(nullable id)arguments
+                                         pushUserInfo:(nullable NSDictionary *)pushUserInfo {
 
-    BOOL aspectLock = [self parseAspectLockOptionFromValue:arguments.value];
+    NSURL *landingPageURL = [self parseURLFromArguments:arguments];
+    CGSize landingPageSize = [self parseSizeFromValue:arguments];
+
+    BOOL aspectLock = [self parseAspectLockOptionFromValue:arguments];
 
     BOOL reportEvent = NO;
-    NSDictionary *payload = arguments.metadata[UAActionMetadataPushPayloadKey];
 
     // Note this is the in-app message ID, not to be confused with the inbox message ID
-    NSString *messageID = payload[@"_"];
+    NSString *messageID = pushUserInfo[@"_"];
     if (messageID != nil) {
         reportEvent = YES;
     } else {
@@ -154,22 +172,12 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
     }];
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
-
-    UASchedule *schedule = [self createScheduleWithActionArguments:arguments];
-
-    [[UAInAppAutomation shared] schedule:schedule completionHandler:^(BOOL result) {
-        completionHandler([UAActionResult emptyResult]);
-    }];
-}
-
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    if (arguments.situation == UASituationBackgroundInteractiveButton || arguments.situation == UASituationBackgroundPush) {
+- (BOOL)acceptsArgumentValue:(nullable id)arguments situation:(NSInteger)situation {
+    if (situation == UAActionSituationBackgroundInteractiveButton || situation == UAActionSituationBackgroundPush) {
         return NO;
     }
 
-    NSURL *url = [self parseURLFromValue:arguments.value];
+    NSURL *url = [self parseURLFromValue:arguments];
     if (!url) {
         return NO;
     }
@@ -181,5 +189,19 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
 
     return YES;
 }
+
+- (void)performWithArgumentValue:(nullable id)argument
+                       situation:(NSInteger)situation
+                    pushUserInfo:(nullable NSDictionary *)pushUserInfo
+               completionHandler:(nonnull void (^)(void))completionHandler {
+
+    UASchedule *schedule = [self createScheduleWithActionArgumentValue:argument pushUserInfo:pushUserInfo];
+
+    [[UAInAppAutomation shared] schedule:schedule completionHandler:^(BOOL result) {
+        completionHandler();
+    }];
+}
+
+
 
 @end

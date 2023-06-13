@@ -13,6 +13,7 @@
 #else
 @import AirshipCore;
 #endif
+
 @implementation UAScheduleAction
 
 NSString * const UAScheduleActionDefaultRegistryName = @"schedule_actions";
@@ -31,40 +32,44 @@ static NSString *const UAScheduleInfoActionsKey = @"actions";
 static NSString * const UAScheduleActionErrorDomain = @"com.urbanairship.schedule_action";
 
 
-- (BOOL)acceptsArguments:(UAActionArguments *)arguments {
-    switch (arguments.situation) {
-        case UASituationManualInvocation:
-        case UASituationWebViewInvocation:
-        case UASituationBackgroundPush:
-        case UASituationForegroundPush:
-        case UASituationAutomation:
-            return [arguments.value isKindOfClass:[NSDictionary class]];
-        case UASituationLaunchedFromPush:
-        case UASituationBackgroundInteractiveButton:
-        case UASituationForegroundInteractiveButton:
-            return NO;
-    }
+- (BOOL (^)(id _Nullable, NSInteger))defaultPredicate {
+    return nil;
 }
 
-- (void)performWithArguments:(UAActionArguments *)arguments
-           completionHandler:(UAActionCompletionHandler)completionHandler {
+- (NSArray<NSString *> *)defaultNames {
+    return @[UAScheduleActionDefaultRegistryName, UAScheduleActionDefaultRegistryAlias];
+}
+
+
+- (BOOL)acceptsArgumentValue:(nullable id)arguments situation:(NSInteger)situation {
+    switch (situation) {
+        case UAActionSituationManualInvocation:
+        case UAActionSituationWebViewInvocation:
+        case UAActionSituationBackgroundPush:
+        case UAActionSituationForegroundPush:
+        case UAActionSituationAutomation:
+            return [arguments isKindOfClass:[NSDictionary class]];
+    }
+    return NO;
+}
+
+- (void)performWithArgumentValue:(nullable id)argument
+                       situation:(NSInteger)situation
+                    pushUserInfo:(nullable NSDictionary *)pushUserInfo
+               completionHandler:(nonnull void (^)(void))completionHandler {
 
     NSError *error = nil;
 
-    UASchedule *schedule =[self parseSchedule:arguments.value error:&error];
+    UASchedule *schedule =[self parseSchedule:argument error:&error];
 
     if (!schedule) {
         UA_LERR(@"Unable to schedule actions. Invalid schedule payload: %@", schedule);
-        completionHandler([UAActionResult resultWithError:error]);
+        completionHandler();
         return;
     }
 
     [[UAInAppAutomation shared] schedule:schedule completionHandler:^(BOOL result) {
-        if (!result) {
-            completionHandler([UAActionResult emptyResult]);
-        } else {
-            completionHandler([UAActionResult resultWithValue:schedule.identifier]);
-        }
+        completionHandler();
     }];
 }
 

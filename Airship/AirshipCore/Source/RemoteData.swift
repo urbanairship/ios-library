@@ -22,7 +22,7 @@ protocol InternalRemoteDataProtocol: RemoteDataProtocol {
     func setContactSourceEnabled(enabled: Bool)
 }
 
-final class RemoteData: NSObject, Component, InternalRemoteDataProtocol {
+final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
     func setContactSourceEnabled(enabled: Bool) {
         self.serialQueue.enqueue { [providers] in
             let provider = providers.first { $0.source == .contact }

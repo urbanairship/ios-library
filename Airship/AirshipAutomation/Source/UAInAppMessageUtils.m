@@ -351,12 +351,12 @@ static CGFloat const CloseButtonHeight = 30;
 
 + (void)runActionsForButton:(UAInAppMessageButton *)button {
     if (button.buttonInfo.actions) {
-        [UAActionRunner runActionsWithActionValues:button.buttonInfo.actions
-                                         situation:UASituationManualInvocation
-                                          metadata:nil
-                                 completionHandler:^(UAActionResult *result) {
-                                     UA_LTRACE(@"Button actions finished running.");
-                                 }];
+
+        [UAActionRunner runActions:button.buttonInfo.actions
+                  situation:UAActionSituationManualInvocation
+                 completionHandler:^{
+                     UA_LTRACE(@"Button actions finished running.");
+               }];
     }
 }
 

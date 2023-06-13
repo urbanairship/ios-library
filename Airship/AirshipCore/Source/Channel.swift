@@ -5,7 +5,7 @@ import Foundation
 
 /// This singleton provides an interface to the channel functionality.
 @objc(UAChannel)
-public final class AirshipChannel: NSObject, Component, AirshipChannelProtocol, @unchecked Sendable {
+public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelProtocol, @unchecked Sendable {
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
 

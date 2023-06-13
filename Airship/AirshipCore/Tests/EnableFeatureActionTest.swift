@@ -13,42 +13,45 @@ class EnableFeatureActionTest: XCTestCase {
         self.action = EnableFeatureAction { return self.testPrompter }
     }
 
-    func testAcceptsArguments() throws {
+    func testAcceptsArguments() async throws {
         let validSituations = [
-            Situation.foregroundInteractiveButton,
-            Situation.launchedFromPush,
-            Situation.manualInvocation,
-            Situation.webViewInvocation,
-            Situation.automation,
-            Situation.foregroundPush,
+            ActionSituation.foregroundInteractiveButton,
+            ActionSituation.launchedFromPush,
+            ActionSituation.manualInvocation,
+            ActionSituation.webViewInvocation,
+            ActionSituation.automation,
+            ActionSituation.foregroundPush,
         ]
 
         let rejectedSituations = [
-            Situation.backgroundPush,
-            Situation.backgroundInteractiveButton,
+            ActionSituation.backgroundPush,
+            ActionSituation.backgroundInteractiveButton,
         ]
 
-        validSituations.forEach { (situation) in
+
+        for situation in validSituations {
             let args = ActionArguments(
-                value: EnableFeatureAction.locationActionValue,
-                with: situation
+                string: EnableFeatureAction.locationActionValue,
+                situation: situation
             )
-            XCTAssertTrue(self.action.acceptsArguments(args))
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertTrue(result)
         }
 
-        rejectedSituations.forEach { (situation) in
+        for situation in rejectedSituations {
             let args = ActionArguments(
-                value: EnableFeatureAction.locationActionValue,
-                with: situation
+                string: EnableFeatureAction.locationActionValue,
+                situation: situation
             )
-            XCTAssertFalse(self.action.acceptsArguments(args))
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
         }
     }
 
     func testLocation() async throws {
         let arguments = ActionArguments(
-            value: EnableFeatureAction.locationActionValue,
-            with: .manualInvocation
+            string: EnableFeatureAction.locationActionValue,
+            situation: .manualInvocation
         )
 
         let prompted = self.expectation(description: "Prompted")
@@ -64,15 +67,14 @@ class EnableFeatureActionTest: XCTestCase {
         }
 
       
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNil(result.value)
+        let result = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
     func testBackgroundLocation() async throws {
         let arguments = ActionArguments(
-            value: EnableFeatureAction.backgroundLocationActionValue,
-            with: .manualInvocation
+            string: EnableFeatureAction.backgroundLocationActionValue,
+            situation: .manualInvocation
         )
 
         let prompted = self.expectation(description: "Prompted")
@@ -87,15 +89,14 @@ class EnableFeatureActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNil(result.value)
+        let result = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
     func testNotifications() async throws {
         let arguments = ActionArguments(
-            value: EnableFeatureAction.userNotificationsActionValue,
-            with: .manualInvocation
+            string: EnableFeatureAction.userNotificationsActionValue,
+            situation: .manualInvocation
         )
 
         let prompted = self.expectation(description: "Prompted")
@@ -110,15 +111,14 @@ class EnableFeatureActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNil(result.value)
+        let result = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
     func testInvalidArgument() async throws {
         let arguments = ActionArguments(
-            value: "invalid",
-            with: .manualInvocation
+            string: "invalid",
+            situation: .manualInvocation
         )
 
         testPrompter.onPrompt = {
@@ -128,17 +128,18 @@ class EnableFeatureActionTest: XCTestCase {
             XCTFail()
             return (.notDetermined, .notDetermined)
         }
-        
-        let result = await self.action.perform(with: arguments)
-        XCTAssertNotNil(result.error)
 
+        do {
+            _ = try await self.action.perform(arguments: arguments)
+            XCTFail("should throw")
+        } catch {}
     }
 
     func testResultReceiver() async throws {
         let resultReceived = self.expectation(description: "Result received")
 
         let resultRecevier:
-            (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
+         @Sendable (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
                 permission,
                 start,
                 end in
@@ -153,8 +154,8 @@ class EnableFeatureActionTest: XCTestCase {
         ]
 
         let arguments = ActionArguments(
-            value: EnableFeatureAction.locationActionValue,
-            with: .manualInvocation,
+            string: EnableFeatureAction.locationActionValue,
+            situation: .manualInvocation,
             metadata: metadata
         )
         
@@ -165,7 +166,7 @@ class EnableFeatureActionTest: XCTestCase {
             return (.notDetermined, .granted)
         }
       
-        _ = await self.action.perform(with: arguments)
+        _ = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [resultReceived], timeout: 10)
     }
 }

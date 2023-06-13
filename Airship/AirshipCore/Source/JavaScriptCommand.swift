@@ -61,6 +61,11 @@ public final class JavaScriptCommand: NSObject, Sendable {
         self.options = options
         self.name = url.host
     }
+
+    public override var description: String {
+        "JavaScriptCommand{name=\(String(describing: name)), options=\(options)}, arguments=\(arguments), url=\(url)})"
+    }
+    
 }
 
 #endif

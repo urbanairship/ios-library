@@ -11,13 +11,13 @@
  *  - "groups": A schedule group or an array of schedule groups.
  *  - "ids": A schedule ID or an array of schedule IDs.
  *
- * Valid situations: UASituationBackgroundPush, UASituationForegroundPush
- * UASituationWebViewInvocation, UASituationManualInvocation, and UASituationAutomation
+ * Valid situations: UAActionSituationBackgroundPush, UAActionSituationForegroundPush
+ * UAActionSituationWebViewInvocation, UAActionSituationManualInvocation, and UAActionSituationAutomation
  *
  * Result value: nil.
  */
 NS_SWIFT_NAME(CancelSchedulesAction)
-@interface UACancelSchedulesAction : NSObject<UAAction>
+@interface UACancelSchedulesAction : NSObject<UALegacyAction>
 
 /**
  * Default registry name for cancel schedules action.

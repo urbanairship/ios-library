@@ -4,7 +4,7 @@ import Combine
 @testable import AirshipCore
 
 @objc(UATestContact)
-class TestContact: NSObject, InternalAirshipContactProtocol, Component, @unchecked Sendable {
+class TestContact: NSObject, InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
 
     var contactIDInfo: AirshipCore.ContactIDInfo? = nil
 

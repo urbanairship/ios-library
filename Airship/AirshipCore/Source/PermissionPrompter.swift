@@ -3,7 +3,7 @@
 import Foundation
 import Combine
 
-typealias PermissionResultReceiver = (
+typealias PermissionResultReceiver = @Sendable (
     AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus
 ) -> Void
 
