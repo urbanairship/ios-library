@@ -89,6 +89,7 @@ struct ContentView_Previews: PreviewProvider {
 
 class Delegate: ThomasDelegate {
     
+    
     func onRunActions(
         actions: [String: Any],
         layoutContext: AirshipCore.ThomasLayoutContext
@@ -106,13 +107,14 @@ class Delegate: ThomasDelegate {
                 )
             }
 
-        let metadata: [AnyHashable: Any] = [
+        let metadata: [String: Sendable] = [
             PromptPermissionAction.resultReceiverMetadataKey: permissionReceiver
         ]
 
+
         Task {
             let result = await ActionRunner.run(
-                actionValues: actions,
+                actionsPayload: try AirshipJSON.wrap(actions),
                 situation: .manualInvocation,
                 metadata: metadata
             )
@@ -211,6 +213,17 @@ class Delegate: ThomasDelegate {
             "Thomas.onPageSwiped{from=\(from), to=\(to), context=\(layoutContext)}"
         )
     }
+    
+    func onPromptPermissionResult(
+        permission: AirshipCore.AirshipPermission,
+        startingStatus: AirshipCore.AirshipPermissionStatus,
+        endingStatus: AirshipCore.AirshipPermissionStatus,
+        layoutContext: AirshipCore.ThomasLayoutContext
+    ) {
+        print(
+            "Thomas.onPromptPermissionResult{permission=\(startingStatus), startingStatus=\(startingStatus), endingStatus=\(endingStatus), layoutContext=\(layoutContext)}"
+        )
+    }
 }
 
 class ThomasNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
@@ -225,7 +238,7 @@ class ThomasNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
     func actionsMetadata(
         for command: AirshipCore.JavaScriptCommand,
         webView: WKWebView
-    ) -> [AnyHashable : Any] {
+    ) -> [String : String] {
         return [ : ]
     }
     

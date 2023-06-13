@@ -1,0 +1,310 @@
+---
+version: 1
+presentation:
+  type: modal
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    device:
+      lock_orientation: portrait
+    size:
+      max_width: 100%
+      max_height: 100%
+      width: 100%
+      min_width: 100%
+      height: 100%
+      min_height: 100%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        type: hex
+        hex: "#000000"
+        alpha: 0.2
+view:
+  type: pager_controller
+  identifier: 63a41161-9322-4425-a940-fa928665459e
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+    - size:
+        height: 100%
+        width: 100%
+      view:
+        type: container
+        items:
+        - position:
+            horizontal: center
+            vertical: center
+          size:
+            width: 100%
+            height: 100%
+          view:
+            type: pager
+            disable_swipe: true
+            gestures:
+            - identifier: 63a41161-9322-4425-a940-fa928665459e_tap_start
+              type: tap
+              location: start
+              behavior:
+                behaviors:
+                - pager_previous
+            - identifier: 63a41161-9322-4425-a940-fa928665459e_tap_end
+              type: tap
+              location: end
+              behavior:
+                behaviors:
+                - pager_next
+            - identifier: 63a41161-9322-4425-a940-fa928665459e_swipe_up
+              type: swipe
+              direction: up
+              behavior:
+                behaviors:
+                - dismiss
+            - identifier: 63a41161-9322-4425-a940-fa928665459e_swipe_down
+              type: swipe
+              direction: down
+              behavior:
+                behaviors:
+                - dismiss
+            - identifier: 63a41161-9322-4425-a940-fa928665459e_hold
+              type: hold
+              press_behavior:
+                behaviors:
+                - pager_pause
+              release_behavior:
+                behaviors:
+                - pager_resume
+            items:
+            - identifier: a648eca0-6f68-49fc-971e-6de4cfdf5af3
+              type: pager_item
+              view:
+                type: container
+                items:
+                - size:
+                    width: 100%
+                    height: 100%
+                  position:
+                    horizontal: center
+                    vertical: center
+                  view:
+                    type: container
+                    items:
+                    - margin:
+                        bottom: 16
+                      position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                        - identifier: layout_container
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - size:
+                                width: 100%
+                                height: auto
+                              margin:
+                                top: 48
+                                bottom: 8
+                                start: 16
+                                end: 16
+                              view:
+                                type: label
+                                text: It’s time to update
+                                text_appearance:
+                                  font_size: 12
+                                  color:
+                                    default:
+                                      type: hex
+                                      hex: "#000000"
+                                      alpha: 1
+                                    selectors:
+                                    - platform: ios
+                                      dark_mode: true
+                                      color:
+                                        type: hex
+                                        hex: "#FFFFFF"
+                                        alpha: 1
+                                    - platform: android
+                                      dark_mode: true
+                                      color:
+                                        type: hex
+                                        hex: "#FFFFFF"
+                                        alpha: 1
+                                  alignment: center
+                                  styles:
+                                  - bold
+                                  - italic
+                                  - underlined
+                                  font_families:
+                                  - serif
+                            - size:
+                                height: auto
+                                width: 100%
+                              view:
+                                type: media
+                                media_fit: center_inside
+                                url: https://unroll-images-production.s3.amazonaws.com/projects/2487/1565801064410-banner-500x500-no-words.jpg
+                                media_type: image
+                            - size:
+                                width: 100%
+                                height: auto
+                              margin:
+                                top: 8
+                                bottom: 8
+                                start: 16
+                                end: 16
+                              view:
+                                type: label
+                                text: The newest version of our app is now available.
+                                  We’re excited to tell you what’s new!
+                                text_appearance:
+                                  font_size: 14
+                                  color:
+                                    default:
+                                      type: hex
+                                      hex: "#000000"
+                                      alpha: 1
+                                    selectors:
+                                    - platform: ios
+                                      dark_mode: true
+                                      color:
+                                        type: hex
+                                        hex: "#FFFFFF"
+                                        alpha: 1
+                                    - platform: android
+                                      dark_mode: true
+                                      color:
+                                        type: hex
+                                        hex: "#FFFFFF"
+                                        alpha: 1
+                                  alignment: center
+                                  styles:
+                                  - italic
+                                  font_families:
+                                  - fancy fonts
+                            - size:
+                                width: 100%
+                                height: 100%
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items: []
+                        background_color:
+                          default:
+                            type: hex
+                            hex: "#FFFFFF"
+                            alpha: 1
+                          selectors:
+                          - platform: ios
+                            dark_mode: true
+                            color:
+                              type: hex
+                              hex: "#000000"
+                              alpha: 1
+                          - platform: android
+                            dark_mode: true
+                            color:
+                              type: hex
+                              hex: "#000000"
+                              alpha: 1
+                background_color:
+                  default:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                  selectors:
+                  - platform: ios
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                  - platform: android
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+              automated_actions:
+              - identifier: pager_next_or_first_a648eca0-6f68-49fc-971e-6de4cfdf5af3
+                delay: 4
+                behaviors:
+                - pager_next_or_first
+        - position:
+            horizontal: end
+            vertical: top
+          size:
+            width: 48
+            height: 48
+          view:
+            type: image_button
+            image:
+              scale: 0.4
+              type: icon
+              icon: close
+              color:
+                default:
+                  type: hex
+                  hex: "#000000"
+                  alpha: 1
+                selectors:
+                - platform: ios
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                - platform: android
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+            identifier: dismiss_button
+            button_click:
+            - dismiss
+        - margin:
+            top: 8
+            bottom: 0
+            end: 16
+            start: 16
+          position:
+            horizontal: center
+            vertical: top
+          size:
+            height: 1.5
+            width: 100%
+          view:
+            type: story_indicator
+            source:
+              type: pager
+            style:
+              type: linear_progress
+              direction: horizontal
+              sizing: equal
+              spacing: 4
+              progress_color:
+                default:
+                  type: hex
+                  hex: "#AAAAAA"
+                  alpha: 1
+              track_color:
+                default:
+                  type: hex
+                  hex: "#AAAAAA"
+                  alpha: 0.5

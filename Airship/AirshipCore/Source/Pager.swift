@@ -412,20 +412,29 @@ struct Pager: View {
         dismiss: Bool = false
     ) {
         
-        var nextIndex =  min(
-            pagerState.pageIndex + 1,
-            pagerState.pages.count - 1)
-        
         if pagerState.isLastPage() {
-            if loop == true { nextIndex = 0 }
+            
+            if loop == true {
+                goToPage(
+                    index,
+                    transition: transition,
+                    pageIndex: 0
+                )
+            }
             if dismiss { thomasEnvironment.dismiss() }
+            
+        } else {
+            
+            let nextIndex =  min(
+                pagerState.pageIndex + 1,
+                pagerState.pages.count - 1)
+            goToPage(
+                index,
+                transition: transition,
+                pageIndex: nextIndex
+            )
+            
         }
-        
-        goToPage(
-            index,
-            transition: transition,
-            pageIndex: nextIndex
-        )
     }
     
     private func goToPreviousPage(
@@ -449,8 +458,8 @@ struct Pager: View {
         self.pagerState.resetProgress()
         
         guard pageIndex >= 0 else { return }
-        guard pageIndex != index.wrappedValue else { return }
-        guard pageIndex < self.model.items.count else { return }
+        guard pageIndex != index.wrappedValue || self.pagerState.pages.count == 1 else { return }
+        guard pageIndex < self.pagerState.pages.count else { return }
         
         handlePagerTransition(
             transition,

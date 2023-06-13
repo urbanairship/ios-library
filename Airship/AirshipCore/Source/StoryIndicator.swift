@@ -61,7 +61,7 @@ struct StoryIndicator: View {
     ) -> some View {
         if self.model.style.type == .linearProgress {
             Rectangle()
-                .fill(isPreviousIndicator(index) ? model.style.progressColor.toColor(colorScheme) : model.style.trackColor.toColor(colorScheme))
+                .fill(indicatorColor(index))
                 .overlay {
                     if let progressDelay = progressDelay {
                         GeometryReader { metrics in
@@ -95,10 +95,15 @@ struct StoryIndicator: View {
         .common(self.model)
     }
     
-    private func isPreviousIndicator(_ index: Int?) -> Bool {
+    private func indicatorColor(_ index: Int?) -> Color {
         guard let index = index else {
-            return false
+            return model.style.progressColor.toColor(colorScheme)
         }
-        return index < pagerState.pageIndex
+        
+        if pagerState.isLastPage() && pagerState.progress >= 1 {
+            return model.style.progressColor.toColor(colorScheme)
+        }
+        
+        return index < pagerState.pageIndex ? model.style.progressColor.toColor(colorScheme) : model.style.trackColor.toColor(colorScheme)
     }
 }
