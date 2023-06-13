@@ -1,7 +1,7 @@
 import Foundation
 
 @objc(UARemoteDataInfo)
-public final class RemoteDataInfo: NSObject, Sendable, Codable {
+public final class RemoteDataInfo: NSObject, Sendable, Codable, NSCopying {
     let url: URL
 
     let lastModifiedTime: String?
@@ -66,5 +66,9 @@ public final class RemoteDataInfo: NSObject, Sendable, Codable {
     @objc
     public func toEncodedJSONString() throws -> String {
         return try String(decoding: toEncodedJSONData(), as: UTF8.self)
+    }
+    
+    public func copy(with zone: NSZone? = nil) -> Any {
+        return RemoteDataInfo(url: url, lastModifiedTime: lastModifiedTime, source: source)
     }
 }

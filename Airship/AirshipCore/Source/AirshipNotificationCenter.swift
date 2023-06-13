@@ -49,4 +49,8 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
         notificationCenter.addObserver(observer, selector: selector, name: name, object: object)
     }
     
+    public func removeObserver(_ observer: Any) {
+        notificationCenter.removeObserver(observer)
+    }
+    
 }

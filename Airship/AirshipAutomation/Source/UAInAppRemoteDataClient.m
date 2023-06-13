@@ -536,14 +536,12 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
                                completionHandler:completionHandler];
 }
 
-
-
 - (void)refreshAndCheckScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
     if (![self isRemoteSchedule:schedule]) {
         completionHandler(YES);
         return;
     }
-
+    
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
     [self.remoteData refreshAndCheckCurrentWithRemoteDataInfo:remoteDataInfo completionHandler:^(BOOL result) {
         if (result) {

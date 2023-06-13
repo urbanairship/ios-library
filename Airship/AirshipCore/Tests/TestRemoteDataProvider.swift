@@ -13,6 +13,8 @@ final class TestRemoteData: NSObject, InternalRemoteDataProtocol, @unchecked Sen
             updatesSubject.send(payloads)
         }
     }
+    
+    var refreshBlock: ((RemoteDataSource) -> Bool)?
 
     var remoteDataRefreshInterval: TimeInterval = 0
     var isContactSourceEnabled: Bool = false
@@ -61,7 +63,11 @@ final class TestRemoteData: NSObject, InternalRemoteDataProtocol, @unchecked Sen
     }
 
     func refresh(source: AirshipCore.RemoteDataSource) async -> Bool {
-        return true
+        guard let block = self.refreshBlock else {
+            return true
+        }
+        
+        return block(source)
     }
 }
 
