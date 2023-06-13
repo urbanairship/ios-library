@@ -2,7 +2,7 @@ import Foundation
 
 actor ContactManager: ContactManagerProtocol {
 
-    private static let operationsKey = "Contact.datedOperations"
+    private static let operationsKey = "Contact.operationEntries"
     private static let legacyOperationsKey = "Contact.operations" // operations without the date
     private static let contactInfoKey = "Contact.contactInfo"
     private static let anonContactDataKey = "Contact.anonContactData"
@@ -32,20 +32,20 @@ actor ContactManager: ContactManagerProtocol {
     
     private var lastIdentifyOperation = Date.distantPast
 
-    private var operations: [DatedContactOperation] {
+    private var operationEntries: [ContactOperationEntry] {
         get {
             if (dataStore.keyExists(ContactManager.operationsKey)) {
                 return dataStore.safeCodable(forKey: ContactManager.operationsKey) ?? []
             } else if (dataStore.keyExists(ContactManager.legacyOperationsKey)) {
                 let operations: [ContactOperation] = dataStore.safeCodable(forKey: ContactManager.operationsKey) ?? []
                 let now = date.now
-                let dated = operations.map { operation in
-                    return DatedContactOperation(date: now, operation: operation)
+                let entries = operations.map { operation in
+                    return ContactOperationEntry(date: now, operation: operation, identifier: UUID().uuidString)
                 }
 
-                dataStore.setSafeCodable(dated, forKey: ContactManager.operationsKey)
+                dataStore.setSafeCodable(entries, forKey: ContactManager.operationsKey)
                 dataStore.removeObject(forKey: ContactManager.legacyOperationsKey)
-                return dated
+                return entries
             }
             return []
         }
@@ -137,11 +137,9 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     func addOperation(_ operation: ContactOperation) {
-        var operations = self.operations
-        operations.append(
-            DatedContactOperation(date: self.date.now, operation: operation)
+        self.operationEntries.append(
+            ContactOperationEntry(date: self.date.now, operation: operation, identifier: UUID().uuidString)
         )
-        self.operations = operations
 
         self.yieldContactUpdates()
         self.enqueueTask()
@@ -163,12 +161,12 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     func currentNamedUserID() -> String? {
-        let operation = self.operations.reversed().first { datedOperation in
-            datedOperation.operation.type == .identify || datedOperation.operation.type == .reset
+        let entries = self.operationEntries.reversed().first { entry in
+            entry.operation.type == .identify || entry.operation.type == .reset
         }
 
-        if let operation = operation {
-            switch(operation.operation) {
+        if let entry = entries {
+            switch(entry.operation) {
             case .reset:
                 return nil
             case .identify(let identifier):
@@ -229,7 +227,7 @@ actor ContactManager: ContactManagerProtocol {
     private func perfromNextOperation() async throws -> Bool {
         guard self.isEnabled else { return true }
 
-        guard !self.operations.isEmpty else {
+        guard !self.operationEntries.isEmpty else {
             return true
         }
 
@@ -255,16 +253,15 @@ actor ContactManager: ContactManagerProtocol {
             return true
         }
 
-
         let result = try await performOperation(operationGroup.mergedOperation)
         if (result) {
-            var operations = self.operations
-            if operations.starts(with: operationGroup.operations) {
-                operations.removeFirst(operationGroup.operations.count)
-                self.operations = operations
+            let identifiers = operationGroup.operations.map { $0.identifier }
+
+            self.operationEntries.removeAll { entry in
+                identifiers.contains(entry.identifier)
             }
 
-            if (!self.operations.isEmpty) {
+            if (!self.operationEntries.isEmpty) {
                 self.enqueueTask()
             }
         }
@@ -293,7 +290,7 @@ actor ContactManager: ContactManagerProtocol {
 
         var rateLimitIDs = [ContactManager.updateRateLimitID]
 
-        let next = self.operations.first { !self.isSkippable(operation: $0.operation) }?.operation
+        let next = self.operationEntries.first { !self.isSkippable(operation: $0.operation) }?.operation
         if (next?.type == .reset || next?.type == .identify || tokenIfValid() == nil) {
             rateLimitIDs += [ContactManager.identityRateLimitID]
         }
@@ -308,7 +305,7 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func clearSkippableOperations() {
-        var operations = self.operations
+        var operations = self.operationEntries
         while let next = operations.first {
             if (isSkippable(operation: next.operation)) {
                 operations.removeFirst()
@@ -316,7 +313,7 @@ actor ContactManager: ContactManagerProtocol {
                 break
             }
         }
-        self.operations = operations
+        self.operationEntries = operations
     }
 
     private func performOperation(_ operation: ContactOperation) async throws -> Bool {
@@ -505,7 +502,7 @@ actor ContactManager: ContactManagerProtocol {
         var tags: [TagGroupUpdate] = []
         var attributes: [AttributeUpdate] = []
         var subscriptionLists: [ScopedSubscriptionListUpdate] = []
-        let operations = operations.map { $0.operation }
+        let operations = operationEntries.map { $0.operation }
 
         var lastOperationNamedUser: String? = nil
 
@@ -576,7 +573,7 @@ actor ContactManager: ContactManagerProtocol {
     }
     
     private func prepareNextOperationGroup() -> ContactOperationGroup? {
-        var operations = self.operations
+        var operations = self.operationEntries
 
         guard let next = operations.first else {
             return nil
@@ -657,8 +654,8 @@ actor ContactManager: ContactManagerProtocol {
             return false
         }
 
-        return !self.operations.contains { datedOperation in
-            switch datedOperation.operation {
+        return !self.operationEntries.contains { entry in
+            switch entry.operation {
             case .reset: return true
             case .identify(let identifier):
                 if lastContactInfo.namedUserID != identifier {
@@ -760,8 +757,8 @@ actor ContactManager: ContactManagerProtocol {
            lastContactInfo?.contactID != newContactInfo.contactID,
            operationType == .resolve {
 
-            self.operations = self.operations.filter { operation in
-                result.contact.channelAssociatedDate < operation.date
+            self.operationEntries = self.operationEntries.filter { entry in
+                result.contact.channelAssociatedDate < entry.date
             }
         }
 
@@ -874,13 +871,14 @@ fileprivate struct InternalContactInfo: Codable, Equatable {
 }
 
 fileprivate struct ContactOperationGroup {
-    let operations: [DatedContactOperation]
+    let operations: [ContactOperationEntry]
     let mergedOperation: ContactOperation
 }
 
-fileprivate struct DatedContactOperation: Codable, Sendable, Equatable {
+fileprivate struct ContactOperationEntry: Codable, Sendable {
     let date: Date
     let operation: ContactOperation
+    let identifier: String
 }
 
 fileprivate extension AirshipHTTPResponse {
