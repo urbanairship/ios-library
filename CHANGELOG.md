@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.12.1, June 14, 2023
+Patch release that fixes app deep links that use the `uairship://` prefix. Any `uairship://` deep links that are not handled by Airship directly will now be delivered to the `DeepLinkDelegate`.
+
+### Changes
+- Allow the `DeepLinkDelegate` to process unhandled `uairship://` deep links
+
 ## Version 16.12.0 June 12, 2023
 Minor release that adds `aspectRatio` to HTML and Modal IAA styles and a new config option `autoPauseInAppAutomationOnLaunch` to always pause IAA during app
 init to be enabled later.
@@ -11,6 +17,7 @@ init to be enabled later.
 - Fixed channel restore from encrypted backups
 - Added aspectRatio to HTML and Modal IAA styles
 - Added `autoPauseInAppAutomationOnLaunch` config option
+- Fixed parsing deep link and open external URLs that contain invalid URL characters
 
 ## Version 16.11.3 March 24, 2023
 Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
