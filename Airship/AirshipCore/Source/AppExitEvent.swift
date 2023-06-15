@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class AppExitEvent: NSObject, Event {
+class AppExitEvent: NSObject, AirshipEvent {
     private lazy var analytics = Airship.requireComponent(
         ofType: AnalyticsProtocol.self
     )

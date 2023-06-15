@@ -38,6 +38,11 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Navigation bar background color
         public var backgroundColor: UIColor? = nil
+
+        public init(title: String? = nil, backgroundColor: UIColor? = nil) {
+            self.title = title
+            self.backgroundColor = backgroundColor
+        }
     }
 
     /// View controller theme
@@ -47,6 +52,11 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Window background color
         public var backgroundColor: UIColor? = nil
+
+        public init(navigationBar: NavigationBar? = nil, backgroundColor: UIColor? = nil) {
+            self.navigationBar = navigationBar
+            self.backgroundColor = backgroundColor
+        }
     }
 
     /// Preference center
@@ -68,6 +78,15 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// The retry message appearance
         public var retryMessageAppearance: TextAppearance? = nil
+
+        public init(subtitleAppearance: TextAppearance? = nil, retryButtonBackgroundColor: Color? = nil, retryButtonLabelAppearance: TextAppearance? = nil, retryButtonLabel: String? = nil, retryMessage: String? = nil, retryMessageAppearance: TextAppearance? = nil) {
+            self.subtitleAppearance = subtitleAppearance
+            self.retryButtonBackgroundColor = retryButtonBackgroundColor
+            self.retryButtonLabelAppearance = retryButtonLabelAppearance
+            self.retryButtonLabel = retryButtonLabel
+            self.retryMessage = retryMessage
+            self.retryMessageAppearance = retryMessageAppearance
+        }
     }
 
     /// Text apperance
@@ -77,6 +96,11 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// The text color
         public var color: Color? = nil
+
+        public init(font: Font? = nil, color: Color? = nil) {
+            self.font = font
+            self.color = color
+        }
     }
 
     /// Chip theme for contact subscription groups
@@ -89,6 +113,12 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Chip label appearance
         public var labelAppearance: TextAppearance? = nil
+
+        public init(checkColor: Color? = nil, borderColor: Color? = nil, labelAppearance: TextAppearance? = nil) {
+            self.checkColor = checkColor
+            self.borderColor = borderColor
+            self.labelAppearance = labelAppearance
+        }
     }
 
     /// Common section theme
@@ -98,6 +128,11 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Subtitle appearance
         public var subtitleAppearance: TextAppearance? = nil
+
+        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil) {
+            self.titleAppearance = titleAppearance
+            self.subtitleAppearance = subtitleAppearance
+        }
     }
 
     /// Labeled section break theme
@@ -107,6 +142,11 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Background color
         public var backgroundColor: Color? = nil
+
+        public init(titleAppearance: TextAppearance? = nil, backgroundColor: Color? = nil) {
+            self.titleAppearance = titleAppearance
+            self.backgroundColor = backgroundColor
+        }
     }
 
     /// Alert item theme
@@ -122,6 +162,13 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Button background color
         public var buttonBackgroundColor: Color? = nil
+
+        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, buttonLabelAppearance: TextAppearance? = nil, buttonBackgroundColor: Color? = nil) {
+            self.titleAppearance = titleAppearance
+            self.subtitleAppearance = subtitleAppearance
+            self.buttonLabelAppearance = buttonLabelAppearance
+            self.buttonBackgroundColor = buttonBackgroundColor
+        }
     }
 
     /// Channel subscription item theme
@@ -134,6 +181,12 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
+
+        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, toggleTintColor: Color? = nil) {
+            self.titleAppearance = titleAppearance
+            self.subtitleAppearance = subtitleAppearance
+            self.toggleTintColor = toggleTintColor
+        }
     }
 
     /// Contact subscription item theme
@@ -146,6 +199,12 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
+
+        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, toggleTintColor: Color? = nil) {
+            self.titleAppearance = titleAppearance
+            self.subtitleAppearance = subtitleAppearance
+            self.toggleTintColor = toggleTintColor
+        }
     }
 
     /// Contact subscription group item theme
@@ -158,6 +217,12 @@ public struct PreferenceCenterTheme: Equatable {
 
         /// Chip theme
         public var chip: Chip? = nil
+
+        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, chip: Chip? = nil) {
+            self.titleAppearance = titleAppearance
+            self.subtitleAppearance = subtitleAppearance
+            self.chip = chip
+        }
     }
     
     public init(

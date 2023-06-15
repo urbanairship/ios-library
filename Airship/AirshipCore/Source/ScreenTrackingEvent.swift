@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class ScreenTrackingEvent: NSObject, Event {
+class ScreenTrackingEvent: NSObject, AirshipEvent {
 
     private let _data: [String: Any]
 

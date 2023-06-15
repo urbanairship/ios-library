@@ -22,8 +22,7 @@ public enum SeparatorStyle {
 ///     )
 ///     .messageCenterTheme(theme)
 ///
-@objc(UAMessageCenterTheme)
-public class MessageCenterTheme: NSObject {
+public struct MessageCenterTheme {
 
     /// The tint color of the "pull to refresh" control
     public var refreshTintColor: Color? = nil
@@ -85,14 +84,28 @@ public class MessageCenterTheme: NSObject {
     /// The navigation bar title
     public var navigationBarTitle: String? = nil
 
-    public override init() {
-
-        // Default to disabling icons
-        self.iconsEnabled = false
-
-        super.init()
+    init(refreshTintColor: Color? = nil, iconsEnabled: Bool = false, placeholderIcon: Image? = nil, cellTitleFont: Font? = nil, cellDateFont: Font? = nil, cellColor: Color? = nil, cellTitleColor: Color? = nil, cellDateColor: Color? = nil, cellSeparatorStyle: SeparatorStyle? = nil, cellSeparatorColor: Color? = nil, cellTintColor: Color? = nil, unreadIndicatorColor: Color? = nil, selectAllButtonTitleColor: Color? = nil, deleteButtonTitleColor: Color? = nil, markAsReadButtonTitleColor: Color? = nil, hideDeleteButton: Bool? = nil, editButtonTitleColor: Color? = nil, cancelButtonTitleColor: Color? = nil, backButtonColor: Color? = nil, navigationBarTitle: String? = nil) {
+        self.refreshTintColor = refreshTintColor
+        self.iconsEnabled = iconsEnabled
+        self.placeholderIcon = placeholderIcon
+        self.cellTitleFont = cellTitleFont
+        self.cellDateFont = cellDateFont
+        self.cellColor = cellColor
+        self.cellTitleColor = cellTitleColor
+        self.cellDateColor = cellDateColor
+        self.cellSeparatorStyle = cellSeparatorStyle
+        self.cellSeparatorColor = cellSeparatorColor
+        self.cellTintColor = cellTintColor
+        self.unreadIndicatorColor = unreadIndicatorColor
+        self.selectAllButtonTitleColor = selectAllButtonTitleColor
+        self.deleteButtonTitleColor = deleteButtonTitleColor
+        self.markAsReadButtonTitleColor = markAsReadButtonTitleColor
+        self.hideDeleteButton = hideDeleteButton
+        self.editButtonTitleColor = editButtonTitleColor
+        self.cancelButtonTitleColor = cancelButtonTitleColor
+        self.backButtonColor = backButtonColor
+        self.navigationBarTitle = navigationBarTitle
     }
-
 }
 
 extension View {

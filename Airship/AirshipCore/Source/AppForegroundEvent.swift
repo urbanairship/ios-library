@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class AppForegroundEvent: NSObject, Event {
+class AppForegroundEvent: NSObject, AirshipEvent {
     
     private let _data: [AnyHashable: Any]
 

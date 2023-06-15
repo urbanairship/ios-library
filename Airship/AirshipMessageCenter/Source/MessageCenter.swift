@@ -14,12 +14,15 @@ public protocol MessageCenterDisplayDelegate {
     ///
     /// - Parameters:
     ///   - messageID: The message ID.
-    func displayMessageCenter(forMessageID messageID: String)
+    @objc(displayMessageCenterForMessageID:)
+    func displayMessageCenter(messageID: String)
 
     /// Called when the message center is requested to be displayed.
+    @objc
     func displayMessageCenter()
 
     /// Called when the message center is requested to be dismissed.
+    @objc
     func dismissMessageCenter()
 }
 
@@ -42,12 +45,17 @@ public class MessageCenter: NSObject {
     /// Message center theme
     public var theme: MessageCenterTheme?
 
+    @objc
+    public func setThemeFromPlist(_ plist: String) throws {
+        self.theme = try MessageCenterTheme.fromPlist(plist)
+    }
+
     private var enabled: Bool {
         return self.isComponentEnabled
             && self.privacyManager.isEnabled(.messageCenter)
     }
 
-    /// The shared MessageCenter instance.
+    /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
     public static var shared: MessageCenter {
         return Airship.requireComponent(ofType: MessageCenter.self)
@@ -132,8 +140,8 @@ public class MessageCenter: NSObject {
     /// Display the given message with animation.
     /// - Parameters:
     ///     - messageID:  The messageID of the message.
-    @objc
-    public func display(withMessageID messageID: String) {
+    @objc(displayWithMessageID:)
+    public func display(messageID: String) {
         guard self.enabled else {
             AirshipLogger.warn("Message center disabled. Unable to display.")
             return
@@ -150,7 +158,7 @@ public class MessageCenter: NSObject {
         }
 
         displayDelegate.displayMessageCenter(
-            forMessageID: messageID
+            messageID: messageID
         )
 
     }
@@ -220,7 +228,7 @@ extension MessageCenter: AirshipComponent, PushableComponent {
                 return false
             }
             let messageID: String = deepLink.pathComponents[2]
-            self.display(withMessageID: messageID)
+            self.display(messageID: messageID)
         } else {
             if (deepLink.path.count != 0) && !(deepLink.path == "/") {
                 return false

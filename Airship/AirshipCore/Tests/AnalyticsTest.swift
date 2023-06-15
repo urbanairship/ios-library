@@ -483,7 +483,7 @@ class AnalyticsTest: XCTestCase {
 
 }
 
-class ValidEvent: NSObject, Event {
+class ValidEvent: NSObject, AirshipEvent {
     var data: [AnyHashable: Any] = [:]
     var eventType: String = "valid"
     var priority: EventPriority = .normal
@@ -538,12 +538,12 @@ final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
 
 
 final class TestLifecyleEventFactory: LifeCycleEventFactoryProtocol, @unchecked Sendable {
-    func make(type: LifeCycleEventType) -> Event {
+    func make(type: LifeCycleEventType) -> AirshipEvent {
         return TestLifeCycleEvent(type: type)
     }
 }
 
-class TestLifeCycleEvent: NSObject, Event {
+class TestLifeCycleEvent: NSObject, AirshipEvent {
     var data: [AnyHashable: Any] = [:]
     let eventType: String
     var priority: EventPriority = .normal

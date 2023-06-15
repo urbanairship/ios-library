@@ -65,7 +65,7 @@ public final class MessageCenterAction: AirshipAction {
         if let messageID = parseMessageID(arguments: arguments),
             !messageID.isEmpty
         {
-            MessageCenter.shared.display(withMessageID: messageID)
+            MessageCenter.shared.display(messageID: messageID)
         } else {
             MessageCenter.shared.display()
         }

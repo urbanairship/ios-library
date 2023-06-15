@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-class PushReceivedEvent: NSObject, Event {
+class PushReceivedEvent: NSObject, AirshipEvent {
 
     @objc
     public var priority: EventPriority {

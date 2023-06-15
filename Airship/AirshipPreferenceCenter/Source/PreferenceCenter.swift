@@ -25,7 +25,7 @@ public protocol PreferenceCenterOpenDelegate {
 @objc(UAPreferenceCenter)
 public class PreferenceCenter: NSObject, AirshipComponent {
 
-    /// The shared PreferenceCenter instance.
+    /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
     public static var shared: PreferenceCenter {
         return Airship.requireComponent(ofType: PreferenceCenter.self)
@@ -52,11 +52,7 @@ public class PreferenceCenter: NSObject, AirshipComponent {
      */
     public var theme: PreferenceCenterTheme?
 
-    @objc(setTheme:)
-    public func _setTheme(_ theme: _PreferenceCenterThemeObjc) {
-        self.theme = theme.toPreferenceCenterTheme()
-    }
-
+    @objc
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
     }

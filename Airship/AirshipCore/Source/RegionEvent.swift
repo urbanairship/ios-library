@@ -17,7 +17,7 @@ public enum UABoundaryEvent: Int {
 
 /// A region event captures information regarding a region event for analytics.
 @objc(UARegionEvent)
-public class RegionEvent: NSObject, Event {
+public class RegionEvent: NSObject, AirshipEvent {
 
     @objc
     public static let regionIDKey = "region_id"

@@ -14,7 +14,6 @@ public class MessageCenterViewControllerFactory: NSObject {
     ///     - controller: The Message Center controller
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
-    @objc
     @MainActor
     public class func make(
         theme: MessageCenterTheme? = nil,
@@ -31,6 +30,34 @@ public class MessageCenterViewControllerFactory: NSObject {
                 action: dismissAction
             )
         )
+    }
+
+    /// Makes a message view controller with the given theme.
+    /// - Parameters:
+    ///     - themePlist: A path to a theme plist
+    ///     - controller: The Message Center controller
+    ///     - dismissAction: Optional action to dismiss the view controller.
+    /// - Returns: A view controller.
+    @objc
+    @MainActor
+    public class func make(
+        themePlist: String?,
+        controller: MessageCenterController,
+        dismissAction: (() -> Void)? = nil
+    ) throws -> UIViewController {
+
+        if let themePlist = themePlist {
+            return make(
+                theme: try MessageCenterThemeLoader.fromPlist(themePlist),
+                controller: controller,
+                dismissAction: dismissAction
+            )
+        } else {
+            return make(
+                controller: controller,
+                dismissAction: dismissAction
+            )
+        }
     }
 }
 

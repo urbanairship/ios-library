@@ -365,7 +365,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     /// Triggers an analytics event.
     /// - Parameter event: The event to be triggered
     @objc
-    public func addEvent(_ event: Event) {
+    public func addEvent(_ event: AirshipEvent) {
         guard self.isAnalyticsEnabled else {
             AirshipLogger.trace(
                 "Analytics disabled, ignoring event: \(event.eventType)"
@@ -682,12 +682,12 @@ enum LifeCycleEventType {
 
 protocol LifeCycleEventFactoryProtocol: Sendable {
     @MainActor
-    func make(type: LifeCycleEventType) -> Event
+    func make(type: LifeCycleEventType) -> AirshipEvent
 }
 
 fileprivate final class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
     @MainActor
-    func make(type: LifeCycleEventType) -> Event {
+    func make(type: LifeCycleEventType) -> AirshipEvent {
         switch (type) {
         case .appInit:
             return AppInitEvent()

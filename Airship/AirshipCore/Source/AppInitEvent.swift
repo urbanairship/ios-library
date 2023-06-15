@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-final class AppInitEvent: NSObject, Event {
+final class AppInitEvent: NSObject, AirshipEvent {
 
     private let _data: [AnyHashable: Any]
 

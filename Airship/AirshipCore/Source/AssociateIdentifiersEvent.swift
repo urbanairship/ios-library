@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class AssociateIdentifiersEvent: NSObject, Event {
+class AssociateIdentifiersEvent: NSObject, AirshipEvent {
 
     @objc
     public var priority: EventPriority {

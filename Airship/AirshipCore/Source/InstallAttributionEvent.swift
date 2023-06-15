@@ -2,7 +2,7 @@
 
 /// Event to track install attributions.
 @objc(UAInstallAttributionEvent)
-public class InstallAttributionEvent: NSObject, Event {
+public class InstallAttributionEvent: NSObject, AirshipEvent {
     @objc
     public var eventType: String {
         return "install_attribution"

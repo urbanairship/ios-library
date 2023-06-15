@@ -65,9 +65,9 @@ NS_SWIFT_NAME(LegacyInAppMessaging)
 @interface UALegacyInAppMessaging : NSObject<UAComponent, UALegacyInAppMessageFactoryDelegate>
 
 /**
- * The shared InAppAutomation instance.
+ * The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
  */
-@property (class, nonatomic, readonly, null_unspecified) UALegacyInAppMessaging *shared;
+@property (class, nonatomic, readonly, nonnull) UALegacyInAppMessaging *shared;
 
 /**
  * Sets whether legacy messages will display immediately upon arrival, instead of waiting

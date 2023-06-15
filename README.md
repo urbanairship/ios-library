@@ -13,13 +13,12 @@ services into your iOS applications.
 - [AirshipNotificationServiceExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationServiceExtension)
 - [AirshipNotificationContentExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationContentExtension)
 
-- [Getting started guide](http://docs.airship.com/platform/ios/)
+- [Getting started guide](https://docs.airship.com/platform/mobile/setup/sdk/ios/)
 - [Migration Guides](Documentation/Migration/README.md)
-- [Sample Quickstart Guide](Sample/README.md)
 
 ## Installation
 
-Xcode 14.0+ is required to use the Airship SDK.
+Xcode 14.3+ is required to use the Airship SDK.
 
 ### CocoaPods
 

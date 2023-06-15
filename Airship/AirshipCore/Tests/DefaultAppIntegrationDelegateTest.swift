@@ -217,7 +217,7 @@ final class InternalTestAnalytics: InternalAnalyticsProtocol, @unchecked Sendabl
 
     var sessionID: String?
 
-    func addEvent(_ event: Event) {
+    func addEvent(_ event: AirshipEvent) {
 
     }
 

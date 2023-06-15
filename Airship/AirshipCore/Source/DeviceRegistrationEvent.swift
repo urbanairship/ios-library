@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For Internal use only :nodoc:
-class DeviceRegistrationEvent: NSObject, Event {
+class DeviceRegistrationEvent: NSObject, AirshipEvent {
 
     init(
         channelID: String?,

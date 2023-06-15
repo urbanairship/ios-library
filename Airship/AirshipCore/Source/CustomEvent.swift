@@ -3,7 +3,7 @@
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.
 @objc(UACustomEvent)
-public class CustomEvent: NSObject, Event {
+public class CustomEvent: NSObject, AirshipEvent {
 
     private static let interactionMCRAP = "ua_mcrap"
 

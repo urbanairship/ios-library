@@ -132,7 +132,7 @@ extension MessageCenterThemeLoader.FontConfig {
 
 extension MessageCenterThemeLoader.Config {
     fileprivate func toMessageCenterTheme() throws -> MessageCenterTheme {
-        let theme = MessageCenterTheme()
+        var theme = MessageCenterTheme()
         theme.refreshTintColor = self.refreshTintColor?.toColor()
         theme.iconsEnabled = self.iconsEnabled ?? false
         if let placeholderIcon = self.placeholderIcon {

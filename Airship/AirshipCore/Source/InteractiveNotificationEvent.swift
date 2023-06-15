@@ -3,7 +3,7 @@
 /// - Note: For Internal use only :nodoc:
 @objc(UAInteractiveNotificationEvent)
 @available(tvOS, unavailable)
-public class InteractiveNotificationEvent: NSObject, Event {
+public class InteractiveNotificationEvent: NSObject, AirshipEvent {
     private static let notificationEventCharacterLimit = 255
 
     @objc

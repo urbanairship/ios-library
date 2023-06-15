@@ -36,7 +36,7 @@ public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponen
     public var isComponentEnabled: Bool = true
 
     @objc
-    public var events: [Event] = []
+    public var events: [AirshipEvent] = []
 
     @objc
     public var conversionSendID: String?
@@ -47,7 +47,7 @@ public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponen
     @objc
     public var sessionID: String?
 
-    public func addEvent(_ event: Event) {
+    public func addEvent(_ event: AirshipEvent) {
         events.append(event)
     }
 

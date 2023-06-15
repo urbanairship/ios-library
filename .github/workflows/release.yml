@@ -185,13 +185,6 @@ jobs:
           type: ${{ job.status }}
           job_name: "Uploaded iOS SDK API docs :female-doctor: :male-doctor:"
           url: ${{ secrets.SLACK_WEBHOOK }}
-      - name: Slack Notification
-        uses: homoluctus/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy iOS SDK to Bintray :bento:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
 
   finished:
     runs-on: ubuntu-latest
