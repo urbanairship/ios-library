@@ -134,8 +134,17 @@ public struct MessageCenterListView: View {
                 ProgressView()
                     .opacity(1.0 - self.listOpacity)
             } else if self.viewModel.messageIDs.isEmpty {
-                Text("ua_empty_message_list".messageCenterlocalizedString)
-                    .opacity(1.0 - self.listOpacity)
+                VStack {
+                    Button {
+                        Task {
+                            await self.viewModel.refreshList()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    Text("ua_empty_message_list".messageCenterlocalizedString)
+                        .opacity(1.0 - self.listOpacity)
+                }
             }
         }
         
