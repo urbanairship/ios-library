@@ -239,8 +239,14 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             isForeground: isForeground
         ) { pushResult in
             lock.sync {
+#if !os(watchOS)
                 let result: UIBackgroundFetchResult =
                 pushResult as! UIBackgroundFetchResult
+#else
+                let result: WKBackgroundFetchResult =
+                pushResult as! WKBackgroundFetchResult
+
+#endif
                 fetchResults.append(result.rawValue)
             }
             dispatchGroup.leave()
