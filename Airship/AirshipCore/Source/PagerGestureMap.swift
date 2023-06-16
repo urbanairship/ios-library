@@ -134,7 +134,7 @@ struct PagerGestureMapExplorer {
 struct PagerGestureMap: View {
     var body: some View {
         Rectangle()
-            .overlay {
+            .overlayView {
                 TopTrapezoid()
                     .fill(.blue)
                 BottomTrapezoid()

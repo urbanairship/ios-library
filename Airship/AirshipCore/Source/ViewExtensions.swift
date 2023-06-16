@@ -76,7 +76,7 @@ public extension View {
         self.modifier(modifiers())
     }
     
-    func overlay<T: View>(
+    internal func overlayView<T: View>(
         alignment: Alignment = .center,
         @ViewBuilder content: () -> T
     ) -> some View {
