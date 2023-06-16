@@ -9,23 +9,49 @@ import AirshipCore
 /// Message center message.
 @objc(UAMessageCenterMessage)
 public final class MessageCenterMessage: NSObject, Sendable {
+    /// The message title.
     @objc
     public let title: String
+    
+    /// The Airship message ID.
+    /// This ID may be used to match an incoming push notification to a specific message.
     @objc
     public let id: String
+    
+    /// The message's extra dictionary.
+    /// This dictionary can be populated with arbitrary key-value data at the time the message is composed.
     @objc
     public let extra: [String: String]
+    
+    /// The URL for the message body itself.
+    /// This URL may only be accessed with Basic Auth credentials set to the user ID and password.
     @objc
     public let bodyURL: URL
+    
+    /// The date and time the message will expire.
+    /// A nil value indicates it will never expire.
     @objc
     public let expirationDate: Date?
+    
+    /// The date and time the message was sent (UTC).
     @objc
     public let sentDate: Date
+    
+    /// The unread status of the message.
+    /// `true` if the message is unread, otherwise `false`.
     @objc
     public let unread: Bool
 
+    /// The reporting data of the message.
     let messageReporting: AirshipJSON?
+    
+    /// The URL for the message.
+    /// This URL may only be accessed with Basic Auth credentials set to the user ID and password.
     let messageURL: URL
+    
+    /// The raw message dictionary.
+    /// This is the dictionary that originally created the message.
+    /// It can contain more values than the message.
     let rawMessageObject: AirshipJSON
 
     init(
@@ -76,6 +102,7 @@ public final class MessageCenterMessage: NSObject, Sendable {
 
 extension MessageCenterMessage {
 
+    /// The list icon of the message. `nil` if there is none.
     @objc
     public var listIcon: String? {
         guard
@@ -89,11 +116,16 @@ extension MessageCenterMessage {
         return listIcon
     }
 
+    /// The subtitle of the message. `nil` if there is none.
     @objc
     public var subtitle: String? {
         return self.extra["com.urbanairship.listing.field1"]
     }
 
+    /// Parses the message ID.
+    /// - Parameters:
+    ///     - userInfo: The notification user info.
+    /// - Returns: The message ID.
     @objc
     public static func parseMessageID(userInfo: [AnyHashable: Any]) -> String? {
         guard let uamid = userInfo["_uamid"] else {
@@ -109,6 +141,8 @@ extension MessageCenterMessage {
         }
     }
 
+    /// Tells if the message is expired.
+    /// `true` if the message is expired, otherwise `false`.
     @objc
     public var isExpired: Bool {
         if let messageExpiration = self.expirationDate {

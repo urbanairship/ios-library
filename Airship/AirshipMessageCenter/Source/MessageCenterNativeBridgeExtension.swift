@@ -7,6 +7,7 @@ import WebKit
 import AirshipCore
 #endif
 
+/// Airship native bridge extension for the Message Center.
 @objc(UAMessageCenterNativeBridgeExtension)
 public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
 

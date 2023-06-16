@@ -21,7 +21,6 @@
 		6EAAE98A28C7E1A1003CAE53 /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */; };
 		6EAAE98B28C7E1A1003CAE53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */; };
 		6EAAE98C28C7E1A1003CAE53 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8C028C7C9A3003CAE53 /* AppView.swift */; };
-		6EAAE99728C7E269003CAE53 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
 		6EAAE9AB28C7E309003CAE53 /* Airship Sample App Clip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 6EAAE99C28C7E308003CAE53 /* Airship Sample App Clip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6EAAE9B028C7E31E003CAE53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */; };
 		6EAAE9B128C7E31E003CAE53 /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */; };
@@ -30,7 +29,6 @@
 		6EAAE9BD28C7E31E003CAE53 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */; };
 		6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */; };
 		6EAAE9C028C7E322003CAE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE98128C7E18C003CAE53 /* Preview Assets.xcassets */; };
-		6EAAE9C128C7E342003CAE53 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */; };
 		6EAAE9F228C7E417003CAE53 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE9F128C7E417003CAE53 /* NotificationService.swift */; };
 		6EAAE9F628C7E417003CAE53 /* Airship Sample Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6EAAE9EF28C7E417003CAE53 /* Airship Sample Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6EAAE9FA28C7E438003CAE53 /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; };
@@ -291,6 +289,20 @@
 			remoteGlobalIDString = 6EDB2B0328D4E24F00A01377;
 			remoteInfo = LiveActivityExtension;
 		};
+		84A565702A3D01A100F3A345 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E0B872A294A9C120064B7BD;
+			remoteInfo = AirshipAutomationSwift;
+		};
+		84A565722A3D01A100F3A345 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6E0B8731294A9C130064B7BD;
+			remoteInfo = AirshipAutomationSwiftTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -380,7 +392,6 @@
 		6EDB2B0F28D4E25100A01377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManagementView.swift; sourceTree = "<group>"; };
 		6EDB2B2A28D4F27800A01377 /* Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets.swift; sourceTree = "<group>"; };
-		CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -440,6 +451,8 @@
 				6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */,
 				6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */,
 				32F68D0628F07C7300F7F52A /* AirshipMessageCenterTests.xctest */,
+				84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */,
+				84A565732A3D01A100F3A345 /* AirshipAutomationSwiftTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -518,7 +531,6 @@
 			children = (
 				6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */,
 				6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */,
-				CCDA35C31B8D237300950AD5 /* AirshipConfig.plist */,
 				6EAAE97928C7E18B003CAE53 /* Airship Sample */,
 				6EAAE99D28C7E308003CAE53 /* Airship Sample App Clip */,
 				6EAAE9F028C7E417003CAE53 /* Airship Sample Service Extension */,
@@ -833,6 +845,20 @@
 			remoteRef = 6ED5B74C288613460093CEEC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipAutomationSwift.framework;
+			remoteRef = 84A565702A3D01A100F3A345 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		84A565732A3D01A100F3A345 /* AirshipAutomationSwiftTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipAutomationSwiftTests.xctest;
+			remoteRef = 84A565722A3D01A100F3A345 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -840,7 +866,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EAAE99728C7E269003CAE53 /* AirshipConfig.plist in Resources */,
 				6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */,
 				6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */,
 			);
@@ -850,7 +875,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EAAE9C128C7E342003CAE53 /* AirshipConfig.plist in Resources */,
 				6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */,
 				6EAAE9C028C7E322003CAE53 /* Preview Assets.xcassets in Resources */,
 			);

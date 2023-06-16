@@ -26,15 +26,18 @@ public protocol MessageCenterDisplayDelegate {
     func dismissMessageCenter()
 }
 
+/// Airship Message Center module.
 @objc(UAMessageCenter)
 public class MessageCenter: NSObject {
 
+    /// Message center display delegate.
     @objc
     public var displayDelegate: MessageCenterDisplayDelegate?
 
     private let privacyManager: AirshipPrivacyManager
     private let disableHelper: ComponentDisableHelper
 
+    /// Message center inbox.
     @objc
     public var inbox: MessageCenterInbox
 
@@ -42,9 +45,12 @@ public class MessageCenter: NSObject {
 
     private var controller: MessageCenterController = MessageCenterController()
 
-    /// Message center theme
+    /// Message center theme.
     public var theme: MessageCenterTheme?
 
+    /// Loads a Message center theme from a plist file.
+    /// - Parameters:
+    ///     - plist: The name of the plist in the bundle.
     @objc
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try MessageCenterTheme.fromPlist(plist)
@@ -136,7 +142,6 @@ public class MessageCenter: NSObject {
         displayDelegate.displayMessageCenter()
     }
 
-    ///
     /// Display the given message with animation.
     /// - Parameters:
     ///     - messageID:  The messageID of the message.
