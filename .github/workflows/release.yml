@@ -159,7 +159,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p Carthage/build
-          unzip build/Airship.zip Carthage/build
+          mkdir -p build
+          unzip build/Airship.zip -d build
           cp -R build/*.xcframework Carthage/build
           zip -r Airship.xcframeworks.zip Carthage -x "*.DS_Store"
       - name: Upload carthage distribution
