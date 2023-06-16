@@ -109,7 +109,7 @@ the main application target.
 The library uses a .plist configuration file named `AirshipConfig.plist` to manage your production and development
 application profiles. Example copies of this file are available in all of the sample projects. Place this file
 in your project and set the following values to the ones in your application at http://go.urbanairship.com.  To
-view all the possible keys and values, see the [AirshipConfig class reference](https://docs.airship.com/reference/libraries/ios/17.0.0-beta/AirshipCore/Classes/AirshipConfig.html)
+view all the possible keys and values, see the [AirshipConfig class reference](https://docs.airship.com/reference/libraries/ios/latest/AirshipCore/Classes/AirshipConfig.html)
 
 You can also edit the file as plain-text:
 

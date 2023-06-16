@@ -3,7 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 17.0.0 June 15, 2023
+## Version 17.0.1, June 16, 2023
+Patch release that addresses potential ambiguous use errors and improves Message Center module documentation.
+Apps upgrading to SDK 17.0.0 should update to 17.0.1 instead.
+
+### Changes
+- Fixed potential `ambiguous use of overlay()` errors when using SwiftUI
+- Improved Message Center module documentation
+
+## Version 17.0.0, June 15, 2023
 Major SDK release that adds support for Stories, In-App experiences downstream of a sequence in Journeys, and improves SDK auth.
 
 This release brings several breaking changes throughout the codebase as we continue the transition from Objective-C to Swift, and as we start adopting structured concurrency.
