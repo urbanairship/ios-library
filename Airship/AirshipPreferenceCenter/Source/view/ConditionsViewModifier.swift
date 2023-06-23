@@ -22,9 +22,9 @@ struct ConditionsViewModifier: ViewModifier {
 extension View {
 
     @ViewBuilder
-    func preferenceConditions(_ conditions: [PreferenceCenterConfig.Condition]?)
-        -> some View
-    {
+    func preferenceConditions(
+        _ conditions: [PreferenceCenterConfig.Condition]?
+    ) -> some View {
         self
     }
 
