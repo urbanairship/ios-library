@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.12.2, June 28, 2023
+Patch release that fixes an issue with modular header on podspec for `AirshipServiceExtension` and `AirshipContentExtension`.
+
+### Changes
+- Enable modular header for `AirshipServiceExtension` and `AirshipContentExtension`.
+
 ## Version 16.12.1, June 14, 2023
 Patch release that fixes app deep links that use the `uairship://` prefix. Any `uairship://` deep links that are not handled by Airship directly will now be delivered to the `DeepLinkDelegate`.
 

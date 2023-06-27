@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="16.12.1"
+AIRSHIP_VERSION="16.12.2"
 
 Pod::Spec.new do |s|
     s.version                 = AIRSHIP_VERSION
@@ -15,4 +15,5 @@ Pod::Spec.new do |s|
     s.module_name             = "AirshipContentExtension"
     s.requires_arc            = true
     s.ios.deployment_target   = "11.0"
+    s.pod_target_xcconfig     = { 'DEFINES_MODULE' => 'YES' }
 end

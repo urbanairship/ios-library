@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="16.12.1"
+AIRSHIP_VERSION="16.12.2"
 
 Pod::Spec.new do |s|
     s.version                 = AIRSHIP_VERSION
@@ -14,7 +14,8 @@ Pod::Spec.new do |s|
     s.ios.deployment_target   = "11.0"
     s.default_subspecs        = ["NotificationService", "NotificationContent"]
     s.deprecated_in_favor_of  = "AirshipServiceExtension"
-
+    s.pod_target_xcconfig     = { 'DEFINES_MODULE' => 'YES' }
+    
     s.subspec "NotificationService" do |notificationService|
         notificationService.ios.source_files     = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m}"
         notificationService.ios.weak_frameworks  = "UserNotifications"
