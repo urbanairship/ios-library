@@ -84,7 +84,7 @@ public struct MessageCenterTheme {
     /// The navigation bar title
     public var navigationBarTitle: String? = nil
 
-    init(refreshTintColor: Color? = nil, iconsEnabled: Bool = false, placeholderIcon: Image? = nil, cellTitleFont: Font? = nil, cellDateFont: Font? = nil, cellColor: Color? = nil, cellTitleColor: Color? = nil, cellDateColor: Color? = nil, cellSeparatorStyle: SeparatorStyle? = nil, cellSeparatorColor: Color? = nil, cellTintColor: Color? = nil, unreadIndicatorColor: Color? = nil, selectAllButtonTitleColor: Color? = nil, deleteButtonTitleColor: Color? = nil, markAsReadButtonTitleColor: Color? = nil, hideDeleteButton: Bool? = nil, editButtonTitleColor: Color? = nil, cancelButtonTitleColor: Color? = nil, backButtonColor: Color? = nil, navigationBarTitle: String? = nil) {
+    public init(refreshTintColor: Color? = nil, iconsEnabled: Bool = false, placeholderIcon: Image? = nil, cellTitleFont: Font? = nil, cellDateFont: Font? = nil, cellColor: Color? = nil, cellTitleColor: Color? = nil, cellDateColor: Color? = nil, cellSeparatorStyle: SeparatorStyle? = nil, cellSeparatorColor: Color? = nil, cellTintColor: Color? = nil, unreadIndicatorColor: Color? = nil, selectAllButtonTitleColor: Color? = nil, deleteButtonTitleColor: Color? = nil, markAsReadButtonTitleColor: Color? = nil, hideDeleteButton: Bool? = nil, editButtonTitleColor: Color? = nil, cancelButtonTitleColor: Color? = nil, backButtonColor: Color? = nil, navigationBarTitle: String? = nil) {
         self.refreshTintColor = refreshTintColor
         self.iconsEnabled = iconsEnabled
         self.placeholderIcon = placeholderIcon

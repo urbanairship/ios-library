@@ -9,12 +9,14 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct ReceivedPushListDebugView: View {
+public struct ReceivedPushListDebugView: View {
 
     @StateObject
     private var viewModel = ViewModel()
 
-    var body: some View {
+    public init() {}
+    
+    public var body: some View {
         Form {
             Section(header: Text("")) {
                 List(self.viewModel.pushNotifications, id: \.self) { push in

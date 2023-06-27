@@ -10,12 +10,14 @@ import AirshipPreferenceCenter
 import AirshipKit
 #endif
 
-struct PreferenceCenterListDebugView: View {
+public struct PreferenceCenterListDebugView: View {
 
     @StateObject
     private var viewModel = ViewModel()
 
-    var body: some View {
+    public init() {}
+    
+    public var body: some View {
         Form {
             Section(header: Text("")) {
                 List {

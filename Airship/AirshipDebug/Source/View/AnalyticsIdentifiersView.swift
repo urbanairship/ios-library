@@ -8,12 +8,14 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct AnalyticsIdentifiersView: View {
+public struct AnalyticsIdentifiersView: View {
 
     @StateObject
     private var viewModel = ViewModel()
 
-    var body: some View {
+    public init() {}
+    
+    public var body: some View {
         Form {
             Section(header: Text("Identifiers".localized())) {
                 NavigationLink(

@@ -2,13 +2,15 @@ import AirshipCore
 import Foundation
 import SwiftUI
 
-struct AddCustomEventView: View {
+public struct AddCustomEventView: View {
 
     @StateObject
     private var viewModel = ViewModel()
 
     @Environment(\.presentationMode)
     private var presentationMode: Binding<PresentationMode>
+
+    public init() {}
 
     @ViewBuilder
     func makeTextInput(title: String, binding: Binding<String>) -> some View {
@@ -34,7 +36,7 @@ struct AddCustomEventView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         Form {
             Section(header: Text("Event Properties".localized())) {
                 makeTextInput(

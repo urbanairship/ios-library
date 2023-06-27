@@ -9,8 +9,10 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct PrivacyManagerDebugView: View {
+public struct PrivacyManagerDebugView: View {
 
+    public init() {}
+    
     @StateObject
     private var viewModel = ViewModel()
 
@@ -21,7 +23,7 @@ struct PrivacyManagerDebugView: View {
         Toggle(title.localized(), isOn: isOn)
     }
 
-    var body: some View {
+    public var body: some View {
         Form {
             Section(header: Text("")) {
                 makeFeatureToggle("Contacts", self.$viewModel.contactsEnabled)

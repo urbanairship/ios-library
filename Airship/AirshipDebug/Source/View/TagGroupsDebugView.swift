@@ -9,13 +9,17 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct TagGroupsDebugView: View {
+public struct TagGroupsDebugView: View {
     enum TagAction: String, Equatable, CaseIterable {
         case add = "Add"
         case remove = "Remove"
     }
 
-    let editorFactory: () -> TagGroupsEditor?
+    private let editorFactory: () -> TagGroupsEditor?
+
+    public init(editorFactory: @escaping () -> TagGroupsEditor?) {
+        self.editorFactory = editorFactory
+    }
 
     @State
     private var tag: String = ""
@@ -27,7 +31,7 @@ struct TagGroupsDebugView: View {
     private var action: TagAction = .add
 
     @ViewBuilder
-    var body: some View {
+    public var body: some View {
         Form {
             Section(header: Text("Tag Info".localized())) {
                 Picker("Action".localized(), selection: $action) {

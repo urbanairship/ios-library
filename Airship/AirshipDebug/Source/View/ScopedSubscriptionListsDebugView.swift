@@ -9,7 +9,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct ScopedSubscriptionListsDebugView: View {
+public struct ScopedSubscriptionListsDebugView: View {
     private enum SubscriptionListAction: String, Equatable, CaseIterable {
         case subscribe = "Subscribe"
         case unsubscribe = "Unsubscribe"
@@ -31,7 +31,11 @@ struct ScopedSubscriptionListsDebugView: View {
         }
     }
 
-    let editorFactory: () -> ScopedSubscriptionListEditor?
+    private let editorFactory: () -> ScopedSubscriptionListEditor?
+
+    public init(editorFactory: @escaping () -> ScopedSubscriptionListEditor?) {
+        self.editorFactory = editorFactory
+    }
 
     @State
     private var listID: String = ""
@@ -43,7 +47,7 @@ struct ScopedSubscriptionListsDebugView: View {
     private var scope: Scope = .app
 
     @ViewBuilder
-    var body: some View {
+    public var body: some View {
         Form {
             Section(header: Text("Subscription Info".localized())) {
                 HStack {

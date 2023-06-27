@@ -9,9 +9,9 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct AttributesDebugView: View {
+public struct AttributesDebugView: View {
 
-    let editorFactory: () -> AttributesEditor?
+    private let editorFactory: () -> AttributesEditor?
 
     private enum AttributeAction: String, Equatable, CaseIterable {
         case add = "Add"
@@ -22,6 +22,10 @@ struct AttributesDebugView: View {
         case text = "Text"
         case number = "Number"
         case date = "Date"
+    }
+
+    public init(editorFactory: @escaping () -> AttributesEditor?) {
+        self.editorFactory = editorFactory
     }
 
     @State
@@ -75,7 +79,7 @@ struct AttributesDebugView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         Form {
             Section(header: Text("Attribute Info".localized())) {
                 Picker("Action".localized(), selection: $action) {

@@ -9,8 +9,10 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct NamedUserDebugView: View {
+public struct NamedUserDebugView: View {
 
+    public init() {}
+    
     @StateObject
     private var viewModel: ViewModel = ViewModel()
 
@@ -26,7 +28,7 @@ struct NamedUserDebugView: View {
         }
     }
 
-    var body: some View {
+    public var body: some View {
         let title = "Named User".localized()
 
         Form {

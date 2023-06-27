@@ -9,12 +9,14 @@ import AirshipCore
 import AirshipKit
 #endif
 
-struct InAppAutomationListDebugView: View {
+public struct InAppAutomationListDebugView: View {
 
     @StateObject
     private var viewModel = ViewModel()
 
-    var body: some View {
+    public init() {}
+    
+    public var body: some View {
         Form {
             Section(header: Text("")) {
                 List(self.viewModel.messagePayloads, id: \.self) { payload in

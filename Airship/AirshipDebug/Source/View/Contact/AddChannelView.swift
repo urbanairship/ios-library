@@ -2,8 +2,10 @@
 
 import SwiftUI
 
-struct AddChannelView: View {
-    var body: some View {
+public struct AddChannelView: View {
+    public init() {}
+
+    public var body: some View {
         Form {
             Section(header: Text("Channel Type".localized())) {
                 NavigationLink(
