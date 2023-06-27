@@ -4,10 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
 ## Version 16.12.2, June 28, 2023
-Patch release that fixes an issue with modular header on podspec for `AirshipServiceExtension` and `AirshipContentExtension`.
+Patch release that fixes an issue with modular header on podspec for `AirshipServiceExtension` and `AirshipContentExtension`
+and a channel registration issue where if the channel's metadata changes during an update task, a new task would not be queued to sync with Airship until the next foreground.
 
 ### Changes
 - Enable modular header for `AirshipServiceExtension` and `AirshipContentExtension`.
+- Fixed channel registration task queuing
 
 ## Version 16.12.1, June 14, 2023
 Patch release that fixes app deep links that use the `uairship://` prefix. Any `uairship://` deep links that are not handled by Airship directly will now be delivered to the `DeepLinkDelegate`.
