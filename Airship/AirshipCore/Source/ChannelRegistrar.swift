@@ -255,27 +255,32 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                     AirshipLogger.error("Failed request with error: \(error)")
                 }
                 
-                self.registrationFinished(payload, success: false)
-                task.taskFailed()
+                self.registrationFinished(payload, success: false) {
+                    task.taskFailed()
+                }
+
                 return
             }
             
             if (response.isSuccess) {
                 AirshipLogger.debug("Channel updated succesfully")
-                self.registrationFinished(payload, success: true)
-                task.taskCompleted()
+                self.registrationFinished(payload, success: true) {
+                    task.taskCompleted()
+                }
+
             } else if (response.status == 409) {
                 AirshipLogger.trace("Channel conflict, recreating")
                 self.clearChannelData()
-                self.register(forcefully: true)
                 task.taskCompleted()
+                self.register(forcefully: true)
             } else {
                 AirshipLogger.debug("Channel update failed with response \(response)")
-                self.registrationFinished(payload, success: false)
-                if (response.isServerError || response.status == 429) {
-                    task.taskFailed()
-                } else {
-                    task.taskCompleted()
+                self.registrationFinished(payload, success: false) {
+                    if (response.isServerError || response.status == 429) {
+                        task.taskFailed()
+                    } else {
+                        task.taskCompleted()
+                    }
                 }
             }
         }
@@ -290,8 +295,10 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                     AirshipLogger.error("Failed request with error: \(error)")
                 }
                 
-                self.registrationFinished(payload, success: false)
-                task.taskFailed()
+                self.registrationFinished(payload, success: false) {
+                    task.taskFailed()
+                }
+
                 return
             }
             
@@ -299,17 +306,19 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
                 AirshipLogger.debug("Channel \(response.channelID!) created succesfully")
                 self._channelID = response.channelID
                 self.delegate?.channelCreated(channelID: response.channelID!, existing: response.status == 200)
-                self.registrationFinished(payload, success: true)
-                task.taskCompleted()
-            } else {
-                AirshipLogger.debug("Channel creation failed with response \(response)")
-                self.registrationFinished(payload, success: false)
-                
-                if (response.isServerError || response.status == 429) {
-                    task.taskFailed()
-                } else {
+                self.registrationFinished(payload, success: true) {
                     task.taskCompleted()
                 }
+            } else {
+                AirshipLogger.debug("Channel creation failed with response \(response)")
+                self.registrationFinished(payload, success: false) {
+                    if (response.isServerError || response.status == 429) {
+                        task.taskFailed()
+                    } else {
+                        task.taskCompleted()
+                    }
+                }
+
             }
         }
     }
@@ -320,17 +329,25 @@ public class ChannelRegistrar : NSObject, ChannelRegistrarProtocol {
         self.lastSuccessPayload = nil
     }
     
-    private func registrationFinished(_ payload: ChannelRegistrationPayload, success: Bool) {
+    private func registrationFinished(
+        _ payload: ChannelRegistrationPayload,
+        success: Bool,
+        onComplete: () -> Void
+    ) {
         if (success) {
             self.lastSuccessPayload = payload
             self.lastUpdateDate = self.date.now
             delegate?.registrationSucceeded()
             
             if (self.shouldUpdate(self.createPayload(), lastPayload: payload)) {
+                onComplete()
                 self.register(forcefully: false)
+            } else {
+                onComplete()
             }
         } else {
             delegate?.registrationFailed()
+            onComplete()
         }
     }
 
