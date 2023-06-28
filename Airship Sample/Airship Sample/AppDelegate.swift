@@ -87,6 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
 
     func displayMessageCenter(messageID: String) {
         AppState.shared.selectedTab = .messageCenter
+        AppState.shared.messageCenterController.navigate(messageID: messageID)
     }
 
     func displayMessageCenter() {
