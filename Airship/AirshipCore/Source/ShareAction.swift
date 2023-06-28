@@ -41,7 +41,7 @@ public final class ShareAction: AirshipAction {
         AirshipLogger.debug("Running share action: \(arguments)")
 
         let activityViewController = ActivityViewController(
-            activityItems: [arguments.value as Any],
+            activityItems: [arguments.value.unWrap() as Any],
             applicationActivities: nil
         )
 
