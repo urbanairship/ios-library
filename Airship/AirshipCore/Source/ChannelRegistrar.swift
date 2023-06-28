@@ -137,7 +137,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
                     ChannelRegistrar.forcefullyKey: String(forcefully)
                 ],
                 requiresNetwork: true,
-                conflictPolicy: forcefully ? .replace : .keep
+                conflictPolicy: forcefully ? .replace : .keepIfNotStarted
             )
         )
     }

@@ -8,6 +8,8 @@ actor Worker {
     private var workContinuation: AsyncStream<PendingRequest>.Continuation?
     private var workStream: AsyncStream<PendingRequest>
     private var pending: [PendingRequest] = []
+    private var inProgress: Set<PendingRequest> = Set()
+
     private var tasks: Set<Task<Void, Error>> = Set()
     private var nextPendingID = 0
 
@@ -64,8 +66,8 @@ actor Worker {
             tasks.removeAll()
             queueWork = true
 
-        case .keep:
-            queueWork = pending.isEmpty
+        case .keepIfNotStarted:
+            queueWork = Set(pending).subtracting(inProgress).isEmpty
         }
 
         if queueWork {
@@ -144,12 +146,14 @@ actor Worker {
         }
 
         var result: AirshipWorkResult = .failure
+
+        inProgress.insert(pendingRequest)
         do {
             result = try await self.workHandler(pendingRequest.request)
         } catch {
             AirshipLogger.debug("Failed to execute work \(canonicalID): \(error)")
         }
-
+        inProgress.remove(pendingRequest)
 
         if result == .success {
             // Success
@@ -269,7 +273,7 @@ actor Worker {
         try await Task.sleep(nanoseconds: sleep)
     }
 
-    fileprivate struct PendingRequest: Equatable, Sendable {
+    fileprivate struct PendingRequest: Equatable, Sendable, Hashable {
         let id: Int
         let request: AirshipWorkRequest
         let date: Date = Date()

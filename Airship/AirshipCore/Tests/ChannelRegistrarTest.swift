@@ -43,7 +43,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         let request = self.workManager.workRequests[0]
         XCTAssertEqual(workID, request.workID)
-        XCTAssertEqual(.keep, request.conflictPolicy)
+        XCTAssertEqual(.keepIfNotStarted, request.conflictPolicy)
         XCTAssertEqual(extras, request.extras)
         XCTAssertEqual(0, request.initialDelay)
     }

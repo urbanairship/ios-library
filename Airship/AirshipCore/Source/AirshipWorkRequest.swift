@@ -2,18 +2,20 @@
 
 import Foundation
 
+// NOTE: For internal use only. :nodoc:
 @objc
 public enum AirshipWorkRequestConflictPolicy: Int, Sendable {
     @objc(UAirshipWorkRequestConflictPolicyAppend)
     case append
     @objc(UAirshipWorkRequestConflictPolicyReplace)
     case replace
-    @objc(UAirshipWorkRequestConflictPolicyKeep)
-    case keep
+    @objc(UAirshipWorkRequestConflictPolicyKeepIfNotStarted)
+    case keepIfNotStarted
 }
 
-public struct AirshipWorkRequest: Equatable, Sendable {
 
+// NOTE: For internal use only. :nodoc:
+public struct AirshipWorkRequest: Equatable, Sendable, Hashable {
     public let workID: String
     public let extras: [String: String]?
     public let initialDelay: TimeInterval
