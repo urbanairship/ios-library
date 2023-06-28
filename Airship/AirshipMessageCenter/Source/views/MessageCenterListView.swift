@@ -157,6 +157,10 @@ public struct MessageCenterListView: View {
                     .message.title
             )
         )
+            .onAppear {
+                self.controller.messageID = nil
+            }
+        
         if #available(iOS 16.0, *) {
             content
                 .background(
