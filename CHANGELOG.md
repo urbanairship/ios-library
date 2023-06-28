@@ -3,7 +3,24 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 17.0.1, June 16, 2023
+## Version 17.0.2 June 2, 2023
+Patch release that fixes an issue with modular header on podspec for AirshipServiceExtension and AirshipContentExtension, an issue deep linking to a deleted Message Center message, and fixes a regression with the share action. Applications that are using 17.0.1 or older should update.
+
+### Changes
+- Enable modular header for AirshipServiceExtension and AirshipContentExtension
+- Fixed issue with a navigation loop to a deleted Message Center message
+- Removed unused `applyIf` extension to avoid potential conflicts
+- Fixed share action regression
+
+
+## Version 16.12.2 June 28, 2023
+Patch release that fixes an issue with modular header on podspec for AirshipServiceExtension and AirshipContentExtension and a channel registration issue where if the channel's metadata changes during an update task, a new task would not be queued to sync with Airship until the next foreground.
+
+### Changes
+- Enable modular header for AirshipServiceExtension and AirshipContentExtension
+- Fixed channel registration task queuing
+
+## Version 17.0.1 June 16, 2023
 Patch release that addresses potential ambiguous use errors and improves Message Center module documentation.
 Apps upgrading to SDK 17.0.0 should update to 17.0.1 instead.
 
@@ -11,7 +28,7 @@ Apps upgrading to SDK 17.0.0 should update to 17.0.1 instead.
 - Fixed potential `ambiguous use of overlay()` errors when using SwiftUI
 - Improved Message Center module documentation
 
-## Version 17.0.0, June 15, 2023
+## Version 17.0.0 June 15, 2023
 Major SDK release that adds support for Stories, In-App experiences downstream of a sequence in Journeys, and improves SDK auth.
 
 This release brings several breaking changes throughout the codebase as we continue the transition from Objective-C to Swift, and as we start adopting structured concurrency.
