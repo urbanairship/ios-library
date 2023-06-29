@@ -146,6 +146,10 @@ jobs:
           asset_path: ./build/Airship.zip
           asset_name: Airship.zip
           asset_content_type: application/zip
+      - name: Update prebuilt repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
 
       - name: Slack Notification
         uses: homoluctus/slatify@master
