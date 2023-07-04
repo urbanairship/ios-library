@@ -5,9 +5,8 @@ import Foundation
 // NOTE: For internal use only. :nodoc:
 @objc(UAExperimentDataProvider)
 public protocol ExperimentDataProvider {
-    func evaluateGlobalHoldouts(info: MessageInfo, contactId: String?) async -> ExperimentResult? 
+    func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult
 }
-
 
 // NOTE: For internal use only. :nodoc:
 @objc
@@ -22,15 +21,21 @@ public final class MessageInfo: NSObject {
 // NOTE: For internal use only. :nodoc:
 @objc
 public final class ExperimentResult: NSObject {
-    let channelId: String
-    let contactId: String? // set if this experiment was evaluated with a contact id or not
-    let experimentId: String
-    let reportingMetadata: [String: String]
-    
-    init(channelId: String, contactId: String?, experimentId: String, reportingMetadata: [String : String]) {
-        self.channelId = channelId
-        self.contactId = contactId
-        self.experimentId = experimentId
-        self.reportingMetadata = reportingMetadata
+    @objc public let channelID: String
+    @objc public let contactID: String
+
+    @objc public let isMatch: Bool
+    public let evaluatedExperimentsReportingData: [AirshipJSON]
+
+    @objc(evaluatedExperimentsReportingData)
+    public var _evaluatedExperimentsReportingData: [Any] {
+        return evaluatedExperimentsReportingData.compactMap { $0.unWrap() }
+    }
+
+    init(channelID: String, contactID: String, isMatch: Bool, evaluatedExperimentsReportingData: [AirshipJSON]) {
+        self.channelID = channelID
+        self.contactID = contactID
+        self.isMatch = isMatch
+        self.evaluatedExperimentsReportingData = evaluatedExperimentsReportingData
     }
 }

@@ -2,7 +2,6 @@
 
 #import "UATagSelector+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UATagGroups+Internal.h"
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
 #elif __has_include("AirshipKit-Swift.h")
@@ -10,6 +9,10 @@
 #else
 @import AirshipCore;
 #endif
+
+/// This class is no longer used internally except. We are not able to remove it since its public and that would be a breaking change. We also
+/// do not want to have to expose structs/enums from swfit to obj-c.
+
 /**
  * Represents the type of the tag selector.
  */

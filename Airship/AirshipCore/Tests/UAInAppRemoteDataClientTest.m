@@ -863,9 +863,7 @@
 
     UASchedule *expected = [UAInAppMessageSchedule scheduleWithMessage:message
                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-            builder.notificationsOptIn = @(YES);
-        }];
+        builder.audienceJSON = payload[@"audience"];
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
@@ -883,6 +881,10 @@
         builder.group = @"some group";
         builder.interval = 60;
         builder.priority = -30;
+
+
+        builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:payload[@"created"]];
+
     }];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
@@ -939,9 +941,7 @@
 
     UASchedule *expected = [UAActionSchedule scheduleWithActions:@{@"some action name": @"some action value"}
                                                     builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-            builder.notificationsOptIn = @(YES);
-        }];
+        builder.audienceJSON = payload[@"audience"];
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
@@ -959,6 +959,7 @@
         builder.group = @"some group";
         builder.interval = 60;
         builder.priority = -30;
+        builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:@"2017-12-04T19:07:54.564"];
     }];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
@@ -1007,15 +1008,14 @@
 
     UASchedule *expected = [UADeferredSchedule scheduleWithDeferredData:deferred
                                                            builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
-        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-            builder.notificationsOptIn = @(YES);
-        }];
+        builder.audienceJSON = payload[@"audience"];
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
             @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
         };
+        builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:payload[@"created"]];
     }];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
@@ -1145,9 +1145,7 @@
     UASchedule *expected = [UAInAppMessageSchedule scheduleWithMessage:message
                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
 
-        builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
-            builder.notificationsOptIn = @(YES);
-        }];
+        builder.audienceJSON = payload[@"audience"];
         builder.identifier = @"some id";
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
@@ -1156,6 +1154,7 @@
         };
         builder.campaigns = @{ @"categories": @[@"cool"] };
         builder.frequencyConstraintIDs = @[@"constraint-one"];
+        builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:payload[@"created"]];
     }];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"

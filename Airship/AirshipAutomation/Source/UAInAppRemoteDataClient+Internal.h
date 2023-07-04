@@ -10,6 +10,7 @@
 @class UAPreferenceDataStore;
 @class UAChannel;
 @class UADispatcher;
+@class UARemoteDataInfo;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -104,6 +105,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)refreshAndCheckScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler;
 
 - (void)invalidateAndRefreshSchedule:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler;
+
+- (UARemoteDataInfo *)remoteDataInfoFromSchedule:(UASchedule *)schedule;
 @end
 
 NS_ASSUME_NONNULL_END

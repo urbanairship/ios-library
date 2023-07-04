@@ -36,6 +36,9 @@ NSUInteger const UAScheduleDataVersion = 3;
 @dynamic reportingContext;
 @dynamic frequencyConstraintIDs;
 @dynamic triggeredTime;
+@dynamic messageType;
+@dynamic bypassHoldoutGroups;
+@dynamic isNewUserEvaluationDate;
 
 -(void)setExecutionState:(NSNumber *)executionState {
     [self willChangeValueForKey:@"executionState"];

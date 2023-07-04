@@ -9,8 +9,7 @@
 #import "UARetriable+Internal.h"
 #import "UARetriablePipeline+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAScheduleAudience.h"
-#import "UAScheduleAudienceChecks+Internal.h"
+#import "UAScheduleAudience+Internal.h"
 #import "UAInAppMessageSchedule.h"
 #import "UADeferredScheduleRetryRules+Internal.h"
 
@@ -41,6 +40,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 @property(nonatomic, assign) dispatch_once_t engineStarted;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, NSURL *> *redirectURLs;
+@property(nonatomic, strong) id<UAAutomationAudienceCheckerProtocol> audienceChecker;
+
 @end
 
 @implementation UAInAppAutomation
@@ -59,7 +60,9 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                              channel:(UAChannel *)channel
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                      privacyManager:(UAPrivacyManager *)privacyManager {
+                      privacyManager:(UAPrivacyManager *)privacyManager
+                     audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker {
+
 
     return [[self alloc] initWithConfig:config
                        automationEngine:automationEngine
@@ -70,7 +73,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                                 channel:channel
               deferredScheduleAPIClient:deferredScheduleAPIClient
                   frequencyLimitManager:frequencyLimitManager
-                         privacyManager:privacyManager];
+                         privacyManager:privacyManager
+                        audienceChecker:audienceChecker];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -108,7 +112,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                                              channel:channel
                            deferredScheduleAPIClient:deferredScheduleAPIClient
                                frequencyLimitManager:frequencyLimitManager
-                                      privacyManager:privacyManager];
+                                      privacyManager:privacyManager
+                                     audienceChecker:[[UAAutomationAudienceChecker alloc] init]];
 }
 
 
@@ -121,7 +126,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                        channel:(UAChannel *)channel
      deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
          frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                privacyManager:(UAPrivacyManager *)privacyManager {
+                privacyManager:(UAPrivacyManager *)privacyManager
+               audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker {
 
     self = [super init];
 
@@ -137,6 +143,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.frequencyCheckers = [NSMutableDictionary dictionary];
         self.privacyManager = privacyManager;
+        self.audienceChecker = audienceChecker;
         self.automationEngine.delegate = self;
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
@@ -316,15 +323,15 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     // Check audience conditions
     UARetriable *checkAudience = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
-        UAScheduleAudience *audience = schedule.audience;
-        [self checkAudience:audience completionHandler:^(BOOL success, NSError *error) {
+        [self checkAudienceForSchedule:schedule completionHandler:^(BOOL success, NSError *error) {
             if (error) {
                 retriableHandler(UARetriableResultRetry, 0);
             } else if (success) {
                 retriableHandler(UARetriableResultSuccess, 0);
             } else {
-                UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)audience.missBehavior);
-                completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
+                UAScheduleAudienceMissBehaviorType missBehavior = schedule.audienceMissBehavior;
+                UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)missBehavior);
+                completionHandler([UAInAppAutomation prepareResultForMissedBehavior:missBehavior]);
                 retriableHandler(UARetriableResultCancel, 0);
             }
         }];
@@ -414,7 +421,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
             } else if (response.result) {
                 if (!response.result.isAudienceMatch) {
                     UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
-                    completionHandler([UAInAppAutomation prepareResultForMissedAudience:schedule.audience]);
+                    completionHandler([UAInAppAutomation prepareResultForMissedBehavior:schedule.audienceMissBehavior]);
                     retriableHandler(UARetriableResultCancel, 0);
                 } else if (response.result.message) {
                     [self.inAppMessageManager prepareMessage:response.result.message
@@ -476,12 +483,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
 }
 
-+ (UAAutomationSchedulePrepareResult)prepareResultForMissedAudience:(UAScheduleAudience *)audience {
-    if (!audience) {
-        return UAAutomationSchedulePrepareResultPenalize;
-    }
-
-    switch(audience.missBehavior) {
++ (UAAutomationSchedulePrepareResult)prepareResultForMissedBehavior:(UAScheduleAudienceMissBehaviorType)missBehavior {
+    switch(missBehavior) {
         case UAScheduleAudienceMissBehaviorCancel:
             return UAAutomationSchedulePrepareResultCancel;
         case UAScheduleAudienceMissBehaviorSkip:
@@ -657,16 +660,27 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     self.automationEngine.delegate = nil;
 }
 
-- (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
+- (void)checkAudienceForSchedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
+    if (schedule.audienceJSON) {
 
-    [UAScheduleAudienceChecks checkDisplayAudienceConditions:audience completionHandler:^(BOOL result) {
-        if (result) {
-            completionHandler(YES, nil);
-        } else {
-            completionHandler(NO, nil);
-        }
-    }];
-    
+        UARemoteDataInfo *remoteDataInfo = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
+
+        [self.audienceChecker evaluateWithAudience:schedule.audienceJSON
+                             isNewUserEvaluationDate:schedule.isNewUserEvaluationDate ?: [NSDate distantPast]
+                                         contactID:remoteDataInfo.contactID
+                                 completionHandler:completionHandler];
+    }  else {
+        completionHandler(YES, nil);
+    }
+}
+
+// Internal method that was in a public header, should delete next major release
+// Keeping it functional to avoid breaking anyone that is using an internally documented method.
+- (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
+    [self.audienceChecker evaluateWithAudience:[audience toJSON]
+                       isNewUserEvaluationDate:[NSDate date]
+                                     contactID:nil
+                             completionHandler:completionHandler];
 }
 
 - (void)executionReadinessChanged {

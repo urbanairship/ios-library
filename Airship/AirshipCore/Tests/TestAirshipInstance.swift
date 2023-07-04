@@ -6,6 +6,7 @@ import Foundation
 
 @objc(UATestAirshipInstance)
 public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
+    public let preferenceDataStore: AirshipCore.PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
 
     private var _config: RuntimeConfig?
     @objc

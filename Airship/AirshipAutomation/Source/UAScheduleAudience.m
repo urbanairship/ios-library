@@ -11,13 +11,17 @@
 #else
 @import AirshipCore;
 #endif
-NSString * const UAScheduleAudienceNewUserKey = @"new_user";
+
+
+/// This class is no longer used internally except to parse the miss behavior. We are not able to remove it since its public and that would be a breaking change. We also
+/// do not want to have to expose structs/enums from swfit to obj-c. For now, this class exists for public definitions of an audience and to parse
+/// the miss behavior.
+
 NSString * const UAScheduleAudienceNotificationOptInKey = @"notification_opt_in";
 NSString * const UAScheduleAudienceLocationOptInKey = @"location_opt_in";
 NSString * const UAScheduleAudienceLanguageTagsKey = @"locale";
 NSString * const UATagSelectorKey = @"tags";
 NSString * const UAScheduleAudienceAppVersionKey = @"app_version";
-NSString * const UAScheduleAudienceTestDevicesKey = @"test_devices";
 NSString * const UAScheduleAudienceMissBehaviorKey = @"miss_behavior";
 NSString * const UAScheduleAudienceRequiresAnalytics = @"requires_analytics";
 NSString * const UAScheduleAudiencePermissions = @"permissions";
@@ -60,8 +64,46 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
 
 @implementation UAScheduleAudience
 
-@synthesize isNewUser = _isNewUser;
-@synthesize testDevices = _testDevices;
++ (UAScheduleAudienceMissBehaviorType)parseMissBehavior:(id)json error:(NSError **)error {
+    if (!json || ![json isKindOfClass:[NSDictionary class]]) {
+        if (error) {
+            *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
+        }
+        return UAScheduleAudienceMissBehaviorPenalize;
+    }
+
+    /// Miss behavior
+    id missBehaviorValue = json[UAScheduleAudienceMissBehaviorKey];
+    if (missBehaviorValue) {
+        if (![missBehaviorValue isKindOfClass:[NSString class]]) {
+            if (error) {
+                NSString *msg = [NSString stringWithFormat:@"Miss behavior must be a string. Invalid value: %@", missBehaviorValue];
+                *error =  [NSError errorWithDomain:UAScheduleAudienceErrorDomain
+                                              code:UAScheduleAudienceErrorCodeInvalidJSON
+                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
+            }
+            return UAScheduleAudienceMissBehaviorSkip;
+        } else {
+            if ([UAScheduleAudienceMissBehaviorCancelValue isEqualToString:missBehaviorValue]) {
+                return UAScheduleAudienceMissBehaviorCancel;
+            } else if ([UAScheduleAudienceMissBehaviorSkipValue isEqualToString:missBehaviorValue]) {
+                return UAScheduleAudienceMissBehaviorSkip;
+            } else if ([UAScheduleAudienceMissBehaviorPenalizeValue isEqualToString:missBehaviorValue]) {
+                return UAScheduleAudienceMissBehaviorPenalize;
+            } else {
+                if (error) {
+                    NSString *msg = [NSString stringWithFormat:@"Invalid miss behavior: %@", missBehaviorValue];
+                    *error =  [NSError errorWithDomain:UAScheduleAudienceErrorDomain
+                                                  code:UAScheduleAudienceErrorCodeInvalidJSON
+                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
+                }
+                return UAScheduleAudienceMissBehaviorPenalize;
+            }
+        }
+    }
+
+    return UAScheduleAudienceMissBehaviorPenalize;
+}
 
 + (nullable instancetype)audienceWithJSON:(id)json error:(NSError **)error {
     UAScheduleAudienceBuilder *builder = [[UAScheduleAudienceBuilder alloc] init];
@@ -71,18 +113,6 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
             *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Json must be a dictionary. Invalid value: %@", json]];
         }
         return nil;
-    }
-
-    /// New user
-    id onlyNewUser = json[UAScheduleAudienceNewUserKey];
-    if (onlyNewUser) {
-        if (![onlyNewUser isKindOfClass:[NSNumber class]]) {
-            if (error) {
-                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be a boolean. Invalid value: %@", UAScheduleAudienceNewUserKey, onlyNewUser]];
-            }
-            return nil;
-        }
-        builder.isNewUser = onlyNewUser;
     }
 
     /// Notification Optin
@@ -140,58 +170,17 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         }
     }
 
-    /// Test devices
-    id testDevices = json[UAScheduleAudienceTestDevicesKey];
-    if (testDevices) {
-        if (![testDevices isKindOfClass:[NSArray class]]) {
-            if (error) {
-                *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Value for the \"%@\" key must be an array. Invalid value: %@", UAScheduleAudienceTestDevicesKey, testDevices]];
-            }
-            return nil;
-        }
-
-        for (id value in testDevices) {
-            if (![value isKindOfClass:[NSString class]]) {
-                if (error) {
-                    *error = [self invalidJSONErrorWithMsg:[NSString stringWithFormat:@"Invalid test device value: %@", value]];
-                }
-                return nil;
-            }
-        }
-
-        builder.testDevices = testDevices;
-    }
     
     /// Miss behavior
-    id missBehaviorValue = json[UAScheduleAudienceMissBehaviorKey];
-    if (missBehaviorValue) {
-        if (![missBehaviorValue isKindOfClass:[NSString class]]) {
-            if (error) {
-                NSString *msg = [NSString stringWithFormat:@"Miss behavior must be a string. Invalid value: %@", missBehaviorValue];
-                *error =  [NSError errorWithDomain:UAScheduleAudienceErrorDomain
-                                              code:UAScheduleAudienceErrorCodeInvalidJSON
-                                          userInfo:@{NSLocalizedDescriptionKey:msg}];
-            }
-            return nil;
-        } else {
-            if ([UAScheduleAudienceMissBehaviorCancelValue isEqualToString:missBehaviorValue]) {
-                builder.missBehavior = UAScheduleAudienceMissBehaviorCancel;
-            } else if ([UAScheduleAudienceMissBehaviorSkipValue isEqualToString:missBehaviorValue]) {
-                builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
-            } else if ([UAScheduleAudienceMissBehaviorPenalizeValue isEqualToString:missBehaviorValue]) {
-                builder.missBehavior = UAScheduleAudienceMissBehaviorPenalize;
-            } else {
-                if (error) {
-                    NSString *msg = [NSString stringWithFormat:@"Invalid miss behavior: %@", missBehaviorValue];
-                    *error =  [NSError errorWithDomain:UAScheduleAudienceErrorDomain
-                                                  code:UAScheduleAudienceErrorCodeInvalidJSON
-                                              userInfo:@{NSLocalizedDescriptionKey:msg}];
-                }
-                return nil;
-            }
+    NSError *missBehaviorError;
+    builder.missBehavior = [self parseMissBehavior:json error:&missBehaviorError];
+    if (missBehaviorError) {
+        if (error) {
+            *error = missBehaviorError;
         }
+        return nil;
     }
-    
+
     /// Requires analytics
     id requiresAnalyticsValue = json[UAScheduleAudienceRequiresAnalytics];
     if (requiresAnalyticsValue) {
@@ -252,8 +241,6 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
             return nil;
         }
 
-        _isNewUser = builder.isNewUser;
-        _testDevices = builder.testDevices;
         self.notificationsOptIn = builder.notificationsOptIn;
         self.locationOptIn = builder.locationOptIn;
         self.languageIDs = builder.languageTags;
@@ -267,26 +254,17 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
     return self;
 }
 
-- (NSArray *)testDevices {
-    return _testDevices;
-}
-
-- (NSNumber *)isNewUser {
-    return _isNewUser;
-}
 
 #pragma mark - Validation
 
 
 - (NSDictionary *)toJSON {
     NSMutableDictionary *json = [NSMutableDictionary dictionary];
-    [json setValue:self.isNewUser forKey:UAScheduleAudienceNewUserKey];
     [json setValue:self.notificationsOptIn forKey:UAScheduleAudienceNotificationOptInKey];
     [json setValue:self.locationOptIn forKey:UAScheduleAudienceLocationOptInKey];
     [json setValue:self.languageIDs forKey:UAScheduleAudienceLanguageTagsKey];
     [json setValue:[self.tagSelector toJSON] forKey:UATagSelectorKey];
     [json setValue:self.versionPredicate.payload forKey:UAScheduleAudienceAppVersionKey];
-    [json setValue:self.testDevices forKey:UAScheduleAudienceTestDevicesKey];
     [json setValue:self.requiresAnalytics forKey:UAScheduleAudienceRequiresAnalytics];
     [json setValue:self.permissionPredicate.payload forKey:UAScheduleAudiencePermissions];
     
@@ -318,9 +296,6 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
 }
 
 - (BOOL)isEqualToAudience:(nullable UAScheduleAudience *)audience {
-    if ((self.isNewUser != audience.isNewUser) && ![self.isNewUser isEqual:audience.isNewUser]) {
-        return NO;
-    }
     if ((self.notificationsOptIn != audience.notificationsOptIn) && ![self.notificationsOptIn isEqual:audience.notificationsOptIn]) {
         return NO;
     }
@@ -334,9 +309,6 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
         return NO;
     }
     if ((self.versionPredicate != audience.versionPredicate) && ![self.versionPredicate.payload isEqual:audience.versionPredicate.payload]) {
-        return NO;
-    }
-    if ((self.testDevices != audience.testDevices) && ![self.testDevices isEqual:audience.testDevices]) {
         return NO;
     }
     if (self.missBehavior != audience.missBehavior) {
@@ -354,13 +326,11 @@ NSString * const UAScheduleAudienceErrorDomain = @"com.urbanairship.in_app_messa
 
 - (NSUInteger)hash {
     NSUInteger result = 1;
-    result = 31 * result + [self.isNewUser hash];
     result = 31 * result + [self.notificationsOptIn hash];
     result = 31 * result + [self.locationOptIn hash];
     result = 31 * result + [self.languageIDs hash];
     result = 31 * result + [self.tagSelector hash];
     result = 31 * result + [self.versionPredicate.payload hash];
-    result = 31 * result + [self.testDevices hash];
     result = 31 * result + self.missBehavior;
     result = 31 * result + [self.requiresAnalytics hash];
     result = 31 * result + [self.permissionPredicate.payload hash];

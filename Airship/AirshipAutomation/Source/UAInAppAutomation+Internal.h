@@ -17,6 +17,9 @@
 @class UAPrivacyManager;
 @class UAAutomationAudienceOverridesProvider;
 @class UARemoteDataAutomationAccess;
+@class UAAutomationAudienceChecker;
+
+@protocol UAAutomationAudienceCheckerProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -39,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param deferredScheduleAPIClient The deferred API client.
  * @param frequencyLimitManager The frequency limit manager.
  * @param privacyManager The privacy manager.
+ * @param audienceChecker The audience checker.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -50,7 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
                              channel:(UAChannel *)channel
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                      privacyManager:(UAPrivacyManager *)privacyManager;
+                      privacyManager:(UAPrivacyManager *)privacyManager
+                     audienceChecker:(id<UAAutomationAudienceCheckerProtocol>)audienceChecker;
 
 /**
  * Factory method.

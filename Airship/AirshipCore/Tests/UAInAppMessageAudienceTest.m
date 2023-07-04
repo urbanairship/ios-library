@@ -16,7 +16,6 @@
     //setup
     __block NSError *error;
     UAScheduleAudience *originalAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
-        builder.isNewUser = @YES;
         builder.notificationsOptIn = @YES;
         builder.locationOptIn = @NO;
         builder.languageTags = @[@"en-us"];
@@ -28,7 +27,6 @@
 
         UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
-        builder.testDevices = @[@"test-device"];
         builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
         builder.requiresAnalytics = @YES;
     }];
@@ -46,7 +44,6 @@
     //setup
     __block NSError *error;
     UAScheduleAudience *originalAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
-        builder.isNewUser = @YES;
         builder.notificationsOptIn = @YES;
         builder.locationOptIn = @NO;
         builder.languageTags = @[@"en-us"];
@@ -58,7 +55,6 @@
         
         UAJSONMatcher *matcher = [[UAJSONMatcher alloc] initWithValueMatcher:[UAJSONValueMatcher matcherWithVersionConstraint:@"[1.0, 2.0]"] scope:@[@"ios",@"version"]];
         builder.versionPredicate = [[UAJSONPredicate alloc] initWithJSONMatcher:matcher];
-        builder.testDevices = @[@"test-device"];
         builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
     }];
     
@@ -114,8 +110,7 @@
 
 - (void)testFullJson {
     NSError *error;
-    NSDictionary *json = @{ @"new_user": @(true),
-                            @"notification_opt_in": @(true),
+    NSDictionary *json = @{ @"notification_opt_in": @(true),
                             @"location_opt_in": @(true),
                             @"locale": @[@"en-us"],
                             @"tags": @{
@@ -124,7 +119,6 @@
                                         }, @{ @"tag": @"cool"}
                                         ]
                                     },
-                            @"test_devices": @[@"test_device_one", @"test_device_two"],
                             @"miss_behavior": @"cancel" };
 
 

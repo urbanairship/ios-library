@@ -2,6 +2,7 @@
 
 #import "UASchedule+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UAScheduleAudience+Internal.h"
 
 NSUInteger const UAScheduleMaxTriggers = 10;
 
@@ -30,7 +31,6 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @property(nonatomic, assign) NSTimeInterval interval;
 @property(nonatomic, assign) NSTimeInterval editGracePeriod;
 @property(nonatomic, copy) NSDictionary *metadata;
-@property(nonatomic, strong) UAScheduleAudience *audience;
 @property(nonatomic, strong) NSDate *triggeredTime;
 @end
 
@@ -40,6 +40,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @synthesize type = _type;
 @synthesize campaigns = _campaigns;
 @synthesize reportingContext = _reportingContext;
+@synthesize audienceJSON = _audienceJSON;
+@synthesize isNewUserEvaluationDate = _isNewUserEvaluationDate;
+@synthesize messageType = _messageType;
+@synthesize bypassHoldoutGroups = _bypassHoldoutGroups;
 
 @synthesize frequencyConstraintIDs = _frequencyConstraintIDs;
 
@@ -78,11 +82,14 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         self.editGracePeriod = builder.editGracePeriod;
         self.interval = builder.interval;
         self.metadata = builder.metadata ?: @{};
-        self.audience = builder.audience;
+        _audienceJSON = builder.audienceJSON ?: [builder.audience toJSON];
         self.triggeredTime = builder.triggeredTime ?: [NSDate distantPast];
         _campaigns = [builder.campaigns copy] ?: @{};
         _reportingContext = [builder.reportingContext copy] ?: @{};
         _frequencyConstraintIDs = [builder.frequencyConstraintIDs copy] ?: @[];
+        _isNewUserEvaluationDate = builder.isNewUserEvaluationDate;
+        _bypassHoldoutGroups = builder.bypassHoldoutGroups;
+        _messageType = builder.messageType;
     }
 
     return self;
@@ -145,7 +152,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         return NO;
     }
 
-    if (self.audience != schedule.audience && ![self.audience isEqual:schedule.audience]) {
+    if (self.audienceJSON != schedule.audienceJSON && ![self.audienceJSON isEqual:schedule.audienceJSON]) {
         return NO;
     }
 
@@ -164,10 +171,38 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     if (![self.triggeredTime isEqualToDate:schedule.triggeredTime]) {
         return NO;
     }
-    
+
+    if (self.messageType != schedule.messageType && ![self.messageType isEqual:schedule.messageType]) {
+        return NO;
+    }
+
+    if (self.bypassHoldoutGroups != schedule.bypassHoldoutGroups) {
+        return NO;
+    }
+
+    if (self.isNewUserEvaluationDate != schedule.isNewUserEvaluationDate && ![self.isNewUserEvaluationDate isEqual:schedule.isNewUserEvaluationDate]) {
+        return NO;
+    }
+
     return YES;
 }
 
+
+- (UAScheduleAudience *)audience {
+    if (self.audienceJSON) {
+        return [UAScheduleAudience audienceWithJSON:self.audienceJSON error:nil];
+    }
+    return nil;
+}
+
+
+- (UAScheduleAudienceMissBehaviorType)audienceMissBehavior {
+    if (!self.audienceJSON) {
+        return UAScheduleAudienceMissBehaviorPenalize;
+    }
+
+    return [UAScheduleAudience parseMissBehavior:self.audienceJSON error:nil];
+}
 
 #pragma mark - NSObject
 
@@ -193,7 +228,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + [self.triggers hash];
     result = 31 * result + [self.data hash];
     result = 31 * result + [self.delay hash];
-    result = 31 * result + [self.audience hash];
+    result = 31 * result + [self.audienceJSON hash];
     result = 31 * result + [self.campaigns hash];
     result = 31 * result + [self.reportingContext hash];
     result = 31 * result + [self.frequencyConstraintIDs hash];
@@ -202,7 +237,9 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + self.type;
     result = 31 * result + self.limit;
     result = 31 * result + self.priority;
-    result = 31 * result + [self.triggeredTime hash];
+    result = 31 * result + [self.messageType hash];
+    result = 31 * result + self.bypassHoldoutGroups;
+    result = 31 * result + [self.isNewUserEvaluationDate hash];
     return result;
 }
 

@@ -114,7 +114,6 @@ NS_SWIFT_NAME(ScheduleBuilder)
  */
 @property(nonatomic, strong, nullable) UAScheduleAudience *audience;
 
-
 /**
  * The schedule's triggered time.
  *

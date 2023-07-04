@@ -15,8 +15,9 @@ struct Experiment: Codable, Sendable {
     let type: ExperimentType
     let resolutionType: ResultionType
     let lastUpdated: Date
-    let reportingMetadata: [String: String]
-    let audienceSelector: AudienceSelector
+    let created: Date
+    let reportingMetadata: AirshipJSON
+    let audienceSelector: DeviceAudienceSelector
     let exclusions: [MessageCriteria]
     
     enum CodingKeys: String, CodingKey {
@@ -24,6 +25,7 @@ struct Experiment: Codable, Sendable {
         case type = "experimentType"
         case resolutionType = "type"
         case lastUpdated = "last_updated"
+        case created
         case reportingMetadata = "reporting_metadata"
         case audienceSelector = "audience_selector"
         case exclusions = "message_exclusions"

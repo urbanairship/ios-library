@@ -5,7 +5,6 @@
 #import "UAInAppMessageManager+Internal.h"
 #import "UASchedule+Internal.h"
 #import "UAScheduleAudience.h"
-#import "UAScheduleAudienceChecks+Internal.h"
 #import "UATagSelector+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAInAppRemoteDataClient+Internal.h"
@@ -27,6 +26,8 @@
 @property(nonatomic, strong) id mockInAppMessageManager;
 @property(nonatomic, strong) id mockDeferredClient;
 @property(nonatomic, strong) id mockChannel;
+@property(nonatomic, strong) id mockAudienceChecker;
+
 @property(nonatomic, strong) UATestAirshipInstance *airship;
 @property(nonatomic, strong) id mockFrequencyLimitManager;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
@@ -46,6 +47,7 @@
 - (void)setUp {
     [super setUp];
 
+
     self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
@@ -55,6 +57,7 @@
     self.mockDeferredClient = [self mockForClass:[UADeferredScheduleAPIClient class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
+    self.mockAudienceChecker = [self mockForProtocol:@protocol(UAAutomationAudienceCheckerProtocol)];
 
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -77,7 +80,8 @@
                                                            channel:self.mockChannel
                                          deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
-                                                    privacyManager:self.privacyManager];
+                                                    privacyManager:self.privacyManager
+                                                   audienceChecker:self.mockAudienceChecker];
     XCTAssertNotNil(self.engineDelegate);
 }
 
@@ -99,7 +103,8 @@
                                                            channel:self.mockChannel
                                          deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
-                                                    privacyManager:self.privacyManager];
+                                                    privacyManager:self.privacyManager
+                                                   audienceChecker:self.mockAudienceChecker];
 
     XCTAssertTrue(self.inAppAutomation.isPaused);
 }
@@ -122,7 +127,8 @@
                                                            channel:self.mockChannel
                                          deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
-                                                    privacyManager:self.privacyManager];
+                                                    privacyManager:self.privacyManager
+                                                   audienceChecker:self.mockAudienceChecker];
 
     XCTAssertFalse(self.inAppAutomation.isPaused);
 }
@@ -131,6 +137,13 @@
 - (void)testCheckEmptyAudience {
     UAScheduleAudience *emptyAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
     }];
+
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(YES, nil);
+    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *checkFinished = [self expectationWithDescription:@"check audience finished"];
     [self.inAppAutomation checkAudience:emptyAudience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
@@ -973,6 +986,13 @@
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
      audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(YES, nil);
+    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -1011,7 +1031,6 @@
         block(overrides);
     }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -1032,6 +1051,13 @@
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
      audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(YES, nil);
+    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -1070,6 +1096,7 @@
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
             builder.notificationsOptIn = @(YES);
         }];
+        builder.isNewUserEvaluationDate = [NSDate date];
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1087,13 +1114,12 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
-        callback(NO);
-    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(NO, nil);
+    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -1104,7 +1130,7 @@
     }];
 
     [self waitForTestExpectations];
-    [checks verify];
+    [self.mockAudienceChecker verify];
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
@@ -1113,6 +1139,7 @@
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorCancel;
         }];
+        builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1130,13 +1157,15 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andDo:^(NSInvocation *invocation) {
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
-        callback(NO);
-    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(NO, nil);
+    }] evaluateWithAudience:schedule.audienceJSON
+     isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
+                  contactID:nil
+          completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1146,7 +1175,7 @@
     }];
 
     [self waitForTestExpectations];
-    [checks verify];
+    [self.mockAudienceChecker verify];
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorSkip {
@@ -1155,6 +1184,7 @@
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
         }];
+        builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
 
@@ -1173,13 +1203,16 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andDo:^(NSInvocation *invocation) {
+    // Mock the checks to reject the audience
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
-        callback(NO);
-    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(NO, nil);
+    }] evaluateWithAudience:schedule.audienceJSON
+     isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
+                  contactID:nil
+          completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1189,7 +1222,7 @@
     }];
 
     [self waitForTestExpectations];
-    [checks verify];
+    [self.mockAudienceChecker verify];
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorPenalize {
@@ -1198,6 +1231,7 @@
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorPenalize;
         }];
+        builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1215,13 +1249,16 @@
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
-    id checks = [self mockForClass:[UAScheduleAudienceChecks class]];
-    [[[checks expect] andDo:^(NSInvocation *invocation) {
+    // Mock the checks to reject the audience
+    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(BOOL ) =  (__bridge void (^)(BOOL ))arg;
-        callback(NO);
-    }] checkDisplayAudienceConditions:schedule.audience completionHandler:OCMOCK_ANY];
+        [invocation getArgument:&arg atIndex:5];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(NO, nil);
+    }] evaluateWithAudience:schedule.audienceJSON
+     isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
+                  contactID:nil
+          completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1231,7 +1268,7 @@
     }];
 
     [self waitForTestExpectations];
-    [checks verify];
+    [self.mockAudienceChecker verify];
 }
 
 - (void)testIsActionsReady {

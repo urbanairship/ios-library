@@ -300,9 +300,13 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
     scheduleData.reportingContext = schedule.reportingContext;
     scheduleData.frequencyConstraintIDs = schedule.frequencyConstraintIDs;
     scheduleData.triggeredTime = schedule.triggeredTime;
-    
-    if (schedule.audience) {
-        scheduleData.audience = [UAJSONUtils stringWithObject:[schedule.audience toJSON]];
+
+    scheduleData.messageType = schedule.messageType;
+    scheduleData.bypassHoldoutGroups = @(schedule.bypassHoldoutGroups);
+    scheduleData.isNewUserEvaluationDate = schedule.isNewUserEvaluationDate;
+
+    if (schedule.audienceJSON) {
+        scheduleData.audience = [UAJSONUtils stringWithObject:schedule.audienceJSON];
     }
 
     if (schedule.delay) {

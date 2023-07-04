@@ -2,7 +2,7 @@
 
 /// Predicate for JSON payloads.
 @objc(UAJSONPredicate)
-public final class JSONPredicate: NSObject, Sendable {
+public final class JSONPredicate: NSObject, Sendable, Codable {
     private static let andTypeKey = "and"
     private static let orTypeKey = "or"
     private static let notTypeKey = "not"
@@ -106,6 +106,16 @@ public final class JSONPredicate: NSObject, Sendable {
                 "Invalid JSON: \(String(describing: json))"
             )
         }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        let json = try AirshipJSON.wrap(payload())
+        try json.encode(to: encoder)
+    }
+
+    public convenience init(from decoder: Decoder) throws {
+        let json = try AirshipJSON(from: decoder)
+        try self.init(json: json.unWrap())
     }
 
     /**
@@ -248,5 +258,32 @@ public final class JSONPredicate: NSObject, Sendable {
 
     public override var description: String {
         return String(format: "JSONPredicate{predicate=\(payload())}")
+    }
+
+    func isEqual(to options: JSONPredicate) -> Bool {
+
+        return type == options.type
+            && jsonMatcher == options.jsonMatcher
+            && subpredicates == options.subpredicates
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let predicate = object as? JSONPredicate else {
+            return false
+        }
+
+        if self === predicate {
+            return true
+        }
+
+        return isEqual(to: predicate)
+    }
+
+    func hash() -> Int {
+        var result = 1
+        result = 31 * result + (type?.hashValue ?? 1)
+        result = 31 * result + jsonMatcher.hashValue
+        result = 31 * result + (subpredicates?.hashValue ?? 1)
+        return result
     }
 }

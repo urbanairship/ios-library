@@ -1363,18 +1363,6 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         return nil;
     }
 
-    UAScheduleAudience *audience;
-    if (scheduleData.audience) {
-        NSError *audienceError;
-        id audienceJSON = [UAJSONUtils objectWithString:scheduleData.audience];
-        audience = [UAScheduleAudience audienceWithJSON:audienceJSON error:&audienceError];
-        if (!audience || audienceError) {
-            UA_LERR(@"Invalid schedule. Deleting %@ - %@", scheduleData.identifier, audienceError);
-            [scheduleData.managedObjectContext deleteObject:scheduleData];
-            return nil;
-        }
-    }
-
     UASchedule *schedule = [UAAutomationEngine scheduleWithType:[scheduleData.type unsignedIntegerValue]
                                                        dataJSON:dataJSON
                                                    builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
@@ -1389,7 +1377,9 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.editGracePeriod = [scheduleData.editGracePeriod doubleValue];
         builder.metadata = [UAJSONUtils objectWithString:scheduleData.metadata];
         builder.identifier = scheduleData.identifier;
-        builder.audience = audience;
+        if (scheduleData.audience) {
+            builder.audienceJSON = [UAJSONUtils objectWithString:scheduleData.audience];
+        }
         builder.campaigns= scheduleData.campaigns;
         builder.reportingContext = scheduleData.reportingContext;
         builder.frequencyConstraintIDs = scheduleData.frequencyConstraintIDs;
@@ -1531,8 +1521,8 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         scheduleData.metadata = [UAJSONUtils stringWithObject:edits.metadata];
     }
 
-    if (edits.audience) {
-        scheduleData.audience = [UAJSONUtils stringWithObject:[edits.audience toJSON]];
+    if (edits.audienceJSON) {
+        scheduleData.audience = [UAJSONUtils stringWithObject:edits.audienceJSON];
     }
 
     if (edits.campaigns) {
@@ -1549,6 +1539,18 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     
     if (edits.triggeredTime) {
         scheduleData.triggeredTime = edits.triggeredTime;
+    }
+
+    if (edits.messageType) {
+        scheduleData.messageType = edits.messageType;
+    }
+
+    if (edits.bypassHoldoutGroups) {
+        scheduleData.bypassHoldoutGroups = edits.bypassHoldoutGroups;
+    }
+
+    if (edits.isNewUserEvaluationDate) {
+        scheduleData.isNewUserEvaluationDate = edits.isNewUserEvaluationDate;
     }
 }
 

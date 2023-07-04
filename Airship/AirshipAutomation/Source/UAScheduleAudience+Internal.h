@@ -14,35 +14,7 @@ typedef NS_ENUM(NSInteger, UAScheduleAudienceErrorCode) {
     UAScheduleAudienceErrorCodeInvalidJSON,
 };
 
-@interface UAScheduleAudienceBuilder()
-
-/**
- * The new user flag.
- *
- * Optional. Defaults to "NO".
- */
-@property(nonatomic, strong, nullable) NSNumber *isNewUser;
-
-/**
- * Test devices.
- *
- * Optional.
- */
-@property(nonatomic, copy, nullable) NSArray<NSString *> *testDevices;
-
-@end
-
 @interface UAScheduleAudience()
-
-/**
- * The new user flag.
- */
-@property(nonatomic, nullable, readonly) NSNumber *isNewUser;
-
-/**
- * Test devices.
- */
-@property(nonatomic, nullable, readonly) NSArray<NSString *> *testDevices;
 
 /**
  * Factory method for building audience model from JSON.
@@ -52,6 +24,15 @@ typedef NS_ENUM(NSInteger, UAScheduleAudienceErrorCode) {
  * @returns `YES` if the json was able to be applied, otherwise `NO`.
  */
 + (nullable instancetype)audienceWithJSON:(id)json error:(NSError **)error;
+
+/**
+ * Parses the miss behavior.
+ *
+ * @param json The json object.
+ * @param error An NSError pointer for storing errors, if applicable.
+ * @returns The miss behavior or peanlize if not able to be parsed.
+ */
++ (UAScheduleAudienceMissBehaviorType)parseMissBehavior:(id)json error:(NSError **)error;
 
 /**
  * Method to return the audience as its JSON representation.

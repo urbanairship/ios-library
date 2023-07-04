@@ -4,7 +4,6 @@
 #import "UASchedule+Internal.h"
 #import "UAInAppMessageSchedule.h"
 #import "UAInAppMessageManager.h"
-#import "UAScheduleAudienceChecks+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAScheduleEdits+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
@@ -37,7 +36,6 @@ static NSString * const UAInAppMessagesLastContactPayloadInfoKey = @"UAInAppRemo
 static NSString * const UAInAppMessagesLastContactSDKVersionKey = @"UAInAppRemoteDataClient.LastSDKVersion.Contact";
 
 
-static NSString * const UAInAppMessagesScheduledNewUserCutoffTimeKey = @"UAInAppRemoteDataClient.ScheduledNewUserCutoffTime";
 static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.iaa.REMOTE_DATA_METADATA";
 static NSString * const UAInAppRemoteDataClientInfoKey = @"com.urbanairship.iaa.REMOTE_DATA_INFO";
 
@@ -78,6 +76,9 @@ static NSString *const UAScheduleInfoCampaignsKey = @"campaigns";
 static NSString *const UAScheduleInfoReportingContextKey = @"reporting_context";
 
 static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_constraint_ids";
+
+static NSString *const UAScheduleInfoMessageTypeKey = @"message_type";
+static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_groups";
 
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -142,17 +143,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     @synchronized (self) {
         if (self.remoteDataSubscription != nil) {
             return;
-        }
-
-        if (!self.scheduleNewUserCutOffTime) {
-            NSURL *documentsDirectoryURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
-            NSDate *installDate = [[[NSFileManager defaultManager] attributesOfItemAtPath:documentsDirectoryURL.path error:nil] objectForKey:NSFileCreationDate];
-
-            if (installDate) {
-                self.scheduleNewUserCutOffTime = installDate;
-            } else {
-                self.scheduleNewUserCutOffTime = (self.channel.identifier) ? [NSDate distantPast] : [NSDate date];
-            }
         }
 
         UA_WEAKIFY(self);
@@ -333,7 +323,8 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
         if ([currentScheduleIDs containsObject:scheduleID]) {
             UAScheduleEdits *edits = [UAInAppRemoteDataClient parseScheduleEditsWithJSON:message
-                                                                                metadata:scheduleMetadata];
+                                                                                metadata:scheduleMetadata
+                                                                   newUserEvaluationDate:createdTimeStamp];
 
             if (!edits) {
                 UA_LERR(@"Failed to parse in-app automation edits: %@", message);
@@ -356,15 +347,14 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
             // New in-app message
             UASchedule *schedule = [UAInAppRemoteDataClient parseScheduleWithJSON:message
-                                                                         metadata:scheduleMetadata];
+                                                                         metadata:scheduleMetadata
+                                                            newUserEvaluationDate:createdTimeStamp];
             if (!schedule) {
                 UA_LERR(@"Failed to parse in-app automation: %@", message);
                 continue;
             }
 
-            if ([self checkSchedule:schedule createdTimeStamp:createdTimeStamp]) {
-                [newSchedules addObject:schedule];
-            }
+            [newSchedules addObject:schedule];
         }
     }
 
@@ -439,12 +429,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
 }
 
-- (BOOL)checkSchedule:(UASchedule *)schedule createdTimeStamp:(NSDate *)createdTimeStamp {
-    UAScheduleAudience *audience = schedule.audience;
-    BOOL isNewUser = ([createdTimeStamp compare:self.scheduleNewUserCutOffTime] == NSOrderedAscending);
-    return [UAScheduleAudienceChecks checkScheduleAudienceConditions:audience isNewUser:isNewUser];
-}
-
 - (BOOL)isNewSchedule:(NSDictionary *)messageJSON
      createdTimeStamp:(NSDate *)createdTimeStamp
  lastPayloadTimeStamp:(NSDate *)lastPayloadTimeStamp
@@ -477,14 +461,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return [matcher evaluateObject:minSDKVersion];
 }
 
-- (NSDate *)scheduleNewUserCutOffTime {
-    return [self.dataStore objectForKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
-}
-
-- (void)setScheduleNewUserCutOffTime:(NSDate *)time {
-    [self.dataStore setObject:time forKey:UAInAppMessagesScheduledNewUserCutoffTimeKey];
-}
-
 - (NSArray<NSString *> *)getCurrentRemoteScheduleIDForSource:(UARemoteDataSource)source {
     NSMutableArray *currentScheduleIDs = [NSMutableArray array];
 
@@ -509,7 +485,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
     return currentScheduleIDs;
 }
-
 
 - (BOOL)isRemoteSchedule:(UASchedule *)schedule {
     if (schedule.metadata[UAInAppRemoteDataClientMetadataKey] || schedule.metadata[UAInAppRemoteDataClientInfoKey]) {
@@ -569,7 +544,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     }];
 }
 
-
 - (UARemoteDataInfo *)remoteDataInfoFromSchedule:(UASchedule *)schedule {
     if (![self isRemoteSchedule:schedule]) {
         return nil;
@@ -587,7 +561,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
     return [UARemoteDataInfo fromJSONWithString:remoteDataInfoString error:nil];
 }
-
 
 + (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {
     NSString *ID = [JSON stringForKey:UAFrequencyConstraintIDKey defaultValue:nil];
@@ -624,7 +597,8 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 }
 
 + (UASchedule *)parseScheduleWithJSON:(id)JSON
-                             metadata:(NSDictionary *)metadata {
+                             metadata:(NSDictionary *)metadata
+                newUserEvaluationDate:(NSDate *)newUserEvaluationDate {
     // Triggers
     NSMutableArray *triggers = [NSMutableArray array];
     for (id triggerJSON in [JSON arrayForKey:UAScheduleInfoTriggersKey defaultValue:nil]) {
@@ -649,13 +623,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     }
 
 
-    NSError *audienceError;
-    UAScheduleAudience *audience = [UAInAppRemoteDataClient parseAudience:JSON error:&audienceError];
-    if (audienceError) {
-        UA_LERR(@"Invalid schedule: %@ - %@", JSON, audienceError);
-        return nil;
-    }
-
     return [UAInAppRemoteDataClient scheduleWithJSON:JSON builderBlock:^(UAScheduleBuilder *builder) {
         builder.identifier = [UAInAppRemoteDataClient parseScheduleID:JSON];
         builder.metadata = metadata;
@@ -668,8 +635,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         builder.interval = [[JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:nil] doubleValue];
         builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:nil];
         builder.reportingContext = [JSON dictionaryForKey:UAScheduleInfoReportingContextKey defaultValue:nil];
-
-        builder.audience = audience;
+        builder.audienceJSON = [JSON dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
         builder.frequencyConstraintIDs = [JSON arrayForKey:UAScheduleInfoFrequencyConstraintIDsKey defaultValue:nil];
 
         if (JSON[UAScheduleInfoStartKey]) {
@@ -679,23 +645,22 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         if (JSON[UAScheduleInfoEndKey]) {
             builder.end = [UAUtils parseISO8601DateFromString:[JSON stringForKey:UAScheduleInfoEndKey defaultValue:@""]];
         }
+
+        builder.messageType = [JSON stringForKey:UAScheduleInfoMessageTypeKey defaultValue:nil];
+        builder.bypassHoldoutGroups = [JSON numberForKey:UAScheduleInfoBypassHoldoutGroupsKey defaultValue:@NO].boolValue;
+        builder.isNewUserEvaluationDate = newUserEvaluationDate;
     }];
 }
 
-+ (UAScheduleEdits *)parseScheduleEditsWithJSON:(id)JSON metadata:(NSDictionary *)metadata {
-    NSError *audienceError;
-    UAScheduleAudience *audience = [UAInAppRemoteDataClient parseAudience:JSON error:&audienceError];
-    if (audienceError) {
-        UA_LERR(@"Invalid schedule: %@ - %@", JSON, audienceError);
-        return nil;
-    }
-
++ (UAScheduleEdits *)parseScheduleEditsWithJSON:(id)JSON
+                                       metadata:(NSDictionary *)metadata
+                          newUserEvaluationDate:(NSDate *)newUserEvaluationDate {
     return [UAInAppRemoteDataClient editsWithJSON:JSON builderBlock:^(UAScheduleEditsBuilder * _Nonnull builder) {
         builder.metadata = metadata;
         builder.limit = [JSON numberForKey:UAScheduleInfoLimitKey defaultValue:@(1)];
         builder.priority = [JSON numberForKey:UAScheduleInfoPriorityKey defaultValue:@(0)];
         builder.interval = [JSON numberForKey:UAScheduleInfoIntervalKey defaultValue:@(0)];
-        builder.audience = audience;
+        builder.audienceJSON = [JSON dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
         builder.campaigns = [JSON dictionaryForKey:UAScheduleInfoCampaignsKey defaultValue:@{}];
         builder.reportingContext = [JSON dictionaryForKey:UAScheduleInfoReportingContextKey defaultValue:nil];
         builder.frequencyConstraintIDs = [JSON arrayForKey:UAScheduleInfoFrequencyConstraintIDsKey defaultValue:@[]];
@@ -725,6 +690,10 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
         } else {
             builder.triggeredTime = [NSDate distantPast];
         }
+
+        builder.messageType = [JSON stringForKey:UAScheduleInfoMessageTypeKey defaultValue:nil];
+        builder.bypassHoldoutGroups = [JSON numberForKey:UAScheduleInfoBypassHoldoutGroupsKey defaultValue:nil];
+        builder.isNewUserEvaluationDate = newUserEvaluationDate;
     }];
 }
 
@@ -738,19 +707,6 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
     return scheduleID;
 }
 
-+ (UAScheduleAudience *)parseAudience:(id)JSON error:(NSError **)error {
-    id audienceDict = [JSON dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
-    if (!audienceDict) {
-        NSDictionary *messagePayload = [JSON dictionaryForKey:UAScheduleInfoInAppMessageKey defaultValue:nil];
-        audienceDict = [messagePayload dictionaryForKey:UAScheduleInfoAudienceKey defaultValue:nil];
-    }
-
-    if (audienceDict) {
-        return [UAScheduleAudience audienceWithJSON:audienceDict error:error];
-    }
-
-    return nil;
-}
 
 + (UASchedule *)scheduleWithJSON:(id)JSON
                     builderBlock:(void(^)(UAScheduleBuilder *builder))builderBlock {

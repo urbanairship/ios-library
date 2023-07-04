@@ -4,6 +4,7 @@ import Foundation
 
 protocol AirshipInstanceProtocol {
     var config: RuntimeConfig { get }
+    var preferenceDataStore: PreferenceDataStore { get }
     var actionRegistry: ActionRegistry { get }
     var applicationMetrics: ApplicationMetrics { get }
     var permissionsManager: AirshipPermissionsManager { get }
@@ -25,6 +26,8 @@ protocol AirshipInstanceProtocol {
 
 class AirshipInstance: AirshipInstanceProtocol {
     public let config: RuntimeConfig
+    public let preferenceDataStore: PreferenceDataStore
+
     public let actionRegistry: ActionRegistry
     public let applicationMetrics: ApplicationMetrics
     public let permissionsManager: AirshipPermissionsManager
@@ -52,6 +55,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             appSecret: config.appSecret
         )
         let dataStore = PreferenceDataStore(appKey: config.appKey)
+        self.preferenceDataStore = dataStore
         self.permissionsManager = AirshipPermissionsManager()
         self.config = RuntimeConfig(config: config, dataStore: dataStore, requestSession: requestSession)
         self.privacyManager = AirshipPrivacyManager(
@@ -131,8 +135,9 @@ class AirshipInstance: AirshipInstanceProtocol {
         self.experimentManager = ExperimentManager(
             dataStore: dataStore,
             remoteData: remoteData,
-            channelIdFetcher: { channel.identifier },
-            stableContactIdFetcher: contact.getStableContactID)
+            channelIDProvider: { channel.identifier },
+            stableContactIDProvider: contact.getStableContactID
+        )
 
         #if !os(tvOS) && !os(watchOS)
         self.channelCapture = ChannelCapture(

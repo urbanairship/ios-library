@@ -4,56 +4,65 @@ import Foundation
 
 // NOTE: For internal use only. :nodoc:
 final class ExperimentManager: ExperimentDataProvider {
-    
     private static let payloadType = "experiments"
     
     private let dataStore: PreferenceDataStore
     private let remoteData: RemoteDataProtocol
-    private let getChannelId: () -> String?
-    private let getStableContactId: () async -> String
-    
+    private let channelIDProvider: () -> String?
+    private let stableContactIDProvider: () async -> String
+    private let audienceChecker: DeviceAudienceChecker
+
     init(
         dataStore: PreferenceDataStore,
         remoteData: RemoteDataProtocol,
-        channelIdFetcher: @escaping () -> String?,
-        stableContactIdFetcher: @escaping () async -> String
+        channelIDProvider: @escaping () -> String?,
+        stableContactIDProvider: @escaping () async -> String,
+        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker()
     ) {
         self.dataStore = dataStore
         self.remoteData = remoteData
-        self.getChannelId = channelIdFetcher
-        self.getStableContactId = stableContactIdFetcher
+        self.channelIDProvider = channelIDProvider
+        self.stableContactIDProvider = stableContactIDProvider
+        self.audienceChecker = audienceChecker
     }
     
-    public func evaluateGlobalHoldouts(info: MessageInfo, contactId: String?) async -> ExperimentResult? {
-        guard let channelId = getChannelId() else { return nil }
-        
-        let evaluationContactId: String
-        if let id = contactId {
-            evaluationContactId = id
-        } else {
-            evaluationContactId = await getStableContactId()
+    public func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult {
+        let contactID = await resolveContactID(contactID: contactID)
+        guard let channelID = channelIDProvider() else {
+            // Since we pull this after a stable contact ID this should never happen. Ideally we have
+            // a way to wait for it like we do the contact ID.
+            throw AirshipErrors.error("Channel ID missing, unable to evaluate hold out groups.")
         }
-        
-        let properties = generateExperimentProperties(channelId: channelId, contactId: evaluationContactId)
-        let experiments = await getExperiments()
-        
-        var result: ExperimentResult? = nil
-        
-        for experiment in experiments {
-            let tryResolve = getResolutionFunction(for: experiment)
-            let resolved = tryResolve(experiment, info, properties)
-            
-            if resolved {
-                result = ExperimentResult(
-                    channelId: channelId,
-                    contactId: evaluationContactId,
-                    experimentId: experiment.id,
-                    reportingMetadata: experiment.reportingMetadata)
+
+        var evaluatedMetadata: [AirshipJSON] = []
+        var isMatch: Bool = false
+
+        for experiment in await getExperiments() {
+            isMatch = try await self.audienceChecker.evaluate(
+                audience: experiment.audienceSelector,
+                newUserEvaluationDate: experiment.created,
+                contactID: contactID
+            )
+            evaluatedMetadata.append(experiment.reportingMetadata)
+
+            if (isMatch) {
                 break
             }
         }
         
-        return result
+        return ExperimentResult(
+            channelID: channelID,
+            contactID: contactID,
+            isMatch: isMatch,
+            evaluatedExperimentsReportingData: evaluatedMetadata
+        )
+    }
+
+    private func resolveContactID(contactID: String?) async -> String {
+        if let contactID = contactID {
+            return contactID
+        }
+        return await stableContactIDProvider()
     }
     
     func getExperiment(id: String) async -> Experiment? {
@@ -70,66 +79,8 @@ final class ExperimentManager: ExperimentDataProvider {
     }
 }
 
-// MARK: - Experiments Evaluation
-private extension ExperimentManager {
-    private func generateExperimentProperties(channelId: String, contactId: String) -> [String: String] {
-        return [
-            AudienceHash.Identifier.channel.rawValue: channelId,
-            AudienceHash.Identifier.contact.rawValue: contactId
-        ]
-    }
-    
-    private func getResolutionFunction(for experiment: Experiment) -> ResolutionFunction {
-        switch (experiment.resolutionType) {
-        case .static:
-            return self.resolveStatic
-        }
-    }
-    
-    private func resolveStatic(experiment: Experiment, info: MessageInfo, properties: [String: String]) -> Bool {
-        if experiment.exclusions.contains(where: { $0.isExcluded(info) }) {
-            return false
-        }
-        
-        return experiment.audienceSelector.isMatching(properties: properties)
-    }
-}
-
 private extension MessageCriteria {
     func isExcluded(_ info: MessageInfo) -> Bool {
         return messageTypePredicate?.evaluate(info.messageType) ?? false
     }
 }
-
-private extension AudienceSelector {
-    func isMatching(properties: [String: String]) -> Bool {
-        return hash
-            .calculateHash(for: properties)
-            .map(bucket.contains)
-        ?? false
-    }
-}
-
-private extension AudienceHash {
-    func calculateHash(for properties: [String: String]) -> UInt64? {
-        guard let key = properties[property.rawValue] else {
-            AirshipLogger.error("can't find device property \(property.rawValue)")
-            return nil
-        }
-        
-        let value = overrides?[key] ?? key
-        let hash = getHashFunction()("\(self.prefix)\(value)")
-        
-        return hash % numberOfBuckets
-    }
-    
-    private func getHashFunction() -> HashFunction {
-        switch (self.algorithm) {
-        case .farm:
-            return FarmHashFingerprint64.fingerprint
-        }
-    }
-}
-
-typealias ResolutionFunction = (Experiment, MessageInfo, [String: String]) -> Bool
-typealias HashFunction = (String) -> UInt64

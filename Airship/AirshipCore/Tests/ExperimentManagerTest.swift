@@ -7,47 +7,47 @@ import AirshipCore
 
 final class ExperimentManagerTest: XCTestCase {
     
-    private var channelId: String? = "channel-id"
-    private var contactId = "some-contact-id"
+    private var channelID: String? = "channel-id"
+    private var contactID: String = "some-contact-id"
     
-    private let remoteData = MockRemoteDataProvider()
+    private let remoteData: MockRemoteDataProvider = MockRemoteDataProvider()
     private var subject: ExperimentManager!
+    private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
 
     override func setUpWithError() throws {
         self.subject = ExperimentManager(
             dataStore: PreferenceDataStore(appKey: UUID().uuidString),
             remoteData: remoteData,
-            channelIdFetcher: getChannelId,
-            stableContactIdFetcher: getContactId
+            channelIDProvider: {
+                return self.channelID
+            },
+            stableContactIDProvider: {
+                return self.contactID
+            },
+            audienceChecker: audienceChecker
         )
-    }
-    
-    private func getChannelId() -> String? {
-        return channelId
-    }
-    
-    private func getContactId() -> String {
-        return contactId
     }
 
     func testManagerParseValidExperimentData() async throws {
-        
         let experimentId = "fake-id"
         self.remoteData.payloads = [createPayload([generateExperiment(id: experimentId)])]
-        let experiment = await self.subject.getExperiment(id: experimentId)
+        guard let experiment = await self.subject.getExperiment(id: experimentId) else {
+            XCTFail("Experiment not found")
+            return
+        }
         
         let reportingMetadata = [
             "experiment_id": "\(experimentId)"
         ]
         
         XCTAssertNotNil(experiment)
-        XCTAssertEqual(experimentId, experiment?.id)
-        XCTAssertEqual("farm_hash", experiment?.audienceSelector.hash.algorithm.rawValue)
-        XCTAssertEqual("contact", experiment?.audienceSelector.hash.property.rawValue)
-        XCTAssertEqual(Date(timeIntervalSince1970: 1684868854), experiment?.lastUpdated)
-        XCTAssertEqual("Holdout", experiment?.type.rawValue)
-        XCTAssertEqual("Static", experiment?.resolutionType.rawValue)
-        XCTAssertEqual(reportingMetadata, experiment?.reportingMetadata)
+        XCTAssertEqual(experimentId, experiment.id)
+        XCTAssertEqual("farm_hash", experiment.audienceSelector.hashSelector!.hash.algorithm.rawValue)
+        XCTAssertEqual("contact", experiment.audienceSelector.hashSelector!.hash.property.rawValue)
+        XCTAssertEqual(Date(timeIntervalSince1970: 1684868854), experiment.lastUpdated)
+        XCTAssertEqual("Holdout", experiment.type.rawValue)
+        XCTAssertEqual("Static", experiment.resolutionType.rawValue)
+        XCTAssertEqual(reportingMetadata, experiment.reportingMetadata.unWrap())
     }
     
     func testExperimentManagerOmitsInvalidExperiments() async {
@@ -59,7 +59,7 @@ final class ExperimentManagerTest: XCTestCase {
         let validExperiment = await self.subject.getExperiment(id: "valid-experiment")
         XCTAssertNotNil(validExperiment)
         XCTAssertEqual("valid-experiment", validExperiment?.id)
-        XCTAssertEqual("channel", validExperiment?.audienceSelector.hash.property.rawValue)
+        XCTAssertEqual("channel", validExperiment!.audienceSelector.hashSelector!.hash.property.rawValue)
 
         let invalidExperiment = await self.subject.getExperiment(id: "invalid-experiment")
         XCTAssertNil(invalidExperiment)
@@ -91,76 +91,76 @@ final class ExperimentManagerTest: XCTestCase {
         let result = await subject.getExperiment(id: "id")
         XCTAssertNil(result)
     }
-    
-    func testHoldoutGroupEvaluationWorks() async {
+
+    func testResultNoExperiments() async throws {
+        self.remoteData.payloads = [createPayload([])]
+
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: nil
+        )
+
+
+        XCTAssertFalse(result.isMatch)
+        XCTAssertEqual(contactID, result.contactID)
+        XCTAssertEqual(channelID, result.channelID)
+        XCTAssertEqual([], result.evaluatedExperimentsReportingData)
+    }
+
+    func testResultNoMatch() async throws {
         let json = generateExperiment(id: "fake-id", hashIdentifier: "channel")
         self.remoteData.payloads = [createPayload([json])]
-        
-        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo.empty, contactId: nil)
-        XCTAssertNotNil(result)
-        XCTAssertEqual("fake-id", result?.experimentId)
-        XCTAssertEqual(contactId, result?.contactId)
-        XCTAssertEqual(channelId, result?.channelId)
-        XCTAssertEqual(["experiment_id": "fake-id"], result?.reportingMetadata)
+
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: nil
+        )
+
+
+        XCTAssertFalse(result.isMatch)
+        XCTAssertEqual(contactID, result.contactID)
+        XCTAssertEqual(channelID, result.channelID)
+
+        XCTAssertEqual(
+            [
+                try! AirshipJSON.wrap(["experiment_id": "fake-id"])
+            ],
+            result.evaluatedExperimentsReportingData
+        )
     }
-    
-    func testHoldoutGroupEvaluationRespectHashBuckets() async {
-        let activeContactId = "active-contact-id"
-        
+
+    func testResultMatch() async throws {
+        let activeContactID = "active-contact-id"
+
         self.remoteData.payloads = [createPayload([
             generateExperiment(id: "unmatched", bucketMax: 1239),
             generateExperiment(id: "matched", bucketMin: 1239)
         ])]
-        
-        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo.empty, contactId: activeContactId)
-        
-        XCTAssertNotNil(result)
-        XCTAssertEqual("matched", result?.experimentId)
-        XCTAssertEqual(activeContactId, result?.contactId)
-    }
-    
-    func testHoldoutGroupEvaluationPicksFirstMatchingExperiment() async {
-        self.remoteData.payloads = [createPayload([
-            generateExperiment(id: "first"),
-            generateExperiment(id: "second")
-        ])]
 
-        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo.empty, contactId: nil)
-        XCTAssertNotNil(result)
-        XCTAssertEqual("first", result?.experimentId)
-    }
+        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID in
+            XCTAssertEqual(contactID, activeContactID)
+            // match only the `matched` experiement
+            return audience.hashSelector?.bucket.min == 1239
+        }
 
-    func testHoldoutEvaluationRespectsMessageExclusion() async {
-        self.remoteData.payloads = [createPayload([
-            generateExperiment(id: "unmatched"),
-            generateExperiment(id: "matched", messageTypeToExclude: "none")
-        ])]
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: activeContactID
+        )
 
-        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo(messageType: "Transactional"), contactId: nil)
+        XCTAssertTrue(result.isMatch)
+        XCTAssertEqual(activeContactID, result.contactID)
+        XCTAssertEqual(channelID, result.channelID)
 
-        XCTAssertNotNil(result)
-        XCTAssertEqual("matched", result?.experimentId)
+        XCTAssertEqual(
+            [
+                try! AirshipJSON.wrap(["experiment_id": "unmatched"]),
+                try! AirshipJSON.wrap(["experiment_id": "matched"])
+            ],
+            result.evaluatedExperimentsReportingData
+        )
     }
 
-    func testHoldoutEvaluationRespectOverridesForHash() async {
-        contactId = "default-contact-id"
-        
-        let unmatched = generateExperiment(
-            id: "unmatched",
-            hashOverrides: "{\"\(contactId)\": \"overriden\"}",
-            bucketMax: 2337)
-
-        self.remoteData.payloads = [createPayload([
-            unmatched,
-            generateExperiment(id: "matched", bucketMax: 2337)
-        ])]
-
-        let result = await subject.evaluateGlobalHoldouts(info: MessageInfo(messageType: ""), contactId: nil)
-
-        XCTAssertNotNil(result)
-        XCTAssertEqual("matched", result?.experimentId)
-    }
-    
     private func generateExperiment(
         id: String,
         hashIdentifier: String = "contact",
@@ -182,6 +182,7 @@ final class ExperimentManagerTest: XCTestCase {
         {
             "id": "\(id)",
             "experimentType": "Holdout",
+            "created": "2023-05-23T19:07:34Z",
             "last_updated": "2023-05-23T19:07:34Z",
             "reporting_metadata": {
                 "experiment_id": "\(id)"
@@ -234,4 +235,17 @@ final class ExperimentManagerTest: XCTestCase {
 
 private extension MessageInfo {
     static let empty = MessageInfo(messageType: "")
+}
+
+private final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
+
+    var onEvaluate: ((DeviceAudienceSelector, Date, String?) async throws -> Bool)!
+
+    func evaluate(
+        audience: DeviceAudienceSelector,
+        newUserEvaluationDate: Date,
+        contactID: String?
+    ) async throws -> Bool {
+        return try await self.onEvaluate?(audience, newUserEvaluationDate, contactID) ?? false
+    }
 }

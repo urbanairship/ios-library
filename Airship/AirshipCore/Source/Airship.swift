@@ -522,4 +522,28 @@ public class Airship: NSObject {
             } ?? [:]
         return queryMap[Airship.itunesIDKey] as? String ?? config.itunesID
     }
+
+
+    // Taken from IAA so we can continue to use the existing value if set
+    private static let newUserCutOffDateKey = "UAInAppRemoteDataClient.ScheduledNewUserCutoffTime"
+
+    var installDate: Date {
+        if let date = self.airshipInstance.preferenceDataStore.value(forKey: Airship.newUserCutOffDateKey) as? Date {
+            return date
+        }
+
+        var date: Date!
+
+        if let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last,
+           let attributes = try? FileManager.default.attributesOfItem(atPath: documentsURL.path),
+           let installDate = attributes[.creationDate] as? Date
+        {
+            date = installDate
+        } else {
+            date = self.airshipInstance.component(ofType: AirshipChannel.self)?.identifier != nil ? Date.distantPast : Date()
+        }
+
+        self.airshipInstance.preferenceDataStore.setObject(date, forKey: Airship.newUserCutOffDateKey)
+        return date
+    }
 }
