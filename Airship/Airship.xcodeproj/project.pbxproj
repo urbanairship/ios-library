@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -559,6 +559,7 @@
 		6E6C3F9A27A47DB4007F55C7 /* PreferenceCenterConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */; };
 		6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */; };
 		6E6C3F9F27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */; };
+		6E6C84462A5C8CFE00DD83A2 /* AirshipConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
 		6E6ED13A2683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
@@ -2244,6 +2245,7 @@
 		6E6C3F8C27A26992007F55C7 /* CachedValueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedValueTest.swift; sourceTree = "<group>"; };
 		6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
 		6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSON.swift; sourceTree = "<group>"; };
+		6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipConfigTest.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semaphore.swift; sourceTree = "<group>"; };
 		6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
@@ -4247,6 +4249,7 @@
 		6E90F0ED228F550900E1FCB0 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */,
 				CC64F08B1D8B781C009CEF27 /* UAConfigTest.m */,
 				6E15B6F926CDCA6A0099C92D /* RuntimeConfigTest.swift */,
 			);
@@ -6965,6 +6968,7 @@
 				6EFAFB78295525C3008AD187 /* ChannelAPIClientTest.swift in Sources */,
 				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
+				6E6C84462A5C8CFE00DD83A2 /* AirshipConfigTest.swift in Sources */,
 				6EFAFB8A29562474008AD187 /* AddTagsActionTest.swift in Sources */,
 				997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */,
 				997140F11FB0F3E600EF5445 /* UAInAppMessageManagerTest.m in Sources */,
