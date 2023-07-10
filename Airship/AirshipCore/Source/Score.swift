@@ -97,8 +97,8 @@ struct Score : View {
     private func restoreFormState() {
         let formValue = self.formState.data.formValue(identifier: self.model.identifier)
 
-        guard case let .score(value) = formValue,
-              let value = value
+        guard case let .score(scoreValue) = formValue,
+              let value = scoreValue
         else {
             return
         }
