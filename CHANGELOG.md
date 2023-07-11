@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.12.3, July 11, 2023
+Patch release that works around a compiler issue with Xcode 15 beta and a Message Center issue with setting the navigation bar item tint.
+
+### Changes
+- Fix message center navigation item tint
+- Added workaround for Xcode 15 beta compile issue
+
 ## Version 16.12.2, June 28, 2023
 Patch release that fixes an issue with modular header on podspec for `AirshipServiceExtension` and `AirshipContentExtension`
 and a channel registration issue where if the channel's metadata changes during an update task, a new task would not be queued to sync with Airship until the next foreground.

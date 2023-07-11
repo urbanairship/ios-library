@@ -171,6 +171,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (self.messageCenterStyle.tintColor) {
         self.view.tintColor = self.messageCenterStyle.tintColor;
         self.messageNavigationController.navigationBar.tintColor = self.messageCenterStyle.tintColor;
+        self.listNavigationController.navigationBar.tintColor = self.messageCenterStyle.tintColor;
     }
         
     if (@available(iOS 13, *)) {
