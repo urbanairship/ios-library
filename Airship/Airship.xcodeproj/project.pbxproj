@@ -559,6 +559,7 @@
 		6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */; };
 		6E6C3F9F27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */; };
 		6E6C84462A5C8CFE00DD83A2 /* AirshipConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */; };
+		6E6C84482A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84472A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
 		6E6ED13A2683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
@@ -961,6 +962,7 @@
 		6E96ED17294197D90053CC91 /* EventUploadTuningInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E96ED15294197D90053CC91 /* EventUploadTuningInfo.swift */; };
 		6E96ED18294197D90053CC91 /* EventUploadTuningInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E96ED15294197D90053CC91 /* EventUploadTuningInfo.swift */; };
 		6E96ED1A2941A0EC0053CC91 /* EventTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E96ED192941A0EC0053CC91 /* EventTestUtils.swift */; };
+		6E9752562A5F79E200E67B1A /* ExperimentTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9752552A5F79E200E67B1A /* ExperimentTest.swift */; };
 		6E9B4874288F0CE000C905B1 /* RateAppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9B4873288F0CE000C905B1 /* RateAppAction.swift */; };
 		6E9B4875288F0CE000C905B1 /* RateAppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9B4873288F0CE000C905B1 /* RateAppAction.swift */; };
 		6E9B4876288F0CE000C905B1 /* RateAppAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9B4873288F0CE000C905B1 /* RateAppAction.swift */; };
@@ -2254,6 +2256,7 @@
 		6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
 		6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSON.swift; sourceTree = "<group>"; };
 		6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipConfigTest.swift; sourceTree = "<group>"; };
+		6E6C84472A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentsListsDebugView.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semaphore.swift; sourceTree = "<group>"; };
 		6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
@@ -2386,6 +2389,7 @@
 		6E96ED1329417A600053CC91 /* EventStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStoreTest.swift; sourceTree = "<group>"; };
 		6E96ED15294197D90053CC91 /* EventUploadTuningInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventUploadTuningInfo.swift; sourceTree = "<group>"; };
 		6E96ED192941A0EC0053CC91 /* EventTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTestUtils.swift; sourceTree = "<group>"; };
+		6E9752552A5F79E200E67B1A /* ExperimentTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentTest.swift; sourceTree = "<group>"; };
 		6E9B4873288F0CE000C905B1 /* RateAppAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateAppAction.swift; sourceTree = "<group>"; };
 		6E9B4877288F360C00C905B1 /* RateAppActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateAppActionTest.swift; sourceTree = "<group>"; };
 		6E9B488A2891962000C905B1 /* PreferenceCenterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterView.swift; sourceTree = "<group>"; };
@@ -3256,6 +3260,7 @@
 			children = (
 				6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */,
 				6079513A2A1E6BEB0086578F /* MockRemoteDataProvider.swift */,
+				6E9752552A5F79E200E67B1A /* ExperimentTest.swift */,
 			);
 			name = Experiments;
 			sourceTree = "<group>";
@@ -3331,6 +3336,7 @@
 				6E14C9B328B6C9F000A55E65 /* InAppAutomationListDebugView.swift */,
 				6E14C9B628B6E46800A55E65 /* EventListDebugView.swift */,
 				6E14C9B828B6EE4700A55E65 /* AddCustomEventDebugView.swift */,
+				6E6C84472A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -5922,6 +5928,7 @@
 				6E14C98728B43C8B00A55E65 /* AirshipDebugExtensions.swift in Sources */,
 				3CA0E2BF237CD05F00EE76CF /* AirshipEvent.swift in Sources */,
 				6E14C9B928B6EE4700A55E65 /* AddCustomEventDebugView.swift in Sources */,
+				6E6C84482A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift in Sources */,
 				6E14C97F28B424C000A55E65 /* PrviacyManagerDebugView.swift in Sources */,
 				BD8C10832865F92200358622 /* CreateSMSChannelView.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
@@ -6847,6 +6854,7 @@
 				6E299FD528D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift in Sources */,
 				6E92ECA5284A7A5C0038802D /* TestPermissionPrompter.swift in Sources */,
 				6E664BE526C5817B00A2C8E5 /* TestContact.swift in Sources */,
+				6E9752562A5F79E200E67B1A /* ExperimentTest.swift in Sources */,
 				6ED040EB278B5D7C00FCF773 /* FormStateTest.swift in Sources */,
 				6E1767FA29B92F1700D65F60 /* AirshipUtilsTest.swift in Sources */,
 				6E1767F629B923D100D65F60 /* ChannelAuthTokenProviderTest.swift in Sources */,

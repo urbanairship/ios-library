@@ -31,6 +31,7 @@
 @property(nonatomic, strong) UATestAirshipInstance *airship;
 @property(nonatomic, strong) id mockFrequencyLimitManager;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
+@property(nonatomic, strong) id<UAExperimentDataProvider> experimentManager;
 
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
 @end
@@ -38,6 +39,7 @@
 @interface UAInAppAutomation()
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
                  triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+               experimentResult:(nullable UAExperimentResult *)experimentResult
                retriableHandler:(UARetriableCompletionHandler) retriableHandler
               completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
 @end
@@ -57,6 +59,7 @@
     self.mockDeferredClient = [self mockForClass:[UADeferredScheduleAPIClient class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
+    self.experimentManager = [self mockForProtocol:@protocol(UAExperimentDataProvider)];
     self.mockAudienceChecker = [self mockForProtocol:@protocol(UAAutomationAudienceCheckerProtocol)];
 
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
@@ -81,7 +84,9 @@
                                          deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
                                                     privacyManager:self.privacyManager
+                                                experimentManager:self.experimentManager
                                                    audienceChecker:self.mockAudienceChecker];
+
     XCTAssertNotNil(self.engineDelegate);
 }
 
@@ -104,6 +109,7 @@
                                          deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
                                                     privacyManager:self.privacyManager
+                                                 experimentManager:self.experimentManager
                                                    audienceChecker:self.mockAudienceChecker];
 
     XCTAssertTrue(self.inAppAutomation.isPaused);
@@ -128,6 +134,7 @@
                                          deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
                                                     privacyManager:self.privacyManager
+                                                 experimentManager:self.experimentManager
                                                    audienceChecker:self.mockAudienceChecker];
 
     XCTAssertFalse(self.inAppAutomation.isPaused);
@@ -165,7 +172,7 @@
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.reportingContext = @{@"some": @"reporting context"};
-
+        builder.bypassHoldoutGroups = YES;
         builder.frequencyConstraintIDs = @[@"barConstraint", @"fooConstraint"];
     }];
 
@@ -189,6 +196,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:@{@"some": @"reporting context"}
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -214,6 +222,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -238,6 +247,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:@{}
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -265,6 +275,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -289,6 +300,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:nil
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -311,6 +323,7 @@
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -341,6 +354,7 @@
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -377,6 +391,7 @@
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -429,6 +444,7 @@
         builder.triggers = @[trigger];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -441,11 +457,12 @@
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&block atIndex:6];
+        [invocation getArgument:&block atIndex:7];
         block(UAInAppMessagePrepareResultSuccess);
     }] prepareMessage:message scheduleID:@"schedule ID"
      campaigns:@{@"some": @"campaigns object"}
      reportingContext:@{}
+     experimentResult:OCMOCK_ANY
      completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -506,6 +523,7 @@
         builder.triggers = @[trigger];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -517,9 +535,9 @@
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
-        [invocation getArgument:&block atIndex:6];
+        [invocation getArgument:&block atIndex:7];
         block(UAInAppMessagePrepareResultSuccess);
-    }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} reportingContext:@{} completionHandler:OCMOCK_ANY];
+    }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} reportingContext:@{} experimentResult:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
@@ -574,6 +592,7 @@
         builder.triggers = @[trigger];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -583,7 +602,12 @@
         callback(YES);
     }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[self.mockInAppMessageManager reject] prepareMessage:OCMOCK_ANY scheduleID:OCMOCK_ANY campaigns:OCMOCK_ANY reportingContext:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockInAppMessageManager reject] prepareMessage:OCMOCK_ANY
+                                               scheduleID:OCMOCK_ANY
+                                                campaigns:OCMOCK_ANY
+                                         reportingContext:OCMOCK_ANY
+                                         experimentResult:OCMOCK_ANY
+                                        completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -627,9 +651,10 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
-    
+
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAAutomationAudienceOverrides *);
@@ -685,6 +710,7 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -750,6 +776,7 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
@@ -779,7 +806,7 @@
      audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
         XCTAssertEqual(result, UARetriableResultRetryAfter);
         XCTAssertEqual(time, 5);
         [prepareFinished fulfill];
@@ -800,6 +827,7 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
@@ -829,7 +857,7 @@
      audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil  experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
         XCTAssertEqual(result, UARetriableResultRetry);
         XCTAssertEqual(time, 0);
         [prepareFinished fulfill];
@@ -851,6 +879,7 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
@@ -880,7 +909,7 @@
      audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil  experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
         XCTAssertEqual(result, UARetriableResultRetryAfter);
         XCTAssertEqual(time, 5);
         [prepareFinished fulfill];
@@ -901,6 +930,7 @@
     UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
@@ -930,7 +960,7 @@
      audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil  experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
         XCTAssertEqual(result, UARetriableResultRetryWithBackoffReset);
         XCTAssertEqual(time, 0);
         [prepareFinished fulfill];
@@ -956,6 +986,7 @@
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
             builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
         }];
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
@@ -1022,6 +1053,7 @@
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder * _Nonnull builder) {
             builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
         }];
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
@@ -1096,6 +1128,7 @@
         builder.audience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
             builder.notificationsOptIn = @(YES);
         }];
+        builder.bypassHoldoutGroups = YES;
         builder.isNewUserEvaluationDate = [NSDate date];
     }];
 
@@ -1139,6 +1172,7 @@
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorCancel;
         }];
+        builder.bypassHoldoutGroups = YES;
         builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
@@ -1184,6 +1218,7 @@
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorSkip;
         }];
+        builder.bypassHoldoutGroups = YES;
         builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
@@ -1231,6 +1266,7 @@
             builder.notificationsOptIn = @(YES);
             builder.missBehavior = UAScheduleAudienceMissBehaviorPenalize;
         }];
+        builder.bypassHoldoutGroups = YES;
         builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
@@ -1275,6 +1311,7 @@
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -1287,6 +1324,7 @@
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -1328,6 +1366,7 @@
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1378,6 +1417,7 @@
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -1394,6 +1434,7 @@
                                                            builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -1412,6 +1453,7 @@
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -1428,6 +1470,7 @@
                                                            builderBlock:^(UAScheduleBuilder * builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultNotReady)] isReadyToDisplay:@"schedule ID"];
@@ -1443,6 +1486,7 @@
     }];
 
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1471,7 +1515,6 @@
 
     UASchedule *schedule = [[UASchedule alloc] init];
 
-
     UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
     XCTAssertEqual(UAAutomationScheduleReadyResultNotReady, result);
 }
@@ -1486,6 +1529,7 @@
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.reportingContext = @{@"something": @"something"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1513,6 +1557,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:@{@"something": @"something"}
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1545,6 +1590,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;builder.bypassHoldoutGroups = YES;
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
@@ -1574,6 +1620,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:@{}
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1617,6 +1664,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
@@ -1665,6 +1713,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:@{}
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1705,6 +1754,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.campaigns = @{@"some": @"campaigns object"};
+        builder.bypassHoldoutGroups = YES;
     }];
 
     UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
@@ -1756,6 +1806,7 @@
                                                scheduleID:@"schedule ID"
                                                 campaigns:@{@"some": @"campaigns object"}
                                          reportingContext:@{}
+                                         experimentResult:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
         completionBlock(UAInAppMessagePrepareResultSuccess);
@@ -1792,6 +1843,7 @@
     UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
 
@@ -1816,6 +1868,7 @@
                                                            builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
     }];
 
     [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -2026,5 +2079,202 @@
     [self.mockAutomationEngine verify];
     [self.mockRemoteDataClient verify];
 }
+
+#pragma mark - Schedule with Holdout Group
+
+- (void)testExperimentResultsSentToInAppMessageManagerPrepare {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+    }];
+
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.messageType = @"some-type";
+        builder.campaigns = @{@"some": @"campaigns object"};
+    }];
+
+    id mockInfo = [self mockForClass:[UARemoteDataInfo class]];
+    [[[self.mockRemoteDataClient stub] andReturn:mockInfo] remoteDataInfoFromSchedule:schedule];
+
+    UAExperimentResult *experimentResult = [[UAExperimentResult alloc] initWithChannelId:@"channel-id"
+                                                                               contactId:@"contact-id"
+                                                                            isMatch:YES
+                                                                       reportingMetadata:@[@{}]];
+
+    UAExperimentMessageInfo *expectedInfo = [[UAExperimentMessageInfo alloc] initWithMessageType:@"some-type" campaignsJSON:schedule.campaigns];
+
+    [[(id)self.experimentManager expect] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
+                                                          contactID:[OCMArg isNil]
+                                                  completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^complemtion)(UAExperimentResult * _Nullable, NSError * _Nullable) = obj;
+        complemtion(experimentResult, nil);
+        return YES;
+    }]];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback(nil);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[self.mockInAppMessageManager expect] prepareMessage:message
+                                               scheduleID:schedule.identifier
+                                                campaigns:schedule.campaigns
+                                         reportingContext:schedule.reportingContext
+                                         experimentResult:experimentResult
+                                        completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+                                                void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
+                                                completionBlock(UAInAppMessagePrepareResultSuccess);
+                                                return YES;
+                                            }]];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [(id)self.experimentManager verify];
+}
+
+- (void)testScheduledMessageCallHoldoutGroupRespectBypassFlag {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+    }];
+
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.messageType = @"some-type";
+        builder.bypassHoldoutGroups = YES;
+        builder.campaigns = @{@"some": @"campaigns object"};
+    }];
+
+    id mockInfo = [self mockForClass:[UARemoteDataInfo class]];
+    [[[self.mockRemoteDataClient stub] andReturn:mockInfo] remoteDataInfoFromSchedule:schedule];
+
+
+    UAExperimentMessageInfo *expectedInfo = [[UAExperimentMessageInfo alloc] initWithMessageType:@"some-type" campaignsJSON:schedule.campaigns];
+
+    [[(id)self.experimentManager reject] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
+                                                          contactID:OCMOCK_ANY
+                                                  completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback(nil);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [[self.mockInAppMessageManager expect] prepareMessage:message
+                                               scheduleID:@"schedule ID"
+                                                campaigns:OCMOCK_ANY
+                                         reportingContext:OCMOCK_ANY
+                                         experimentResult:OCMOCK_ANY
+                                        completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
+        completionBlock(UAInAppMessagePrepareResultSuccess);
+        return YES;
+    }]];
+
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [(id)self.experimentManager verify];
+    [self.mockInAppMessageManager verify];
+}
+
+- (void)testScheduledMessageDefaultsToTransactionalIfNoMessageType {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+    }];
+
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.messageType = nil;
+        builder.bypassHoldoutGroups = NO;
+        builder.campaigns = @{@"some": @"campaigns object"};
+    }];
+
+    id mockInfo = [self mockForClass:[UARemoteDataInfo class]];
+    [[[self.mockRemoteDataClient stub] andReturn:mockInfo] remoteDataInfoFromSchedule:schedule];
+
+    UAExperimentMessageInfo *expectedInfo = [[UAExperimentMessageInfo alloc] initWithMessageType:@"transactional" campaignsJSON:schedule.campaigns];
+
+    UAExperimentResult *experimentResult = [[UAExperimentResult alloc] initWithChannelId:@"channel-id"
+                                                                               contactId:@"contact-id"
+                                                                            isMatch:YES
+                                                                       reportingMetadata:@[@{}]];
+
+    [[(id)self.experimentManager expect] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
+                                                          contactID:[OCMArg isNil]
+                                                  completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^complemtion)(UAExperimentResult * _Nullable, NSError * _Nullable) = obj;
+        complemtion(experimentResult, nil);
+        return YES;
+    }]];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback(nil);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [[self.mockInAppMessageManager expect] prepareMessage:message
+                                               scheduleID:@"schedule ID"
+                                                campaigns:OCMOCK_ANY
+                                         reportingContext:OCMOCK_ANY
+                                         experimentResult:experimentResult
+                                        completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
+        completionBlock(UAInAppMessagePrepareResultSuccess);
+        return YES;
+    }]];
+
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [(id)self.experimentManager verify];
+    [self.mockInAppMessageManager verify];
+}
+
 
 @end

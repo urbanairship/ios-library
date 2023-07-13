@@ -5,6 +5,7 @@
 #import "UAInAppAutomation+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 #import "UAInAppMessageSchedule.h"
+#import "UASchedule+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -164,6 +165,7 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
         builder.priority = 0;
         builder.limit = 1;
         builder.triggers = @[[UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(1) predicate:nil]];
+        builder.bypassHoldoutGroups = YES;
 
         // Allow the app to customize the schedule builder if necessary
         if (extender && [extender respondsToSelector:@selector(extendScheduleBuilder:)]) {

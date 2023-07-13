@@ -134,6 +134,11 @@ public struct AirshipDebugView: View {
                     destination: InAppAutomationListDebugView()
                 )
 
+                makeNavItem(
+                    "Experiments",
+                    destination: ExperimentsListsDebugView()
+                )
+
                 VStack {
                     makeInfoItem(
                         "Display Interval",

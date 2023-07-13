@@ -11,19 +11,22 @@ final class ExperimentManager: ExperimentDataProvider {
     private let channelIDProvider: () -> String?
     private let stableContactIDProvider: () async -> String
     private let audienceChecker: DeviceAudienceChecker
+    private let date: AirshipDateProtocol
 
     init(
         dataStore: PreferenceDataStore,
         remoteData: RemoteDataProtocol,
         channelIDProvider: @escaping () -> String?,
         stableContactIDProvider: @escaping () async -> String,
-        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker()
+        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.dataStore = dataStore
         self.remoteData = remoteData
         self.channelIDProvider = channelIDProvider
         self.stableContactIDProvider = stableContactIDProvider
         self.audienceChecker = audienceChecker
+        self.date = date
     }
     
     public func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult {
@@ -37,12 +40,22 @@ final class ExperimentManager: ExperimentDataProvider {
         var evaluatedMetadata: [AirshipJSON] = []
         var isMatch: Bool = false
 
-        for experiment in await getExperiments() {
+        let experiments = await getExperiments()
+        for experiment in experiments {
+            if (!experiment.isActive(date: self.date.now)) {
+                continue
+            }
+
+            if (experiment.isExcluded(info: info)) {
+                continue
+            }
+
             isMatch = try await self.audienceChecker.evaluate(
                 audience: experiment.audienceSelector,
                 newUserEvaluationDate: experiment.created,
                 contactID: contactID
             )
+
             evaluatedMetadata.append(experiment.reportingMetadata)
 
             if (isMatch) {
@@ -69,7 +82,7 @@ final class ExperimentManager: ExperimentDataProvider {
         return await getExperiments().first(where: { $0.id == id })
     }
     
-    private func getExperiments() async -> [Experiment] {
+    func getExperiments() async -> [Experiment] {
         return await remoteData
             .payloads(types: [Self.payloadType])
             .map { $0.data }
@@ -79,8 +92,27 @@ final class ExperimentManager: ExperimentDataProvider {
     }
 }
 
-private extension MessageCriteria {
-    func isExcluded(_ info: MessageInfo) -> Bool {
-        return messageTypePredicate?.evaluate(info.messageType) ?? false
+private extension Experiment {
+    func isExcluded(info: MessageInfo) -> Bool {
+        return self.exclusions?.contains { criteria in
+            let messageType = criteria.messageTypePredicate?.evaluate(info.messageType) ?? false
+            let campaigns = criteria.campaignsPredicate?.evaluate(info.campaigns?.unWrap()) ?? false
+            return messageType || campaigns
+        } ?? false
+    }
+
+    func isActive(date: Date) -> Bool {
+        let currentMS = date.millisecondsSince1970
+
+        if let startMS = timeCriteria?.start, currentMS < startMS {
+            return false
+        }
+
+        if let endMS = timeCriteria?.end, currentMS >= endMS {
+            return false
+        }
+
+        return true
     }
 }
+

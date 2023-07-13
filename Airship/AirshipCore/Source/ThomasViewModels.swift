@@ -940,7 +940,6 @@ struct PagerModel: BaseModel {
     let type = ViewModelType.pager
     let border: Border?
     let backgroundColor: ThomasColor?
-    // TODO: deprecate? need for backwards compatibility
     let disableSwipe: Bool?
     let items: [PagerItem]
     let visibility: VisibilityInfo?

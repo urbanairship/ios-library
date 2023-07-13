@@ -29,6 +29,8 @@ public class SDKDependencyKeys: NSObject {
     public static let workManager = "work_manager"
     @objc
     public static let automationAudienceOverridesProvider = "automation_audience_overrides_provider"
+    @objc
+    public static let experimentsManager = "experiments_manager"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -61,7 +63,8 @@ class ModuleLoader {
         analytics: AirshipAnalytics,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        audienceOverrides: AudienceOverridesProvider
+        audienceOverrides: AudienceOverridesProvider,
+        experimentsManager: ExperimentDataProvider
     ) {
 
         let dependencies: [String: Any] = [
@@ -80,7 +83,8 @@ class ModuleLoader {
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
             SDKDependencyKeys.automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider(
                 audienceOverridesProvider: audienceOverrides
-            )
+            ),
+            SDKDependencyKeys.experimentsManager: experimentsManager
         ]
 
         let swiftModules = ModuleLoader.loadModules(dependencies)

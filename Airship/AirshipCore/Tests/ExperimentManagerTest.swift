@@ -14,6 +14,8 @@ final class ExperimentManagerTest: XCTestCase {
     private var subject: ExperimentManager!
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
 
+    private let testDate: UATestDate = UATestDate(offset: 0, dateOverride: Date())
+
     override func setUpWithError() throws {
         self.subject = ExperimentManager(
             dataStore: PreferenceDataStore(appKey: UUID().uuidString),
@@ -24,57 +26,49 @@ final class ExperimentManagerTest: XCTestCase {
             stableContactIDProvider: {
                 return self.contactID
             },
-            audienceChecker: audienceChecker
+            audienceChecker: audienceChecker,
+            date: testDate
         )
     }
 
     func testManagerParseValidExperimentData() async throws {
         let experimentId = "fake-id"
-        self.remoteData.payloads = [createPayload([generateExperiment(id: experimentId)])]
-        guard let experiment = await self.subject.getExperiment(id: experimentId) else {
+        let experiment = Experiment.generate(id: experimentId)
+        self.remoteData.payloads = [
+            createPayload([experiment.toString])
+        ]
+
+        guard let fromManager = await self.subject.getExperiment(id: experimentId) else {
             XCTFail("Experiment not found")
             return
         }
-        
-        let reportingMetadata = [
-            "experiment_id": "\(experimentId)"
-        ]
-        
-        XCTAssertNotNil(experiment)
-        XCTAssertEqual(experimentId, experiment.id)
-        XCTAssertEqual("farm_hash", experiment.audienceSelector.hashSelector!.hash.algorithm.rawValue)
-        XCTAssertEqual("contact", experiment.audienceSelector.hashSelector!.hash.property.rawValue)
-        XCTAssertEqual(Date(timeIntervalSince1970: 1684868854), experiment.lastUpdated)
-        XCTAssertEqual("Holdout", experiment.type.rawValue)
-        XCTAssertEqual("Static", experiment.resolutionType.rawValue)
-        XCTAssertEqual(reportingMetadata, experiment.reportingMetadata.unWrap())
+
+        XCTAssertEqual(experiment, fromManager)
     }
-    
+
     func testExperimentManagerOmitsInvalidExperiments() async {
-        let valid = generateExperiment(id: "valid-experiment", hashIdentifier: "channel")
-        let invalid = generateExperiment(id: "invalid-experiment", hashIdentifier: "invalid")
-        
-        self.remoteData.payloads = [createPayload([valid, invalid])]
+        let experiment = Experiment.generate(id: "valid")
 
-        let validExperiment = await self.subject.getExperiment(id: "valid-experiment")
-        XCTAssertNotNil(validExperiment)
-        XCTAssertEqual("valid-experiment", validExperiment?.id)
-        XCTAssertEqual("channel", validExperiment!.audienceSelector.hashSelector!.hash.property.rawValue)
+        self.remoteData.payloads = [createPayload([experiment.toString, "{ \"not valid\": true }"])]
 
-        let invalidExperiment = await self.subject.getExperiment(id: "invalid-experiment")
-        XCTAssertNil(invalidExperiment)
+        let experiments = await self.subject.getExperiments()
+        XCTAssertEqual([experiment], experiments)
     }
 
     func testExperimentManagerParseMultipleExperiments() async {
-        let experiment1 = generateExperiment(id: "id1")
-        let experiment2 = generateExperiment(id: "id2")
-        self.remoteData.payloads = [createPayload([experiment1]), createPayload([experiment2])]
+        let experiment1 = Experiment.generate(id: "id1")
+        let experiment2 = Experiment.generate(id: "id2")
+
+        self.remoteData.payloads = [
+            createPayload([experiment1.toString]),
+            createPayload([experiment2.toString])
+        ]
 
         let ex1 = await self.subject.getExperiment(id: "id1")
-        XCTAssertNotNil(ex1)
+        XCTAssertEqual(experiment1, ex1)
 
         let ex2 = await self.subject.getExperiment(id: "id2")
-        XCTAssertNotNil(ex2)
+        XCTAssertEqual(experiment2, ex2)
     }
 
     func testExperimentManagerHandleNoExperimentsPayload() async {
@@ -100,22 +94,20 @@ final class ExperimentManagerTest: XCTestCase {
             contactID: nil
         )
 
-
         XCTAssertFalse(result.isMatch)
         XCTAssertEqual(contactID, result.contactID)
         XCTAssertEqual(channelID, result.channelID)
-        XCTAssertEqual([], result.evaluatedExperimentsReportingData)
+        XCTAssertTrue(result.evaluatedExperimentsReportingData.isEmpty)
     }
 
     func testResultNoMatch() async throws {
-        let json = generateExperiment(id: "fake-id", hashIdentifier: "channel")
-        self.remoteData.payloads = [createPayload([json])]
+        let experiment = Experiment.generate(id: "fake-id", reportingMetadata: AirshipJSON.string("reporting data!"))
+        self.remoteData.payloads = [createPayload([experiment.toString])]
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
             contactID: nil
         )
-
 
         XCTAssertFalse(result.isMatch)
         XCTAssertEqual(contactID, result.contactID)
@@ -123,24 +115,37 @@ final class ExperimentManagerTest: XCTestCase {
 
         XCTAssertEqual(
             [
-                try! AirshipJSON.wrap(["experiment_id": "fake-id"])
+                experiment.reportingMetadata
             ],
             result.evaluatedExperimentsReportingData
         )
     }
 
     func testResultMatch() async throws {
+        let audienceSelector1 = DeviceAudienceSelector(newUser: true)
+        let experiment1 = Experiment.generate(
+            id: "id1",
+            reportingMetadata: AirshipJSON.string("reporting data 1"),
+            audienceSelector: audienceSelector1
+        )
+
+        let audienceSelector2 = DeviceAudienceSelector(newUser: false)
+        let experiment2 = Experiment.generate(
+            id: "id2",
+            reportingMetadata: AirshipJSON.string("reporting data 2"),
+            audienceSelector: audienceSelector2
+        )
+
         let activeContactID = "active-contact-id"
 
         self.remoteData.payloads = [createPayload([
-            generateExperiment(id: "unmatched", bucketMax: 1239),
-            generateExperiment(id: "matched", bucketMin: 1239)
+            experiment1.toString,
+            experiment2.toString
         ])]
 
         self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID in
             XCTAssertEqual(contactID, activeContactID)
-            // match only the `matched` experiement
-            return audience.hashSelector?.bucket.min == 1239
+            return audience == audienceSelector2
         }
 
         let result = try await subject.evaluateExperiments(
@@ -154,66 +159,128 @@ final class ExperimentManagerTest: XCTestCase {
 
         XCTAssertEqual(
             [
-                try! AirshipJSON.wrap(["experiment_id": "unmatched"]),
-                try! AirshipJSON.wrap(["experiment_id": "matched"])
+                experiment1.reportingMetadata,
+                experiment2.reportingMetadata
             ],
             result.evaluatedExperimentsReportingData
         )
     }
 
-    private func generateExperiment(
-        id: String,
-        hashIdentifier: String = "contact",
-        hashAlgorithm: String = "farm_hash",
-        hashOverrides: String? = nil,
-        bucketMin: Int = 0,
-        bucketMax: Int = 16384,
-        messageTypeToExclude: String = "Transactional"
-    ) -> String {
-        
-        let overrides: String
-        if let value = hashOverrides {
-            overrides = ",\"hash_identifier_overrides\": \(value)"
-        } else {
-            overrides = ""
+    func testResultMatchExcludesInactive() async throws {
+        let audienceSelector1 = DeviceAudienceSelector(newUser: true)
+        let experiment1 = Experiment.generate(
+            id: "id1",
+            reportingMetadata: AirshipJSON.string("reporting data 1"),
+            audienceSelector: audienceSelector1,
+            timeCriteria: TimeCriteria(
+                start: self.testDate.now.millisecondsSince1970 + 1,
+                end: self.testDate.now.millisecondsSince1970 + 2
+            )
+        )
+
+        let audienceSelector2 = DeviceAudienceSelector(newUser: false)
+        let experiment2 = Experiment.generate(
+            id: "id2",
+            reportingMetadata: AirshipJSON.string("reporting data 2"),
+            audienceSelector: audienceSelector2,
+            timeCriteria: TimeCriteria(
+                start: self.testDate.now.millisecondsSince1970,
+                end: self.testDate.now.millisecondsSince1970 + 1
+            )
+        )
+
+        let activeContactID = "active-contact-id"
+
+        self.remoteData.payloads = [createPayload([
+            experiment1.toString,
+            experiment2.toString
+        ])]
+
+        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID in
+            XCTAssertEqual(contactID, activeContactID)
+            return audience == audienceSelector2
         }
-        
-        return """
-        {
-            "id": "\(id)",
-            "experimentType": "Holdout",
-            "created": "2023-05-23T19:07:34Z",
-            "last_updated": "2023-05-23T19:07:34Z",
-            "reporting_metadata": {
-                "experiment_id": "\(id)"
-            },
-            "type": "Static",
-            "audience_selector": {
-                "hash": {
-                    "audience_hash": {
-                        "hash_prefix": "e66a2371-fecf-41de-9238-cb6c28a86cec:",
-                        "num_hash_buckets": 16384,
-                        "hash_identifier": "\(hashIdentifier)",
-                        "hash_algorithm": "\(hashAlgorithm)"
-                        \(overrides)
-                    },
-                    "audience_subset": {
-                        "min_hash_bucket": \(bucketMin),
-                        "max_hash_bucket": \(bucketMax)
-                    }
-                }
-            },
-            "message_exclusions": [
-                {
-                    "message_type": {
-                        "value": {
-                            "equals": "\(messageTypeToExclude)"
-                        }
-                    }
-                }
+
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: activeContactID
+        )
+
+        XCTAssertTrue(result.isMatch)
+        XCTAssertEqual(activeContactID, result.contactID)
+        XCTAssertEqual(channelID, result.channelID)
+
+        XCTAssertEqual(
+            [
+                experiment2.reportingMetadata
+            ],
+            result.evaluatedExperimentsReportingData
+        )
+    }
+
+    func testResultMatchExclusions() async throws {
+        let messageTypePredicate = JSONPredicate(
+            jsonMatcher: JSONMatcher(valueMatcher: .matcherWhereStringEquals("transactional"))
+        )
+
+        let campaignsPredicate = JSONPredicate(
+            jsonMatcher: JSONMatcher(
+                valueMatcher: JSONValueMatcher.matcherWithArrayContainsPredicate(
+                    JSONPredicate(
+                        jsonMatcher: JSONMatcher(valueMatcher: .matcherWhereStringEquals("transactional campaign"))
+                    )
+                )!,
+                scope: ["categories"]
+            )
+        )
+
+        let experiment = Experiment.generate(
+            id: "id1",
+            reportingMetadata: AirshipJSON.string("reporting data 1"),
+            exclusions: [
+                MessageCriteria(
+                    messageTypePredicate: messageTypePredicate,
+                    campaignsPredicate: campaignsPredicate
+                )
             ]
+        )
+
+        self.remoteData.payloads = [createPayload([experiment.toString])]
+
+
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return true
         }
-        """
+
+        var result = try await subject.evaluateExperiments(
+            info: MessageInfo(
+                messageType: "commercial",
+                campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar"]])
+            ),
+            contactID: "contact ID"
+        )
+
+        XCTAssertTrue(result.isMatch)
+        XCTAssertEqual([experiment.reportingMetadata], result.evaluatedExperimentsReportingData)
+
+        result = try await subject.evaluateExperiments(
+            info: MessageInfo(messageType: "transactional"),
+            contactID: "contact ID"
+        )
+
+        XCTAssertFalse(result.isMatch)
+        XCTAssertEqual([], result.evaluatedExperimentsReportingData)
+
+        result = try await subject.evaluateExperiments(
+            info: MessageInfo(
+                messageType: "commercial",
+                campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar", "transactional campaign"]])
+            ),
+            contactID: "contact ID"
+        )
+
+        XCTAssertFalse(result.isMatch)
+        XCTAssertEqual([], result.evaluatedExperimentsReportingData)
     }
     
     private func createPayload(_ json: [String], type: String = "experiments") -> RemoteDataPayload {
@@ -234,7 +301,7 @@ final class ExperimentManagerTest: XCTestCase {
 }
 
 private extension MessageInfo {
-    static let empty = MessageInfo(messageType: "")
+    static let empty = MessageInfo(messageType: "", campaigns: nil)
 }
 
 private final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
@@ -247,5 +314,42 @@ private final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Senda
         contactID: String?
     ) async throws -> Bool {
         return try await self.onEvaluate?(audience, newUserEvaluationDate, contactID) ?? false
+    }
+}
+
+fileprivate extension Experiment {
+    var toString: String {
+        let encoder = JSONEncoder()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        encoder.dateEncodingStrategy = .formatted(formatter)
+
+        return try! AirshipJSON.wrap(self).toString(encoder: encoder)
+    }
+
+    static func generate(
+        id: String,
+        created: Date = Date(),
+        reportingMetadata: AirshipJSON = AirshipJSON.string("reporting!"),
+        audienceSelector: DeviceAudienceSelector = DeviceAudienceSelector(),
+        exclusions: [MessageCriteria]? = nil,
+        timeCriteria: TimeCriteria? = nil
+    ) -> Experiment {
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+
+        let dateString = formatter.string(from: created)
+        let normalized = formatter.date(from: dateString)!
+        
+        return Experiment(
+            id: id,
+            lastUpdated: normalized,
+            created: normalized,
+            reportingMetadata: reportingMetadata,
+            audienceSelector: audienceSelector,
+            exclusions: exclusions,
+            timeCriteria: timeCriteria
+        )
     }
 }

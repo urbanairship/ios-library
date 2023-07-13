@@ -156,7 +156,8 @@ class AirshipInstance: AirshipInstanceProtocol {
             analytics: analytics,
             privacyManager: self.privacyManager,
             permissionsManager: self.permissionsManager,
-            audienceOverrides: audienceOverridesProvider
+            audienceOverrides: audienceOverridesProvider,
+            experimentsManager: experimentManager
         )
 
         var components: [AirshipComponent] = [

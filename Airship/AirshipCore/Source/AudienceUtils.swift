@@ -221,7 +221,7 @@ final class AudienceUtils {
     class func normalize(_ updates: [LiveActivityUpdate])
         -> [LiveActivityUpdate]
     {
-        var timeStamps: [String: UInt64] = [:]
+        var timeStamps: [String: Int64] = [:]
 
         var normalized: [LiveActivityUpdate] = []
 

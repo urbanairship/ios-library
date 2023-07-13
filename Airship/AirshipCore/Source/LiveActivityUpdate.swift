@@ -22,10 +22,10 @@ struct LiveActivityUpdate: Codable, Equatable {
     var token: String?
 
     /// The update start time in milliseconds
-    var actionTimeMS: UInt64
+    var actionTimeMS: Int64
 
     /// The activity start time in milliseconds
-    var startTimeMS: UInt64
+    var startTimeMS: Int64
 
     enum CodingKeys: String, CodingKey {
         case action = "action"

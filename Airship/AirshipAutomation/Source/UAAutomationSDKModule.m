@@ -49,15 +49,16 @@
     UAAnalytics *analytics = dependencies[UASDKDependencyKeys.analytics];
     UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
     UAAutomationAudienceOverridesProvider *audienceOverridesProvider = dependencies[UASDKDependencyKeys.automationAudienceOverridesProvider];
-
-
+    id<UAExperimentDataProvider> experimentsManager = dependencies[UASDKDependencyKeys.experimentsManager];
+    
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
                                                        audienceOverridesProvider:audienceOverridesProvider
                                                               remoteData:remoteData
                                                                        dataStore:dataStore
                                                                          channel:channel
                                                                        analytics:analytics
-                                                                  privacyManager:privacyManager];
+                                                                  privacyManager:privacyManager
+                                                              experimentManager:experimentsManager];
 
     UALegacyInAppMessaging *legacyIAM = [UALegacyInAppMessaging inAppMessagingWithAnalytics:analytics
                                                                                   dataStore:dataStore

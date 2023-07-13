@@ -121,6 +121,7 @@ NS_SWIFT_NAME(ScheduleBuilder)
  */
 @property(nonatomic, strong, nullable) NSDate *triggeredTime;
 
+
 @end
 
 

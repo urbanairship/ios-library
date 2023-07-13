@@ -19,6 +19,7 @@
 @class UARemoteDataAutomationAccess;
 @class UAAutomationAudienceChecker;
 
+@protocol UAExperimentDataProvider;
 @protocol UAAutomationAudienceCheckerProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -42,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param deferredScheduleAPIClient The deferred API client.
  * @param frequencyLimitManager The frequency limit manager.
  * @param privacyManager The privacy manager.
+ * @param experimentManager The experiment manager.
  * @param audienceChecker The audience checker.
  * @return A in-app automation manager instance.
  */
@@ -55,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager
+                  experimentManager: (id<UAExperimentDataProvider>) experimentManager
                      audienceChecker:(id<UAAutomationAudienceCheckerProtocol>)audienceChecker;
 
 /**
@@ -67,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param channel The channel.
  * @param analytics The system analytics instance.
  * @param privacyManager The privacy manager.
+ * @param experimentManager The experiment manager.
  * @return A in-app automation manager instance.
  */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -75,7 +79,8 @@ NS_ASSUME_NONNULL_BEGIN
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
-                      privacyManager:(UAPrivacyManager *)privacyManager;
+                      privacyManager:(UAPrivacyManager *)privacyManager
+                  experimentManager: (id<UAExperimentDataProvider>) experimentManager;
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
               completionHandler:(nullable void (^)(BOOL))completionHandler;

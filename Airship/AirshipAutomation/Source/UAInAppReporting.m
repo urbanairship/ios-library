@@ -1,6 +1,7 @@
 #import "UAInAppReporting+Internal.h"
 #import "UAInAppMessage+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UASchedule+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -59,6 +60,7 @@ NSString *const UAInAppMessageResolutionEventMessageClick = @"message_click";
 NSString *const UAInAppMessageResolutionEventButtonClick = @"button_click";
 NSString *const UAInAppMessageResolutionEventUserDismissed = @"user_dismissed";
 NSString *const UAInAppMessageResolutionEventTimedOut = @"timed_out";
+NSString *const UAInAppMessageResolutionEventControl = @"control";
 
 // Button tap
 NSString *const UAInAppMessageButtonTapEventType = @"in_app_button_tap";
@@ -123,6 +125,11 @@ NSString *const UAInAppMessageFormDisplayEventFormIdentifierKey = @"form_identif
 NSString *const UAInAppMessageFormDisplayEventFormTypeKey = @"form_type";
 NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_response_type";
 
+// Holdout groups
+NSString *const UAInAppMessageHoldoutExperimentsKey = @"experiments";
+NSString *const UAInAppMessageHoldoutDeviceKey = @"device";
+NSString *const UAInAppMessageHoldoutChannelIDKey = @"channel_identifier";
+NSString *const UAInAppMessageHoldoutContactIDKey = @"contact_identifier";
 
 @interface UAInAppAutomationEvent : NSObject<UAEvent>
 @property(nonatomic, copy) NSString *inAppEventType;
@@ -154,6 +161,7 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
 @end
 
 @implementation UAInAppReporting
+
 - (instancetype)initWithEventType:(NSString *)eventType
                        scheduleID:(NSString *)scheduleID
                            source:(UAInAppMessageSource)source
@@ -422,6 +430,26 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
                                   baseData:baseData];
 }
 
++ (instancetype)controlEventForScheduleID:(NSString *)identifier
+                                  message:(UAInAppMessage *)message
+                         experimentResult:(UAExperimentResult *)experimentResult {
+
+    NSDictionary *baseData = @{
+        UAInAppMessageResolutionEventResolutionKey: @{
+            UAInAppMessageResolutionEventTypeKey: UAInAppMessageResolutionEventControl
+        },
+        UAInAppMessageHoldoutDeviceKey: @{
+            UAInAppMessageHoldoutChannelIDKey: experimentResult.channelID,
+            UAInAppMessageHoldoutContactIDKey: experimentResult.contactID
+        }
+    };
+
+    return [[self alloc] initWithEventType:UAInAppMessageResolutionEventType
+                                scheduleID:identifier
+                                   message:message
+                                  baseData:baseData];
+}
+
 + (id)createIDMapWithMessageID:(NSString *)messageID
                         source:(UAInAppMessageSource)source
                      campaigns:(NSDictionary *)campaigns {
@@ -523,6 +551,10 @@ NSString *const UAInAppMessageFormDisplayEventFormResponseTypeKey = @"form_respo
     
     if (self.reportingContext.count) {
         [context setValue:self.reportingContext forKey:UAInAppMessageEventReportingContextKey];
+    }
+
+    if (self.experimentResult.evaluatedExperimentsReportingData.count) {
+        [context setValue:self.experimentResult.evaluatedExperimentsReportingData forKey:UAInAppMessageHoldoutExperimentsKey];
     }
     
     if (context.count) {

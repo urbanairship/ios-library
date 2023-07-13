@@ -24,6 +24,7 @@
 static NSTimeInterval const MaxSchedules = 1000;
 static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairship.automation.prepare_schedule";
+static NSString *const UADefaultScheduleMessageType = @"transactional";
 
 @interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
@@ -35,6 +36,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 @property(nonatomic, strong) UADeferredScheduleAPIClient *deferredScheduleAPIClient;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) UAFrequencyLimitManager *frequencyLimitManager;
+@property(nonatomic) id<UAExperimentDataProvider> experimentManager;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyChecker *> *frequencyCheckers;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, assign) dispatch_once_t engineStarted;
@@ -61,6 +63,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
            deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager
+                   experimentManager:(id<UAExperimentDataProvider>) experimentManager
                      audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker {
 
 
@@ -74,6 +77,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
               deferredScheduleAPIClient:deferredScheduleAPIClient
                   frequencyLimitManager:frequencyLimitManager
                          privacyManager:privacyManager
+                     experimentsManager:experimentManager
                         audienceChecker:audienceChecker];
 }
 
@@ -83,7 +87,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
-                      privacyManager:(UAPrivacyManager *)privacyManager {
+                      privacyManager:(UAPrivacyManager *)privacyManager
+                  experimentManager: (id<UAExperimentDataProvider>) experimentManager {
 
 
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
@@ -102,7 +107,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
 
-
     return [[UAInAppAutomation alloc] initWithConfig:config
                                     automationEngine:automationEngine
                            audienceOverridesProvider:audienceOverridesProvider
@@ -113,6 +117,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                            deferredScheduleAPIClient:deferredScheduleAPIClient
                                frequencyLimitManager:frequencyLimitManager
                                       privacyManager:privacyManager
+                                  experimentsManager:experimentManager
                                      audienceChecker:[[UAAutomationAudienceChecker alloc] init]];
 }
 
@@ -127,6 +132,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
      deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
          frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                 privacyManager:(UAPrivacyManager *)privacyManager
+            experimentsManager:(id<UAExperimentDataProvider>) experimentManager
                audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker {
 
     self = [super init];
@@ -150,6 +156,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
                                                                        className:@"UAInAppAutomation"];
         self.redirectURLs = [NSMutableDictionary dictionary];
+        self.experimentManager = experimentManager;
 
         UA_WEAKIFY(self)
         self.disableHelper.onChange = ^{
@@ -288,7 +295,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     UA_LDEBUG(@"Trigger Context trigger: %@ event: %@", triggerContext.trigger, triggerContext.event);
     UA_LDEBUG(@"Preparing schedule: %@", schedule.identifier);
-
     
     NSString *scheduleID = schedule.identifier;
 
@@ -345,6 +351,22 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         completionHandler(result);
     };
 
+    // Evaluate experiements
+    __block UAExperimentResult *experimentResult;
+    UARetriable *evaluateExperiments = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
+        UA_STRONGIFY(self)
+        [self evaluateExperimentsForSchedule:schedule completionHandler:^(UAExperimentResult *result, NSError *error) {
+            if (error) {
+                UA_LDEBUG(@"Error %@ evaluating experiments for schedule: %@", error, scheduleID);
+                retriableHandler(UARetriableResultRetry, 0);
+            } else {
+                UA_LDEBUG(@"Experiment result %@ for schedule: %@", result, scheduleID);
+                experimentResult = result;
+                retriableHandler(UARetriableResultSuccess, 0);
+            }
+        }];
+    }];
+
     // Prepare
     UARetriable *prepare = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
         UA_STRONGIFY(self)
@@ -360,6 +382,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                                               scheduleID:schedule.identifier
                                                campaigns:schedule.campaigns
                                         reportingContext:schedule.reportingContext
+                                        experimentResult:experimentResult
                                        completionHandler:prepareCompletionHandlerWrapper];
                 retriableHandler(UARetriableResultSuccess, 0);
                 break;
@@ -367,6 +390,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
             case UAScheduleTypeDeferred:
                 [self prepareDeferredSchedule:schedule
                                triggerContext:triggerContext
+                             experimentResult:experimentResult
                              retriableHandler:retriableHandler
                             completionHandler:prepareCompletionHandlerWrapper];
                 break;
@@ -383,12 +407,14 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
         checkValid,
         checkFrequencyLimits,
         checkAudience,
+        evaluateExperiments,
         prepare
     ]];
 }
 
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
                  triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
+               experimentResult:(UAExperimentResult *)experimentResult
                retriableHandler:(UARetriableCompletionHandler) retriableHandler
               completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
 
@@ -428,6 +454,7 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
                                                   scheduleID:schedule.identifier
                                                    campaigns:schedule.campaigns
                                             reportingContext:schedule.reportingContext
+                                            experimentResult:experimentResult
                                            completionHandler:completionHandler];
                     retriableHandler(UARetriableResultSuccess, 0);
                 } else {
@@ -531,7 +558,6 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     UA_LTRACE(@"Executing schedule: %@", schedule.identifier);
 
     [self.frequencyCheckers removeObjectForKey:schedule.identifier];
-
 
     switch (schedule.type) {
         case UAScheduleTypeActions: {
@@ -720,6 +746,29 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     dispatch_once(&_engineStarted, ^{
         [self.automationEngine start];
     });
+}
+
+#pragma mark - Holdout groups
+- (void)evaluateExperimentsForSchedule:(UASchedule *)schedule
+                     completionHandler:(void (^)(UAExperimentResult *, NSError *))completionHandler {
+
+    UARemoteDataInfo *remoteDataInfo = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
+
+    // Skip actions for now or anything that is not from remote-data
+    if (schedule.type == UAScheduleTypeActions || !remoteDataInfo) {
+        completionHandler(nil, nil);
+        return;
+    }
+
+    if (schedule.bypassHoldoutGroups) {
+        completionHandler(nil, nil);
+    } else {
+        UAExperimentMessageInfo *info = [[UAExperimentMessageInfo alloc] initWithMessageType:schedule.messageType ?: UADefaultScheduleMessageType
+                                                                               campaignsJSON:schedule.campaigns];
+        [self.experimentManager evaluateExperimentsWithInfo:info
+                                                  contactID:remoteDataInfo.contactID
+                                          completionHandler:completionHandler];
+    }
 }
 
 @end

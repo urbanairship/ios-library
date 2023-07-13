@@ -8,6 +8,7 @@
 #import "UAInAppAutomation.h"
 #import "UAInAppMessageBannerDisplayContent.h"
 #import "UAAirshipAutomationCoreImport.h"
+#import "UASchedule+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -250,6 +251,7 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         builder.triggers = @[trigger];
         builder.end = message.expiry;
         builder.identifier = message.identifier;
+        builder.bypassHoldoutGroups = YES;
 
         // Allow the app to customize the schedule info builder if necessary
         if (extender && [extender respondsToSelector:@selector(extendScheduleBuilder:message:)]) {

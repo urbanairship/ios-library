@@ -118,6 +118,7 @@
             XCTAssertEqual(message.displayType, UAInAppMessageDisplayTypeHTML);
             XCTAssertEqualObjects(message.displayBehavior, UAInAppMessageDisplayBehaviorImmediate);
             XCTAssertEqual(message.isReportingEnabled, NO);
+            XCTAssertTrue(schedule.bypassHoldoutGroups);
 
             UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *)message.displayContent;
             XCTAssertEqual(displayContent.requireConnectivity, NO);

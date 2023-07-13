@@ -11,6 +11,7 @@
 
 @class UAPreferenceDataStore;
 @class UADispatcher;
+@class UAExperimentResult;
 @protocol UAAnalyticsProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -74,15 +75,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param scheduleID The schedule ID.
  * @param campaigns The campaign info.
  * @param reportingContext The reporting context info.
-
+ * @param experimentResult The experiment results.
  * @param completionHandler The completion handler with the prepare result.
  */
 - (void)prepareMessage:(UAInAppMessage *)message
             scheduleID:(NSString *)scheduleID
              campaigns:(nullable id)campaigns
       reportingContext:(nullable id)reportingContext
+      experimentResult:(nullable UAExperimentResult *)experimentResult
      completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler;
-
 
 /**
  * Called to check if the message is ready to display.
@@ -150,7 +151,6 @@ NS_ASSUME_NONNULL_BEGIN
                          scheduleID:(NSString *)scheduleID
                           campaigns:(nullable id)campaigns
                    reportingContext:(nullable id)reportingContext;
-
 @end
 
 NS_ASSUME_NONNULL_END

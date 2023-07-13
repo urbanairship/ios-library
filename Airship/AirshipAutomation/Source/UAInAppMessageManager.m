@@ -40,25 +40,27 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 @property(nonatomic, strong, nonnull) id<UAInAppMessageDisplayCoordinator> displayCoordinator;
 @property(nonatomic, copy, nullable) id campaigns;
 @property(nonatomic, copy, nullable) id reportingContext;
+@property(nonatomic, strong, nullable) UAExperimentResult *experimentResult;
 
-+ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
++ (instancetype)dataWithAdapter:(nullable id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
-                        message:(UAInAppMessage *)message
+                        message:(nonnull UAInAppMessage *)message
                       campaigns:(nullable id)campaigns
                reportingContext:(nullable id)reportingContext
-             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator;
-
+             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator
+               experimentResult:(nullable UAExperimentResult *)experimentResult;
 
 @end
 
 @implementation UAInAppMessageScheduleData
 
-- (instancetype)initWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
+- (instancetype)initWithAdapter:(nullable id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
-                        message:(UAInAppMessage *)message
+                        message:(nonnull UAInAppMessage *)message
                       campaigns:(nullable id)campaigns
                reportingContext:(nullable id)reportingContext
-             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
+             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator
+               experimentResult:(nullable UAExperimentResult *)experimentResult {
 
     self = [super init];
 
@@ -69,24 +71,27 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         self.campaigns = campaigns;
         self.reportingContext = reportingContext;
         self.displayCoordinator = displayCoordinator;
+        self.experimentResult = experimentResult;
     }
 
     return self;
 }
 
-+ (instancetype)dataWithAdapter:(id<UAInAppMessageAdapterProtocol>)adapter
++ (instancetype)dataWithAdapter:(nullable id<UAInAppMessageAdapterProtocol>)adapter
                      scheduleID:(NSString *)scheduleID
-                        message:(UAInAppMessage *)message
+                        message:(nonnull UAInAppMessage *)message
                       campaigns:(nullable id)campaigns
                reportingContext:(nullable id)reportingContext
-             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator {
+             displayCoordinator:(id<UAInAppMessageDisplayCoordinator>)displayCoordinator
+               experimentResult:(nullable UAExperimentResult *)experimentResult {
 
     return [[self alloc] initWithAdapter:adapter
                               scheduleID:scheduleID
                                  message:message
                                campaigns:campaigns
                         reportingContext:reportingContext
-                      displayCoordinator:displayCoordinator];
+                      displayCoordinator:displayCoordinator
+                        experimentResult:experimentResult];
 }
 
 @end
@@ -287,7 +292,9 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             scheduleID:(NSString *)scheduleID
              campaigns:(nullable id)campaigns
       reportingContext:(nullable id)reportingContext
+      experimentResult:(nullable UAExperimentResult *)experimentResult
      completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
+
     // Allow the delegate to extend the message if desired.
     id<UAInAppMessagingDelegate> delegate = self.delegate;
     if ([delegate respondsToSelector:@selector(extendMessage:)]) {
@@ -299,17 +306,30 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         }
     }
 
+    // Display coordinator
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
+
+    // Message is part of a hold out group, skip adapter and prepare
+    if (experimentResult.isMatch) {
+        self.scheduleData[scheduleID] = [UAInAppMessageScheduleData dataWithAdapter:nil
+                                                                         scheduleID:scheduleID
+                                                                            message:message
+                                                                          campaigns:campaigns
+                                                                   reportingContext:reportingContext
+                                                                 displayCoordinator:displayCoordinator
+                                                                   experimentResult:experimentResult];
+
+        completionHandler(UAAutomationSchedulePrepareResultContinue);
+        return;
+    }
+
     // Create adapter
     id<UAInAppMessageAdapterProtocol> adapter = [self createAdapterForMessage:message scheduleID:scheduleID];
-
     if (!adapter) {
         UA_LDEBUG(@"Failed to build adapter for message: %@, skipping display for schedule: %@", message, scheduleID);
         completionHandler(UAAutomationSchedulePrepareResultPenalize);
         return;
     }
-
-    // Display coordinator
-    id<UAInAppMessageDisplayCoordinator> displayCoordinator = [self displayCoordinatorForMessage:message];
 
     // Prepare the assets
     UARetriable *prepareAssets = [self prepareMessageAssetsWithMessage:message scheduleID:scheduleID resultHandler:^(UARetriableResult result, NSTimeInterval backoff) {
@@ -347,7 +367,8 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                                                                                     message:message
                                                                                   campaigns:campaigns
                                                                            reportingContext:reportingContext
-                                                                         displayCoordinator:displayCoordinator];
+                                                                         displayCoordinator:displayCoordinator
+                                                                           experimentResult:experimentResult];
                 break;
             case UARetriableResultRetry:
                 // Allow the pipeline to retry with backoff
@@ -371,7 +392,11 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     [self.prepareSchedulePipeline addChainedRetriables:@[prepareAssets, prepareAdapter]];
 }
 
-- (nonnull id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(UAInAppMessage *)message {
+- (nonnull id<UAInAppMessageDisplayCoordinator>)displayCoordinatorForMessage:(nullable UAInAppMessage *)message {
+    if (!message) {
+        return self.defaultDisplayCoordinator;
+    }
+
     id<UAInAppMessageDisplayCoordinator> displayCoordinator;
     id<UAInAppMessagingDelegate> delegate = self.delegate;
     if ([delegate respondsToSelector:@selector(displayCoordinatorForMessage:)]) {
@@ -414,9 +439,12 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         return UAAutomationScheduleReadyResultNotReady;
     }
 
-    if (![data.adapter isReadyToDisplay]) {
-        UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", scheduleID);
-        return UAAutomationScheduleReadyResultNotReady;
+    // If it's part of a hold out group skip the adapter checks
+    if (!data.experimentResult.isMatch) {
+        if (![data.adapter isReadyToDisplay]) {
+            UA_LTRACE(@"Adapter ready check failed. Schedule: %@ not ready.", scheduleID);
+            return UAAutomationScheduleReadyResultNotReady;
+        }
     }
 
     id<UAInAppMessagingDelegate> delegate = self.delegate;
@@ -430,6 +458,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     return UAAutomationScheduleReadyResultContinue;
 }
 
+
 - (void)displayMessageWithScheduleID:(NSString *)scheduleID
                    completionHandler:(void (^)(void))completionHandler {
 
@@ -439,9 +468,39 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         return;
     }
 
+    id<UAInAppMessageDisplayCoordinator> displayCoordinator = scheduleData.displayCoordinator;
     UAInAppMessage *message = scheduleData.message;
     id<UAInAppMessageAdapterProtocol> adapter = scheduleData.adapter;
-    id<UAInAppMessageDisplayCoordinator> displayCoordinator = scheduleData.displayCoordinator;
+
+    // Holdout group
+    if (scheduleData.experimentResult.isMatch) {
+        UAInAppReporting *reporting = [UAInAppReporting controlEventForScheduleID:scheduleID
+                                                                          message:scheduleData.message
+                                                                 experimentResult:scheduleData.experimentResult];
+        reporting.campaigns = scheduleData.campaigns;
+        reporting.reportingContext = scheduleData.reportingContext;
+        reporting.experimentResult = scheduleData.experimentResult;
+
+        [reporting record:self.analytics];
+
+        [self.scheduleData removeObjectForKey:scheduleID];
+
+        // Notify the coordinator that message display has begun
+        if ([displayCoordinator respondsToSelector:@selector(didBeginDisplayingMessage:)]) {
+            [displayCoordinator didBeginDisplayingMessage:message];
+        }
+
+        // Notify the coordinator that message display has ended
+        if ([displayCoordinator respondsToSelector:@selector(didFinishDisplayingMessage:)]) {
+            [displayCoordinator didFinishDisplayingMessage:message];
+        }
+
+        completionHandler();
+        return;
+    }
+
+    // Store the result in case we are interrupted during the display
+    [self storeExperimentResult:scheduleData.experimentResult scheduleID:scheduleID];
 
     // Notify delegate that the message is about to be displayed
     id<UAInAppMessagingDelegate> delegate = self.delegate;
@@ -449,7 +508,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         [delegate messageWillBeDisplayed:message scheduleID:scheduleID];
     }
 
-    // Notify the coordinator that message display has begin
+    // Notify the coordinator that message display has begun
     if ([displayCoordinator respondsToSelector:@selector(didBeginDisplayingMessage:)]) {
         [displayCoordinator didBeginDisplayingMessage:message];
     }
@@ -490,6 +549,9 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             [displayCoordinator didFinishDisplayingMessage:message];
         }
 
+        // Clear the result after display
+        [self storeExperimentResult:nil scheduleID:scheduleID];
+
         completionHandler();
     };
 
@@ -501,6 +563,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             if (message.isReportingEnabled) {
                 reporting.reportingContext = scheduleData.reportingContext;
                 reporting.campaigns = scheduleData.campaigns;
+                reporting.experimentResult = scheduleData.experimentResult;
                 [reporting record:self.analytics];
             }
         } onDismiss:onDismiss];
@@ -513,6 +576,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:scheduleID message:message];
             reporting.campaigns = scheduleData.campaigns;
             reporting.reportingContext = scheduleData.reportingContext;
+            reporting.experimentResult = scheduleData.experimentResult;
             [reporting record:self.analytics];
         }
         
@@ -523,6 +587,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                                                                                    resolution:resolution displayTime:timer.time];
                 reporting.campaigns = scheduleData.campaigns;
                 reporting.reportingContext = scheduleData.reportingContext;
+                reporting.experimentResult = scheduleData.experimentResult;
                 [reporting record:self.analytics];
             }
             onDismiss(resolution);
@@ -531,6 +596,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
         UA_LWARN(@"Unable to display message, missing display method for schedule %@", scheduleID);
     }
 }
+
 
 - (void)messageExecutionInterrupted:(nullable UAInAppMessage *)message
                          scheduleID:(NSString *)scheduleID
@@ -542,6 +608,8 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
     UAInAppReporting *reporting = [UAInAppReporting interruptedEventWithScheduleID:scheduleID source:source];
     reporting.campaigns = campaigns;
     reporting.reportingContext = reportingContext;
+    reporting.experimentResult = [self storedExperimentResultForScheduleID:scheduleID];
+    [self storeExperimentResult:nil scheduleID:scheduleID];
     [reporting record:self.analytics];
 }
 
@@ -569,6 +637,20 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
 
 - (void)notifyDisplayConditionsChanged {
     [self.executionDelegate executionReadinessChanged];
+}
+
+- (nullable UAExperimentResult *)storedExperimentResultForScheduleID:(NSString *)scheduleID {
+    NSString *key = [self experimentResultStoreKeyForScheduleID:scheduleID];
+    return [self.dataStore experimentResultForKey:key];
+}
+
+- (void)storeExperimentResult:(nullable UAExperimentResult *)experimentResult scheduleID:(NSString *)scheduleID {
+    NSString *key = [self experimentResultStoreKeyForScheduleID:scheduleID];
+    [self.dataStore storeExperimentResult:experimentResult forKey:key];
+}
+
+- (NSString *)experimentResultStoreKeyForScheduleID:(NSString *)scheduleID {
+    return [NSString stringWithFormat:@"UAInAppMessageManager:experimentResult:%@", scheduleID];
 }
 
 @end

@@ -24,7 +24,7 @@
         builder.renderedLocale = @{@"some": @"locale"};
         builder.source = UAInAppMessageSourceRemoteData;
     }];
-    
+
     self.scheduleID = [NSUUID UUID].UUIDString;
     self.analytics = [[UATestAnalytics alloc] init];
     self.analytics.conversionSendID = [NSUUID UUID].UUIDString;
@@ -49,26 +49,26 @@
         @"from_page_identifier": @"page0",
         @"to_page_identifier": @"page5"
     };
-    
+
     UAThomasPagerInfo *from = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
                                                                   pageIndex:0
                                                              pageIdentifier:@"page0"
                                                                   pageCount:5
                                                                   completed:false];
-    
+
     UAThomasPagerInfo *to = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
                                                                   pageIndex:5
                                                              pageIdentifier:@"page5"
                                                                   pageCount:5
                                                                   completed:true];
-    
+
     UAInAppReporting *reporting = [UAInAppReporting pageSwipeEventWithScheduleID:self.scheduleID
                                                                          message:self.message
                                                                             from:from
                                                                               to:to];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_page_swipe");
 }
@@ -88,15 +88,15 @@
         @"gesture_identifier": @"pager_gesture_id",
         @"reporting_metadata" : @{ @"key": @"value"}
     };
-    
+
     UAInAppReporting *reporting = [UAInAppReporting pageGestureEventWithScheduleID:self.scheduleID
                                                                         identifier:@"pager_gesture_id"
                                                                           metadata:@{ @"key": @"value"}
                                                                            message:self.message];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_gesture");
 }
@@ -116,15 +116,15 @@
         @"action_identifier": @"page_automated_action_id",
         @"reporting_metadata": @{ @"key": @"value"}
     };
-    
+
     UAInAppReporting *reporting = [UAInAppReporting pageAutomatedActionEventWithScheduleID:self.scheduleID
                                                                                 identifier:@"page_automated_action_id"
                                                                                   metadata:@{ @"key": @"value"}
                                                                                    message:self.message];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_page_action");
 }
@@ -145,7 +145,7 @@
             @"duration": @"3.1"
         },
     ];
-    
+
     NSDictionary *expectedData = @{
         @"id": @{
             @"message_id": self.scheduleID
@@ -159,23 +159,23 @@
         @"page_count": @5,
         @"completed": @(NO)
     };
-    
+
     UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
                                                                   pageIndex:1
                                                              pageIdentifier:@"page1"
                                                                   pageCount:5
                                                                   completed:NO];
-    
+
 
 
     UAInAppReporting *reporting = [UAInAppReporting pagerSummaryEventWithScehduleID:self.scheduleID
                                                                             message:self.message
                                                                           pagerInfo:pagerInfo
                                                                         viewedPages:pages];
-                                                                              
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_pager_summary");
 }
@@ -198,21 +198,21 @@
         @"page_identifier": @"page4id"
     };
 
-    
+
     UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
                                                                   pageIndex:4
                                                              pageIdentifier:@"page4id"
                                                                   pageCount:5
                                                                   completed:YES];
-    
-    
+
+
     UAInAppReporting *reporting = [UAInAppReporting pagerCompletedEventWithScheduleID:self.scheduleID
                                                                               message:self.message
                                                                             pagerInfo:pagerInfo];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_pager_completed");
 }
@@ -224,7 +224,7 @@
     NSDictionary *formData = @{
         @"form_data": @"test_data"
     };
-    
+
     NSDictionary *expectedData = @{
         @"id": @{
             @"message_id": self.scheduleID
@@ -235,16 +235,16 @@
         @"source": @"urban-airship",
         @"forms": formData
     };
-    
+
     UAThomasFormResult *formResult = [[UAThomasFormResult alloc] initWithIdentifier:@"form_id" formData:formData];
 
     UAInAppReporting *reporting = [UAInAppReporting formResultEventWithScheduleID:self.scheduleID
                                                                           message:self.message
                                                                         formResult:formResult];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_form_result");
 }
@@ -271,14 +271,14 @@
                                                                      formType:@"some form type"
                                                                formResponseType:@"some form response type"];
 
-    
+
     UAInAppReporting *reporting = [UAInAppReporting formDisplayEventWithScheduleID:self.scheduleID
                                                                            message:self.message
                                                                           formInfo:formInfo];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_form_display");
 }
@@ -303,10 +303,10 @@
                                                                          message:self.message
                                                                         metadata:@{ @"key": @"value"}
                                                                         buttonID:@"some-button"];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_button_tap");
 }
@@ -330,7 +330,7 @@
         @"completed": @YES,
         @"viewed_count": @4
     };
-    
+
     UAThomasPagerInfo *pagerInfo = [[UAThomasPagerInfo alloc] initWithIdentifier:@"pager_id"
                                                                   pageIndex:0
                                                              pageIdentifier:@"page-0"
@@ -341,10 +341,10 @@
                                                                         message:self.message
                                                                       pagerInfo:pagerInfo
                                                                       viewCount:4];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_page_view");
 }
@@ -364,10 +364,10 @@
     };
 
     UAInAppReporting *reporting = [UAInAppReporting legacyDirectOpenEventWithScheduleID:self.scheduleID];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -389,10 +389,10 @@
 
     UAInAppReporting *reporting = [UAInAppReporting legacyReplacedEventWithScheduleID:self.scheduleID
                                                                         replacementID:@"replacement id"];
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -422,7 +422,7 @@
                                                                       displayTime:100.0];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -452,7 +452,7 @@
                                                                       displayTime:100.0];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -484,7 +484,7 @@
         }];
         builder.identifier = @"button";
     }];
-    
+
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution buttonClickResolutionWithButtonInfo:info];
     UAInAppReporting *reporting = [UAInAppReporting resolutionEventWithScheduleID:self.scheduleID
                                                                           message:self.message
@@ -492,7 +492,7 @@
                                                                       displayTime:100.0];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -514,7 +514,7 @@
             @"display_time": @"100.000"
         }
     };
-    
+
     UAInAppMessageResolution *resolution = [UAInAppMessageResolution messageClickResolution];
     UAInAppReporting *reporting = [UAInAppReporting resolutionEventWithScheduleID:self.scheduleID
                                                                           message:self.message
@@ -522,7 +522,7 @@
                                                                       displayTime:100.0];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -548,7 +548,7 @@
                                                                             source:self.message.source];
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
     XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
 }
@@ -598,10 +598,10 @@
 
     UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:self.scheduleID message:self.message];
     reporting.campaigns = campaigns;
-    
+
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
-    
+
     XCTAssertEqualObjects(event.data, expectedData);
 }
 
@@ -609,6 +609,11 @@
  * Test context.
  */
 - (void)testContext {
+    UAExperimentResult *experimentResult = [[UAExperimentResult alloc] initWithChannelId:@"channel-id"
+                                                                               contactId:@"contact-id"
+                                                                            isMatch:YES
+                                                                       reportingMetadata:@[@"some experiment result"]];
+
     NSDictionary *reportingContext = @{ @"some reporting context": @"some reporting value" };
 
     NSDictionary *expectedData = @{
@@ -636,7 +641,8 @@
             },
             @"button": @{
                 @"identifier": @"some-button",
-            }
+            },
+            @"experiments": @[@"some experiment result"]
         }
     };
 
@@ -653,14 +659,15 @@
                                                                   completed:NO];
 
     UAThomasButtonInfo *buttonInfo = [[UAThomasButtonInfo alloc] initWithIdentifier:@"some-button"];
-    
+
     UAThomasLayoutContext *layoutContext = [[UAThomasLayoutContext alloc] initWithFormInfo:formInfo
                                                                                  pagerInfo:pagerInfo
                                                                                 buttonInfo:buttonInfo];
-    
+
     UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:self.scheduleID message:self.message];
     reporting.reportingContext = reportingContext;
     reporting.layoutContext = layoutContext;
+    reporting.experimentResult = experimentResult;
 
     [reporting record:self.analytics];
     id<UAEvent> event = self.analytics.events[0];
@@ -668,5 +675,38 @@
     XCTAssertEqualObjects(event.data, expectedData);
 }
 
+- (void)testControlEvent {
+    NSDictionary *expectedData = @{
+        @"id": @{
+            @"message_id": self.scheduleID,
+        },
+        @"locale": self.message.renderedLocale,
+        @"conversion_send_id": self.analytics.conversionSendID,
+        @"conversion_metadata": self.analytics.conversionPushMetadata,
+        @"source": @"urban-airship",
+        @"device": @{
+            @"channel_identifier": @"channeld-id",
+            @"contact_identifier": @"contact-id"
+        },
+        @"resolution": @{
+            @"type": @"control"
+        }
+    };
+
+    UAExperimentResult *experiment = [[UAExperimentResult alloc] initWithChannelId: @"channeld-id"
+                                                                         contactId: @"contact-id"
+                                                                           isMatch: YES
+                                                                 reportingMetadata: @[@{@"experiment-id": @"id"}]];
+
+    UAInAppReporting *reporting = [UAInAppReporting controlEventForScheduleID:self.scheduleID
+                                                                      message:self.message
+                                                             experimentResult:experiment];
+
+    [reporting record:self.analytics];
+    id<UAEvent> event = self.analytics.events[0];
+
+    XCTAssertEqualObjects(event.data, expectedData);
+    XCTAssertEqualObjects(event.eventType, @"in_app_resolution");
+}
 
 @end

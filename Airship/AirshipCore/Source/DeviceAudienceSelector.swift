@@ -1,7 +1,7 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-struct DeviceAudienceSelector: Sendable, Codable {
+struct DeviceAudienceSelector: Sendable, Codable, Equatable {
     public var newUser: Bool?
     public var notificationOptIn: Bool?
     public var locationOptIn: Bool?

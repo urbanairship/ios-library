@@ -7,12 +7,15 @@
 @class UAThomasPagerInfo;
 @class UAThomasFormInfo;
 @class UAThomasFormResult;
+@class UAExperimentResult;
 
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const UAInAppPagerSummaryIndexKey;
 extern NSString *const UAInAppPagerSummaryDurationKey;
 extern NSString *const UAInAppPagerSummaryIDKey;
+
+@class UAExperimentResult;
 
 
 /**
@@ -88,9 +91,14 @@ NS_SWIFT_NAME(InAppReporting)
                                      startingStatus:(NSString *)startingStatus
                                        endingStatus:(NSString *)endingStatus;
 
++ (instancetype)controlEventForScheduleID:(NSString *)identifier
+                                  message:(UAInAppMessage *)message
+                         experimentResult:(UAExperimentResult *)experimentResult;
+
 @property(nonatomic, copy, nullable) NSDictionary *campaigns;
 @property(nonatomic, copy, nullable) NSDictionary *reportingContext;
 @property(nonatomic, strong, nullable) UAThomasLayoutContext *layoutContext;
+@property(nonatomic, strong, nullable) UAExperimentResult *experimentResult;
 
 - (void)record:(id<UAAnalyticsProtocol>)analytics;
 

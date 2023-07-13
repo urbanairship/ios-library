@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22F66" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="UAScheduleData" representedClassName="UAScheduleData" elementID="UAActionScheduleData" syncable="YES">
         <attribute name="audience" optional="YES" attributeType="String"/>
         <attribute name="campaigns" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
