@@ -34,10 +34,6 @@ let package = Package(
             targets: ["AirshipPreferenceCenter"]
         ),
         .library(
-            name: "AirshipFeatureFlags",
-            targets: ["AirshipFeatureFlags"]
-        ),
-        .library(
             name: "AirshipDebug",
             targets: ["AirshipDebug"]
         ),
@@ -172,20 +168,6 @@ let package = Package(
             path: "Airship/AirshipPreferenceCenter",
             exclude: [
                 "Source/AirshipPreferenceCenter.h",
-                "Info.plist",
-                "Tests",
-            ],
-            sources: ["Source"],
-            resources: [
-                .process("Resources")
-            ]
-        ),
-        .target(
-            name: "AirshipFeatureFlags",
-            dependencies: [.target(name: "AirshipCore")],
-            path: "Airship/AirshipFeatureFlags",
-            exclude: [
-                "Source/AirshipFeatureFlags.h",
                 "Info.plist",
                 "Tests",
             ],
