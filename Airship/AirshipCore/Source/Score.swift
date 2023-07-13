@@ -110,8 +110,9 @@ struct Score: View {
             identifier: self.model.identifier
         )
 
-        guard case let .score(value) = formValue,
-            let value = value
+        guard
+            case let .score(scoreValue) = formValue,
+            let value = scoreValue
         else {
             return
         }

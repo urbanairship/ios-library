@@ -418,6 +418,8 @@ public class AirshipConfig: NSObject, NSCopying {
         urlAllowListScopeJavaScriptInterface =
             config.urlAllowListScopeJavaScriptInterface
         urlAllowListScopeOpenURL = config.urlAllowListScopeOpenURL
+        isURLAllowListSet = config.isURLAllowListSet
+        isURLAllowListScopeOpenURLSet = config.isURLAllowListScopeOpenURLSet
         clearNamedUserOnAppRestore = config.clearNamedUserOnAppRestore
         isChannelCaptureEnabled = config.isChannelCaptureEnabled
         isChannelCreationDelayEnabled = config.isChannelCreationDelayEnabled

@@ -3,7 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 17.0.2 June 2, 2023
+## Version 17.0.3 July 10, 2023
+Patch release that fixes an issue with URL allow lists defaulting to allowing all URLs if calling takeOff with a config instance.
+
+### Changes
+- Fixed URL allow list issue
+- Added workaround for Xcode 15 beta compile issue
+
+
+## Version 17.0.2 July 2, 2023
 Patch release that fixes an issue with modular header on podspec for AirshipServiceExtension and AirshipContentExtension, an issue deep linking to a deleted Message Center message, and fixes a regression with the share action. Applications that are using 17.0.1 or older should update.
 
 ### Changes

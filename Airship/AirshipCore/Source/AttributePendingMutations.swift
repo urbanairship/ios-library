@@ -33,8 +33,8 @@ class AttributePendingMutations: NSObject, NSSecureCoding {
             }
 
             if action == "set" {
-                guard let value = update["value"],
-                      let value = try? AirshipJSON.wrap(value)
+                guard let valueJSON = update["value"],
+                      let value = try? AirshipJSON.wrap(valueJSON)
                 else {
                     return nil
                 }
