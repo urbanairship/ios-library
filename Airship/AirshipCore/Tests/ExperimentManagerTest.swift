@@ -31,31 +31,24 @@ final class ExperimentManagerTest: XCTestCase {
         )
     }
 
-    func testManagerParseValidExperimentData() async throws {
-        let experimentId = "fake-id"
-        let experiment = Experiment.generate(id: experimentId)
-        self.remoteData.payloads = [
-            createPayload([experiment.toString])
-        ]
-
-        guard let fromManager = await self.subject.getExperiment(id: experimentId) else {
-            XCTFail("Experiment not found")
-            return
-        }
-
-        XCTAssertEqual(experiment, fromManager)
-    }
-
-    func testExperimentManagerOmitsInvalidExperiments() async {
+    func testExperimentManagerOmitsInvalidExperiments() async throws {
         let experiment = Experiment.generate(id: "valid")
-
         self.remoteData.payloads = [createPayload([experiment.toString, "{ \"not valid\": true }"])]
 
-        let experiments = await self.subject.getExperiments()
-        XCTAssertEqual([experiment], experiments)
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: nil
+        )!
+
+        XCTAssertEqual(
+            [
+                experiment.reportingMetadata
+            ],
+            result.evaluatedExperimentsReportingData
+        )
     }
 
-    func testExperimentManagerParseMultipleExperiments() async {
+    func testExperimentManagerParseMultipleExperiments() async throws {
         let experiment1 = Experiment.generate(id: "id1")
         let experiment2 = Experiment.generate(id: "id2")
 
@@ -64,25 +57,39 @@ final class ExperimentManagerTest: XCTestCase {
             createPayload([experiment2.toString])
         ]
 
-        let ex1 = await self.subject.getExperiment(id: "id1")
-        XCTAssertEqual(experiment1, ex1)
 
-        let ex2 = await self.subject.getExperiment(id: "id2")
-        XCTAssertEqual(experiment2, ex2)
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: nil
+        )!
+
+        XCTAssertEqual(
+            [
+                experiment1.reportingMetadata,
+                experiment2.reportingMetadata
+            ],
+            result.evaluatedExperimentsReportingData
+        )
     }
 
-    func testExperimentManagerHandleNoExperimentsPayload() async {
+    func testExperimentManagerHandleNoExperimentsPayload() async throws {
         self.remoteData.payloads = [createPayload(["{}"])]
 
-        let experiment = await self.subject.getExperiment(id: "id")
-        XCTAssertNil(experiment)
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: nil
+        )
+        XCTAssertNil(result)
     }
 
-    func testExperimentManagerHandleInvalidPayload() async {
+    func testExperimentManagerHandleInvalidPayload() async throws {
         let experiment = "{\"invalid\": \"experiment\"}"
         self.remoteData.payloads = [createPayload([experiment])]
 
-        let result = await subject.getExperiment(id: "id")
+        let result = try await subject.evaluateExperiments(
+            info: MessageInfo.empty,
+            contactID: nil
+        )
         XCTAssertNil(result)
     }
 
@@ -94,10 +101,7 @@ final class ExperimentManagerTest: XCTestCase {
             contactID: nil
         )
 
-        XCTAssertFalse(result.isMatch)
-        XCTAssertEqual(contactID, result.contactID)
-        XCTAssertEqual(channelID, result.channelID)
-        XCTAssertTrue(result.evaluatedExperimentsReportingData.isEmpty)
+        XCTAssertNil(result)
     }
 
     func testResultNoMatch() async throws {
@@ -107,7 +111,7 @@ final class ExperimentManagerTest: XCTestCase {
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
             contactID: nil
-        )
+        )!
 
         XCTAssertFalse(result.isMatch)
         XCTAssertEqual(contactID, result.contactID)
@@ -151,7 +155,7 @@ final class ExperimentManagerTest: XCTestCase {
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
             contactID: activeContactID
-        )
+        )!
 
         XCTAssertTrue(result.isMatch)
         XCTAssertEqual(activeContactID, result.contactID)
@@ -204,7 +208,7 @@ final class ExperimentManagerTest: XCTestCase {
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
             contactID: activeContactID
-        )
+        )!
 
         XCTAssertTrue(result.isMatch)
         XCTAssertEqual(activeContactID, result.contactID)
@@ -258,20 +262,19 @@ final class ExperimentManagerTest: XCTestCase {
                 campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar"]])
             ),
             contactID: "contact ID"
-        )
+        )!
 
         XCTAssertTrue(result.isMatch)
         XCTAssertEqual([experiment.reportingMetadata], result.evaluatedExperimentsReportingData)
 
-        result = try await subject.evaluateExperiments(
+        var emptyResult = try await subject.evaluateExperiments(
             info: MessageInfo(messageType: "transactional"),
             contactID: "contact ID"
         )
 
-        XCTAssertFalse(result.isMatch)
-        XCTAssertEqual([], result.evaluatedExperimentsReportingData)
+        XCTAssertNil(emptyResult)
 
-        result = try await subject.evaluateExperiments(
+        emptyResult = try await subject.evaluateExperiments(
             info: MessageInfo(
                 messageType: "commercial",
                 campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar", "transactional campaign"]])
@@ -279,8 +282,7 @@ final class ExperimentManagerTest: XCTestCase {
             contactID: "contact ID"
         )
 
-        XCTAssertFalse(result.isMatch)
-        XCTAssertEqual([], result.evaluatedExperimentsReportingData)
+        XCTAssertNil(emptyResult)
     }
     
     private func createPayload(_ json: [String], type: String = "experiments") -> RemoteDataPayload {

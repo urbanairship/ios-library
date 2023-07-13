@@ -29,7 +29,12 @@ final class ExperimentManager: ExperimentDataProvider {
         self.date = date
     }
     
-    public func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult {
+    public func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult? {
+        let experiments = await getExperiments(info: info)
+        guard !experiments.isEmpty else {
+            return nil
+        }
+
         let contactID = await resolveContactID(contactID: contactID)
         guard let channelID = channelIDProvider() else {
             // Since we pull this after a stable contact ID this should never happen. Ideally we have
@@ -40,16 +45,7 @@ final class ExperimentManager: ExperimentDataProvider {
         var evaluatedMetadata: [AirshipJSON] = []
         var isMatch: Bool = false
 
-        let experiments = await getExperiments()
         for experiment in experiments {
-            if (!experiment.isActive(date: self.date.now)) {
-                continue
-            }
-
-            if (experiment.isExcluded(info: info)) {
-                continue
-            }
-
             isMatch = try await self.audienceChecker.evaluate(
                 audience: experiment.audienceSelector,
                 newUserEvaluationDate: experiment.created,
@@ -78,17 +74,15 @@ final class ExperimentManager: ExperimentDataProvider {
         return await stableContactIDProvider()
     }
     
-    func getExperiment(id: String) async -> Experiment? {
-        return await getExperiments().first(where: { $0.id == id })
-    }
-    
-    func getExperiments() async -> [Experiment] {
+    func getExperiments(info: MessageInfo) async -> [Experiment] {
         return await remoteData
             .payloads(types: [Self.payloadType])
             .map { $0.data }
             .compactMap { $0[Self.payloadType] as? [[String: Any]] }
             .flatMap { $0 }
             .compactMap(Experiment.from)
+            .filter { $0.isActive(date: self.date.now) }
+            .filter { !$0.isExcluded(info: info) }
     }
 }
 

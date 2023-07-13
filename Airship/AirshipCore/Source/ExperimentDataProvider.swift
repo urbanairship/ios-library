@@ -6,7 +6,7 @@ import Foundation
 @objc(UAExperimentDataProvider)
 public protocol ExperimentDataProvider {
     @objc
-    func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult
+    func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult?
 }
 
 // NOTE: For internal use only. :nodoc:
