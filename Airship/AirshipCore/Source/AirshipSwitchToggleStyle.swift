@@ -7,13 +7,13 @@ import SwiftUI
 struct AirshipSwitchToggleStyle: ToggleStyle {
     let model: SwitchToggleStyleModel
     let colorScheme: ColorScheme
+    let disabled: Bool
 
     @Environment(\.isEnabled) var isEnabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let colors = self.model.colors
-        let fill =
-            configuration.isOn
+        let fill = configuration.isOn
             ? colors.on.toColor(colorScheme) : colors.off.toColor(colorScheme)
         Button(action: { configuration.isOn.toggle() }) {}
             .buttonStyle(
@@ -24,6 +24,9 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
             )
             .applyIf(!isEnabled) {
                 $0.saturation(0.5)
+            }
+            .applyIf(disabled) {  view in
+                view.colorMultiply(HexColor.disabled.toColor())
             }
     }
 

@@ -30,7 +30,8 @@ struct Score: View {
                                 style: style,
                                 viewConstraints: constraints,
                                 value: index,
-                                colorScheme: colorScheme
+                                colorScheme: colorScheme,
+                                disabled: !formState.isFormInputEnabled
                             )
                         )
                 }
@@ -129,6 +130,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
     let viewConstraints: ViewConstraints
     let value: Int
     let colorScheme: ColorScheme
+    let disabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
@@ -148,10 +150,13 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         .opacity(isOn ? 1 : 0)
                     }
                     Text(String(self.value))
-                        .textAppearance(style.bindings.selected.textAppearance)
-
+                        .textAppearance(style.bindings.selected.textAppearance
+                        )
                 }
                 .opacity(isOn ? 1 : 0)
+                .applyIf(disabled) {  view in
+                    view.colorMultiply(HexColor.disabled.toColor())
+                }
 
                 Group {
                     if let shapes = style.bindings.unselected.shapes {
@@ -169,7 +174,6 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         )
                 }
                 .opacity(isOn ? 0 : 1)
-
             }
             .aspectRatio(1, contentMode: .fit)
             .frame(height: self.viewConstraints.height)

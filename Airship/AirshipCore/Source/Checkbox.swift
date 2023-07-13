@@ -7,6 +7,7 @@ import SwiftUI
 struct Checkbox: View {
     let model: CheckboxModel
     let constraints: ViewConstraints
+    @EnvironmentObject var formState: FormState
     @EnvironmentObject var checkboxState: CheckboxState
     @Environment(\.colorScheme) var colorScheme
 
@@ -33,12 +34,13 @@ struct Checkbox: View {
                 AirshipCheckboxToggleStyle(
                     viewConstraints: self.constraints,
                     model: style,
-                    colorScheme: colorScheme
+                    colorScheme: colorScheme,
+                    disabled: !formState.isFormInputEnabled
                 )
             )
         case .switchStyle(let style):
             toggle.toggleStyle(
-                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme)
+                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme, disabled: !formState.isFormInputEnabled)
             )
         }
     }

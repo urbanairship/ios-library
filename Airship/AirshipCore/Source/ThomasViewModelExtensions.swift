@@ -112,6 +112,7 @@ extension HorizontalPosition {
 
 extension HexColor {
     static let clear = HexColor(hex: "#000000", alpha: 0.00001)
+    static let disabled = HexColor(hex: "#020202", alpha: 0.38)
 }
 
 private enum ParentController {

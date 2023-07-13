@@ -30,12 +30,13 @@ struct RadioInput: View {
                 AirshipCheckboxToggleStyle(
                     viewConstraints: self.constraints,
                     model: style,
-                    colorScheme: colorScheme
+                    colorScheme: colorScheme,
+                    disabled: !formState.isFormInputEnabled
                 )
             )
         case .switchStyle(let style):
             toggle.toggleStyle(
-                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme)
+                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme, disabled: !formState.isFormInputEnabled)
             )
         }
     }

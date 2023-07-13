@@ -32,8 +32,7 @@ struct Shapes {
     private static func rectangle(colorScheme: ColorScheme, border: Border?)
         -> some View
     {
-        let strokeColor =
-            border?.strokeColor?.toColor(colorScheme) ?? Color.clear
+        let strokeColor = border?.strokeColor?.toColor(colorScheme) ?? Color.clear
         let strokeWidth = border?.strokeWidth ?? 0
         let cornerRadius = border?.radius ?? 0
 
@@ -139,8 +138,8 @@ struct Shapes {
         constraints: ViewConstraints,
         colorScheme: ColorScheme
     ) -> some View {
-        let color = model.color?.toColor(colorScheme) ?? Color.clear
         let scaled = scaledConstraints(constraints, scale: model.scale)
+        let color = model.color?.toColor(colorScheme) ?? Color.clear
         if let border = model.border {
             ellipse(colorScheme: colorScheme, border: border)
                 .aspectRatio(model.aspectRatio ?? 1, contentMode: .fit)
