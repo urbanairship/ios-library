@@ -65,6 +65,18 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
             .eraseToAnyPublisher()
     }
 
+    var featureFlagPublisher: AnyPublisher<[[String: AnyHashable]], Never>
+    {
+        self.remoteData.publisher(types: ["feature_flags"])
+            .map { payloads -> [[String: AnyHashable]] in
+                return payloads.compactMap { payload in
+                    payload.data["feature_flags"] as? [[String: AnyHashable]]
+                }.reduce([], +)
+            }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
     private let pushNotifiacitonReceivedSubject = PassthroughSubject<
         PushNotification, Never
     >()

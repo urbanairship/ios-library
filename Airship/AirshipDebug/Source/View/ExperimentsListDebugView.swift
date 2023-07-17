@@ -9,62 +9,52 @@ import AirshipCore
 import AirshipKit
 #endif
 
-public struct InAppAutomationListDebugView: View {
+public struct ExperimentsListsDebugView: View {
 
     @StateObject
     private var viewModel = ViewModel()
 
     public init() {}
-    
+
     public var body: some View {
         Form {
             Section(header: Text("")) {
-                List(self.viewModel.messagePayloads, id: \.self) { payload in
-                    let title = parseTitle(payload: payload)
+                List(self.viewModel.payloads, id: \.self) { payload in
                     NavigationLink(
                         destination: AirshipJSONDetailsView(
                             payload: AirshipJSON.wrapSafe(payload),
-                            title: title
+                            title: parseID(payload: payload)
                         )
                     ) {
                         VStack(alignment: .leading) {
-                            Text(title)
                             Text(parseID(payload: payload))
                         }
                     }
                 }
             }
         }
-        .navigationTitle("In-App Automations".localized())
-    }
-
-    func parseTitle(payload: [String: AnyHashable]) -> String {
-        let message = payload["message"] as? [String: AnyHashable]
-        return message?["name"] as? String ?? parseType(payload: payload)
-    }
-
-    func parseType(payload: [String: AnyHashable]) -> String {
-        return payload["type"] as? String ?? "Unknown"
+        .navigationTitle("Experiments".localized())
     }
 
     func parseID(payload: [String: AnyHashable]) -> String {
-        return payload["id"] as? String ?? "MISSING_ID"
+        return payload["experiment_id"] as? String ?? "MISSING_ID"
     }
 
     class ViewModel: ObservableObject {
-        @Published private(set) var messagePayloads: [[String: AnyHashable]] =
+        @Published private(set) var payloads: [[String: AnyHashable]] =
             []
         private var cancellable: AnyCancellable? = nil
 
         init() {
             if Airship.isFlying {
                 self.cancellable = AirshipDebugManager.shared
-                    .inAppAutomationsPublisher
+                    .experimentsPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in
-                        self.messagePayloads = incoming
+                        self.payloads = incoming
                     }
             }
         }
     }
 }
+

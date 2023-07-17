@@ -20,7 +20,10 @@ public struct ReceivedPushListDebugView: View {
         Form {
             Section(header: Text("")) {
                 List(self.viewModel.pushNotifications, id: \.self) { push in
-                    NavigationLink(destination: PushDetailDebugView(push: push))
+                    NavigationLink(destination: AirshipJSONDetailsView(
+                        payload: AirshipJSON.wrapSafe(push.description),
+                        title: push.alert ?? "Silent Push".localized()
+                    ))
                     {
                         HStack {
                             Text(push.alert ?? "Silent Push".localized())
@@ -57,19 +60,5 @@ public struct ReceivedPushListDebugView: View {
                 }
             }
         }
-    }
-}
-
-private struct PushDetailDebugView: View {
-    let push: PushNotification
-
-    @ViewBuilder
-    var body: some View {
-        Form {
-            Section(header: Text("Push details".localized())) {
-                Text(push.description)
-            }
-        }
-        .navigationTitle(self.push.alert ?? "Silent Push".localized())
     }
 }

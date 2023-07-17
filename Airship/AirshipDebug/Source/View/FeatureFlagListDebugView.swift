@@ -9,7 +9,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-public struct ExperimentsListsDebugView: View {
+public struct FeatureFlagListDebugView: View {
 
     @StateObject
     private var viewModel = ViewModel()
@@ -21,23 +21,29 @@ public struct ExperimentsListsDebugView: View {
             Section(header: Text("")) {
                 List(self.viewModel.payloads, id: \.self) { payload in
                     NavigationLink(
-                        destination: ExperemintsDetailsView(
-                            payload: payload,
-                            title: parseID(payload: payload)
+                        destination: AirshipJSONDetailsView(
+                            payload: AirshipJSON.wrapSafe(payload),
+                            title: parseName(payload: payload)
                         )
                     ) {
                         VStack(alignment: .leading) {
+                            Text(parseName(payload: payload))
                             Text(parseID(payload: payload))
                         }
                     }
                 }
             }
         }
-        .navigationTitle("Experiments".localized())
+        .navigationTitle("Feature Flags".localized())
     }
 
     func parseID(payload: [String: AnyHashable]) -> String {
-        return payload["experiment_id"] as? String ?? "MISSING_ID"
+        return payload["flag_id"] as? String ?? "MISSING_ID"
+    }
+
+    func parseName(payload: [String: AnyHashable]) -> String {
+        let flag = payload["flag"] as? [String: AnyHashable]
+        return flag?["name"] as? String ?? "MISSING_NAME"
     }
 
     class ViewModel: ObservableObject {
@@ -48,7 +54,7 @@ public struct ExperimentsListsDebugView: View {
         init() {
             if Airship.isFlying {
                 self.cancellable = AirshipDebugManager.shared
-                    .experimentsPublisher
+                    .featureFlagPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in
                         self.payloads = incoming
@@ -58,21 +64,3 @@ public struct ExperimentsListsDebugView: View {
     }
 }
 
-private struct ExperemintsDetailsView: View {
-    let payload: [String: AnyHashable]
-    let title: String
-
-    @ViewBuilder
-    var body: some View {
-        let description = try? JSONUtils.string(
-            payload,
-            options: .prettyPrinted
-        )
-        Form {
-            Section(header: Text("Details".localized())) {
-                Text(description ?? "ERROR!")
-            }
-        }
-        .navigationTitle(title)
-    }
-}

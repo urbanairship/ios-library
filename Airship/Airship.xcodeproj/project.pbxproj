@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -312,6 +312,9 @@
 		6E2D6AF226B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */; };
 		6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */; };
 		6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */; };
+		6E2F5A802A6224D700CABD3D /* AirshipJSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A7F2A6224D700CABD3D /* AirshipJSONView.swift */; };
+		6E2F5A822A6229B900CABD3D /* AirshipJSONDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A812A6229B900CABD3D /* AirshipJSONDetailsView.swift */; };
+		6E2F5A842A622C4700CABD3D /* FeatureFlagListDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A832A622C4700CABD3D /* FeatureFlagListDebugView.swift */; };
 		6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E382C20276D3E990091A351 /* ThomasValidationTests.swift */; };
 		6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B230E28A318CD0005D46E /* PreferenceCenterThemeLoader.swift */; };
 		6E3B231328A32EC30005D46E /* PreferenceCenterViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */; };
@@ -559,7 +562,7 @@
 		6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */; };
 		6E6C3F9F27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */; };
 		6E6C84462A5C8CFE00DD83A2 /* AirshipConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */; };
-		6E6C84482A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84472A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift */; };
+		6E6C84482A5CB1B900DD83A2 /* ExperimentsListDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84472A5CB1B900DD83A2 /* ExperimentsListDebugView.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6ED1392683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
 		6E6ED13A2683A58D00A2CBD0 /* Semaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */; };
@@ -2111,6 +2114,9 @@
 		6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClientTest.swift; sourceTree = "<group>"; };
 		6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAudienceManagerTest.swift; sourceTree = "<group>"; };
 		6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSubscriptionListAPIClient.swift; sourceTree = "<group>"; };
+		6E2F5A7F2A6224D700CABD3D /* AirshipJSONView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONView.swift; sourceTree = "<group>"; };
+		6E2F5A812A6229B900CABD3D /* AirshipJSONDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONDetailsView.swift; sourceTree = "<group>"; };
+		6E2F5A832A622C4700CABD3D /* FeatureFlagListDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagListDebugView.swift; sourceTree = "<group>"; };
 		6E3494EB2580222A007F5357 /* UAAutomation 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 8.xcdatamodel"; sourceTree = "<group>"; };
 		6E356F9B2579513D004CCCC8 /* UAAutomation 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 7.xcdatamodel"; sourceTree = "<group>"; };
 		6E382C20276D3E990091A351 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
@@ -2294,7 +2300,7 @@
 		6E6C3F9927A47DB4007F55C7 /* PreferenceCenterConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterConfig.swift; sourceTree = "<group>"; };
 		6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSON.swift; sourceTree = "<group>"; };
 		6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipConfigTest.swift; sourceTree = "<group>"; };
-		6E6C84472A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentsListsDebugView.swift; sourceTree = "<group>"; };
+		6E6C84472A5CB1B900DD83A2 /* ExperimentsListDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentsListDebugView.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6ED1342683A58D00A2CBD0 /* Semaphore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semaphore.swift; sourceTree = "<group>"; };
 		6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
@@ -3393,12 +3399,15 @@
 				6E14C98A28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift */,
 				6E14C98C28B4457600A55E65 /* AttributesDebugView.swift */,
 				6E14C99A28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift */,
+				6E2F5A812A6229B900CABD3D /* AirshipJSONDetailsView.swift */,
 				6E14C99C28B5619B00A55E65 /* PreferenceCenterListDebugView.swift */,
 				6E14C99E28B5A14300A55E65 /* ReceivedPushListDebugView.swift */,
 				6E14C9B328B6C9F000A55E65 /* InAppAutomationListDebugView.swift */,
 				6E14C9B628B6E46800A55E65 /* EventListDebugView.swift */,
 				6E14C9B828B6EE4700A55E65 /* AddCustomEventDebugView.swift */,
-				6E6C84472A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift */,
+				6E6C84472A5CB1B900DD83A2 /* ExperimentsListDebugView.swift */,
+				6E2F5A7F2A6224D700CABD3D /* AirshipJSONView.swift */,
+				6E2F5A832A622C4700CABD3D /* FeatureFlagListDebugView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -6075,6 +6084,7 @@
 				6E14C99F28B5A14300A55E65 /* ReceivedPushListDebugView.swift in Sources */,
 				3CB37A1E251151A400E60392 /* DebugResources.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
+				6E2F5A822A6229B900CABD3D /* AirshipJSONDetailsView.swift in Sources */,
 				6E14C98328B430C000A55E65 /* DeviceTagsDebugView.swift in Sources */,
 				6E14C98D28B4457600A55E65 /* AttributesDebugView.swift in Sources */,
 				6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */,
@@ -6086,12 +6096,14 @@
 				6E14C98728B43C8B00A55E65 /* AirshipDebugExtensions.swift in Sources */,
 				3CA0E2BF237CD05F00EE76CF /* AirshipEvent.swift in Sources */,
 				6E14C9B928B6EE4700A55E65 /* AddCustomEventDebugView.swift in Sources */,
-				6E6C84482A5CB1B900DD83A2 /* ExperimentsListsDebugView.swift in Sources */,
+				6E2F5A802A6224D700CABD3D /* AirshipJSONView.swift in Sources */,
+				6E6C84482A5CB1B900DD83A2 /* ExperimentsListDebugView.swift in Sources */,
 				6E14C97F28B424C000A55E65 /* PrviacyManagerDebugView.swift in Sources */,
 				BD8C10832865F92200358622 /* CreateSMSChannelView.swift in Sources */,
 				3CA0E2CA237CD05F00EE76CF /* EventDataManager.swift in Sources */,
 				6E14C98B28B4435600A55E65 /* ScopedSubscriptionListsDebugView.swift in Sources */,
 				3CA0E2CD237CD05F00EE76CF /* AirshipDebugManager.swift in Sources */,
+				6E2F5A842A622C4700CABD3D /* FeatureFlagListDebugView.swift in Sources */,
 				BD8C10892865F92200358622 /* CreateEmailChannelView.swift in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 				6E14C97D28B41EDB00A55E65 /* NamedUserDebugView.swift in Sources */,
