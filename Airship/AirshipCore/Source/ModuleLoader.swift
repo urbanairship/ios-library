@@ -38,6 +38,7 @@ enum SDKModuleNames: String, CaseIterable {
     case messageCenter = "UAMessageCenterSDKModule"
     case preferenceCenter = "UAPreferenceCenterSDKModule"
     case debug = "UADebugSDKModule"
+    case featureFlags = "UAFeatureFlagsSDKModule"
 }
 
 /// NOTE: For internal use only. :nodoc:

@@ -165,6 +165,34 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertTrue(result)
     }
 
+    func testContactStatus() async {
+        let expectation = XCTestExpectation()
+        await self.contactProvider.setStatusCallback { _, locale, _ in
+            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+            expectation.fulfill()
+            return .upToDate
+        }
+
+        let result = await self.remoteData.status(source: .contact)
+        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+
+        XCTAssertEqual(.upToDate, result)
+    }
+
+    func testAppStatus() async {
+        let expectation = XCTestExpectation()
+        await self.appProvider.setStatusCallback { _, locale, _ in
+            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+            expectation.fulfill()
+            return .stale
+        }
+
+        let result = await self.remoteData.status(source: .app)
+        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+
+        XCTAssertEqual(.stale, result)
+    }
+
     func testContentAvailableRefresh() {
         XCTAssertEqual(0, self.testWorkManager.workRequests.count)
 
@@ -441,12 +469,19 @@ final class RemoteDataTest: AirshipBaseTest {
                 workID: RemoteDataTest.RefreshTask
             )
         )!
-
     }
-
 }
 
 fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
+    private var statusCallback: ((String, Locale, Int) async -> RemoteDataSourceStatus)?
+    func setStatusCallback(callback: @escaping (String, Locale, Int) async -> RemoteDataSourceStatus) {
+        self.statusCallback = callback
+    }
+
+    func status(changeToken: String, locale: Locale, randomeValue: Int) async -> RemoteDataSourceStatus {
+        return await self.statusCallback!(changeToken, locale, randomeValue)
+    }
+
     let source: RemoteDataSource
 
     private var payloads: [RemoteDataPayload] = []

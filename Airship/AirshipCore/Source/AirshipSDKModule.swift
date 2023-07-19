@@ -1,14 +1,9 @@
-//
-//  AirshipSDKModule.swift
-//  Airship
-//
-//  Created by Ryan Lepinski on 6/7/23.
-//  Copyright © 2023 Urban Airship. All rights reserved.
-//
+/* Copyright Airship and Contributors */
 
 import Foundation
 
 
+// NOTE: For internal use only. :nodoc:
 public protocol AirshipSDKModule: NSObject {
     var actionsManifest: ActionsManifest? { get }
     var components: [AirshipComponent] { get }

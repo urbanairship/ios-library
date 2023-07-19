@@ -3,20 +3,17 @@
 import Foundation
 
 
+// NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataAutomationAccess)
 public final class _RemoteDataAutomationAccess: NSObject {
     private let remoteData: RemoteDataProtocol
-    private let notificationCenter: AirshipNotificationCenter
     private let serialQueues: [RemoteDataSource: SerialQueue]
-    private let sessionNumber: Atomic<UInt> = Atomic(0)
     private let remoteDataRefresher: BestEffortRefresher
 
     init(
         remoteData: RemoteDataProtocol,
-        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         networkMonitor: NetworkMonitor = NetworkMonitor()
     ) {
-        self.notificationCenter = notificationCenter
         self.remoteData = remoteData
         self.remoteDataRefresher = BestEffortRefresher(remoteData: remoteData, networkMonitor: networkMonitor)
 
@@ -25,18 +22,6 @@ public final class _RemoteDataAutomationAccess: NSObject {
             queues[source] = SerialQueue()
         }
         self.serialQueues = queues
-
-        super.init()
-        
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(onAppForeground),
-            name: AppStateTracker.willEnterForegroundNotification
-        )
-    }
-    
-    deinit {
-        notificationCenter.removeObserver(self)
     }
 
     @objc
@@ -59,14 +44,11 @@ public final class _RemoteDataAutomationAccess: NSObject {
 
     @objc
     public func refreshAndCheckCurrent(remoteDataInfo: RemoteDataInfo?) async -> Bool {
-        let sessionNumber = self.sessionNumber.value
         let source = remoteDataInfo?.source ?? .app
-
         await self.runInQueue(source: source) { [remoteDataRefresher] in
             await remoteDataRefresher.bestEffortRefresh(
                 remoteDataInfo: remoteDataInfo,
-                source: source,
-                sessionNumber: sessionNumber
+                source: source
             )
         }
 
@@ -75,20 +57,13 @@ public final class _RemoteDataAutomationAccess: NSObject {
 
     @objc
     public func refreshOutdated(remoteDataInfo: RemoteDataInfo?) async {
-        let sessionNumber = self.sessionNumber.value
         let source = remoteDataInfo?.source ?? .app
         await self.runInQueue(source: source) { [remoteDataRefresher] in
             await remoteDataRefresher.refreshOutdated(
                 remoteDataInfo: remoteDataInfo,
-                source: source,
-                sessionNumber: sessionNumber
+                source: source
             )
         }
-    }
-    
-    @objc
-    private func onAppForeground() {
-        sessionNumber.value += 1
     }
 
     private func runInQueue(source: RemoteDataSource, block: @escaping @Sendable () async -> Void) async {
@@ -97,7 +72,6 @@ public final class _RemoteDataAutomationAccess: NSObject {
 }
 
 fileprivate actor BestEffortRefresher {
-    private var lastRefreshState: [RemoteDataSource: UInt] = [:]
     private let remoteData: RemoteDataProtocol
     private let networkMonitor: NetworkMonitor
 
@@ -108,25 +82,21 @@ fileprivate actor BestEffortRefresher {
 
     func refreshOutdated(
         remoteDataInfo: RemoteDataInfo?,
-        source: RemoteDataSource,
-        sessionNumber: UInt
+        source: RemoteDataSource
     ) async {
-
         guard
             let remoteDataInfo = remoteDataInfo,
             await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
         else {
             await bestEffortRefresh(
                 remoteDataInfo: remoteDataInfo,
-                source: source,
-                sessionNumber: sessionNumber
+                source: source
             )
             return
         }
 
-        self.lastRefreshState[source] = nil
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
-        await refreshSource(source: source, sessionNumber: sessionNumber)
+        await refreshSource(source: source)
     }
 
     func isCurrent(remoteDataInfo: RemoteDataInfo?) async -> Bool {
@@ -136,27 +106,23 @@ fileprivate actor BestEffortRefresher {
         return await remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
     }
 
-    func bestEffortRefresh(remoteDataInfo: RemoteDataInfo?, source: RemoteDataSource, sessionNumber: UInt) async {
+    func bestEffortRefresh(remoteDataInfo: RemoteDataInfo?, source: RemoteDataSource) async {
         if await isCurrent(remoteDataInfo: remoteDataInfo) {
-            if lastRefreshState[source] != sessionNumber, networkMonitor.isConnected {
-                await refreshSource(source: source, sessionNumber: sessionNumber)
+            if await self.remoteData.status(source: source) != .upToDate, networkMonitor.isConnected {
+                await refreshSource(source: source)
             }
             return
         }
         
-        await refreshSource(source: source, sessionNumber: sessionNumber)
+        await refreshSource(source: source)
     }
 
-    private func refreshSource(
-        source: RemoteDataSource,
-        sessionNumber: UInt
-    ) async {
-        AirshipLogger.trace("Attempting to refresh source \(source) sessionNumber \(sessionNumber)")
+    private func refreshSource(source: RemoteDataSource) async {
+        AirshipLogger.trace("Attempting to refresh source \(source)")
         if await self.remoteData.refresh(source: source) {
-            AirshipLogger.trace("Refreshed source \(source) sessionNumber \(sessionNumber)")
-            self.lastRefreshState[source] = sessionNumber
+            AirshipLogger.trace("Refreshed source \(source)")
         } else {
-            AirshipLogger.trace("Failed to refresh source \(source) sessionNumber \(sessionNumber)")
+            AirshipLogger.trace("Failed to refresh source \(source)")
         }
     }
 }

@@ -47,3 +47,17 @@ open class NetworkMonitor: NSObject {
         }
     }
 }
+
+/// - Note: For internal use only. :nodoc:
+public protocol NetworkCheckerProtocol: Actor, Sendable {
+    var isConnected: Bool { get }
+}
+
+/// - Note: For internal use only. :nodoc:
+public actor NetworkChecker: NetworkCheckerProtocol {
+    private let networkMonitor: NetworkMonitor = NetworkMonitor()
+    public init() {}
+    public var isConnected: Bool {
+        return networkMonitor.isConnected
+    }
+}

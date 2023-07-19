@@ -79,7 +79,7 @@ fileprivate struct ObjectEntry: View {
     let key: String
     let value: AirshipJSON
 
-    @State private var collapsed: Bool = true
+    @State private var collapsed: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -91,11 +91,11 @@ fileprivate struct ObjectEntry: View {
                         Spacer()
                         Image(systemName: self.collapsed ? "chevron.down" : "chevron.up")
                     }
+                    .contentShape(Rectangle())
                 }
             )
             .buttonStyle(PlainButtonStyle())
             .frame(minHeight: 36)
-            .contentShape(Rectangle())
 
             VStack(alignment: .leading) {
                 Text(value.prettyString)

@@ -201,6 +201,7 @@ let package = Package(
                 .target(name: "AirshipPreferenceCenter"),
                 .target(name: "AirshipMessageCenter"),
                 .target(name: "AirshipAutomation"),
+                .target(name: "AirshipFeatureFlags")
             ],
             path: "Airship/AirshipDebug",
             exclude: [

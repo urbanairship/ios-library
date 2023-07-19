@@ -349,28 +349,37 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
         XCTAssertFalse(result, file: file, line: line)
     }
 
+    func testDeviceTypes() async throws {
+        let emptyDeviceTypes = DeviceAudienceSelector(
+            deviceTypes: ["android", "ios"]
+        )
+
+        try await assertTrue {
+            try await emptyDeviceTypes.evaluate(deviceInfoProvider: self.testDeviceInfo)
+        }
+    }
+
+    func testDeviceTypesNoIOS() async throws {
+        let emptyDeviceTypes = DeviceAudienceSelector(
+            deviceTypes: ["android", "web"]
+        )
+
+        try await assertFalse {
+            try await emptyDeviceTypes.evaluate(deviceInfoProvider: self.testDeviceInfo)
+        }
+    }
+
+    func testEmtpyDeviceTypes() async throws {
+        let emptyDeviceTypes = DeviceAudienceSelector(
+            deviceTypes: []
+        )
+
+        try await assertFalse {
+            try await emptyDeviceTypes.evaluate(deviceInfoProvider: self.testDeviceInfo)
+        }
+    }
 
 }
 
 
-class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider {
-    var isAirshipReady: Bool = true
 
-    var tags: Set<String> = Set()
-
-    var channelID: String? = nil
-
-    var locale: Locale = Locale.current
-
-    var appVersion: String? = nil
-
-    var permissions: [AirshipPermission : AirshipPermissionStatus] = [:]
-
-    var isUserOptedInPushNotifications: Bool = false
-
-    var analyticsEnabled: Bool = false
-
-    var installDate: Date = Date()
-
-    var stableContactID: String = "stable"
-}

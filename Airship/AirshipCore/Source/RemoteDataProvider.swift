@@ -2,7 +2,9 @@
 
 import Foundation
 
+// NOTE: For internal use only. :nodoc:
 actor RemoteDataProvider: RemoteDataProviderProtocol {
+
 
     // Old
     private static let lastRefreshMetadataKey = "remotedata.LAST_REFRESH_METADATA"
@@ -210,6 +212,25 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
             AirshipLogger.trace("Refresh failed for \(self.sourceName) remote data: \(error)")
             return .failed
         }
+    }
+
+    func status(changeToken: String, locale: Locale, randomeValue: Int) async -> RemoteDataSourceStatus {
+        let shouldRefresh = await self.shouldRefresh(
+            refreshState: self.refreshState,
+            changeToken: changeToken,
+            locale: locale,
+            randomeValue: randomeValue
+        )
+
+        guard shouldRefresh else {
+            return .upToDate
+        }
+
+        guard await self.isCurrent(locale: locale, randomeValue: randomeValue) else {
+            return .outOfDate
+        }
+
+        return .stale
     }
 
     private func shouldRefresh(

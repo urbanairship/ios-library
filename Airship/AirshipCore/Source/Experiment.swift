@@ -11,16 +11,6 @@ enum ResultionType: String, Codable, Sendable, Equatable {
 }
 
 
-struct TimeCriteria: Codable, Sendable, Equatable {
-    let start: Int64?
-    let end: Int64?
-
-    enum CodingKeys: String, CodingKey {
-        case start = "start_timestamp"
-        case end = "end_timestamp"
-    }
-}
-
 struct Experiment: Codable, Sendable, Equatable {
     let id: String
     let type: ExperimentType
@@ -30,7 +20,7 @@ struct Experiment: Codable, Sendable, Equatable {
     let reportingMetadata: AirshipJSON
     let audienceSelector: DeviceAudienceSelector
     let exclusions: [MessageCriteria]?
-    let timeCriteria: TimeCriteria?
+    let timeCriteria: AirshipTimeCriteria?
 
     enum CodingKeys: String, CodingKey {
         case id = "experiment_id"
@@ -57,7 +47,7 @@ struct Experiment: Codable, Sendable, Equatable {
         reportingMetadata: AirshipJSON,
         audienceSelector: DeviceAudienceSelector,
         exclusions: [MessageCriteria]? = nil,
-        timeCriteria: TimeCriteria? = nil
+        timeCriteria: AirshipTimeCriteria? = nil
     ) {
         self.id = id
         self.type = type
@@ -82,7 +72,7 @@ struct Experiment: Codable, Sendable, Equatable {
         self.reportingMetadata = try definitionContainer.decode(AirshipJSON.self, forKey: .reportingMetadata)
         self.audienceSelector = try definitionContainer.decode(DeviceAudienceSelector.self, forKey: .audienceSelector)
         self.exclusions = try definitionContainer.decodeIfPresent([MessageCriteria].self, forKey: .exclusions)
-        self.timeCriteria = try definitionContainer.decodeIfPresent(TimeCriteria.self, forKey: .timeCriteria)
+        self.timeCriteria = try definitionContainer.decodeIfPresent(AirshipTimeCriteria.self, forKey: .timeCriteria)
     }
 
     func encode(to encoder: Encoder) throws {

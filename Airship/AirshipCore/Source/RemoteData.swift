@@ -5,7 +5,16 @@ import Combine
 
 // NOTE: For internal use only. :nodoc:
 public protocol RemoteDataProtocol: AnyObject, Sendable {
+    /// Gets the update status for the given source
+    /// - Parameter source: The source.
+    /// - Returns The status of the source.
+    func status(source: RemoteDataSource) async -> RemoteDataSourceStatus
+
+    /// Checks if the remote data info is current or not.
+    /// - Parameter remoteDataInfo: The remote data info.
+    /// - Returns `true` if current, otherwise `false`.
     func isCurrent(remoteDataInfo: RemoteDataInfo) async -> Bool
+
     func notifyOutdated(remoteDataInfo: RemoteDataInfo) async
     func publisher(types: [String]) -> AnyPublisher<[RemoteDataPayload], Never>
     func payloads(types: [String]) async -> [RemoteDataPayload]
@@ -202,6 +211,23 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
             return try await self?.handleRefreshTask() ?? .success
         }
     }
+
+    public func status(
+        source: RemoteDataSource
+    ) async -> RemoteDataSourceStatus {
+        for provider in self.providers {
+            if (provider.source == source) {
+                return await provider.status(
+                    changeToken: self.changeToken,
+                    locale: self.localeManager.currentLocale,
+                    randomeValue: self.randomValue
+                )
+            }
+        }
+
+        return .outOfDate
+    }
+
 
     public func isCurrent(
         remoteDataInfo: RemoteDataInfo

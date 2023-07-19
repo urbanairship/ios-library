@@ -1,5 +1,6 @@
 import Foundation
 
+// NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataInfo)
 public final class RemoteDataInfo: NSObject, Sendable, Codable, NSCopying {
     let url: URL

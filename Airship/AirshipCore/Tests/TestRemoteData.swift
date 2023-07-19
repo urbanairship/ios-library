@@ -5,7 +5,8 @@ import Foundation
 import Combine
 
 
-final class MockRemoteDataProvider: RemoteDataProtocol, @unchecked Sendable {
+final class TestRemoteData: NSObject, InternalRemoteDataProtocol, @unchecked Sendable {
+
     let updatesSubject = PassthroughSubject<[RemoteDataPayload], Never>()
     var isCurrent = true
     var payloads: [RemoteDataPayload] = [] {
@@ -14,17 +15,28 @@ final class MockRemoteDataProvider: RemoteDataProtocol, @unchecked Sendable {
         }
     }
 
+    var status: [RemoteDataSource : RemoteDataSourceStatus] = [:]
+
+
+    var refreshBlock: ((RemoteDataSource) -> Bool)?
+
     var remoteDataRefreshInterval: TimeInterval = 0
     var isContactSourceEnabled: Bool = false
     func setContactSourceEnabled(enabled: Bool) {
         isContactSourceEnabled = enabled
     }
 
+
     func isCurrent(remoteDataInfo: RemoteDataInfo) async -> Bool {
         return isCurrent
     }
 
-    func notifyOutdated(remoteDataInfo: AirshipCore.RemoteDataInfo) async {
+    func notifyOutdated(remoteDataInfo: RemoteDataInfo) async {
+
+    }
+
+    func status(source: RemoteDataSource) async -> RemoteDataSourceStatus {
+        return self.status[source] ?? .outOfDate
     }
 
     func publisher(types: [String]) -> AnyPublisher<[RemoteDataPayload], Never> {
@@ -59,7 +71,11 @@ final class MockRemoteDataProvider: RemoteDataProtocol, @unchecked Sendable {
     }
 
     func refresh(source: AirshipCore.RemoteDataSource) async -> Bool {
-        return true
+        guard let block = self.refreshBlock else {
+            return true
+        }
+        
+        return block(source)
     }
 }
 

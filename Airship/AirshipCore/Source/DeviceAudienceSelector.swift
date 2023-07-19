@@ -1,17 +1,18 @@
 import Foundation
 
 // NOTE: For internal use only. :nodoc:
-struct DeviceAudienceSelector: Sendable, Codable, Equatable {
-    public var newUser: Bool?
-    public var notificationOptIn: Bool?
-    public var locationOptIn: Bool?
-    public var languageIDs: [String]?
-    public var tagSelector: DeviceTagSelector?
-    public var requiresAnalytics: Bool?
-    public var permissionPredicate: JSONPredicate?
-    public var versionPredicate: JSONPredicate?
-    public var testDevices: [String]?
-    public var hashSelector: AudienceHashSelector?
+public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
+    var newUser: Bool?
+    var notificationOptIn: Bool?
+    var locationOptIn: Bool?
+    var languageIDs: [String]?
+    var tagSelector: DeviceTagSelector?
+    var requiresAnalytics: Bool?
+    var permissionPredicate: JSONPredicate?
+    var versionPredicate: JSONPredicate?
+    var testDevices: [String]?
+    var hashSelector: AudienceHashSelector?
+    var deviceTypes: [String]?
 
     enum CodingKeys: String, CodingKey {
         case newUser = "new_user"
@@ -24,9 +25,10 @@ struct DeviceAudienceSelector: Sendable, Codable, Equatable {
         case versionPredicate = "app_version"
         case testDevices = "test_devices"
         case hashSelector = "hash"
+        case deviceTypes = "device_types"
     }
 
-    init(newUser: Bool? = nil, notificationOptIn: Bool? = nil, locationOptIn: Bool? = nil, languageIDs: [String]? = nil, tagSelector: DeviceTagSelector? = nil, versionPredicate: JSONPredicate? = nil, requiresAnalytics: Bool? = nil, permissionPredicate: JSONPredicate? = nil, testDevices: [String]? = nil, hashSelector: AudienceHashSelector? = nil) {
+    init(newUser: Bool? = nil, notificationOptIn: Bool? = nil, locationOptIn: Bool? = nil, languageIDs: [String]? = nil, tagSelector: DeviceTagSelector? = nil, versionPredicate: JSONPredicate? = nil, requiresAnalytics: Bool? = nil, permissionPredicate: JSONPredicate? = nil, testDevices: [String]? = nil, hashSelector: AudienceHashSelector? = nil, deviceTypes: [String]? = nil) {
         self.newUser = newUser
         self.notificationOptIn = notificationOptIn
         self.locationOptIn = locationOptIn
@@ -37,6 +39,7 @@ struct DeviceAudienceSelector: Sendable, Codable, Equatable {
         self.permissionPredicate = permissionPredicate
         self.testDevices = testDevices
         self.hashSelector = hashSelector
+        self.deviceTypes = deviceTypes
     }
 }
 
@@ -57,6 +60,11 @@ extension DeviceAudienceSelector {
 
         guard checkNewUser(deviceInfoProvider: deviceInfoProvider, newUserEvaluationDate: newUserEvaluationDate) else {
             AirshipLogger.trace("Locale condition not met for audience: \(self)")
+            return false
+        }
+
+        guard checkDeviceTypes() else {
+            AirshipLogger.trace("Device type condition not met for audience: \(self)")
             return false
         }
 
@@ -109,6 +117,10 @@ extension DeviceAudienceSelector {
         }
 
         return newUser == (deviceInfoProvider.installDate >= newUserEvaluationDate)
+    }
+
+    private func checkDeviceTypes() -> Bool {
+        return deviceTypes?.contains("ios") ?? true
     }
 
     private func checkPermissions(deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
@@ -232,71 +244,5 @@ extension DeviceAudienceSelector {
         }
 
         return await deviceInfoProvider.stableContactID
-    }
-}
-
-protocol AudienceDeviceInfoProvider: AnyObject {
-    var isAirshipReady: Bool { get }
-    var tags: Set<String> { get }
-    var channelID: String? { get }
-    var locale:  Locale { get }
-    var appVersion:  String? { get }
-    var permissions:  [AirshipPermission: AirshipPermissionStatus] { get async }
-    var isUserOptedInPushNotifications: Bool { get async }
-    var analyticsEnabled: Bool { get }
-    var installDate: Date { get }
-    var stableContactID: String { get async }
-}
-
-final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider {
-
-    var installDate: Date {
-        Airship.shared.installDate
-    }
-
-    var stableContactID: String {
-        get async {
-            return await Airship.contact.getStableContactID()
-        }
-    }
-
-    var appVersion: String? {
-        return AirshipUtils.bundleShortVersionString()
-    }
-
-    var isAirshipReady: Bool {
-        return Airship.isFlying
-    }
-
-    var tags: Set<String> {
-        return Set(Airship.channel.tags)
-    }
-
-    var channelID: String? {
-        return Airship.channel.identifier
-    }
-
-    var locale: Locale {
-        return Airship.shared.localeManager.currentLocale
-    }
-
-    var permissions: [AirshipPermission : AirshipPermissionStatus] {
-        get async {
-            var results: [AirshipPermission : AirshipPermissionStatus] = [:]
-            for permission in Airship.shared.permissionsManager.configuredPermissions {
-                results[permission] = await Airship.shared.permissionsManager.checkPermissionStatus(permission)
-            }
-            return results
-        }
-    }
-
-    var isUserOptedInPushNotifications: Bool {
-        get async {
-            return await Airship.push.notificationStatus.isUserOptedIn
-        }
-    }
-
-    var analyticsEnabled: Bool {
-        return Airship.shared.privacyManager.isEnabled(.analytics)
     }
 }

@@ -84,6 +84,7 @@ final class ExperimentManager: ExperimentDataProvider {
             .filter { $0.isActive(date: self.date.now) }
             .filter { !$0.isExcluded(info: info) }
     }
+    
 }
 
 private extension Experiment {
@@ -96,17 +97,7 @@ private extension Experiment {
     }
 
     func isActive(date: Date) -> Bool {
-        let currentMS = date.millisecondsSince1970
-
-        if let startMS = timeCriteria?.start, currentMS < startMS {
-            return false
-        }
-
-        if let endMS = timeCriteria?.end, currentMS >= endMS {
-            return false
-        }
-
-        return true
+        return self.timeCriteria?.isActive(date: date) ?? true
     }
 }
 

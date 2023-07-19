@@ -203,6 +203,69 @@ class RemoteDataProviderTest: XCTestCase {
         XCTAssertFalse(payloads.isEmpty)
     }
 
+    func testStatus() async throws {
+        let de = Locale(identifier: "de")
+
+        var status: RemoteDataSourceStatus!
+        status = await self.provider.status(changeToken: "change", locale: de, randomeValue: 100)
+        // No data
+        XCTAssertEqual(status, .outOfDate)
+
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "example://")!,
+            lastModifiedTime: "some last modified",
+            source: self.delegate.source
+        )
+
+        // Load data
+        self.delegate.fetchRemoteDataCallback = { _, _, _ in
+            let refreshResult = RemoteDataResult(
+                payloads: [
+                    RemoteDataTestUtils.generatePayload(
+                        type: "foo",
+                        timestamp: Date(),
+                        data: ["cool": "data"],
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ],
+                remoteDataInfo: remoteDataInfo
+            )
+
+            return AirshipHTTPResponse(result: refreshResult, statusCode: 200, headers: [:])
+        }
+
+        _ = await self.provider.refresh(
+            changeToken: "change",
+            locale: Locale.current,
+            randomeValue: 100
+        )
+
+
+
+        // Up to date
+        self.delegate.isRemoteDataInfoUpToDateCallback = { info, locale, randomValue in
+            return true
+        }
+        status = await self.provider.status(changeToken: "change", locale: de, randomeValue: 100)
+        XCTAssertEqual(status, .upToDate)
+
+        // Stale
+        status = await self.provider.status(changeToken: "some other", locale: de, randomeValue: 100)
+        XCTAssertEqual(status, .stale)
+
+        self.delegate.isRemoteDataInfoUpToDateCallback = { info, locale, randomValue in
+            return false
+        }
+
+        // Out of date from random value
+        status = await self.provider.status(changeToken: "change", locale: de, randomeValue: 200)
+        XCTAssertEqual(status, .outOfDate)
+
+        // Out of date check over stale
+        status = await self.provider.status(changeToken: "some other", locale: de, randomeValue: 100)
+        XCTAssertEqual(status, .outOfDate)
+    }
+
     func testRefresh304() async throws {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,

@@ -21,3 +21,14 @@ public class TestNetworkMonitor: NetworkMonitor {
         super.init()
     }
 }
+
+
+actor TestNetworkChecker: NetworkCheckerProtocol {
+    init() {}
+
+    public func setConnected(_ connected: Bool) {
+        self.isConnected = connected
+    }
+    private(set) var isConnected: Bool = false
+
+}

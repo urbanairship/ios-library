@@ -18,10 +18,19 @@ protocol RemoteDataProviderProtocol: Actor {
     /// - Parameter remoteDataInfo: The remote data info.
     func notifyOutdated(remoteDataInfo: RemoteDataInfo)
 
-    /// Checks if the source is current is current.
+    /// Checks if the source is current.
     /// - Parameter locale: The current locale.
     /// - Parameter randomeValue: The remote-data random value.
     func isCurrent(locale: Locale, randomeValue: Int) async -> Bool
+
+
+    /// Checks if the source update status.
+    /// - Parameter changeToken: The change token.
+    /// - Parameter locale: The current locale.
+    /// - Parameter randomeValue: The remote-data random value.
+    /// - Returns The update status.
+    func status(changeToken: String, locale: Locale, randomeValue: Int) async -> RemoteDataSourceStatus
+
 
     /// Refreshes remote data
     /// - Parameter changeToken: The change token. Used to control checkign for a refresh

@@ -7,14 +7,12 @@ import XCTest
 
 class PreferenceCenterTest: XCTestCase {
 
-    private var dataStore: PreferenceDataStore!
+    private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var privacyManager: AirshipPrivacyManager!
     private var preferenceCenter: PreferenceCenter!
-    private var remoteDataProvider: MockRemoteDataProvider!
+    private let remoteDataProvider: TestRemoteData = TestRemoteData()
 
     override func setUp() {
-        self.remoteDataProvider = MockRemoteDataProvider()
-        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all

@@ -10,7 +10,7 @@ final class ExperimentManagerTest: XCTestCase {
     private var channelID: String? = "channel-id"
     private var contactID: String = "some-contact-id"
     
-    private let remoteData: MockRemoteDataProvider = MockRemoteDataProvider()
+    private let remoteData: TestRemoteData = TestRemoteData()
     private var subject: ExperimentManager!
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
 
@@ -147,7 +147,7 @@ final class ExperimentManagerTest: XCTestCase {
             experiment2.toString
         ])]
 
-        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID in
+        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID, _ in
             XCTAssertEqual(contactID, activeContactID)
             return audience == audienceSelector2
         }
@@ -176,9 +176,9 @@ final class ExperimentManagerTest: XCTestCase {
             id: "id1",
             reportingMetadata: AirshipJSON.string("reporting data 1"),
             audienceSelector: audienceSelector1,
-            timeCriteria: TimeCriteria(
-                start: self.testDate.now.millisecondsSince1970 + 1,
-                end: self.testDate.now.millisecondsSince1970 + 2
+            timeCriteria: AirshipTimeCriteria(
+                start: self.testDate.now + 0.01,
+                end: self.testDate.now + 0.02
             )
         )
 
@@ -187,9 +187,9 @@ final class ExperimentManagerTest: XCTestCase {
             id: "id2",
             reportingMetadata: AirshipJSON.string("reporting data 2"),
             audienceSelector: audienceSelector2,
-            timeCriteria: TimeCriteria(
-                start: self.testDate.now.millisecondsSince1970,
-                end: self.testDate.now.millisecondsSince1970 + 1
+            timeCriteria: AirshipTimeCriteria(
+                start: self.testDate.now,
+                end: self.testDate.now + 0.01
             )
         )
 
@@ -200,7 +200,7 @@ final class ExperimentManagerTest: XCTestCase {
             experiment2.toString
         ])]
 
-        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID in
+        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID, _ in
             XCTAssertEqual(contactID, activeContactID)
             return audience == audienceSelector2
         }
@@ -252,7 +252,7 @@ final class ExperimentManagerTest: XCTestCase {
         self.remoteData.payloads = [createPayload([experiment.toString])]
 
 
-        self.audienceChecker.onEvaluate = { _, _, _ in
+        self.audienceChecker.onEvaluate = { _, _, _, _ in
             return true
         }
 
@@ -306,18 +306,6 @@ private extension MessageInfo {
     static let empty = MessageInfo(messageType: "", campaigns: nil)
 }
 
-private final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
-
-    var onEvaluate: ((DeviceAudienceSelector, Date, String?) async throws -> Bool)!
-
-    func evaluate(
-        audience: DeviceAudienceSelector,
-        newUserEvaluationDate: Date,
-        contactID: String?
-    ) async throws -> Bool {
-        return try await self.onEvaluate?(audience, newUserEvaluationDate, contactID) ?? false
-    }
-}
 
 fileprivate extension Experiment {
     var toString: String {
@@ -335,7 +323,7 @@ fileprivate extension Experiment {
         reportingMetadata: AirshipJSON = AirshipJSON.string("reporting!"),
         audienceSelector: DeviceAudienceSelector = DeviceAudienceSelector(),
         exclusions: [MessageCriteria]? = nil,
-        timeCriteria: TimeCriteria? = nil
+        timeCriteria: AirshipTimeCriteria? = nil
     ) -> Experiment {
 
         let formatter = DateFormatter()

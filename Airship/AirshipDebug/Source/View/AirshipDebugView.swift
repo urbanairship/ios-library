@@ -113,10 +113,10 @@ public struct AirshipDebugView: View {
                 )
             }
 
-            Section(header: Text("Experiments".localized())) {
+            Section(header: Text("Feature Flags".localized())) {
                 makeNavItem(
                     "Feature Flags",
-                    destination: FeatureFlagListDebugView()
+                    destination: FeatureFlagDebugView()
                 )
             }
 

@@ -9,29 +9,24 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
     
     private var subject: _RemoteDataAutomationAccess!
     private var remoteData: TestRemoteData!
-    private let notificationCenter = NotificationCenter()
     private let networkMonitor = TestNetworkMonitor()
 
     override func setUpWithError() throws {
         remoteData = TestRemoteData()
-        subject = _RemoteDataAutomationAccess(remoteData: remoteData,
-                                              notificationCenter: AirshipNotificationCenter(notificationCenter: notificationCenter),
-                                              networkMonitor: networkMonitor)
+        subject = _RemoteDataAutomationAccess(remoteData: remoteData, networkMonitor: networkMonitor)
         networkMonitor.isConnectedOverride = true
-        simulateAppForeground()
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testRemoteDataCalledOnceDuringOneForegroundSessions() async {
+    func testRemoteDataCalledOnceIfStale() async {
         var updates = [RemoteDataSource: UInt]()
         remoteData.refreshBlock = { source in
             let current = updates[source] ?? 0
             updates[source] = current + 1
+            self.remoteData.status[source] = .upToDate
             return true
         }
+
+        remoteData.status[.app] = .stale
         
         let responses = [
             await subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
@@ -49,14 +44,18 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
         XCTAssert(appSource == 1)
     }
     
-    func testRemoteDataCalledOnceDuringOneForegroundSessionsParallel() async {
+    func testRemoteDataCalledIfStaleInParallel() async {
         var updates = [RemoteDataSource: UInt]()
         remoteData.refreshBlock = { source in
             let current = updates[source] ?? 0
             updates[source] = current + 1
+            self.remoteData.status[source] = .upToDate
             return true
         }
-        
+
+        remoteData.status[.app] = .stale
+
+
         async let operations = [
             self.subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
             self.subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
@@ -73,14 +72,17 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
         XCTAssert(appSource == 1)
     }
     
-    func testCacheResetOnForegroundNotification() async {
+    func testStaleAfterUpdate() async {
         var updates = [RemoteDataSource: UInt]()
         remoteData.refreshBlock = { source in
             let current = updates[source] ?? 0
             updates[source] = current + 1
+            self.remoteData.status[source] = .upToDate
             return true
         }
-        
+
+        remoteData.status[.app] = .stale
+
         var responses = [
             await subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
             await subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
@@ -90,7 +92,7 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
         XCTAssert(updates.count == 1)
         XCTAssert(updates[.app] == 1)
         
-        simulateAppForeground()
+        remoteData.status[.app] = .stale
         
         responses = [
             await subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
@@ -108,6 +110,7 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
         remoteData.refreshBlock = { source in
             let current = updates[source] ?? 0
             updates[source] = current + 1
+            self.remoteData.status[source] = .upToDate
             return true
         }
         
@@ -123,8 +126,9 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
         XCTAssert(updates[.app] == 1)
         XCTAssert(updates[.contact] == 1)
         
-        simulateAppForeground()
-        
+        remoteData.status[.app] = .stale
+        remoteData.status[.contact] = .stale
+
         responses = [
             await subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
             await subject.refreshAndCheckCurrent(remoteDataInfo: makeRemoteDataInfo()),
@@ -141,9 +145,4 @@ final class RemoteDataAutomationAccessTest: XCTestCase {
                               lastModifiedTime: nil,
                               source: source)
     }
-    
-    func simulateAppForeground() {
-        notificationCenter.post(Notification(name: AppStateTracker.willEnterForegroundNotification))
-    }
-
 }
