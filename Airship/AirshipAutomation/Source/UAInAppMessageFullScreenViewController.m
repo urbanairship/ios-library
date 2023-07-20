@@ -190,6 +190,7 @@ NSString *const UAInAppMessageFullScreenViewNibName = @"UAInAppMessageFullScreen
 
     [self.fullScreenWindow addSubview:self.view];
     [self.fullScreenWindow makeKeyAndVisible];
+    self.fullScreenWindow.accessibilityViewIsModal = YES;
 
     self.buttonView = [UAInAppMessageButtonView buttonViewWithButtons:self.displayContent.buttons
                                                                layout:self.displayContent.buttonLayout
