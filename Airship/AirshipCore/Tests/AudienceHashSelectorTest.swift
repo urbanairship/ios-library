@@ -47,6 +47,72 @@ final class AudienceHashSelectorTest: XCTestCase {
         XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
     }
 
+    func testBoundaries() throws {
+        let selectorGenerator: (UInt64, UInt64) throws -> AudienceHashSelector = { min, max in
+            let json = """
+                {
+                    "audience_hash":{
+                       "hash_prefix":"686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
+                       "num_hash_buckets":16384,
+                       "hash_identifier":"contact",
+                       "hash_algorithm":"farm_hash"
+                    },
+                    "audience_subset":{
+                       "min_hash_bucket":\(min),
+                       "max_hash_bucket":\(max)
+                    }
+                 }
+            """
+
+            return try JSONDecoder().decode(
+                AudienceHashSelector.self,
+                from: json.data(using: .utf8)!
+            )
+        }
+
+
+        // contactId = 9908
+        XCTAssertTrue(
+            try selectorGenerator(9908, 9908)
+                .evaluate(
+                    channelID: "",
+                    contactID: "contactId"
+                )
+        )
+
+        XCTAssertTrue(
+            try selectorGenerator(9907, 9908)
+                .evaluate(
+                    channelID: "",
+                    contactID: "contactId"
+                )
+        )
+
+        XCTAssertTrue(
+            try selectorGenerator(9908, 9909)
+                .evaluate(
+                    channelID: "",
+                    contactID: "contactId"
+                )
+        )
+
+        XCTAssertFalse(
+            try selectorGenerator(9907, 9907)
+                .evaluate(
+                    channelID: "",
+                    contactID: "contactId"
+                )
+        )
+
+        XCTAssertFalse(
+            try selectorGenerator(9909, 9909)
+                .evaluate(
+                    channelID: "",
+                    contactID: "contactId"
+                )
+        )
+    }
+
     func testEvaluateChannel() throws {
         let experiment = AudienceHashSelector(
             hash: AudienceHashSelector.Hash(
@@ -57,12 +123,12 @@ final class AudienceHashSelectorTest: XCTestCase {
                 numberOfBuckets: 16384,
                 overrides: nil
             ),
-            bucket: AudienceHashSelector.Bucket(min: 4647, max: 11280)
+            bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000)
         )
 
-        // match = 11279
+        // match = 12443
         XCTAssertTrue(experiment.evaluate(channelID: "match", contactID: "not used"))
-        // not a match = 4646
+        // not a match = 11599
         XCTAssertFalse(experiment.evaluate(channelID: "not a match", contactID: "not used"))
     }
 
@@ -76,12 +142,13 @@ final class AudienceHashSelectorTest: XCTestCase {
                 numberOfBuckets: 16384,
                 overrides: nil
             ),
-            bucket: AudienceHashSelector.Bucket(min: 4647, max: 11280)
+            bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000)
         )
 
-        // match = 11279
+
+        // match = 12443
         XCTAssertTrue(experiment.evaluate(channelID: "not used", contactID: "match"))
-        // not a match = 4646
+        // not a match = 11599
         XCTAssertFalse(experiment.evaluate(channelID: "not used", contactID: "not a match"))
     }
 
@@ -97,12 +164,12 @@ final class AudienceHashSelectorTest: XCTestCase {
                     "not a match" : "match"
                 ]
             ),
-            bucket: AudienceHashSelector.Bucket(min: 4647, max: 11280)
+            bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000)
         )
 
-        // match = 11279
+        // match = 12443
         XCTAssertTrue(experiment.evaluate(channelID: "not used", contactID: "match"))
-        // not a match = 4646
+        // not a match = 11599
         XCTAssertTrue(experiment.evaluate(channelID: "not used", contactID: "not a match"))
     }
 }
