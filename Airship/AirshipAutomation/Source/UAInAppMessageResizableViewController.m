@@ -349,6 +349,7 @@ static double const DefaultResizableViewAnimationDuration = 0.2;
 
     self.topWindow = [[UIWindow alloc] initWithWindowScene:scene];
     self.topWindow.rootViewController = self;
+    self.topWindow.accessibilityViewIsModal = YES;
     [self observeSceneEvents];
 
     #if TARGET_OS_MACCATALYST
