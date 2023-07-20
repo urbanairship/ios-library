@@ -282,7 +282,7 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
                 numberOfBuckets: 16384,
                 overrides: nil
             ),
-            bucket: AudienceHashSelector.Bucket(min: 4647, max: 11280)
+            bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000)
         )
 
         let audience = DeviceAudienceSelector(
@@ -312,7 +312,7 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
                 numberOfBuckets: 16384,
                 overrides: nil
             ),
-            bucket: AudienceHashSelector.Bucket(min: 4647, max: 11280)
+            bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000)
         )
 
         let audience = DeviceAudienceSelector(

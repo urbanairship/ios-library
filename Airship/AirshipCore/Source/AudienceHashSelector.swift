@@ -60,14 +60,14 @@ struct AudienceHashSelector: Codable, Sendable, Equatable {
         }
 
         func contains(_ value: UInt64) -> Bool {
-            return value >= min && value < max
+            return value >= min && value <= max
         }
     }
 
     func evaluate(channelID: String, contactID: String) -> Bool {
         let param = self.hashParameter(channelID: channelID, contactID: contactID)
-        let function = self.hashFunction
-        let result: UInt64 = function(param) % self.hash.numberOfBuckets
+        let hash = self.hashFunction(param)
+        let result: UInt64 = hash % self.hash.numberOfBuckets
         return bucket.contains(result)
     }
 
@@ -81,7 +81,7 @@ struct AudienceHashSelector: Codable, Sendable, Equatable {
         }
 
         let resolved: String = self.hash.overrides?[property] ?? property
-        return "\(self.hash.prefix)\(resolved))"
+        return "\(self.hash.prefix)\(resolved)"
     }
 
     private var hashFunction: (String) -> UInt64 {
