@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
    s.watchos.deployment_target  = "7.0"
    s.swift_versions             = "5.0"
    s.requires_arc               = true
-   s.default_subspecs           = ["Basement", "Core", "Automation", "MessageCenter", "PreferenceCenter", "AirshipFeatureFlags"]
+   s.default_subspecs           = ["Basement", "Core", "Automation", "MessageCenter", "PreferenceCenter", "FeatureFlags"]
 
    s.subspec "Basement" do |basement|
       basement.public_header_files        = "Airship/AirshipBasement/Source/Public/*.h", "Cocoapods/AirshipKit.h"
@@ -64,7 +64,7 @@ Pod::Spec.new do |s|
       preferenceCenter.dependency                      "Airship/Core"
    end
 
-   s.subspec "AirshipFeatureFlags" do |airshipFeatureFlags|
+   s.subspec "FeatureFlags" do |airshipFeatureFlags|
       airshipFeatureFlags.ios.source_files              = "Airship/AirshipFeatureFlags/Source/**/*.{h,m,swift}"
       airshipFeatureFlags.ios.exclude_files             = "Airship/AirshipFeatureFlags/Source/AirshipFeatureFlags.h"
       airshipFeatureFlags.dependency                      "Airship/Core"
