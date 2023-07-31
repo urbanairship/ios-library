@@ -401,7 +401,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 
                 do {
                     if let script = script {
-                        try await webView.evaluateJavaScript(script)
+                        try await webView.evaluateJavaScriptAsync(script)
                     }
                 } catch {
                     AirshipLogger.error("JavaScript error: \(error) command: \(command)")
@@ -533,6 +533,26 @@ fileprivate class JSBridgeLoadRequest: Sendable {
     func cancel() {
         self.task?.cancel()
     }
+}
+
+fileprivate extension WKWebView {
+
+    //The async/await version of `evaluateJavaScript` function exposed by apple is crashing when the JavaScript is a void method. We created this func to avoid the crash and we can update once the crash is fixed.
+    @discardableResult
+    func evaluateJavaScriptAsync(_ str: String) async throws -> Any? {
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Any?, Error>) in
+            DispatchQueue.main.async {
+                self.evaluateJavaScript(str) { data, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    } else {
+                        continuation.resume(returning: data)
+                    }
+                }
+            }
+        }
+    }
+    
 }
 
 #endif
