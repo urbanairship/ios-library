@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.1.0 July 31, 2023
+Minor release that adds support for global holdout groups in In-App experiences and support for feature flags.
+
+### Changes
+- Added new feature flag module `AirshipFeatureFlags`
+- Added support for global holdout groups
+- Fixed crash with deep links from an HTML based message
+
 ## Version 17.0.3 July 10, 2023
 Patch release that fixes an issue with URL allow lists defaulting to allowing all URLs if calling takeOff with a config instance.
 
