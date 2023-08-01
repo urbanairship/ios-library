@@ -50,10 +50,41 @@ jobs:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - name: Test
+        run: make test
+
+  run-package-tests:
+    runs-on: macOS-13
+    timeout-minutes: 60
+    steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
-        run: make test build-samples
+        run: make test-packages
+
+  build-samples:
+    runs-on: macOS-13
+    timeout-minutes: 60
+    steps:
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - name: Build samples
+        run: make build-samples
+      
 
   # run-tests-watchos:
   #   runs-on: macOS-12

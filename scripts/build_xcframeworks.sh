@@ -131,6 +131,13 @@ xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
   -output "$OUTPUT/AirshipPreferenceCenter.xcframework"
 
+# Package AirshipFeatureFlags
+xcodebuild -create-xcframework \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -output "$OUTPUT/AirshipFeatureFlags.xcframework"
+
 # Package AirshipNotificationServiceExtension
 xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \

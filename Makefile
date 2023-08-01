@@ -14,6 +14,7 @@ archive_path = ${build_path}/archive
 xcframeworks_path = ${build_path}/xcframeworks
 docs_path = ${build_path}/Documentation
 package_zip_path = ${build_path}/Airship.zip
+package_carthage_zip_path = ${build_path}/Airship.xcframeworks.zip
 
 .PHONY: setup
 setup:
@@ -36,6 +37,7 @@ build-package: clean-package build-docs build-xcframeworks
 	 CHANGELOG.md \
 	 README.md \
 	 LICENSE
+	bash ./scripts/package_carthage.sh "${package_carthage_zip_path}" "${xcframeworks_path}/" 
 
 .PHONY: build-docs
 build-docs: setup clean-docs
@@ -61,7 +63,7 @@ build-sample-watchos: setup
 	bash ./scripts/build_sample_watchos.sh "watchOSSample_WatchKit_Extension" "${derived_data_path}"
 
 .PHONY: test
-test: setup test-core test-preference-center test-message-center test-automation test-feature-flags test-content-extension test-service-extension test-packages
+test: setup test-core test-preference-center test-message-center test-automation test-feature-flags test-content-extension test-service-extension
 
 .PHONY: test-core
 test-core: setup
@@ -82,7 +84,6 @@ test-automation: setup
 .PHONY: test-feature-flags
 test-feature-flags: setup
 	bash ./scripts/run_tests.sh AirshipFeatureFlags "${derived_data_path}"
-
 
 .PHONY: test-content-extension
 test-content-extension: setup
@@ -133,7 +134,8 @@ clean-docs:
 .PHONY: clean-package
 clean-package:
 	rm -rf "${package_zip_path}"
+	rm -rf "${package_carthage_zip_path}"
 
 .PHONY: clean-xcframeworks
 clean-xcframeworks:
-	rm -rf "${xcframeworks_output}"
+	# rm -rf "${xcframeworks_path}"
