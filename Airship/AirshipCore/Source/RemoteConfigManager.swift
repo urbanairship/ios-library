@@ -155,13 +155,15 @@ final class RemoteConfigManager: @unchecked Sendable {
     @objc
     func updateRemoteConfigSubscription() {
         lock.sync {
-            if self.privacyManager.isAnyFeatureEnabled() && self.subscription == nil {
-                self.subscription = self.remoteData.publisher(
-                    types: ["app_config", "app_config:ios"]
-                )
-                .removeDuplicates()
-                .sink { [weak self] remoteConfig in
-                    self?.processRemoteConfig(remoteConfig)
+            if self.privacyManager.isAnyFeatureEnabled() {
+                if self.subscription == nil {
+                    self.subscription = self.remoteData.publisher(
+                        types: ["app_config", "app_config:ios"]
+                    )
+                    .removeDuplicates()
+                    .sink { [weak self] remoteConfig in
+                        self?.processRemoteConfig(remoteConfig)
+                    }
                 }
             } else {
                 self.subscription?.cancel()

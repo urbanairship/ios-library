@@ -1,8 +1,9 @@
 
 XCODE ?= 14.3.1
 
-export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 14
-export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV
+export TEST_DESTINATION ?= platform=iOS Simulator,OS=16.4,name=iPhone 14
+export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=16.4,name=Apple TV
+
 
 export DEVELOPER_DIR = $(shell bash ./scripts/get_xcode_path.sh ${XCODE} $(XCODE_PATH))
 export AIRSHIP_VERSION = $(shell bash "./scripts/airship_version.sh")
