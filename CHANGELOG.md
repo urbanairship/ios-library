@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.1.1 August 4, 2023
+Patch release that fixes a possible delay with channel creation if the enabled flags on privacy manager changes before the channel is able to be created.
+
+### Changes
+- Fixed channel registration issue with privacy manager
+- Fixed missing AirshipFeatureFlags xcframework in the Airship.zip
+
 ## Version 17.1.0 July 31, 2023
 Minor release that adds support for global holdout groups in In-App experiences and support for feature flags.
 
