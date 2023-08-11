@@ -2,7 +2,7 @@
 
 import Foundation
 
-/// Represents an edit made to a subsription list through the SDK.
+/// Represents an edit made to a subscription list through the SDK.
 public enum SubscriptionListEdit: Equatable {
     /// Subscribed
     case subscribe(String)

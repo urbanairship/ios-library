@@ -89,7 +89,7 @@ struct LiveActivity<T: ActivityAttributes>: LiveActivityProtocol {
         }
 
         /// If the push token is already created it does not cause an update above,
-        /// so we will call the tokenUpdate callback direclty if we have a token.
+        /// so we will call the tokenUpdate callback directly if we have a token.
         if let token = activity.pushToken {
             await tokenUpdates(token.tokenString)
             await backgroundTask.stop()

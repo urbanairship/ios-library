@@ -9,7 +9,7 @@ import Combine
 @objc(UAPushProtocol)
 public protocol BasePushProtocol: Sendable {
 
-    /// Checks to see if push notificaitons are opted in.
+    /// Checks to see if push notifications are opted in.
     @objc
     @MainActor
     var isPushNotificationsOptedIn: Bool { get }
@@ -25,7 +25,7 @@ public protocol BasePushProtocol: Sendable {
     @objc
     var userPushNotificationsEnabled: Bool { get set }
 
-    /// When enabled, if the user has ephemeral notification authorization the SDK will promp the user for
+    /// When enabled, if the user has ephemeral notification authorization the SDK will prompt the user for
     /// notifications.  Defaults to `false`.
     @objc
     var requestExplicitPermissionWhenEphemeral: Bool { get set }
@@ -120,7 +120,7 @@ public protocol PushProtocol: BasePushProtocol {
     /// Notification status updates
     var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> { get }
 
-    /// Gets the current notificaiton status
+    /// Gets the current notification status
     var notificationStatus: AirshipNotificationStatus { get async }
 
 }

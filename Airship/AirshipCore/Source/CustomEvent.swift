@@ -363,7 +363,7 @@ public class CustomEvent: NSObject, AirshipEvent {
             guard required else {
                 return true
             }
-            AirshipLogger.error("Missing requied field \(name)")
+            AirshipLogger.error("Missing required field \(name)")
             return false
         }
 

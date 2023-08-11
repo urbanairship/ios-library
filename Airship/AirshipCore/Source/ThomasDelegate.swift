@@ -54,7 +54,7 @@ public protocol ThomasDelegate {
         layoutContext: ThomasLayoutContext
     )
 
-    /// Called when a form is dismissed beceuse it timed out.
+    /// Called when a form is dismissed because it timed out.
     /// - Parameters:
     ///     - layoutContext: The layout context.
     func onTimedOut(layoutContext: ThomasLayoutContext?)

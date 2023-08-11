@@ -31,7 +31,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     public func onBackgroundAppRefresh() {
-        AirshipLogger.info("Application received backgound app refresh")
+        AirshipLogger.info("Application received background app refresh")
         self.push.dispatchUpdateAuthorizedNotificationTypes()
     }
 

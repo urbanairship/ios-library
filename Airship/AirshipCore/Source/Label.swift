@@ -9,7 +9,7 @@ struct Label: View {
     /// Label model.
     let model: LabelModel
 
-    /// View constriants.
+    /// View constraints.
     let constraints: ViewConstraints
 
     var body: some View {

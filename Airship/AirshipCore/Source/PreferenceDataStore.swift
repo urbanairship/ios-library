@@ -237,7 +237,7 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
 
     /// Merges old key formats `com.urbanairship.<APP_KEY>.<PREFERENCE>` to
     /// the new key formats `<APP_KEY><PREFERENCE>`. Fixes a bug in SDK 15.x-16.0.1
-    /// where the key changed but we didnt migrate the data.
+    /// where the key changed but we didn't migrate the data.
     private func mergeKeys() {
         let legacyKeyPrefix = PreferenceDataStore.legacyKeyPrefix(
             appKey: self.appKey

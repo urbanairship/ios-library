@@ -247,7 +247,7 @@ public class AirshipUtils: NSObject {
 
     /// Parses ISO 8601 date strings.
     ///
-    /// Supports timestamps with just year all the way up to seconds with and without the optional `T` delimeter.
+    /// Supports timestamps with just year all the way up to seconds with and without the optional `T` delimiter.
     ///
     /// - Parameter from: The ISO 8601 timestamp.
     ///
@@ -549,9 +549,9 @@ public class AirshipUtils: NSObject {
             return url
         }
 
-        /* Caracters reserved for url  */
+        /* Characters reserved for url  */
         let reserved = "!*'();:@&=+$,/?%#[]"
-        /* Caracters are not reserved for url but should not be encoded */
+        /* Characters are not reserved for url but should not be encoded */
         let unreserved = ":-._~/? "
         let allowed = NSMutableCharacterSet.alphanumeric()
         allowed.addCharacters(in: reserved)

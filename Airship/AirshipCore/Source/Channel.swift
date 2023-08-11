@@ -159,7 +159,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         {
             self.isChannelCreationEnabled = true
         } else {
-            AirshipLogger.debug("Channelc creation disabled.")
+            AirshipLogger.debug("Channel creation disabled.")
             self.isChannelCreationEnabled = false
         }
 

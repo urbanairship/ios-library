@@ -17,7 +17,7 @@ import WatchKit
  */
 
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
-/// before accesing any instances on Airship or Airship modules.
+/// before accessing any instances on Airship or Airship modules.
 @objc(UAirship)
 public class Airship: NSObject {
 
@@ -42,7 +42,7 @@ public class Airship: NSObject {
     @objc
     public static let airshipReadyChannelIdentifier = "channel_id"
 
-    /// Airship ready app key. Only avaialble if `extendedBroadcastEnabled` is true in config.
+    /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
     @objc
     public static let airshipReadyAppKey = "app_key"
 
@@ -176,7 +176,7 @@ public class Airship: NSObject {
 
     #if !os(watchOS)
 
-    /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
+    /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
     /// - Parameters:
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
@@ -187,7 +187,7 @@ public class Airship: NSObject {
         takeOff(nil, launchOptions: launchOptions)
     }
 
-    /// Initalizes Airship.
+    /// Initializes Airship.
     /// - Parameters:
     ///     - config: The Airship config.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
@@ -264,7 +264,7 @@ public class Airship: NSObject {
 
     #else
 
-    /// Initalizes Airship. Config will be read from `AirshipConfig.plist`.
+    /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
 
     @objc
     @MainActor
@@ -272,7 +272,7 @@ public class Airship: NSObject {
         takeOff(nil)
     }
 
-    /// Initalizes Airship.
+    /// Initializes Airship.
     /// - Parameters:
     ///     - config: The Airship config.
     @objc
@@ -427,10 +427,10 @@ public class Airship: NSObject {
 
     /// Processes a deep link.
     /// - Note: For internal use only. :nodoc:
-    /// `uairship://` deep links will be handled internally. All other deep links will be forwaded to the deep link delegate.
+    /// `uairship://` deep links will be handled internally. All other deep links will be forwarded to the deep link delegate.
     /// - Parameters:
     ///     - deepLink: The deep link.
-    ///     - completionHandler: The result. `true` if the link was able to be procesed, otherwise `false`.
+    ///     - completionHandler: The result. `true` if the link was able to be processed, otherwise `false`.
     @MainActor
     @objc
     public func deepLink(

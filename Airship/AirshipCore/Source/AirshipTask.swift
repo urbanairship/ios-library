@@ -26,7 +26,7 @@ public protocol AirshipTask {
     var requestOptions: TaskRequestOptions { get }
 
     /**
-     * The launcher should call this method to signal that the task was completed succesfully.
+     * The launcher should call this method to signal that the task was completed successfully.
      */
     @objc
     func taskCompleted()

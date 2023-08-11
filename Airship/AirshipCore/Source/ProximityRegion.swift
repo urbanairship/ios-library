@@ -18,7 +18,7 @@ public class ProximityRegion: NSObject {
      * - Parameter major: The major.
      * - Parameter minor: The minor.
      * - Parameter rssi: The rssi.
-     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter latitude: The latitude of the circular region's center point in degrees.
      * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
      * - Returns: Proximity region object or `nil` if error occurs.
@@ -36,7 +36,7 @@ public class ProximityRegion: NSObject {
             && (latitude == nil || longitude == nil)
         {
             AirshipLogger.error(
-                "Invalid proximity region. Both lat and long must both be defined if one is provied."
+                "Invalid proximity region. Both lat and long must both be defined if one is provided."
             )
             return nil
         }
@@ -132,7 +132,7 @@ public class ProximityRegion: NSObject {
      * - Parameter proximityID: The ID of the proximity region.
      * - Parameter major: The major.
      * - Parameter minor: The minor.
-     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter latitude: The latitude of the circular region's center point in degrees.
      * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
      * - Returns: Proximity region object or `nil` if error occurs.
@@ -161,7 +161,7 @@ public class ProximityRegion: NSObject {
      * - Parameter major: The major.
      * - Parameter minor: The minor.
      * - Parameter rssi: The rssi.
-     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter latitude: The latitude of the circular region's center point in degrees.
      * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
      * - Returns: Proximity region object or `nil` if error occurs.

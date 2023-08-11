@@ -20,7 +20,7 @@ public class AirshipCoreResources: NSObject {
             }
         }
 
-        // Cocopaods (static)
+        // Cocoapods (static)
         if let path = mainBundle.path(
             forResource: "AirshipCoreResources",
             ofType: "bundle"
@@ -30,7 +30,7 @@ public class AirshipCoreResources: NSObject {
             }
         }
 
-        // Cocopaods (framework)
+        // Cocoapods (framework)
         if let path = sourceBundle.path(
             forResource: "AirshipCoreResources",
             ofType: "bundle"
