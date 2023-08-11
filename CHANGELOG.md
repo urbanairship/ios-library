@@ -23,6 +23,7 @@ Minor release that adds support for global holdout groups in In-App experiences 
 - Added new feature flag module `AirshipFeatureFlags`
 - Added support for global holdout groups
 - Fixed crash with deep links from an HTML based message
+- Fixed a VoiceOver IAA issue where the content behind the IAA was being read
 
 ## Version 17.0.3 July 10, 2023
 Patch release that fixes an issue with URL allow lists defaulting to allowing all URLs if calling takeOff with a config instance.
