@@ -380,7 +380,7 @@ struct Pager: View {
                 self.pagerState.progress += Pager.timerTransition / duration
             }
             
-            // Check for any automated action past the current duration that have not been exectuted yet
+            // Check for any automated action past the current duration that have not been executed yet
             let automatedAction = automatedActions.first {
                 let isExecuted = (self.pagerState.currentPage.automatedActionStatus[$0.identifier] == true)
                 let isOlder = (self.pagerState.progress * duration) >= ($0.delay ?? 0.0)

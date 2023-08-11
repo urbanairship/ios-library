@@ -59,14 +59,14 @@ public protocol BaseAirshipChannelProtocol: Sendable {
     func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void)
 
     /**
-     * Edits channel subcription lists.
-     * - Returns: Subcription list editor.
+     * Edits channel subscription lists.
+     * - Returns: Subscription list editor.
      */
     @objc
     func editSubscriptionLists() -> SubscriptionListEditor
 
     /**
-     * Edits channel subcription lists.
+     * Edits channel subscription lists.
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
@@ -113,7 +113,7 @@ public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
     )
 
     /**
-     * Updates channel registration if needed. Appications should not need to call this method.
+     * Updates channel registration if needed. Applications should not need to call this method.
      */
     func updateRegistration()
 

@@ -33,7 +33,7 @@ protocol RemoteDataProviderProtocol: Actor {
 
 
     /// Refreshes remote data
-    /// - Parameter changeToken: The change token. Used to control checkign for a refresh
+    /// - Parameter changeToken: The change token. Used to control checking for a refresh
     /// even if the remote data info is up to date.
     /// - Parameter locale: The current locale.
     /// - Parameter randomeValue: The remote-data random value.

@@ -10,7 +10,7 @@ struct Container: View {
     /// Container model.
     let model: ContainerModel
 
-    /// View constriants.
+    /// View constraints.
     let constraints: ViewConstraints
 
     @State private var contentSize: (ViewConstraints, CGSize)? = nil

@@ -7,7 +7,7 @@ import Foundation
 public final class ContactConflictEvent: NSObject, @unchecked Sendable {
 
     /**
-     * The named user ID if the conflict was caused by  an identify operation with an existing named user through the SDK.
+     * The named user ID if the conflict was caused by an identify operation with an existing named user through the SDK.
      */
     @objc
     public let conflictingNamedUserID: String?
@@ -50,7 +50,7 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
      *   - attributes: The attributes.
      *   - subscriptionLists: The subscription lists.
      *   - channels: The associated channels.
-     *   - conflictingNamedUserID: The conflicitng named user ID.
+     *   - conflictingNamedUserID: The conflicting named user ID.
      */
    init(
         tags: [String: [String]],

@@ -268,7 +268,7 @@ extension ViewModel {
                 case .formSubmit:
                     if !controllers.contains(.form) {
                         throw AirshipErrors.error(
-                            "Button with form subimt behavior must be a descendent of a form or nps controller"
+                            "Button with form submit behavior must be a descendent of a form or nps controller"
                         )
                     }
                 case .pagerNext:
@@ -295,7 +295,7 @@ extension ViewModel {
                 case .formValidation:
                     if !controllers.contains(.form) {
                         throw AirshipErrors.error(
-                            "Button with form subimt behavior must be a descendent of a form or nps controller"
+                            "Button with form submit behavior must be a descendent of a form or nps controller"
                         )
                     }
                 case .formSubmission:

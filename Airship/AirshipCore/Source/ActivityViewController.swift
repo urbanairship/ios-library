@@ -18,7 +18,7 @@ public class ActivityViewController: UIActivityViewController,
 
     /**
      * Returns the desired source rect dimensions for the popover.
-     * - Returns: popover diminsions.
+     * - Returns: popover dimensions.
      */
     @objc
     public func sourceRect() -> CGRect {

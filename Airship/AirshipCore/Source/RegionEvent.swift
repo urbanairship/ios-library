@@ -95,7 +95,7 @@ public class RegionEvent: NSObject, AirshipEvent {
      * - Parameter source: The source of the event.
      * - Parameter boundaryEvent: The type of boundary crossing event.
      * - Parameter circularRegion: The circular region info.
-     * - Parameter proximityRegion: The proximiity region info.
+     * - Parameter proximityRegion: The proximity region info.
      *
      * - Returns: Region event object or `nil` if error occurs.
      */
@@ -152,7 +152,7 @@ public class RegionEvent: NSObject, AirshipEvent {
      * - Parameter source: The source of the event.
      * - Parameter boundaryEvent: The type of boundary crossing event.
      * - Parameter circularRegion: The circular region info.
-     * - Parameter proximityRegion: The proximiity region info.
+     * - Parameter proximityRegion: The proximity region info.
      *
      * - Returns: Region event object or `nil` if error occurs.
      */

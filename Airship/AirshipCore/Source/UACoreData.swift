@@ -128,7 +128,7 @@ public final class UACoreData: NSObject, @unchecked Sendable {
                 } else {
                     continuation.resume(
                         throwing: AirshipErrors.error(
-                            "Peristant store unable to be created"
+                            "Persistent store unable to be created"
                         )
                     )
                 }
@@ -165,7 +165,7 @@ public final class UACoreData: NSObject, @unchecked Sendable {
                 } else {
                     continuation.resume(
                         throwing: AirshipErrors.error(
-                            "Peristant store unable to be created"
+                            "Persistent store unable to be created"
                         )
                     )
                 }
@@ -395,7 +395,7 @@ public final class UACoreData: NSObject, @unchecked Sendable {
                 )
             } catch {
                 AirshipLogger.debug(
-                    "Failed to create aiship SQL directory. \(error)"
+                    "Failed to create airship SQL directory. \(error)"
                 )
                 return false
             }

@@ -340,7 +340,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
     }
 
 
-    /// When enabled, if the user has ephemeral notification authorization the SDK will promp the user for
+    /// When enabled, if the user has ephemeral notification authorization the SDK will prompt the user for
     /// notifications.  Defaults to `false`.
     @objc
     public var requestExplicitPermissionWhenEphemeral: Bool {
@@ -999,7 +999,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
             _ = await self.permissionsManager.requestPermission(.displayNotifications)
         } else {
             // If we are going from `ephemeral` to `[]` it will prompt the user to disable notifications...
-            // avoid that by just skippping if we have ephemeral.
+            // avoid that by just skipping if we have ephemeral.
             await self.notificationRegistrar.updateRegistration(
                 options: [],
                 skipIfEphemeral: true

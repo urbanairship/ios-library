@@ -85,7 +85,7 @@ public class VersionMatcher: NSObject {
     }
 
     /**
-     * Create a matcher for the supplied version contraint
+     * Create a matcher for the supplied version constraint
      *
      * - Parameters:
      *   - versionConstraint: constraint that matches one of our supported patterns

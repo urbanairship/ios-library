@@ -7,7 +7,7 @@ protocol AirshipDeviceIDProtocol: AnyActor {
 }
 
 /**
- * Access to a generated UUID stored in the keycahin for this device only. Used to detect app restore only.
+ * Access to a generated UUID stored in the keychain for this device only. Used to detect app restore only.
  */
 actor AirshipDeviceID: AirshipDeviceIDProtocol {
     private static let deviceKeychainID = "com.urbanairship.deviceID"

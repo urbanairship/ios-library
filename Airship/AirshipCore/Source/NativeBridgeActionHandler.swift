@@ -195,7 +195,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
         do {
             return try AirshipJSON.from(json: json)
         } catch {
-            AirshipLogger.warn("Unableto json decode action args \(error), \(json)")
+            AirshipLogger.warn("Unable to json decode action args \(error), \(json)")
             return AirshipJSON.null
         }
     }
@@ -249,7 +249,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
                 }
             }
         } catch {
-            AirshipLogger.warn("Unableto json decode action args \(error) for command \(command)")
+            AirshipLogger.warn("Unable to json decode action args \(error) for command \(command)")
             return [:]
         }
 

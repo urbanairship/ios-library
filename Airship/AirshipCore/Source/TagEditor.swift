@@ -34,7 +34,7 @@ public class TagEditor: NSObject {
     /**
      * Adds a single tag.
      * - Parameters:
-     *   - tag: The tatg.
+     *   - tag: The tag.
      */
     @objc(addTag:)
     public func add(_ tag: String) {
@@ -59,7 +59,7 @@ public class TagEditor: NSObject {
     /**
      * Removes a single tag.
      * - Parameters:
-     *   - tag: The tatg.
+     *   - tag: The tag.
      */
     @objc(removeTag:)
     public func remove(_ tag: String) {

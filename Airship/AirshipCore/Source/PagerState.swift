@@ -5,7 +5,7 @@ import Foundation
 struct PageState {
     var identifier: String
     var delay: Double
-    // represent the automated action identifier and it's status (true if it's exectuted and false if not)
+    // represent the automated action identifier and it's status (true if it's executed and false if not)
     var automatedActionStatus: [String: Bool] = [:]
     
     init(identifier: String,

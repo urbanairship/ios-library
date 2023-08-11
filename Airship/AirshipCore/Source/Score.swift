@@ -136,7 +136,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         let isOn = configuration.isOn
         return Button(action: { configuration.isOn.toggle() }) {
             ZStack {
-                // Drwaing both with 1 hidden in case the content size changes between the two
+                // Drawing both with 1 hidden in case the content size changes between the two
                 // it will prevent the parent from resizing on toggle
                 Group {
                     if let shapes = style.bindings.selected.shapes {

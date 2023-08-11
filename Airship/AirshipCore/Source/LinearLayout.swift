@@ -10,7 +10,7 @@ struct LinearLayout: View {
     /// LinearLayout model.
     let model: LinearLayoutModel
 
-    /// View constriants.
+    /// View constraints.
     let constraints: ViewConstraints
 
     @State

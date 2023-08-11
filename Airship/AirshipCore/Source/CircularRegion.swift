@@ -12,7 +12,7 @@ public class CircularRegion: NSObject {
      * Default constructor.
      *
      * - Parameter radius: The radius of the circular region in meters.
-     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter latitude: The latitude of the circular region's center point in degrees.
      * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
      * - Returns: Circular region object or `nil` if error occurs
@@ -41,7 +41,7 @@ public class CircularRegion: NSObject {
      * Factory method for creating a circular region.
      *
      * - Parameter radius: The radius of the circular region in meters.
-     * - Parameter latitude: The latitude of the circular region's center point in degress.
+     * - Parameter latitude: The latitude of the circular region's center point in degrees.
      * - Parameter longitude: The longitude of the circular region's center point in degrees.
      *
      * - Returns: Circular region object or `nil` if error occurs

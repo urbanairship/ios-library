@@ -63,7 +63,7 @@ public final class ExperimentResult: NSObject, Codable {
     }
     
     public override var description: String {
-        return "ExperimentResult: channgeId: \(channelID), contactId: \(contactID), isMatch: \(isMatch), metadata: \(evaluatedExperimentsReportingData)"
+        return "ExperimentResult: channelId: \(channelID), contactId: \(contactID), isMatch: \(isMatch), metadata: \(evaluatedExperimentsReportingData)"
     }
 }
 

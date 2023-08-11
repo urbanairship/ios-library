@@ -68,7 +68,7 @@ public class AirshipDateFormatter: NSObject {
 
     /// Parses ISO 8601 date strings.
     ///
-    /// Supports timestamps with just year all the way up to seconds with and without the optional `T` delimeter.
+    /// Supports timestamps with just year all the way up to seconds with and without the optional `T` delimiter.
     ///
     /// - Parameter from: The ISO 8601 timestamp.
     ///

@@ -27,7 +27,7 @@ public struct AirshipKeychainCredentials: Sendable {
 public protocol AirshipKeychainAccessProtocol: Sendable {
     /// Writes credentials to the keychain for the given identifier.
     /// - Parameters:
-    ///     - credentials: The credentails to save
+    ///     - credentials: The credentials to save
     ///     - identifier: The credential's identifier
     ///     - appKey: The app key
     /// - Returns: `true` if the data was written, otherwise `false`.
@@ -37,7 +37,7 @@ public protocol AirshipKeychainAccessProtocol: Sendable {
         appKey: String
     ) async -> Bool
 
-    /// Deltes credentials for the given identifier.
+    /// Deletes credentials for the given identifier.
     /// - Parameters:
     ///     - identifier: The credential's identifier
     ///     - appKey: The app key

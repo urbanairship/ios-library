@@ -3,12 +3,12 @@
 import Foundation
 
 
-/// AIrship push notificaiton status
+/// Airship push notification status
 public struct AirshipNotificationStatus: Sendable, Equatable {
     /// If user notifications are enabled on AirshipPush.
     public let isUserNotificationsEnabled: Bool
 
-    /// If notifications are either  ephemeral or granted and has at least one authroized type.
+    /// If notifications are either  ephemeral or granted and has at least one authorized type.
     public let areNotificationsAllowed: Bool
 
     /// If the push feature is enabled on AirshipPrivacyManager.

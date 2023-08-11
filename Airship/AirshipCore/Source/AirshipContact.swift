@@ -179,7 +179,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
             await self.setupTask?.value
         }
 
-        // Whenever the contact ID changes, ignoring stableness, notify the channnel
+        // Whenever the contact ID changes, ignoring stableness, notify the channel
         self.contactIDUpdatesSubject
             .receive(on: RunLoop.main)
             .map { $0?.contactID }
@@ -497,7 +497,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
 
     public func getStableContactID() async -> String {
         // Stableness is determined by a reset or identify operation.  Since
-        // pending operations are added throught the serialQueue to ensure order, some might still
+        // pending operations are added through the serialQueue to ensure order, some might still
         // be in the queue. To avoid ignoring any of those, wait for current operations on the queue
         // to finish
         await self.serialQueue.waitForCurrentOperations()
@@ -527,7 +527,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         var subscriptions = try await self.resolveSubscriptionLists(contactID)
 
         // Audience overrides will take any pending operations and updated operations. Since
-        // pending operations are added throught the serialQueue to ensure order, some might still
+        // pending operations are added through the serialQueue to ensure order, some might still
         // be in the queue. To avoid ignoring any of those, wait for current operations on the queue
         // to finish
         await self.serialQueue.waitForCurrentOperations()

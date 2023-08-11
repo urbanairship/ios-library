@@ -22,7 +22,7 @@ public final class PromptPermissionAction: AirshipAction {
         return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
     }
 
-    /// Metadata key for the reuslt receiver. Must be (Permission, PermissionStatus, PermissionStatus) -> Void
+    /// Metadata key for the result receiver. Must be (Permission, PermissionStatus, PermissionStatus) -> Void
     /// - Note: For internal use only. :nodoc:
     public static let resultReceiverMetadataKey = "permission_result"
 

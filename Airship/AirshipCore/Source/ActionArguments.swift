@@ -7,11 +7,11 @@ import Foundation
 public enum ActionSituation: Int, Sendable {
     /// Action invoked manually
     case manualInvocation
-    /// Action invoked from the app being lauched from a push notification
+    /// Action invoked from the app being launched from a push notification
     case launchedFromPush
     /// Action invoked from a foreground push
     case foregroundPush
-    /// Action invoked from a foreground push
+    /// Action invoked from a background push
     case backgroundPush
     /// Action invoked from a web view
     case webViewInvocation

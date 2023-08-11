@@ -10,7 +10,7 @@ struct ScrollLayout: View {
     /// ScrollLayout model.
     let model: ScrollLayoutModel
 
-    /// View constriants.
+    /// View constraints.
     let constraints: ViewConstraints
 
     @State private var contentSize: (ViewConstraints, CGSize)? = nil

@@ -20,7 +20,7 @@ public final class JavaScriptCommand: NSObject, Sendable {
     @objc
     public let options: [String: [String]]
 
-    // The orignal URL that initiated the call.
+    // The original URL that initiated the call.
     @objc(URL)
     public let url: URL
 

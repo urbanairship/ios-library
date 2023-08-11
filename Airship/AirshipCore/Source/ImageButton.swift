@@ -10,7 +10,7 @@ struct ImageButton : View {
     /// Image Button model.
     let model: ImageButtonModel
   
-    /// View constriants.
+    /// View constraints.
     let constraints: ViewConstraints
   
     @Environment(\.colorScheme) var colorScheme

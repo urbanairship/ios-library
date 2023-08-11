@@ -28,7 +28,7 @@ struct UNNotificationRegistrar: NotificationRegistrar {
         let requestOptions = options.appleOptions
         let (status, settings) = await checkStatus()
 
-        // Skip registration if no options are enable dand we are requestion no options
+        // Skip registration if no options are enable and we are requesting no options
         if settings == [] && requestOptions == [] {
             return
         }

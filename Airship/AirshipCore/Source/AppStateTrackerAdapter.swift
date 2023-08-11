@@ -33,7 +33,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
         case .background:
             return .background
         @unknown default:
-            AirshipLogger.error("Unkonwn application state \(appState)")
+            AirshipLogger.error("Unknown application state \(appState)")
             return .background
         }
     }
@@ -109,7 +109,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
         case .background:
             return .background
         @unknown default:
-            AirshipLogger.error("Unkonwn application state \(appState)")
+            AirshipLogger.error("Unknown application state \(appState)")
             return .background
         }
     }
