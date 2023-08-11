@@ -75,13 +75,12 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         )
     }
 
+    
     /**
      * Decide whether to allow or cancel a navigation. :nodoc:
      *
      * If a uairship:// URL, process it ourselves
      */
-    @available(iOSApplicationExtension, unavailable)
-    @MainActor
     public func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
@@ -124,9 +123,12 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
                 if policyForThisURL == WKNavigationActionPolicy.allow
                     && navigationType == WKNavigationType.linkActivated
                 {
-                    // Try to override any special link handling
-                    self.handle(requestURL) { success in
-                        decisionHandler(success ? .cancel : .allow)
+                    let decisionHandlerWrapper = AirshipUnsafeSendableWrapper(decisionHandler)
+                    Task { @MainActor in
+                        // Try to override any special link handling
+                        self.handle(requestURL) { success in
+                            decisionHandlerWrapper.value(success ? .cancel : .allow)
+                        }
                     }
                 } else {
                     decisionHandler(policyForThisURL)
@@ -158,13 +160,19 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         }
 
         if navigationType == WKNavigationType.linkActivated {
-            self.handle(requestURL) { success in
-                if success {
-                    decisionHandler(.cancel)
-                } else {
-                    handleLink()
+            let decisionHandlerWrapper = AirshipUnsafeSendableWrapper(decisionHandler)
+            let handleLinkWrapper = AirshipUnsafeSendableWrapper(handleLink)
+
+            Task { @MainActor in
+                self.handle(requestURL) { success in
+                    if success {
+                        decisionHandlerWrapper.value(.cancel)
+                    } else {
+                        handleLinkWrapper.value()
+                    }
                 }
             }
+
         } else {
             handleLink()
         }
