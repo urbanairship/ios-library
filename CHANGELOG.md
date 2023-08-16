@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.1.3 August 16, 2023
+Patch release that fixes a reporting issue related to global holdout groups. Applications making use of global holdout groups should update.
+
+###
+- Fixed experiment info reporting for global holdout groups
+
 ## Version 17.1.2 August 11, 2023
 Patch release that fixes an issue with Xcode 15 due to a WKNavigationDelegate protocol conformance issue with the AirshipNativeBridge. Applications that are facing Airship build errors with Xcode 15 should update.
 
