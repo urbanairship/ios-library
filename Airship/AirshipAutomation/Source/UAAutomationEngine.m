@@ -1384,6 +1384,9 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.reportingContext = scheduleData.reportingContext;
         builder.frequencyConstraintIDs = scheduleData.frequencyConstraintIDs;
         builder.triggeredTime = scheduleData.triggeredTime;
+        builder.messageType = scheduleData.messageType;
+        builder.bypassHoldoutGroups = scheduleData.bypassHoldoutGroups.boolValue;
+        builder.isNewUserEvaluationDate = scheduleData.isNewUserEvaluationDate;
     }];
 
     if (![schedule isValid]) {
