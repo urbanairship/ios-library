@@ -157,7 +157,7 @@ public struct MessageCenterListView: View {
                     .message.title
             )
         )
-            .onAppear {
+            .onDisappear {
                 self.controller.messageID = nil
             }
         

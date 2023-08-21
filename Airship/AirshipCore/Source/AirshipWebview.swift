@@ -13,7 +13,7 @@ struct AirshipWebView: View {
 
     let constraints: ViewConstraints
 
-    @State var isLoading: Bool = false
+    @State var isWebViewLoading: Bool = false
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
@@ -24,13 +24,13 @@ struct AirshipWebView: View {
                 url: self.model.url,
                 nativeBridgeExtension: self.thomasEnvironment.extensions?
                     .nativeBridgeExtension,
-                isLoading: self.$isLoading
+                isWebViewLoading: self.$isWebViewLoading
             ) {
                 thomasEnvironment.dismiss(layoutState: layoutState)
             }
-            .opacity(self.isLoading ? 0.0 : 1.0)
+            .opacity(self.isWebViewLoading ? 0.0 : 1.0)
 
-            if self.isLoading {
+            if self.isWebViewLoading {
                 AirshipProgressView()
             }
         }
@@ -47,7 +47,7 @@ struct WebViewView: UIViewRepresentable {
 
     let url: String
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
-    @Binding var isLoading: Bool
+    @Binding var isWebViewLoading: Bool
 
     let onDismiss: () -> Void
 
@@ -68,12 +68,12 @@ struct WebViewView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        print(self.isLoading)
+        print(self.isWebViewLoading)
     }
 
-    func updateLoading(_ isLoading: Bool) {
+    func updateLoading(_ isWebViewLoading: Bool) {
         DispatchQueue.main.async {
-            self.isLoading = isLoading
+            self.isWebViewLoading = isWebViewLoading
         }
     }
 

@@ -128,8 +128,15 @@ struct MessageCenterWebView: UIViewRepresentable {
     let dismiss: () async -> Void
 
     @State
-    private var isLoading: Bool = false
+    private var isWebViewLoading: Bool = false
 
+    private var isLoaded: Bool {
+        guard case .loaded = self.phase else {
+            return false
+        }
+        return true
+    }
+    
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
@@ -159,7 +166,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 
     @MainActor
     func checkLoad(webView: WKWebView, coordinator: Coordinator) async {
-        if case .loading = phase, !isLoading {
+        if !isLoaded, !isWebViewLoading {
             await self.load(webView: webView, coordinator: coordinator)
         }
     }
@@ -174,7 +181,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 
             let request = try await self.request()
             _ = webView.load(request)
-            self.isLoading = true
+            self.isWebViewLoading = true
         } catch {
             self.phase = .error(error)
         }
@@ -182,7 +189,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 
     @MainActor
     private func pageFinished(error: Error? = nil) async {
-        self.isLoading = false
+        self.isWebViewLoading = false
 
         if let error = error {
             self.phase = .error(error)
@@ -280,28 +287,22 @@ private struct MessageCenterMessageContentView: View {
     let messageID: String
     let title: String?
 
-    private var isLoading: Bool {
-        guard case .loading = self.webViewPhase else {
-            return false
-        }
-        return true
-    }
-
-    private var isLoaded: Bool {
-        guard case .loaded = self.webViewPhase else {
-            return false
-        }
-        return true
-    }
-
     @MainActor
     func getMessage(_ messageID: String) async -> MessageCenterMessage? {
         if let message = message {
             return message
         }
-        let message = await MessageCenter.shared.inbox.message(
+        var message = await MessageCenter.shared.inbox.message(
             forID: messageID
         )
+        
+        if message == nil {
+            await MessageCenter.shared.inbox.refreshMessages()
+            message = await MessageCenter.shared.inbox.message(
+                forID: messageID
+            )
+        }
+        
         self.message = message
         return message
     }
