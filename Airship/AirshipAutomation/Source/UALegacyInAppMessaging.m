@@ -251,7 +251,6 @@ NSString *const UALastDisplayedInAppMessageID = @"UALastDisplayedInAppMessageID"
         builder.triggers = @[trigger];
         builder.end = message.expiry;
         builder.identifier = message.identifier;
-        builder.bypassHoldoutGroups = YES;
 
         // Allow the app to customize the schedule info builder if necessary
         if (extender && [extender respondsToSelector:@selector(extendScheduleBuilder:message:)]) {

@@ -754,8 +754,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
     UARemoteDataInfo *remoteDataInfo = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
 
-    // Skip actions for now or anything that is not from remote-data
-    if (schedule.type == UAScheduleTypeActions || !remoteDataInfo) {
+    // Skip actions for now
+    if (schedule.type == UAScheduleTypeActions) {
         completionHandler(nil, nil);
         return;
     }
