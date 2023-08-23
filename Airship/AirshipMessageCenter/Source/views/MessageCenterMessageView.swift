@@ -130,8 +130,8 @@ struct MessageCenterWebView: UIViewRepresentable {
     @State
     private var isWebViewLoading: Bool = false
 
-    private var isLoaded: Bool {
-        guard case .loaded = self.phase else {
+    private var isLoading: Bool {
+        guard case .loading = self.phase else {
             return false
         }
         return true
@@ -166,7 +166,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 
     @MainActor
     func checkLoad(webView: WKWebView, coordinator: Coordinator) async {
-        if !isLoaded, !isWebViewLoading {
+        if isLoading, !isWebViewLoading {
             await self.load(webView: webView, coordinator: coordinator)
         }
     }
