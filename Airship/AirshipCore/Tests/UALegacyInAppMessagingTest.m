@@ -384,4 +384,71 @@
     [self.mockInAppAutomation verify];
 }
 
+- (void)testCampaigns {
+    id mutablePayload = self.payload.mutableCopy;
+    mutablePayload[@"campaigns"] = @{ @"categories": @[@"cool", @"cool_cool"] };
+
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"_uamid": @"some message ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": mutablePayload
+                                   };
+
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        UASchedule *schedule = (__bridge UASchedule *)arg;
+        XCTAssertEqual(schedule.campaigns, mutablePayload[@"campaigns"]);
+        void *completionHandlerArg;
+        [invocation getArgument:&completionHandlerArg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))completionHandlerArg;
+        completionHandler(YES);
+    }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging)
+     receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
+    [self.mockInAppAutomation verify];
+}
+
+- (void)testMessageType {
+    id mutablePayload = self.payload.mutableCopy;
+    mutablePayload[@"message_type"] = @"commercial";
+
+    NSDictionary *notification = @{
+                                   @"_": @"send ID",
+                                   @"_uamid": @"some message ID",
+                                   @"aps": self.aps,
+                                   @"com.urbanairship.in_app": mutablePayload
+                                   };
+
+    [[[self.mockInAppAutomation expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        UASchedule *schedule = (__bridge UASchedule *)arg;
+        XCTAssertEqual(schedule.messageType, @"commercial");
+        void *completionHandlerArg;
+        [invocation getArgument:&completionHandlerArg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void(^)(BOOL))completionHandlerArg;
+        completionHandler(YES);
+    }] schedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    XCTestExpectation *testExpectation = [self expectationWithDescription:@"completion handler called"];
+    [((NSObject<UAPushableComponent> *) self.inAppMessaging)
+     receivedRemoteNotification:notification completionHandler:^(UIBackgroundFetchResult fetchResult) {
+        XCTAssertEqual(UIBackgroundFetchResultNoData, fetchResult);
+        [testExpectation fulfill];
+    }];
+    [self waitForTestExpectations];
+
+    [self.mockInAppAutomation verify];
+}
+
+
 @end

@@ -1214,6 +1214,7 @@
 		6EFD6D8A272A53FB005B26F1 /* PagerIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */; };
 		6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		6EFD6D8C272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
+		6EFE7E3D2A96B65B0064AC31 /* UALegacyInappMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFE7E3C2A96B6500064AC31 /* UALegacyInappMessage+Internal.h */; };
 		8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -2633,6 +2634,7 @@
 		6EFD6D84272A53FA005B26F1 /* Pager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pager.swift; sourceTree = "<group>"; };
 		6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerIndicator.swift; sourceTree = "<group>"; };
 		6EFD6D86272A53FB005B26F1 /* PagerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerController.swift; sourceTree = "<group>"; };
+		6EFE7E3C2A96B6500064AC31 /* UALegacyInappMessage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UALegacyInappMessage+Internal.h"; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		8401769326C5671100373AF7 /* JSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMatcher.swift; sourceTree = "<group>"; };
 		8401769526C5715E00373AF7 /* VersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMatcher.swift; sourceTree = "<group>"; };
@@ -4347,6 +4349,7 @@
 				CC40DB6D1D8C996900BABD4F /* UALegacyInAppMessage.m */,
 				CC40DB781D8C996900BABD4F /* UALegacyInAppMessaging+Internal.h */,
 				CC40DB7A1D8C996900BABD4F /* UALegacyInAppMessaging.m */,
+				6EFE7E3C2A96B6500064AC31 /* UALegacyInappMessage+Internal.h */,
 			);
 			name = Legacy;
 			sourceTree = "<group>";
@@ -5262,6 +5265,7 @@
 				6E8453D3237E0540007D3B1E /* UAInAppMessageAssetManager.h in Headers */,
 				6E845463237E0DCF007D3B1E /* UAAirshipAutomationCoreImport.h in Headers */,
 				6E8453D4237E0540007D3B1E /* UAInAppMessageAssets.h in Headers */,
+				6EFE7E3D2A96B65B0064AC31 /* UALegacyInappMessage+Internal.h in Headers */,
 				6E8453D5237E0540007D3B1E /* UAInAppMessageDefaultPrepareAssetsDelegate.h in Headers */,
 				6E8453D6237E0540007D3B1E /* UAInAppMessageSceneManager.h in Headers */,
 				6E8453D7237E0540007D3B1E /* UAInAppMessageResolution.h in Headers */,

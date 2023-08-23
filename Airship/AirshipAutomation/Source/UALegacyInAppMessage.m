@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import "UALegacyInAppMessage.h"
+#import "UALegacyInappMessage+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
@@ -42,8 +42,12 @@
     NSDictionary *extra = typeCheck(payload[@"extra"], [NSDictionary class]);
     NSDictionary *display = typeCheck(payload[@"display"], [NSDictionary class]);
     NSDictionary *actions = typeCheck(payload[@"actions"], [NSDictionary class]);
+    NSDictionary *campaigns = typeCheck(payload[@"campaigns"], [NSDictionary class]);
+    NSString *messageType = typeCheck(payload[@"message_type"], [NSString class]);
 
     message.identifier = identifier;
+    message.campaigns = campaigns;
+    message.messageType = messageType;
 
     if (expiry) {
         message.expiry = [UAUtils parseISO8601DateFromString:expiry];
@@ -85,6 +89,7 @@
     message.buttonGroup = typeCheck(actions[@"button_group"], [NSString class]);
     message.buttonActions = typeCheck(actions[@"button_actions"], [NSDictionary class]);
     message.onClick = typeCheck(actions[@"on_click"], [NSDictionary class]);
+
 
     return message;
 }
@@ -148,6 +153,9 @@
 
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
     [payload setValue:self.identifier forKey:@"identifier"];
+    [payload setValue:self.campaigns forKey:@"campaigns"];
+    [payload setValue:self.messageType forKey:@"message_type"];
+
     [payload setValue:expiry forKey:@"expiry"];
     [payload setValue:(extra.count ? extra : nil) forKey:@"extra"];
     [payload setValue:(display.count ? display : nil) forKey:@"display"];

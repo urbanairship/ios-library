@@ -2,7 +2,7 @@
 
 #import "UAAirshipBaseTest.h"
 
-#import "UALegacyInAppMessage.h"
+#import "UALegacyInAppMessage+Internal.h"
 #import "AirshipTests-Swift.h"
 
 @import AirshipCore;
@@ -23,7 +23,8 @@
 
     id actions = @{@"on_click":@{@"^d":@"http://google.com"}, @"button_group":@"ua_yes_no_foreground", @"button_actions":@{@"yes":@{@"^+t": @"yes_tag"}, @"no":@{@"^+t": @"no_tag"}}};
 
-    self.payload = @{@"identifier":@"some identifier", @"expiry":expiry, @"extra":extra, @"display":display, @"actions":actions};
+    self.payload = @{@"identifier":@"some identifier", @"expiry":expiry, @"extra":extra, @"display":display, @"actions":actions, @"message_type": @"commercial",
+        @"campaigns": @{@"categories": @[@"cool", @"cool_cool"]}};
 }
 
 /**
@@ -39,6 +40,10 @@
     [gregorian components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond) fromDate:message.expiry];
 
     XCTAssertEqualObjects(message.identifier, @"some identifier");
+
+    id campaigns = @{@"categories": @[@"cool", @"cool_cool"]};
+    XCTAssertEqualObjects(message.campaigns, campaigns);
+    XCTAssertEqualObjects(message.messageType, @"commercial");
 
     XCTAssertEqual(expiryComponents.year, 2020);
     XCTAssertEqual(expiryComponents.month, 12);
