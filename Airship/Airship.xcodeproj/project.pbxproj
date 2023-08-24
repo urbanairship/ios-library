@@ -1114,6 +1114,9 @@
 		6ED8079B273DA56000D1F455 /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
 		6ED807AA273DEA7D00D1F455 /* UAInAppMessageAirshipLayoutAdapter+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED807A8273DEA7C00D1F455 /* UAInAppMessageAirshipLayoutAdapter+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ED807AB273DEA7D00D1F455 /* UAInAppMessageAirshipLayoutDisplayContent+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED807A9273DEA7C00D1F455 /* UAInAppMessageAirshipLayoutDisplayContent+Internal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6EDE293F2A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
+		6EDE29402A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
+		6EDE29412A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
 		6EE49BDD2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE49BDE2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE49BDF2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
@@ -2580,6 +2583,7 @@
 		6ED87FA01FEB315B003B652A /* UAInAppMessageTextInfo+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageTextInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FA91FEB3A47003B652A /* UAInAppMessageButtonInfo+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButtonInfo+Internal.h"; sourceTree = "<group>"; };
 		6ED87FAC1FEB5044003B652A /* UATagSelector+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UATagSelector+Internal.h"; sourceTree = "<group>"; };
+		6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionRunner.swift; sourceTree = "<group>"; };
 		6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNotificationStatus.swift; sourceTree = "<group>"; };
 		6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRemoteDataProviderDelegate.swift; sourceTree = "<group>"; };
 		6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataURLFactory.swift; sourceTree = "<group>"; };
@@ -3787,6 +3791,7 @@
 				6E692AFC29E0CB2F00D96CCC /* JavaScriptCommand.swift */,
 				6E692AFE29E0CB4100D96CCC /* JavaScriptCommandDelegate.swift */,
 				6E692B0229E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift */,
+				6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */,
 			);
 			name = "Native Bridge";
 			sourceTree = "<group>";
@@ -6378,6 +6383,7 @@
 				6E4E5B3B26E7F91600198175 /* LocalizationUtils.swift in Sources */,
 				6E1892B1268CE8FE00417887 /* Lock.swift in Sources */,
 				6E692B0329E0CBB500D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
+				6EDE293F2A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */,
 				6E698E0C267A88D600654DB2 /* EventAPIClient.swift in Sources */,
 				6EC7559F2A4E5AB200851ABB /* DeviceAudienceChecker.swift in Sources */,
 				6E15B6F426CD85C40099C92D /* RuntimeConfig.swift in Sources */,
@@ -6787,6 +6793,7 @@
 				607951412A1E74AC0086578F /* MessageCriteria.swift in Sources */,
 				A6722A7C281A9EDA0033F54D /* LocaleManager.swift in Sources */,
 				6E91E44E28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
+				6EDE29412A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */,
 				6E75F50F29CA7FD000E3585A /* AutomationAudienceOverridesProvider.swift in Sources */,
 				A6722A7D281A9EDA0033F54D /* AssociatedChannel.swift in Sources */,
 				A6722A7E281A9EDA0033F54D /* ContactAPIClient.swift in Sources */,
@@ -7454,6 +7461,7 @@
 				6E91B45526883B6E00DDB1A8 /* AppForegroundEvent.swift in Sources */,
 				6E92EC8B284933750038802D /* PromptPermissionAction.swift in Sources */,
 				A6D6D4A42A02BB1C0072A5CA /* ActionArguments.swift in Sources */,
+				6EDE29402A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */,
 				6E698E0A267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
 				6E9D529926C1A502004EA16B /* ActionRunner.swift in Sources */,
 				A61517C526B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,

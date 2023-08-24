@@ -4,14 +4,18 @@ import XCTest
 @testable
 import AirshipCore
 
+import WebKit
+
 final class NativeBridgeActionHandlerTest: XCTestCase {
 
     private let metadata: [String: String] = ["some": UUID().uuidString]
 
     private let testActionRunner = TestActionRunner()
+
+    private let webView = WKWebView()
     private var actionHandler: NativeBridgeActionHandler!
     override func setUpWithError() throws {
-        self.actionHandler = NativeBridgeActionHandler(actionRunner: testActionRunner.run)
+        self.actionHandler = NativeBridgeActionHandler(actionRunner: testActionRunner)
     }
 
     func testRunActionsMultiple() async throws {
@@ -21,7 +25,8 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         XCTAssertNil(result)
 
         let expecteActions: [String: [ActionArguments]] = [
@@ -40,7 +45,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         XCTAssertNil(result)
 
         let expecteActions: [String: [ActionArguments]] = [
@@ -60,7 +65,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         XCTAssertNil(result)
 
         XCTAssertEqual([:], self.testActionRunner.ranActions)
@@ -74,7 +79,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "UAirship.finishAction(null, null, \"callback-ID-1\");"
         XCTAssertEqual(expectedResult, result)
 
@@ -93,7 +98,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "UAirship.finishAction(null, \"neat\", \"callback-ID-2\");"
         XCTAssertEqual(expectedResult, result)
 
@@ -112,7 +117,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "var error = new Error(); error.message = \"Some error\"; UAirship.finishAction(error, null, \"callback-ID-2\");"
         XCTAssertEqual(expectedResult, result)
 
@@ -131,7 +136,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "var error = new Error(); error.message = \"No action found with name test_action, skipping action.\"; UAirship.finishAction(error, null, \"callback-ID-2\");"
         XCTAssertEqual(expectedResult, result)
 
@@ -150,7 +155,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "var error = new Error(); error.message = \"Action test_action rejected arguments.\"; UAirship.finishAction(error, null, \"callback-ID-2\");"
         XCTAssertEqual(expectedResult, result)
 
@@ -168,7 +173,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         XCTAssertNil(result)
 
         let expecteActions: [String: [ActionArguments]] = [
@@ -186,7 +191,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             )!
         )
 
-        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata)
+        let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         XCTAssertNil(result)
 
         let expecteActions: [String: [ActionArguments]] = [
@@ -201,21 +206,17 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 }
 
 
-final class TestActionRunner: @unchecked Sendable {
+final class TestActionRunner: NativeBridgeActionRunner {
     var actionResult: ActionResult = .completed(AirshipJSON.null)
     var ranActions: [String: [ActionArguments]] = [:]
 
-    @Sendable
-    func run(
-        name: String,
-        arguments: ActionArguments
-    ) async -> ActionResult {
-        ranActions[name] = ranActions[name] ?? []
-        ranActions[name]?.append(arguments)
+    @MainActor
+    func runAction(actionName: String, arguments: AirshipCore.ActionArguments, webView: WKWebView) async -> AirshipCore.ActionResult {
+        ranActions[actionName] = ranActions[actionName] ?? []
+        ranActions[actionName]?.append(arguments)
         return actionResult
     }
 }
-
 
 extension ActionArguments: Equatable {
     public static func == (lhs: AirshipCore.ActionArguments, rhs: AirshipCore.ActionArguments) -> Bool {

@@ -3,6 +3,7 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
+import WebKit
 
 protocol NativeBridgeActionHandlerProtocol {
     
@@ -13,36 +14,41 @@ protocol NativeBridgeActionHandlerProtocol {
      *    - metadata The action metadata.
      *  - Returns: Returns the optional script to evaluate in the web view..
      */
+    @MainActor
     func runActionsForCommand(
         command: JavaScriptCommand,
-        metadata: [String: Sendable]?
+        metadata: [String: Sendable]?,
+        webView: WKWebView
     ) async -> String?
+}
+
+private struct DefaultNativeBridgeActionRunner: NativeBridgeActionRunner {
+    func runAction(actionName: String, arguments: ActionArguments, webView: WKWebView) async -> ActionResult {
+        return await ActionRunner.run(actionName: actionName, arguments: arguments)
+    }
 }
 
 class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
 
 
-    private let actionRunner: @Sendable (String, ActionArguments) async -> ActionResult
+    private let actionRunner: NativeBridgeActionRunner
 
-    init(actionRunner: @escaping @Sendable (String, ActionArguments) async -> ActionResult) {
+    init(actionRunner: NativeBridgeActionRunner = DefaultNativeBridgeActionRunner()) {
         self.actionRunner = actionRunner
     }
 
-    convenience init() {
-        self.init { name, args in
-            return await ActionRunner.run(actionName: name, arguments: args)
-        }
-    }
     /**
      * Runs actions for a command.
      *  - Parameters:
      *   - command The action command.
      *   - metadata The action metadata.
-     *   - completionHandler The completion handler with optional script to evaluate in the web view..
+     *   - webView The web view
      */
+    @MainActor
     public func runActionsForCommand(
         command: JavaScriptCommand,
-        metadata: [String: Sendable]?
+        metadata: [String: Sendable]?,
+        webView: WKWebView
     ) async -> String? {
         AirshipLogger.debug("Running actions for command: \(command)")
         
@@ -76,7 +82,8 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
                 actionName,
                 actionValue,
                 metadata ?? [:],
-                callbackID
+                callbackID,
+                webView: webView
             )
         }
         
@@ -89,7 +96,8 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
         if command.name == "run-actions" {
             await self.run(
                 self.decodeActionValues(command, false),
-                metadata: metadata
+                metadata: metadata,
+                webView: webView
             )
             return nil
         }
@@ -103,7 +111,8 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
         if command.name == "run-basic-actions" {
                 await self.run(
                     self.decodeActionValues(command, true),
-                    metadata: metadata
+                    metadata: metadata,
+                    webView: webView
                 )
             return nil
         }
@@ -118,19 +127,22 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
      *   - actionValues A map of action name to an array of action values.
      *   - metadata Optional metadata to pass to the action arguments.
      */
+    @MainActor
     private func run(
         _ actionValues: [String: [AirshipJSON]],
-        metadata: [String: Sendable]?
+        metadata: [String: Sendable]?,
+        webView: WKWebView
     ) async {
         for (actionName, values) in actionValues {
             for value in values {
-                _ = await self.actionRunner(
-                    actionName,
-                    ActionArguments(
+                _ = await self.actionRunner.runAction(
+                    actionName: actionName,
+                    arguments: ActionArguments(
                         value: value,
                         situation: .webViewInvocation,
                         metadata: metadata ?? [:]
-                    )
+                    ),
+                    webView: webView
                 )
             }
         }
@@ -145,11 +157,13 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
      *   - metadata Optional metadata to pass to the action arguments.
      *   - callbackID A callback identifier generated in the JS layer. This can be `nil`.
      */
+    @MainActor
     private func run(
-        _ action: String,
+        _ actionName: String,
         _ actionValue: AirshipJSON,
         _ metadata: [String: Sendable],
-        _ callbackID: String
+        _ callbackID: String,
+        webView: WKWebView
     ) async -> String? {
         
         let callbackID = try? JSONUtils.string(
@@ -157,15 +171,15 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
             options: .fragmentsAllowed
         )
         
-        let result = await self.actionRunner(
-            action,
-            ActionArguments(
+        let result = await self.actionRunner.runAction(
+            actionName: actionName, 
+            arguments:  ActionArguments(
                 value: actionValue,
                 situation: .webViewInvocation,
                 metadata: metadata
-            )
+            ),
+            webView: webView
         )
-
         guard let callbackID = callbackID else {
             return nil
         }
@@ -175,7 +189,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
             return "UAirship.finishAction(null, \((try? value.toString()) ?? "null"), \(callbackID));"
         case .actionNotFound:
             return errorResponse(
-                errorMessage: "No action found with name \(action), skipping action.",
+                errorMessage: "No action found with name \(actionName), skipping action.",
                 callbackID: callbackID
             )
         case .error(let error):
@@ -185,7 +199,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
             )
         case .argumentsRejected:
             return errorResponse(
-                errorMessage: "Action \(action) rejected arguments.",
+                errorMessage: "Action \(actionName) rejected arguments.",
                 callbackID: callbackID
             )
         }

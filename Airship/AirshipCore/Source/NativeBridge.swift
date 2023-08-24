@@ -75,7 +75,17 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         )
     }
 
-    
+    /// NativeBridge initializer.
+    /// - Parameter actionRunner: An action runner to run actions triggered from the web view
+    public convenience init(actionRunner: NativeBridgeActionRunner) {
+        self.init(
+            actionHandler: NativeBridgeActionHandler(actionRunner: actionRunner),
+            javaScriptEnvironmentFactoryBlock: {
+                return JavaScriptEnvironment()
+            }
+        )
+    }
+
     /**
      * Decide whether to allow or cancel a navigation. :nodoc:
      *
@@ -404,7 +414,8 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 
                 let script = await self.actionHandler.runActionsForCommand(
                     command: command,
-                    metadata: metadata
+                    metadata: metadata,
+                    webView: webView
                 )
 
                 do {
