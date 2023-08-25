@@ -80,7 +80,7 @@ jobs:
       - name: Install Coreutils
         run: brew install coreutils
       
-        - name: Install Apple Certificate
+      - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
