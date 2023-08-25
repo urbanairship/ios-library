@@ -29,6 +29,25 @@ jobs:
       - name: Build SDK
         run: make build-xcframeworks
 
+  build-sdk-xcode15:
+    runs-on: macOS-13
+    steps:
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
+          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
+      - name: Set env variable
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - name: Build SDK
+        run: make build-xcframeworks XCODE=15.0
+
   build-docs:
     runs-on: macOS-13
     steps:

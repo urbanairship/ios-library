@@ -3,10 +3,20 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.2.0 August 25, 2023
+Minor release that fixes a reporting issue with hold out groups and In-App Messaging. 17.2.0 will be the minimum version required for global hold out groups.
+
+### Changes
+- Fixed reporting issue with hold out groups and In-App Messaging
+- Added a new `NativeBridgeActionRunner` that can be passed into a `NativeBridge` instance to customize action running
+- Added frameworks signing
+- Fixed a remote-data crash during init
+- Fixed Message Center sometimes not loading a message when opened from a push notification
+
 ## Version 17.1.3 August 16, 2023
 Patch release that fixes a reporting issue related to global holdout groups. Applications making use of global holdout groups should update.
 
-###
+### Changes
 - Fixed experiment info reporting for global holdout groups
 
 ## Version 17.1.2 August 11, 2023

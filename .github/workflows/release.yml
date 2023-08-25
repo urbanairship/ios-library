@@ -15,7 +15,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Check Version
         run: bash ./scripts/check_version.sh ${{ steps.get_version.outputs.VERSION }}
       - name: Slack Notification
@@ -59,6 +60,40 @@ jobs:
           name: docs
           path: ./build/Documentation
 
+  build-package-xcode15:
+    needs: check-version
+    runs-on: macOS-13
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+      - name: Install Coreutils
+        run: brew install coreutils
+
+      - name: Build SDK
+        run: make build-package XCODE=15.0
+
+      - name: Upload zip distribution
+        uses: actions/upload-artifact@v1
+        with:
+          name: airship-xcode15
+          path: ./build/Airship.zip
+
+      - name: Upload zip distribution
+        uses: actions/upload-artifact@v1
+        with:
+          name: airship-carthage-xcode15
+          path: ./build/Airship.xcframeworks.zip
+
+      - name: Upload Documentation
+        uses: actions/upload-artifact@v1
+        with:
+          name: docs
+          path: ./build/Documentation
+
   build-samples:
     needs: check-version
     runs-on: macOS-13
@@ -94,7 +129,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Get the release notes
         id: get_release_notes
         run: |
@@ -160,7 +196,51 @@ jobs:
           type: ${{ job.status }}
           job_name: "Deploy iOS SDK to Github :octocat:"
           url: ${{ secrets.SLACK_WEBHOOK }}
+  deploy-github-xcode15:
+    runs-on: macOS-13
+    needs: [build-package-xcode15, deploy-github]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get the version
+        id: get_version
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      - name: Download zip distribution
+        uses: actions/download-artifact@v1
+        with:
+          name: airship-xcode15
+          path: ./build
+      - name: Download Carthage zip distribution
+        uses: actions/download-artifact@v1
+        with:
+          name: airship-carthage-xcode15
+          path: ./build
+      - name: Upload zip distribution
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/Airship.zip
+          asset_name: Airship-Xcode15.zip
+          asset_content_type: application/zip
+      - name: Upload carthage zip distribution
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/Airship.xcframeworks.zip
+          asset_name: Airship-Xcode15.xcframeworks.zip
+          asset_content_type: application/zip
 
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: "Deploy iOS SDK Xcode 15 to Github :octocat:"
+          url: ${{ secrets.SLACK_WEBHOOK }}
   deploy-pods:
     runs-on: macOS-13
     needs: [run-tests, build-package, build-samples]
@@ -168,7 +248,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
@@ -193,7 +274,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - uses: actions/cache@v1
         with:
           path: vendor/bundle
@@ -226,7 +308,8 @@ jobs:
     steps:
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
