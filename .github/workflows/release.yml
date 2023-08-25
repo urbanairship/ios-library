@@ -204,12 +204,14 @@ jobs:
         with:
           name: docs
           path: ./build/Documentation
-      - uses: google-github-actions/setup-gcloud@v0
+      - name: Setup GCP Auth
+        uses: google-github-actions/auth@v1
         with:
-          version: "270.0.0"
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-      - run: bash ./scripts/upload_docs.sh
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Upload Docs
+        run: bash ./scripts/upload_docs.sh
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
