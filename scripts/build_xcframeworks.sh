@@ -151,3 +151,14 @@ xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
   -output "$OUTPUT/AirshipNotificationContentExtension.xcframework"
+
+
+# Sign the frameworks
+
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipBasement.xcframework"
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipCore.xcframework"
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipAutomation.xcframework"
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipMessageCenter.xcframework"
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipPreferenceCenter.xcframework"
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
+codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipNotificationContentExtension.xcframework"
