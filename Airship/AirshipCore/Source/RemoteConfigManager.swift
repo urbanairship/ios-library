@@ -34,6 +34,9 @@ final class RemoteConfigManager: @unchecked Sendable {
         self.moduleAdapter = moduleAdapter
         self.appVersion = appVersion
         self.notificationCenter = notificationCenter
+    }
+
+    func airshipReady() {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateRemoteConfigSubscription),
@@ -43,7 +46,6 @@ final class RemoteConfigManager: @unchecked Sendable {
 
         self.updateRemoteConfigSubscription()
     }
-
 
     func processRemoteConfig(_ payloads: [RemoteDataPayload]?) {
         var combinedData: [AnyHashable: Any] = [:]

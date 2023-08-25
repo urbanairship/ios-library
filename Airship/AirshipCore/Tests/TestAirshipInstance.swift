@@ -127,4 +127,7 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     public class func clearShared() {
         Airship._shared = nil
     }
+
+    public func airshipReady() {
+    }
 }

@@ -22,6 +22,8 @@ protocol AirshipInstanceProtocol {
 
     func component(forClassName className: String) -> AirshipComponent?
     func component<E>(ofType componentType: E.Type) -> E?
+
+    func airshipReady()
 }
 
 class AirshipInstance: AirshipInstanceProtocol {
@@ -205,5 +207,10 @@ class AirshipInstance: AirshipInstanceProtocol {
             component = componentMap[key] as? E
         }
         return component
+    }
+
+    func airshipReady() {
+        self.components.forEach { $0.airshipReady?() }
+        self.remoteConfigManager.airshipReady()
     }
 }

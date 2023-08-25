@@ -27,7 +27,7 @@ class RemoteConfigManagerTest: XCTestCase {
             notificationCenter: self.notificationCenter,
             appVersion: "0.0.0"
         )
-
+        self.remoteConfigManager.airshipReady()
     }
 
     func testDisableModules() throws {
@@ -271,6 +271,7 @@ class RemoteConfigManagerTest: XCTestCase {
             notificationCenter: self.notificationCenter,
             appVersion: "2.0.0"
         )
+        self.remoteConfigManager.airshipReady()
 
         self.testRemoteData.payloads = [payload]
         expectedDisable = [

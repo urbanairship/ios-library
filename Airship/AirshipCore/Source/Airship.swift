@@ -242,7 +242,7 @@ public class Airship: NSObject {
         }
         #endif
 
-        self.shared.components.forEach { $0.airshipReady?() }
+        self.shared.airshipInstance.airshipReady()
 
         if self.shared.config.isExtendedBroadcastsEnabled {
             var userInfo: [String: Any] = [:]
