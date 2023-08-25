@@ -38,6 +38,12 @@ jobs:
           restore-keys: ${{ runner.os }}-gems-
       - name: Install Coreutils
         run: brew install coreutils
+      
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
+          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
 
       - name: Build SDK
         run: make build-package
@@ -70,8 +76,15 @@ jobs:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gems-
+      
       - name: Install Coreutils
         run: brew install coreutils
+      
+        - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
+          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
 
       - name: Build SDK
         run: make build-package XCODE=15.0
