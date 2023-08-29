@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.12.4 August 29, 2023
+Patch release that fixes an issue with not being able to update a Live Activity after it becomes stale. Apps that use `staleDate` with Live Activities should update.
+
+### Changes
+- Continue to track a Live Activity after it becomes stale
+- Fixed channel registration issue with changing privacy manager flags during the first run
+
 ## Version 16.12.3, July 11, 2023
 Patch release that works around a compiler issue with Xcode 15 beta and a Message Center issue with setting the navigation bar item tint.
 
