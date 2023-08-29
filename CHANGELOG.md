@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.2.1 August 29, 2023
+Patch release that fixes an issue with not being able to update a Live Activity after it becomes stale. Apps that use `staleDate` with Live Activities should update.
+
+### Changes
+- Continue to track a Live Activity after it becomes stale
+
 ## Version 17.2.0 August 25, 2023
 Minor release that fixes a reporting issue with hold out groups and In-App Messaging. 17.2.0 will be the minimum version required for global hold out groups.
 

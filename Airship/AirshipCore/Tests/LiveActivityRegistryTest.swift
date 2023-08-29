@@ -38,7 +38,7 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
 
         self.date.offset += 1.0
-        activity.isActive = false
+        activity.isUpdatable = false
 
         await assertUpdate(
             LiveActivityUpdate(
@@ -196,9 +196,9 @@ final class LiveActivityRegistryTest: XCTestCase {
 /// Tried to match as closely as I coudl to the real object
 private final class TestLiveActivity: LiveActivityProtocol, @unchecked Sendable {
     let id: String
-    var isActive: Bool = true {
+    var isUpdatable: Bool = true {
         didSet {
-            statusUpdatesContinuation.yield(isActive)
+            statusUpdatesContinuation.yield(isUpdatable)
         }
     }
     var pushTokenString: String? {
@@ -229,7 +229,7 @@ private final class TestLiveActivity: LiveActivityProtocol, @unchecked Sendable 
     }
 
     func track(tokenUpdates: @escaping (String) async -> Void) async {
-        guard self.isActive else {
+        guard self.isUpdatable else {
             return
         }
 

@@ -7,7 +7,7 @@ protocol LiveActivityProtocol: Sendable {
     /// The activity's ID
     var id: String { get }
 
-    var isActive: Bool { get }
+    var isUpdatable: Bool { get }
 
     var pushTokenString: String? { get }
 
@@ -38,8 +38,8 @@ fileprivate struct ActivityProvider<T : ActivityAttributes>: Sendable {
 struct LiveActivity<T: ActivityAttributes>: LiveActivityProtocol {
     public let id: String
 
-    public var isActive: Bool {
-        return provider.getActivity()?.activityState == .active
+    public var isUpdatable: Bool {
+        return provider.getActivity()?.activityState.isStaleOrActive ?? false
     }
 
     public var pushTokenString: String? {
@@ -72,7 +72,7 @@ struct LiveActivity<T: ActivityAttributes>: LiveActivityProtocol {
 
         let task = Task {
             guard let activity = provider.getActivity(),
-                  activity.activityState == .active
+                  activity.activityState.isStaleOrActive
             else {
                 return
             }
@@ -96,11 +96,22 @@ struct LiveActivity<T: ActivityAttributes>: LiveActivityProtocol {
         }
 
         for await update in activity.activityStateUpdates {
-            if update != .active || Task.isCancelled {
+            if !update.isStaleOrActive || Task.isCancelled {
                 await backgroundTask.stop()
                 task.cancel()
                 break
             }
+        }
+    }
+}
+
+@available(iOS 16.1, *)
+extension ActivityState {
+    public var isStaleOrActive: Bool {
+        if #available(iOS 16.2, *) {
+            return self == .active || self == .stale
+        } else {
+            return self == .active
         }
     }
 }

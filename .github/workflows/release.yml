@@ -137,7 +137,7 @@ jobs:
 
   deploy-github:
     runs-on: macOS-13
-    needs: [run-tests, build-package, build-samples]
+    needs: [run-tests, build-package, build-samples, build-package-xcode15]
     steps:
       - uses: actions/checkout@v2
       - name: Get the version
@@ -168,6 +168,16 @@ jobs:
         with:
           name: airship-carthage
           path: ./build
+      - name: Download Xcode15 zip distribution
+        uses: actions/download-artifact@v1
+        with:
+          name: airship
+          path: ./buildXcode15
+      - name: Download Xcode15 Carthage zip distribution
+        uses: actions/download-artifact@v1
+        with:
+          name: airship-carthage
+          path: ./buildXcode15
       - name: Github Release
         id: create_release
         uses: actions/create-release@v1.0.1
@@ -201,49 +211,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
         run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
-
-      - name: Slack Notification
-        uses: homoluctus/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy iOS SDK to Github :octocat:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
-  deploy-github-xcode15:
-    runs-on: macOS-13
-    needs: [build-package-xcode15, deploy-github]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Get the version
-        id: get_version
-        run: |
-          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
-      - name: Download zip distribution
-        uses: actions/download-artifact@v1
-        with:
-          name: airship-xcode15
-          path: ./build
-      - name: Download Carthage zip distribution
-        uses: actions/download-artifact@v1
-        with:
-          name: airship-carthage-xcode15
-          path: ./build
-      - name: Upload zip distribution
+      - name: Upload Xcode15 zip distribution
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/Airship.zip
+          asset_path: ./buildXcode15/Airship.zip
           asset_name: Airship-Xcode15.zip
           asset_content_type: application/zip
-      - name: Upload carthage zip distribution
+      - name: Upload Xcode 15 carthage zip distribution
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/Airship.xcframeworks.zip
+          asset_path: ./buildXcode15/Airship.xcframeworks.zip
           asset_name: Airship-Xcode15.xcframeworks.zip
           asset_content_type: application/zip
 
@@ -252,7 +235,7 @@ jobs:
         if: always()
         with:
           type: ${{ job.status }}
-          job_name: "Deploy iOS SDK Xcode 15 to Github :octocat:"
+          job_name: "Deploy iOS SDK to Github :octocat:"
           url: ${{ secrets.SLACK_WEBHOOK }}
   deploy-pods:
     runs-on: macOS-13
