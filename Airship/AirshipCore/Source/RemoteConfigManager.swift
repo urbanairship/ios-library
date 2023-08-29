@@ -144,12 +144,14 @@ public class RemoteConfigManager : NSObject {
 
     @objc
     func updateRemoteConfigSubscription() {
-        if self.privacyManager.isAnyFeatureEnabled() && self.remoteDataSubscription == nil {
-            self.remoteDataSubscription = self.remoteDataManager.subscribe(
-                types: ["app_config", "app_config:ios"],
-                block: { [weak self] remoteConfig in
-                    self?.processRemoteConfig(remoteConfig)
-                })
+        if self.privacyManager.isAnyFeatureEnabled() {
+            if self.remoteDataSubscription == nil {
+                self.remoteDataSubscription = self.remoteDataManager.subscribe(
+                    types: ["app_config", "app_config:ios"],
+                    block: { [weak self] remoteConfig in
+                        self?.processRemoteConfig(remoteConfig)
+                    })
+            }
         } else {
             remoteDataSubscription?.dispose()
             remoteDataSubscription = nil
