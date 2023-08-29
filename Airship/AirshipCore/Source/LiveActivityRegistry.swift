@@ -89,7 +89,7 @@ actor LiveActivityRegistry {
         _ activity: LiveActivity,
         name: String
     ) {
-        guard activity.isActive else {
+        guard activity.isUpdatable else {
             return
         }
         

@@ -10,8 +10,8 @@ protocol LiveActivity {
     /// The activity's ID
     var id: String { get }
 
-    /// If the activity is active or not
-    var isActive: Bool { get }
+    /// If the activity is updatable or not
+    var isUpdatable: Bool { get }
 
     /// Push token
     var pushTokenString: String? { get }
@@ -30,7 +30,7 @@ extension Activity: LiveActivity {
 
     func track(tokenUpdates: @escaping (String) async -> Void) async {
 
-        guard self.activityState == .active else {
+        guard self.activityState.isStaleOrActive else {
             return
         }
 
@@ -60,7 +60,7 @@ extension Activity: LiveActivity {
         }
 
         for await update in self.activityStateUpdates {
-            if update != .active || Task.isCancelled {
+            if !update.isStaleOrActive || Task.isCancelled {
                 await backgroundTask.stop()
                 task.cancel()
                 break
@@ -68,8 +68,8 @@ extension Activity: LiveActivity {
         }
     }
 
-    var isActive: Bool {
-        return self.activityState == .active
+    var isUpdatable: Bool {
+        return self.activityState.isStaleOrActive
     }
 
     var pushTokenString: String? {
@@ -80,6 +80,17 @@ extension Activity: LiveActivity {
 fileprivate extension Data {
     var tokenString: String {
         Utils.deviceTokenStringFromDeviceToken(self)
+    }
+}
+
+@available(iOS 16.1, *)
+extension ActivityState {
+    public var isStaleOrActive: Bool {
+        if #available(iOS 16.2, *) {
+            return self == .active || self == .stale
+        } else {
+            return self == .active
+        }
     }
 }
 
