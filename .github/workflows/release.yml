@@ -166,12 +166,12 @@ jobs:
       - name: Download Carthage zip distribution
         uses: actions/download-artifact@v1
         with:
-          name: airship-carthage
+          name: airship-carthage-xcode15
           path: ./build
       - name: Download Xcode15 zip distribution
         uses: actions/download-artifact@v1
         with:
-          name: airship
+          name: airship-xcode15
           path: ./buildXcode15
       - name: Download Xcode15 Carthage zip distribution
         uses: actions/download-artifact@v1
