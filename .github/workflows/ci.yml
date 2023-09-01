@@ -37,6 +37,7 @@ jobs:
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
+
       - name: Set env variable
         run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v2
@@ -47,6 +48,11 @@ jobs:
           restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
       - name: Build SDK
         run: make build-xcframeworks XCODE=15.0
+      - name: Upload xcframeworks
+        uses: actions/upload-artifact@v3
+        with:
+          name: airship-xcode15
+          path: ./build/xcframeworks/
 
   build-docs:
     runs-on: macOS-13

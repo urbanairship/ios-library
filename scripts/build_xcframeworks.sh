@@ -7,6 +7,7 @@
 set -o pipefail
 set -ex
 
+
 ROOT_PATH=`dirname "${0}"`/..
 OUTPUT="$1"
 DERIVED_DATA="$2"
@@ -155,10 +156,11 @@ xcodebuild -create-xcframework \
 
 # Sign the frameworks
 
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipBasement.xcframework"
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipCore.xcframework"
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipAutomation.xcframework"
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipMessageCenter.xcframework"
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipPreferenceCenter.xcframework"
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
-codesign --timestamp -v --sign "iPhone Distribution: Urban Airship" "$OUTPUT/AirshipNotificationContentExtension.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipBasement.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipCore.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipMessageCenter.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipPreferenceCenter.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationContentExtension.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipFeatureFlags.xcframework"
