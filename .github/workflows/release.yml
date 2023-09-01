@@ -207,10 +207,6 @@ jobs:
           asset_path: ./build/Airship.xcframeworks.zip
           asset_name: Airship.xcframeworks.zip
           asset_content_type: application/zip
-      - name: Update prebuilt repo
-        env:
-          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
-        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
       - name: Upload Xcode15 zip distribution
         uses: actions/upload-release-asset@v1.0.1
         env:
@@ -229,7 +225,14 @@ jobs:
           asset_path: ./buildXcode15/Airship.xcframeworks.zip
           asset_name: Airship-Xcode15.xcframeworks.zip
           asset_content_type: application/zip
-
+      - name: Update prebuilt Xcode 14 repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
+        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
+      - name: Update prebuilt Xcode 15 repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
+        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()

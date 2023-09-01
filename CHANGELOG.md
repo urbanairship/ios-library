@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.2.2 September 1, 2023
+Patch release that fixes an issue with the signing of the frameworks.
+
+### Changes
+- Fixed the certificate and included feature flags in signed frameworks.
+
 ## Version 17.2.1 August 29, 2023
 Patch release that fixes an issue with not being able to update a Live Activity after it becomes stale. Apps that use `staleDate` with Live Activities should update.
 
