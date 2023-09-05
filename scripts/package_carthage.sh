@@ -13,7 +13,7 @@ mkdir -p "$TEMP/Carthage/build"
 cp -r $2 "$TEMP/Carthage/build"
 cd  $TEMP
 
-zip -r xcframeworks.zip Carthage -x "*.DS_Store"
+zip -r --symlinks xcframeworks.zip Carthage -x "*.DS_Store"
 cd - 
 
 cp "$TEMP/xcframeworks.zip" $1

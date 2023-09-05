@@ -14,7 +14,7 @@ package() {
   if [ -d "$1" ]
   then
     pushd "${1}/.."
-    zip -r "${ZIP}" "./$(basename $1)"
+    zip -r --symlinks "${ZIP}" "./$(basename $1)"
     popd
   else
     if [ -f "$1" ]

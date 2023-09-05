@@ -12,7 +12,7 @@ jobs:
     if: github.repository == 'urbanairship/ios-library'
     runs-on: macOS-13
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get the version
         id: get_version
         run: |
@@ -30,38 +30,31 @@ jobs:
     needs: check-version
     runs-on: macOS-13
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          bundler-cache: true
       - name: Install Coreutils
         run: brew install coreutils
-      
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-
       - name: Build SDK
         run: make build-package
-
       - name: Upload zip distribution
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: airship
           path: ./build/Airship.zip
-
       - name: Upload zip distribution
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: airship-carthage
           path: ./build/Airship.xcframeworks.zip
-
       - name: Upload Documentation
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: ./build/Documentation
@@ -70,39 +63,31 @@ jobs:
     needs: check-version
     runs-on: macOS-13
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-
+          bundler-cache: true
       - name: Install Coreutils
         run: brew install coreutils
-      
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-
       - name: Build SDK
         run: make build-package XCODE=15.0
-
       - name: Upload zip distribution
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: airship-xcode15
           path: ./build/Airship.zip
-
       - name: Upload zip distribution
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: airship-carthage-xcode15
           path: ./build/Airship.xcframeworks.zip
-
       - name: Upload Documentation
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: ./build/Documentation
@@ -111,12 +96,10 @@ jobs:
     needs: check-version
     runs-on: macOS-13
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          bundler-cache: true
       - name: Build samples
         run: make build-samples
 
@@ -124,12 +107,10 @@ jobs:
     needs: check-version
     runs-on: macOS-13
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+          bundler-cache: true
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
@@ -139,7 +120,7 @@ jobs:
     runs-on: macOS-13
     needs: [run-tests, build-package, build-samples, build-package-xcode15]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get the version
         id: get_version
         run: |
@@ -153,34 +134,29 @@ jobs:
           NOTES="${NOTES//$'\n'/%0A}"
           NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
       - name: Download zip distribution
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: airship
           path: ./build
       - name: Download Carthage zip distribution
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: airship-carthage-xcode15
           path: ./build
       - name: Download Xcode15 zip distribution
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: airship-xcode15
           path: ./buildXcode15
       - name: Download Xcode15 Carthage zip distribution
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: airship-carthage
           path: ./buildXcode15
       - name: Github Release
         id: create_release
-        uses: actions/create-release@v1.0.1
+        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -232,7 +208,7 @@ jobs:
       - name: Update prebuilt Xcode 15 repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
-        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
+        run: gh --repo urbanairship/ios-library-prebuilt --ref xcode-15 workflow run release.yml
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
@@ -240,20 +216,19 @@ jobs:
           type: ${{ job.status }}
           job_name: "Deploy iOS SDK to Github :octocat:"
           url: ${{ secrets.SLACK_WEBHOOK }}
+
   deploy-pods:
     runs-on: macOS-13
     needs: [run-tests, build-package, build-samples]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
       - name: Get the version
         id: get_version
         run: |
           echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
       - name: Publish Pods
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
@@ -270,18 +245,13 @@ jobs:
     runs-on: macOS-13
     needs: [run-tests, build-package, build-samples]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get the version
         id: get_version
         run: |
           echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
       - name: Download docs
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: docs
           path: ./build/Documentation

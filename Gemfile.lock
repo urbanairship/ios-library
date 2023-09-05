@@ -77,7 +77,6 @@ GEM
       xcinvoke (~> 0.3.0)
     json (2.6.3)
     liferaft (0.0.6)
-    mini_portile2 (2.8.2)
     minitest (5.18.0)
     molinillo (0.8.0)
     mustache (1.1.1)
@@ -92,8 +91,8 @@ GEM
     ruby-macho (2.5.1)
     sassc (2.4.0)
       ffi (~> 1.9)
-    sqlite3 (1.6.3)
-      mini_portile2 (~> 2.8.0)
+    sqlite3 (1.6.3-arm64-darwin)
+    sqlite3 (1.6.3-x86_64-darwin)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
     tzinfo (2.0.6)
@@ -110,6 +109,8 @@ GEM
     zeitwerk (2.6.9)
 
 PLATFORMS
+  arm64-darwin-22
+  x86_64-darwin-19
   x86_64-darwin-22
 
 DEPENDENCIES
