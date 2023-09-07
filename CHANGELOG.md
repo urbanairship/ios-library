@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.3.0 September 7, 2023
+Minor release that adds a privacy manifest that declares the default data collected by the Airship SDK. For more information, see [privacy manifest guide](https://docs.airship.com/platform/mobile/data-collection/ios-privacy-manifest/).
+
+### Changes
+- Added privacy manifest
+
 ## Version 17.2.2 September 1, 2023
 Patch release that fixes an issue with the signing of the frameworks.
 
