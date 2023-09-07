@@ -10,7 +10,7 @@ set -e
 TEMP="$(mktemp -d)"
 mkdir -p "$TEMP/Carthage/build"
 
-cp -r $2 "$TEMP/Carthage/build"
+cp -R $2 "$TEMP/Carthage/build"
 cd  $TEMP
 
 zip -r --symlinks xcframeworks.zip Carthage -x "*.DS_Store"
