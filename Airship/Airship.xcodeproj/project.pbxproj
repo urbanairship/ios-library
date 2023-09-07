@@ -1218,6 +1218,9 @@
 		6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		6EFD6D8C272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		6EFE7E3D2A96B65B0064AC31 /* UALegacyInappMessage+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EFE7E3C2A96B6500064AC31 /* UALegacyInappMessage+Internal.h */; };
+		6EFE7E3F2A97ED660064AC31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */; };
+		6EFE7E402A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */; };
+		6EFE7E412A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */; };
 		8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -2639,6 +2642,7 @@
 		6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerIndicator.swift; sourceTree = "<group>"; };
 		6EFD6D86272A53FB005B26F1 /* PagerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PagerController.swift; sourceTree = "<group>"; };
 		6EFE7E3C2A96B6500064AC31 /* UALegacyInappMessage+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UALegacyInappMessage+Internal.h"; sourceTree = "<group>"; };
+		6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		8401769326C5671100373AF7 /* JSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMatcher.swift; sourceTree = "<group>"; };
 		8401769526C5715E00373AF7 /* VersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMatcher.swift; sourceTree = "<group>"; };
@@ -5092,6 +5096,7 @@
 				6E411C742538C60900FEE4E8 /* UrbanAirship.strings */,
 				6E411B6C2538C4E500FEE4E8 /* UANativeBridge */,
 				6E411B6D2538C4E600FEE4E8 /* UANotificationCategories.plist */,
+				6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -5935,6 +5940,7 @@
 			files = (
 				6E411C782538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B782538C4E600FEE4E8 /* UANativeBridge in Resources */,
+				6EFE7E3F2A97ED660064AC31 /* PrivacyInfo.xcprivacy in Resources */,
 				6E411B7C2538C4E600FEE4E8 /* UANotificationCategories.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6027,6 +6033,7 @@
 			files = (
 				A67229C0281A9E330033F54D /* UrbanAirship.strings in Resources */,
 				A67229C3281A9E330033F54D /* UANativeBridge in Resources */,
+				6EFE7E412A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */,
 				A67229C4281A9E330033F54D /* UANotificationCategories.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6073,6 +6080,7 @@
 			files = (
 				6E411C792538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B792538C4E600FEE4E8 /* UANativeBridge in Resources */,
+				6EFE7E402A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */,
 				6E411B7D2538C4E600FEE4E8 /* UANotificationCategories.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
