@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.3.1 September 13, 2023
+Patch release that updates the prebuilt XCFrameworks for Xcode 15 to use the new Xcode 15 RC release. 
+
+### Changes
+- Update the Xcode 15 prebuilt XCFrameworks to use Xcode 15 RC release.
+
 ## Version 17.3.0 September 7, 2023
 Minor release that adds a privacy manifest that declares the default data collected by the Airship SDK. For more information, see [privacy manifest guide](https://docs.airship.com/platform/mobile/data-collection/ios-privacy-manifest/).
 
