@@ -25,6 +25,10 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
             .eraseToAnyPublisher()
     }
 
+    @objc
+    public static let notificationStatusUpdateEvent = NSNotification.Name(
+        "com.urbanairship.notification.status.update"
+    )
 
     private let notificationStatusSubject = PassthroughSubject<AirshipNotificationStatus, Never>()
     public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
@@ -85,7 +89,21 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
         "UABackgroundPushNotificationsEnabled"
     private static let requestExplicitPermissionWhenEphemeralKey =
         "UAExtendedPushNotificationPermissionEnabled"
-
+    
+    @objc
+    public static let areNotificationsAllowed = "areNotificationsAllowed"
+    @objc
+    public static let isOptedIn = "isOptedIn"
+    @objc
+    public static let isPushPrivacyFeatureEnabled = "isPushPrivacyFeatureEnabled"
+    @objc
+    public static let isPushTokenRegistered = "isPushTokenRegistered"
+    @objc
+    public static let isUserNotificationsEnabled = "isUserNotificationsEnabled"
+    @objc
+    public static let isUserOptedIn = "isUserOptedIn"
+    
+    
     private static let badgeSettingsKey = "UAPushBadge"
     private static let deviceTokenKey = "UADeviceToken"
     private static let quietTimeSettingsKey = "UAPushQuietTime"
@@ -157,6 +175,8 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
         }
     }
 
+    private var subscriptions: Set<AnyCancellable> = Set()
+    
     @MainActor
     init(
         config: RuntimeConfig,
@@ -190,6 +210,25 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
         )
         super.init()
 
+        self.notificationStatusSubject
+            .receive(on: RunLoop.main)
+            .sink { status in
+                notificationCenter.post(
+                    name: AirshipPush.notificationStatusUpdateEvent,
+                    object: nil,
+                    userInfo:
+                        [
+                            AirshipPush.areNotificationsAllowed : status.areNotificationsAllowed,
+                            AirshipPush.isOptedIn : status.isOptedIn,
+                            AirshipPush.isPushPrivacyFeatureEnabled : status.isPushPrivacyFeatureEnabled,
+                            AirshipPush.isPushTokenRegistered : status.isPushTokenRegistered,
+                            AirshipPush.isUserNotificationsEnabled : status.isUserNotificationsEnabled,
+                            AirshipPush.isUserOptedIn : status.isUserOptedIn
+                        ]
+                )
+            }
+            .store(in: &self.subscriptions)
+        
         self.disableHelper.onChange = { [weak self] in
             self?.onComponentEnableChange()
         }
