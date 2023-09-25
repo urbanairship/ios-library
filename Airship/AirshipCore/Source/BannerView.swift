@@ -2,14 +2,12 @@
 
 import SwiftUI
 
-
 struct BannerView: View {
 
     static let animationInDuration = 0.2
     static let animationOutDuration = 0.2
 
     let viewControllerOptions: ThomasViewControllerOptions
-
     let presentation: BannerPresentationModel
     let layout: Layout
 
@@ -33,39 +31,32 @@ struct BannerView: View {
                     orientation: orientation,
                     windowSize: windowSize
                 )
-                let ignoreSafeArea = placement.ignoreSafeArea == true
-                let safeAreaInsets =
-                    ignoreSafeArea
-                    ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
-
+                
                 #if !os(watchOS)
-                let constraints = ViewConstraints(
-                    size: UIScreen.main.bounds.size,
-                    safeAreaInsets: safeAreaInsets
-                )
-                createBanner(constraints: constraints, placement: placement)
-                    .applyIf(ignoreSafeArea) {
-                        $0.edgesIgnoringSafeArea(.all)
-                    }
+                createBanner(placement: placement, metrics: metrics)
                 #endif
             }
         }
     }
 
     private func createBanner(
-        constraints: ViewConstraints,
-        placement: BannerPlacement
+        placement: BannerPlacement,
+        metrics: GeometryProxy
     ) -> some View {
-        let verticalAlignment =
-            placement.position == .top
-            ? VerticalAlignment.top : VerticalAlignment.bottom
+        
         let alignment = Alignment(
             horizontal: .center,
-            vertical: verticalAlignment
+            vertical: placement.position == .top ? .top : .bottom
         )
-        let height = constraints.height ?? 0.0
-        let offset = placement.position == .top ? -height : height
-
+        
+        let ignoreSafeArea = placement.ignoreSafeArea == true
+        let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
+        
+        let constraints = ViewConstraints(
+            size: UIScreen.main.bounds.size,
+            safeAreaInsets: safeAreaInsets
+        )
+        
         var contentSize: CGSize?
         if constraints == self.contentSize?.0 {
             contentSize = self.contentSize?.1
@@ -76,7 +67,10 @@ struct BannerView: View {
             contentSize: contentSize,
             margin: placement.margin
         )
-
+        
+        let height = constraints.height ?? 0.0
+        let offset = placement.position == .top ? -height : height
+        
         return VStack {
             ViewFactory.createView(
                 model: layout.view,
@@ -89,16 +83,15 @@ struct BannerView: View {
                     let size = contentMetrics.size
                     DispatchQueue.main.async {
                         self.contentSize = (constraints, size)
-                        self.viewControllerOptions.bannerSize =
-                            contentMetrics.size
-
+                        self.viewControllerOptions.bannerSize = size
                     }
                     return Color.clear
                 })
             )
         }
-        .constraints(constraints, alignment: alignment)
+        .constraints(contentConstraints, alignment: alignment, fixedSize: true)
         .offset(x: 0.0, y: offset * self.offsetPercentWrapper.offsetPercent)
+        .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
         .onAppear {
             displayBanner()
         }
@@ -149,7 +142,6 @@ struct BannerView: View {
 
         return placement
     }
-
     
     private class OffsetPercentWrapper: ObservableObject {
         @Published var offsetPercent: Double = 1.0
