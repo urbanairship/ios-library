@@ -5,7 +5,11 @@ import Foundation
 import Combine
 
 
-final class TestRemoteData: NSObject, InternalRemoteDataProtocol, @unchecked Sendable {
+final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
+
+    var waitForRefreshAttemptBlock: ((RemoteDataSource, TimeInterval?) -> Void)?
+    var waitForRefreshBlock: ((RemoteDataSource, TimeInterval?) -> Void)?
+
 
     let updatesSubject = PassthroughSubject<[RemoteDataPayload], Never>()
     var isCurrent = true
@@ -77,5 +81,28 @@ final class TestRemoteData: NSObject, InternalRemoteDataProtocol, @unchecked Sen
         
         return block(source)
     }
+
+    func waitRefresh(
+        source: AirshipCore.RemoteDataSource,
+        maxTime: TimeInterval?
+    ) async {
+        self.waitForRefreshBlock?(source, maxTime)
+    }
+
+    func waitRefreshAttempt(
+        source: AirshipCore.RemoteDataSource,
+        maxTime: TimeInterval?
+    ) async {
+        self.waitForRefreshAttemptBlock?(source, maxTime)
+    }
+
+    func waitRefresh(source: AirshipCore.RemoteDataSource) async {
+        await self.waitRefresh(source: source, maxTime: nil)
+    }
+
+    func waitRefreshAttempt(source: AirshipCore.RemoteDataSource) async {
+        await self.waitRefreshAttempt(source: source, maxTime: nil)
+    }
+
 }
 

@@ -251,7 +251,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                     handler(UARetriableResultCancel, 0);
                     break;
                 case UAInAppMessagePrepareResultInvalidate:
-                    handler(UARetriableResultInvalidate, 0);
+                    handler(UARetriableResultCancel, 0);
             }
         }];
     } resultHandler:resultHandler];
@@ -279,7 +279,7 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                             handler(UARetriableResultCancel, 0);
                             break;
                         case UAInAppMessagePrepareResultInvalidate:
-                            handler(UARetriableResultInvalidate, 0);
+                            handler(UARetriableResultCancel, 0);
                             break;
                     }
                 }];
@@ -347,9 +347,6 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
             case UARetriableResultCancel:
                 prepareResult = UAAutomationSchedulePrepareResultCancel;
                 break;
-            case UARetriableResultInvalidate:
-                prepareResult = UAAutomationSchedulePrepareResultInvalidate;
-                break;
         }
         completionHandler(prepareResult);
     }];
@@ -379,10 +376,6 @@ NSString *const UAInAppMessageDisplayCoordinatorIsReadyKey = @"isReady";
                 return;
             case UARetriableResultCancel:
                 prepareResult = UAAutomationSchedulePrepareResultCancel;
-                [self.assetManager onDisplayFinished:message scheduleID:scheduleID];
-                break;
-            case UARetriableResultInvalidate:
-                prepareResult = UAAutomationSchedulePrepareResultInvalidate;
                 [self.assetManager onDisplayFinished:message scheduleID:scheduleID];
                 break;
         }

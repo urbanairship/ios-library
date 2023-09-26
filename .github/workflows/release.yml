@@ -42,7 +42,7 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - name: Build SDK
-        run: make build-package
+        run: make build-package XCODE=14.3.1
       - name: Upload zip distribution
         uses: actions/upload-artifact@v3
         with:
@@ -75,7 +75,7 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - name: Build SDK
-        run: make build-package XCODE=15.0
+        run: make build-package
       - name: Upload zip distribution
         uses: actions/upload-artifact@v3
         with:
@@ -183,32 +183,32 @@ jobs:
           asset_path: ./build/Airship.xcframeworks.zip
           asset_name: Airship.xcframeworks.zip
           asset_content_type: application/zip
-      # - name: Upload Xcode15 zip distribution
-      #   uses: actions/upload-release-asset@v1.0.1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./buildXcode15/Airship.zip
-      #     asset_name: Airship-Xcode15.zip
-      #     asset_content_type: application/zip
-      # - name: Upload Xcode 15 carthage zip distribution
-      #   uses: actions/upload-release-asset@v1.0.1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./buildXcode15/Airship.xcframeworks.zip
-      #     asset_name: Airship-Xcode15.xcframeworks.zip
-      #     asset_content_type: application/zip
+      - name: Upload Xcode15 zip distribution
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./buildXcode15/Airship.zip
+          asset_name: Airship-Xcode15.zip
+          asset_content_type: application/zip
+      - name: Upload Xcode 15 carthage zip distribution
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./buildXcode15/Airship.xcframeworks.zip
+          asset_name: Airship-Xcode15.xcframeworks.zip
+          asset_content_type: application/zip
       - name: Update prebuilt Xcode 14 repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
         run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
-      # - name: Update prebuilt Xcode 15 repo
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
-      #   run: gh --repo urbanairship/ios-library-prebuilt --ref xcode-15 workflow run release.yml
+      - name: Update prebuilt Xcode 15 repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
+        run: gh --repo urbanairship/ios-library-prebuilt --ref xcode-15 workflow run release.yml
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()

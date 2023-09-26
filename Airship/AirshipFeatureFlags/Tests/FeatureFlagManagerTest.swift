@@ -27,9 +27,64 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
-    func testFlagAccessRefreshesRemoteData() async throws {
-        let _ = try await featureFlagManager.flag(name: "foo")
-        XCTAssertTrue(self.remoteDataAccess.refreshed)
+    func testFlagAccessWaitsForRefreshIfOutOfDate() async throws {
+        let expectation = XCTestExpectation()
+        self.remoteDataAccess.waitForRefreshBlock = {
+            expectation.fulfill()
+        }
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(variables: nil)
+                )
+            )
+        ]
+        self.remoteDataAccess.status = .outOfDate
+        let _ = try? await featureFlagManager.flag(name: "foo")
+        await self.fulfillment(of: [expectation])
+    }
+
+    func testFlagAccessWaitsForRefreshIfFlagNotFound() async throws {
+        let expectation = XCTestExpectation()
+        self.remoteDataAccess.waitForRefreshBlock = {
+            expectation.fulfill()
+        }
+        self.remoteDataAccess.status = .outOfDate
+        let _ = try? await featureFlagManager.flag(name: "foo")
+        await self.fulfillment(of: [expectation])
+    }
+
+    func testFlagAccessWaitsForRefreshIfStaleNotAllowed() async throws {
+        let expectation = XCTestExpectation()
+        self.remoteDataAccess.waitForRefreshBlock = {
+            self.remoteDataAccess.status = .upToDate
+            expectation.fulfill()
+        }
+
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(variables: nil)
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
+            )
+        ]
+
+        self.remoteDataAccess.status = .stale
+        let flag = try await featureFlagManager.flag(name: "foo")
+        await self.fulfillment(of: [expectation])
+
+        XCTAssertTrue(flag.exists)
     }
 
     func testNoFlags() async throws {
@@ -428,12 +483,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 }
 
 final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol, @unchecked Sendable {
+    var waitForRefreshBlock: (() -> Void)?
+    func waitForRefresh() async {
+        self.waitForRefreshBlock?()
+    }
+    
     var status: RemoteDataSourceStatus = .upToDate
     var flagInfos: [FeatureFlagInfo] = []
-
-    var refreshed: Bool = false
-    func refresh() async -> RemoteDataSourceStatus {
-        self.refreshed = true
-        return status
-    }
 }

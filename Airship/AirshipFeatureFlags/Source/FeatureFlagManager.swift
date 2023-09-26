@@ -63,20 +63,31 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
             throw FeatureFlagError.failedToFetchData
         }
 
-        let status = await self.remoteDataAccess.refresh()
+        return try await flag(name: name, allowRefresh: true)
+    }
 
-        switch(status) {
+    private func flag(name: String, allowRefresh: Bool) async throws -> FeatureFlag {
+        switch(await self.remoteDataAccess.status) {
         case .upToDate:
             let flagInfos = await flagInfos(name: name)
             return await evaluate(flagInfos: flagInfos)
         case .stale:
             let flagInfos = await flagInfos(name: name)
             if (flagInfos.isEmpty || !isStaleAllowed(flagInfos: flagInfos)) {
+                if (allowRefresh) {
+                    await self.remoteDataAccess.waitForRefresh()
+                    return try await flag(name: name, allowRefresh: false)
+                }
                 throw FeatureFlagError.failedToFetchData
             }
             return await evaluate(flagInfos: flagInfos)
         case .outOfDate:
+            if (allowRefresh) {
+                await self.remoteDataAccess.waitForRefresh()
+                return try await flag(name: name, allowRefresh: false)
+            }
             throw FeatureFlagError.failedToFetchData
+
 #if canImport(AirshipCore)
         default: throw FeatureFlagError.failedToFetchData
 #endif

@@ -11,9 +11,13 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
     private static let lastRefreshTimeKey = "remotedata.LAST_REFRESH_TIME"
     private static let lastRefreshAppVersionKey = "remotedata.LAST_REFRESH_APP_VERSION"
 
+    private static let maxStaleTime: TimeInterval = 3 * 24 * 60.0 // 3 days
+
     private let dataStore: PreferenceDataStore
     private let delegate: RemoteDataProviderDelegate
     private let remoteDataStore: RemoteDataStore
+    private let date: AirshipDate
+
     private let sourceName: String
     private let defaultEnabled: Bool
 
@@ -33,6 +37,7 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
         self.dataStore = dataStore
         self.delegate = delegate
         self.defaultEnabled = defaultEnabled
+        self.date = date
         self.remoteDataStore = RemoteDataStore(
             storeName: delegate.storeName,
             inMemory: inMemory
@@ -158,18 +163,17 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
 
         let refreshState = self.refreshState
 
-        let shouldRefresh = await self.shouldRefresh(
+        let shouldRefresh = await self.status(
             refreshState: refreshState,
             changeToken: changeToken,
             locale: locale,
             randomeValue: randomeValue
-        )
+        ) != .upToDate
 
         guard shouldRefresh else {
             AirshipLogger.trace("Skipping update, \(self.sourceName) remote data already up to date")
             return .skipped
         }
-
 
         AirshipLogger.trace("Requesting \(self.sourceName) remote data")
 
@@ -191,7 +195,8 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
 
                 self.refreshState = LastRefreshState(
                     changeToken: changeToken,
-                    remoteDataInfo: remoteData.remoteDataInfo
+                    remoteDataInfo: remoteData.remoteDataInfo,
+                    date: date.now
                 )
 
                 return .newData
@@ -202,7 +207,8 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
 
                 self.refreshState = LastRefreshState(
                     changeToken: changeToken,
-                    remoteDataInfo: refreshState.remoteDataInfo
+                    remoteDataInfo: refreshState.remoteDataInfo,
+                    date: date.now
                 )
 
                 return .skipped
@@ -215,35 +221,27 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
     }
 
     func status(changeToken: String, locale: Locale, randomeValue: Int) async -> RemoteDataSourceStatus {
-        let shouldRefresh = await self.shouldRefresh(
+        return await status(
             refreshState: self.refreshState,
             changeToken: changeToken,
             locale: locale,
             randomeValue: randomeValue
         )
-
-        guard shouldRefresh else {
-            return .upToDate
-        }
-
-        guard await self.isCurrent(locale: locale, randomeValue: randomeValue) else {
-            return .outOfDate
-        }
-
-        return .stale
     }
 
-    private func shouldRefresh(
+    private func status(
         refreshState: LastRefreshState?,
         changeToken: String,
         locale: Locale,
         randomeValue: Int
-    ) async -> Bool {
-
-        guard let refreshState = refreshState,
-              changeToken == refreshState.changeToken
+    ) async ->RemoteDataSourceStatus {
+        guard 
+            self.isEnabled,
+            let refreshState = refreshState,
+            let refreshDate = refreshState.date,
+            self.date.now.timeIntervalSince(refreshDate) <= RemoteDataProvider.maxStaleTime
         else {
-            return true
+            return .outOfDate
         }
 
         let isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
@@ -251,17 +249,23 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
             locale: locale,
             randomValue: randomeValue
         )
+
         guard isUpToDate else {
-            return true
+            return .outOfDate
         }
 
-        return false
+        guard changeToken == refreshState.changeToken else {
+            return .stale
+        }
+
+        return .upToDate
     }
 }
 
 fileprivate struct LastRefreshState: Codable {
     let changeToken: String
     let remoteDataInfo: RemoteDataInfo
+    let date: Date?
 }
 
 

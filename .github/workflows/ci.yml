@@ -10,6 +10,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build-sdk-xcode14:
+    runs-on: macOS-13
+    steps:
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
+          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Build SDK
+        run: make build-xcframeworks XCODE=14.3.1
+
   build-sdk:
     runs-on: macOS-13
     steps:
@@ -24,21 +39,6 @@ jobs:
           bundler-cache: true
       - name: Build SDK
         run: make build-xcframeworks
-
-  build-sdk-xcode15:
-    runs-on: macOS-13
-    steps:
-      - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
-          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Build SDK
-        run: make build-xcframeworks XCODE=15.0
 
   build-docs:
     runs-on: macOS-13
@@ -59,7 +59,7 @@ jobs:
         with:
           bundler-cache: true
       - name: Test
-        run: make test
+        run: make test XCODE=14.3.1 TEST_DESTINATION="platform=iOS Simulator,OS=16.4,name=iPhone 14" TEST_DESTINATION_TVOS="platform=tvOS Simulator,OS=16.4,name=Apple TV"
 
   run-package-tests:
     runs-on: macOS-13

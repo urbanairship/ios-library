@@ -71,15 +71,6 @@
 }
 
 - (void)testMetadataChange {
-    NSDictionary *expectedSceduleMetadataA = @{
-        @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
-        @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0,\"lastModifiedTime\":\"last modified a\"}"
-    };
-
-    NSDictionary *expectedSceduleMetadataB = @{
-        @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
-        @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0,\"lastModifiedTime\":\"last modified b\"}"
-    };
     // setup
     NSString *messageID = [NSUUID UUID].UUIDString;
     NSDictionary *simpleMessage = @{@"message": @{
@@ -119,7 +110,7 @@
         NSArray<UASchedule *> *schedules = (__bridge NSArray<UASchedule *> *)arg;
 
         for (UASchedule *schedule in schedules) {
-            XCTAssertEqualObjects(expectedSceduleMetadataA, schedule.metadata);
+            XCTAssertEqualObjects([self.remoteDataClient remoteDataInfoFromSchedule:schedule], inAppRemoteDataPayload.remoteDataInfo);
         }
 
         XCTAssertEqual(schedules.count, expectedNumberOfSchedules);
@@ -138,6 +129,15 @@
     [self.mockDelegate verify];
     XCTAssertEqual(callsToScheduleMessages, 1);
 
+
+
+    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                             timestamp:[NSDate date]
+                                                                  data:@{@"in_app_messages":inAppMessages}
+                                                              source:UARemoteDataSourceApp
+                                                             lastModified:@"last modified b"];
+
+
     XCTestExpectation *editCalled = [self expectationWithDescription:@"Edit call should be made for metadata change"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -147,15 +147,12 @@
         [editCalled fulfill];
     }] editScheduleWithID:self.allSchedules[0].identifier edits:[OCMArg checkWithBlock:^BOOL(id obj) {
         UAScheduleEdits *edits = obj;
-        return [edits.metadata isEqualToDictionary:expectedSceduleMetadataB];
+        id info = [UARemoteDataInfo fromJSONWithString:edits.metadata[@"com.urbanairship.iaa.REMOTE_DATA_INFO"] error:nil];
+        return [info isEqual:inAppRemoteDataPayload.remoteDataInfo];
     }] completionHandler:OCMOCK_ANY];
 
     // setup to same message with metadata B
-    inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
-                                                             timestamp:[NSDate date]
-                                                                  data:@{@"in_app_messages":inAppMessages}
-                                                              source:UARemoteDataSourceApp
-                                                             lastModified:@"last modified b"];
+
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
 
@@ -861,6 +858,11 @@
         builder.source = UAInAppMessageSourceRemoteData;
     }];
 
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                        source:UARemoteDataSourceApp];
+
     UASchedule *expected = [UAInAppMessageSchedule scheduleWithMessage:message
                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.audienceJSON = payload[@"audience"];
@@ -868,7 +870,7 @@
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
-            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": [inAppRemoteDataPayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil]
         };
 
         // Edit grace period should be converted to seconds
@@ -887,10 +889,7 @@
 
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":@[payload]}
-                                                                                        source:UARemoteDataSourceApp];
+
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -939,6 +938,12 @@
         @"priority": @(-30)
     };
 
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                   source:UARemoteDataSourceApp];
+
+
     UASchedule *expected = [UAActionSchedule scheduleWithActions:@{@"some action name": @"some action value"}
                                                     builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.audienceJSON = payload[@"audience"];
@@ -946,7 +951,7 @@
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
-            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": [inAppRemoteDataPayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil]
         };
 
         // Edit grace period should be converted to seconds
@@ -962,10 +967,6 @@
         builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:@"2017-12-04T19:07:54.564"];
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":@[payload]}
-                                                                                   source:UARemoteDataSourceApp];
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1006,6 +1007,11 @@
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com/example"]
                                                                 retriableOnTimeout:YES];
 
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                        source:UARemoteDataSourceApp];
+
     UASchedule *expected = [UADeferredSchedule scheduleWithDeferredData:deferred
                                                            builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.audienceJSON = payload[@"audience"];
@@ -1013,15 +1019,12 @@
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
-            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": [inAppRemoteDataPayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil]
         };
         builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:payload[@"created"]];
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":@[payload]}
-                                                                                        source:UARemoteDataSourceApp];
+
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
@@ -1142,6 +1145,12 @@
         builder.source = UAInAppMessageSourceRemoteData;
     }];
 
+    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
+                                                                                  timestamp:[NSDate date]
+                                                                                       data:@{@"in_app_messages":@[payload]}
+                                                                                        source:UARemoteDataSourceApp];
+
+
     UASchedule *expected = [UAInAppMessageSchedule scheduleWithMessage:message
                                                           builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
 
@@ -1150,17 +1159,13 @@
         builder.triggers = @[[UAScheduleTrigger appInitTriggerWithCount:1]];
         builder.metadata = @{
             @"com.urbanairship.iaa.REMOTE_DATA_METADATA": @{},
-            @"com.urbanairship.iaa.REMOTE_DATA_INFO": @"{\"url\":\"someurl\",\"source\":0}"
+            @"com.urbanairship.iaa.REMOTE_DATA_INFO": [inAppRemoteDataPayload.remoteDataInfo toEncodedJSONStringAndReturnError:nil]
         };
         builder.campaigns = @{ @"categories": @[@"cool"] };
         builder.frequencyConstraintIDs = @[@"constraint-one"];
         builder.isNewUserEvaluationDate = [UAUtils parseISO8601DateFromString:payload[@"created"]];
     }];
 
-    UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
-                                                                                  timestamp:[NSDate date]
-                                                                                       data:@{@"in_app_messages":@[payload]}
-                                                                                        source:UARemoteDataSourceApp];
 
     XCTestExpectation *scheduled = [self expectationWithDescription:@"scheduled"];
     [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {

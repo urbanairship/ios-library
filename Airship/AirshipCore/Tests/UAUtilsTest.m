@@ -447,16 +447,16 @@
     XCTAssertEqualObjects(originalUrl, url.absoluteString);
     
     originalUrl = @"rtlmost://szakaszó.com/main/típus/v1?page=azonosító";
-    NSString *encodedUrl = @"rtlmost://szakasz%C3%B3.com/main/t%C3%ADpus/v1?page=azonos%C3%ADt%C3%B3";
     url = [UAUtils parseURL:originalUrl];
     XCTAssertNotNil(url);
-    XCTAssertEqualObjects(encodedUrl, url.absoluteString);
-    
-    
-    //Decode the url
-    NSString *decodedUrl = url.absoluteString.stringByRemovingPercentEncoding;
-    XCTAssertNotNil(decodedUrl);
-    XCTAssertEqualObjects(originalUrl, decodedUrl);
+
+    if (@available(iOS 17.0, tvOS 17.0, *)) {
+        NSString *encodedUrl = @"rtlmost://xn--szakasz-r0a.com/main/t%C3%ADpus/v1?page=azonos%C3%ADt%C3%B3";
+        XCTAssertEqualObjects(encodedUrl, url.absoluteString);
+    } else {
+        NSString *encodedUrl = @"rtlmost://szakasz%C3%B3.com/main/t%C3%ADpus/v1?page=azonos%C3%ADt%C3%B3";
+        XCTAssertEqualObjects(encodedUrl, url.absoluteString);
+    }
 }
 
 @end

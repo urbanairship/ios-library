@@ -7,24 +7,24 @@ import AirshipCore
 #endif
 
 protocol FeatureFlagRemoteDataAccessProtocol: Sendable {
-    func refresh() async -> RemoteDataSourceStatus
+    func waitForRefresh() async
     var flagInfos: [FeatureFlagInfo] { get async }
+    var status: RemoteDataSourceStatus { get async }
+
 }
 
 final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
+    var status: RemoteDataSourceStatus {
+        get async {
+            return await remoteData.status(source: RemoteDataSource.app)
+        }
+    }
+
     private let decoder: JSONDecoder = JSONDecoder()
-    private let networkChecker: NetworkCheckerProtocol
     private let remoteData: RemoteDataProtocol
 
-    func refresh() async -> RemoteDataSourceStatus {
-        let status = await self.remoteData.status(source: .app)
-        let isNetworkConnected = await networkChecker.isConnected
-        if status == .upToDate || !isNetworkConnected {
-            return status
-        }
-
-        await remoteData.refresh(source: .app)
-        return await remoteData.status(source: .app)
+    func waitForRefresh() async  {
+        await remoteData.waitRefresh(source: RemoteDataSource.app, maxTime: 15.0)
     }
 
     var flagInfos: [FeatureFlagInfo] {
@@ -53,10 +53,8 @@ final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
 
 
     init(
-        remoteData: RemoteDataProtocol,
-        networkChecker: NetworkCheckerProtocol = NetworkChecker()
+        remoteData: RemoteDataProtocol
     ) {
         self.remoteData = remoteData
-        self.networkChecker = networkChecker
     }
 }

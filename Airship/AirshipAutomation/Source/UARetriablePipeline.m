@@ -85,8 +85,6 @@
                     break;
                 case UARetriableResultCancel:
                     break;
-                case UARetriableResultInvalidate:
-                    break;
             }
 
             if (next.resultHandler) {

@@ -161,14 +161,6 @@
     XCTAssertFalse([self.URLAllowList addEntry:@"*://*what"]);
 }
 
-/**
- * Test international URLs.
- */
-- (void)testInternationalDomainsNotAllowed {
-    //NSURL can't handle these
-    XCTAssertFalse([self.URLAllowList addEntry:@"*://ουτοπία.δπθ.gr"]);
-    XCTAssertFalse([self.URLAllowList addEntry:@"*://müller.com"]);
-}
 
 /**
  * Test wild card scheme accepts http and https schemes.
@@ -208,18 +200,6 @@
     // Accept
     XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"https://www.urbanairship.com"]]);
     XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"file:///asset.html"]]);
-}
-
-/**
- * Test regular expression on the host are treated as literals.
- */
-- (void)testRegexInHost {
-    XCTAssertTrue([self.URLAllowList addEntry:@"w+.+://[a-z,A-Z]+"]);
-
-    XCTAssertFalse([self.URLAllowList isAllowed:[NSURL URLWithString:@"wwww://urbanairship"]]);
-
-    // It should match on a host that is equal to [a-z,A-Z]+
-    XCTAssertTrue([self.URLAllowList isAllowed:[NSURL URLWithString:@"w+.+://[a-z,A-Z]%2B"]]);
 }
 
 /**

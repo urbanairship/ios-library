@@ -506,7 +506,7 @@ fileprivate class TestRemoteDataProviderDelegate: RemoteDataProviderDelegate, @u
     func isRemoteDataInfoUpToDate(
         _ remoteDataInfo: RemoteDataInfo, locale: Locale, randomValue: Int
     ) async -> Bool {
-        return await self.isRemoteDataInfoUpToDateCallback!(remoteDataInfo, locale, randomValue)
+        return await self.isRemoteDataInfoUpToDateCallback?(remoteDataInfo, locale, randomValue) ?? true
     }
 
     func fetchRemoteData(locale: Locale, randomValue: Int, lastRemoteDataInfo: RemoteDataInfo?) async throws -> AirshipHTTPResponse<RemoteDataResult> {

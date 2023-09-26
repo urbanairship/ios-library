@@ -14,6 +14,8 @@
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
+		6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; };
+		6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */; };
 		6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE98128C7E18C003CAE53 /* Preview Assets.xcassets */; };
 		6EAAE98728C7E1A1003CAE53 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */; };
@@ -380,6 +382,7 @@
 				6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */,
 				6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */,
 				6EAAEA0828C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Embed Frameworks */,
+				6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */,
 				6EAAEA0228C7E4B4003CAE53 /* AirshipCore.framework in Embed Frameworks */,
 				6EAAE9FE28C7E4B4003CAE53 /* AirshipAutomation.framework in Embed Frameworks */,
 			);
@@ -434,6 +437,7 @@
 				6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */,
 				6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */,
 				6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */,
+				6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */,
 				6EAAEA0128C7E4B4003CAE53 /* AirshipCore.framework in Frameworks */,
 				6EAAE9FD28C7E4B4003CAE53 /* AirshipAutomation.framework in Frameworks */,
 			);

@@ -101,10 +101,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)isScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler;
-
-- (void)refreshAndCheckScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler;
-
-- (void)invalidateAndRefreshSchedule:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler;
+- (void)scheduleRequiresRefresh:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler;
+- (void)bestEffortRefresh:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler;
+- (void)notifyOutdatedSchedule:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler;
+- (void)waitFullRefresh:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler;
 
 - (UARemoteDataInfo *)remoteDataInfoFromSchedule:(UASchedule *)schedule;
 @end

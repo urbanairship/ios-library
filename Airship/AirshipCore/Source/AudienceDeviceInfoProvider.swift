@@ -23,6 +23,7 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     private let cachedTags: OneTimeValue<Set<String>>
     private let cachedLocale: OneTimeValue<Locale>
     private let cachedContactID: OneTimeAsyncValue<String>
+    private let cachedChannelID: OneTimeValue<String?>
     private let cachedPermissions: OneTimeAsyncValue<[AirshipPermission : AirshipPermissionStatus]>
     private let cachedIsUserOptedInPushNotifications: OneTimeAsyncValue<Bool>
     private let cachedAnalyticsEnabled: OneTimeValue<Bool>
@@ -53,56 +54,64 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         self.cachedAnalyticsEnabled = OneTimeValue {
             return deviceInfoProvider.analyticsEnabled
         }
+
+        self.cachedChannelID = OneTimeValue {
+            return Airship.channel.identifier
+        }
+    }
+
+    public var evaluatedContactID: String? {
+        return self.cachedContactID.cachedValue
+    }
+
+    public var evaluatedChannelID: String? {
+        return self.cachedChannelID.cachedValue ?? nil
     }
 
     public var installDate: Date {
-        Airship.shared.installDate
+        deviceInfoProvider.installDate
     }
 
     public var stableContactID: String {
         get async {
-            return await Airship.contact.getStableContactID()
+            return await cachedContactID.value
         }
     }
 
     public var appVersion: String? {
-        return AirshipUtils.bundleShortVersionString()
+        return deviceInfoProvider.appVersion
     }
 
     public var isAirshipReady: Bool {
-        return Airship.isFlying
+        return deviceInfoProvider.isAirshipReady
     }
 
     public var tags: Set<String> {
-        return Set(Airship.channel.tags)
+        return cachedTags.value
     }
 
     public var channelID: String? {
-        return Airship.channel.identifier
+        return cachedChannelID.value
     }
 
     public var locale: Locale {
-        return Airship.shared.localeManager.currentLocale
+        return cachedLocale.value
     }
 
     public var permissions: [AirshipPermission : AirshipPermissionStatus] {
         get async {
-            var results: [AirshipPermission : AirshipPermissionStatus] = [:]
-            for permission in Airship.shared.permissionsManager.configuredPermissions {
-                results[permission] = await Airship.shared.permissionsManager.checkPermissionStatus(permission)
-            }
-            return results
+            await cachedPermissions.value
         }
     }
 
     public var isUserOptedInPushNotifications: Bool {
         get async {
-            return await Airship.push.notificationStatus.isUserOptedIn
+            return await cachedIsUserOptedInPushNotifications.value
         }
     }
 
     public var analyticsEnabled: Bool {
-        return Airship.shared.privacyManager.isEnabled(.analytics)
+        return cachedAnalyticsEnabled.value
     }
 
 }
@@ -167,8 +176,14 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
 fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendable {
     private let lock = AirshipLock()
-    private var _value: T?
+    private var atomicValue: Atomic<T?> = Atomic(nil)
     private var provider: () -> T
+
+    var cachedValue: T? {
+        get {
+            return atomicValue.value
+        }
+    }
 
     init(provider: @escaping () -> T) {
         self.provider = provider
@@ -178,11 +193,11 @@ fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendab
         get {
             var value: T!
             lock.sync {
-                if let _value = _value {
-                    value = _value
+                if let cachedValue = atomicValue.value {
+                    value = cachedValue
                 } else {
                     value = provider()
-                    _value = value
+                    atomicValue.value = value
                 }
             }
             return value
@@ -192,8 +207,14 @@ fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendab
 
 fileprivate final class OneTimeAsyncValue<T: Equatable & Sendable>: @unchecked Sendable {
     private let queue = SerialQueue()
-    private var _value: T?
+    private var atomicValue: Atomic<T?> = Atomic(nil)
     private var provider: @Sendable () async -> T
+
+    var cachedValue: T? {
+        get {
+            return atomicValue.value
+        }
+    }
 
     init(provider: @Sendable @escaping () async -> T) {
         self.provider = provider
@@ -202,12 +223,12 @@ fileprivate final class OneTimeAsyncValue<T: Equatable & Sendable>: @unchecked S
     var value: T {
         get async {
             return await queue.runSafe {
-                if let _value = self._value {
-                    return _value
+                if let cached = self.atomicValue.value {
+                    return cached
                 } else {
-                    let value = await self.provider()
-                    self._value = value
-                    return value
+                    let newValue = await self.provider()
+                    self.atomicValue.value = newValue
+                    return newValue
                 }
             }
         }

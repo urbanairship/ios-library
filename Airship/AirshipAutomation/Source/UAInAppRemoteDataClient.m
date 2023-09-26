@@ -269,7 +269,7 @@ static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_g
 
     NSDictionary *scheduleMetadata = @{
         UAInAppRemoteDataClientMetadataKey: @{},
-        UAInAppRemoteDataClientInfoKey: [payloadInfo toEncodedJSONStringAndReturnError:nil] ?: @""
+        UAInAppRemoteDataClientInfoKey: [payloadInfo toEncodedJSONStringAndReturnError:nil] ?: @{}
     };
 
     BOOL isMetadataCurrent = [lastRemoteInfo isEqual:messagePayload.remoteDataInfo];
@@ -500,6 +500,7 @@ static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_g
     return NO;
 }
 
+
 - (void)isScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
     if (![self isRemoteSchedule:schedule]) {
         completionHandler(YES);
@@ -511,37 +512,53 @@ static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_g
                                completionHandler:completionHandler];
 }
 
-- (void)refreshAndCheckScheduleUpToDate:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
+
+- (void)scheduleRequiresRefresh:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
     if (![self isRemoteSchedule:schedule]) {
-        completionHandler(YES);
+        completionHandler(NO);
         return;
     }
-    
-    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData refreshAndCheckCurrentWithRemoteDataInfo:remoteDataInfo completionHandler:^(BOOL result) {
-        if (result) {
-            completionHandler(YES);
-            return;
-        }
 
-        [self invalidateAndRefreshSchedule:schedule completionHandler:^{
-            completionHandler(NO);
-        }];
-    }];
+    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
+    [self.remoteData requiresUpdateWithRemoteDataInfo:remoteDataInfo completionHandler:completionHandler];
 }
 
-- (void)invalidateAndRefreshSchedule:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
+- (void)waitFullRefresh:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
     if (![self isRemoteSchedule:schedule]) {
         completionHandler();
         return;
     }
 
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData refreshOutdatedWithRemoteDataInfo:remoteDataInfo completionHandler:^{
+    [self.remoteData  waitFullRefreshWithRemoteDataInfo:remoteDataInfo completionHandler:^{
         [self.schedulerDispatcher dispatchAsync:^{
             completionHandler();
         }];
     }];
+}
+
+- (void)bestEffortRefresh:(UASchedule *)schedule completionHandler:(void (^)(BOOL))completionHandler {
+    if (![self isRemoteSchedule:schedule]) {
+        completionHandler(YES);
+        return;
+    }
+    
+    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
+    [self.remoteData  bestEffortRefreshWithRemoteDataInfo:remoteDataInfo completionHandler:^(BOOL result) {
+        [self.schedulerDispatcher dispatchAsync:^{
+            completionHandler(result);
+        }];
+    }];
+}
+
+- (void)notifyOutdatedSchedule:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
+    if (![self isRemoteSchedule:schedule]) {
+        completionHandler();
+        return;
+    }
+
+    UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
+    [self.remoteData notifyOutdatedWithRemoteDataInfo:remoteDataInfo completionHandler:completionHandler];
 }
 
 - (UARemoteDataInfo *)remoteDataInfoFromSchedule:(UASchedule *)schedule {
@@ -549,17 +566,20 @@ static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_g
         return nil;
     }
 
-
     if (!schedule.metadata) {
         return nil;
     }
 
-    NSString *remoteDataInfoString = schedule.metadata[UAInAppRemoteDataClientInfoKey];
-    if (!remoteDataInfoString.length) {
+    id remoteDataInfo = schedule.metadata[UAInAppRemoteDataClientInfoKey];
+    if (!remoteDataInfo) {
         return nil;
     }
 
-    return [UARemoteDataInfo fromJSONWithString:remoteDataInfoString error:nil];
+    if ([remoteDataInfo isKindOfClass:[NSString class]]) {
+        return [UARemoteDataInfo fromJSONWithString:remoteDataInfo error:nil];
+    }
+
+    return nil;
 }
 
 + (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {

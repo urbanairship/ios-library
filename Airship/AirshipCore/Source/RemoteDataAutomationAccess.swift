@@ -7,30 +7,23 @@ import Foundation
 @objc(UARemoteDataAutomationAccess)
 public final class _RemoteDataAutomationAccess: NSObject {
     private let remoteData: RemoteDataProtocol
-    private let serialQueues: [RemoteDataSource: SerialQueue]
-    private let remoteDataRefresher: BestEffortRefresher
+    private let network: NetworkCheckerProtocol
 
     init(
         remoteData: RemoteDataProtocol,
-        networkMonitor: NetworkMonitor = NetworkMonitor()
+        network: NetworkCheckerProtocol = NetworkChecker()
     ) {
         self.remoteData = remoteData
-        self.remoteDataRefresher = BestEffortRefresher(remoteData: remoteData, networkMonitor: networkMonitor)
-
-        var queues: [RemoteDataSource: SerialQueue] = [:]
-        RemoteDataSource.allCases.forEach { source in
-            queues[source] = SerialQueue()
-        }
-        self.serialQueues = queues
+        self.network = network
     }
 
     @objc
     public func subscribe(types: [String], block: @escaping ([RemoteDataPayload]) -> Void) -> Disposable {
         let cancellable = remoteData.publisher(types: types)
-                  .receive(on: RunLoop.main)
-                  .sink { payloads in
-                      block(payloads)
-                  }
+            .receive(on: RunLoop.main)
+            .sink { payloads in
+                block(payloads)
+            }
 
         return Disposable {
             cancellable.cancel()
@@ -39,90 +32,58 @@ public final class _RemoteDataAutomationAccess: NSObject {
 
     @objc
     public func isCurrent(remoteDataInfo: RemoteDataInfo?) async -> Bool {
-        return await remoteDataRefresher.isCurrent(remoteDataInfo: remoteDataInfo)
-    }
-
-    @objc
-    public func refreshAndCheckCurrent(remoteDataInfo: RemoteDataInfo?) async -> Bool {
-        let source = remoteDataInfo?.source ?? .app
-        await self.runInQueue(source: source) { [remoteDataRefresher] in
-            await remoteDataRefresher.bestEffortRefresh(
-                remoteDataInfo: remoteDataInfo,
-                source: source
-            )
-        }
-
-        return await isCurrent(remoteDataInfo: remoteDataInfo)
-    }
-
-    @objc
-    public func refreshOutdated(remoteDataInfo: RemoteDataInfo?) async {
-        let source = remoteDataInfo?.source ?? .app
-        await self.runInQueue(source: source) { [remoteDataRefresher] in
-            await remoteDataRefresher.refreshOutdated(
-                remoteDataInfo: remoteDataInfo,
-                source: source
-            )
-        }
-    }
-
-    private func runInQueue(source: RemoteDataSource, block: @escaping @Sendable () async -> Void) async {
-        await self.serialQueues[source]?.runSafe(work: block)
-    }
-}
-
-fileprivate actor BestEffortRefresher {
-    private let remoteData: RemoteDataProtocol
-    private let networkMonitor: NetworkMonitor
-
-    init(remoteData: RemoteDataProtocol, networkMonitor: NetworkMonitor) {
-        self.remoteData = remoteData
-        self.networkMonitor = networkMonitor
-    }
-
-    func refreshOutdated(
-        remoteDataInfo: RemoteDataInfo?,
-        source: RemoteDataSource
-    ) async {
-        guard
-            let remoteDataInfo = remoteDataInfo,
-            await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
-        else {
-            await bestEffortRefresh(
-                remoteDataInfo: remoteDataInfo,
-                source: source
-            )
-            return
-        }
-
-        await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
-        await refreshSource(source: source)
-    }
-
-    func isCurrent(remoteDataInfo: RemoteDataInfo?) async -> Bool {
         guard let remoteDataInfo = remoteDataInfo else {
             return false
         }
         return await remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
     }
 
-    func bestEffortRefresh(remoteDataInfo: RemoteDataInfo?, source: RemoteDataSource) async {
-        if await isCurrent(remoteDataInfo: remoteDataInfo) {
-            if await self.remoteData.status(source: source) != .upToDate, networkMonitor.isConnected {
-                await refreshSource(source: source)
-            }
-            return
+    @objc
+    public func requiresUpdate(remoteDataInfo: RemoteDataInfo?) async -> Bool {
+        guard await isCurrent(remoteDataInfo: remoteDataInfo) else {
+            return true
         }
-        
-        await refreshSource(source: source)
+
+        let source = remoteDataInfo?.source ?? .app
+        switch(await remoteData.status(source: source)) {
+        case .outOfDate:
+            return true
+        case .stale:
+            return false
+        case .upToDate:
+            return false
+        }
     }
 
-    private func refreshSource(source: RemoteDataSource) async {
-        AirshipLogger.trace("Attempting to refresh source \(source)")
-        if await self.remoteData.refresh(source: source) {
-            AirshipLogger.trace("Refreshed source \(source)")
-        } else {
-            AirshipLogger.trace("Failed to refresh source \(source)")
+    @objc
+    public func waitFullRefresh(remoteDataInfo: RemoteDataInfo?) async {
+        let source = remoteDataInfo?.source ?? .app
+        await self.remoteData.waitRefresh(source: source)
+    }
+
+    @objc
+    public func bestEffortRefresh(remoteDataInfo: RemoteDataInfo?) async -> Bool {
+        let source = remoteDataInfo?.source ?? .app
+        guard await isCurrent(remoteDataInfo: remoteDataInfo) else {
+            return false
+        }
+
+        if await self.remoteData.status(source: source) == .upToDate {
+            return true
+        }
+
+        // if we are connected wait for refresh
+        if (await network.isConnected) {
+            await remoteData.waitRefreshAttempt(source: source)
+        }
+
+        return await isCurrent(remoteDataInfo: remoteDataInfo)
+    }
+
+    @objc
+    public func notifyOutdated(remoteDataInfo: RemoteDataInfo?) async {
+        if let remoteDataInfo = remoteDataInfo {
+            await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
         }
     }
 }

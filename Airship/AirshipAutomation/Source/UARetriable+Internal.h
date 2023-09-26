@@ -30,10 +30,6 @@ typedef NS_ENUM(NSUInteger, UARetriableResult) {
      * Represents a cancel condition.
      */
     UARetriableResultCancel = 4,
-    /**
-     * Represents an invalidation of the retriable chain.
-     */
-    UARetriableResultInvalidate = 5
 };
 
 /**

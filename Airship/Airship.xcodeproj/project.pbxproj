@@ -1023,6 +1023,9 @@
 		6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
 		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
+		6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
+		6EB3FCF02ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
+		6EB3FCF12ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
 		6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */; };
 		6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */; };
 		6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */; };
@@ -2521,6 +2524,7 @@
 		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceUtils.swift; sourceTree = "<group>"; };
+		6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataProtocol.swift; sourceTree = "<group>"; };
 		6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugView.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E4BE2549F9B900E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS14.0.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -3718,6 +3722,7 @@
 		6E411D0C2538CD6400FEE4E8 /* Remote Data */ = {
 			isa = PBXGroup;
 			children = (
+				6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */,
 				6E15B72926CEDBA50099C92D /* RemoteData.swift */,
 				6E698E08267A7DD900654DB2 /* RemoteDataAPIClient.swift */,
 				6EE49C132A0C146100AB1CF4 /* RemoteDataAutomationAccess.swift */,
@@ -6478,6 +6483,7 @@
 				6E062D092716571F001A74A1 /* LabelButton.swift in Sources */,
 				6E698E00267A78CA00654DB2 /* AirshipLegacyRequestSession.swift in Sources */,
 				A6A8077C26C1566E00CB266E /* ColorUtils.swift in Sources */,
+				6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */,
 				6E8BF45126852E4B009A8BD4 /* TaskRequestOptions.swift in Sources */,
 				6E1C9C45271F74E7009EF9EF /* BorderViewModifier.swift in Sources */,
 				6EC7E48D26A738C80038CFDD /* ContactConflictEvent.swift in Sources */,
@@ -7067,6 +7073,7 @@
 				A67229F4281A9E640033F54D /* ViewConstraints.swift in Sources */,
 				A67229F5281A9E640033F54D /* ScrollLayout.swift in Sources */,
 				A6D6D4A32A02BB190072A5CA /* AirshipAction.swift in Sources */,
+				6EB3FCF12ABCFA680018594E /* RemoteDataProtocol.swift in Sources */,
 				6EC755A52A4F29DB00851ABB /* AirshipAutomationAudienceChecker.swift in Sources */,
 				A67229F6281A9E640033F54D /* ViewFactory.swift in Sources */,
 				A67229F7281A9E640033F54D /* Media.swift in Sources */,
@@ -7556,6 +7563,7 @@
 				6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */,
 				6EC7E46C269E0E3E0038CFDD /* ContactOperation.swift in Sources */,
 				6E664BA226C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
+				6EB3FCF02ABCFA680018594E /* RemoteDataProtocol.swift in Sources */,
 				6E6ED14A2683D8E200A2CBD0 /* LocaleManager.swift in Sources */,
 				6E6ED16A2683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */,
 				6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,

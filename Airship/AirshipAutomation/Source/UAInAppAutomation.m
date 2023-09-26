@@ -299,15 +299,30 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     NSString *scheduleID = schedule.identifier;
 
     // Check valid
+
     UA_WEAKIFY(self)
+    UARetriable *checkRequiresUpdate = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
+        UA_STRONGIFY(self)
+        [self.remoteDataClient scheduleRequiresRefresh:schedule completionHandler:^(BOOL requiresUpdate) {
+            if (requiresUpdate) {
+                [self.remoteDataClient waitFullRefresh:schedule completionHandler:^{
+                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                }];
+                retriableHandler(UARetriableResultCancel, 0);
+            } else {
+                retriableHandler(UARetriableResultSuccess, 0);
+            }
+        }];
+    }];
+
     UARetriable *checkValid = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
         UA_STRONGIFY(self)
-        [self.remoteDataClient refreshAndCheckScheduleUpToDate:schedule completionHandler:^(BOOL isValid) {
+        [self.remoteDataClient bestEffortRefresh:schedule completionHandler:^(BOOL isValid) {
             if (isValid) {
                 retriableHandler(UARetriableResultSuccess, 0);
             } else {
                 completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-                retriableHandler(UARetriableResultInvalidate, 0);
+                retriableHandler(UARetriableResultCancel, 0);
             }
         }];
     }];
@@ -318,9 +333,9 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         [self.frequencyLimitManager getFrequencyChecker:schedule.frequencyConstraintIDs completionHandler:^(UAFrequencyChecker *c) {
             checker = c;
             if (checker.isOverLimit) {
-                // If we're over the limit, skip the rest of the prepare steps and invalidate the pipeline
+                // If we're over the limit, skip the rest of the prepare steps and cancel the pipeline
                 completionHandler(UAAutomationSchedulePrepareResultSkip);
-                retriableHandler(UARetriableResultInvalidate, 0);
+                retriableHandler(UARetriableResultCancel, 0);
             } else {
                 retriableHandler(UARetriableResultSuccess, 0);
             }
@@ -404,6 +419,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
 
     [self.prepareSchedulePipeline addChainedRetriables:@[
+        checkRequiresUpdate,
         checkValid,
         checkFrequencyLimits,
         checkAudience,
@@ -480,7 +496,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                         break;
                     }
                     case 409: {
-                        [self.remoteDataClient invalidateAndRefreshSchedule:schedule completionHandler:^{
+                        [self.remoteDataClient notifyOutdatedSchedule:schedule completionHandler:^{
                             completionHandler(UAAutomationSchedulePrepareResultInvalidate);
                         }];
                         retriableHandler(UARetriableResultCancel, 0);

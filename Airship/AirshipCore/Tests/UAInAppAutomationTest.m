@@ -173,15 +173,23 @@
         builder.campaigns = @{@"some": @"campaigns object"};
         builder.reportingContext = @{@"some": @"reporting context"};
         builder.bypassHoldoutGroups = YES;
-        builder.frequencyConstraintIDs = @[@"barConstraint", @"fooConstraint"];
+        builder.frequencyConstraintIDs = @
+        [@"barConstraint", @"fooConstraint"];
     }];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -229,8 +237,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -282,8 +297,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -330,8 +352,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -361,8 +390,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
@@ -398,8 +434,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -469,8 +512,16 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
@@ -530,8 +581,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
@@ -599,8 +657,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager reject] prepareMessage:OCMOCK_ANY
                                                scheduleID:OCMOCK_ANY
@@ -666,8 +731,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -717,8 +789,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
     [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
@@ -732,7 +811,7 @@
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(void) =  (__bridge void (^)(void))arg;
         callback();
-    }] invalidateAndRefreshSchedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] notifyOutdatedSchedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1000,8 +1079,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1067,8 +1153,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1106,12 +1199,19 @@
 - (void)testPrepareScheduleInvalid {
     UASchedule *schedule = [[UASchedule alloc] init];
 
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(NO);
-    }] refreshAndCheckScheduleUpToDate:schedule completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:schedule completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
@@ -1136,8 +1236,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1180,8 +1287,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1222,13 +1336,19 @@
         builder.isNewUserEvaluationDate = [NSDate now];
     }];
 
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1274,8 +1394,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1332,8 +1459,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
@@ -1373,8 +1507,16 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
@@ -1536,8 +1678,16 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
@@ -1597,8 +1747,16 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1706,8 +1864,16 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -1778,13 +1944,19 @@
         block(deferredResponse, nil);
     }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -2116,8 +2288,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -2175,8 +2354,16 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -2243,8 +2430,15 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
         callback(YES);
-    }] refreshAndCheckScheduleUpToDate:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
         void *arg;

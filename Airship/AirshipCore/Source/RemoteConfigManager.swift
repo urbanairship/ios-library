@@ -16,14 +16,14 @@ final class RemoteConfigManager: @unchecked Sendable {
     private let decoder = JSONDecoder()
     private var subscription: AnyCancellable?
     private let moduleAdapter: RemoteConfigModuleAdapterProtocol
-    private let remoteData: InternalRemoteDataProtocol
+    private let remoteData: RemoteDataProtocol
     private let privacyManager: AirshipPrivacyManager
     private let appVersion: String
     private let notificationCenter: AirshipNotificationCenter
     private let lock = AirshipLock()
 
     init(
-        remoteData: InternalRemoteDataProtocol,
+        remoteData: RemoteDataProtocol,
         privacyManager: AirshipPrivacyManager,
         moduleAdapter: RemoteConfigModuleAdapterProtocol = RemoteConfigModuleAdapter(),
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,

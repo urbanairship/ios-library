@@ -175,9 +175,10 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @objc
     @discardableResult
-    open func addEntry(_ patternString: String, scope: URLAllowListScope)
-        -> Bool
-    {
+    open func addEntry(
+        _ patternString: String,
+        scope: URLAllowListScope
+    ) -> Bool {
         if patternString.isEmpty {
             AirshipLogger.error(
                 "Invalid URL allow list pattern: \(patternString)"

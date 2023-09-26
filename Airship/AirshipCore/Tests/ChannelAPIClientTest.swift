@@ -49,7 +49,7 @@ final class ChannelAPIClientTest: XCTestCase {
         XCTAssertEqual("POST", request.method)
         XCTAssertEqual(AirshipRequestAuth.generatedAppToken, request.auth)
         XCTAssertEqual("http://example.com/api/channels/", request.url?.absoluteString)
-        XCTAssertEqual(try encoder.encode(payload), request.body)
+        XCTAssertEqual(try! AirshipJSON.wrap(payload), try! AirshipJSON.from(data: request.body))
     }
 
     func testCreateInvalidResponse() async throws {
@@ -117,8 +117,9 @@ final class ChannelAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual("PUT", request.method)
+
         XCTAssertEqual(AirshipRequestAuth.channelAuthToken(identifier: "some-channel-id"), request.auth)
-        XCTAssertEqual(try encoder.encode(payload), request.body)
+        XCTAssertEqual(try! AirshipJSON.wrap(payload), try! AirshipJSON.from(data: request.body))
         XCTAssertEqual("http://example.com/api/channels/some-channel-id", request.url?.absoluteString)
 
     }

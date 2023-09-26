@@ -10,78 +10,26 @@ import AirshipFeatureFlags
 
 final class FeatureFlagRemoteDataAccessTest: XCTestCase {
 
-    private let networkChecker: TestNetworkChecker = TestNetworkChecker()
     private let remoteData: TestRemoteData = TestRemoteData()
 
     private var remoteDataAccess: FeatureFlagRemoteDataAccess!
 
     override func setUp() {
         self.remoteDataAccess = FeatureFlagRemoteDataAccess(
-            remoteData: self.remoteData,
-            networkChecker: self.networkChecker
+            remoteData: self.remoteData
         )
     }
 
-    func testRefreshAlreadyUpToDate() async throws {
-        await self.networkChecker.setConnected(true)
-        self.remoteData.status[.app] = .stale
-        self.remoteData.refreshBlock = { source in
+    func testWaitForRefresh() async throws {
+        let expectation = XCTestExpectation()
+        self.remoteData.waitForRefreshBlock = { source, time in
             XCTAssertEqual(source, .app)
-            self.remoteData.status[source] = .upToDate
-            return true
+            XCTAssertEqual(time, 15.0)
+            expectation.fulfill()
         }
 
-        let status = await self.remoteDataAccess.refresh()
-        XCTAssertEqual(status, .upToDate)
-    }
-
-    func testRefreshStale() async throws {
-        await self.networkChecker.setConnected(true)
-        self.remoteData.status[.app] = .upToDate
-        self.remoteData.refreshBlock = { source in
-            XCTFail("Should skip")
-            return true
-        }
-
-        let status = await self.remoteDataAccess.refresh()
-        XCTAssertEqual(status, .upToDate)
-    }
-
-    func testRefreshStaleNoNetwork() async throws {
-        await self.networkChecker.setConnected(false)
-        self.remoteData.status[.app] = .stale
-        self.remoteData.refreshBlock = { source in
-            XCTFail("Should skip")
-            return true
-        }
-
-        let status = await self.remoteDataAccess.refresh()
-        XCTAssertEqual(status, .stale)
-    }
-
-    func testRefreshOutOfDate() async throws {
-        await self.networkChecker.setConnected(true)
-        self.remoteData.status[.app] = .outOfDate
-        self.remoteData.refreshBlock = { source in
-            XCTAssertEqual(source, .app)
-            self.remoteData.status[source] = .upToDate
-            return true
-        }
-
-        let status = await self.remoteDataAccess.refresh()
-        XCTAssertEqual(status, .upToDate)
-    }
-
-    func testRefreshOutOfDateNoNetwork() async throws {
-        await self.networkChecker.setConnected(false)
-        self.remoteData.status[.app] = .outOfDate
-        self.remoteData.refreshBlock = { source in
-            XCTFail("Should skip")
-            return true
-        }
-
-        let status = await self.remoteDataAccess.refresh()
-        XCTAssertEqual(status, .outOfDate)
+        await self.remoteDataAccess.waitForRefresh()
+        await self.fulfillment(of: [expectation])
     }
 
     func testFeatureFlags() async throws {

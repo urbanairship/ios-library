@@ -4,41 +4,11 @@
 import Combine
 
 // NOTE: For internal use only. :nodoc:
-public protocol RemoteDataProtocol: AnyObject, Sendable {
-    /// Gets the update status for the given source
-    /// - Parameter source: The source.
-    /// - Returns The status of the source.
-    func status(source: RemoteDataSource) async -> RemoteDataSourceStatus
-
-    /// Checks if the remote data info is current or not.
-    /// - Parameter remoteDataInfo: The remote data info.
-    /// - Returns `true` if current, otherwise `false`.
-    func isCurrent(remoteDataInfo: RemoteDataInfo) async -> Bool
-
-    func notifyOutdated(remoteDataInfo: RemoteDataInfo) async
-    func publisher(types: [String]) -> AnyPublisher<[RemoteDataPayload], Never>
-    func payloads(types: [String]) async -> [RemoteDataPayload]
-
-    @discardableResult
-    func refresh() async -> Bool
-
-    @discardableResult
-    func refresh(source: RemoteDataSource) async -> Bool
-}
-
-protocol InternalRemoteDataProtocol: RemoteDataProtocol {
-    var remoteDataRefreshInterval: TimeInterval { get set }
-    func setContactSourceEnabled(enabled: Bool)
-}
-
-final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
-    func setContactSourceEnabled(enabled: Bool) {
-        self.serialQueue.enqueue { [providers] in
-            let provider = providers.first { $0.source == .contact }
-            if (await provider?.setEnabled(enabled) == true) {
-                self.enqueueRefreshTask()
-            }
-        }
+final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
+    fileprivate enum RefreshStatus: Sendable {
+        case none
+        case success
+        case failed
     }
 
     static let refreshTaskID = "RemoteData.refresh"
@@ -57,7 +27,10 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
     private let workManager: AirshipWorkManagerProtocol
     private let privacyManager: AirshipPrivacyManager
     private let appVersion: String
-    private let refreshSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
+
+    private let refreshResultSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
+    private let refreshStatusSubjectMap: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]
+
     private let lastActiveRefreshDate: AirshipMainActorWrapper<Date> = AirshipMainActorWrapper(Date.distantPast)
     private let changeTokenLock: AirshipLock = AirshipLock()
     private let contactSubscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
@@ -167,13 +140,20 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
             className: "UARemoteData"
         )
 
+        
+        self.refreshStatusSubjectMap = self.providers.reduce(
+            into: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]()
+        ) {
+            $0[$1.source] = CurrentValueSubject(.none)
+        }
+
         super.init()
 
         self.contactSubscription.value = contact.contactIDUpdates
             .map { $0.contactID }
             .removeDuplicates()
-            .sink { _ in
-                self.enqueueRefreshTask()
+            .sink { [weak self] _ in
+                self?.enqueueRefreshTask()
             }
 
         notificationCenter.addObserver(
@@ -209,6 +189,15 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
             type: .serial
         ) { [weak self] _ in
             return try await self?.handleRefreshTask() ?? .success
+        }
+    }
+
+    public func setContactSourceEnabled(enabled: Bool) {
+        self.serialQueue.enqueue { [providers] in
+            let provider = providers.first { $0.source == .contact }
+            if (await provider?.setEnabled(enabled) == true) {
+                self.enqueueRefreshTask()
+            }
         }
     }
 
@@ -275,6 +264,9 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
 
     @objc
     private func enqueueRefreshTask() {
+        self.refreshStatusSubjectMap.values.forEach { subject in
+            subject.send(.none)
+        }
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
                 workID: RemoteData.refreshTaskID,
@@ -311,7 +303,8 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
     private func handleRefreshTask() async throws -> AirshipWorkResult {
         guard self.privacyManager.isAnyFeatureEnabled() else {
             self.providers.forEach { provider in
-                refreshSubject.send((provider.source, .skipped))
+                refreshResultSubject.send((provider.source, .skipped))
+                refreshStatusSubjectMap[provider.source]?.send(.success)
             }
             return .success
         }
@@ -322,7 +315,7 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
 
         let success = await withTaskGroup(
             of: (RemoteDataSource, RemoteDataRefreshResult).self
-        ) { [providers, refreshSubject] group in
+        ) { [providers, refreshResultSubject, refreshStatusSubjectMap] group in
             for provider in providers {
                 group.addTask{
                     let result = await provider.refresh(
@@ -336,9 +329,12 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
 
             var success: Bool = true
             for await (source, result) in group {
-                refreshSubject.send((source, result))
+                refreshResultSubject.send((source, result))
                 if (result == .failed) {
                     success = false
+                    refreshStatusSubjectMap[source]?.send(.failed)
+                } else {
+                    refreshStatusSubjectMap[source]?.send(.success)
                 }
             }
 
@@ -359,13 +355,75 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
         return await self.refresh(sources: [source])
     }
 
+    public func waitRefresh(source: RemoteDataSource) async {
+        await waitRefresh(source: source, maxTime: nil)
+    }
+
+    public func waitRefresh(
+        source: RemoteDataSource,
+        maxTime: TimeInterval?
+    ) async {
+        AirshipLogger.trace("Waiting for remote data to refresh \(source)")
+        await waitRefreshStatus(source: source, maxTime: maxTime) { status in
+            status != .none
+        }
+    }
+
+    public func waitRefreshAttempt(source: RemoteDataSource) async {
+        await waitRefreshAttempt(source: source, maxTime: nil)
+    }
+
+    public func waitRefreshAttempt(
+        source: RemoteDataSource,
+        maxTime: TimeInterval?
+    ) async {
+        AirshipLogger.trace("Waiting for remote data to refresh successfully \(source)")
+        await waitRefreshStatus(source: source, maxTime: maxTime) { status in
+            status != .none
+        }
+    }
+
+    private func waitRefreshStatus(
+        source: RemoteDataSource,
+        maxTime: TimeInterval?,
+        statusPredicate: @escaping @Sendable (RefreshStatus) -> Bool
+    ) async {
+        guard let subject = self.refreshStatusSubjectMap[source] else {
+            return
+        }
+
+        let result: RefreshStatus = await withUnsafeContinuation { continuation in
+            var cancellable: AnyCancellable?
+
+            var publisher: AnyPublisher<RefreshStatus, Never> = subject.first(where: statusPredicate).eraseToAnyPublisher()
+
+            if let maxTime = maxTime, maxTime > 0.0 {
+                publisher = Publishers.Merge(
+                    Just(.none).delay(
+                        for: .seconds(maxTime),
+                        scheduler: RunLoop.main
+                    ),
+                    publisher
+                ).eraseToAnyPublisher()
+            }
+
+            cancellable = publisher.first()
+                .sink { result in
+                    continuation.resume(returning: result)
+                    cancellable?.cancel()
+                }
+        }
+
+        AirshipLogger.trace("Remote data refresh: \(source), status: \(result)")
+    }
+
     private func refresh(sources: [RemoteDataSource]) async -> Bool {
         // Refresh task will refresh all remoteDataHandlers. If we only care about
         // a subset of the sources, we need filter out those results and collect
         // the expected count of sources.
         var cancellable: AnyCancellable?
         let result = await withCheckedContinuation { continuation in
-            cancellable = self.refreshSubject
+            cancellable = self.refreshResultSubject
                 .filter { result in
                     sources.contains(result.source)
                 }
@@ -408,7 +466,7 @@ final class RemoteData: NSObject, AirshipComponent, InternalRemoteDataProtocol {
     ) -> AnyPublisher<[RemoteDataPayload], Never> {
         // We use the refresh subject to know when to update
         // the current values by listening for a `newData` result
-        return self.refreshSubject
+        return self.refreshResultSubject
             .filter { result in
                 result.result == .newData
             }
