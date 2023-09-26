@@ -153,8 +153,8 @@ public struct MessageCenterListView: View {
                 messageID: self.controller.messageID ?? "",
                 title: self.viewModel.messageItem(
                     forID: self.controller.messageID ?? ""
-                )?
-                    .message.title
+                )?.message.title,
+                dismissAction: nil
             )
         )
             .onDisappear {

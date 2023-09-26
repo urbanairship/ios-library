@@ -25,14 +25,23 @@ public struct MessageCenterMessageView: View {
 
     /// The message's title
     private let title: String?
+    
+    /// The dimiss action callback
+    private let dismissAction: (() -> Void)?
 
     /// Default constructor
     /// - Parameters:
     ///     - messageID: The message ID to load
     ///     - title: The title. If not set the title will be loaded from the message.
-    public init(messageID: String, title: String?) {
+    ///     - dismissAction: Optional action to dismiss the message view message.
+    public init(
+        messageID: String,
+        title: String?,
+        dismissAction: (() -> Void)? = nil
+    ) {
         self.messageID = messageID
         self.title = title
+        self.dismissAction = dismissAction
     }
 
     @ViewBuilder
@@ -40,7 +49,8 @@ public struct MessageCenterMessageView: View {
 
         let configuration = MessageViewStyleConfiguration(
             messageID: messageID,
-            title: title
+            title: title,
+            dismissAction: dismissAction
         )
 
         style.makeBody(configuration: configuration)
@@ -66,6 +76,7 @@ extension View {
 public struct MessageViewStyleConfiguration {
     public let messageID: String
     public let title: String?
+    public let dismissAction: (() -> Void)?
 }
 
 public protocol MessageViewStyle {
@@ -88,7 +99,8 @@ public struct DefaultMessageViewStyle: MessageViewStyle {
     public func makeBody(configuration: Configuration) -> some View {
         MessageCenterMessageContentView(
             messageID: configuration.messageID,
-            title: configuration.title
+            title: configuration.title,
+            dismissAction: configuration.dismissAction
         )
     }
 }
@@ -286,7 +298,8 @@ private struct MessageCenterMessageContentView: View {
 
     let messageID: String
     let title: String?
-
+    let dismissAction: (() -> Void)?
+    
     @MainActor
     func getMessage(_ messageID: String) async -> MessageCenterMessage? {
         if let message = message {
@@ -354,7 +367,7 @@ private struct MessageCenterMessageContentView: View {
                 },
                 dismiss: {
                     await MainActor.run {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             )
@@ -416,10 +429,18 @@ private struct MessageCenterMessageContentView: View {
                             messageIDs: [self.messageID]
                         )
                     }
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    private func dismiss() {
+        if let dismissAction = self.dismissAction {
+            dismissAction()
+        } else {
+            presentationMode.wrappedValue.dismiss()
+        }
     }
 }
