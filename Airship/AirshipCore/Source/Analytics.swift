@@ -669,8 +669,11 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
 
     @MainActor
     private func addLifeCycleEvent(_ type: LifeCycleEventType) {
-        let event = self.lifeCycleEventFactory.make(type: type)
-        addEvent(event)
+        // call add event on the next run loop iteration to get the correct is_foreground value
+        DispatchQueue.main.async {
+            let event = self.lifeCycleEventFactory.make(type: type)
+            self.addEvent(event)
+        }
     }
 }
 
