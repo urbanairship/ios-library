@@ -19,10 +19,12 @@ class ThomasEnvironment: ObservableObject {
 
 
 
+    @Published
     var isDismissed = false
     @Published
     var focusedID: String? = nil
-    private var onDismiss: (() -> Void)
+
+    var onDismiss: (() -> Void)?
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
@@ -33,7 +35,7 @@ class ThomasEnvironment: ObservableObject {
     init(
         delegate: ThomasDelegate,
         extensions: ThomasExtensions?,
-        onDismiss: @escaping () -> Void
+        onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
         self.extensions = extensions
@@ -187,7 +189,7 @@ class ThomasEnvironment: ObservableObject {
         if !self.isDismissed {
             self.isDismissed = true
             callback()
-            onDismiss()
+            onDismiss?()
         }
     }
 

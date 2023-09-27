@@ -139,18 +139,14 @@ public class Thomas: NSObject {
         let environment = ThomasEnvironment(
             delegate: delegate,
             extensions: extensions
-        ) {
-            if let dismissable = viewController?.rootView.dismiss {
-                dismissable(dismissController)
-            } else {
-                dismissController()
-            }
-        }
+        )
+
         let rootView = BannerView(
             viewControllerOptions: options,
             presentation: presentation,
             layout: layout,
-            thomasEnvironment: environment
+            thomasEnvironment: environment,
+            onDismiss: dismissController
         )
         viewController = ThomasBannerViewController(
             rootView: rootView,

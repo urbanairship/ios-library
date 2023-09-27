@@ -4,6 +4,11 @@ import SwiftUI
 
 struct BannerView: View {
 
+    private enum PositionState {
+        case hidden
+        case visible
+    }
+
     static let animationInDuration = 0.2
     static let animationOutDuration = 0.2
 
@@ -11,10 +16,15 @@ struct BannerView: View {
     let presentation: BannerPresentationModel
     let layout: Layout
 
+
     @ObservedObject
     var thomasEnvironment: ThomasEnvironment
 
-    @State private var offsetPercentWrapper = OffsetPercentWrapper()
+    /// The dimiss action callback
+    let onDismiss: () -> Void
+
+
+    @State private var positionState: PositionState = .hidden
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
     @Environment(\.layoutState) var layoutState
@@ -34,6 +44,22 @@ struct BannerView: View {
                 
                 #if !os(watchOS)
                 createBanner(placement: placement, metrics: metrics)
+                    .onChange(of: thomasEnvironment.isDismissed) { _ in
+                        withAnimation(.linear(duration: BannerView.animationOutDuration)) {
+                            self.positionState = .hidden
+                        }
+                        DispatchQueue.main.asyncAfter(
+                            deadline: .now() + BannerView.animationOutDuration
+                        ) {
+                            onDismiss()
+                        }
+                    }
+                    .onAppear {
+                        withAnimation(.linear(duration: BannerView.animationInDuration)) {
+                            self.positionState = .visible
+                        }
+                    }
+
                 #endif
             }
         }
@@ -68,9 +94,8 @@ struct BannerView: View {
             margin: placement.margin
         )
         
-        let height = constraints.height ?? 0.0
-        let offset = placement.position == .top ? -height : height
-        
+        let height = constraints.height ?? metrics.size.height
+
         return VStack {
             ViewFactory.createView(
                 model: layout.view,
@@ -89,30 +114,12 @@ struct BannerView: View {
                 })
             )
         }
+        .offset(
+            x: 0.0,
+            y: calculateOffset(height: height, placement: placement)
+        )
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
-        .offset(x: 0.0, y: offset * self.offsetPercentWrapper.offsetPercent)
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
-        .onAppear {
-            displayBanner()
-        }
-    }
-
-    private func displayBanner() {
-        withAnimation(.linear(duration: BannerView.animationInDuration)) {
-            self.offsetPercentWrapper.offsetPercent = 0.0
-        }
-    }
-
-    func dismiss(onComplete: @escaping () -> Void) {
-        withAnimation(.linear(duration: BannerView.animationOutDuration)) {
-            self.offsetPercentWrapper.offsetPercent = 1.0
-        }
-
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + BannerView.animationOutDuration
-        ) {
-            onComplete()
-        }
     }
 
     private func resolvePlacement(
@@ -142,9 +149,13 @@ struct BannerView: View {
 
         return placement
     }
-    
-    private class OffsetPercentWrapper: ObservableObject {
-        @Published var offsetPercent: Double = 1.0
-    }
 
+    private func calculateOffset(height: CGFloat, placement: BannerPlacement) -> CGFloat {
+        switch(self.positionState) {
+        case .hidden:
+            return placement.position == .top ? -height : height
+        case .visible:
+            return 0
+        }
+    }
 }
