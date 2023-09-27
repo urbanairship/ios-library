@@ -42,6 +42,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 @property(nonatomic, assign) dispatch_once_t engineStarted;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, NSURL *> *redirectURLs;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, UARemoteDataInfo *> *remoteDataInfoCache;
+
 @property(nonatomic, strong) id<UAAutomationAudienceCheckerProtocol> audienceChecker;
 
 @end
@@ -156,6 +158,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
                                                                        className:@"UAInAppAutomation"];
         self.redirectURLs = [NSMutableDictionary dictionary];
+        self.remoteDataInfoCache = [NSMutableDictionary dictionary];
         self.experimentManager = experimentManager;
 
         UA_WEAKIFY(self)
@@ -360,8 +363,15 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
     void (^prepareCompletionHandlerWrapper)(UAAutomationSchedulePrepareResult) = ^(UAAutomationSchedulePrepareResult result){
         UA_STRONGIFY(self)
-        if (checker && result == UAAutomationSchedulePrepareResultContinue) {
-            [self.frequencyCheckers setObject:checker forKey:scheduleID];
+        if (result == UAAutomationSchedulePrepareResultContinue) {
+            if (checker) {
+                self.frequencyCheckers[scheduleID] = checker;
+            }
+
+            UARemoteDataInfo *info = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
+            if (info) {
+                self.remoteDataInfoCache[scheduleID] = info;
+            }
         }
         completionHandler(result);
     };
@@ -434,7 +444,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                retriableHandler:(UARetriableCompletionHandler) retriableHandler
               completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
 
-    UAScheduleDeferredData *deferred =  (UAScheduleDeferredData *)schedule.data;
+    UAScheduleDeferredData *deferred = (UAScheduleDeferredData *)schedule.data;
     NSString *channelID = self.channel.identifier;
     if (!channelID) {
         retriableHandler(UARetriableResultRetry, 0);
@@ -574,6 +584,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     UA_LTRACE(@"Executing schedule: %@", schedule.identifier);
 
     [self.frequencyCheckers removeObjectForKey:schedule.identifier];
+    [self.remoteDataInfoCache removeObjectForKey:schedule.identifier];
 
     switch (schedule.type) {
         case UAScheduleTypeActions: {
@@ -655,6 +666,16 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
 - (void)isScheduleReadyPrecheck:(nonnull UASchedule *)schedule
               completionHandler:(nonnull void (^)(UAAutomationScheduleReadyResult))completionHandler {
+
+    UARemoteDataInfo *info = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
+    if (info && ![info isEqual:self.remoteDataInfoCache[schedule.identifier]]) {
+        if (schedule.type == UAScheduleTypeInAppMessage) {
+            [self.inAppMessageManager scheduleExecutionAborted:schedule.identifier];
+        }
+        completionHandler(UAAutomationScheduleReadyResultInvalidate);
+        return;
+    }
+
     [self.remoteDataClient isScheduleUpToDate:schedule completionHandler:^(BOOL result) {
         if (result) {
             completionHandler(UAAutomationScheduleReadyResultContinue);
