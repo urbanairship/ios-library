@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.4.0 September 28, 2023
+Minor release that improves refreshing the feeds for in-app experiences and feature flags, adds a new interaction event for feature flags, and fixes a reporting issue with direct opens and sessions counts for apps that are scene enabled.
+
+### Changes
+- Improve refresh handling of remote-data for IAX and feature flags.
+- Added new method `trackInteraction(flag:)` for Feature Flags.
+- Added new optional parameter `dismissAction` on the `MessageCenterListView` view
+- Fixed app session and direct open reporting for scene enabled applications
+
 ## Version 17.3.1 September 13, 2023
 Patch release that updates the prebuilt XCFrameworks for Xcode 15 to use the new Xcode 15 RC release. 
 

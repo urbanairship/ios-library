@@ -707,7 +707,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        self.featureFlagManager.trackInteracted(flag: flag)
+        self.featureFlagManager.trackInteraction(flag: flag)
 
         XCTAssertEqual(1, self.eventTracker.events.count)
         XCTAssertNotNil(self.eventTracker.events[0] as? FeatureFlagInteractedEvent)
@@ -726,7 +726,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        self.featureFlagManager.trackInteracted(flag: flag)
+        self.featureFlagManager.trackInteraction(flag: flag)
 
         XCTAssertEqual(0, self.eventTracker.events.count)
     }
@@ -740,7 +740,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             reportingInfo: nil
         )
 
-        self.featureFlagManager.trackInteracted(flag: flag)
+        self.featureFlagManager.trackInteraction(flag: flag)
         XCTAssertEqual(0, self.eventTracker.events.count)
     }
 

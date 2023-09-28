@@ -74,7 +74,7 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
     /// Tracks a feature flag interaction event.
     /// - Parameter flag: The flag.
-    public func trackInteracted(flag: FeatureFlag) {
+    public func trackInteraction(flag: FeatureFlag) {
         guard flag.exists else { return }
 
         do {
