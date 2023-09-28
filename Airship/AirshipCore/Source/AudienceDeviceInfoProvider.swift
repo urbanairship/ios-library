@@ -56,16 +56,8 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         }
 
         self.cachedChannelID = OneTimeValue {
-            return Airship.channel.identifier
+            return deviceInfoProvider.channelID
         }
-    }
-
-    public var evaluatedContactID: String? {
-        return self.cachedContactID.cachedValue
-    }
-
-    public var evaluatedChannelID: String? {
-        return self.cachedChannelID.cachedValue ?? nil
     }
 
     public var installDate: Date {

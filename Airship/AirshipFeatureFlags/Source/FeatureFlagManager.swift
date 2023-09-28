@@ -37,17 +37,22 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
     private let audienceChecker: DeviceAudienceChecker
     private let date: AirshipDateProtocol
     private let disableHelper: ComponentDisableHelper
+    private let eventTracker: EventTracker
+    private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
 
     init(
         dataStore: PreferenceDataStore,
         remoteDataAccess: FeatureFlagRemoteDataAccessProtocol,
+        eventTracker: EventTracker,
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: AirshipDateProtocol = AirshipDate.shared,
+        deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() }
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
         self.date = date
-
+        self.eventTracker = eventTracker
+        self.deviceInfoProviderFactory = deviceInfoProviderFactory
         self.disableHelper = ComponentDisableHelper(
             dataStore: dataStore,
             className: "FeatureFlags"
@@ -66,11 +71,25 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         return try await flag(name: name, allowRefresh: true)
     }
 
+
+    /// Tracks a feature flag interaction event.
+    /// - Parameter flag: The flag.
+    public func trackInteracted(flag: FeatureFlag) {
+        guard flag.exists else { return }
+
+        do {
+            let event = try FeatureFlagInteractedEvent(flag: flag)
+            eventTracker.addEvent(event)
+        } catch {
+            AirshipLogger.error("Failed to generate FeatureFlagInteractedEvent \(error)")
+        }
+    }
+
     private func flag(name: String, allowRefresh: Bool) async throws -> FeatureFlag {
         switch(await self.remoteDataAccess.status) {
         case .upToDate:
             let flagInfos = await flagInfos(name: name)
-            return await evaluate(flagInfos: flagInfos)
+            return await evaluate(name: name, flagInfos: flagInfos)
         case .stale:
             let flagInfos = await flagInfos(name: name)
             if (flagInfos.isEmpty || !isStaleAllowed(flagInfos: flagInfos)) {
@@ -80,7 +99,7 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
                 }
                 throw FeatureFlagError.failedToFetchData
             }
-            return await evaluate(flagInfos: flagInfos)
+            return await evaluate(name: name, flagInfos: flagInfos)
         case .outOfDate:
             if (allowRefresh) {
                 await self.remoteDataAccess.waitForRefresh()
@@ -101,11 +120,17 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         return disallowStale == nil
     }
 
-    private func evaluate(flagInfos: [FeatureFlagInfo]) async -> FeatureFlag {
-        let deviceInfoProvider = CachingAudienceDeviceInfoProvider()
+    private func evaluate(name: String, flagInfos: [FeatureFlagInfo]) async -> FeatureFlag {
+        let deviceInfoProvider = deviceInfoProviderFactory()
 
         guard !flagInfos.isEmpty else {
-            return FeatureFlag(isEligible: false, exists: false, variables: nil)
+            return FeatureFlag(
+                name: name,
+                isEligible: false,
+                exists: false,
+                variables: nil,
+                reportingInfo: nil
+            )
         }
 
         for flagInfo in flagInfos {
@@ -126,25 +151,46 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
             case .deferredPayload(_): continue
             case .staticPayload(let staticInfo):
                 let variables = await evaluateVariables(staticInfo.variables, flagInfo: flagInfo, deviceInfoProvider: deviceInfoProvider)
-                return FeatureFlag(isEligible: true, exists: true, variables: variables)
+                return FeatureFlag(
+                    name: name,
+                    isEligible: true,
+                    exists: true,
+                    variables: variables?.data,
+                    reportingInfo: FeatureFlag.ReportingInfo(
+                        reportingMetadata: variables?.reportingMetadata ?? flagInfo.reportingMetadata,
+                        contactID: await deviceInfoProvider.stableContactID,
+                        channelID: deviceInfoProvider.channelID
+                    )
+                )
             }
         }
 
-        return FeatureFlag(isEligible: false, exists: true, variables: nil)
+
+        return FeatureFlag(
+            name: name,
+            isEligible: false,
+            exists: true,
+            variables: nil,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: flagInfos.last?.reportingMetadata ?? .null,
+                contactID: await deviceInfoProvider.stableContactID,
+                channelID: deviceInfoProvider.channelID
+            )
+        )
     }
 
     private func evaluateVariables(
         _ variables: FeatureFlagVariables?,
         flagInfo: FeatureFlagInfo,
         deviceInfoProvider: AudienceDeviceInfoProvider
-    ) async -> AirshipJSON? {
+    ) async -> VariableResult? {
         guard let variables = variables else {
             return nil
         }
 
         switch (variables) {
-        case .fixed(let variables):
-            return variables
+        case .fixed(let data):
+            return VariableResult(data: data, reportingMetadata: nil)
         case .variant(let variants):
             for variant in variants {
                 if let audienceSelector = variant.audienceSelector {
@@ -160,11 +206,19 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
                     }
                 }
 
-                return variant.data
+                return VariableResult(
+                    data: variant.data,
+                    reportingMetadata: variant.reportingMetadata
+                )
             }
 
             return nil
         }
+    }
+
+    struct VariableResult {
+        let data: AirshipJSON?
+        let reportingMetadata: AirshipJSON?
     }
 
     private func flagInfos(
@@ -176,3 +230,8 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
             .filter { !$0.isDeferred } // ignore deferred for now
     }
 }
+
+protocol EventTracker: Sendable {
+    func addEvent(_ event: AirshipEvent)
+}
+

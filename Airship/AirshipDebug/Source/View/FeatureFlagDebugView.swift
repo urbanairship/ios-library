@@ -104,6 +104,9 @@ private struct FeaturFlagDetailsView: View {
                                     .padding(.leading, 8)
                             }
                         }
+                        Button("Track Interacted") {
+                            FeatureFlagManager.shared.trackInteracted(flag: result)
+                        }
                     } else {
                         VStack {
                             ProgressView()

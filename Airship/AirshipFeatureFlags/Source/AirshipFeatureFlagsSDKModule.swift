@@ -21,10 +21,12 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         let remoteData =
             dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
 
+        let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalytics
 
         let manager = FeatureFlagManager(
             dataStore: dataStore,
-            remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: remoteData)
+            remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: remoteData),
+            eventTracker: analytics
         )
         return AirshipFeatureFlagsSDKModule(components: [manager])
     }
@@ -33,3 +35,6 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         self.components = components
     }
 }
+
+
+extension AirshipAnalytics : EventTracker {}

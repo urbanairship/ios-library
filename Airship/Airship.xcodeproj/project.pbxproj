@@ -950,6 +950,8 @@
 		6E92ECB1284ECE590038802D /* CachedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92ECB0284ECE590038802D /* CachedList.swift */; };
 		6E92ECB2284ECE590038802D /* CachedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92ECB0284ECE590038802D /* CachedList.swift */; };
 		6E92ECB6284ED7330038802D /* CachedListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92ECB3284ED6F10038802D /* CachedListTest.swift */; };
+		6E938DBA2AC395DA00F691D9 /* FeatureFlagInteractedEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E938DB92AC395DA00F691D9 /* FeatureFlagInteractedEvent.swift */; };
+		6E938DBC2AC39A0500F691D9 /* FeatureFlagInteractedEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E938DBB2AC39A0500F691D9 /* FeatureFlagInteractedEventTest.swift */; };
 		6E94760F29BA8FA30025F364 /* ContactManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E94760E29BA8FA30025F364 /* ContactManager.swift */; };
 		6E94761529BBC0240025F364 /* AirshipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E94761429BBC0230025F364 /* AirshipButton.swift */; };
 		6E94761629BBC0240025F364 /* AirshipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E94761429BBC0230025F364 /* AirshipButton.swift */; };
@@ -2475,6 +2477,8 @@
 		6E92ECAB284EA7DA0038802D /* AnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTest.swift; sourceTree = "<group>"; };
 		6E92ECB0284ECE590038802D /* CachedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedList.swift; sourceTree = "<group>"; };
 		6E92ECB3284ED6F10038802D /* CachedListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedListTest.swift; sourceTree = "<group>"; };
+		6E938DB92AC395DA00F691D9 /* FeatureFlagInteractedEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagInteractedEvent.swift; sourceTree = "<group>"; };
+		6E938DBB2AC39A0500F691D9 /* FeatureFlagInteractedEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagInteractedEventTest.swift; sourceTree = "<group>"; };
 		6E94760E29BA8FA30025F364 /* ContactManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManager.swift; sourceTree = "<group>"; };
 		6E94761429BBC0230025F364 /* AirshipButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipButton.swift; sourceTree = "<group>"; };
 		6E95291F268A6C1500398B54 /* SearchEventTemplate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchEventTemplate.swift; sourceTree = "<group>"; };
@@ -4713,6 +4717,7 @@
 				A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */,
 				6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */,
 				6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */,
+				6E938DBB2AC39A0500F691D9 /* FeatureFlagInteractedEventTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -4735,6 +4740,7 @@
 				6E2F5A752A60871E00CABD3D /* FeatureFlagPayload.swift */,
 				6E2F5AB02A67434B00CABD3D /* FeatureFlag.swift */,
 				6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */,
+				6E938DB92AC395DA00F691D9 /* FeatureFlagInteractedEvent.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6753,6 +6759,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E2F5A742A60833700CABD3D /* FeatureFlagManager.swift in Sources */,
+				6E938DBA2AC395DA00F691D9 /* FeatureFlagInteractedEvent.swift in Sources */,
 				6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */,
 				6E2F5AB12A67434B00CABD3D /* FeatureFlag.swift in Sources */,
 				A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */,
@@ -6766,6 +6773,7 @@
 			files = (
 				A61F3A752A5DA58500EE94CC /* FeatureFlagManagerTest.swift in Sources */,
 				6E8BDF012A679E5000F816D9 /* FeatureFlagRemoteDataAccessTest.swift in Sources */,
+				6E938DBC2AC39A0500F691D9 /* FeatureFlagInteractedEventTest.swift in Sources */,
 				6E8BDEFE2A67938200F816D9 /* FeatureFlagInfoTest.swift in Sources */,
 				6E2F5AB52A67599400CABD3D /* TestRemoteData.swift in Sources */,
 				6E2F5AB22A67589400CABD3D /* TestDate.swift in Sources */,
