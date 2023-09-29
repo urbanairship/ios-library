@@ -1,7 +1,11 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
+
+#if canImport(UIKit)
 import UIKit
+#endif
+
 
 struct BannerView: View {
 
@@ -66,6 +70,8 @@ struct BannerView: View {
         }
     }
 
+#if !os(watchOS)
+
     private func createBanner(
         placement: BannerPlacement,
         metrics: GeometryProxy
@@ -122,6 +128,7 @@ struct BannerView: View {
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
     }
+#endif
 
     private func resolvePlacement(
         orientation: Orientation,
