@@ -114,7 +114,7 @@ jobs:
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
-        run: make test test-packages
+        run: make test test-packages XCODE=14.3.1 TEST_DESTINATION="platform=iOS Simulator,OS=16.4,name=iPhone 14" TEST_DESTINATION_TVOS="platform=tvOS Simulator,OS=16.4,name=Apple TV"
 
   deploy-github:
     runs-on: macOS-13
