@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
+import UIKit
 
 struct BannerView: View {
 
