@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build-sdk-xcode14:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v1
@@ -19,14 +19,11 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Build SDK
         run: make build-xcframeworks XCODE=14.3.1
 
   build-sdk:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v1
@@ -34,69 +31,50 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Build SDK
         run: make build-xcframeworks
 
   build-docs:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Build Docs
         run: make build-docs
 
   run-tests:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Test
         run: make test XCODE=14.3.1 TEST_DESTINATION="platform=iOS Simulator,OS=16.4,name=iPhone 14" TEST_DESTINATION_TVOS="platform=tvOS Simulator,OS=16.4,name=Apple TV"
 
   run-package-tests:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
         run: make test-packages
 
   build-samples:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Build samples
         run: make build-samples
       
 
   # run-tests-watchos:
-  #   runs-on: macOS-12
+  #   runs-on: macos-13-xlarge
   #   steps:
-  #     - name: Set env variable
-  #       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/cache@v1
+  #     - uses: actions/checkout@v4
+  #     - uses: ruby/setup-ruby@v1
   #       with:
-  #         path: vendor/bundle
-  #         key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-  #         restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+  #         bundler-cache: true
   #     - name: Install xcodegen
   #       run: brew install xcodegen
   #     - name: Install Apple Certificate
@@ -112,8 +90,8 @@ jobs:
   #         PP_APP_PATH=$RUNNER_TEMP/wkapp_prof.mobileprovision
   #         PP_EXT_PATH=$RUNNER_TEMP/wkext_prof.mobileprovision
 
-  #         echo -n "$PROVISIONING_APP_BASE64" | base64 --decode --output $PP_APP_PATH
-  #         echo -n "$PROVISIONING_EXT_BASE64" | base64 --decode --output $PP_EXT_PATH
+  #         echo -n "$PROVISIONING_APP_BASE64" | base64 --decode > $PP_APP_PATH
+  #         echo -n "$PROVISIONING_EXT_BASE64" | base64 --decode > $PP_EXT_PATH
 
   #         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
   #         cp $PP_APP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
@@ -121,52 +99,30 @@ jobs:
   #     - name: Test
   #       run: make build-sample-watchos
         
-  # pod-lib-lint-watchos:
-  #   runs-on: macOS-12
-  #   steps:
-  #     - name: Set env variable
-  #       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/cache@v1
-  #       with:
-  #         path: vendor/bundle
-  #         key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-  #         restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
-  #     - name: Pod lint
-  #       run: make pod-lint-watchos
+  pod-lib-lint-watchos:
+    runs-on: macos-13-xlarge
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pod lint
+        run: make pod-lint-watchos
         
   pod-lib-lint-tvos:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Pod lint
         run: make pod-lint-tvos
 
   pod-lib-lint-ios:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Pod lint
         run: make pod-lint-ios
 
   pod-lib-lint-extensions:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Pod lint
         run: make pod-lint-extensions

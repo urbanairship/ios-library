@@ -10,7 +10,7 @@ env:
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -28,12 +28,9 @@ jobs:
 
   build-package:
     needs: check-version
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Install Coreutils
         run: brew install coreutils
       - name: Install Apple Certificate
@@ -61,12 +58,9 @@ jobs:
 
   build-package-xcode15:
     needs: check-version
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Install Coreutils
         run: brew install coreutils
       - name: Install Apple Certificate
@@ -94,30 +88,24 @@ jobs:
 
   build-samples:
     needs: check-version
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Build samples
         run: make build-samples
 
   run-tests:
     needs: check-version
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
         run: make test test-packages XCODE=14.3.1 TEST_DESTINATION="platform=iOS Simulator,OS=16.4,name=iPhone 14" TEST_DESTINATION_TVOS="platform=tvOS Simulator,OS=16.4,name=Apple TV"
 
   deploy-github:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     needs: [run-tests, build-package, build-samples, build-package-xcode15]
     steps:
       - uses: actions/checkout@v4
@@ -218,13 +206,10 @@ jobs:
           url: ${{ secrets.SLACK_WEBHOOK }}
 
   deploy-pods:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
       - name: Get the version
         id: get_version
         run: |
@@ -242,7 +227,7 @@ jobs:
           url: ${{ secrets.SLACK_WEBHOOK }}
 
   deploy-docs:
-    runs-on: macOS-13
+    runs-on: macos-13-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
