@@ -219,9 +219,9 @@ static double const MinimumSwipeVelocity = 100.0;
                  completionHandler:^{
             UA_LTRACE(@"Message tap actions finished running.");
         }];
+        
+        [self dismissWithResolution:[UAInAppMessageResolution messageClickResolution]];
     }
-
-    [self dismissWithResolution:[UAInAppMessageResolution messageClickResolution]];
 }
 
 - (void)messageSwiped {
