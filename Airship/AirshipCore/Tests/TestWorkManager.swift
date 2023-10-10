@@ -3,13 +3,17 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestWorkManager: AirshipWorkManagerProtocol {
+class TestWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
+
+    
     struct Worker {
         let workID: String
         let type: AirshipWorkerType
         let workHandler: (AirshipWorkRequest) async throws -> AirshipWorkResult
     }
     
+    var backgroundWorkRequests: [AirshipWorkRequest] = []
+
     var rateLimits: [String: RateLimit] = [:]
     var workRequests: [AirshipWorkRequest] = []
     private var workHandler: ((AirshipWorkRequest) async throws -> AirshipWorkResult?)? = nil
@@ -49,6 +53,10 @@ class TestWorkManager: AirshipWorkManagerProtocol {
 
     }
     
+    func autoDispatchWorkRequestOnBackground(_ request: AirshipWorkRequest) {
+        backgroundWorkRequests.append(request)
+    }
+
     func launchTask(request: AirshipWorkRequest) async throws -> AirshipWorkResult? {
         return try await workHandler?(request)
     }

@@ -107,6 +107,10 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             return try await self?.handleUpdateTask() ?? .success
         }
 
+        self.workManager.autoDispatchWorkRequestOnBackground(
+            AirshipWorkRequest(workID: ChannelAudienceManager.updateTaskID)
+        )
+
         self.migrateMutations()
 
         notificationCenter.addObserver(

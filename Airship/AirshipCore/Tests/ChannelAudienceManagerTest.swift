@@ -42,6 +42,17 @@ class ChannelAudienceManagerTest: XCTestCase {
         self.workManager.workRequests.removeAll()
     }
 
+
+    func testBackgroundWorkRequest() async throws {
+        XCTAssertEqual(1, self.workManager.backgroundWorkRequests.count)
+
+        let expected = AirshipWorkRequest(
+            workID: ChannelAudienceManager.updateTaskID
+        )
+        XCTAssertEqual(expected, self.workManager.backgroundWorkRequests.first)
+    }
+
+
     func testUpdates() async throws {
         let subscriptionListEditor = self.audienceManager
             .editSubscriptionLists()

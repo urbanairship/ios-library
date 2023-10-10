@@ -26,4 +26,8 @@ public protocol AirshipWorkManagerProtocol: Sendable {
     func dispatchWorkRequest(
         _ request: AirshipWorkRequest
     )
+
+    func autoDispatchWorkRequestOnBackground(
+        _ request: AirshipWorkRequest
+    )
 }
