@@ -703,7 +703,7 @@ extension AirshipChannel {
     ///     - name: The live activity name
     /// - Returns A `LiveActivityRegistrationStatusUpdates`
     @available(iOS 16.1, *)
-    public func liveActityRegistrationStatusUpdates(
+    public func liveActivityRegistrationStatusUpdates(
         name: String
     ) -> LiveActivityRegistrationStatusUpdates {
 
@@ -715,7 +715,7 @@ extension AirshipChannel {
     ///     - activity: The live activity
     /// - Returns A `LiveActivityRegistrationStatusUpdates`
     @available(iOS 16.1, *)
-    public func liveActityRegistrationStatusUpdates<T: ActivityAttributes>(
+    public func liveActivityRegistrationStatusUpdates<T: ActivityAttributes>(
         activity: Activity<T>
     ) -> LiveActivityRegistrationStatusUpdates {
         self.liveActivityRegistry.registrationUpdates(name: nil, id: activity.id)

@@ -183,7 +183,7 @@ struct DeliveryActivityView: View {
             }
         }
         .task {
-            for await update in Airship.channel.liveActityRegistrationStatusUpdates(
+            for await update in Airship.channel.liveActivityRegistrationStatusUpdates(
                 activity: activity
             ) {
                 await MainActor.run {
