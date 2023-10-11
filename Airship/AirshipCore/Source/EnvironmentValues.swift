@@ -39,7 +39,6 @@ extension EnvironmentValues {
         get { self[LayoutStateEnvironmentKey.self] }
         set { self[LayoutStateEnvironmentKey.self] = newValue }
     }
-
 }
 
 extension View {

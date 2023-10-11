@@ -19,13 +19,13 @@ extension UIImage {
             return nil
         }
 
-        guard imageData.frames.count > 1 else {
-            return imageData.frames[0].image
+        guard imageData.isAnimated else {
+            return imageData.loadFrames()[0].image
         }
         var totalDuration: TimeInterval = 0.0
         var images: [UIImage] = []
 
-        imageData.frames.forEach { frame in
+        imageData.loadFrames().forEach { frame in
             if frame.duration > 0.0 {
                 totalDuration += frame.duration
             }
@@ -63,11 +63,20 @@ public class AirshipImageData: NSObject {
         let duration: TimeInterval
     }
 
-    let frames: [Frame]
-    private static let minFrameDuration: TimeInterval = 0.01
+    static let minFrameDuration: TimeInterval = 0.01
+    private let source: CGImageSource
+    
+    let isAnimated: Bool
+    let imageFramesCount: Int
 
-    init(frames: [Frame]) {
-        self.frames = frames
+    init(_ source: CGImageSource) throws {
+        self.source = source
+        imageFramesCount = CGImageSourceGetCount(source)
+        if imageFramesCount < 1 {
+            throw AirshipErrors.error("Invalid image, no frames.")
+        }
+        
+        self.isAnimated = imageFramesCount > 1
     }
 
     @objc
@@ -76,19 +85,22 @@ public class AirshipImageData: NSObject {
         else {
             throw AirshipErrors.error("Invalid image data")
         }
-
-        let frames = AirshipImageData.frames(from: source)
-        if frames.isEmpty {
-            throw AirshipErrors.error("Invalid image, no frames.")
-        }
-
-        self.init(frames: frames)
+        
+        try self.init(source)
+    }
+    
+    func loadFrames() -> [Frame] {
+        return Self.frames(from: source)
+    }
+    
+    func getActor() -> AirshipImageDataFrameActor {
+        return AirshipImageDataFrameActor(source: source)
     }
 
     private class func frames(from source: CGImageSource) -> [Frame] {
         let count = CGImageSourceGetCount(source)
         guard count > 1 else {
-            guard let image = frameImage(0, source: source) else {
+            guard let image = AirshipImageDataFrameActor.frameImage(0, source: source) else {
                 return []
             }
             return [Frame(image: image, duration: 0.0)]
@@ -96,21 +108,45 @@ public class AirshipImageData: NSObject {
 
         var frames: [Frame] = []
         for i in 0..<count {
-            guard let image = frameImage(i, source: source) else {
+            guard let image = AirshipImageDataFrameActor.frameImage(i, source: source) else {
                 continue
             }
 
             frames.append(
                 Frame(
                     image: image,
-                    duration: frameDuration(i, source: source)
+                    duration: AirshipImageDataFrameActor.frameDuration(i, source: source)
                 )
             )
         }
         return frames
     }
+}
 
-    private static func frameImage(_ index: Int, source: CGImageSource)
+actor AirshipImageDataFrameActor {
+    private let source: CGImageSource
+    
+    let framesCount: Int
+    
+    init(source: CGImageSource) {
+        self.source = source
+        framesCount = CGImageSourceGetCount(source)
+    }
+    
+    func loadFrame(at index: Int) -> AirshipImageData.Frame? {
+        guard index >= 0, index < framesCount else { return nil }
+        
+        guard let image = Self.frameImage(index, source: source) else {
+            return nil
+        }
+
+        return AirshipImageData.Frame(
+            image: image,
+            duration: Self.frameDuration(index, source: source)
+        )
+    }
+    
+    fileprivate static func frameImage(_ index: Int, source: CGImageSource)
         -> UIImage?
     {
         guard let imageRef = CGImageSourceCreateImageAtIndex(source, index, nil)
@@ -121,7 +157,7 @@ public class AirshipImageData: NSObject {
         return UIImage(cgImage: imageRef)
     }
 
-    private static func frameDuration(
+    fileprivate static func frameDuration(
         _ index: Int,
         source: CGImageSource
     ) -> TimeInterval {
@@ -134,7 +170,7 @@ public class AirshipImageData: NSObject {
             )
                 as? [AnyHashable: Any]
         else {
-            return minFrameDuration
+            return AirshipImageData.minFrameDuration
         }
 
         guard
@@ -142,7 +178,7 @@ public class AirshipImageData: NSObject {
                 properties[kCGImagePropertyGIFDictionary as String]
                 as? [AnyHashable: Any]
         else {
-            return minFrameDuration
+            return AirshipImageData.minFrameDuration
         }
 
         let delayTime =
@@ -151,6 +187,6 @@ public class AirshipImageData: NSObject {
             gifProperties[[kCGImagePropertyGIFUnclampedDelayTime as String]]
             as? TimeInterval
 
-        return max(gifDelayTime ?? delayTime ?? 0.0, minFrameDuration)
+        return max(gifDelayTime ?? delayTime ?? 0.0, AirshipImageData.minFrameDuration)
     }
 }

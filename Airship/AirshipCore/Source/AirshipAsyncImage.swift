@@ -29,15 +29,16 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
     @State private var imageIndex: Int = 0
     @State private var animationTask: Task<Void, Never>?
     @State private var cancellable: AnyCancellable?
+    
+    @Environment(\.isVisible) var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
+                                                    //that's why we need to store the actual value in a separate @State variable
+    @State private var isImageVisible: Bool = false
 
     public var body: some View {
         content
             .onAppear {
                 if self.loadedImage != nil {
-                    self.animationTask?.cancel()
-                    self.animationTask = Task {
-                        await animateImage()
-                    }
+                    animateIfNeeded()
                 } else {
                     self.cancellable = self.imageLoader.load(url: self.url)
                         .receive(on: DispatchQueue.main)
@@ -51,14 +52,15 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
                             },
                             receiveValue: { image in
                                 self.loadedImage = image
-                                self.animationTask?.cancel()
-                                self.animationTask = Task {
-                                    await animateImage()
-                                }
+                                animateIfNeeded()
                             }
                         )
                 }
             }
+            .onChange(of: isVisible, perform: { newValue in
+                self.isImageVisible = newValue
+                animateIfNeeded()
+            })
     }
 
     private var content: some View {
@@ -74,35 +76,50 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
             }
         }
     }
-
+    
+    private func animateIfNeeded() {
+        if isImageVisible {
+            self.animationTask?.cancel()
+            self.animationTask = Task {
+                await animateImage()
+            }
+        } else {
+            self.animationTask?.cancel()
+        }
+    }
+    
     @MainActor
     private func animateImage() async {
-        guard let loadedImage = self.loadedImage else {
+        guard let loadedImage = self.loadedImage else { return }
+        
+        guard loadedImage.isAnimated else {
+            self.currentImage = loadedImage.loadFrames().first?.image
             return
         }
+        
+        let frameActor = loadedImage.getActor()
 
-        guard loadedImage.frames.count > 1 else {
-            self.currentImage = loadedImage.frames[0].image
-            return
-        }
+        imageIndex = 0
+        var frame = await frameActor.loadFrame(at: imageIndex)
 
-        let frames = loadedImage.frames
-        self.currentImage = frames[self.imageIndex].image
+        self.currentImage = frame?.image
 
         while !Task.isCancelled {
-            let duration = frames[self.imageIndex].duration
-            try? await Task.sleep(
-                nanoseconds: UInt64(duration * 1_000_000_000)
-            )
+            let duration = frame?.duration ?? AirshipImageData.minFrameDuration
+            
+            async let delay: () = Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
+            
+            let nextIndex = (imageIndex + 1) % loadedImage.imageFramesCount
+            
+            do {
+                let (_, nextFrame) = try await (delay, frameActor.loadFrame(at: nextIndex))
+                frame = nextFrame
+            } catch {} // most likely it's a task cancelled exception when animation is stopped
+
+            imageIndex = nextIndex
 
             if !Task.isCancelled {
-                if self.imageIndex >= (frames.count - 1) {
-                    self.imageIndex = 0
-                } else {
-                    self.imageIndex += 1
-                }
-
-                self.currentImage = frames[self.imageIndex].image
+                self.currentImage = frame?.image
             }
         }
     }
