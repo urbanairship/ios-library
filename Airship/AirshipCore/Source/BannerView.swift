@@ -70,8 +70,7 @@ struct BannerView: View {
         }
     }
 
-#if !os(watchOS)
-
+    #if !os(watchOS)
     private func createBanner(
         placement: BannerPlacement,
         metrics: GeometryProxy
@@ -128,7 +127,7 @@ struct BannerView: View {
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
     }
-#endif
+    #endif
 
     private func resolvePlacement(
         orientation: Orientation,

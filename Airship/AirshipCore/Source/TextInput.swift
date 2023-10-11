@@ -4,19 +4,34 @@ import Combine
 import Foundation
 import SwiftUI
 
-
 struct TextInput: View {
     let model: TextInputModel
     let constraints: ViewConstraints
 
     @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.colorScheme) var colorScheme
 
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
     @State private var input: String = ""
     @State private var isEditing: Bool = false
-
+    
+    #if !os(watchOS)
+    private var keyboardType: UIKeyboardType {
+        switch self.model.inputType {
+        case .email:
+            return .emailAddress
+        case .number:
+            return .decimalPad
+        case .text:
+            return .default
+        case .textMultiline:
+            return .default
+        }
+    }
+    #endif
+    
     @ViewBuilder
     private func createTextEditor() -> some View {
         let binding = Binding<String>(
@@ -27,28 +42,37 @@ struct TextInput: View {
             }
         )
 
-        #if !os(watchOS)
-        AirshipTextView(
-            textAppearance: self.model.textAppearance,
-            text: binding,
-            isEditing: $isEditing
-        )
-        .onChange(of: self.isEditing) { newValue in
-            let focusedID = newValue ? self.model.identifier : nil
-            self.thomasEnvironment.focusedID = focusedID
+        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+            AirshipTexField(
+                model: self.model,
+                constraints: constraints,
+                binding: binding,
+                isEditing: $isEditing
+            )
+        } else {
+            // Fallback on earlier versions
+            #if !os(watchOS)
+            AirshipTextView(
+                textAppearance: self.model.textAppearance,
+                text: binding,
+                isEditing: $isEditing
+            )
+            .constraints(constraints, alignment: .topLeading)
+            .onChange(of: self.isEditing) { newValue in
+                let focusedID = newValue ? self.model.identifier : nil
+                self.thomasEnvironment.focusedID = focusedID
+            }
+            #endif
         }
-        #endif
     }
-
+    
     @ViewBuilder
     var body: some View {
         ZStack {
             if let hint = self.model.placeHolder {
                 Text(hint)
                     .textAppearance(placeHolderTextAppearance())
-                    .padding(
-                        EdgeInsets(top: 8, leading: 5, bottom: 0, trailing: 0)
-                    )
+                    .padding(5)
                     .constraints(constraints, alignment: .topLeading)
                     .opacity(input.isEmpty && !isEditing ? 1 : 0)
                     .animation(.linear(duration: 0.1))
@@ -56,7 +80,9 @@ struct TextInput: View {
             createTextEditor()
                 .id(self.model.identifier)
         }
-        .constraints(constraints, alignment: .topLeading)
+        #if !os(watchOS)
+        .keyboardType(keyboardType)
+        #endif
         .background(self.model.backgroundColor)
         .border(self.model.border)
         .common(self.model, formInputID: self.model.identifier)
@@ -102,6 +128,68 @@ struct TextInput: View {
         return appearance
     }
 }
+
+@available(iOS 16.0, tvOS 16, watchOS 9.0, *)
+struct AirshipTexField: View {
+    
+    let model: TextInputModel
+    let constraints: ViewConstraints
+
+    @Binding var binding: String
+    @Binding var isEditing: Bool
+
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        let axis: Axis = self.model.inputType == .textMultiline ? .vertical : .horizontal
+        TextField("", text: $binding, axis: axis)
+            .padding(5)
+            .onChange(of: binding) { [binding] newValue in
+                if (axis == .vertical) {
+                    let oldCount = binding.filter { $0 == "\n" }.count
+                    let newCount = newValue.filter { $0 == "\n" }.count
+
+                    if (newCount == oldCount + 1) {
+                        self.binding = binding
+                        self.focused = false
+                    }
+                }
+            }
+            .constraints(constraints, alignment: .topLeading)
+            .focused($focused)
+            .foregroundColor(self.model.textAppearance.color.toColor(colorScheme))
+            .contentShape(Rectangle())
+            .onTapGesture {
+                self.focused = true
+            }
+            .applyViewAppearance(self.model.textAppearance)
+            .applyIf(isUnderlined, transform: { content in
+                content.underline()
+            })
+            .onChange(of: focused) { newValue in
+                if (newValue) {
+                    self.thomasEnvironment.focusedID = self.model.identifier
+                } else if (self.thomasEnvironment.focusedID == self.model.identifier) {
+                    self.thomasEnvironment.focusedID = nil
+                }
+
+                isEditing = newValue
+            }
+    }
+    
+    private var isUnderlined : Bool {
+        if let styles = self.model.textAppearance.styles {
+            if styles.contains(.underlined) {
+                return true
+            }
+        }
+        return false
+    }
+}
+
 
 #if !os(watchOS)
 /// TextView
@@ -185,7 +273,6 @@ internal struct AirshipTextView: UIViewRepresentable {
     }
 }
 
-
 extension UITextView {
     func applyTextAppearance<Appearance: BaseTextAppearance>(
         _ textAppearance: Appearance?,
@@ -196,93 +283,37 @@ extension UITextView {
                 textAppearance.alignment?.toNSTextAlignment() ?? .center
             self.textColor =
                 textAppearance.color.toUIColor(colorScheme)
-            self.font = resolveUIFont(textAppearance)
+            self.font = UIFont.resolveUIFont(textAppearance)
         }
     }
 
     func textModifyAppearance<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance?
+        _ textAppearance: Appearance
     ) {
         underlineText(textAppearance)
     }
 
     func underlineText<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance?
-    ) {
-        if let textAppearance = textAppearance {
-            if let styles = textAppearance.styles {
-                if styles.contains(.underlined) {
-                    let textRange = NSRange(
-                        location: 0,
-                        length: self.text.count
-                    )
-                    let attributeString = NSMutableAttributedString(
-                        attributedString:
-                            self.attributedText
-                    )
-                    attributeString.addAttribute(
-                        .underlineStyle,
-                        value: NSUnderlineStyle.single.rawValue,
-                        range: textRange
-                    )
-                    self.attributedText = attributeString
-                }
-            }
-        }
-    }
-
-    private func resolveUIFont<Appearance: BaseTextAppearance>(
         _ textAppearance: Appearance
-    ) -> UIFont {
-        var font = UIFont()
-        let scaledSize = UIFontMetrics.default.scaledValue(for: textAppearance.fontSize)
-
-        if let fontFamily = resolveFontFamily(
-            families: textAppearance.fontFamilies
-        ) {
-            font =
-                UIFont(
-                    name: fontFamily,
-                    size: scaledSize
-                )
-                ?? UIFont()
-        } else {
-            font = UIFont.systemFont(
-                ofSize: scaledSize
-            )
-        }
-
+    ) {
         if let styles = textAppearance.styles {
-            if styles.contains(.bold) {
-                font = font.bold()
-            }
-            if styles.contains(.italic) {
-                font = font.italic()
-            }
-        }
-        return font
-    }
-
-    func resolveFontFamily(families: [String]?) -> String? {
-        if let families = families {
-            for family in families {
-                let lowerCased = family.lowercased()
-
-                switch lowerCased {
-                case "serif":
-                    return "Times New Roman"
-                case "sans-serif":
-                    return nil
-                default:
-                    if !UIFont.fontNames(forFamilyName: lowerCased).isEmpty {
-                        return family
-                    }
-                }
+            if styles.contains(.underlined) {
+                let textRange = NSRange(
+                    location: 0,
+                    length: self.text.count
+                )
+                let attributeString = NSMutableAttributedString(
+                    attributedString:
+                        self.attributedText
+                )
+                attributeString.addAttribute(
+                    .underlineStyle,
+                    value: NSUnderlineStyle.single.rawValue,
+                    range: textRange
+                )
+                self.attributedText = attributeString
             }
         }
-        return nil
     }
 }
 #endif
-
-
