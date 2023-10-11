@@ -21,6 +21,10 @@ protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
     func fetchSubscriptionLists() async throws -> [String]
 
     func clearSubscriptionListCache()
+
+    var liveActivityUpdates: AsyncStream<[LiveActivityUpdate]> { get }
+
+    var pendingLiveActivityUpdates: [LiveActivityUpdate] { get }
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -81,6 +85,9 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
+    let liveActivityUpdates: AsyncStream<[LiveActivityUpdate]>
+    private let liveActivityUpdatesContinuation: AsyncStream<[LiveActivityUpdate]>.Continuation
+
     init(
         dataStore: PreferenceDataStore,
         workManager: AirshipWorkManagerProtocol,
@@ -99,6 +106,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.date = date
         self.cachedSubscriptionLists = CachedValue(date: date)
         self.audienceOverridesProvider = audienceOverridesProvider
+        (self.liveActivityUpdates, self.liveActivityUpdatesContinuation) = AsyncStream<[LiveActivityUpdate]>.makeStreamWithContinuation()
 
         self.workManager.registerWorker(
             ChannelAudienceManager.updateTaskID,
@@ -271,6 +279,16 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         )
     }
 
+    public var pendingLiveActivityUpdates: [LiveActivityUpdate] {
+        var liveAcitivtyUpdates: [LiveActivityUpdate] = []
+        self.updateLock.sync {
+            self.getUpdates().forEach { update in
+                liveAcitivtyUpdates += update.liveActivityUpdates
+            }
+        }
+        return liveAcitivtyUpdates
+    }
+
     private func resolveSubscriptionLists(
         channelID: String
     ) async throws -> [String] {
@@ -364,6 +382,9 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             return response.isServerError ? .failure : .success
         }
 
+        if (!update.liveActivityUpdates.isEmpty) {
+            self.liveActivityUpdatesContinuation.yield(update.liveActivityUpdates)
+        }
 
         await self.audienceOverridesProvider.channelUpdated(
             channelID: channelID,

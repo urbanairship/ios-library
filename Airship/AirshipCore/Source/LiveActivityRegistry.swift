@@ -1,9 +1,16 @@
 /* Copyright Airship and Contributors */
 
+#if canImport(ActivityKit)
+
 import Foundation
+
+@preconcurrency
+import Combine
 
 /// Registers and watches live activities
 actor LiveActivityRegistry {
+
+    private nonisolated let liveActivityUpdatesSubject = CurrentValueSubject<Void, Never>(())
 
     /// A stream of registry updates
     let updates: AsyncStream<LiveActivityUpdate>
@@ -35,7 +42,6 @@ actor LiveActivityRegistry {
         self.date = date
         self.dataStore = dataStore
         (self.updates, self.updatesContinuation) = AsyncStream<LiveActivityUpdate>.makeStreamWithContinuation()
-
     }
 
     /// For tests
@@ -60,6 +66,50 @@ actor LiveActivityRegistry {
         }
     }
 
+    func restoreStatus(pendingUpdates: [LiveActivityUpdate]) {
+        var infos = tracked
+
+        guard infos.contains(where: { $0.status == .pending }) else {
+            return
+        }
+
+        var updated = false
+        let pendingSets = pendingUpdates.filter { $0.action == .set }.map { $0.id }
+        for (index, _) in infos.enumerated() {
+            if infos[index].status == .pending, !pendingSets.contains(infos[index].id) {
+                infos[index].status = .registered
+                updated = true
+            }
+        }
+
+        if (updated) {
+            self.tracked = infos
+            liveActivityUpdatesSubject.send()
+        }
+    }
+
+
+    func updatesProcessed(updates: [LiveActivityUpdate]) {
+        let sets = updates.filter { $0.action == .set }
+        guard !sets.isEmpty else {
+            return
+        }
+
+        var infos = tracked
+        sets.forEach { update in
+            let index = infos.firstIndex(where: { info in
+                info.id == update.id
+            })
+
+            if let index = index {
+                infos[index].status = .registered
+            }
+        }
+
+        self.tracked = infos
+        liveActivityUpdatesSubject.send()
+    }
+
     /// Should be called after all activities have been restored.
     func clearUntracked() {
         tracked.filter { info in
@@ -78,9 +128,33 @@ actor LiveActivityRegistry {
                 name: info.name,
                 date: date
             )
+        }
+        liveActivityUpdatesSubject.send()
+    }
+
+    @available(iOS 16.1, *)
+    public nonisolated func registrationUpdates(
+        name: String?,
+        id: String?
+    ) -> LiveActivityRegistrationStatusUpdates {
+
+        return LiveActivityRegistrationStatusUpdates { previous in
+            var async = self.liveActivityUpdatesSubject.values.map { _ in
+                return await self.findInfos(id: id, name: name).last?.status ?? .unknown
+            }.makeAsyncIterator()
+
+            while !Task.isCancelled {
+                let status = await async.next()
+                if status != previous {
+                    return status
+                }
+            }
+
+            return nil
 
         }
     }
+
 
     /// Adds a live activity to the registry. The activity will be monitored and
     /// automatically removed after its finished.
@@ -88,7 +162,6 @@ actor LiveActivityRegistry {
         _ liveActivity: LiveActivityProtocol,
         name: String
     ) {
-
         guard liveActivity.isUpdatable else {
             return
         }
@@ -102,7 +175,8 @@ actor LiveActivityRegistry {
             id: liveActivity.id,
             name: name,
             token: liveActivity.pushTokenString,
-            startDate: self.date.now
+            startDate: self.date.now,
+            status: .pending
         )
 
         self.tracked.append(info)
@@ -115,6 +189,7 @@ actor LiveActivityRegistry {
         }
 
         watchActivity(liveActivity, name: info.name)
+        liveActivityUpdatesSubject.send()
     }
 
     private func watchActivity(
@@ -169,6 +244,7 @@ actor LiveActivityRegistry {
 
             return false
         }
+        liveActivityUpdatesSubject.send()
     }
 
     private func yieldUpdate(
@@ -210,9 +286,13 @@ actor LiveActivityRegistry {
     }
 }
 
-private struct LiveActivityInfo: Codable {
+private struct LiveActivityInfo: Codable, Sendable {
     var id: String
     var name: String
     var token: String?
     var startDate: Date
+    var status: LiveActivityRegistrationStatus?
 }
+
+
+#endif
