@@ -3,7 +3,21 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestChannelAudienceManager: ChannelAudienceManagerProtocol {
+class TestChannelAudienceManager: ChannelAudienceManagerProtocol, @unchecked Sendable {
+    var pendingLiveActivityUpdates: [LiveActivityUpdate] = []
+
+    let liveActivityUpdates: AsyncStream<[LiveActivityUpdate]>
+    let liveActivityUpdatesContinuation: AsyncStream<[LiveActivityUpdate]>.Continuation
+
+    private(set) var operations: [ContactOperation] = []
+    var generateDefaultContactIDCalled: Bool = false
+
+    init() {
+        (
+            self.liveActivityUpdates,
+            self.liveActivityUpdatesContinuation
+        ) = AsyncStream<[LiveActivityUpdate]>.makeStreamWithContinuation()
+    }
 
     public let subscriptionListEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never

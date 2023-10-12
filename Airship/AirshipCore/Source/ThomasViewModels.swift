@@ -1282,6 +1282,7 @@ struct TextInputModel: BaseModel, Accessible {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    let inputType: TextInputType
 
     enum CodingKeys: String, CodingKey {
         case textAppearance = "text_appearance"
@@ -1294,6 +1295,7 @@ struct TextInputModel: BaseModel, Accessible {
         case enableBehaviors = "enabled"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
+        case inputType = "input_type"
     }
 }
 

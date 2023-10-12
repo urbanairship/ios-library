@@ -5,6 +5,7 @@ import Foundation
 
 /// Manages work for the Airship SDK
 final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
+
     private let rateLimitor = WorkRateLimiter()
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()
@@ -12,8 +13,8 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private let startTask: Task<Void, Never>
     private let backgroundWaitTask: AirshipMainActorWrapper<AirshipCancellable?> = AirshipMainActorWrapper(nil)
     private let queue: AsyncSerialQueue = AsyncSerialQueue()
+    private let backgroundWorkRequests: Atomic<[AirshipWorkRequest]> = Atomic([])
 
-    
     /// Shared instance
     static let shared = AirshipWorkManager()
 
@@ -41,7 +42,6 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         )
     }
 
-
     @objc
     @MainActor(unsafe)
     private func applicationDidEnterBackground() {
@@ -55,7 +55,12 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
             cancellable.cancel()
         }
 
-        cancellable.value = Task {
+
+        cancellable.value = Task {  [workers, backgroundWorkRequests]  in
+            for request in backgroundWorkRequests.value {
+                await workers.dispatchWorkRequest(request)
+            }
+
             let sleep = await workers.calculateBackgroundWaitTime(maxTime: 15.0)
             try? await Task.sleep(nanoseconds: UInt64(max(sleep, 5.0) * 1_000_000_000))
             background?.cancel()
@@ -140,6 +145,10 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         queue.enqueue { [workers = self.workers] in
             await workers.dispatchWorkRequest(request)
         }
+    }
+
+    func autoDispatchWorkRequestOnBackground(_ request: AirshipWorkRequest) {
+        backgroundWorkRequests.value.append(request)
     }
 }
 

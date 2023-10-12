@@ -3,6 +3,17 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.5.0 October 12, 2023
+Minor release that adds support for querying the Airship registration status of a Live Activity, improves gif loading in Scenes & Surveys, and improves text input handling in Surveys. Applications that use Live Activities or several large GIFs in Scenes & Surveys should update.
+
+### Changes
+- Optimized GIF loading for Scenes & Surveys.
+- Improve text input on iOS 16+ for Surveys.
+- Fixed carthage build due to a missing dependency on AirshipDebug.
+- Added an additional attempt to upload a Live Activity registration upload on background if it previously failed.
+- Added new `liveActivityRegistrationStatusUpdates(name:)` and `liveActivityRegistrationStatusUpdates(activity:)` on `AirshipChannel` to make it possible to query the current registration status of a Live Activity with Airship.
+- Extended the background task used for waiting for a Live Activity token from 10 seconds to 30 seconds.
+
 ## Version 17.4.0 September 28, 2023
 Minor release that improves refreshing the feeds for in-app experiences and feature flags, adds a new interaction event for feature flags, and fixes a reporting issue with direct opens and sessions counts for apps that are scene enabled.
 

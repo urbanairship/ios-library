@@ -25,14 +25,29 @@ struct ScrollLayout: View {
     }
 
     @ViewBuilder
+    private func makeScrollView(axis: Axis.Set) -> some View {
+
+        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+            ScrollView(axis) {
+                makeContent()
+            }
+            .scrollDismissesKeyboard(
+                self.thomasEnvironment.focusedID != nil ? .immediately : .never
+            )
+        } else {
+            ScrollView(axis) {
+                makeContent()
+            }
+        }
+    }
+
+    @ViewBuilder
     private func makeScrollView() -> some View {
         let isVertical = self.model.direction == .vertical
         let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
 
         ScrollViewReader { proxy in
-            ScrollView(axis) {
-                makeContent()
-            }
+            makeScrollView(axis: axis)
             .clipped()
             .onChange(
                 of: self.thomasEnvironment.keyboardState

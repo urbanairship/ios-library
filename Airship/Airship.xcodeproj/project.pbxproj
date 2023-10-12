@@ -298,6 +298,13 @@
 		6E2486F22898341400657CE4 /* ConditionsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F02898341400657CE4 /* ConditionsMonitor.swift */; };
 		6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */; };
 		6E2486FD2899C06100657CE4 /* PreferenceCenterViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */; };
+		6E29474B2AD47E15009EC6DD /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
+		6E29474D2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */; };
+		6E29474E2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */; };
+		6E29474F2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */; };
+		6E2947512AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */; };
+		6E2947522AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */; };
+		6E2947532AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */; };
 		6E299FD528D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E299FD428D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift */; };
 		6E299FD728D13E54001305A7 /* AirshipRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E299FD628D13E54001305A7 /* AirshipRequest.swift */; };
 		6E299FD828D13E54001305A7 /* AirshipRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E299FD628D13E54001305A7 /* AirshipRequest.swift */; };
@@ -1715,6 +1722,13 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
+		6E2947492AD47E0C009EC6DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 847BFFF3267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
+		};
 		6E2F5A912A67314A00CABD3D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -2179,6 +2193,8 @@
 		6E2486F02898341400657CE4 /* ConditionsMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConditionsMonitor.swift; sourceTree = "<group>"; };
 		6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTheme.swift; sourceTree = "<group>"; };
 		6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewLoader.swift; sourceTree = "<group>"; };
+		6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatus.swift; sourceTree = "<group>"; };
+		6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatusUpdates.swift; sourceTree = "<group>"; };
 		6E299FD428D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAirshipRequestSessionTest.swift; sourceTree = "<group>"; };
 		6E299FD628D13E54001305A7 /* AirshipRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipRequest.swift; sourceTree = "<group>"; };
 		6E299FDA28D14208001305A7 /* AirshipResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipResponse.swift; sourceTree = "<group>"; };
@@ -2922,6 +2938,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E29474B2AD47E15009EC6DD /* AirshipPreferenceCenter.framework in Frameworks */,
 				3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */,
 				3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */,
 				6E2F5A932A67316C00CABD3D /* AirshipFeatureFlags.framework in Frameworks */,
@@ -4052,6 +4069,8 @@
 				6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */,
 				6E7DB38228ECDC41002725F6 /* LiveActivity.swift */,
 				6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */,
+				6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */,
+				6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */,
 			);
 			name = LiveActivities;
 			sourceTree = "<group>";
@@ -5507,6 +5526,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E29474A2AD47E0C009EC6DD /* PBXTargetDependency */,
 				6E2F5A922A67314A00CABD3D /* PBXTargetDependency */,
 				3CA0E2DA237CD59100EE76CF /* PBXTargetDependency */,
 				3C39D3082384C8B6003C50D4 /* PBXTargetDependency */,
@@ -6536,11 +6556,13 @@
 				6E44626729E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
 				6E1C9C4D271F78AE009EF9EF /* MarginViewModifier.swift in Sources */,
 				6E6ED1692683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */,
+				6E29474D2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */,
 				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
 				6EE49C082A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
+				6E2947512AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */,
 				6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				A67EC24B279B1C34009089E1 /* ScopedSubscriptionListUpdate.swift in Sources */,
 				A684939D273436370021675E /* FontViewModifier.swift in Sources */,
@@ -6876,6 +6898,7 @@
 				6E91E44E28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
 				6EDE29412A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */,
 				6E75F50F29CA7FD000E3585A /* AutomationAudienceOverridesProvider.swift in Sources */,
+				6E29474F2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				A6722A7D281A9EDA0033F54D /* AssociatedChannel.swift in Sources */,
 				A6722A7E281A9EDA0033F54D /* ContactAPIClient.swift in Sources */,
 				A6722A80281A9EDA0033F54D /* ContactOperation.swift in Sources */,
@@ -6940,6 +6963,7 @@
 				A6722AAC281A9EDA0033F54D /* AirshipDate.swift in Sources */,
 				A6722AAE281A9EDA0033F54D /* Dispatcher.swift in Sources */,
 				A6722AAF281A9EDA0033F54D /* Semaphore.swift in Sources */,
+				6E2947532AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */,
 				A6722AB0281A9EDA0033F54D /* NSArrayValueTransformer.swift in Sources */,
 				6E6363EE29DDF84B009C358A /* SerialQueue.swift in Sources */,
 				A6722AB1281A9EDA0033F54D /* NSDictionaryValueTransformer.swift in Sources */,
@@ -7632,11 +7656,13 @@
 				6E44626829E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
 				A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */,
 				6E4E5B3E26E7F91600198175 /* Attributes.swift in Sources */,
+				6E29474E2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				6E692B0829E0DA5200D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
 				6EE49C092A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
 				6E510C242721DA86006D9126 /* ViewConstraintsViewModifier.swift in Sources */,
+				6E2947522AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */,
 				3CC8AA0726BB3C7900405614 /* Push.swift in Sources */,
 				6EC755A82A4F8FBB00851ABB /* AudienceHashSelector.swift in Sources */,
 				A684939E273436370021675E /* FontViewModifier.swift in Sources */,
@@ -7736,6 +7762,11 @@
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E0B8746294A9C950064B7BD /* PBXContainerItemProxy */;
+		};
+		6E29474A2AD47E0C009EC6DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */;
+			targetProxy = 6E2947492AD47E0C009EC6DD /* PBXContainerItemProxy */;
 		};
 		6E2F5A922A67314A00CABD3D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

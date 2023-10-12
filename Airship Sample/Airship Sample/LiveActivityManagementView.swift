@@ -28,6 +28,7 @@ struct LiveActivityManagementView: View {
                             DeliveryActivityView(
                                 activity: self.viewModel.activities[index]
                             )
+                            .id(self.viewModel.activities[index].id)
                         }
                         .onDelete { (indexSet) in
                             self.viewModel.remove(atOffsets: indexSet)
@@ -76,6 +77,7 @@ struct LiveActivityManagementView: View {
                 Activity<DeliveryAttributes>
                 .activities
         }
+
         func add() {
             let state = DeliveryAttributes.ContentState(
                 stopsAway: 10
@@ -128,10 +130,13 @@ struct DeliveryActivityView: View {
     let activity: Activity<DeliveryAttributes>
 
     @State
-    var status: String
+    var status: String?
 
     @State
     var pushToken: String?
+
+    @State
+    var airshipStatus: String?
 
     init(activity: Activity<DeliveryAttributes>) {
         self.activity = activity
@@ -145,7 +150,10 @@ struct DeliveryActivityView: View {
             Text(activity.attributes.orderNumber)
                 .font(.headline)
 
-            Text("State: \(status)")
+            Text("Registration Status: \(airshipStatus ?? "")")
+                .font(.subheadline)
+
+            Text("State: \(status ?? "")")
                 .font(.subheadline)
 
             Text("Token: \(pushToken ?? "")")
@@ -165,9 +173,21 @@ struct DeliveryActivityView: View {
             }
         }
         .task {
+            await MainActor.run {
+                self.pushToken = activity.pushToken?.deviceToken
+            }
             for await update in activity.pushTokenUpdates {
                 await MainActor.run {
                     self.pushToken = update.deviceToken
+                }
+            }
+        }
+        .task {
+            for await update in Airship.channel.liveActivityRegistrationStatusUpdates(
+                activity: activity
+            ) {
+                await MainActor.run {
+                    self.airshipStatus = update.rawValue.capitalized(with: .current)
                 }
             }
         }

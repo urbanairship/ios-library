@@ -61,6 +61,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
 
     private var isChannelCreationEnabled: Bool
 
+
     /// The channel identifier.
     public var identifier: String? {
         return self.channelRegistrar.channelID
@@ -198,14 +199,23 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         self.observeNotificationCenterEvents()
         self.updateRegistration()
 
+
         #if canImport(ActivityKit)
         Task {
             for await update in self.liveActivityRegistry.updates {
                 self.audienceManager.addLiveActivityUpdate(update)
             }
         }
-        #endif
 
+        Task {
+            await self.liveActivityRegistry.restoreStatus(
+                pendingUpdates: self.audienceManager.pendingLiveActivityUpdates
+            )
+            for await updates in self.audienceManager.liveActivityUpdates {
+                await self.liveActivityRegistry.updatesProcessed(updates: updates)
+            }
+        }
+        #endif
     }
 
     // NOTE: For internal use only. :nodoc:
@@ -688,6 +698,29 @@ import ActivityKit
 @available(iOS 16.1, *)
 extension AirshipChannel {
 
+    /// Gets an AsyncSequence of `LiveActivityRegistrationStatus` updates for a given live acitvity name.
+    /// - Parameters:
+    ///     - name: The live activity name
+    /// - Returns A `LiveActivityRegistrationStatusUpdates`
+    @available(iOS 16.1, *)
+    public func liveActivityRegistrationStatusUpdates(
+        name: String
+    ) -> LiveActivityRegistrationStatusUpdates {
+
+        self.liveActivityRegistry.registrationUpdates(name: name, id: nil)
+    }
+
+    /// Gets an AsyncSequence of `LiveActivityRegistrationStatus` updates for a given live acitvity ID.
+    /// - Parameters:
+    ///     - activity: The live activity
+    /// - Returns A `LiveActivityRegistrationStatusUpdates`
+    @available(iOS 16.1, *)
+    public func liveActivityRegistrationStatusUpdates<T: ActivityAttributes>(
+        activity: Activity<T>
+    ) -> LiveActivityRegistrationStatusUpdates {
+        self.liveActivityRegistry.registrationUpdates(name: nil, id: activity.id)
+    }
+
     /// Tracks a live activity with Airship for the given name.
     /// Airship will monitor the push token and status and automatically
     /// add and remove it from the channel for the App. If an activity is already
@@ -704,6 +737,7 @@ extension AirshipChannel {
         name: String
     ) {
         let liveActivity = LiveActivity(activity: activity)
+
         Task {
             await liveActivityRegistry.addLiveActivity(liveActivity, name: name)
         }
@@ -727,6 +761,5 @@ extension AirshipChannel {
         }
     }
 }
-
 
 #endif

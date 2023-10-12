@@ -1,0 +1,1673 @@
+---
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 90%
+      height: auto
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.75
+  dismiss_on_touch_outside: false
+view:
+  type: state_controller
+  view:
+    type: form_controller
+    identifier: a_form
+    submit: submit_event
+    view:
+      type: scroll_layout
+      direction: vertical
+      view:
+        type: container
+        background_color:
+          default:
+            hex: "#ffffff"
+            alpha: 1
+        items:
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: auto
+            margin:
+              top: 32
+              bottom: 32
+              start: 16
+              end: 16
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+
+               #
+               # Label
+               #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 0
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Label
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: label
+                    text: Tap me
+                    text_appearance:
+                      alignment: start
+                      font_size: 16
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                    event_handlers:
+                      - type: tap
+                        state_actions:
+                          - type: set
+                            key: label_tapped
+                            value: true
+                    visibility:
+                      default: true
+                      invert_when_state_matches:
+                        key: label_tapped
+                        value:
+                          equals: true
+
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: label
+                    text: Tap me again?
+                    text_appearance:
+                      alignment: end
+                      font_size: 16
+                      color:
+                        default:
+                          hex: "#FF00FF"
+                          alpha: 1
+                    visibility:
+                      default: false
+                      invert_when_state_matches:
+                        key: label_tapped
+                        value:
+                          equals: true
+                    event_handlers:
+                      - type: tap
+                        state_actions:
+                          - type: set
+                            key: label_tapped
+                            value: false
+
+                #
+                # Label Button
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Label Button
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+
+                - size:
+                    width: auto
+                    height: auto
+                  view:
+                    type: label_button
+                    identifier: boop_button
+                    background_color:
+                      default:
+                        hex: "#000000"
+                        alpha: 1
+                    label:
+                      type: label
+                      text: Click to close
+                      text_appearance:
+                        alignment: start
+                        font_size: 12
+                        color:
+                          default:
+                            hex: "#FFFFFF"
+                            alpha: 1
+                    event_handlers:
+                      - type: tap
+                        state_actions:
+                          - type: set
+                            key: button_tapped
+                            value: true
+                    visibility:
+                      default: true
+                      invert_when_state_matches:
+                        key: button_tapped
+                        value:
+                          equals: true
+
+                - size:
+                    width: auto
+                    height: auto
+                  view:
+                    type: label_button
+                    background_color:
+                      default:
+                        hex: "#000000"
+                        alpha: 1
+                    identifier: close_confirm_button
+                    button_click:
+                      - dismiss
+                    label:
+                      type: label
+                      text: Are you sure?
+                      text_appearance:
+                        alignment: end
+                        font_size: 12
+                        color:
+                          default:
+                            hex: "#FF0000"
+                            alpha: 1
+                    visibility:
+                      default: false
+                      invert_when_state_matches:
+                        key: button_tapped
+                        value:
+                          equals: true
+
+                #
+                # Image Buttons (url & icon)
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 4
+                  view:
+                    type: label
+                    text: Image Button
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    start: 12
+                    end: 12
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 50%
+                          height: 100
+                        view:
+                          type: image_button
+                          identifier: image_button_airship
+                          image:
+                            type: url
+                            url: https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Airship_2019_logo.png/220px-Airship_2019_logo.png
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: airship_tapped
+                                  value: true
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              key: airship_tapped
+                              value:
+                                equals: true
+
+                      - size:
+                          width: 50%
+                          height: 100
+                        view:
+                          type: image_button
+                          identifier: image_button_airship_old
+                          image:
+                            type: url
+                            url: https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Urban_Airship_Logo.jpg/640px-Urban_Airship_Logo.jpg
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: airship_tapped
+                                  value: false
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: airship_tapped
+                              value:
+                                equals: true
+
+                      - size:
+                          width: 50%
+                          height: 100
+                        view:
+                          type: image_button
+                          identifier: image_button_forward
+                          image:
+                            type: icon
+                            icon: forward_arrow
+                            color:
+                              default:
+                                hex: "#00ff00"
+                                alpha: 1
+                            scale: 0.5
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: icon_tapped
+                                  value: true
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              key: icon_tapped
+                              value:
+                                equals: true
+
+                      - size:
+                          width: 50%
+                          height: 100
+                        view:
+                          type: image_button
+                          identifier: image_button_back
+                          image:
+                            type: icon
+                            icon: back_arrow
+                            color:
+                              default:
+                                hex: "#ff0000"
+                                alpha: 1
+                            scale: 0.5
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: icon_tapped
+                                  value: false
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: icon_tapped
+                              value:
+                                equals: true
+
+                #
+                # Toggle
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 4
+                  view:
+                    type: label
+                    text: Toggle
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 16
+                    start: 24
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: auto
+                          height: auto
+                        view:
+                          type: toggle
+                          identifier: toggle
+                          style:
+                            type: switch
+                            toggle_colors:
+                              on:
+                                default:
+                                  hex: "#00FF00"
+                                  alpha: 1
+                              off:
+                                default:
+                                  hex: "#FF0000"
+                                  alpha: 1
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: toggled
+                                  value: true
+                      - size:
+                          width: auto
+                          height: auto
+                        view:
+                          type: label
+                          text: "<-- You tapped!"
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: toggled
+                              value:
+                                equals: true
+                      - size:
+                          width: auto
+                          height: 24
+                        view:
+                          type: label
+                          text: "<-- Tap there"
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              key: toggled
+                              value:
+                                equals: true
+                #
+                # Radios
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                  view:
+                    type: label
+                    text: Radio Inputs
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 12
+                    start: 24
+                  view:
+                    type: radio_input_controller
+                    identifier: radios
+                    view:
+                      type: linear_layout
+                      direction: horizontal
+                      items:
+                        - size:
+                            width: auto
+                            height: auto
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                top: 4
+                              view:
+                                type: radio_input
+                                reporting_value: radio_red
+                                event_handlers:
+                                  - type: tap
+                                    state_actions:
+                                      - type: set
+                                        key: color
+                                        value: red
+                                style:
+                                  type: checkbox
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - border:
+                                            radius: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#000000"
+                                                alpha: 1
+                                            stroke_width: 2
+                                          color:
+                                            default:
+                                              hex: "#ff0000"
+                                              alpha: 1
+                                          scale: 1
+                                          type: ellipse
+                                    unselected:
+                                      shapes:
+                                        - border:
+                                            radius: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#000000"
+                                                alpha: 0.5
+                                            stroke_width: 1
+                                          color:
+                                            default:
+                                              hex: "#ff0000"
+                                              alpha: 0.5
+                                          scale: 1
+                                          type: ellipse
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                top: 4
+                              view:
+                                type: radio_input
+                                reporting_value: radio_yellow
+                                event_handlers:
+                                  - type: tap
+                                    state_actions:
+                                      - type: set
+                                        key: color
+                                        value: yellow
+                                style:
+                                  type: checkbox
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - border:
+                                            radius: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#000000"
+                                                alpha: 1
+                                            stroke_width: 2
+                                          color:
+                                            default:
+                                              hex: "#ffff00"
+                                              alpha: 1
+                                          scale: 1
+                                          type: ellipse
+                                    unselected:
+                                      shapes:
+                                        - border:
+                                            radius: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#000000"
+                                                alpha: 0.5
+                                            stroke_width: 1
+                                          color:
+                                            default:
+                                              hex: "#ffff00"
+                                              alpha: 0.5
+                                          scale: 1
+                                          type: ellipse
+                            - size:
+                                width: auto
+                                height: auto
+                              margin:
+                                top: 4
+                              view:
+                                type: radio_input
+                                reporting_value: radio_green
+                                event_handlers:
+                                  - type: tap
+                                    state_actions:
+                                      - type: set
+                                        key: color
+                                        value: green
+                                style:
+                                  type: checkbox
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - border:
+                                            radius: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#000000"
+                                                alpha: 1
+                                            stroke_width: 2
+                                          color:
+                                            default:
+                                              hex: "#00ff00"
+                                              alpha: 1
+                                          scale: 1
+                                          type: ellipse
+                                    unselected:
+                                      shapes:
+                                        - border:
+                                            radius: 2
+                                            stroke_color:
+                                              default:
+                                                hex: "#000000"
+                                                alpha: 0.5
+                                            stroke_width: 1
+                                          color:
+                                            default:
+                                              hex: "#00ff00"
+                                              alpha: 0.5
+                                          scale: 1
+                                          type: ellipse
+                        - size:
+                            width: auto
+                            height: auto
+                          margin:
+                            top: 4
+                            start: 8
+                          view:
+                            type: label
+                            text: "<-- Pick a color"
+                            text_appearance:
+                              color:
+                                default:
+                                  hex: "#000000"
+                                  alpha: 1
+                              font_size: 14
+                              alignment: start
+                            visibility:
+                              default: true
+                              invert_when_state_matches:
+                                key: color
+                                value:
+                                  is_present: true
+                        - size:
+                            width: auto
+                            height: auto
+                          margin:
+                            top: 4
+                            start: 8
+                          view:
+                            type: label
+                            text: "<-- You picked RED"
+                            text_appearance:
+                              color:
+                                default:
+                                  hex: "#000000"
+                                  alpha: 1
+                              font_size: 14
+                              alignment: start
+                            visibility:
+                              default: false
+                              invert_when_state_matches:
+                                key: color
+                                value:
+                                  equals: red
+                        - size:
+                            width: auto
+                            height: auto
+                          margin:
+                            top: 4
+                            start: 8
+                          view:
+                            type: label
+                            text: "<-- You picked YELLOW"
+                            text_appearance:
+                              color:
+                                default:
+                                  hex: "#000000"
+                                  alpha: 1
+                              font_size: 14
+                              alignment: start
+                            visibility:
+                              default: false
+                              invert_when_state_matches:
+                                key: color
+                                value:
+                                  equals: yellow
+                        - size:
+                            width: auto
+                            height: auto
+                          margin:
+                            top: 4
+                            start: 8
+                          view:
+                            type: label
+                            text: "<-- You picked GREEN"
+                            text_appearance:
+                              color:
+                                default:
+                                  hex: "#000000"
+                                  alpha: 1
+                              font_size: 14
+                              alignment: start
+                            visibility:
+                              default: false
+                              invert_when_state_matches:
+                                key: color
+                                value:
+                                  equals: green
+
+
+                #
+                # Checkboxes
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                  view:
+                    type: label
+                    text: Checkboxes
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 12
+                    start: 24
+                  view:
+                    type: checkbox_controller
+                    identifier: checkboxes
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                        - size:
+                            width: 100%
+                            height: auto
+                          view:
+                            type: linear_layout
+                            direction: horizontal
+                            items:
+                              - size:
+                                  width: auto
+                                  height: auto
+                                margin:
+                                  top: 0
+                                view:
+                                  type: checkbox
+                                  reporting_value: check_cyan
+                                  event_handlers:
+                                    - type: tap
+                                      state_actions:
+                                        - type: set
+                                          key: last_check
+                                          value: cyan
+                                  style:
+                                    type: checkbox
+                                    bindings:
+                                      selected:
+                                        icon:
+                                          icon: checkmark
+                                          color:
+                                            default:
+                                              hex: "#000000"
+                                              alpha: 1
+                                          scale: 0.5
+                                        shapes:
+                                          - border:
+                                              radius: 5
+                                              stroke_color:
+                                                default:
+                                                  hex: "#000000"
+                                                  alpha: 1
+                                              stroke_width: 2
+                                            color:
+                                              default:
+                                                hex: "#00ffff"
+                                                alpha: 1
+                                            scale: 1
+                                            type: rectangle
+                                      unselected:
+                                        shapes:
+                                          - border:
+                                              radius: 5
+                                              stroke_color:
+                                                default:
+                                                  hex: "#000000"
+                                                  alpha: 0.5
+                                              stroke_width: 1
+                                            color:
+                                              default:
+                                                hex: "#00ffff"
+                                                alpha: 0.5
+                                            scale: 1
+                                            type: rectangle
+                              - size:
+                                  width: auto
+                                  height: auto
+                                margin:
+                                  start: 8
+                                view:
+                                  type: label
+                                  text: "<-- Check it"
+                                  text_appearance:
+                                    color:
+                                      default:
+                                        hex: "#000000"
+                                        alpha: 1
+                                    font_size: 14
+                                    alignment: start
+                                  visibility:
+                                    default: true
+                                    invert_when_state_matches:
+                                      key: last_check
+                                      value:
+                                        is_present: true
+
+                              - size:
+                                  width: auto
+                                  height: auto
+                                margin:
+                                  start: 8
+                                view:
+                                  type: label
+                                  text: "<-- Tapped last"
+                                  text_appearance:
+                                    color:
+                                      default:
+                                        hex: "#000000"
+                                        alpha: 1
+                                    font_size: 14
+                                    alignment: start
+                                  visibility:
+                                    default: false
+                                    invert_when_state_matches:
+                                      key: last_check
+                                      value:
+                                        equals: cyan
+
+                        - size:
+                            width: 100%
+                            height: auto
+                          margin:
+                            top: 4
+                          view:
+                            type: linear_layout
+                            direction: horizontal
+                            items:
+                              - size:
+                                  width: auto
+                                  height: auto
+                                view:
+                                  type: checkbox
+                                  reporting_value: check_magenta
+                                  event_handlers:
+                                    - type: tap
+                                      state_actions:
+                                        - type: set
+                                          key: last_check
+                                          value: magenta
+                                  style:
+                                    type: checkbox
+                                    bindings:
+                                      selected:
+                                        icon:
+                                          icon: checkmark
+                                          color:
+                                            default:
+                                              hex: "#000000"
+                                              alpha: 1
+                                          scale: 0.5
+                                        shapes:
+                                          - border:
+                                              radius: 5
+                                              stroke_color:
+                                                default:
+                                                  hex: "#000000"
+                                                  alpha: 1
+                                              stroke_width: 2
+                                            color:
+                                              default:
+                                                hex: "#ff00ff"
+                                                alpha: 1
+                                            scale: 1
+                                            type: rectangle
+                                      unselected:
+                                        shapes:
+                                          - border:
+                                              radius: 5
+                                              stroke_color:
+                                                default:
+                                                  hex: "#000000"
+                                                  alpha: 0.5
+                                              stroke_width: 1
+                                            color:
+                                              default:
+                                                hex: "#ff00ff"
+                                                alpha: 0.5
+                                            scale: 1
+                                            type: rectangle
+                              - size:
+                                  width: auto
+                                  height: auto
+                                margin:
+                                  start: 8
+                                view:
+                                  type: label
+                                  text: "<-- Check it"
+                                  text_appearance:
+                                    color:
+                                      default:
+                                        hex: "#000000"
+                                        alpha: 1
+                                    font_size: 14
+                                    alignment: start
+                                  visibility:
+                                    default: true
+                                    invert_when_state_matches:
+                                      key: last_check
+                                      value:
+                                        is_present: true
+
+                              - size:
+                                  width: auto
+                                  height: auto
+                                margin:
+                                  start: 8
+                                view:
+                                  type: label
+                                  text: "<-- Tapped last"
+                                  text_appearance:
+                                    color:
+                                      default:
+                                        hex: "#000000"
+                                        alpha: 1
+                                    font_size: 14
+                                    alignment: start
+                                  visibility:
+                                    default: false
+                                    invert_when_state_matches:
+                                      key: last_check
+                                      value:
+                                        equals: magenta
+                #
+                # Text Input
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Text Input
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 125
+                          height: auto
+                        margin:
+                          start: 24
+                        view:
+                          type: text_input
+                          place_holder: Tap in here
+                          identifier: text_input
+                          border:
+                            radius: 5
+                            stroke_width: 1
+                            stroke_color:
+                              default:
+                                type: hex
+                                hex: "#cccccc"
+                                alpha: 1
+                          text_appearance:
+                            alignment: start
+                            font_size: 14
+                            color:
+                              default:
+                                type: hex
+                                hex: "#000000"
+                                alpha: 1
+                          input_type: text
+                          required: false
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: text_input_tapped
+                                  value: true
+
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: text_input_tapped
+                              value:
+                                equals: true
+
+
+                #
+                # Score
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Score
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 125
+                          height: 32
+                        margin:
+                          start: 24
+                        view:
+                          type: score
+                          identifier: score_input
+                          border:
+                            radius: 5
+                            stroke_width: 1
+                            stroke_color:
+                              default:
+                                type: hex
+                                hex: "#cccccc"
+                                alpha: 1
+                          required: false
+                          style:
+                            type: number_range
+                            start: 1
+                            end: 5
+                            spacing: 1
+                            bindings:
+                              selected:
+                                shapes:
+                                  - type: rectangle
+                                    scale: 0.75
+                                    border:
+                                      radius: 2
+                                      stroke_width: 1
+                                      stroke_color:
+                                        default:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: .5
+                                text_appearance:
+                                  alignment: center
+                                  font_size: 12
+                                  color:
+                                    default:
+                                      type: hex
+                                      hex: "#ffffff"
+                                      alpha: 1
+                              unselected:
+                                shapes:
+                                  - type: rectangle
+                                    scale: 0.75
+                                    border:
+                                      radius: 2
+                                      stroke_width: 1
+                                      stroke_color:
+                                        default:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#ffffff"
+                                        alpha: 1
+                                text_appearance:
+                                  font_size: 12
+                                  color:
+                                    default:
+                                      type: hex
+                                      hex: "#000000"
+                                      alpha: 1
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: score_tapped
+                                  value: true
+
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: score_tapped
+                              value:
+                                equals: true
+
+
+                #
+                # Media Image
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Media Image
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 150
+                          height: 100
+                        view:
+                          type: media
+                          media_fit: center_inside
+                          url: https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Airship_2019_logo.png/220px-Airship_2019_logo.png
+                          media_type: image
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: media_image_tapped
+                                  value: true
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              key: media_image_tapped
+                              value:
+                                equals: true
+                      - size:
+                          width: 150
+                          height: 100
+                        view:
+                          type: media
+                          media_fit: center_inside
+                          url: https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Urban_Airship_Logo.jpg/640px-Urban_Airship_Logo.jpg
+                          media_type: image
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: media_image_tapped
+                                  value: false
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: media_image_tapped
+                              value:
+                                equals: true
+
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: media_image_tapped
+                              value:
+                                is_present: true
+
+                #
+                # Media Video
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Media Video
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 175
+                          height: auto
+                        view:
+                          type: media
+                          media_fit: center_inside
+                          url: https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
+                          media_type: video
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: media_video_tapped
+                                  value: true
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: media_video_tapped
+                              value:
+                                equals: true
+
+                #
+                # Media SVG
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Media SVG
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    start: 16
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 75
+                          height: 75
+                        view:
+                          type: media
+                          media_fit: center_inside
+                          url: https://www.airship.com/wp-content/themes/airship/images/logo-mark.svg
+                          media_type: image
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: media_svg_tapped
+                                  value: true
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              key: media_svg_tapped
+                              value:
+                                equals: true
+                      - size:
+                          width: 75
+                          height: 75
+                        view:
+                          type: media
+                          media_fit: center_inside
+                          url: https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Zeppelin_%28example%29.svg/512px-Zeppelin_%28example%29.svg.png?20180723125412
+                          media_type: image
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: media_svg_tapped
+                                  value: false
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: media_svg_tapped
+                              value:
+                                equals: true
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: media_svg_tapped
+                              value:
+                                is_present: true
+
+                #
+                # WebView
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: WebView
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 50%
+                          height: 150
+                        view:
+                          type: web_view
+                          url: "https://example.com"
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: web_view_tapped
+                                  value: true
+
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: web_view_tapped
+                              value:
+                                equals: true
+
+                #
+                # Pager Indicator
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Pager Indicator
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 50%
+                          height: 75
+                        view:
+                          type: pager_controller
+                          identifier: pager_controller
+                          view:
+                            type: container
+                            border:
+                              radius: 2
+                              stroke_width: 1
+                              stroke_color:
+                                default:
+                                  type: hex
+                                  hex: "#000000"
+                                  alpha: 1
+                            items:
+                              - position:
+                                  vertical: center
+                                  horizontal: center
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  type: pager
+                                  items:
+                                    - identifier: "page1"
+                                      view:
+                                        type: empty_view
+                                        background_color:
+                                          default:
+                                            hex: "#00FF00"
+                                            alpha: 0.5
+                                    - identifier: "page2"
+                                      view:
+                                        type: empty_view
+                                        background_color:
+                                          default:
+                                            hex: "#FFFF00"
+                                            alpha: 0.5
+                                    - identifier: "page2"
+                                      view:
+                                        type: empty_view
+                                        background_color:
+                                          default:
+                                            hex: "#FF00FF"
+                                            alpha: 0.5
+
+                              - position:
+                                  horizontal: center
+                                  vertical: bottom
+                                size:
+                                  height: 24
+                                  width: auto
+                                margin:
+                                  bottom: 8
+                                view:
+                                  type: pager_indicator
+                                  background_color:
+                                    default:
+                                      hex: "#333333"
+                                      alpha: 0.7
+                                  border:
+                                    radius: 4
+                                  spacing: 4
+                                  event_handlers:
+                                    - type: tap
+                                      state_actions:
+                                        - type: set
+                                          key: pager_indicator_tapped
+                                          value: true
+                                  bindings:
+                                    selected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 2.25
+                                          scale: 0.9
+                                          border:
+                                            radius: 4
+                                            stroke_width: 1
+                                            stroke_color:
+                                              default:
+                                                hex: "#ffffff"
+                                                alpha: 0.7
+                                          color:
+                                            default:
+                                              hex: "#ffffff"
+                                              alpha: 1
+                                    unselected:
+                                      shapes:
+                                        - type: rectangle
+                                          aspect_ratio: 2.25
+                                          scale: .9
+                                          border:
+                                            radius: 4
+                                            stroke_width: 1
+                                            stroke_color:
+                                              default:
+                                                hex: "#ffffff"
+                                                alpha: 0.7
+                                          color:
+                                            default:
+                                              hex: "#000000"
+                                              alpha: 0
+
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: pager_indicator_tapped
+                              value:
+                                equals: true
+                #
+                # Empty View
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 24
+                    bottom: 12
+                  view:
+                    type: label
+                    text: Empty View
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: linear_layout
+                    direction: horizontal
+                    items:
+                      - size:
+                          width: 50%
+                          height: 75
+                        view:
+                          type: empty_view
+                          border:
+                            radius: 2
+                            stroke_width: 1
+                            stroke_color:
+                              default:
+                                type: hex
+                                hex: "#000000"
+                                alpha: 1
+                          event_handlers:
+                            - type: tap
+                              state_actions:
+                                - type: set
+                                  key: empty_tapped
+                                  value: true
+
+                      - size:
+                          width: auto
+                          height: auto
+                        margin:
+                          start: 8
+                        view:
+                          type: label
+                          text: <-- you tapped!
+                          text_appearance:
+                            color:
+                              default:
+                                hex: "#000000"
+                                alpha: 1
+                            font_size: 14
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              key: empty_tapped
+                              value:
+                                equals: true
