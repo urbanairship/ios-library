@@ -140,7 +140,7 @@ actor LiveActivityRegistry {
 
         return LiveActivityRegistrationStatusUpdates { previous in
             var async = self.liveActivityUpdatesSubject.values.map { _ in
-                return await self.findInfos(id: id, name: name).last?.status ?? .unknown
+                return await self.findInfos(id: id, name: name).last?.status ?? .notTracked
             }.makeAsyncIterator()
 
             while !Task.isCancelled {

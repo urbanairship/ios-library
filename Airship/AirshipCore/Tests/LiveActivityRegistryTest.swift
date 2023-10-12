@@ -185,16 +185,15 @@ final class LiveActivityRegistryTest: XCTestCase {
 
     @available(iOS 16.1, *)
     public func testRegistrationStatusByID() async {
-        // Not found
+        // notTracked
         var updates = registry.registrationUpdates(name: nil, id: "some-id").makeAsyncIterator()
         var status = await updates.next()
-        XCTAssertEqual(status, .unknown)
+        XCTAssertEqual(status, .notTracked)
 
-        // Added
         let activity = TestLiveActivity("some-id")
         await self.registry.addLiveActivity(activity, name: "some-name")
 
-        // Pending
+        // pending
         status = await updates.next()
         XCTAssertEqual(status, .pending)
 
@@ -204,7 +203,7 @@ final class LiveActivityRegistryTest: XCTestCase {
             ]
         )
 
-        // Registered
+        // registered
         status = await updates.next()
         XCTAssertEqual(status, .registered)
 
@@ -212,23 +211,22 @@ final class LiveActivityRegistryTest: XCTestCase {
         let otherActivity = TestLiveActivity("some-other-id")
         await self.registry.addLiveActivity(otherActivity, name: "some-name")
 
-        // Unknown since its by ID and has been replaced
+        // notTracked since its by ID and has been replaced
         status = await updates.next()
-        XCTAssertEqual(status, .unknown)
+        XCTAssertEqual(status, .notTracked)
     }
 
     @available(iOS 16.1, *)
     public func testRegistrationStatusByName() async {
-        // Not found
+        // notTracked
         var updates = registry.registrationUpdates(name: "some-name", id: nil).makeAsyncIterator()
         var status = await updates.next()
-        XCTAssertEqual(status, .unknown)
+        XCTAssertEqual(status, .notTracked)
 
-        // Added
         let activity = TestLiveActivity("some-id")
         await self.registry.addLiveActivity(activity, name: "some-name")
 
-        // Pending
+        // pending
         status = await updates.next()
         XCTAssertEqual(status, .pending)
 
@@ -238,30 +236,29 @@ final class LiveActivityRegistryTest: XCTestCase {
             ]
         )
 
-        // Registered
+        // registered
         status = await updates.next()
         XCTAssertEqual(status, .registered)
 
         let otherActivity = TestLiveActivity("some-other-id")
         await self.registry.addLiveActivity(otherActivity, name: "some-name")
 
-        // Pending since its by name
+        // pending since its by name
         status = await updates.next()
         XCTAssertEqual(status, .pending)
     }
 
     @available(iOS 16.1, *)
     public func testRegistrationStatus() async {
-        // Not found
+        // Not tracked
         var updates = registry.registrationUpdates(name: "some-name", id: nil).makeAsyncIterator()
         var status = await updates.next()
-        XCTAssertEqual(status, .unknown)
+        XCTAssertEqual(status, .notTracked)
 
-        // Added
         let activity = TestLiveActivity("some-id")
         await self.registry.addLiveActivity(activity, name: "some-name")
 
-        // Pending
+        // pending
         status = await updates.next()
         XCTAssertEqual(status, .pending)
 
@@ -271,7 +268,7 @@ final class LiveActivityRegistryTest: XCTestCase {
             ]
         )
 
-        // Registered
+        // registered
         status = await updates.next()
         XCTAssertEqual(status, .registered)
     }
