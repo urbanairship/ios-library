@@ -140,6 +140,12 @@ class AirshipInstance: AirshipInstanceProtocol {
             channelIDProvider: { channel.identifier },
             stableContactIDProvider: contact.getStableContactID
         )
+        
+        let meteredUsage = AirshipMeteredUsage(
+            config: self.config,
+            dataStore: dataStore,
+            channel: channel,
+            privacyManager: privacyManager)
 
         #if !os(tvOS) && !os(watchOS)
         self.channelCapture = ChannelCapture(
@@ -171,7 +177,8 @@ class AirshipInstance: AirshipInstanceProtocol {
 
         self.remoteConfigManager = RemoteConfigManager(
             remoteData: remoteData,
-            privacyManager: self.privacyManager
+            privacyManager: self.privacyManager,
+            meteredUsage: meteredUsage
         )
 
         self.actionRegistry.registerActions(

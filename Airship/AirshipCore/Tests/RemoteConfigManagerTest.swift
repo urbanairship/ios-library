@@ -23,6 +23,7 @@ class RemoteConfigManagerTest: XCTestCase {
         self.remoteConfigManager = RemoteConfigManager(
             remoteData: self.testRemoteData,
             privacyManager: self.privacyManager,
+            meteredUsage: AirshipMeteredUsage.test(dataStore: dataStore, privacyManager: privacyManager),
             moduleAdapter: self.testModuleAdapter,
             notificationCenter: self.notificationCenter,
             appVersion: "0.0.0"
@@ -136,8 +137,7 @@ class RemoteConfigManagerTest: XCTestCase {
             remoteDataURL: "cool://remote",
             deviceAPIURL: "cool://devices",
             analyticsURL: "cool://analytics",
-            chatURL: "cool://chat",
-            chatWebSocketURL: "cool://chatWebSocket"
+            meteredUsageURL: "cool://meteredUsage"
         )
 
         let remoteConfigData = try! JSONEncoder().encode(remoteConfig)
@@ -267,6 +267,7 @@ class RemoteConfigManagerTest: XCTestCase {
         self.remoteConfigManager = RemoteConfigManager(
             remoteData: self.testRemoteData,
             privacyManager: self.privacyManager,
+            meteredUsage: AirshipMeteredUsage.test(dataStore: dataStore, privacyManager: privacyManager),
             moduleAdapter: self.testModuleAdapter,
             notificationCenter: self.notificationCenter,
             appVersion: "2.0.0"
@@ -284,6 +285,23 @@ class RemoteConfigManagerTest: XCTestCase {
         XCTAssertEqual(
             200.0,
             self.testRemoteData.remoteDataRefreshInterval
+        )
+    }
+}
+
+extension AirshipMeteredUsage {
+    static func test(
+        dataStore: PreferenceDataStore,
+        privacyManager: AirshipPrivacyManager
+    ) -> AirshipMeteredUsage {
+        return AirshipMeteredUsage(
+            dataStore: dataStore,
+            channel: TestChannel(),
+            privacyManager: privacyManager,
+            client: MeteredTestApiClient(),
+            store: MeteredUsageStore(appKey: "test.app.key", inMemory: true),
+            workManager: TestWorkManager(),
+            notificationCenter: AirshipNotificationCenter()
         )
     }
 }

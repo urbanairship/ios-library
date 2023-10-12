@@ -21,10 +21,12 @@ final class RemoteConfigManager: @unchecked Sendable {
     private let appVersion: String
     private let notificationCenter: AirshipNotificationCenter
     private let lock = AirshipLock()
+    private let meteredUsage: AirshipMeteredUsage
 
     init(
         remoteData: RemoteDataProtocol,
         privacyManager: AirshipPrivacyManager,
+        meteredUsage: AirshipMeteredUsage,
         moduleAdapter: RemoteConfigModuleAdapterProtocol = RemoteConfigModuleAdapter(),
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? ""
@@ -34,6 +36,7 @@ final class RemoteConfigManager: @unchecked Sendable {
         self.moduleAdapter = moduleAdapter
         self.appVersion = appVersion
         self.notificationCenter = notificationCenter
+        self.meteredUsage = meteredUsage
     }
 
     func airshipReady() {
@@ -120,6 +123,8 @@ final class RemoteConfigManager: @unchecked Sendable {
     }
 
     func applyRemoteConfig(_ data: [AnyHashable: Any]) {
+        self.updateMeteredUsageConfig(data)
+        
         guard let remoteConfigData = data["airship_config"] else {
             return
         }
@@ -152,6 +157,23 @@ final class RemoteConfigManager: @unchecked Sendable {
             object: nil,
             userInfo: [RemoteConfigManager.remoteConfigKey: remoteConfig]
         )
+    }
+    
+    private func updateMeteredUsageConfig(_ source: [AnyHashable: Any]) {
+        guard let raw = source["metered_usage"] else { return }
+        
+        do {
+            let data = try JSONSerialization.data(
+                withJSONObject: raw,
+                options: []
+            )
+            
+            let parsed = try self.decoder.decode(MeteredUsageConfig.self, from: data)
+            meteredUsage.updateConfig(parsed)
+        } catch {
+            AirshipLogger.error("Invalid metered usage config \(error)")
+            return
+        }
     }
 
     @objc

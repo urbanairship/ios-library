@@ -103,8 +103,7 @@ class RuntimeConfigTest: XCTestCase {
             remoteDataURL: "cool://remote",
             deviceAPIURL: "cool://devices",
             analyticsURL: "cool://analytics",
-            chatURL: "cool://chat",
-            chatWebSocketURL: "cool://chatWebSocket"
+            meteredUsageURL: "cool://meteredUsage"
         )
 
         self.notificationCenter.post(
@@ -116,8 +115,9 @@ class RuntimeConfigTest: XCTestCase {
         XCTAssertEqual("cool://devices", config.deviceAPIURL)
         XCTAssertEqual("cool://analytics", config.analyticsURL)
         XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
-        XCTAssertEqual("cool://chat", config.chatURL)
-        XCTAssertEqual("cool://chatWebSocket", config.chatWebSocketURL)
+        XCTAssertEqual("cool://meteredUsage", config.meteredUsageURL)
+        XCTAssertNil(config.chatURL)
+        XCTAssertNil(config.chatWebSocketURL)
         XCTAssertEqual(1, updatedCount)
 
         self.notificationCenter.post(
@@ -129,16 +129,16 @@ class RuntimeConfigTest: XCTestCase {
         XCTAssertEqual("cool://devices", config.deviceAPIURL)
         XCTAssertEqual("cool://analytics", config.analyticsURL)
         XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
-        XCTAssertEqual("cool://chat", config.chatURL)
-        XCTAssertEqual("cool://chatWebSocket", config.chatWebSocketURL)
+        XCTAssertEqual("cool://meteredUsage", config.meteredUsageURL)
+        XCTAssertNil(config.chatURL)
+        XCTAssertNil(config.chatWebSocketURL)
         XCTAssertEqual(1, updatedCount)
 
         let differntConfig = RemoteConfig(
             remoteDataURL: "neat://remote",
             deviceAPIURL: "neat://devices",
             analyticsURL: "neat://analytics",
-            chatURL: "neat://chat",
-            chatWebSocketURL: "neat://chatWebSocket"
+            meteredUsageURL: "neat://meteredUsage"
         )
 
         self.notificationCenter.post(
@@ -150,8 +150,9 @@ class RuntimeConfigTest: XCTestCase {
         XCTAssertEqual("neat://devices", config.deviceAPIURL)
         XCTAssertEqual("neat://analytics", config.analyticsURL)
         XCTAssertEqual("neat://remote", config.remoteDataAPIURL)
-        XCTAssertEqual("neat://chat", config.chatURL)
-        XCTAssertEqual("neat://chatWebSocket", config.chatWebSocketURL)
+        XCTAssertEqual("neat://meteredUsage", config.meteredUsageURL)
+        XCTAssertNil(config.chatURL)
+        XCTAssertNil(config.chatWebSocketURL)
         XCTAssertEqual(2, updatedCount)
     }
 }

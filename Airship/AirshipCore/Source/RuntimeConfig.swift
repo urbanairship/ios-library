@@ -232,15 +232,17 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     @objc
     public var chatURL: String? {
-        return self.remoteConfigCache.remoteConfig?.chatURL
-            ?? self.defaultChatURL
+        return nil
     }
 
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     @objc
     public var chatWebSocketURL: String? {
-        return self.remoteConfigCache.remoteConfig?.chatWebSocketURL
-            ?? self.defaultChatWebSocketURL
+        return nil
+    }
+
+    var meteredUsageURL: String? {
+        return remoteConfigCache.remoteConfig?.meteredUsageURL
     }
 
     @objc
