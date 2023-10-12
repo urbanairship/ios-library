@@ -50,7 +50,7 @@ public class Thomas: NSObject {
     @MainActor
     public class func deferredDisplay(
         json: Any,
-        scene: UIWindowScene,
+        scene: () -> UIWindowScene?,
         extensions: ThomasExtensions? = nil,
         delegate: ThomasDelegate
     ) throws -> () -> Disposable {
@@ -71,7 +71,7 @@ public class Thomas: NSObject {
     @MainActor
     public class func deferredDisplay(
         data: Data,
-        scene: UIWindowScene,
+        scene: () -> UIWindowScene?,
         extensions: ThomasExtensions? = nil,
         delegate: ThomasDelegate
     ) throws -> () -> Disposable {
@@ -79,6 +79,9 @@ public class Thomas: NSObject {
 
         switch layout.presentation {
         case .banner(let presentation):
+            guard let scene = scene() else {
+                throw AirshipErrors.error("Unable to get scene")
+            }
             return try bannerDisplay(
                 presentation,
                 scene: scene,
@@ -87,6 +90,9 @@ public class Thomas: NSObject {
                 delegate: delegate
             )
         case .modal(let presentation):
+            guard let scene = scene() else {
+                throw AirshipErrors.error("Unable to get scene")
+            }
             return try modalDisplay(
                 presentation,
                 scene: scene,
@@ -94,14 +100,36 @@ public class Thomas: NSObject {
                 extensions: extensions,
                 delegate: delegate
             )
+        case .embedded(let presentation):
+            return {
+                AirshipEmbeddedViewManager.shared.addPending(
+                    presentation: presentation, layout: layout, extensions: extensions, delegate: delegate
+                )
+
+                return Disposable {
+                }
+            }
+
+
         }
+    }
+
+    @MainActor
+    @ViewBuilder
+    public class func makeView(
+        from data: Data,
+        extensions: ThomasExtensions? = nil,
+        delegate: ThomasDelegate
+    ) throws -> some View {
+
+
     }
 
     @MainActor
     @discardableResult
     public class func display(
         _ data: Data,
-        scene: UIWindowScene,
+        scene: () -> UIWindowScene?,
         extensions: ThomasExtensions? = nil,
         delegate: ThomasDelegate
     ) throws -> Disposable {

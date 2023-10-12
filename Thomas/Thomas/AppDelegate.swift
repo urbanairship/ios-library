@@ -2,6 +2,7 @@
 
 import AirshipCore
 import Foundation
+import AirshipMessageCenter
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -12,6 +13,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.

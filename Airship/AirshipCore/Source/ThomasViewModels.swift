@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct Layout: Decodable, Equatable {
+struct Layout: Decodable, Equatable, Sendable {
     let view: ViewModel
     let version: Int
     let presentation: PresentationModel
@@ -14,14 +14,16 @@ struct Layout: Decodable, Equatable {
     }
 }
 
-enum PresentationModelType: String, Decodable, Equatable {
+enum PresentationModelType: String, Decodable, Equatable, Sendable {
     case modal
     case banner
+    case embedded
 }
 
-enum PresentationModel: Decodable, Equatable {
+enum PresentationModel: Decodable, Equatable, Sendable {
     case banner(BannerPresentationModel)
     case modal(ModalPresentationModel)
+    case embedded(EmbeddedPresentationModel)
 
     enum CodingKeys: String, CodingKey {
         case type = "type"
@@ -44,11 +46,15 @@ enum PresentationModel: Decodable, Equatable {
             self = .modal(
                 try singleValueContainer.decode(ModalPresentationModel.self)
             )
+        case .embedded:
+            self = .embedded(
+                try singleValueContainer.decode(EmbeddedPresentationModel.self)
+            )
         }
     }
 }
 
-struct BannerPresentationModel: Decodable, Equatable {
+struct BannerPresentationModel: Decodable, Equatable, Sendable {
     let duration: Int?
     let placementSelectors: [BannerPlacementSelector]?
     let defaultPlacement: BannerPlacement
@@ -60,7 +66,7 @@ struct BannerPresentationModel: Decodable, Equatable {
     }
 }
 
-struct BannerPlacement: Decodable, Equatable {
+struct BannerPlacement: Decodable, Equatable, Sendable {
     let margin: Margin?
     let size: ConstrainedSize
     let position: BannerPosition
@@ -74,7 +80,7 @@ struct BannerPlacement: Decodable, Equatable {
     }
 }
 
-struct BannerPlacementSelector: Decodable, Equatable {
+struct BannerPlacementSelector: Decodable, Equatable, Sendable {
     let placement: BannerPlacement
     let windowSize: WindowSize?
     let orientation: Orientation?
@@ -86,7 +92,7 @@ struct BannerPlacementSelector: Decodable, Equatable {
     }
 }
 
-struct ModalPresentationModel: Decodable, Equatable {
+struct ModalPresentationModel: Decodable, Equatable, Sendable {
     let placementSelectors: [ModalPlacementSelector]?
     let defaultPlacement: ModalPlacement
     let dismissOnTouchOutside: Bool?
@@ -99,7 +105,7 @@ struct ModalPresentationModel: Decodable, Equatable {
         case device = "device"
     }
 
-    struct Device: Decodable, Equatable {
+    struct Device: Decodable, Equatable, Sendable {
         let orientationLock: Orientation?
         enum CodingKeys: String, CodingKey {
             case orientationLock = "lock_orientation"
@@ -107,7 +113,7 @@ struct ModalPresentationModel: Decodable, Equatable {
     }
 }
 
-struct ModalPlacement: Decodable, Equatable {
+struct ModalPlacement: Decodable, Equatable, Sendable {
     let margin: Margin?
     let size: ConstrainedSize
     let position: Position?
@@ -115,7 +121,7 @@ struct ModalPlacement: Decodable, Equatable {
     let ignoreSafeArea: Bool?
     let device: Device?
 
-    enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey, Sendable {
         case margin = "margin"
         case size = "size"
         case position = "position"
@@ -124,7 +130,7 @@ struct ModalPlacement: Decodable, Equatable {
         case device = "device"
     }
 
-    struct Device: Decodable, Equatable {
+    struct Device: Decodable, Equatable, Sendable {
         let orientationLock: Orientation?
         enum CodingKeys: String, CodingKey {
             case orientationLock = "lock_orientation"
@@ -133,7 +139,7 @@ struct ModalPlacement: Decodable, Equatable {
 
 }
 
-struct ModalPlacementSelector: Decodable, Equatable {
+struct ModalPlacementSelector: Decodable, Equatable, Sendable {
     let placement: ModalPlacement
     let windowSize: WindowSize?
     let orientation: Orientation?
@@ -145,28 +151,64 @@ struct ModalPlacementSelector: Decodable, Equatable {
     }
 }
 
-enum WindowSize: String, Decodable, Equatable {
+struct EmbeddedPresentationModel: Decodable, Equatable, Sendable {
+    let placementSelectors: [EmbeddedPlacementSelector]?
+    let defaultPlacement: EmbeddedPlacement
+    let embeddedID: String
+
+    enum CodingKeys: String, CodingKey {
+        case defaultPlacement = "default_placement"
+        case placementSelectors = "placement_selectors"
+        case embeddedID = "embedded_id"
+    }
+}
+
+struct EmbeddedPlacement: Decodable, Equatable, Sendable {
+    let margin: Margin?
+    let size: ConstrainedSize
+    let ignoreSafeArea: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case margin = "margin"
+        case size = "size"
+        case ignoreSafeArea = "ignore_safe_area"
+    }
+}
+
+struct EmbeddedPlacementSelector: Decodable, Equatable, Sendable {
+    let placement: EmbeddedPlacement
+    let windowSize: WindowSize?
+    let orientation: Orientation?
+
+    enum CodingKeys: String, CodingKey {
+        case placement = "placement"
+        case windowSize = "window_size"
+        case orientation = "orientation"
+    }
+}
+
+enum WindowSize: String, Decodable, Equatable, Sendable {
     case small = "small"
     case medium = "medium"
     case large = "large"
 }
 
-enum Orientation: String, Decodable, Equatable {
+enum Orientation: String, Decodable, Equatable, Sendable {
     case portrait = "portrait"
     case landscape = "landscape"
 }
 
-enum ShapeModelType: String, Decodable, Equatable {
+enum ShapeModelType: String, Decodable, Equatable, Sendable {
     case rectangle = "rectangle"
     case ellipse = "ellipse"
 }
 
-enum ToggleStyleModelType: String, Decodable, Equatable {
+enum ToggleStyleModelType: String, Decodable, Equatable, Sendable {
     case switchStyle = "switch"
     case checkboxStyle = "checkbox"
 }
 
-enum ToggleStyleModel: Decodable, Equatable {
+enum ToggleStyleModel: Decodable, Equatable, Sendable {
     case switchStyle(SwitchToggleStyleModel)
     case checkboxStyle(CheckboxToggleStyleModel)
 
@@ -221,7 +263,7 @@ enum ViewModelType: String, Decodable {
     case stateController = "state_controller"
 }
 
-indirect enum PagerGestureModel: Decodable, Equatable {
+indirect enum PagerGestureModel: Decodable, Equatable, Sendable {
     case swipeGesture(PagerDragGesture)
     case tapGesture(PagerTapGesture)
     case holdGesture(PagerHoldGesture)
@@ -252,7 +294,7 @@ indirect enum PagerGestureModel: Decodable, Equatable {
     }
 }
 
-indirect enum ViewModel: Decodable, Equatable {
+indirect enum ViewModel: Decodable, Equatable, Sendable {
     case container(ContainerModel)
     case linearLayout(LinearLayoutModel)
     #if !os(tvOS) && !os(watchOS)
@@ -383,7 +425,7 @@ indirect enum ViewModel: Decodable, Equatable {
     }
 }
 
-protocol BaseTextAppearance: Decodable, Equatable {
+protocol BaseTextAppearance: Decodable, Equatable, Sendable {
     var color: ThomasColor { get }
     var fontSize: Double { get }
     var alignment: TextAlignement? { get }
@@ -407,7 +449,7 @@ struct TextAppearance: BaseTextAppearance {
     }
 }
 
-protocol BaseModel: Decodable, Equatable {
+protocol BaseModel: Decodable, Equatable, Sendable {
     var type: ViewModelType { get }
     var border: Border? { get }
     var backgroundColor: ThomasColor? { get }
@@ -416,13 +458,13 @@ protocol BaseModel: Decodable, Equatable {
     var enableBehaviors: [EnableBehavior]? { get }
 }
 
-enum EventHandlerType: String, Decodable, Equatable {
+enum EventHandlerType: String, Decodable, Equatable, Sendable {
     case tap
     case focus
     case formInput = "form_input"
 }
 
-struct EventHandler: Decodable, Equatable {
+struct EventHandler: Decodable, Equatable, Sendable {
     let type: EventHandlerType
     let stateActions: [StateAction]
 
@@ -432,14 +474,14 @@ struct EventHandler: Decodable, Equatable {
     }
 }
 
-enum StateActionType: String, Decodable, Equatable {
+enum StateActionType: String, Decodable, Equatable, Sendable {
     case setState = "set"
     case clearState = "clear"
     case formValue = "set_form_value"
 
 }
 
-enum StateAction: Decodable, Equatable {
+enum StateAction: Decodable, Equatable, Sendable {
     case setState(SetStateAction)
     case clearState
     case formValue(SetFormValueStateAction)
@@ -468,7 +510,7 @@ enum StateAction: Decodable, Equatable {
     }
 }
 
-struct SetStateAction: Decodable, Equatable {
+struct SetStateAction: Decodable, Equatable, Sendable {
     let key: String
     let value: AirshipJSON?
 
@@ -478,7 +520,7 @@ struct SetStateAction: Decodable, Equatable {
     }
 }
 
-struct SetFormValueStateAction: Decodable, Equatable {
+struct SetFormValueStateAction: Decodable, Equatable, Sendable {
     let key: String
 
     enum CodingKeys: String, CodingKey {
@@ -486,7 +528,7 @@ struct SetFormValueStateAction: Decodable, Equatable {
     }
 }
 
-struct VisibilityInfo: Decodable, Equatable {
+struct VisibilityInfo: Decodable, Equatable, Sendable {
     let invertWhenStateMatches: JSONPredicate
     let defaultVisibility: Bool
 
@@ -549,7 +591,7 @@ struct ContainerModel: BaseModel {
     }
 }
 
-struct ContainerItem: Decodable, Equatable {
+struct ContainerItem: Decodable, Equatable, Sendable {
     let position: Position
     let margin: Margin?
     let size: Size
@@ -592,7 +634,7 @@ struct LinearLayoutModel: BaseModel {
     }
 }
 
-struct LinearLayoutItem: Decodable, Equatable {
+struct LinearLayoutItem: Decodable, Equatable, Sendable {
     let size: Size
     let margin: Margin?
     let view: ViewModel
@@ -671,7 +713,7 @@ struct MediaModel: BaseModel, Accessible {
     }
 }
 
-struct Video: Decodable, Equatable {
+struct Video: Decodable, Equatable, Sendable {
     let aspectRatio: Double?
     let showControls: Bool?
     let autoplay: Bool?
@@ -739,12 +781,12 @@ struct LabelButtonModel: BaseModel, Accessible {
     }
 }
 
-enum ButtonImageModelType: String, Decodable, Equatable {
+enum ButtonImageModelType: String, Decodable, Equatable, Sendable {
     case url
     case icon
 }
 
-enum ButtomImageModel: Decodable, Equatable {
+enum ButtomImageModel: Decodable, Equatable, Sendable {
     case url(ImageURLModel)
     case icon(IconModel)
 
@@ -769,7 +811,7 @@ enum ButtomImageModel: Decodable, Equatable {
     }
 }
 
-struct ImageURLModel: Decodable, Equatable {
+struct ImageURLModel: Decodable, Equatable, Sendable {
     let url: String
 
     enum CodingKeys: String, CodingKey {
@@ -777,14 +819,14 @@ struct ImageURLModel: Decodable, Equatable {
     }
 }
 
-enum Icon: String, Decodable, Equatable {
+enum Icon: String, Decodable, Equatable, Sendable {
     case close
     case checkmark
     case forwardArrow = "forward_arrow"
     case backArrow = "back_arrow"
 }
 
-struct IconModel: Decodable, Equatable {
+struct IconModel: Decodable, Equatable, Sendable {
     let icon: Icon
     let color: ThomasColor
     let scale: Double?
@@ -796,7 +838,7 @@ struct IconModel: Decodable, Equatable {
     }
 }
 
-struct ActionsPayload: Decodable, Equatable {
+struct ActionsPayload: Decodable, Equatable, Sendable {
     let value: AirshipJSON
 
     init(from decoder: Decoder) throws {
@@ -856,12 +898,12 @@ struct EmptyViewModel: BaseModel {
     }
 }
 
-enum PagerGestureDirection: String, Decodable, Equatable {
+enum PagerGestureDirection: String, Decodable, Equatable, Sendable {
     case up
     case down
 }
 
-enum PagerGestureLocation: String, Decodable, Equatable {
+enum PagerGestureLocation: String, Decodable, Equatable, Sendable {
     case top
     case bottom
     case start
@@ -871,13 +913,13 @@ enum PagerGestureLocation: String, Decodable, Equatable {
     case any
 }
 
-enum PagerGestureType: String, Decodable, Equatable {
+enum PagerGestureType: String, Decodable, Equatable, Sendable {
     case tap
     case swipe
     case hold
 }
 
-protocol PagerGesture: Decodable, Equatable {
+protocol PagerGesture: Decodable, Equatable, Sendable {
     var reportingMetadata: AirshipJSON? { get }
     var type: PagerGestureType { get }
     var identifier: String { get }
@@ -926,7 +968,7 @@ struct PagerHoldGesture: PagerGesture {
     }
 }
 
-struct PagerGestureBehavior: Decodable, Equatable {
+struct PagerGestureBehavior: Decodable, Equatable, Sendable {
     let actions: [ActionsPayload]?
     let behaviors: [ButtonClickBehavior]?
     
@@ -959,7 +1001,7 @@ struct PagerModel: BaseModel {
     }
 }
 
-struct AutomatedAction: Decodable, Equatable {
+struct AutomatedAction: Decodable, Equatable, Sendable {
     let identifier: String
     let delay: Double?
     let actions: [ActionsPayload]?
@@ -979,7 +1021,7 @@ enum ProgressType: String, Decodable {
     case linear = "linear"
 }
 
-struct Progress: Decodable, Equatable {
+struct Progress: Decodable, Equatable, Sendable {
     var type: ProgressType
     var color: ThomasColor
     
@@ -989,7 +1031,7 @@ struct Progress: Decodable, Equatable {
     }
 }
 
-struct PagerItem: Decodable, Equatable {
+struct PagerItem: Decodable, Equatable, Sendable {
     let identifier: String
     let view: ViewModel
     let displayActions: ActionsPayload?
@@ -1023,7 +1065,7 @@ struct PagerIndicatorModel: BaseModel {
         case enableBehaviors = "enabled"
     }
 
-    struct Bindings: Decodable, Equatable {
+    struct Bindings: Decodable, Equatable, Sendable {
         let selected: Binding
         let unselected: Binding
 
@@ -1033,7 +1075,7 @@ struct PagerIndicatorModel: BaseModel {
         }
     }
 
-    struct Binding: Decodable, Equatable {
+    struct Binding: Decodable, Equatable, Sendable {
         let shapes: [ShapeModel]?
         let icon: IconModel?
 
@@ -1064,21 +1106,21 @@ struct StoryIndicatorModel: BaseModel {
         case style = "style"
     }
     
-    struct StoryIndicatorSource: Decodable, Equatable {
+    struct StoryIndicatorSource: Decodable, Equatable, Sendable {
         let type: IndicatorType
     }
     
-    enum IndicatorType: String, Decodable, Equatable {
+    enum IndicatorType: String, Decodable, Equatable, Sendable {
         case pager = "pager"
         case currentPage = "current_page"
     }
     
-    enum LayoutDirection: String, Decodable, Equatable {
+    enum LayoutDirection: String, Decodable, Equatable, Sendable {
         case vertical = "vertical"
         case horizontal = "horizontal"
     }
     
-    struct LinearProgressStoryIndicatorStyle: Decodable, Equatable {
+    struct LinearProgressStoryIndicatorStyle: Decodable, Equatable, Sendable {
         let type: ProgressType
         let direction: LayoutDirection
         let sizing: ProgressSizingType?
@@ -1096,12 +1138,12 @@ struct StoryIndicatorModel: BaseModel {
         }
     }
     
-    enum ProgressSizingType: String,Decodable, Equatable {
+    enum ProgressSizingType: String,Decodable, Equatable, Sendable {
         case equal = "equal"
         case pageDuration = "page_duration"
     }
     
-    enum ProgressType: String, Decodable, Equatable {
+    enum ProgressType: String, Decodable, Equatable, Sendable {
         case linearProgress = "linear_progress"
     }
 }
@@ -1377,11 +1419,11 @@ struct RadioInputModel: BaseModel, Accessible {
     }
 }
 
-enum ScoreStyleModelType: String, Decodable, Equatable {
+enum ScoreStyleModelType: String, Decodable, Equatable, Sendable {
     case numberRange = "number_range"
 }
 
-enum ScoreStyleModel: Decodable, Equatable {
+enum ScoreStyleModel: Decodable, Equatable, Sendable {
     case numberRange(ScoreNumberRangeStyle)
 
     enum CodingKeys: String, CodingKey {
@@ -1403,7 +1445,7 @@ enum ScoreStyleModel: Decodable, Equatable {
 
 }
 
-struct ScoreNumberRangeStyle: Decodable, Equatable {
+struct ScoreNumberRangeStyle: Decodable, Equatable, Sendable {
     let type = ScoreStyleModelType.numberRange
     let spacing: Double?
     let bindings: Bindings
@@ -1417,7 +1459,7 @@ struct ScoreNumberRangeStyle: Decodable, Equatable {
         case end = "end"
     }
 
-    struct Bindings: Decodable, Equatable {
+    struct Bindings: Decodable, Equatable, Sendable {
         let selected: Binding
         let unselected: Binding
 
@@ -1427,7 +1469,7 @@ struct ScoreNumberRangeStyle: Decodable, Equatable {
         }
     }
 
-    struct Binding: Decodable, Equatable {
+    struct Binding: Decodable, Equatable, Sendable {
         let shapes: [ShapeModel]?
         let textAppearance: TextAppearance?
 
@@ -1465,14 +1507,14 @@ struct ScoreModel: BaseModel, Accessible {
     }
 }
 
-struct SwitchToggleStyleModel: Decodable, Equatable {
+struct SwitchToggleStyleModel: Decodable, Equatable, Sendable {
     let colors: ToggleColors
 
     enum CodingKeys: String, CodingKey {
         case colors = "toggle_colors"
     }
 
-    struct ToggleColors: Decodable, Equatable {
+    struct ToggleColors: Decodable, Equatable, Sendable {
         var on: ThomasColor
         var off: ThomasColor
 
@@ -1483,14 +1525,14 @@ struct SwitchToggleStyleModel: Decodable, Equatable {
     }
 }
 
-struct CheckboxToggleStyleModel: Decodable, Equatable {
+struct CheckboxToggleStyleModel: Decodable, Equatable, Sendable {
     let bindings: Bindings
 
     enum CodingKeys: String, CodingKey {
         case bindings = "bindings"
     }
 
-    struct Bindings: Decodable, Equatable {
+    struct Bindings: Decodable, Equatable, Sendable {
         let selected: Binding
         let unselected: Binding
 
@@ -1500,7 +1542,7 @@ struct CheckboxToggleStyleModel: Decodable, Equatable {
         }
     }
 
-    struct Binding: Decodable, Equatable {
+    struct Binding: Decodable, Equatable, Sendable {
         let shapes: [ShapeModel]?
         let icon: IconModel?
 
@@ -1511,7 +1553,7 @@ struct CheckboxToggleStyleModel: Decodable, Equatable {
     }
 }
 
-enum ShapeModel: Decodable, Equatable {
+enum ShapeModel: Decodable, Equatable, Sendable {
     case rectangle(RectangleShapeModel)
     case ellipse(EllipseShapeModel)
 
@@ -1537,7 +1579,7 @@ enum ShapeModel: Decodable, Equatable {
     }
 }
 
-struct EllipseShapeModel: Decodable, Equatable {
+struct EllipseShapeModel: Decodable, Equatable, Sendable {
     let type = ShapeModelType.ellipse
     let border: Border?
     let scale: Double?
@@ -1552,7 +1594,7 @@ struct EllipseShapeModel: Decodable, Equatable {
     }
 }
 
-struct RectangleShapeModel: Decodable, Equatable {
+struct RectangleShapeModel: Decodable, Equatable, Sendable {
     let type = ShapeModelType.rectangle
     let border: Border?
     let scale: Double?
@@ -1567,7 +1609,7 @@ struct RectangleShapeModel: Decodable, Equatable {
     }
 }
 
-struct Size: Decodable, Equatable {
+struct Size: Decodable, Equatable, Sendable {
     let width: SizeConstraint
     let height: SizeConstraint
 
@@ -1577,13 +1619,13 @@ struct Size: Decodable, Equatable {
     }
 }
 
-struct ConstrainedSize: Decodable, Equatable {
-    let minWidth: SizeConstraint?
-    let width: SizeConstraint
-    let maxWidth: SizeConstraint?
-    let minHeight: SizeConstraint?
-    let height: SizeConstraint
-    let maxHeight: SizeConstraint?
+struct ConstrainedSize: Decodable, Equatable, Sendable {
+    var minWidth: SizeConstraint?
+    var width: SizeConstraint
+    var maxWidth: SizeConstraint?
+    var minHeight: SizeConstraint?
+    var height: SizeConstraint
+    var maxHeight: SizeConstraint?
 
     enum CodingKeys: String, CodingKey {
         case minWidth = "min_width"
@@ -1605,7 +1647,7 @@ struct AttributeName: Decodable, Equatable, Hashable {
     }
 }
 
-enum SizeConstraint: Decodable, Equatable {
+enum SizeConstraint: Decodable, Equatable, Sendable {
     case points(Double)
     case percent(Double)
     case auto
@@ -1643,7 +1685,7 @@ enum SizeConstraint: Decodable, Equatable {
     }
 }
 
-struct Border: Decodable, Equatable {
+struct Border: Decodable, Equatable, Sendable {
     var radius: Double?
     var strokeWidth: Double?
     var strokeColor: ThomasColor?
@@ -1655,7 +1697,7 @@ struct Border: Decodable, Equatable {
     }
 }
 
-struct Margin: Decodable, Equatable {
+struct Margin: Decodable, Equatable, Sendable {
     let top: CGFloat?
     let bottom: CGFloat?
     let start: CGFloat?
@@ -1669,12 +1711,12 @@ struct Margin: Decodable, Equatable {
     }
 }
 
-enum BannerPosition: String, Decodable, Equatable {
+enum BannerPosition: String, Decodable, Equatable, Sendable {
     case top
     case bottom
 }
 
-struct Position: Decodable, Equatable {
+struct Position: Decodable, Equatable, Sendable {
     let horizontal: HorizontalPosition
     let vertical: VerticalPosition
 
@@ -1684,62 +1726,62 @@ struct Position: Decodable, Equatable {
     }
 }
 
-enum Direction: String, Decodable, Equatable {
+enum Direction: String, Decodable, Equatable, Sendable {
     case vertical = "vertical"
     case horizontal = "horizontal"
 }
 
-enum HorizontalPosition: String, Decodable, Equatable {
+enum HorizontalPosition: String, Decodable, Equatable, Sendable {
     case center = "center"
     case start = "start"
     case end = "end"
 }
 
-enum VerticalPosition: String, Decodable, Equatable {
+enum VerticalPosition: String, Decodable, Equatable, Sendable {
     case center = "center"
     case top = "top"
     case bottom = "bottom"
 }
 
-enum MediaType: String, Decodable, Equatable {
+enum MediaType: String, Decodable, Equatable, Sendable {
     case image = "image"
     case video = "video"
     case youtube = "youtube"
 }
 
-enum MediaFit: String, Decodable, Equatable {
+enum MediaFit: String, Decodable, Equatable, Sendable {
     case center = "center"
     case centerInside = "center_inside"
     case centerCrop = "center_crop"
 }
 
-enum TextAlignement: String, Decodable, Equatable {
+enum TextAlignement: String, Decodable, Equatable, Sendable {
     case start = "start"
     case end = "end"
     case center = "center"
 }
 
-enum TextInputType: String, Decodable, Equatable {
+enum TextInputType: String, Decodable, Equatable, Sendable {
     case email = "email"
     case number = "number"
     case text = "text"
     case textMultiline = "text_multiline"
 }
 
-enum TextStyle: String, Decodable, Equatable {
+enum TextStyle: String, Decodable, Equatable, Sendable {
     case bold = "bold"
     case italic = "italic"
     case underlined = "underlined"
 }
 
-enum EnableBehavior: String, Decodable, Equatable {
+enum EnableBehavior: String, Decodable, Equatable, Sendable {
     case formValidation = "form_validation"
     case formSubmission = "form_submission"
     case pagerNext = "pager_next"
     case pagerPrevious = "pager_previous"
 }
 
-enum ButtonClickBehavior: String, Decodable, Equatable {
+enum ButtonClickBehavior: String, Decodable, Equatable, Sendable {
     case dismiss = "dismiss"
     case cancel = "cancel"
     case pagerNext = "pager_next"
@@ -1751,17 +1793,17 @@ enum ButtonClickBehavior: String, Decodable, Equatable {
     case pagerResume = "pager_resume"
 }
 
-enum FormSubmitBehavior: String, Decodable, Equatable {
+enum FormSubmitBehavior: String, Decodable, Equatable, Sendable {
     case submitEvent = "submit_event"
 }
 
-enum ThomasPlatform: String, Decodable, Equatable {
+enum ThomasPlatform: String, Decodable, Equatable, Sendable {
     case android
     case ios
     case web
 }
 
-struct ColorSelector: Decodable, Equatable {
+struct ColorSelector: Decodable, Equatable, Sendable {
     let darkMode: Bool?
     let platform: ThomasPlatform?
     let color: HexColor
@@ -1773,7 +1815,7 @@ struct ColorSelector: Decodable, Equatable {
     }
 }
 
-struct ThomasColor: Decodable, Equatable {
+struct ThomasColor: Decodable, Equatable, Sendable {
     let defaultColor: HexColor
     let selectors: [ColorSelector]?
 
@@ -1783,7 +1825,7 @@ struct ThomasColor: Decodable, Equatable {
     }
 }
 
-struct HexColor: Decodable, Equatable {
+struct HexColor: Decodable, Equatable, Sendable {
     let hex: String
     let alpha: Double?
 
@@ -1793,7 +1835,7 @@ struct HexColor: Decodable, Equatable {
     }
 }
 
-enum AttributeValue: Decodable, Equatable, Hashable {
+enum AttributeValue: Decodable, Equatable, Hashable, Sendable {
     case string(String)
     case number(Double)
 

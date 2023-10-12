@@ -102,12 +102,9 @@ final class MeteredUsageApiClientTest: XCTestCase {
         XCTAssertNotNil(body)
 
         let decodedBody = try JSONSerialization.jsonObject(with: body!) as! [String : [[String: String]]]
-        
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'hh:mm:ss'Z'"
-        formatter.timeZone = TimeZone(identifier: "UTC")
-        let timestampString = formatter.string(from: timestamp)
-        
+
+        let timestampString = AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: timestamp)
+
         XCTAssertEqual([
             [
                 "entity_id": "message.id",
@@ -141,6 +138,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "type": "iax_impression",
                 "reporting_context": "event.4"
             ]], decodedBody["usage"])
+
     }
     
     func testUploadStrippedEvents() async throws {

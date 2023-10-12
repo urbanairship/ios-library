@@ -14,6 +14,18 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
 
+    private let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(
+                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+            )
+        })
+        return encoder
+    }()
+
+
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
         self.session = session
@@ -44,8 +56,6 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
             headers["X-UA-Channel-ID"] = channelID
         }
 
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
         let body = try encoder.encode(RequestBody(usage: events))
 
         let request = AirshipRequest(

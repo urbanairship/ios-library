@@ -147,7 +147,7 @@
                                       imageProvider:assetImageProvider];
 
     self.deferredDisplay = [UAThomas deferredDisplayWithJson:self.displayContent.layout
-                                                       scene:scene
+                                                       scene:^{ return scene; }
                                                   extensions:extensions
                                                     delegate:self
                                                        error:nil];
