@@ -430,59 +430,6 @@ class ChannelAudienceManagerTest: XCTestCase {
         await fulfillmentCompat(of: [expectation])
     }
 
-
-    func testGetPendingLiveActivityUpdates() async throws {
-        XCTAssertTrue(self.audienceManager.pendingLiveActivityUpdates.isEmpty)
-
-        let updates = [
-            LiveActivityUpdate(
-                action: .set,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 10,
-                startTimeMS: 10
-            ),
-            LiveActivityUpdate(
-                action: .remove,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 11,
-                startTimeMS: 10
-            ),
-            LiveActivityUpdate(
-                action: .set,
-                id: "some other foo",
-                name: "bar",
-                actionTimeMS: 12,
-                startTimeMS: 10
-            ),
-        ]
-
-        updates.forEach { update in
-            self.audienceManager.addLiveActivityUpdate(update)
-        }
-
-        XCTAssertEqual(updates, self.audienceManager.pendingLiveActivityUpdates)
-
-
-        let expectation = XCTestExpectation(description: "callback called")
-        self.updateClient.updateCallback = { identifier, update in
-            expectation.fulfill()
-            XCTAssertEqual(updates, update.liveActivityUpdates)
-            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
-        }
-
-        let result = try? await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ChannelAudienceManager.updateTaskID
-            )
-        )
-        XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [expectation])
-
-        XCTAssertTrue(self.audienceManager.pendingLiveActivityUpdates.isEmpty)
-    }
-
     func testLiveActivityUpdatesStream() async throws {
         let updates = [
             LiveActivityUpdate(
@@ -528,7 +475,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         await fulfillmentCompat(of: [expectation])
 
         var iterator = self.audienceManager.liveActivityUpdates.makeAsyncIterator()
-        var actualUpdates = await iterator.next()
+        let actualUpdates = await iterator.next()
 
         XCTAssertEqual(actualUpdates, updates)
 

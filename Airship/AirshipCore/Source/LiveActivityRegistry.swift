@@ -66,29 +66,6 @@ actor LiveActivityRegistry {
         }
     }
 
-    func restoreStatus(pendingUpdates: [LiveActivityUpdate]) {
-        var infos = tracked
-
-        guard infos.contains(where: { $0.status == .pending }) else {
-            return
-        }
-
-        var updated = false
-        let pendingSets = pendingUpdates.filter { $0.action == .set }.map { $0.id }
-        for (index, _) in infos.enumerated() {
-            if infos[index].status == .pending, !pendingSets.contains(infos[index].id) {
-                infos[index].status = .registered
-                updated = true
-            }
-        }
-
-        if (updated) {
-            self.tracked = infos
-            liveActivityUpdatesSubject.send()
-        }
-    }
-
-
     func updatesProcessed(updates: [LiveActivityUpdate]) {
         let sets = updates.filter { $0.action == .set }
         guard !sets.isEmpty else {

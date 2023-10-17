@@ -23,8 +23,6 @@ protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
     func clearSubscriptionListCache()
 
     var liveActivityUpdates: AsyncStream<[LiveActivityUpdate]> { get }
-
-    var pendingLiveActivityUpdates: [LiveActivityUpdate] { get }
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -277,16 +275,6 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             attributes: attributes,
             subscriptionLists: subscriptionLists
         )
-    }
-
-    public var pendingLiveActivityUpdates: [LiveActivityUpdate] {
-        var liveAcitivtyUpdates: [LiveActivityUpdate] = []
-        self.updateLock.sync {
-            self.getUpdates().forEach { update in
-                liveAcitivtyUpdates += update.liveActivityUpdates
-            }
-        }
-        return liveAcitivtyUpdates
     }
 
     private func resolveSubscriptionLists(
