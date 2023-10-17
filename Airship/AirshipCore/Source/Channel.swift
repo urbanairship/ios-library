@@ -208,9 +208,6 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         }
 
         Task {
-            await self.liveActivityRegistry.restoreStatus(
-                pendingUpdates: self.audienceManager.pendingLiveActivityUpdates
-            )
             for await updates in self.audienceManager.liveActivityUpdates {
                 await self.liveActivityRegistry.updatesProcessed(updates: updates)
             }
