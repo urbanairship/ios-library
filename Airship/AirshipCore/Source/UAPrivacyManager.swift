@@ -109,8 +109,8 @@ public class PrivacyManager : NSObject {
     */
     @objc
     public func isEnabled(_ feature: Features) -> Bool {
-        if feature == .none {
-            return enabledFeatures == .none
+        if feature == [] {
+            return enabledFeatures == []
         } else {
             return (enabledFeatures.rawValue & feature.rawValue) == feature.rawValue
         }

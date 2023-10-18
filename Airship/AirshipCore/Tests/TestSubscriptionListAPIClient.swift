@@ -3,7 +3,7 @@ import Foundation
 @testable
 import AirshipCore
 
-public class TestSubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
+class TestSubscriptionListAPIClient : SubscriptionListAPIClientProtocol {
     var getCallback: ((String, ((SubscriptionListFetchResponse?, Error?) -> Void)) -> Void)?
     var defaultCallback: ((String) -> Void)?
     

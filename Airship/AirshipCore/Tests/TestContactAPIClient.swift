@@ -3,7 +3,7 @@ import Foundation
 @testable
 import AirshipCore
 
-public class TestContactAPIClient : ContactsAPIClientProtocol {
+class TestContactAPIClient : ContactsAPIClientProtocol {
     
     var resolveCallback: ((String, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?
     var identifyCallback: ((String, String, String?, ((ContactAPIResponse?, Error?) -> Void)) -> Void)?

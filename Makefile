@@ -1,8 +1,8 @@
 
-XCODE ?= 13.4.1
+XCODE ?= 14.3.1
 
-export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 11
-export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV
+export TEST_DESTINATION ?= platform=iOS Simulator,OS=16.4,name=iPhone 14
+export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=16.4,name=Apple TV
 
 export DEVELOPER_DIR = $(shell bash ./scripts/get_xcode_path.sh ${XCODE} $(XCODE_PATH))
 export AIRSHIP_VERSION = $(shell bash "./scripts/airship_version.sh")
@@ -14,6 +14,8 @@ archive_path = ${build_path}/archive
 xcframeworks_path = ${build_path}/xcframeworks
 docs_path = ${build_path}/Documentation
 package_zip_path = ${build_path}/Airship.zip
+package_carthage_zip_path = ${build_path}/Airship.xcframeworks.zip
+
 
 .PHONY: setup
 setup:
@@ -36,6 +38,7 @@ build-package: clean-package build-docs build-xcframeworks
 	 CHANGELOG.md \
 	 README.md \
 	 LICENSE
+	bash ./scripts/package_carthage.sh "${package_carthage_zip_path}" "${xcframeworks_path}/" 
 
 .PHONY: build-docs
 build-docs: setup clean-docs
@@ -113,7 +116,8 @@ clean-docs:
 .PHONY: clean-package
 clean-package:
 	rm -rf "${package_zip_path}"
+	rm -rf "${package_carthage_zip_path}"
 
 .PHONY: clean-xcframeworks
 clean-xcframeworks:
-	rm -rf "${xcframeworks_output}"
+	rm -rf "${xcframeworks_path}"

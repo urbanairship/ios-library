@@ -12,7 +12,7 @@ public class TestChannel : NSObject, ChannelProtocol, Component {
     @objc
     public var identifier: String? = nil
 
-    public var contactUpdates: [SubscriptionListUpdate] = []
+    var contactUpdates: [SubscriptionListUpdate] = []
 
     @objc
     public var updateRegistrationCalled : Bool = false
@@ -110,10 +110,5 @@ public class TestChannel : NSObject, ChannelProtocol, Component {
                               extenders: self.extenders,
                               completionHandler: completionHandler)
     }
-
-    public func processContactSubscriptionUpdates(_ updates: [SubscriptionListUpdate]) {
-        self.contactUpdates.append(contentsOf: updates)
-    }
 }
 
-extension TestChannel: InternalChannelProtocol {}

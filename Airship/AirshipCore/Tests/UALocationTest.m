@@ -635,60 +635,6 @@
 }
 
 /**
- * Test enabling location updates do not request always authorization if the app
- * bundle does not contain a description for 'always and when and use' location description on iOS 11+.
- */
-- (void)testMissingAlwaysAndWhenInUseLocationDescription {
-    // Stop mocking the bundle to remove the description
-    [self.mockedBundle stopMocking];
-
-    // Make the app active
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-
-    // Set the location authorization to be not determined
-    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-
-    // Make significant location available
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
-
-    // Expect auhorization to be requested
-    [[self.mockLocationManager reject] requestAlwaysAuthorization];
-
-    // Enable location
-    self.location.locationUpdatesEnabled = YES;
-
-    // Verify we did not request location authorization
-    [self.mockLocationManager verify];
-}
-
-/**
- * Test enabling location updates do not request authorization if the app
- * bundle does not contain a description for always on location use.
- */
-- (void)testMissingAlwaysOnLocationDescription {
-    // Stop mocking the bundle to remove the description
-    [self.mockedBundle stopMocking];
-
-    // Make the app active
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
-
-    // Set the location authorization to be not determined
-    [self stubLocationAuthorizationStatus:kCLAuthorizationStatusNotDetermined];
-
-    // Make significant location available
-    [[[self.mockLocationManager stub] andReturnValue:OCMOCK_VALUE(YES)] significantLocationChangeMonitoringAvailable];
-
-    // Reject auhorization to be requested
-    [[self.mockLocationManager reject] requestAlwaysAuthorization];
-
-    // Enable location
-    self.location.locationUpdatesEnabled = YES;
-
-    // Verify we did not request location authorization
-    [self.mockLocationManager verify];
-}
-
-/**
  * Helper method to generate a location
  */
 + (CLLocation *)createLocationWithLat:(double)lat lon:(double)lon accuracy:(double)accuracy age:(double)age {

@@ -10,12 +10,13 @@ env:
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
-    runs-on: macOS-12
+    runs-on: macos-13-xlarge
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Check Version
         run: bash ./scripts/check_version.sh ${{ steps.get_version.outputs.VERSION }}
       - name: Slack Notification
@@ -27,68 +28,61 @@ jobs:
 
   build-package:
     needs: check-version
-    runs-on: macOS-12
+    runs-on: macos-13-xlarge
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+      - uses: actions/checkout@v4
       - name: Install Coreutils
         run: brew install coreutils
-
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
+          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - name: Build SDK
-        run: make build-package
-
+        run: make build-package XCODE
       - name: Upload zip distribution
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: airship
           path: ./build/Airship.zip
-
+      - name: Upload zip distribution
+        uses: actions/upload-artifact@v3
+        with:
+          name: airship-carthage
+          path: ./build/Airship.xcframeworks.zip
       - name: Upload Documentation
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: ./build/Documentation
 
   build-samples:
     needs: check-version
-    runs-on: macOS-12
+    runs-on: macos-13-xlarge
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+      - uses: actions/checkout@v4
       - name: Build samples
         run: make build-samples
 
   run-tests:
     needs: check-version
-    runs-on: macOS-12
+    runs-on: macos-13-xlarge
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
+      - uses: actions/checkout@v4
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
-        run: make test
+        run: make test test-packages
 
-  deploy:
-    runs-on: macOS-12
+  deploy-github:
+    runs-on: macos-13-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Get the release notes
         id: get_release_notes
         run: |
@@ -98,37 +92,19 @@ jobs:
           NOTES="${NOTES//$'\n'/%0A}"
           NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-
-      - name: Download docs
-        uses: actions/download-artifact@v1
-        with:
-          name: docs
-          path: ./build/Documentation
       - name: Download zip distribution
-        uses: actions/download-artifact@v1
+        uses: actions/download-artifact@v3
         with:
           name: airship
           path: ./build
-
-      - name: Publish Pods
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: make pod-publish
-      - name: Slack Notification
-        uses: homoluctus/slatify@master
-        if: always()
+      - name: Download Carthage zip distribution
+        uses: actions/download-artifact@v3
         with:
-          type: ${{ job.status }}
-          job_name: "Publish the Pods ${{ steps.get_version.outputs.VERSION }} :tidepod:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
-
+          name: airship-carthage
+          path: ./build
       - name: Github Release
         id: create_release
-        uses: actions/create-release@v1.0.1
+        uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -146,7 +122,15 @@ jobs:
           asset_path: ./build/Airship.zip
           asset_name: Airship.zip
           asset_content_type: application/zip
-
+      - name: Upload carthage zip distribution
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/Airship.xcframeworks.zip
+          asset_name: Airship.xcframeworks.zip
+          asset_content_type: application/zip
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
@@ -155,29 +139,49 @@ jobs:
           job_name: "Deploy iOS SDK to Github :octocat:"
           url: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: Prepare Carthage
-        shell: bash
+  deploy-pods:
+    runs-on: macos-13-xlarge
+    needs: [run-tests, build-package, build-samples]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get the version
+        id: get_version
         run: |
-          mkdir -p Carthage/build
-          unzip build/Airship.zip Carthage/build
-          cp -R build/*.xcframework Carthage/build
-          zip -r Airship.xcframeworks.zip Carthage -x "*.DS_Store"
-      - name: Upload carthage distribution
-        uses: actions/upload-release-asset@v1.0.1
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      - name: Publish Pods
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
+        run: make pod-publish
+      - name: Slack Notification
+        uses: homoluctus/slatify@master
+        if: always()
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: Airship.xcframeworks.zip
-          asset_name: Airship.xcframeworks.zip
-          asset_content_type: application/zip
+          type: ${{ job.status }}
+          job_name: "Publish the Pods ${{ steps.get_version.outputs.VERSION }} :tidepod:"
+          url: ${{ secrets.SLACK_WEBHOOK }}
 
-      - uses: google-github-actions/setup-gcloud@v0
+  deploy-docs:
+    runs-on: macos-13-xlarge
+    needs: [run-tests, build-package, build-samples]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get the version
+        id: get_version
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      - name: Download docs
+        uses: actions/download-artifact@v3
         with:
-          version: "270.0.0"
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-      - run: bash ./scripts/upload_docs.sh
+          name: docs
+          path: ./build/Documentation
+      - name: Setup GCP Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Upload Docs
+        run: bash ./scripts/upload_docs.sh
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
@@ -185,21 +189,15 @@ jobs:
           type: ${{ job.status }}
           job_name: "Uploaded iOS SDK API docs :female-doctor: :male-doctor:"
           url: ${{ secrets.SLACK_WEBHOOK }}
-      - name: Slack Notification
-        uses: homoluctus/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy iOS SDK to Bintray :bento:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
 
   finished:
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [deploy-github, deploy-pods, deploy-docs]
     steps:
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: |
+          echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()

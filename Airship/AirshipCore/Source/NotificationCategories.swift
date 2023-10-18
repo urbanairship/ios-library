@@ -132,7 +132,7 @@ public class NotificationCategories : NSObject {
 
     private class func createCategories(fromFile path: String, actionDefinitionModBlock: @escaping (inout [AnyHashable : Any]) -> Void) -> Set<UNNotificationCategory> {
 
-        let categoriesDictionary = NSDictionary(contentsOfFile: path) as? Dictionary ?? [:]
+        let categoriesDictionary = NSDictionary(contentsOfFile: path) as? [AnyHashable: Any] ?? [:]
         var categories: Set<UNNotificationCategory> = []
 
         for key in categoriesDictionary.keys {

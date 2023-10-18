@@ -404,7 +404,7 @@ class ContactAPIClient : ContactsAPIClientProtocol {
                 ContactAPIClient.localeLanguageKey: currentLocale.languageCode ?? "",
                 ContactAPIClient.optInKey: true,
                 ContactAPIClient.openKey: openPayload
-            ]
+            ] as [String : Any]
         ]
         
         let request = self.request(payload, "\(config.deviceAPIURL ?? "")\(ContactAPIClient.channelsPath)/restricted/open")

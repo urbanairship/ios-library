@@ -11,59 +11,31 @@ concurrency:
 
 jobs:
   build-sdk:
-    runs-on: macOS-12
+    runs-on: macos-13-xl
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - uses: actions/checkout@v4
       - name: Build SDK
         run: make build-xcframeworks
 
   build-docs:
-    runs-on: macOS-12
+    runs-on: macos-13-xl
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - uses: actions/checkout@v4
       - name: Build Docs
         run: make build-docs
 
   run-tests:
-    runs-on: macOS-12
+    runs-on: macos-13-xl
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - uses: actions/checkout@v4
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
         run: make test build-samples
 
   pod-lib-lint:
-    runs-on: macOS-12
+    runs-on: macos-13-xl
     steps:
-      - name: Set env variable
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ env.ImageVersion }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gems-${{ env.ImageVersion }}
+      - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint

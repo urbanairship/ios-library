@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 @objc(UATestChannelAudienceManager)
-public class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
+class TestChannelAudienceManager : NSObject, ChannelAudienceManagerProtocol {
 
     public var contactUpdates: [SubscriptionListUpdate] = []
     
