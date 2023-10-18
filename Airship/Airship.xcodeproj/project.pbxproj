@@ -212,6 +212,9 @@
 		6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
 		6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
 		6E0B8764294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
+		6E0F557F2AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
+		6E0F55802AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
+		6E0F55812AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
 		6E12539129A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
 		6E12539229A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
 		6E12539329A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
@@ -2101,6 +2104,7 @@
 		6E0B874B294A9D590064B7BD /* AirshipAutomationSDKModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAutomationSDKModule.swift; sourceTree = "<group>"; };
 		6E0B875F294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmHashFingerprint64Test.swift; sourceTree = "<group>"; };
 		6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmHashFingerprint64.swift; sourceTree = "<group>"; };
+		6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThomasAsyncImage.swift; sourceTree = "<group>"; };
 		6E12138C1E5D1B95006738FD /* UAScheduleDelay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAScheduleDelay.h; sourceTree = "<group>"; };
 		6E12138D1E5D1B95006738FD /* UAScheduleDelay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAScheduleDelay.m; sourceTree = "<group>"; };
 		6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoreDataPredicate.swift; sourceTree = "<group>"; };
@@ -3432,7 +3436,6 @@
 		6E062CFF27165642001A74A1 /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
-				6E8873982763D80400AC248A /* Image Loading */,
 				6EF02DEF2714EB500008B6C9 /* Thomas.swift */,
 				6E46A27E272B68660089CDE3 /* ThomasDelegate.swift */,
 				6ED80799273DA56000D1F455 /* ThomasViewController.swift */,
@@ -3549,6 +3552,7 @@
 		6E1C9C42271F744E009EF9EF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */,
 				6E94761429BBC0230025F364 /* AirshipButton.swift */,
 				6E71129A2880DACB004942E4 /* StateController.swift */,
 				6E46A272272B19760089CDE3 /* ViewExtensions.swift */,
@@ -3574,7 +3578,6 @@
 				A658DE182728498900007672 /* AirshipWebview.swift */,
 				6E152BC92743235800788402 /* Icons.swift */,
 				6E6541DF2758976D009676CA /* AirshipProgressView.swift */,
-				32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */,
 				6EF66D902769B69C00ABCB76 /* RootView.swift */,
 				320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */,
 			);
@@ -4403,6 +4406,7 @@
 		6E8873982763D80400AC248A /* Image Loading */ = {
 			isa = PBXGroup;
 			children = (
+				32CF81E1275627F4003009D1 /* AirshipAsyncImage.swift */,
 				A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */,
 				6E8873992763D8AB00AC248A /* AirshipImageProvider.swift */,
 			);
@@ -4452,6 +4456,7 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E8873982763D80400AC248A /* Image Loading */,
 				6EC755972A4E114700851ABB /* Audience Checks */,
 				6E91E42E28EF420700B6F25E /* WorkManager */,
 				6E49D7CA2840257000C7BB9D /* PermissionsManager */,
@@ -6501,6 +6506,7 @@
 				6E29474D2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */,
 				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
+				6E0F557F2AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
 				6EE49C082A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
@@ -6978,6 +6984,7 @@
 				A6722A78281A9EB90033F54D /* JSONPredicate.swift in Sources */,
 				A6722A79281A9EB90033F54D /* JSONUtils.swift in Sources */,
 				A6722A7A281A9EB90033F54D /* JSONValueMatcher.swift in Sources */,
+				6E0F55812AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */,
 				60D3BCC92A152A1800E07524 /* ExperimentDataProvider.swift in Sources */,
 				A6722A7B281A9EB90033F54D /* AirshipJSON.swift in Sources */,
 				A6722A23281A9EA00033F54D /* ModifyAttributesAction.swift in Sources */,
@@ -7587,6 +7594,7 @@
 				6E29474E2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				6E692B0829E0DA5200D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
+				6E0F55802AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */,
 				6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,
 				6EE49C092A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift in Sources */,
 				6E510C242721DA86006D9126 /* ViewConstraintsViewModifier.swift in Sources */,

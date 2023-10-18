@@ -4,8 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-/// - Note: for internal use only.  :nodoc:
-public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
+public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
     let url: String
     let imageLoader: AirshipImageLoader
@@ -30,11 +29,15 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
     @State private var animationTask: Task<Void, Never>?
     @State private var cancellable: AnyCancellable?
 
+    @Environment(\.isVisible) var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
+                                                    //that's why we need to store the actual value in a separate @State variable
+    @State private var isImageVisible: Bool = false
+
     public var body: some View {
         content
             .onAppear {
                 if self.loadedImage != nil {
-                    startAnimation()
+                    animateIfNeeded()
                 } else {
                     self.cancellable = self.imageLoader.load(url: self.url)
                         .receive(on: DispatchQueue.main)
@@ -48,11 +51,15 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
                             },
                             receiveValue: { image in
                                 self.loadedImage = image
-                                startAnimation()
+                                animateIfNeeded()
                             }
                         )
                 }
             }
+            .onChange(of: isVisible, perform: { newValue in
+                self.isImageVisible = newValue
+                animateIfNeeded()
+            })
     }
 
     private var content: some View {
@@ -69,22 +76,26 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
         }
     }
 
-    private func startAnimation() {
-        self.animationTask?.cancel()
-        self.animationTask = Task {
-            await animateImage()
+    private func animateIfNeeded() {
+        if isImageVisible {
+            self.animationTask?.cancel()
+            self.animationTask = Task {
+                await animateImage()
+            }
+        } else {
+            self.animationTask?.cancel()
         }
     }
 
     @MainActor
     private func animateImage() async {
         guard let loadedImage = self.loadedImage else { return }
-        
+
         guard loadedImage.isAnimated else {
             self.currentImage = loadedImage.loadFrames().first?.image
             return
         }
-        
+
         let frameActor = loadedImage.getActor()
 
         imageIndex = 0
@@ -94,11 +105,11 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
 
         while !Task.isCancelled {
             let duration = frame?.duration ?? AirshipImageData.minFrameDuration
-            
+
             async let delay: () = Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
-            
+
             let nextIndex = (imageIndex + 1) % loadedImage.imageFramesCount
-            
+
             do {
                 let (_, nextFrame) = try await (delay, frameActor.loadFrame(at: nextIndex))
                 frame = nextFrame

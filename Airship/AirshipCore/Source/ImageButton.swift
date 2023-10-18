@@ -45,7 +45,7 @@ struct ImageButton : View {
     private func makeInnerButton() -> some View {
         switch(model.image) {
         case .url(let model):
-            AirshipAsyncImage(
+            ThomasAsyncImage(
                 url: model.url,
                 imageLoader: thomasEnvironment.imageLoader,
                 image: { image, _ in
