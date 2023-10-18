@@ -37,7 +37,7 @@ extension Activity: LiveActivity {
         // Use a background task to wait for the first token update
         let backgroundTask = await AirshipBackgroundTask(
             name: "live_activity: \(self.id)",
-            expiry: 10.0
+            expiry: 30.0
         )
 
         let task = Task {

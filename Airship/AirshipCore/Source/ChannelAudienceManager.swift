@@ -128,6 +128,13 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             object: nil)
 
 
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(didEnterBackground),
+            name: AppStateTracker.didEnterBackgroundNotification,
+            object: nil)
+
+
         self.checkPrivacyManager()
     }
     
@@ -301,7 +308,12 @@ class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                                             options: TaskRequestOptions.defaultOptions)
         }
     }
-    
+
+    @objc
+    private func didEnterBackground() {
+       enqueueTask()
+    }
+
     private func handleUpdateTask(_ task: AirshipTask)  {
         guard self.enabled else {
             task.taskCompleted()
