@@ -14,7 +14,7 @@ struct Media: View {
     var body: some View {
         switch model.mediaType {
         case .image:
-            AirshipAsyncImage(
+            ThomasAsyncImage(
                 url: self.model.url,
                 imageLoader: thomasEnvironment.imageLoader
             ) { image, imageSize in
