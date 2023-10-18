@@ -3,7 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 16.12.4 August 29, 2023
+## Version 16.12.5, October 18, 2023
+Patch release that extends background time for Live Activity token generation from 10 seconds to 30 seconds and forces a Live Activity registration update on background if it previously failed.
+
+### Changes
+- Added an additional attempt to upload a Live Activity registration upload on background if it previously failed.
+- Extended the background task used for waiting for a Live Activity token from 10 seconds to 30 seconds.
+- Prebuilt frameworks now use Xcode 14 instead of Xcode 13 due to App store restrictions
+
+## Version 16.12.4, August 29, 2023
 Patch release that fixes an issue with not being able to update a Live Activity after it becomes stale. Apps that use `staleDate` with Live Activities should update.
 
 ### Changes
