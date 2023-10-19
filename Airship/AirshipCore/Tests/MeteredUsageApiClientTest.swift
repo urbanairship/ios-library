@@ -31,7 +31,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "message",
                 reportingContext: try! AirshipJSON.wrap("event.1"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-1"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.2",
@@ -39,7 +40,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "landingpage",
                 reportingContext: try! AirshipJSON.wrap("event.2"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-2"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.3",
@@ -47,7 +49,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "Scene",
                 reportingContext: try! AirshipJSON.wrap("event.3"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-3"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.4",
@@ -55,7 +58,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "Survey",
                 reportingContext: try! AirshipJSON.wrap("event.4"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-4"
             )
         ]
 
@@ -112,7 +116,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "product": "message",
                 "occurred": timestampString,
                 "type": "iax_impression",
-                "reporting_context": "event.1"
+                "reporting_context": "event.1",
+                "contact_id": "contact-id-1"
             ],
             [
                 "entity_id": "landing-page.id",
@@ -120,7 +125,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "product": "landingpage",
                 "occurred": timestampString,
                 "type": "iax_impression",
-                "reporting_context": "event.2"
+                "reporting_context": "event.2",
+                "contact_id": "contact-id-2"
             ],
             [
                 "entity_id": "scene.id",
@@ -128,7 +134,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "product": "Scene",
                 "occurred": timestampString,
                 "type": "iax_impression",
-                "reporting_context": "event.3"
+                "reporting_context": "event.3",
+                "contact_id": "contact-id-3"
             ],
             [
                 "entity_id": "survey.id",
@@ -136,7 +143,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "product": "Survey",
                 "occurred": timestampString,
                 "type": "iax_impression",
-                "reporting_context": "event.4"
+                "reporting_context": "event.4",
+                "contact_id": "contact-id-4"
             ]], decodedBody["usage"])
 
     }
@@ -152,7 +160,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "message",
                 reportingContext: try! AirshipJSON.wrap("event.1"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-1"
             ).withDisabledAnalytics(),
             AirshipMeteredUsageEvent(
                 eventID: "event.2",
@@ -160,7 +169,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "landingpage",
                 reportingContext: try! AirshipJSON.wrap("event.2"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-2"
             ).withDisabledAnalytics(),
             AirshipMeteredUsageEvent(
                 eventID: "event.3",
@@ -168,7 +178,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "Scene",
                 reportingContext: try! AirshipJSON.wrap("event.3"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-3"
             ).withDisabledAnalytics(),
             AirshipMeteredUsageEvent(
                 eventID: "event.4",
@@ -176,7 +187,8 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 type: .InAppExperienceImpresssion,
                 product: "Survey",
                 reportingContext: try! AirshipJSON.wrap("event.4"),
-                timestamp: timestamp
+                timestamp: timestamp,
+                contactId: "contact-id-4"
             ).withDisabledAnalytics()
         ]
 

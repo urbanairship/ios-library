@@ -21,6 +21,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
     let product: String
     let reportingContext: AirshipJSON?
     let timestamp: Date?
+    let contactId: String?
 
     enum CodingKeys: String, CodingKey {
         case eventID = "event_id"
@@ -29,6 +30,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
         case reportingContext = "reporting_context"
         case timestamp = "occurred"
         case entityID = "entity_id"
+        case contactId = "contact_id"
     }
     
     func withDisabledAnalytics() -> AirshipMeteredUsageEvent {
@@ -38,6 +40,8 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
             type: type,
             product: product,
             reportingContext: nil,
-            timestamp: nil)
+            timestamp: nil,
+            contactId: nil
+        )
     }
 }

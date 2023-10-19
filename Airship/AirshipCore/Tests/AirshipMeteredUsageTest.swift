@@ -139,7 +139,8 @@ final class AirshipMeteredUsageTest: XCTestCase {
             type: .InAppExperienceImpresssion,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
-            timestamp: Date()
+            timestamp: Date(),
+            contactId: "test-contact-id"
         )
         
         XCTAssertEqual(0, workManager.workRequests.count)
@@ -170,7 +171,8 @@ final class AirshipMeteredUsageTest: XCTestCase {
             type: .InAppExperienceImpresssion,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
-            timestamp: Date()
+            timestamp: Date(),
+            contactId: "test-contact-id"
         )
         
         XCTAssertEqual(0, workManager.workRequests.count)
@@ -200,7 +202,8 @@ final class AirshipMeteredUsageTest: XCTestCase {
             type: .InAppExperienceImpresssion,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
-            timestamp: timeStamp
+            timestamp: timeStamp,
+            contactId: "test-contact-id"
         )
             .withDisabledAnalytics()
         
@@ -210,6 +213,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertNil(event.entityID)
         XCTAssertNil(event.reportingContext)
         XCTAssertNil(event.timestamp)
+        XCTAssertNil(event.contactId)
     }
     
     func testScheduleWorkRespectsConfig() {
