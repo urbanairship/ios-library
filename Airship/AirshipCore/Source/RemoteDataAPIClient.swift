@@ -43,7 +43,8 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
         remoteDataInfoBlock: @Sendable @escaping (String?) throws -> RemoteDataInfo
     ) async throws -> AirshipHTTPResponse<RemoteDataResult> {
         var headers: [String: String] = [
-            "X-UA-Appkey": self.config.appKey
+            "X-UA-Appkey": self.config.appKey,
+            "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 
         if let lastModified = lastModified {
