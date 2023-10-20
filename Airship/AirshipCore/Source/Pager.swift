@@ -29,7 +29,7 @@ struct Pager: View {
         case end
     }
 
-    private static let flingSpeed: CGFloat = 300.0
+    private static let flingSpeed: CGFloat = 150.0
     private static let offsetPercent: CGFloat = 0.50
     private static let timerTransition = 0.01
 

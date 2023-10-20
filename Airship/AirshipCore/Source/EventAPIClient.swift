@@ -54,7 +54,7 @@ final class EventAPIClient: EventAPIClientProtocol {
         AirshipLogger.trace("Sending analytics events: \(events)")
 
         // Perform the upload
-        return try await self.session.performHTTPRequest(request) { _ , response in
+        return try await self.session.performHTTPRequest(request) { _, response in
             return EventUploadTuningInfo(
                 maxTotalStoreSizeKB: response.unsignedInt(
                     forHeader: "X-UA-Max-Total"

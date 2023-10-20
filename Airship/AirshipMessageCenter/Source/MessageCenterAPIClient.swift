@@ -89,7 +89,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
         let urlString =
             "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/")"
         var headers: [String: String] = [
-            MessageCenterAPIClient.channelIDHeader: channelID
+            MessageCenterAPIClient.channelIDHeader: channelID,
+            "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 
         if let lastModified = lastModified {

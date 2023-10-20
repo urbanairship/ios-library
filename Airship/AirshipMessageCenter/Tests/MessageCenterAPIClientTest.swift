@@ -96,6 +96,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         let expectedHeaders = [
             "X-UA-Channel-ID": "some channel",
             "If-Modified-Since": "some modified date",
+            "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 
         XCTAssertEqual(expectedHeaders, request.headers)

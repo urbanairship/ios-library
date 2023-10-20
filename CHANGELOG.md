@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.5.1 October 18, 2023
+Patch release that fixes an issue with Live Activity registration reporting the wrong value on app restart and fixes a regression introduced in 17.5.0 with image loading in both the Preference Center and Message Center OOTB UI.
+
+### Changes
+- Fixed Message Center list icon loading
+- Fixed Preference Center alert icon loading
+- Fixed Live Activity registration status reporting `registered` before it actually is able to register. This only occurs if the Live Activity was tracked and failed to generate a token before the app is restarted.
+
+
 ## Version 17.5.0 October 12, 2023
 Minor release that adds support for querying the Airship registration status of a Live Activity, improves gif loading in Scenes & Surveys, and improves text input handling in Surveys. Applications that use Live Activities or several large GIFs in Scenes & Surveys should update.
 
