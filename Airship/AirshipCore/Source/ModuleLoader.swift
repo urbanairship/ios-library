@@ -32,7 +32,7 @@ public class SDKDependencyKeys: NSObject {
     @objc
     public static let experimentsManager = "experiments_manager"
     @objc
-    public static let meteredUsage = "metered_usage"
+    public static let iaaMeteredUsage = "iaa_metered_usage"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -89,7 +89,10 @@ class ModuleLoader {
                 audienceOverridesProvider: audienceOverrides
             ),
             SDKDependencyKeys.experimentsManager: experimentsManager,
-            SDKDependencyKeys.meteredUsage: InAppMeteredUsage(meteredUsage)
+            SDKDependencyKeys.iaaMeteredUsage: InAppMeteredUsage(
+                meteredUsage: meteredUsage,
+                contact: contact
+            )
         ]
 
         let swiftModules = ModuleLoader.loadModules(dependencies)

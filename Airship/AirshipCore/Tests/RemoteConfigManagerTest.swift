@@ -300,8 +300,7 @@ extension AirshipMeteredUsage {
             privacyManager: privacyManager,
             client: MeteredTestApiClient(),
             store: MeteredUsageStore(appKey: "test.app.key", inMemory: true),
-            workManager: TestWorkManager(),
-            notificationCenter: AirshipNotificationCenter()
+            workManager: TestWorkManager()
         )
     }
 }

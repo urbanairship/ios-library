@@ -50,7 +50,7 @@
     UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
     UAAutomationAudienceOverridesProvider *audienceOverridesProvider = dependencies[UASDKDependencyKeys.automationAudienceOverridesProvider];
     id<UAExperimentDataProvider> experimentsManager = dependencies[UASDKDependencyKeys.experimentsManager];
-    InAppMeteredUsage *meteredUsage = dependencies[UASDKDependencyKeys.meteredUsage];
+    InAppMeteredUsage *meteredUsage = dependencies[UASDKDependencyKeys.iaaMeteredUsage];
     
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
                                                        audienceOverridesProvider:audienceOverridesProvider

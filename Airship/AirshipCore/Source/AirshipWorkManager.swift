@@ -55,7 +55,6 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
             cancellable.cancel()
         }
 
-
         cancellable.value = Task {  [workers, backgroundWorkRequests]  in
             for request in backgroundWorkRequests.value {
                 await workers.dispatchWorkRequest(request)

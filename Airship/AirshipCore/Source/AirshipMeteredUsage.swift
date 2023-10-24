@@ -18,10 +18,11 @@ public final class AirshipMeteredUsage: Sendable {
     private let privacyManager: AirshipPrivacyManager
     private let meteredUsageConfig: Atomic<MeteredUsageConfig?> = Atomic(nil)
 
-    convenience init(config: RuntimeConfig,
-                     dataStore: PreferenceDataStore,
-                     channel: AirshipChannelProtocol,
-                     privacyManager: AirshipPrivacyManager
+    convenience init(
+        config: RuntimeConfig,
+        dataStore: PreferenceDataStore,
+        channel: AirshipChannelProtocol,
+        privacyManager: AirshipPrivacyManager
     ) {
         self.init(
             dataStore: dataStore,
@@ -38,8 +39,7 @@ public final class AirshipMeteredUsage: Sendable {
         privacyManager: AirshipPrivacyManager,
         client: MeteredUsageAPIClientProtocol,
         store: MeteredUsageStore,
-        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
+        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared
     ) {
         self.dataStore = dataStore
         self.channel = channel
@@ -58,11 +58,13 @@ public final class AirshipMeteredUsage: Sendable {
             return try await self.performWork()
         }
 
-        notificationCenter.addObserver(
-            forName: AppStateTracker.didEnterBackgroundNotification
-        ) { [weak self] _ in
-            self?.scheduleWork(conflictPolicy: .replace)
-        }
+        self.workManager.autoDispatchWorkRequestOnBackground(
+            AirshipWorkRequest(
+                workID: AirshipMeteredUsage.workID,
+                requiresNetwork: true,
+                conflictPolicy: .replace
+            )
+        )
     }
 
     func updateConfig(_ newConfig: MeteredUsageConfig?) {
@@ -112,21 +114,14 @@ public final class AirshipMeteredUsage: Sendable {
         return .success
     }
 
-    func addEvent(_ event: AirshipMeteredUsageEvent) {
-        Task {
-            do {
-                let eventToStore = privacyManager.isEnabled(.analytics) ? event : event.withDisabledAnalytics()
-                try await self.store.saveEvent(eventToStore)
-                scheduleWork()
-            } catch {
-                AirshipLogger.error("Failed to save usage: \(event)")
-            }
-        }
+    func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
+        let eventToStore = privacyManager.isEnabled(.analytics) ? event : event.withDisabledAnalytics()
+        try await self.store.saveEvent(eventToStore)
+        scheduleWork()
     }
 
     func scheduleWork(
-        initialDelay: TimeInterval = 0.0,
-        conflictPolicy: AirshipWorkRequestConflictPolicy = .keepIfNotStarted
+        initialDelay: TimeInterval = 0.0
     ) {
         guard self.isEnabled else { return }
 
@@ -135,7 +130,7 @@ public final class AirshipMeteredUsage: Sendable {
                 workID: AirshipMeteredUsage.workID,
                 initialDelay: initialDelay,
                 requiresNetwork: true,
-                conflictPolicy: conflictPolicy
+                conflictPolicy: .keepIfNotStarted
             )
         )
     }
@@ -148,9 +143,11 @@ public final class AirshipMeteredUsage: Sendable {
 @objc
 public final class InAppMeteredUsage: NSObject {
     private let meteredUsage: AirshipMeteredUsage
+    private let contact: InternalAirshipContactProtocol
 
-    init(_ meteredUsage: AirshipMeteredUsage) {
+    init(meteredUsage: AirshipMeteredUsage, contact: InternalAirshipContactProtocol) {
         self.meteredUsage = meteredUsage
+        self.contact = contact
     }
 
     @objc
@@ -160,16 +157,29 @@ public final class InAppMeteredUsage: NSObject {
         contactID: String?,
         reportingContext: Any?
     ) {
-        self.meteredUsage.addEvent(
-            AirshipMeteredUsageEvent(
+        let date = Date()
+        let reportingContextJSON = try? AirshipJSON.wrap(reportingContext)
+
+
+        Task {
+            let lastContactID = await contact.contactID
+
+            let event = AirshipMeteredUsageEvent(
                 eventID: UUID().uuidString,
                 entityID: entityID,
                 type: .inAppExperienceImpression,
                 product: product,
-                reportingContext: try? AirshipJSON.wrap(reportingContext),
-                timestamp: Date(),
-                contactId: contactID
+                reportingContext: reportingContextJSON,
+                timestamp: date,
+                contactId: contactID ?? lastContactID
             )
-        )
+
+            do {
+                try await self.meteredUsage.addEvent(event)
+            } catch {
+                AirshipLogger.error("Failed to save metered usage event: \(event)")
+            }
+        }
+
     }
 }

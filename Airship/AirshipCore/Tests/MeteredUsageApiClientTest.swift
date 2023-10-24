@@ -93,12 +93,13 @@ final class MeteredUsageApiClientTest: XCTestCase {
 
         let request = requestSession.lastRequest
         XCTAssertNotNil(request)
-        XCTAssertEqual("test://meteredUsage/metered_usage", request?.url?.absoluteString)
+        XCTAssertEqual("test://meteredUsage/api/metered-usage", request?.url?.absoluteString)
         XCTAssertEqual([
             "Content-Type": "application/json",
             "X-UA-Lib-Version": AirshipVersion.get(),
             "X-UA-Device-Family": "ios",
-            "X-UA-Channel-ID": "test.channel.id"
+            "X-UA-Channel-ID": "test.channel.id",
+            "Accept": "application/vnd.urbanairship+json; version=3;"
         ], request?.headers)
         XCTAssertEqual("POST", request?.method)
 
@@ -222,12 +223,13 @@ final class MeteredUsageApiClientTest: XCTestCase {
 
         let request = requestSession.lastRequest
         XCTAssertNotNil(request)
-        XCTAssertEqual("test://meteredUsage/metered_usage", request?.url?.absoluteString)
+        XCTAssertEqual("test://meteredUsage/api/metered-usage", request?.url?.absoluteString)
         XCTAssertEqual([
             "Content-Type": "application/json",
             "X-UA-Lib-Version": AirshipVersion.get(),
             "X-UA-Device-Family": "ios",
-            "X-UA-Channel-ID": "test.channel.id"
+            "X-UA-Channel-ID": "test.channel.id",
+            "Accept": "application/vnd.urbanairship+json; version=3;"
         ], request?.headers)
         XCTAssertEqual("POST", request?.method)
 

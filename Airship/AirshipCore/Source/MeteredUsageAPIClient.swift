@@ -49,7 +49,8 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
         var headers: [String: String] = [
             "X-UA-Lib-Version": AirshipVersion.get(),
             "X-UA-Device-Family": "ios",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept":  "application/vnd.urbanairship+json; version=3;"
         ]
 
         if let channelID = channelID {
@@ -59,7 +60,7 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
         let body = try encoder.encode(RequestBody(usage: events))
 
         let request = AirshipRequest(
-            url: URL(string: "\(meteredUsageURL)/metered_usage"),
+            url: URL(string: "\(meteredUsageURL)/api/metered-usage"),
             headers: headers,
             method: "POST",
             auth: .generatedAppToken,

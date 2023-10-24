@@ -14,8 +14,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
     private let apiClient: MeteredUsageAPIClientProtocol = MeteredTestApiClient()
     private let storage = MeteredUsageStore(appKey: "test.app.key", inMemory: true)
     private let workManager = TestWorkManager()
-    private let notificationCenter = NotificationCenter()
-    
+
     private var target: AirshipMeteredUsage!
     
     override func setUp() {
@@ -25,8 +24,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             privacyManager: privacyManager,
             client: apiClient,
             store: storage,
-            workManager: workManager,
-            notificationCenter: AirshipNotificationCenter(notificationCenter: notificationCenter)
+            workManager: workManager
         )
     }
     
@@ -34,11 +32,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let worker = workManager.workers.first
         XCTAssertNotNil(worker)
         XCTAssertEqual("MeteredUsage.upload", worker?.workID)
-        XCTAssertEqual(0, workManager.rateLimits.count)
-        
-        XCTAssertEqual(0, workManager.workRequests.count)
-        notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
-        
+        XCTAssertEqual(0, workManager.rateLimits.count)        
         XCTAssertEqual(0, workManager.workRequests.count)
     }
     
@@ -113,15 +107,8 @@ final class AirshipMeteredUsageTest: XCTestCase {
     }
     
     func testManagerUploadsDataOnBackground() {
-        XCTAssertEqual(0, workManager.workRequests.count)
-        
-        notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
-        XCTAssertEqual(0, workManager.workRequests.count)
-        
-        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelay: nil, interval: nil))
-        notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
-        let work = workManager.workRequests.last
-        
+        XCTAssertEqual(1, workManager.backgroundWorkRequests.count)
+        let work = workManager.backgroundWorkRequests.last
         XCTAssertNotNil(work)
         XCTAssertEqual("MeteredUsage.upload", work?.workID)
         XCTAssertEqual(0, work?.initialDelay)
@@ -151,7 +138,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             expectation.fulfill()
         }
         
-        self.target.addEvent(event)
+        try await self.target.addEvent(event)
         
         await fulfillment(of: [expectation], timeout: 30)
         XCTAssertEqual(1, workManager.workRequests.count)
@@ -183,7 +170,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             expectation.fulfill()
         }
         
-        self.target.addEvent(event)
+        try await self.target.addEvent(event)
         
         await fulfillment(of: [expectation], timeout: 30)
         XCTAssertEqual(1, workManager.workRequests.count)
@@ -217,7 +204,6 @@ final class AirshipMeteredUsageTest: XCTestCase {
     }
     
     func testScheduleWorkRespectsConfig() {
-        
         XCTAssertEqual(0, workManager.workRequests.count)
         target.scheduleWork()
         XCTAssertEqual(0, workManager.workRequests.count)
@@ -244,14 +230,14 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(AirshipWorkRequestConflictPolicy.keepIfNotStarted, lastWork?.conflictPolicy)
         
         workManager.workRequests.removeAll()
-        target.scheduleWork(initialDelay: 2, conflictPolicy: .replace)
+        target.scheduleWork(initialDelay: 2)
         
         lastWork = workManager.workRequests.last
         XCTAssertNotNil(lastWork)
         XCTAssertEqual("MeteredUsage.upload", lastWork?.workID)
         XCTAssertEqual(2, lastWork?.initialDelay)
         XCTAssertEqual(true, lastWork?.requiresNetwork)
-        XCTAssertEqual(AirshipWorkRequestConflictPolicy.replace, lastWork?.conflictPolicy)
+        XCTAssertEqual(AirshipWorkRequestConflictPolicy.keepIfNotStarted, lastWork?.conflictPolicy)
     }
 }
 
