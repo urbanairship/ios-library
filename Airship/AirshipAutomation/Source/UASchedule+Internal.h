@@ -82,6 +82,11 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
  */
 @property(nonatomic, readonly) NSArray<NSString *> *frequencyConstraintIDs;
 
+/**
+ * Message product id
+ */
+@property(nonatomic, readonly, nullable) NSString *productId;
+
 
 - (instancetype)initWithData:(id)data
                         type:(UAScheduleType)scheduleType
@@ -128,6 +133,11 @@ typedef NS_ENUM(NSUInteger, UAScheduleType) {
  * New user evaluation date
  */
 @property(nonatomic, nullable) NSDate *isNewUserEvaluationDate;
+
+/**
+ * Product id for metered usage
+ */
+@property(nonatomic, nullable) NSString *productId;
 
 
 @end

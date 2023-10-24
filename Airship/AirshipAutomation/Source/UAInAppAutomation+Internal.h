@@ -18,6 +18,7 @@
 @class UAAutomationAudienceOverridesProvider;
 @class UARemoteDataAutomationAccess;
 @class UAAutomationAudienceChecker;
+@class InAppMeteredUsage;
 
 @protocol UAExperimentDataProvider;
 @protocol UAAutomationAudienceCheckerProtocol;
@@ -58,7 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager
                   experimentManager: (id<UAExperimentDataProvider>) experimentManager
-                     audienceChecker:(id<UAAutomationAudienceCheckerProtocol>)audienceChecker;
+                     audienceChecker:(id<UAAutomationAudienceCheckerProtocol>)audienceChecker
+                        meteredUsage:(InAppMeteredUsage *)meteredUsage;
 
 /**
  * Factory method.
@@ -80,7 +82,8 @@ NS_ASSUME_NONNULL_BEGIN
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
                       privacyManager:(UAPrivacyManager *)privacyManager
-                  experimentManager: (id<UAExperimentDataProvider>) experimentManager;
+                  experimentManager: (id<UAExperimentDataProvider>) experimentManager
+                        meteredUsage:(InAppMeteredUsage *)meteredUsage;
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
               completionHandler:(nullable void (^)(BOOL))completionHandler;

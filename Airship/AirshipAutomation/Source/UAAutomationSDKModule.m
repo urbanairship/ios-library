@@ -50,6 +50,7 @@
     UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
     UAAutomationAudienceOverridesProvider *audienceOverridesProvider = dependencies[UASDKDependencyKeys.automationAudienceOverridesProvider];
     id<UAExperimentDataProvider> experimentsManager = dependencies[UASDKDependencyKeys.experimentsManager];
+    InAppMeteredUsage *meteredUsage = dependencies[UASDKDependencyKeys.meteredUsage];
     
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
                                                        audienceOverridesProvider:audienceOverridesProvider
@@ -58,7 +59,8 @@
                                                                          channel:channel
                                                                        analytics:analytics
                                                                   privacyManager:privacyManager
-                                                              experimentManager:experimentsManager];
+                                                              experimentManager:experimentsManager
+                                                                    meteredUsage:meteredUsage];
 
     UALegacyInAppMessaging *legacyIAM = [UALegacyInAppMessaging inAppMessagingWithAnalytics:analytics
                                                                                   dataStore:dataStore

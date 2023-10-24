@@ -20,6 +20,7 @@
         <attribute name="messageType" optional="YES" attributeType="String"/>
         <attribute name="metadata" optional="YES" attributeType="String"/>
         <attribute name="priority" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="productId" optional="YES" attributeType="String"/>
         <attribute name="reportingContext" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="triggerContext" optional="YES" attributeType="Transformable" valueTransformerName="UAScheduleTriggerContextTransformer"/>

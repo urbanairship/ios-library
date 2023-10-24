@@ -205,6 +205,12 @@ extern NSUInteger const UAScheduleDataVersion;
  */
 @property (nullable, nonatomic, strong) NSDate *isNewUserEvaluationDate;
 
+/**
+ * Product id is used for reporting metered usage
+ */
+@property (nullable, nonatomic, copy) NSString *productId;
+
+
 
 /**
  * Whether the schedule has exceeded its limit.

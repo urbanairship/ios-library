@@ -34,6 +34,7 @@
 @property(nonatomic, strong) id<UAExperimentDataProvider> experimentManager;
 
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
+@property(nonatomic, strong) InAppMeteredUsage *meteredUsage;
 @end
 
 @interface UAInAppAutomation()
@@ -61,6 +62,7 @@
     self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
     self.experimentManager = [self mockForProtocol:@protocol(UAExperimentDataProvider)];
     self.mockAudienceChecker = [self mockForProtocol:@protocol(UAAutomationAudienceCheckerProtocol)];
+    self.meteredUsage = [self mockForClass:[InAppMeteredUsage class]];
 
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -85,7 +87,8 @@
                                              frequencyLimitManager:self.mockFrequencyLimitManager
                                                     privacyManager:self.privacyManager
                                                 experimentManager:self.experimentManager
-                                                   audienceChecker:self.mockAudienceChecker];
+                                                   audienceChecker:self.mockAudienceChecker
+                                                      meteredUsage:self.meteredUsage];
 
     XCTAssertNotNil(self.engineDelegate);
 }
@@ -110,7 +113,8 @@
                                              frequencyLimitManager:self.mockFrequencyLimitManager
                                                     privacyManager:self.privacyManager
                                                  experimentManager:self.experimentManager
-                                                   audienceChecker:self.mockAudienceChecker];
+                                                   audienceChecker:self.mockAudienceChecker
+                                                      meteredUsage:self.meteredUsage];
 
     XCTAssertTrue(self.inAppAutomation.isPaused);
 }
@@ -135,7 +139,8 @@
                                              frequencyLimitManager:self.mockFrequencyLimitManager
                                                     privacyManager:self.privacyManager
                                                  experimentManager:self.experimentManager
-                                                   audienceChecker:self.mockAudienceChecker];
+                                                   audienceChecker:self.mockAudienceChecker
+                                                      meteredUsage:self.meteredUsage];
 
     XCTAssertFalse(self.inAppAutomation.isPaused);
 }
@@ -2016,6 +2021,7 @@
         builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
         builder.identifier = @"schedule ID";
         builder.bypassHoldoutGroups = YES;
+        builder.productId = @"test-product-id";
     }];
 
 
@@ -2024,6 +2030,11 @@
         completionBlock();
         return YES;
     }]];
+    
+    [[(id)self.meteredUsage expect] addImpressionWithEntityID:@"schedule ID"
+                                                      product:@"test-product-id"
+                                                    contactID:nil
+                                             reportingContext:schedule.reportingContext];
 
     XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
     [self.engineDelegate executeSchedule:schedule completionHandler:^{
@@ -2032,6 +2043,37 @@
 
     [self waitForTestExpectations];
     [self.mockInAppMessageManager verify];
+    [(id)self.meteredUsage verify];
+}
+
+- (void)testExecuteMessageNotCallingIfNoProductId {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+    }];
+
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.bypassHoldoutGroups = YES;
+    }];
+
+
+    [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(void) = obj;
+        completionBlock();
+        return YES;
+    }]];
+    
+    [[(id)self.meteredUsage reject] addImpressionWithEntityID:[OCMArg any] product:[OCMArg any] contactID:[OCMArg any] reportingContext:[OCMArg any]];
+
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
+    [self.engineDelegate executeSchedule:schedule completionHandler:^{
+        [executeFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockInAppMessageManager verify];
+    [(id)self.meteredUsage verify];
 }
 
 - (void)testExecuteDeferred {

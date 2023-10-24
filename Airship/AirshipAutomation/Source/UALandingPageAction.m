@@ -166,6 +166,7 @@ CGFloat const UALandingPageDefaultBorderRadiusPoints = 2;
         builder.limit = 1;
         builder.triggers = @[[UAScheduleTrigger triggerWithType:UAScheduleTriggerActiveSession goal:@(1) predicate:nil]];
         builder.bypassHoldoutGroups = YES;
+        builder.productId = @"landing_page";
 
         // Allow the app to customize the schedule builder if necessary
         if (extender && [extender respondsToSelector:@selector(extendScheduleBuilder:)]) {

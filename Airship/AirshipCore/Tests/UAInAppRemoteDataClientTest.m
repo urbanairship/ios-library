@@ -85,6 +85,7 @@
     },
                                     @"created": @"2017-12-04T19:07:54.564",
                                     @"last_updated": @"2017-12-04T19:07:54.564",
+                                    @"product_id": @"test product id",
                                     @"triggers": @[
                                             @{
                                                 @"type":@"app_init",
@@ -111,6 +112,7 @@
 
         for (UASchedule *schedule in schedules) {
             XCTAssertEqualObjects([self.remoteDataClient remoteDataInfoFromSchedule:schedule], inAppRemoteDataPayload.remoteDataInfo);
+            XCTAssertEqual(@"test product id", schedule.productId);
         }
 
         XCTAssertEqual(schedules.count, expectedNumberOfSchedules);
@@ -676,6 +678,7 @@
                         },
     },
                 @"created": @"2017-12-04T19:07:54.564",
+                @"product_id": @"another product id",
                 @"last_updated": now,
                 @"triggers": @[
                         @{
@@ -705,7 +708,8 @@
         edits.interval && edits.interval.doubleValue == 0 &&
         edits.priority && edits.priority.integerValue == 0 &&
         [edits.start isEqual:[NSDate distantPast]] &&
-        [edits.end isEqual:[NSDate distantFuture]];
+        [edits.end isEqual:[NSDate distantFuture]] &&
+        [edits.productId isEqualToString: @"another product id"];
     }] completionHandler:OCMOCK_ANY];
 
     // test

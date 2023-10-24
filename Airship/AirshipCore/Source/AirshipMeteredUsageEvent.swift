@@ -7,7 +7,7 @@ import Foundation
  * :nodoc:
  */
 public enum AirshipMeteredUsageType: String, Codable, Sendable {
-    case InAppExperienceImpresssion = "iax_impression"
+    case inAppExperienceImpression = "iax_impression"
 }
 
 /**

@@ -79,6 +79,7 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
 
 static NSString *const UAScheduleInfoMessageTypeKey = @"message_type";
 static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_groups";
+static NSString *const UAScheduleInfoProducId = @"product_id";
 
 @interface UAInAppRemoteDataClient()
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
@@ -669,6 +670,7 @@ static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_g
         builder.messageType = [JSON stringForKey:UAScheduleInfoMessageTypeKey defaultValue:nil];
         builder.bypassHoldoutGroups = [JSON numberForKey:UAScheduleInfoBypassHoldoutGroupsKey defaultValue:@NO].boolValue;
         builder.isNewUserEvaluationDate = newUserEvaluationDate;
+        builder.productId = [JSON stringForKey:UAScheduleInfoProducId defaultValue:nil];
     }];
 }
 
@@ -714,6 +716,7 @@ static NSString *const UAScheduleInfoBypassHoldoutGroupsKey = @"bypass_holdout_g
         builder.messageType = [JSON stringForKey:UAScheduleInfoMessageTypeKey defaultValue:nil];
         builder.bypassHoldoutGroups = [JSON numberForKey:UAScheduleInfoBypassHoldoutGroupsKey defaultValue:nil];
         builder.isNewUserEvaluationDate = newUserEvaluationDate;
+        builder.productId = [JSON stringForKey:UAScheduleInfoProducId defaultValue:nil];
     }];
 }
 

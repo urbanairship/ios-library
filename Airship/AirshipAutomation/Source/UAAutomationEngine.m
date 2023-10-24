@@ -1387,6 +1387,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
         builder.messageType = scheduleData.messageType;
         builder.bypassHoldoutGroups = scheduleData.bypassHoldoutGroups.boolValue;
         builder.isNewUserEvaluationDate = scheduleData.isNewUserEvaluationDate;
+        builder.productId = scheduleData.productId;
     }];
 
     if (![schedule isValid]) {
@@ -1554,6 +1555,10 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
     if (edits.isNewUserEvaluationDate) {
         scheduleData.isNewUserEvaluationDate = edits.isNewUserEvaluationDate;
+    }
+    
+    if (edits.productId) {
+        scheduleData.productId = edits.productId;
     }
 }
 

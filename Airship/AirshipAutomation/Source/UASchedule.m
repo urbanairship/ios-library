@@ -44,6 +44,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
 @synthesize isNewUserEvaluationDate = _isNewUserEvaluationDate;
 @synthesize messageType = _messageType;
 @synthesize bypassHoldoutGroups = _bypassHoldoutGroups;
+@synthesize productId = _productId;
 
 @synthesize frequencyConstraintIDs = _frequencyConstraintIDs;
 
@@ -90,6 +91,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
         _isNewUserEvaluationDate = builder.isNewUserEvaluationDate;
         _bypassHoldoutGroups = builder.bypassHoldoutGroups;
         _messageType = builder.messageType;
+        _productId = builder.productId;
     }
 
     return self;
@@ -183,6 +185,10 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     if (self.isNewUserEvaluationDate != schedule.isNewUserEvaluationDate && ![self.isNewUserEvaluationDate isEqual:schedule.isNewUserEvaluationDate]) {
         return NO;
     }
+    
+    if (self.productId != schedule.productId && ![self.productId isEqualToString:schedule.productId]) {
+        return NO;
+    }
 
     return YES;
 }
@@ -240,6 +246,7 @@ NSUInteger const UAScheduleMaxTriggers = 10;
     result = 31 * result + [self.messageType hash];
     result = 31 * result + self.bypassHoldoutGroups;
     result = 31 * result + [self.isNewUserEvaluationDate hash];
+    result = 31 * result + [self.productId hash];
     return result;
 }
 

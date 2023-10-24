@@ -2,10 +2,6 @@
 
 import Foundation
 
-/**
- * Internal only
- * :nodoc:
- */
 public final class AirshipMeteredUsage: Sendable {
 
     private static let workID: String = "MeteredUsage.upload"
@@ -146,5 +142,34 @@ public final class AirshipMeteredUsage: Sendable {
     
     private var isEnabled: Bool {
         return self.meteredUsageConfig.value?.isEnabled ?? false
+    }
+}
+
+@objc
+public final class InAppMeteredUsage: NSObject {
+    private let meteredUsage: AirshipMeteredUsage
+
+    init(_ meteredUsage: AirshipMeteredUsage) {
+        self.meteredUsage = meteredUsage
+    }
+
+    @objc
+    public func addImpression(
+        entityID: String,
+        product: String,
+        contactID: String?,
+        reportingContext: Any?
+    ) {
+        self.meteredUsage.addEvent(
+            AirshipMeteredUsageEvent(
+                eventID: UUID().uuidString,
+                entityID: entityID,
+                type: .inAppExperienceImpression,
+                product: product,
+                reportingContext: try? AirshipJSON.wrap(reportingContext),
+                timestamp: Date(),
+                contactId: contactID
+            )
+        )
     }
 }

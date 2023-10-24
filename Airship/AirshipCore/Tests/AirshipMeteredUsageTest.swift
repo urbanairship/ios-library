@@ -136,7 +136,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .InAppExperienceImpresssion,
+            type: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
@@ -168,7 +168,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .InAppExperienceImpresssion,
+            type: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
@@ -199,7 +199,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .InAppExperienceImpresssion,
+            type: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: timeStamp,
@@ -208,7 +208,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             .withDisabledAnalytics()
         
         XCTAssertEqual(event.eventID, "test.id")
-        XCTAssertEqual(event.type, .InAppExperienceImpresssion)
+        XCTAssertEqual(event.type, .inAppExperienceImpression)
         XCTAssertEqual(event.product, "Story")
         XCTAssertNil(event.entityID)
         XCTAssertNil(event.reportingContext)

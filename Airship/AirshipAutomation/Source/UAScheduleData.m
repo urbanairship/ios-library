@@ -39,6 +39,7 @@ NSUInteger const UAScheduleDataVersion = 3;
 @dynamic messageType;
 @dynamic bypassHoldoutGroups;
 @dynamic isNewUserEvaluationDate;
+@dynamic productId;
 
 -(void)setExecutionState:(NSNumber *)executionState {
     [self willChangeValueForKey:@"executionState"];

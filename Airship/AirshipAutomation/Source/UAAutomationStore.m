@@ -304,6 +304,7 @@ static NSString *const UALegacyActionAutomationStoreFileFormat = @"Automation-%@
     scheduleData.messageType = schedule.messageType;
     scheduleData.bypassHoldoutGroups = @(schedule.bypassHoldoutGroups);
     scheduleData.isNewUserEvaluationDate = schedule.isNewUserEvaluationDate;
+    scheduleData.productId = schedule.productId;
 
     if (schedule.audienceJSON) {
         scheduleData.audience = [UAJSONUtils stringWithObject:schedule.audienceJSON];

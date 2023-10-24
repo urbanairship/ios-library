@@ -45,6 +45,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, nullable) NSDate *isNewUserEvaluationDate;
 
+/**
+ * Product id for metered usage
+ */
+@property(nonatomic, nullable) NSString *productId;
+
 @end
 
 @interface UAScheduleEdits ()
@@ -95,6 +100,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Frequency constraint IDs.
  */
 @property(nonatomic, readonly, nullable) NSArray<NSString *> *frequencyConstraintIDs;
+
+/**
+ * Product id for metered usage
+ */
+@property(nonatomic, nullable, readonly) NSString *productId;
 
 
 /**

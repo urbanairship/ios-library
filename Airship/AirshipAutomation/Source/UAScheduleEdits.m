@@ -38,6 +38,7 @@
 @synthesize isNewUserEvaluationDate = _isNewUserEvaluationDate;
 @synthesize messageType = _messageType;
 @synthesize bypassHoldoutGroups = _bypassHoldoutGroups;
+@synthesize productId = _productId;
 
 - (instancetype)initWithData:(NSString *)data
                         type:(NSNumber *)type
@@ -57,6 +58,7 @@
         self.editGracePeriod = builder.editGracePeriod;
         self.interval = builder.interval;
         self.metadata = builder.metadata;
+        _productId = builder.productId;
     }
 
     return self;
@@ -128,7 +130,8 @@
             "Audience: %@\n"
             "Campaigns: %@\n"
             "Reporting Context: %@\n"
-            "Frequency Constraint IDs: %@",
+            "Frequency Constraint IDs: %@\n"
+            "ProductId: %@",
             self.data,
             self.type,
             self.priority,
@@ -141,7 +144,9 @@
             self.audienceJSON,
             self.campaigns,
             self.reportingContext,
-            self.frequencyConstraintIDs];
+            self.frequencyConstraintIDs,
+            self.productId
+    ];
 }
 
 @end

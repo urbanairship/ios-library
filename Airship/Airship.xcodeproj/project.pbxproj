@@ -2113,6 +2113,7 @@
 		45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipAccengageTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		60303EEF2AE26585008EE716 /* UAAutomation 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 12.xcdatamodel"; sourceTree = "<group>"; };
 		6058771C2AC73C7E0021628E /* AirshipMeteredUsageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsageTest.swift; sourceTree = "<group>"; };
 		6058771E2ACAC86A0021628E /* MeteredUsageApiClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageApiClientTest.swift; sourceTree = "<group>"; };
 		6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentManagerTest.swift; sourceTree = "<group>"; };
@@ -9506,6 +9507,7 @@
 		1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				60303EEF2AE26585008EE716 /* UAAutomation 12.xcdatamodel */,
 				6EC755A62A4F5DB200851ABB /* UAAutomation 11.xcdatamodel */,
 				3203D9CA29FA80BE0082858F /* UAAutomation 10.xcdatamodel */,
 				6E8873952762A77400AC248A /* UAAutomation 9.xcdatamodel */,
@@ -9518,7 +9520,7 @@
 				1B2F3B0824B7525500A5DE8C /* UAAutomation 6.xcdatamodel */,
 				1B2F3B0924B7525500A5DE8C /* UAAutomation 5.xcdatamodel */,
 			);
-			currentVersion = 6EC755A62A4F5DB200851ABB /* UAAutomation 11.xcdatamodel */;
+			currentVersion = 60303EEF2AE26585008EE716 /* UAAutomation 12.xcdatamodel */;
 			name = UAAutomation.xcdatamodeld;
 			path = Resources/UAAutomation.xcdatamodeld;
 			sourceTree = "<group>";

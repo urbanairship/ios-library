@@ -45,6 +45,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 @property(nonatomic, strong) NSMutableDictionary<NSString *, UARemoteDataInfo *> *remoteDataInfoCache;
 
 @property(nonatomic, strong) id<UAAutomationAudienceCheckerProtocol> audienceChecker;
+@property(nonatomic, strong) InAppMeteredUsage *meteredUsage;
 
 @end
 
@@ -66,7 +67,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager
                    experimentManager:(id<UAExperimentDataProvider>) experimentManager
-                     audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker {
+                     audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker
+                        meteredUsage:(InAppMeteredUsage *)meteredUsage {
 
 
     return [[self alloc] initWithConfig:config
@@ -80,7 +82,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                   frequencyLimitManager:frequencyLimitManager
                          privacyManager:privacyManager
                      experimentsManager:experimentManager
-                        audienceChecker:audienceChecker];
+                        audienceChecker:audienceChecker
+                           meteredUsage:meteredUsage];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
@@ -90,7 +93,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
                       privacyManager:(UAPrivacyManager *)privacyManager
-                  experimentManager: (id<UAExperimentDataProvider>) experimentManager {
+                  experimentManager: (id<UAExperimentDataProvider>) experimentManager
+                        meteredUsage:(InAppMeteredUsage *) meteredUsage {
 
 
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
@@ -120,7 +124,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                                frequencyLimitManager:frequencyLimitManager
                                       privacyManager:privacyManager
                                   experimentsManager:experimentManager
-                                     audienceChecker:[[UAAutomationAudienceChecker alloc] init]];
+                                     audienceChecker:[[UAAutomationAudienceChecker alloc] init]
+                                        meteredUsage:meteredUsage];
 }
 
 
@@ -135,7 +140,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
          frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
                 privacyManager:(UAPrivacyManager *)privacyManager
             experimentsManager:(id<UAExperimentDataProvider>) experimentManager
-               audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker {
+               audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker
+                  meteredUsage:(InAppMeteredUsage *) meteredUsage {
 
     self = [super init];
 
@@ -160,6 +166,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         self.redirectURLs = [NSMutableDictionary dictionary];
         self.remoteDataInfoCache = [NSMutableDictionary dictionary];
         self.experimentManager = experimentManager;
+        self.meteredUsage = meteredUsage;
 
         UA_WEAKIFY(self)
         self.disableHelper.onChange = ^{
@@ -598,6 +605,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         case UAScheduleTypeDeferred:
         case UAScheduleTypeInAppMessage: {
             [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
+            [self reportMeteredUsage:schedule];
             break;
         }
 
@@ -606,6 +614,17 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
             return completionHandler();
         }
     }
+}
+
+- (void)reportMeteredUsage: (nonnull UASchedule *)schedule {
+    if (schedule.productId.length == 0) {
+        return;
+    }
+    
+    [self.meteredUsage addImpressionWithEntityID:schedule.identifier
+                                         product:schedule.productId
+                                       contactID:nil
+                                reportingContext:schedule.reportingContext];
 }
 
 - (void)onExecutionInterrupted:(UASchedule *)schedule {
