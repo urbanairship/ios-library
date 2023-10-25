@@ -2024,7 +2024,6 @@
         builder.productId = @"test-product-id";
     }];
 
-
     [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^completionBlock)(void) = obj;
         completionBlock();
@@ -2034,6 +2033,90 @@
     [[(id)self.meteredUsage expect] addImpressionWithEntityID:@"schedule ID"
                                                       product:@"test-product-id"
                                                     contactID:nil
+                                             reportingContext:schedule.reportingContext];
+
+    XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
+    [self.engineDelegate executeSchedule:schedule completionHandler:^{
+        [executeFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+    [self.mockInAppMessageManager verify];
+    [(id)self.meteredUsage verify];
+}
+
+- (void)testExecuteMessagePassContactIdToImpression {
+    UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
+        builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
+    }];
+
+    UASchedule *schedule = [UAInAppMessageSchedule scheduleWithMessage:message builderBlock:^(UAScheduleBuilder *builder) {
+        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
+        builder.identifier = @"schedule ID";
+        builder.productId = @"test-product-id";
+    }];
+
+    id mockInfo = [self mockForClass:[UARemoteDataInfo class]];
+    [[[mockInfo stub] andReturn:@"test-contact-id"] contactID];
+    [[[self.mockRemoteDataClient stub] andReturn:mockInfo] remoteDataInfoFromSchedule:schedule];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(NO);
+    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
+        callback(YES);
+    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
+        callback(nil);
+    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    
+    [[(id)self.experimentManager stub] evaluateExperimentsWithInfo:[OCMArg any]
+                                                          contactID:[OCMArg any]
+                                                  completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^complemtion)(UAExperimentResult * _Nullable, NSError * _Nullable) = obj;
+        complemtion(nil, nil);
+        return YES;
+    }]];
+
+    [[self.mockInAppMessageManager expect] prepareMessage:message
+                                               scheduleID:schedule.identifier
+                                                campaigns:schedule.campaigns
+                                         reportingContext:schedule.reportingContext
+                                         experimentResult:nil
+                                        completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+                                                void(^completionBlock)(UAInAppMessagePrepareResult) = obj;
+                                                completionBlock(UAInAppMessagePrepareResultSuccess);
+                                                return YES;
+                                            }]];
+
+    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
+    [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
+        XCTAssertEqual(UAAutomationSchedulePrepareResultContinue, result);
+        [prepareFinished fulfill];
+    }];
+
+    [self waitForTestExpectations];
+
+    [[self.mockInAppMessageManager expect] displayMessageWithScheduleID:@"schedule ID" completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(void) = obj;
+        completionBlock();
+        return YES;
+    }]];
+    
+    [[(id)self.meteredUsage expect] addImpressionWithEntityID:@"schedule ID"
+                                                      product:@"test-product-id"
+                                                    contactID:@"test-contact-id"
                                              reportingContext:schedule.reportingContext];
 
     XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];

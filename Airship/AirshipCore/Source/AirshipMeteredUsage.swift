@@ -39,7 +39,8 @@ public final class AirshipMeteredUsage: Sendable {
         privacyManager: AirshipPrivacyManager,
         client: MeteredUsageAPIClientProtocol,
         store: MeteredUsageStore,
-        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared
+        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
         self.dataStore = dataStore
         self.channel = channel
@@ -122,9 +123,7 @@ public final class AirshipMeteredUsage: Sendable {
         scheduleWork()
     }
 
-    func scheduleWork(
-        initialDelay: TimeInterval = 0.0
-    ) {
+    func scheduleWork(initialDelay: TimeInterval = 0.0) {
         guard self.isEnabled else { return }
 
         self.workManager.dispatchWorkRequest(

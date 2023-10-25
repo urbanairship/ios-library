@@ -589,6 +589,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
 - (void)executeSchedule:(nonnull UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
     UA_LTRACE(@"Executing schedule: %@", schedule.identifier);
+    
+    NSString *contactId = self.remoteDataInfoCache[schedule.identifier].contactID.copy;
 
     [self.frequencyCheckers removeObjectForKey:schedule.identifier];
     [self.remoteDataInfoCache removeObjectForKey:schedule.identifier];
@@ -605,7 +607,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         case UAScheduleTypeDeferred:
         case UAScheduleTypeInAppMessage: {
             [self.inAppMessageManager displayMessageWithScheduleID:schedule.identifier completionHandler:completionHandler];
-            [self reportMeteredUsage:schedule];
+            [self reportMeteredUsage:schedule contactId:contactId];
             break;
         }
 
@@ -616,14 +618,14 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     }
 }
 
-- (void)reportMeteredUsage: (nonnull UASchedule *)schedule {
+- (void)reportMeteredUsage: (nonnull UASchedule *)schedule contactId: (NSString *)contactId {
     if (schedule.productId.length == 0) {
         return;
     }
     
     [self.meteredUsage addImpressionWithEntityID:schedule.identifier
                                          product:schedule.productId
-                                       contactID:nil
+                                       contactID:contactId
                                 reportingContext:schedule.reportingContext];
 }
 
