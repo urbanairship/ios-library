@@ -39,6 +39,7 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
     private let disableHelper: ComponentDisableHelper
     private let eventTracker: EventTracker
     private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
+    private let notificationCenter: AirshipNotificationCenter
 
     init(
         dataStore: PreferenceDataStore,
@@ -46,7 +47,8 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         eventTracker: EventTracker,
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         date: AirshipDateProtocol = AirshipDate.shared,
-        deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() }
+        deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
+        notificationCenter: AirshipNotificationCenter = .shared
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
@@ -57,6 +59,7 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
             dataStore: dataStore,
             className: "FeatureFlags"
         )
+        self.notificationCenter = notificationCenter
     }
 
     /// Gets and evaluates  a feature flag
@@ -80,6 +83,11 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         do {
             let event = try FeatureFlagInteractedEvent(flag: flag)
             eventTracker.addEvent(event)
+            self.notificationCenter.post(
+                name: AirshipAnalytics.featureFlagInterracted,
+                object: self,
+                userInfo: [AirshipAnalytics.eventKey: event]
+            )
         } catch {
             AirshipLogger.error("Failed to generate FeatureFlagInteractedEvent \(error)")
         }

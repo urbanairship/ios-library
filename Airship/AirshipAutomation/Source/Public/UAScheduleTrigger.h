@@ -74,7 +74,12 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
     /**
      * Version trigger.
      */
-    UAScheduleTriggerVersion
+    UAScheduleTriggerVersion,
+    
+    /**
+     * FeatureFlag interracted trigger.
+     */
+    UAScheduleTriggerFeatureFlagInterracted
 };
 
 
@@ -142,6 +147,11 @@ extern NSString *const UAScheduleTriggerActiveSessionName;
  * Version trigger name when defining a trigger in JSON.
  */
 extern NSString *const UAScheduleTriggerVersionName;
+
+/**
+ * Feature flag interracted trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerFeatureFlagInterractedName;
 
 
 /**
@@ -271,6 +281,15 @@ NS_SWIFT_NAME(ScheduleTrigger)
  * @return A trigger or `nil` if the JSON is invalid.
  */
 + (nullable instancetype)triggerWithJSON:(id)json error:(NSError * _Nullable *)error;
+
+/**
+ * Factory method to create a feature flag interracted trigger.
+ *
+ * @param name A feature flag name constraint to match to filter out events that are applied.
+ * @param count The number of interraction to match before firing the trigger.
+ * @return A version trigger.
+ */
++ (instancetype)featureFlagInterractedWithName:(NSString *)name count:(NSUInteger)count;
 
 ///---------------------------------------------------------------------------------------
 /// @name Schedule Trigger Evaluation

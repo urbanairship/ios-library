@@ -186,6 +186,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                                 selector:@selector(regionEventAdded:)
                                     name:UAAnalytics.regionEventAdded
                                   object:nil];
+    
+    [self.notificationCenter addObserver:self
+                                selector:@selector(featureFlagInterracted:)
+                                    name:UAAnalytics.featureFlagInterracted
+                                  object:nil];
 
     [self.notificationCenter addObserver:self
                                 selector:@selector(applicationDidTransitionToBackground)
@@ -196,6 +201,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
                                 selector:@selector(applicationDidTransitionToForeground)
                                     name:UAAppStateTracker.didTransitionToForeground
                                   object:nil];
+    
 
     [self finishExecutionSchedules];
     [self cleanSchedules];
@@ -624,6 +630,11 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
     [self updateTriggersWithType:triggerType argument:event.payload incrementAmount:1.0];
 
     [self scheduleConditionsChanged];
+}
+
+-(void)featureFlagInterracted:(NSNotification *)notification {
+    id<UAEvent> event = notification.userInfo[UAAnalytics.eventKey];
+    [self updateTriggersWithType:UAScheduleTriggerFeatureFlagInterracted argument:event.data incrementAmount:1.0];
 }
 
 -(void)screenTracked:(NSNotification *)notification {

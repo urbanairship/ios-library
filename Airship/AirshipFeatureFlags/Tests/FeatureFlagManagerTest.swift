@@ -17,6 +17,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
     private let eventTracker: TestEventTracker = TestEventTracker()
     private let deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
+    private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
 
     private var featureFlagManager: FeatureFlagManager!
 
@@ -27,7 +28,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             eventTracker: self.eventTracker,
             audienceChecker: self.audienceChecker,
             date: self.date,
-            deviceInfoProviderFactory: { self.deviceInfoProvider }
+            deviceInfoProviderFactory: { self.deviceInfoProvider },
+            notificationCenter: notificationCenter
         )
     }
 
@@ -706,11 +708,22 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
+        
+        let expectation = self.expectation(description: "tracked notification sent")
+        notificationCenter.addObserver(forName: AirshipAnalytics.featureFlagInterracted) { notification in
+            let event = self.eventTracker.events.last as? FeatureFlagInteractedEvent
+            let receivedEvent = notification.userInfo?[AirshipAnalytics.eventKey] as? FeatureFlagInteractedEvent
+            XCTAssertNotNil(event)
+            XCTAssertEqual(event, receivedEvent)
+            expectation.fulfill()
+        }
 
         self.featureFlagManager.trackInteraction(flag: flag)
 
         XCTAssertEqual(1, self.eventTracker.events.count)
         XCTAssertNotNil(self.eventTracker.events[0] as? FeatureFlagInteractedEvent)
+        
+        waitForExpectations(timeout: 10)
     }
 
     func testTrackInteractionDoesNotExist() {

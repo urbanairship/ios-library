@@ -36,6 +36,12 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     public static let regionEventAdded = NSNotification.Name(
         "UARegionEventAdded"
     )
+    
+    /// FeatureFlag interracted notification. :nodoc:
+    @objc
+    public static let featureFlagInterracted = NSNotification.Name(
+        "UAFeatureFlagInterracted"
+    )
 
     /// Screen tracked notification,. :nodoc:
     @objc

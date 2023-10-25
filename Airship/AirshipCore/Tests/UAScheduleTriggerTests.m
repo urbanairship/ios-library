@@ -25,7 +25,8 @@
                                       UAScheduleTriggerScreenName: @(UAScheduleTriggerScreen),
                                       UAScheduleTriggerAppInitName: @(UAScheduleTriggerAppInit),
                                       UAScheduleTriggerActiveSessionName : @(UAScheduleTriggerActiveSession),
-                                      UAScheduleTriggerVersionName : @(UAScheduleTriggerVersion)
+                                      UAScheduleTriggerVersionName : @(UAScheduleTriggerVersion),
+                                      UAScheduleTriggerFeatureFlagInterractedName : @(UAScheduleTriggerFeatureFlagInterracted)
                                       };
 
 

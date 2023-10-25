@@ -23,6 +23,7 @@ NSString *const UAScheduleTriggerRegionEnterName = @"region_enter";
 NSString *const UAScheduleTriggerRegionExitName = @"region_exit";
 NSString *const UAScheduleTriggerCustomEventCountName = @"custom_event_count";
 NSString *const UAScheduleTriggerCustomEventValueName = @"custom_event_value";
+NSString *const UAScheduleTriggerFeatureFlagInterractedName = @"feature_flag_interaction";
 NSString *const UAScheduleTriggerScreenName = @"screen";
 NSString *const UAScheduleTriggerActiveSessionName = @"active_session";
 NSString *const UAScheduleTriggerVersionName = @"version";
@@ -111,6 +112,14 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
     return [UAScheduleTrigger triggerWithType:UAScheduleTriggerVersion goal:@(count) predicate:predicate];
 }
 
++ (instancetype)featureFlagInterractedWithName:(NSString *)name count:(NSUInteger)count {
+    UAJSONValueMatcher *valueMatcher = [UAJSONValueMatcher matcherWhereStringEquals:name];
+    UAJSONMatcher *jsonMatcher = [[UAJSONMatcher alloc] initWithValueMatcher:valueMatcher scope:@[@"flag_name"]];
+    UAJSONPredicate *predicate = [[UAJSONPredicate alloc] initWithJSONMatcher:jsonMatcher];
+    
+    return [UAScheduleTrigger triggerWithType:UAScheduleTriggerFeatureFlagInterracted goal:@(count) predicate:predicate];
+}
+
 + (nullable instancetype)triggerWithJSON:(id)json error:(NSError **)error {
     if (![json isKindOfClass:[NSDictionary class]]) {
         if (error) {
@@ -158,6 +167,8 @@ NSString * const UAScheduleTriggerErrorDomain = @"com.urbanairship.schedule_trig
         triggerType = UAScheduleTriggerActiveSession;
     } else if ([UAScheduleTriggerVersionName isEqualToString:triggerTypeString]) {
         triggerType = UAScheduleTriggerVersion;
+    } else if ([UAScheduleTriggerFeatureFlagInterractedName isEqualToString:triggerTypeString]) {
+        triggerType = UAScheduleTriggerFeatureFlagInterracted;
     } else {
 
         if (error) {
