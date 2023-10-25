@@ -146,7 +146,28 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let storedEvent = try await storage.getEvents().first
         XCTAssertEqual(event, storedEvent)
     }
-    
+
+    func testAddEventConfigDisabled() async throws {
+        target.updateConfig(MeteredUsageConfig(isEnabled: false, initialDelay: 1, interval: nil))
+        workManager.workRequests.removeAll()
+
+        let event = AirshipMeteredUsageEvent(
+            eventID: "test.id",
+            entityID: "story.id",
+            type: .inAppExperienceImpression,
+            product: "Story",
+            reportingContext: try! AirshipJSON.wrap("context"),
+            timestamp: Date(),
+            contactId: "test-contact-id"
+        )
+
+        try await self.target.addEvent(event)
+        XCTAssertEqual(0, workManager.workRequests.count)
+
+        let events = try await storage.getEvents()
+        XCTAssertTrue(events.isEmpty)
+    }
+
     func testEventStoreStripsDataIfAnalyticsDisabled() async throws {
         
         target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelay: 1, interval: nil))

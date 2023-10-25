@@ -115,6 +115,8 @@ public final class AirshipMeteredUsage: Sendable {
     }
 
     func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
+        guard self.isEnabled else { return }
+
         let eventToStore = privacyManager.isEnabled(.analytics) ? event : event.withDisabledAnalytics()
         try await self.store.saveEvent(eventToStore)
         scheduleWork()
