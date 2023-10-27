@@ -6,25 +6,20 @@ import Foundation
 import AirshipCore
 
 final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
-
-    var onEvaluate: ((DeviceAudienceSelector, Date, String?, AudienceDeviceInfoProvider) async throws -> Bool)!
-
-
     func evaluate(
         audience: DeviceAudienceSelector,
         newUserEvaluationDate: Date,
-        contactID: String?
+        deviceInfoProvider: AirshipCore.AudienceDeviceInfoProvider
     ) async throws -> Bool {
-        return try await self.evaluate(audience: audience, newUserEvaluationDate: newUserEvaluationDate, contactID: contactID, deviceInfoProvider: TestAudienceDeviceInfoProvider())
+        return try await self.onEvaluate?(audience, newUserEvaluationDate, deviceInfoProvider) ?? false
     }
 
-    func evaluate(audience: DeviceAudienceSelector, newUserEvaluationDate: Date, contactID: String?, deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
-        return try await self.onEvaluate?(audience, newUserEvaluationDate, contactID, deviceInfoProvider) ?? false
-
-    }
+    var onEvaluate: ((DeviceAudienceSelector, Date,  AudienceDeviceInfoProvider) async throws -> Bool)!
 }
 
 final class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
+    var sdkVersion: String = AirshipVersion.get()
+    
     var isAirshipReady: Bool = true
 
     var tags: Set<String> = Set()

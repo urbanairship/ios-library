@@ -2,7 +2,7 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc
 public enum AirshipWorkRequestConflictPolicy: Int, Sendable {
     @objc(UAirshipWorkRequestConflictPolicyAppend)
@@ -14,7 +14,7 @@ public enum AirshipWorkRequestConflictPolicy: Int, Sendable {
 }
 
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public struct AirshipWorkRequest: Equatable, Sendable, Hashable {
     public let workID: String
     public let extras: [String: String]?

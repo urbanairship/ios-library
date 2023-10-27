@@ -17,7 +17,7 @@
 @property (nonatomic,strong) UAInAppRemoteDataClient *remoteDataClient;
 @property (nonatomic, copy) void (^publishBlock)(NSArray<UARemoteDataPayload *> *);
 
-@property (nonatomic, strong) id mockRemoteData;
+@property (nonatomic, strong) id mockinAppCoreSwiftBridge;
 @property (nonatomic, strong) id mockDelegate;
 @property (nonatomic, strong) id mockChannel;
 
@@ -30,8 +30,8 @@
     [super setUp];
 
     // mock remote data
-    self.mockRemoteData = [self mockForClass:[UARemoteDataAutomationAccess class]];
-    [[[self.mockRemoteData stub] andDo:^(NSInvocation *invocation) {
+    self.mockinAppCoreSwiftBridge = [self mockForClass:[UAInAppCoreSwiftBridge class]];
+    [[[self.mockinAppCoreSwiftBridge stub] andDo:^(NSInvocation *invocation) {
         void *arg;
 
         // verify payload types
@@ -59,11 +59,11 @@
         completionHandler(self.allSchedules);
     }] getSchedules:OCMOCK_ANY];
 
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteData:self.mockRemoteData
-                                                                dataStore:self.dataStore
-                                                                  channel:self.mockChannel
-                                                      schedulerDispatcher:[[UATestDispatcher alloc] init]
-                                                               SDKVersion:@"0.0.0"];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithInAppCoreSwiftBridge:self.mockinAppCoreSwiftBridge
+                                                                          dataStore:self.dataStore
+                                                                            channel:self.mockChannel
+                                                                schedulerDispatcher:[[UATestDispatcher alloc] init]
+                                                                         SDKVersion:@"0.0.0"];
     self.remoteDataClient.delegate = self.mockDelegate;
 
     [self.remoteDataClient subscribe];
@@ -1056,11 +1056,11 @@
 
     [self.remoteDataClient unsubscribe];
 
-    self.remoteDataClient = [UAInAppRemoteDataClient clientWithRemoteData:self.mockRemoteData
-                                                                dataStore:self.dataStore
-                                                                  channel:self.mockChannel
-                                                      schedulerDispatcher:[[UATestDispatcher alloc] init]
-                                                               SDKVersion:@"1.0.0"];
+    self.remoteDataClient = [UAInAppRemoteDataClient clientWithInAppCoreSwiftBridge:self.mockinAppCoreSwiftBridge
+                                                                          dataStore:self.dataStore
+                                                                            channel:self.mockChannel
+                                                                schedulerDispatcher:[[UATestDispatcher alloc] init]
+                                                                         SDKVersion:@"1.0.0"];
     self.remoteDataClient.delegate = self.mockDelegate;
 
     [self.remoteDataClient subscribe];

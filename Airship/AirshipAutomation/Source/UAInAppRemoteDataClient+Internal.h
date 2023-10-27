@@ -6,7 +6,7 @@
 #import "UAScheduleEdits.h"
 #import "UAFrequencyConstraint+Internal.h"
 
-@class UARemoteDataAutomationAccess;
+@class UAInAppCoreSwiftBridge;
 @class UAPreferenceDataStore;
 @class UAChannel;
 @class UADispatcher;
@@ -75,19 +75,19 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Create a remote data client for in-app messaging.
  *
- * @param remoteData The remote data provider.
+ * @param inAppCoreSwiftBridge The in-app core swift bridge.
  * @param dataStore A UAPreferenceDataStore to store persistent preferences
  * @param channel The channel.
  */
-+ (instancetype)clientWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
-                           dataStore:(UAPreferenceDataStore *)dataStore
-                             channel:(UAChannel *)channel;
++ (instancetype)clientWithInAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
+                                     dataStore:(UAPreferenceDataStore *)dataStore
+                                       channel:(UAChannel *)channel;
 
-+ (instancetype)clientWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
-                           dataStore:(UAPreferenceDataStore *)dataStore
-                             channel:(UAChannel *)channel
-                 schedulerDispatcher:(UADispatcher *)schedulerDispatcher
-                          SDKVersion:(NSString *)SDKVersion;
++ (instancetype)clientWithInAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
+                                     dataStore:(UAPreferenceDataStore *)dataStore
+                                       channel:(UAChannel *)channel
+                           schedulerDispatcher:(UADispatcher *)schedulerDispatcher
+                                    SDKVersion:(NSString *)SDKVersion;
 
 /**
  * Subscribes to updates.

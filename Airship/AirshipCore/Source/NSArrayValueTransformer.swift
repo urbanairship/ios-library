@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc(UANSArrayValueTransformer)
 public class NSArrayValueTransformer: ValueTransformer {
 

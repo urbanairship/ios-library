@@ -59,7 +59,7 @@ public class PreferenceCenter: NSObject, AirshipComponent {
 
     private let disableHelper: ComponentDisableHelper
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return disableHelper.enabled
@@ -162,7 +162,7 @@ public class PreferenceCenter: NSObject, AirshipComponent {
         throw AirshipErrors.error("Preference center not found \(preferenceCenterID)")
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == Airship.deepLinkScheme,
             deepLink.host == "preferences",

@@ -2,7 +2,13 @@
 
 import Foundation
 
-public final class AirshipMeteredUsage: Sendable {
+/// NOTE: For internal use only. :nodoc:
+protocol AirshipMeteredUsageProtocol: Sendable {
+    func addEvent(_ event: AirshipMeteredUsageEvent) async throws
+}
+
+/// NOTE: For internal use only. :nodoc:
+public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
 
     private static let workID: String = "MeteredUsage.upload"
     private static let configKey: String = "MeteredUsage.config"
@@ -138,49 +144,5 @@ public final class AirshipMeteredUsage: Sendable {
     
     private var isEnabled: Bool {
         return self.meteredUsageConfig.value?.isEnabled ?? false
-    }
-}
-
-@objc
-public final class InAppMeteredUsage: NSObject {
-    private let meteredUsage: AirshipMeteredUsage
-    private let contact: InternalAirshipContactProtocol
-
-    init(meteredUsage: AirshipMeteredUsage, contact: InternalAirshipContactProtocol) {
-        self.meteredUsage = meteredUsage
-        self.contact = contact
-    }
-
-    @objc
-    public func addImpression(
-        entityID: String,
-        product: String,
-        contactID: String?,
-        reportingContext: Any?
-    ) {
-        let date = Date()
-        let reportingContextJSON = try? AirshipJSON.wrap(reportingContext)
-
-
-        Task {
-            let lastContactID = await contact.contactID
-
-            let event = AirshipMeteredUsageEvent(
-                eventID: UUID().uuidString,
-                entityID: entityID,
-                type: .inAppExperienceImpression,
-                product: product,
-                reportingContext: reportingContextJSON,
-                timestamp: date,
-                contactId: contactID ?? lastContactID
-            )
-
-            do {
-                try await self.meteredUsage.addEvent(event)
-            } catch {
-                AirshipLogger.error("Failed to save metered usage event: \(event)")
-            }
-        }
-
     }
 }

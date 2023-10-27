@@ -2,7 +2,7 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 struct ScopedSubscriptionListUpdate: Codable, Equatable, Sendable {
     let listId: String
     let type: SubscriptionListUpdateType

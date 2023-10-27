@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 protocol SubscriptionListAPIClientProtocol: Sendable {
     func get(
         channelID: String
     ) async throws -> AirshipHTTPResponse<[String]>
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
 
     private static let getPath = "/api/subscription_lists/channels/"

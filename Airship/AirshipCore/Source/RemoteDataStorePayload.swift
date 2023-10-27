@@ -3,7 +3,7 @@
 import CoreData
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataStorePayload)
 class RemoteDataStorePayload: NSManagedObject {
 

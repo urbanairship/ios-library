@@ -3,7 +3,7 @@
 import Foundation
 
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 enum ContactOperation: Codable, Equatable, Sendable {
     var type: OperationType {
         switch (self) {

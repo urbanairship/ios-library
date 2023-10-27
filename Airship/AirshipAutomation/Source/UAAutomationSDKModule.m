@@ -45,22 +45,17 @@
     UAPreferenceDataStore *dataStore = dependencies[UASDKDependencyKeys.dataStore];
     UARuntimeConfig *config = dependencies[UASDKDependencyKeys.config];
     UAChannel *channel = dependencies[UASDKDependencyKeys.channel];
-    UARemoteDataAutomationAccess *remoteData = dependencies[UASDKDependencyKeys.remoteDataAutomation];
+    UAInAppCoreSwiftBridge *inAppCoreSwiftBridge = dependencies[UASDKDependencyKeys.inAppCoreSwiftBridge];
     UAAnalytics *analytics = dependencies[UASDKDependencyKeys.analytics];
     UAPrivacyManager *privacyManager = dependencies[UASDKDependencyKeys.privacyManager];
-    UAAutomationAudienceOverridesProvider *audienceOverridesProvider = dependencies[UASDKDependencyKeys.automationAudienceOverridesProvider];
-    id<UAExperimentDataProvider> experimentsManager = dependencies[UASDKDependencyKeys.experimentsManager];
-    InAppMeteredUsage *meteredUsage = dependencies[UASDKDependencyKeys.iaaMeteredUsage];
+    
     
     UAInAppAutomation *inAppAutomation = [UAInAppAutomation automationWithConfig:config
-                                                       audienceOverridesProvider:audienceOverridesProvider
-                                                              remoteData:remoteData
+                                                            inAppCoreSwiftBridge:inAppCoreSwiftBridge
                                                                        dataStore:dataStore
                                                                          channel:channel
                                                                        analytics:analytics
-                                                                  privacyManager:privacyManager
-                                                              experimentManager:experimentsManager
-                                                                    meteredUsage:meteredUsage];
+                                                                  privacyManager:privacyManager];
 
     UALegacyInAppMessaging *legacyIAM = [UALegacyInAppMessaging inAppMessagingWithAnalytics:analytics
                                                                                   dataStore:dataStore

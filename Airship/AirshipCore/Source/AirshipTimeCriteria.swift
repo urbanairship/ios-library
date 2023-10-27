@@ -2,7 +2,7 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public struct AirshipTimeCriteria: Codable, Sendable, Equatable {
     private let start: Int64?
     private let end: Int64?
@@ -18,7 +18,7 @@ public struct AirshipTimeCriteria: Codable, Sendable, Equatable {
     }
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public extension AirshipTimeCriteria {
     func isActive(date: Date) -> Bool {
         let currentMS = date.millisecondsSince1970

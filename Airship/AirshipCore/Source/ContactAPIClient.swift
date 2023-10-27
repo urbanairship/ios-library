@@ -2,7 +2,7 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 protocol ContactsAPIClientProtocol {
     func resolve(
         channelID: String,
@@ -57,7 +57,7 @@ protocol ContactsAPIClientProtocol {
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 class ContactAPIClient: ContactsAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession

@@ -3,7 +3,7 @@
 @preconcurrency
 import Combine
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
     fileprivate enum RefreshStatus: Sendable {
         case none
@@ -66,7 +66,7 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
 
 
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return disableHelper.enabled

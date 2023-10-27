@@ -2,41 +2,35 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class ExperimentManager: ExperimentDataProvider {
     private static let payloadType = "experiments"
     
     private let dataStore: PreferenceDataStore
     private let remoteData: RemoteDataProtocol
-    private let channelIDProvider: () -> String?
-    private let stableContactIDProvider: () async -> String
     private let audienceChecker: DeviceAudienceChecker
     private let date: AirshipDateProtocol
 
     init(
         dataStore: PreferenceDataStore,
         remoteData: RemoteDataProtocol,
-        channelIDProvider: @escaping () -> String?,
-        stableContactIDProvider: @escaping () async -> String,
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.dataStore = dataStore
         self.remoteData = remoteData
-        self.channelIDProvider = channelIDProvider
-        self.stableContactIDProvider = stableContactIDProvider
         self.audienceChecker = audienceChecker
         self.date = date
     }
     
-    public func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult? {
+    public func evaluateExperiments(info: MessageInfo, deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> ExperimentResult? {
         let experiments = await getExperiments(info: info)
         guard !experiments.isEmpty else {
             return nil
         }
 
-        let contactID = await resolveContactID(contactID: contactID)
-        guard let channelID = channelIDProvider() else {
+        let contactID = await deviceInfoProvider.stableContactID
+        guard let channelID = deviceInfoProvider.channelID else {
             // Since we pull this after a stable contact ID this should never happen. Ideally we have
             // a way to wait for it like we do the contact ID.
             throw AirshipErrors.error("Channel ID missing, unable to evaluate hold out groups.")
@@ -49,7 +43,7 @@ final class ExperimentManager: ExperimentDataProvider {
             isMatch = try await self.audienceChecker.evaluate(
                 audience: experiment.audienceSelector,
                 newUserEvaluationDate: experiment.created,
-                contactID: contactID
+                deviceInfoProvider: deviceInfoProvider
             )
 
             evaluatedMetadata.append(experiment.reportingMetadata)
@@ -67,13 +61,6 @@ final class ExperimentManager: ExperimentDataProvider {
         )
     }
 
-    private func resolveContactID(contactID: String?) async -> String {
-        if let contactID = contactID {
-            return contactID
-        }
-        return await stableContactIDProvider()
-    }
-    
     func getExperiments(info: MessageInfo) async -> [Experiment] {
         return await remoteData
             .payloads(types: [Self.payloadType])

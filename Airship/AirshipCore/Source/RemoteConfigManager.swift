@@ -2,7 +2,7 @@
 
 import Combine
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class RemoteConfigManager: @unchecked Sendable {
 
     @objc

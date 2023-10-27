@@ -93,7 +93,7 @@ public class AttributeMutations: NSObject {
         return AttributeMutations()
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     @objc
     public func applyMutations(editor: AttributesEditor) {
         mutations.forEach { $0.apply(editor) }

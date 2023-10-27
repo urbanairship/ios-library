@@ -3,7 +3,7 @@
 import Foundation
 
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public protocol AirshipSDKModule: NSObject {
     var actionsManifest: ActionsManifest? { get }
     var components: [AirshipComponent] { get }

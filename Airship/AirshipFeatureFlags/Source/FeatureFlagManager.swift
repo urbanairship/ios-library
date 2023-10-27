@@ -17,7 +17,7 @@ public enum FeatureFlagError: Error {
 /// Airship feature flag manager
 public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return disableHelper.enabled
@@ -73,7 +73,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
         return try await flag(name: name, allowRefresh: true)
     }
-
 
     /// Tracks a feature flag interaction event.
     /// - Parameter flag: The flag.
@@ -146,7 +145,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
                 let result = try? await self.audienceChecker.evaluate(
                     audience: audienceSelector,
                     newUserEvaluationDate: flagInfo.created,
-                    contactID: nil,
                     deviceInfoProvider: deviceInfoProvider
                 )
 
@@ -172,7 +170,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
                 )
             }
         }
-
 
         return FeatureFlag(
             name: name,
@@ -205,7 +202,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
                     let result = try? await self.audienceChecker.evaluate(
                         audience: audienceSelector,
                         newUserEvaluationDate: flagInfo.created,
-                        contactID: nil,
                         deviceInfoProvider: deviceInfoProvider
                     )
 

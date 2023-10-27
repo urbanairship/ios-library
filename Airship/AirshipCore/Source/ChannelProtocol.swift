@@ -106,7 +106,7 @@ public protocol AirshipChannelProtocol: BaseAirshipChannelProtocol {
 
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
     func addRegistrationExtender(
         _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
@@ -117,7 +117,7 @@ public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
      */
     func updateRegistration()
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     func updateRegistration(forcefully: Bool)
 
     func clearSubscriptionListsCache()

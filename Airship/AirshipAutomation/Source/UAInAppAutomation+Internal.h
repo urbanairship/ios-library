@@ -8,20 +8,13 @@
 #import "UASchedule.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UADeferredScheduleAPIClient+Internal.h"
 #import "UAFrequencyLimitManager+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UAChannel;
 @class UAAnalytics;
 @class UAPrivacyManager;
-@class UAAutomationAudienceOverridesProvider;
-@class UARemoteDataAutomationAccess;
-@class UAAutomationAudienceChecker;
-@class InAppMeteredUsage;
-
-@protocol UAExperimentDataProvider;
-@protocol UAAutomationAudienceCheckerProtocol;
+@class UAInAppCoreSwiftBridge;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,59 +24,22 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface UAInAppAutomation() 
 
-/**
- * Factory method. Use for testing.
- *
- * @param config The UARuntimeConfigInstance.
- * @param automationEngine The automation engine.
- * @param audienceOverridesProvider The audience overides provider.
- * @param remoteDataClient The remote data client.
- * @param dataStore The preference data store.
- * @param inAppMessageManager The in-app message manager instance.
- * @param channel The channel instance.
- * @param deferredScheduleAPIClient The deferred API client.
- * @param frequencyLimitManager The frequency limit manager.
- * @param privacyManager The privacy manager.
- * @param experimentManager The experiment manager.
- * @param audienceChecker The audience checker.
- * @return A in-app automation manager instance.
- */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
                     automationEngine:(UAAutomationEngine *)automationEngine
-           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
+                inAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
-           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                      privacyManager:(UAPrivacyManager *)privacyManager
-                  experimentManager: (id<UAExperimentDataProvider>) experimentManager
-                     audienceChecker:(id<UAAutomationAudienceCheckerProtocol>)audienceChecker
-                        meteredUsage:(InAppMeteredUsage *)meteredUsage;
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
-/**
- * Factory method.
- *
- * @param config The UARuntimeConfigInstance.
- * @param audienceOverridesProvider The audience overides provider.
- * @param remoteData The remote data provider.
- * @param dataStore The preference data store.
- * @param channel The channel.
- * @param analytics The system analytics instance.
- * @param privacyManager The privacy manager.
- * @param experimentManager The experiment manager.
- * @return A in-app automation manager instance.
- */
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
-                          remoteData:(UARemoteDataAutomationAccess *)remoteData
+                inAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
-                      privacyManager:(UAPrivacyManager *)privacyManager
-                  experimentManager: (id<UAExperimentDataProvider>) experimentManager
-                        meteredUsage:(InAppMeteredUsage *)meteredUsage;
+                      privacyManager:(UAPrivacyManager *)privacyManager;
 
 - (void)cancelSchedulesWithType:(UAScheduleType)scheduleType
               completionHandler:(nullable void (^)(BOOL))completionHandler;

@@ -122,7 +122,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         eventSubject.eraseToAnyPublisher()
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return disableHelper.enabled

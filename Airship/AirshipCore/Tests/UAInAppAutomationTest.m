@@ -15,30 +15,30 @@
 #import "UAFrequencyLimitManager+Internal.h"
 #import "AirshipTests-Swift.h"
 #import "UARetriable+Internal.h"
+#import "UAScheduleTriggerContext+Internal.h"
 
 @import AirshipCore;
 
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
 @property(nonatomic, strong) id mockAutomationEngine;
-@property(nonatomic, strong) id mockAudienceOverridesProvider;
 @property(nonatomic, strong) id mockRemoteDataClient;
 @property(nonatomic, strong) id mockInAppMessageManager;
-@property(nonatomic, strong) id mockDeferredClient;
 @property(nonatomic, strong) id mockChannel;
-@property(nonatomic, strong) id mockAudienceChecker;
+@property(nonatomic, strong) id mockInAppCoreSwiftBridge;
+@property(nonatomic, strong) id mockAudience;
 
 @property(nonatomic, strong) UATestAirshipInstance *airship;
 @property(nonatomic, strong) id mockFrequencyLimitManager;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
-@property(nonatomic, strong) id<UAExperimentDataProvider> experimentManager;
-
 @property(nonatomic, strong) id<UAAutomationEngineDelegate> engineDelegate;
-@property(nonatomic, strong) InAppMeteredUsage *meteredUsage;
+@property(nonatomic, assign) BOOL audienceMatch;
+
 @end
 
 @interface UAInAppAutomation()
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
+                       audience:(nonnull UAInAppAudience *)audience
                  triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
                experimentResult:(nullable UAExperimentResult *)experimentResult
                retriableHandler:(UARetriableCompletionHandler) retriableHandler
@@ -54,15 +54,23 @@
     self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
-    self.mockAudienceOverridesProvider = [self mockForClass:[UAAutomationAudienceOverridesProvider class]];
+    self.mockInAppCoreSwiftBridge = [self mockForClass:[UAInAppCoreSwiftBridge class]];
     self.mockRemoteDataClient = [self mockForClass:[UAInAppRemoteDataClient class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
-    self.mockDeferredClient = [self mockForClass:[UADeferredScheduleAPIClient class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
     self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
-    self.experimentManager = [self mockForProtocol:@protocol(UAExperimentDataProvider)];
-    self.mockAudienceChecker = [self mockForProtocol:@protocol(UAAutomationAudienceCheckerProtocol)];
-    self.meteredUsage = [self mockForClass:[InAppMeteredUsage class]];
+
+    self.mockAudience = [self mockForClass:[UAInAppAudience class]];
+
+    self.audienceMatch = YES;
+    [[[self.mockAudience stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:2];
+        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
+        callback(self.audienceMatch, nil);
+    }] evaluateAudienceWithCompletionHandler:OCMOCK_ANY];
+
+    [[[self.mockInAppCoreSwiftBridge stub] andReturn:self.mockAudience] audienceWithSelectorJSON:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY error:[OCMArg setTo:nil]];
 
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -78,17 +86,13 @@
 
     self.inAppAutomation = [UAInAppAutomation automationWithConfig:self.config
                                                   automationEngine:self.mockAutomationEngine
-                                         audienceOverridesProvider:self.mockAudienceOverridesProvider
+                                              inAppCoreSwiftBridge:self.mockInAppCoreSwiftBridge
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
                                                inAppMessageManager:self.mockInAppMessageManager
                                                            channel:self.mockChannel
-                                         deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
-                                                    privacyManager:self.privacyManager
-                                                experimentManager:self.experimentManager
-                                                   audienceChecker:self.mockAudienceChecker
-                                                      meteredUsage:self.meteredUsage];
+                                                    privacyManager:self.privacyManager];
 
     XCTAssertNotNil(self.engineDelegate);
 }
@@ -102,19 +106,16 @@
     config.autoPauseInAppAutomationOnLaunch = YES;
 
     UARuntimeConfig *runtimeConfig = [[UARuntimeConfig alloc] initWithConfig:config dataStore:self.dataStore];
+
     self.inAppAutomation = [UAInAppAutomation automationWithConfig:runtimeConfig
                                                   automationEngine:self.mockAutomationEngine
-                                         audienceOverridesProvider:self.mockAudienceOverridesProvider
+                                              inAppCoreSwiftBridge:self.mockInAppCoreSwiftBridge
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
                                                inAppMessageManager:self.mockInAppMessageManager
                                                            channel:self.mockChannel
-                                         deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
-                                                    privacyManager:self.privacyManager
-                                                 experimentManager:self.experimentManager
-                                                   audienceChecker:self.mockAudienceChecker
-                                                      meteredUsage:self.meteredUsage];
+                                                    privacyManager:self.privacyManager];
 
     XCTAssertTrue(self.inAppAutomation.isPaused);
 }
@@ -130,17 +131,13 @@
 
     self.inAppAutomation = [UAInAppAutomation automationWithConfig:runtimeConfig
                                                   automationEngine:self.mockAutomationEngine
-                                         audienceOverridesProvider:self.mockAudienceOverridesProvider
+                                              inAppCoreSwiftBridge:self.mockInAppCoreSwiftBridge
                                                   remoteDataClient:self.mockRemoteDataClient
                                                          dataStore:self.dataStore
                                                inAppMessageManager:self.mockInAppMessageManager
                                                            channel:self.mockChannel
-                                         deferredScheduleAPIClient:self.mockDeferredClient
                                              frequencyLimitManager:self.mockFrequencyLimitManager
-                                                    privacyManager:self.privacyManager
-                                                 experimentManager:self.experimentManager
-                                                   audienceChecker:self.mockAudienceChecker
-                                                      meteredUsage:self.meteredUsage];
+                                                    privacyManager:self.privacyManager];
 
     XCTAssertFalse(self.inAppAutomation.isPaused);
 }
@@ -150,12 +147,13 @@
     UAScheduleAudience *emptyAudience = [UAScheduleAudience audienceWithBuilderBlock:^(UAScheduleAudienceBuilder *builder) {
     }];
 
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
+    
+    [[[self.mockAudience expect] andDo:^(NSInvocation *invocation) {
         void *arg;
-        [invocation getArgument:&arg atIndex:5];
+        [invocation getArgument:&arg atIndex:2];
         void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
         callback(YES, nil);
-    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    }] evaluateAudienceWithCompletionHandler:OCMOCK_ANY];
 
     XCTestExpectation *checkFinished = [self expectationWithDescription:@"check audience finished"];
     [self.inAppAutomation checkAudience:emptyAudience completionHandler:^(BOOL inAudience, NSError * _Nullable error) {
@@ -477,12 +475,7 @@
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
     }];
 
-    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
-
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
-
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
@@ -495,6 +488,30 @@
         builder.bypassHoldoutGroups = YES;
     }];
 
+    NSDictionary *deferredResult = @{
+        @"audience_match": @YES,
+        @"type": @"in_app_message",
+        @"message": message.toJSON
+    };
+
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: triggerContext.trigger.typeName
+                                                       triggerEvent: triggerContext.event
+                                                       triggerGoal: triggerContext.trigger.goal.doubleValue
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@YES] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        [[[mockResult stub] andReturn:deferredResult] responseBody];
+
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -528,20 +545,6 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
-
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL
-     channelID:@"channel ID" triggerContext:triggerContext
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -552,9 +555,8 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
     [self.mockInAppMessageManager verify];
-    [self.mockAudienceOverridesProvider verify];
 }
 
 - (void)testPrepareDeferredUnderLimit {
@@ -563,12 +565,7 @@
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
     }];
 
-    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
-
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
-
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
@@ -602,13 +599,6 @@
         block(UAInAppMessagePrepareResultSuccess);
     }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} reportingContext:@{} experimentResult:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
-
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
@@ -620,13 +610,31 @@
         }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL
-     channelID:@"channel ID" triggerContext:triggerContext
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+
+    NSDictionary *deferredResult = @{
+        @"audience_match": @YES,
+        @"type": @"in_app_message",
+        @"message": message.toJSON
+    };
+
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: triggerContext.trigger.typeName
+                                                       triggerEvent: triggerContext.event
+                                                       triggerGoal: triggerContext.trigger.goal.doubleValue
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@YES] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        [[[mockResult stub] andReturn:deferredResult] responseBody];
+
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -637,9 +645,8 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
     [self.mockInAppMessageManager verify];
-    [self.mockAudienceOverridesProvider verify];
     [self.mockFrequencyLimitManager verify];
 }
 
@@ -690,8 +697,14 @@
         }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[self.mockDeferredClient reject] resolveURL:OCMOCK_ANY channelID:OCMOCK_ANY triggerContext:OCMOCK_ANY audienceOverrides:OCMOCK_ANY
-                              completionHandler:OCMOCK_ANY];
+    [[self.mockInAppCoreSwiftBridge reject] resolveDeferredWithUrl: OCMOCK_ANY
+                                                         channelID: OCMOCK_ANY
+                                                          audience: OCMOCK_ANY
+                                                       triggerType: OCMOCK_ANY
+                                                      triggerEvent: OCMOCK_ANY
+                                                       triggerGoal: trigger.goal.doubleValue
+                                                 completionHandler: OCMOCK_ANY];
+
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -702,19 +715,12 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
     [self.mockInAppMessageManager verify];
 }
 
 - (void)testPrepareDeferredTimedOut {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:401 result:nil rules:nil];
-
-    NSError *deferredError = [NSError errorWithDomain:@"deferred error"
-                                                  code:100
-                                              userInfo:nil];
-
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
 
@@ -723,14 +729,6 @@
         builder.identifier = @"schedule ID";
         builder.bypassHoldoutGroups = YES;
     }];
-
-
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -757,12 +755,22 @@
         }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, deferredError);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: nil
+                                                       triggerEvent: nil
+                                                       triggerGoal: 0
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@NO] isSuccess];
+        [[[mockResult stub] andReturnValue:@YES] timedOut];
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -773,13 +781,11 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
 }
 
-- (void)testPrepareDeferredCode409 {
+- (void)testPrepareDeferredCodeBackOffZero {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:409 result:nil rules:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
@@ -790,69 +796,37 @@
         builder.bypassHoldoutGroups = YES;
     }];
 
-    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
-        callback(NO);
-    }] scheduleRequiresRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: nil
+                                                       triggerEvent: nil
+                                                       triggerGoal: 0
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
 
-    [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(BOOL) =  (__bridge void (^)(BOOL))arg;
-        callback(YES);
-    }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
-
-    [[[self.mockRemoteDataClient expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(void) =  (__bridge void (^)(void))arg;
-        callback();
-    }] notifyOutdatedSchedule:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@NO] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.engineDelegate prepareSchedule:schedule
-                          triggerContext:nil
-                       completionHandler:^(UAAutomationSchedulePrepareResult result) {
-        XCTAssertEqual(UAAutomationSchedulePrepareResultInvalidate, result);
+    [self.inAppAutomation prepareDeferredSchedule:schedule audience:self.mockAudience triggerContext:nil experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+        XCTAssertEqual(result, UARetriableResultRetryWithBackoffReset);
+        XCTAssertEqual(time, 0);
         [prepareFinished fulfill];
-    }];
+    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
+
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
 }
 
-- (void)testPrepareDeferredCode429WithRetry {
+- (void)testPrepareDeferredCodeBackOff {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredScheduleRetryRules *rules = [UADeferredScheduleRetryRules rulesWithLocation:nil retryTime:5];
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:429 result:nil rules:rules];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
@@ -863,47 +837,37 @@
         builder.bypassHoldoutGroups = YES;
     }];
 
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: nil
+                                                       triggerEvent: nil
+                                                       triggerGoal: 0
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
 
-
-    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@NO] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@100] backOff];
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+    [self.inAppAutomation prepareDeferredSchedule:schedule audience:self.mockAudience triggerContext:nil experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
         XCTAssertEqual(result, UARetriableResultRetryAfter);
-        XCTAssertEqual(time, 5);
+        XCTAssertEqual(time, 100);
         [prepareFinished fulfill];
     } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
 }
 
-- (void)testPrepareDeferredCode429NoRetry {
-    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:429 result:nil rules:nil];
+- (void)testPrepareDeferredCodeBackOffNoBackoff {
+    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
@@ -914,152 +878,36 @@
         builder.bypassHoldoutGroups = YES;
     }];
 
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: nil
+                                                       triggerEvent: nil
+                                                       triggerGoal: 0
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
 
-
-    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@NO] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@-1] backOff];
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil  experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
+    [self.inAppAutomation prepareDeferredSchedule:schedule audience:self.mockAudience triggerContext:nil experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
         XCTAssertEqual(result, UARetriableResultRetry);
         XCTAssertEqual(time, 0);
         [prepareFinished fulfill];
     } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
-}
-
-- (void)testPrepareDeferredCode307WithRetry {
-    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredScheduleRetryRules *rules = [UADeferredScheduleRetryRules rulesWithLocation:nil retryTime:5];
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:307 result:nil rules:rules];
-
-    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
-                                                                retriableOnTimeout:NO];
-
-    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
-        builder.identifier = @"schedule ID";
-        builder.bypassHoldoutGroups = YES;
-    }];
-
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
-
-
-    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil  experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
-        XCTAssertEqual(result, UARetriableResultRetryAfter);
-        XCTAssertEqual(time, 5);
-        [prepareFinished fulfill];
-    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
-
-    [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
-}
-
-- (void)testPrepareDeferredCode307NoRetry {
-    [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:307 result:nil rules:nil];
-
-    UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
-                                                                retriableOnTimeout:NO];
-
-    UASchedule *schedule = [UADeferredSchedule scheduleWithDeferredData:deferred builderBlock:^(UAScheduleBuilder *builder) {
-        builder.triggers = @[[UAScheduleTrigger foregroundTriggerWithCount:1]];
-        builder.identifier = @"schedule ID";
-        builder.bypassHoldoutGroups = YES;
-    }];
-
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
-
-
-    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
-
-    XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-    [self.inAppAutomation prepareDeferredSchedule:schedule triggerContext:nil  experimentResult:nil retriableHandler:^(UARetriableResult result, NSTimeInterval time) {
-        XCTAssertEqual(result, UARetriableResultRetryWithBackoffReset);
-        XCTAssertEqual(time, 0);
-        [prepareFinished fulfill];
-    } completionHandler:^(UAAutomationSchedulePrepareResult result) {}];
-
-    [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testPrepareDeferredAudienceMiss {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:NO];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
@@ -1072,13 +920,6 @@
         }];
         builder.bypassHoldoutGroups = YES;
     }];
-
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1101,19 +942,29 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
 
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
-        callback(YES, nil);
-    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    NSDictionary *deferredResult = @{
+        @"audience_match": @NO
+    };
+
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: nil
+                                                       triggerEvent: nil
+                                                       triggerGoal: 0
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@YES] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        [[[mockResult stub] andReturn:deferredResult] responseBody];
+
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -1125,16 +976,11 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testPrepareDeferredNoMessage {
     [[[self.mockChannel stub] andReturn:@"channel ID"] identifier];
-
-    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:nil audienceMatch:YES];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
-
     UAScheduleDeferredData *deferred = [UAScheduleDeferredData deferredDataWithURL:[NSURL URLWithString:@"https://airship.com"]
                                                                 retriableOnTimeout:NO];
 
@@ -1146,13 +992,6 @@
         }];
         builder.bypassHoldoutGroups = YES;
     }];
-
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1175,19 +1014,28 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:nil
-     audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+    NSDictionary *deferredResult = @{
+        @"audience_match": @YES
+    };
 
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
-        callback(YES, nil);
-    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: nil
+                                                       triggerEvent: nil
+                                                       triggerGoal: 0
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@YES] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        [[[mockResult stub] andReturn:deferredResult] responseBody];
+
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [self.engineDelegate prepareSchedule:schedule
@@ -1198,7 +1046,7 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockDeferredClient verify];
+    [self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testPrepareScheduleInvalid {
@@ -1226,7 +1074,6 @@
 
     [self waitForTestExpectations];
 }
-
 
 - (void)testPrepareAudienceCheckFailureDefaultMissBehavior {
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder *builder) {
@@ -1258,24 +1105,15 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    // Mock the checks to reject the audience
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
-        callback(NO, nil);
-    }] evaluateWithAudience:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY completionHandler:OCMOCK_ANY];
-
+    self.audienceMatch = NO;
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
-
     [self.engineDelegate prepareSchedule:schedule triggerContext:nil completionHandler:^(UAAutomationSchedulePrepareResult result) {
         XCTAssertEqual(UAAutomationSchedulePrepareResultPenalize, result);
         [prepareFinished fulfill];
     }];
 
     [self waitForTestExpectations];
-    [self.mockAudienceChecker verify];
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorCancel {
@@ -1309,16 +1147,7 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    // Mock the checks to reject the audience
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
-        callback(NO, nil);
-    }] evaluateWithAudience:schedule.audienceJSON
-     isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
-                  contactID:nil
-          completionHandler:OCMOCK_ANY];
+    self.audienceMatch = NO;
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1328,7 +1157,6 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockAudienceChecker verify];
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorSkip {
@@ -1362,17 +1190,7 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    // Mock the checks to reject the audience
-    // Mock the checks to reject the audience
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
-        callback(NO, nil);
-    }] evaluateWithAudience:schedule.audienceJSON
-     isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
-                  contactID:nil
-          completionHandler:OCMOCK_ANY];
+    self.audienceMatch = NO;
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1382,7 +1200,6 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockAudienceChecker verify];
 }
 
 - (void)testPrepareAudienceCheckFailureMissBehaviorPenalize {
@@ -1416,17 +1233,7 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    // Mock the checks to reject the audience
-    // Mock the checks to reject the audience
-    [[[self.mockAudienceChecker expect] andDo:^(NSInvocation *invocation) {
-        void *arg;
-        [invocation getArgument:&arg atIndex:5];
-        void(^callback)(BOOL, NSError *) =  (__bridge void (^)(BOOL, NSError *))arg;
-        callback(NO, nil);
-    }] evaluateWithAudience:schedule.audienceJSON
-     isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
-                  contactID:nil
-          completionHandler:OCMOCK_ANY];
+    self.audienceMatch = NO;
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1436,7 +1243,6 @@
     }];
 
     [self waitForTestExpectations];
-    [self.mockAudienceChecker verify];
 }
 
 - (void)testIsActionsReady {
@@ -1830,27 +1636,36 @@
         builder.bypassHoldoutGroups = YES;
     }];
 
-    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
 
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
 
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+    NSDictionary *deferredResult = @{
+        @"audience_match": @YES,
+        @"type": @"in_app_message",
+        @"message": message.toJSON
+    };
 
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: triggerContext.trigger.typeName
+                                                       triggerEvent: triggerContext.event
+                                                       triggerGoal: triggerContext.trigger.goal.doubleValue
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@YES] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        [[[mockResult stub] andReturn:deferredResult] responseBody];
+
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
@@ -1904,7 +1719,7 @@
 
     XCTAssertEqual(UAAutomationScheduleReadyResultContinue, result);
 
-    [self.mockAudienceOverridesProvider verify];
+    [self.mockInAppCoreSwiftBridge verify];
     [self.mockInAppMessageManager verify];
     [self.mockFrequencyLimitManager verify];
 }
@@ -1928,26 +1743,34 @@
         builder.bypassHoldoutGroups = YES;
     }];
 
-    UADeferredScheduleResult *deferredResult = [UADeferredScheduleResult resultWithMessage:message audienceMatch:YES];
-
-    UADeferredAPIClientResponse *deferredResponse = [UADeferredAPIClientResponse responseWithStatus:200 result:deferredResult rules:nil];
-
     UAScheduleTrigger *trigger = [UAScheduleTrigger foregroundTriggerWithCount:1];
     UAScheduleTriggerContext *triggerContext = [UAScheduleTriggerContext triggerContextWithTrigger:trigger
                                                                                              event:@"some event"];
 
-    UAAutomationAudienceOverrides *overrides = [[UAAutomationAudienceOverrides alloc] initWithTagsPayload:nil attributesPayload:nil];
-    [[[self.mockAudienceOverridesProvider expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UAAutomationAudienceOverrides *);
-        [invocation getArgument:&block atIndex:3];
-        block(overrides);
-    }] audienceOverridesWithChannelID:@"channel ID" completionHandler:OCMOCK_ANY];
+    NSDictionary *deferredResult = @{
+        @"audience_match": @YES,
+        @"type": @"in_app_message",
+        @"message": message.toJSON
+    };
 
-    [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
-        void (^block)(UADeferredAPIClientResponse *, NSError *);
-        [invocation getArgument:&block atIndex:6];
-        block(deferredResponse, nil);
-    }] resolveURL:deferred.URL channelID:@"channel ID" triggerContext:triggerContext audienceOverrides:overrides completionHandler:OCMOCK_ANY];
+    [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
+                                                       channelID: @"channel ID"
+                                                       audience: self.mockAudience
+                                                       triggerType: triggerContext.trigger.typeName
+                                                       triggerEvent: triggerContext.event
+                                                       triggerGoal: triggerContext.trigger.goal.doubleValue
+                                                       completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+        void(^completionBlock)(UAInAppDeferredResult *) = obj;
+
+        id mockResult = [self mockForClass:[UAInAppDeferredResult class]];
+        [[[mockResult stub] andReturnValue:@YES] isSuccess];
+        [[[mockResult stub] andReturnValue:@NO] timedOut];
+        [[[mockResult stub] andReturnValue:@0] backOff];
+        [[[mockResult stub] andReturn:deferredResult] responseBody];
+
+        completionBlock(mockResult);
+        return YES;
+    }]];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -2007,7 +1830,7 @@
 
     XCTAssertEqual(UAAutomationScheduleReadyResultSkip, result);
 
-    [self.mockAudienceOverridesProvider verify];
+    [self.mockInAppCoreSwiftBridge verify];
     [self.mockInAppMessageManager verify];
     [self.mockFrequencyLimitManager verify];
 }
@@ -2030,10 +1853,10 @@
         return YES;
     }]];
     
-    [[(id)self.meteredUsage expect] addImpressionWithEntityID:@"schedule ID"
-                                                      product:@"test-product-id"
-                                                    contactID:nil
-                                             reportingContext:schedule.reportingContext];
+    [[(id)self.mockInAppCoreSwiftBridge expect] addImpressionWithEntityID:@"schedule ID"
+                                                                  product:@"test-product-id"
+                                                                contactID:nil
+                                                         reportingContext:schedule.reportingContext];
 
     XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
     [self.engineDelegate executeSchedule:schedule completionHandler:^{
@@ -2042,10 +1865,11 @@
 
     [self waitForTestExpectations];
     [self.mockInAppMessageManager verify];
-    [(id)self.meteredUsage verify];
+    [(id)self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testExecuteMessagePassContactIdToImpression {
+
     UAInAppMessage *message = [UAInAppMessage messageWithBuilderBlock:^(UAInAppMessageBuilder *builder) {
         builder.displayContent = [UAInAppMessageCustomDisplayContent displayContentWithValue:@{}];
     }];
@@ -2081,9 +1905,8 @@
         callback(nil);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
-    [[(id)self.experimentManager stub] evaluateExperimentsWithInfo:[OCMArg any]
-                                                          contactID:[OCMArg any]
-                                                  completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[self.mockAudience stub] evaluateExperimentsWithInfo:OCMOCK_ANY
+                                        completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^complemtion)(UAExperimentResult * _Nullable, NSError * _Nullable) = obj;
         complemtion(nil, nil);
         return YES;
@@ -2114,7 +1937,7 @@
         return YES;
     }]];
     
-    [[(id)self.meteredUsage expect] addImpressionWithEntityID:@"schedule ID"
+    [[(id)self.mockInAppCoreSwiftBridge expect] addImpressionWithEntityID:@"schedule ID"
                                                       product:@"test-product-id"
                                                     contactID:@"test-contact-id"
                                              reportingContext:schedule.reportingContext];
@@ -2126,7 +1949,7 @@
 
     [self waitForTestExpectations];
     [self.mockInAppMessageManager verify];
-    [(id)self.meteredUsage verify];
+    [(id)self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testExecuteMessageNotCallingIfNoProductId {
@@ -2147,7 +1970,7 @@
         return YES;
     }]];
     
-    [[(id)self.meteredUsage reject] addImpressionWithEntityID:[OCMArg any] product:[OCMArg any] contactID:[OCMArg any] reportingContext:[OCMArg any]];
+    [[(id)self.mockInAppCoreSwiftBridge reject] addImpressionWithEntityID:[OCMArg any] product:[OCMArg any] contactID:[OCMArg any] reportingContext:[OCMArg any]];
 
     XCTestExpectation *executeFinished = [self expectationWithDescription:@"execute finished"];
     [self.engineDelegate executeSchedule:schedule completionHandler:^{
@@ -2156,7 +1979,7 @@
 
     [self waitForTestExpectations];
     [self.mockInAppMessageManager verify];
-    [(id)self.meteredUsage verify];
+    [(id)self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testExecuteDeferred {
@@ -2401,9 +2224,8 @@
 
     UAExperimentMessageInfo *expectedInfo = [[UAExperimentMessageInfo alloc] initWithMessageType:@"some-type" campaignsJSON:schedule.campaigns];
 
-    [[(id)self.experimentManager expect] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
-                                                          contactID:[OCMArg isNil]
-                                                  completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[(id)self.mockAudience expect] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
+                                              completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^complemtion)(UAExperimentResult * _Nullable, NSError * _Nullable) = obj;
         complemtion(experimentResult, nil);
         return YES;
@@ -2449,7 +2271,7 @@
 
     [self waitForTestExpectations];
 
-    [(id)self.experimentManager verify];
+    [(id)self.mockInAppCoreSwiftBridge verify];
 }
 
 - (void)testScheduledMessageCallHoldoutGroupRespectBypassFlag {
@@ -2471,9 +2293,8 @@
 
     UAExperimentMessageInfo *expectedInfo = [[UAExperimentMessageInfo alloc] initWithMessageType:@"some-type" campaignsJSON:schedule.campaigns];
 
-    [[(id)self.experimentManager reject] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
-                                                          contactID:OCMOCK_ANY
-                                                  completionHandler:OCMOCK_ANY];
+    [[(id)self.mockAudience reject] evaluateExperimentsWithInfo:OCMOCK_ANY
+                                              completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -2516,7 +2337,7 @@
 
     [self waitForTestExpectations];
 
-    [(id)self.experimentManager verify];
+    [(id)self.mockInAppCoreSwiftBridge verify];
     [self.mockInAppMessageManager verify];
 }
 
@@ -2543,8 +2364,7 @@
                                                                             isMatch:YES
                                                                        reportingMetadata:@[@{}]];
 
-    [[(id)self.experimentManager expect] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
-                                                          contactID:[OCMArg isNil]
+    [[(id)self.mockAudience expect] evaluateExperimentsWithInfo:[OCMArg isEqual:expectedInfo]
                                                   completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
         void(^complemtion)(UAExperimentResult * _Nullable, NSError * _Nullable) = obj;
         complemtion(experimentResult, nil);
@@ -2591,7 +2411,7 @@
 
     [self waitForTestExpectations];
 
-    [(id)self.experimentManager verify];
+    [(id)self.mockAudience verify];
     [self.mockInAppMessageManager verify];
 }
 

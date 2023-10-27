@@ -2,14 +2,15 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
-@objc(UAExperimentDataProvider)
-public protocol ExperimentDataProvider {
-    @objc
-    func evaluateExperiments(info: MessageInfo, contactID: String?) async throws -> ExperimentResult?
+/// NOTE: For internal use only. :nodoc:
+protocol ExperimentDataProvider: Sendable {
+    func evaluateExperiments(
+        info: MessageInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> ExperimentResult?
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc(UAExperimentMessageInfo)
 public final class MessageInfo: NSObject {
     let messageType: String
@@ -35,7 +36,7 @@ public final class MessageInfo: NSObject {
     }
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc(UAExperimentResult)
 public final class ExperimentResult: NSObject, Codable {
     @objc public let channelID: String

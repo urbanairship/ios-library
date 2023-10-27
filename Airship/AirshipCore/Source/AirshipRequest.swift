@@ -4,7 +4,7 @@ import Foundation
 
 /// AirshipRequest
 /// - Note: For internal use only. :nodoc:
-public struct AirshipRequest {
+public struct AirshipRequest: Sendable {
     let url: URL?
     let headers: [String: String]
     let method: String?

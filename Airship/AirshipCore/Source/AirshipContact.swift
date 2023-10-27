@@ -101,7 +101,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
 
     private let disableHelper: ComponentDisableHelper
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return disableHelper.enabled

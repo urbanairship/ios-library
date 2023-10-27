@@ -123,7 +123,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .inAppExperienceImpression,
+            usageType: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
@@ -154,7 +154,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .inAppExperienceImpression,
+            usageType: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
@@ -176,7 +176,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .inAppExperienceImpression,
+            usageType: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
@@ -207,7 +207,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         let event = AirshipMeteredUsageEvent(
             eventID: "test.id",
             entityID: "story.id",
-            type: .inAppExperienceImpression,
+            usageType: .inAppExperienceImpression,
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: timeStamp,
@@ -216,7 +216,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             .withDisabledAnalytics()
         
         XCTAssertEqual(event.eventID, "test.id")
-        XCTAssertEqual(event.type, .inAppExperienceImpression)
+        XCTAssertEqual(event.usageType, .inAppExperienceImpression)
         XCTAssertEqual(event.product, "Story")
         XCTAssertNil(event.entityID)
         XCTAssertNil(event.reportingContext)

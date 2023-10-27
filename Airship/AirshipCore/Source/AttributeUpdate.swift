@@ -2,14 +2,14 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 
 enum AttributeUpdateType: Int, Codable, Sendable, Equatable {
     case remove
     case set
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 struct AttributeUpdate: Codable, Sendable, Equatable {
     let attribute: String
     let type: AttributeUpdateType
@@ -81,3 +81,45 @@ struct AttributeUpdate: Codable, Sendable, Equatable {
         let jsonEncodedValue: String?
     }
 }
+
+
+extension AttributeUpdate {
+    var operation: AttributeOperation {
+        let timestamp = AirshipUtils.isoDateFormatterUTCWithDelimiter()
+            .string(
+                from: self.date
+            )
+        switch self.type {
+        case .set:
+            return AttributeOperation(
+                action: .set,
+                key: self.attribute,
+                timestamp: timestamp,
+                value: self.jsonValue
+            )
+        case .remove:
+            return AttributeOperation(
+                action: .remove,
+                key: self.attribute,
+                timestamp: timestamp,
+                value: nil
+            )
+        }
+    }
+}
+
+/// NOTE: For internal use only. :nodoc:
+// Used by ChannelBulkAPIClient and DeferredAPIClient
+
+struct AttributeOperation: Encodable {
+    enum AttributeAction: String, Encodable {
+        case set
+        case remove
+    }
+
+    var action: AttributeAction
+    var key: String
+    var timestamp: String
+    var value: AirshipJSON?
+}
+

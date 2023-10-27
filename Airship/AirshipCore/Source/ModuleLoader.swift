@@ -14,7 +14,7 @@ public class SDKDependencyKeys: NSObject {
     @objc
     public static let remoteData = "remote_data"
     @objc
-    public static let remoteDataAutomation = "remote_data_automation"
+    public static let inAppCoreSwiftBridge = "iaa_core_swift_bridge"
     @objc
     public static let config = "config"
     @objc
@@ -27,12 +27,6 @@ public class SDKDependencyKeys: NSObject {
     public static let permissionsManager = "permissions_manager"
     @objc
     public static let workManager = "work_manager"
-    @objc
-    public static let automationAudienceOverridesProvider = "automation_audience_overrides_provider"
-    @objc
-    public static let experimentsManager = "experiments_manager"
-    @objc
-    public static let iaaMeteredUsage = "iaa_metered_usage"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -68,7 +62,8 @@ class ModuleLoader {
         permissionsManager: AirshipPermissionsManager,
         audienceOverrides: AudienceOverridesProvider,
         experimentsManager: ExperimentDataProvider,
-        meteredUsage: AirshipMeteredUsage
+        meteredUsage: AirshipMeteredUsage,
+        deferredResolver: AirshipDeferredResolverProtocol
     ) {
 
         let dependencies: [String: Any] = [
@@ -78,21 +73,17 @@ class ModuleLoader {
             SDKDependencyKeys.contact: contact,
             SDKDependencyKeys.push: push,
             SDKDependencyKeys.remoteData: remoteData,
-            SDKDependencyKeys.remoteDataAutomation: _RemoteDataAutomationAccess(
-                remoteData: remoteData
+            SDKDependencyKeys.inAppCoreSwiftBridge: _InAppCoreSwiftBridge(
+                remoteData: remoteData,
+                meteredUsage: meteredUsage,
+                contact: contact,
+                deferredResolver: deferredResolver,
+                experimentProvider: experimentsManager
             ),
             SDKDependencyKeys.analytics: analytics,
             SDKDependencyKeys.privacyManager: privacyManager,
             SDKDependencyKeys.permissionsManager: permissionsManager,
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
-            SDKDependencyKeys.automationAudienceOverridesProvider: _AutomationAudienceOverridesProvider(
-                audienceOverridesProvider: audienceOverrides
-            ),
-            SDKDependencyKeys.experimentsManager: experimentsManager,
-            SDKDependencyKeys.iaaMeteredUsage: InAppMeteredUsage(
-                meteredUsage: meteredUsage,
-                contact: contact
-            )
         ]
 
         let swiftModules = ModuleLoader.loadModules(dependencies)

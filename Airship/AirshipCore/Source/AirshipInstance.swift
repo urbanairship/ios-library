@@ -136,11 +136,9 @@ class AirshipInstance: AirshipInstanceProtocol {
         
         self.experimentManager = ExperimentManager(
             dataStore: dataStore,
-            remoteData: remoteData,
-            channelIDProvider: { channel.identifier },
-            stableContactIDProvider: contact.getStableContactID
+            remoteData: remoteData
         )
-        
+
         let meteredUsage = AirshipMeteredUsage(
             config: self.config,
             dataStore: dataStore,
@@ -154,6 +152,11 @@ class AirshipInstance: AirshipInstanceProtocol {
         )
         #endif
 
+        let deferredResolver = AirshipDeferredResolver(
+            config: self.config,
+            audienceOverrides: audienceOverridesProvider
+        )
+        
         let moduleLoader = ModuleLoader(
             config: self.config,
             dataStore: dataStore,
@@ -166,7 +169,8 @@ class AirshipInstance: AirshipInstanceProtocol {
             permissionsManager: self.permissionsManager,
             audienceOverrides: audienceOverridesProvider,
             experimentsManager: experimentManager,
-            meteredUsage: meteredUsage
+            meteredUsage: meteredUsage,
+            deferredResolver: deferredResolver
         )
 
         var components: [AirshipComponent] = [

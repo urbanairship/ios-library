@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 struct RemoteConfig: Codable, Equatable {
 
     public let remoteDataURL: String?

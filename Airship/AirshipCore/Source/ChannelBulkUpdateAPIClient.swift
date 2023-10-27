@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 protocol ChannelBulkUpdateAPIClientProtocol: Sendable {
     func update(
         _ update: AudienceUpdate,
@@ -8,7 +8,7 @@ protocol ChannelBulkUpdateAPIClientProtocol: Sendable {
     ) async throws -> AirshipHTTPResponse<Void>
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
     private static let path = "/api/channels/sdk/batch/"
 
@@ -71,137 +71,42 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
 }
 
 extension AudienceUpdate {
-
-    fileprivate var clientSubscriptionListPayload:
-        [ClientPayload.SubscriptionOperation]?
-    {
-        guard !self.subscriptionListUpdates.isEmpty else { return nil }
-
-        return self.subscriptionListUpdates.map { update in
-            switch update.type {
-            case .subscribe:
-                return ClientPayload.SubscriptionOperation(
-                    action: .subscribe,
-                    listID: update.listId
-                )
-            case .unsubscribe:
-                return ClientPayload.SubscriptionOperation(
-                    action: .unsubscribe,
-                    listID: update.listId
-                )
-            }
-        }
-    }
-
-    fileprivate var clientAttributePayload: [ClientPayload.AttributeOperation]?
-    {
-        guard !self.attributeUpdates.isEmpty else { return nil }
-
-        return self.attributeUpdates.map { update in
-            let timestamp = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-                .string(
-                    from: update.date
-                )
-            switch update.type {
-            case .set:
-                return ClientPayload.AttributeOperation(
-                    action: .set,
-                    key: update.attribute,
-                    timestamp: timestamp,
-                    value: update.jsonValue
-                )
-            case .remove:
-                return ClientPayload.AttributeOperation(
-                    action: .remove,
-                    key: update.attribute,
-                    timestamp: timestamp,
-                    value: nil
-                )
-            }
-        }
-    }
-
-    fileprivate var clientLiveActivitiesPayload: [LiveActivityUpdate]? {
-        guard !self.liveActivityUpdates.isEmpty else { return nil }
-        return liveActivityUpdates
-    }
-
-    fileprivate var clientTagPayload: ClientPayload.TagPayload? {
-        guard !self.tagGroupUpdates.isEmpty else { return nil }
-
-        var tagPayload = ClientPayload.TagPayload()
-        self.tagGroupUpdates.forEach { tagUpdate in
-            switch tagUpdate.type {
-            case .set:
-                if tagPayload.set == nil {
-                    tagPayload.set = [:]
-                }
-                tagPayload.set?[tagUpdate.group] = tagUpdate.tags
-            case .remove:
-                if tagPayload.remove == nil {
-                    tagPayload.remove = [:]
-                }
-                tagPayload.remove?[tagUpdate.group] = tagUpdate.tags
-            case .add:
-                if tagPayload.add == nil {
-                    tagPayload.add = [:]
-                }
-                tagPayload.add?[tagUpdate.group] = tagUpdate.tags
-            }
-        }
-
-        return tagPayload
-    }
-
     fileprivate var clientPayload: ClientPayload {
+        var subscriptionLists: [SubscriptionListOperation]?
+        if (!self.subscriptionListUpdates.isEmpty) {
+            subscriptionLists = self.subscriptionListUpdates.map { $0.operation }
+        }
+
+        var attributes: [AttributeOperation]?
+        if (!self.attributeUpdates.isEmpty) {
+            attributes = self.attributeUpdates.map { $0.operation }
+        }
+
+        var tags: TagGroupOverrides?
+        if (!self.tagGroupUpdates.isEmpty) {
+            tags = TagGroupOverrides.from(updates: self.tagGroupUpdates)
+        }
+
+        var liveActivities: [LiveActivityUpdate]?
+        if (!self.liveActivityUpdates.isEmpty) {
+            liveActivities = self.liveActivityUpdates
+        }
+
+
         return ClientPayload(
-            tags: self.clientTagPayload,
-            subscriptionLists: self.clientSubscriptionListPayload,
-            attributes: self.clientAttributePayload,
-            liveActivities: self.clientLiveActivitiesPayload
+            tags: tags,
+            subscriptionLists: subscriptionLists,
+            attributes: attributes,
+            liveActivities: liveActivities
         )
     }
 }
 
 private struct ClientPayload: Encodable {
-
-    struct TagPayload: Encodable {
-        var add: [String: [String]]? = nil
-        var remove: [String: [String]]? = nil
-        var set: [String: [String]]? = nil
-    }
-
-    enum SubscriptionAction: String, Encodable {
-        case subscribe
-        case unsubscribe
-    }
-
-    struct SubscriptionOperation: Encodable {
-        var action: SubscriptionAction
-        var listID: String
-
-        enum CodingKeys: String, CodingKey {
-            case action = "action"
-            case listID = "list_id"
-        }
-    }
-
-    enum AttributeAction: String, Encodable {
-        case set
-        case remove
-    }
-
-    struct AttributeOperation: Encodable {
-        var action: AttributeAction
-        var key: String
-        var timestamp: String
-        var value: AirshipJSON?
-    }
-
-    let tags: TagPayload?
-    let subscriptionLists: [SubscriptionOperation]?
-    let attributes: [AttributeOperation]?
-    let liveActivities: [LiveActivityUpdate]?
+    var tags: TagGroupOverrides?
+    var subscriptionLists: [SubscriptionListOperation]?
+    var attributes: [AttributeOperation]?
+    var liveActivities: [LiveActivityUpdate]?
 
     enum CodingKeys: String, CodingKey {
         case tags = "tags"

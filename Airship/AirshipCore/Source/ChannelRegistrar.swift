@@ -3,7 +3,7 @@
 import Foundation
 import Combine
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 protocol ChannelRegistrarProtocol: AnyObject, Sendable {
     var channelID: String? { get }
     var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> { get }

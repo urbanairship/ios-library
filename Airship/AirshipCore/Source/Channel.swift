@@ -38,7 +38,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
     )
 
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     @objc
     public static let legacyTagsSettingsKey = "UAPushTags"
 
@@ -110,7 +110,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
 
     private let disableHelper: ComponentDisableHelper
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return disableHelper.enabled
@@ -215,7 +215,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         #endif
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
@@ -308,7 +308,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         self.updateRegistration(forcefully: true)
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     private func onComponentEnableChange() {
         if self.isComponentEnabled {
             self.updateRegistration()
@@ -335,7 +335,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         }
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public func addRegistrationExtender(
         _ extender: @escaping (ChannelRegistrationPayload) -> ChannelRegistrationPayload
     ) {

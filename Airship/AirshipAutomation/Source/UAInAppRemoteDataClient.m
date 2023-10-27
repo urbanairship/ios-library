@@ -86,7 +86,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
 @property(atomic, strong) UADisposable *remoteDataSubscription;
 @property(nonatomic, strong) UADispatcher *schedulerDispatcher;
-@property(nonatomic, strong) UARemoteDataAutomationAccess *remoteData;
+@property(nonatomic, strong) UAInAppCoreSwiftBridge *inAppCoreSwiftBridge;
 @property(nonatomic, copy) NSDate *scheduleNewUserCutOffTime;
 @property(nonatomic, copy) NSDictionary *lastPayloadMetadata;
 @property(nonatomic, strong) UAChannel *channel;
@@ -96,7 +96,9 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
 
 @implementation UAInAppRemoteDataClient
 
-- (instancetype)initWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
+
+
+- (instancetype)initWithInAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
                          dataStore:(UAPreferenceDataStore *)dataStore
                            channel:(UAChannel *)channel
                schedulerDispatcher:(UADispatcher *)schedulerDispatcher
@@ -106,7 +108,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
 
     if (self) {
         self.schedulerDispatcher = schedulerDispatcher;
-        self.remoteData = remoteData;
+        self.inAppCoreSwiftBridge = inAppCoreSwiftBridge;
         self.dataStore = dataStore;
         self.channel = channel;
         self.SDKVersion = SDKVersion;
@@ -115,25 +117,27 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     return self;
 }
 
-+ (instancetype)clientWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
++ (instancetype)clientWithInAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel {
 
 
-    return [[UAInAppRemoteDataClient alloc] initWithRemoteData:remoteData
+    return [[UAInAppRemoteDataClient alloc] initWithInAppCoreSwiftBridge:inAppCoreSwiftBridge
                                                      dataStore:dataStore
                                                        channel:channel
                                            schedulerDispatcher:[UADispatcher serialUtility]
                                                     SDKVersion:[UAirshipVersion get]];
 }
 
-+ (instancetype)clientWithRemoteData:(UARemoteDataAutomationAccess *)remoteData
-                           dataStore:(UAPreferenceDataStore *)dataStore
-                             channel:(UAChannel *)channel
-                 schedulerDispatcher:(UADispatcher *)schedulerDispatcher
-                          SDKVersion:(NSString *)SDKVersion {
 
-    return [[UAInAppRemoteDataClient alloc] initWithRemoteData:remoteData
+
++ (instancetype)clientWithInAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
+                                     dataStore:(UAPreferenceDataStore *)dataStore
+                                       channel:(UAChannel *)channel
+                           schedulerDispatcher:(UADispatcher *)schedulerDispatcher
+                                    SDKVersion:(NSString *)SDKVersion {
+
+    return [[UAInAppRemoteDataClient alloc] initWithInAppCoreSwiftBridge:inAppCoreSwiftBridge
                                                      dataStore:dataStore
                                                        channel:channel
                                            schedulerDispatcher:schedulerDispatcher
@@ -147,7 +151,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
         }
 
         UA_WEAKIFY(self);
-        self.remoteDataSubscription = [self.remoteData subscribeWithTypes:@[UAInAppMessages]
+        self.remoteDataSubscription = [self.inAppCoreSwiftBridge subscribeWithTypes:@[UAInAppMessages]
                                                                     block:^(NSArray<UARemoteDataPayload *> * _Nonnull messagePayloads) {
             UA_STRONGIFY(self);
             [self.schedulerDispatcher dispatchAsync:^{
@@ -509,7 +513,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     }
 
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData isCurrentWithRemoteDataInfo:remoteDataInfo
+    [self.inAppCoreSwiftBridge isCurrentWithRemoteDataInfo:remoteDataInfo
                                completionHandler:completionHandler];
 }
 
@@ -521,7 +525,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     }
 
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData requiresUpdateWithRemoteDataInfo:remoteDataInfo completionHandler:completionHandler];
+    [self.inAppCoreSwiftBridge requiresUpdateWithRemoteDataInfo:remoteDataInfo completionHandler:completionHandler];
 }
 
 - (void)waitFullRefresh:(UASchedule *)schedule completionHandler:(void (^)(void))completionHandler {
@@ -531,7 +535,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     }
 
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData  waitFullRefreshWithRemoteDataInfo:remoteDataInfo completionHandler:^{
+    [self.inAppCoreSwiftBridge waitFullRefreshWithRemoteDataInfo:remoteDataInfo completionHandler:^{
         [self.schedulerDispatcher dispatchAsync:^{
             completionHandler();
         }];
@@ -545,7 +549,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     }
     
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData  bestEffortRefreshWithRemoteDataInfo:remoteDataInfo completionHandler:^(BOOL result) {
+    [self.inAppCoreSwiftBridge bestEffortRefreshWithRemoteDataInfo:remoteDataInfo completionHandler:^(BOOL result) {
         [self.schedulerDispatcher dispatchAsync:^{
             completionHandler(result);
         }];
@@ -559,7 +563,7 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     }
 
     UARemoteDataInfo *remoteDataInfo = [self remoteDataInfoFromSchedule:schedule];
-    [self.remoteData notifyOutdatedWithRemoteDataInfo:remoteDataInfo completionHandler:completionHandler];
+    [self.inAppCoreSwiftBridge notifyOutdatedWithRemoteDataInfo:remoteDataInfo completionHandler:completionHandler];
 }
 
 - (UARemoteDataInfo *)remoteDataInfoFromSchedule:(UASchedule *)schedule {
@@ -804,5 +808,6 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     UA_LERR(@"Invalid schedule: %@ error: %@", JSON, error);
     return nil;
 }
+
 
 @end

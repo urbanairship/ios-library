@@ -2,7 +2,7 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc
 public protocol TaskManagerProtocol {
 

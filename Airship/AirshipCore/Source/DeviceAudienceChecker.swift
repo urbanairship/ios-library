@@ -1,47 +1,28 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
 
+/// NOTE: For internal use only. :nodoc:
 public protocol DeviceAudienceChecker: Sendable {
     func evaluate(
         audience: DeviceAudienceSelector,
         newUserEvaluationDate: Date,
-        contactID: String?
-    ) async throws -> Bool
-
-    func evaluate(
-        audience: DeviceAudienceSelector,
-        newUserEvaluationDate: Date,
-        contactID: String?,
         deviceInfoProvider: AudienceDeviceInfoProvider
     ) async throws -> Bool
 }
 
-
+/// NOTE: For internal use only. :nodoc:
 public struct DefaultDeviceAudienceChecker: DeviceAudienceChecker {
     public init() {}
-    
-    public func evaluate(
-        audience: DeviceAudienceSelector,
-        newUserEvaluationDate: Date,
-        contactID: String?
-    ) async throws -> Bool {
-        return try await evaluate(
-            audience: audience,
-            newUserEvaluationDate: newUserEvaluationDate,
-            contactID: contactID,
-            deviceInfoProvider: DefaultAudienceDeviceInfoProvider()
-        )
-    }
 
     public func evaluate(
         audience: DeviceAudienceSelector,
         newUserEvaluationDate: Date,
-        contactID: String?,
         deviceInfoProvider: AudienceDeviceInfoProvider
     ) async throws -> Bool {
         return try await audience.evaluate(
             newUserEvaluationDate: newUserEvaluationDate,
-            contactID: contactID,
             deviceInfoProvider: deviceInfoProvider
         )
     }

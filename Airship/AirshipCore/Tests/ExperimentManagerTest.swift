@@ -6,10 +6,8 @@ import XCTest
 import AirshipCore
 
 final class ExperimentManagerTest: XCTestCase {
-    
-    private var channelID: String? = "channel-id"
-    private var contactID: String = "some-contact-id"
-    
+
+    private var deviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
     private let remoteData: TestRemoteData = TestRemoteData()
     private var subject: ExperimentManager!
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
@@ -17,15 +15,12 @@ final class ExperimentManagerTest: XCTestCase {
     private let testDate: UATestDate = UATestDate(offset: 0, dateOverride: Date())
 
     override func setUpWithError() throws {
+        self.deviceInfo.channelID = "channel-id"
+        self.deviceInfo.stableContactID = "some-contact-id"
+
         self.subject = ExperimentManager(
             dataStore: PreferenceDataStore(appKey: UUID().uuidString),
             remoteData: remoteData,
-            channelIDProvider: {
-                return self.channelID
-            },
-            stableContactIDProvider: {
-                return self.contactID
-            },
             audienceChecker: audienceChecker,
             date: testDate
         )
@@ -37,7 +32,7 @@ final class ExperimentManagerTest: XCTestCase {
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: nil
+            deviceInfoProvider: self.deviceInfo
         )!
 
         XCTAssertEqual(
@@ -60,7 +55,7 @@ final class ExperimentManagerTest: XCTestCase {
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: nil
+            deviceInfoProvider: self.deviceInfo
         )!
 
         XCTAssertEqual(
@@ -77,7 +72,7 @@ final class ExperimentManagerTest: XCTestCase {
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: nil
+            deviceInfoProvider: self.deviceInfo
         )
         XCTAssertNil(result)
     }
@@ -88,7 +83,7 @@ final class ExperimentManagerTest: XCTestCase {
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: nil
+            deviceInfoProvider: self.deviceInfo
         )
         XCTAssertNil(result)
     }
@@ -98,7 +93,7 @@ final class ExperimentManagerTest: XCTestCase {
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: nil
+            deviceInfoProvider: self.deviceInfo
         )
 
         XCTAssertNil(result)
@@ -110,12 +105,12 @@ final class ExperimentManagerTest: XCTestCase {
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: nil
+            deviceInfoProvider: self.deviceInfo
         )!
 
         XCTAssertFalse(result.isMatch)
-        XCTAssertEqual(contactID, result.contactID)
-        XCTAssertEqual(channelID, result.channelID)
+        XCTAssertEqual(self.deviceInfo.stableContactID, result.contactID)
+        XCTAssertEqual(self.deviceInfo.channelID, result.channelID)
 
         XCTAssertEqual(
             [
@@ -140,26 +135,25 @@ final class ExperimentManagerTest: XCTestCase {
             audienceSelector: audienceSelector2
         )
 
-        let activeContactID = "active-contact-id"
+        self.deviceInfo.stableContactID = "active-contact-id"
 
         self.remoteData.payloads = [createPayload([
             experiment1.toString,
             experiment2.toString
         ])]
 
-        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID, _ in
-            XCTAssertEqual(contactID, activeContactID)
+        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, _ in
             return audience == audienceSelector2
         }
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: activeContactID
+            deviceInfoProvider: self.deviceInfo
         )!
 
         XCTAssertTrue(result.isMatch)
-        XCTAssertEqual(activeContactID, result.contactID)
-        XCTAssertEqual(channelID, result.channelID)
+        XCTAssertEqual("active-contact-id", result.contactID)
+        XCTAssertEqual("channel-id", result.channelID)
 
         XCTAssertEqual(
             [
@@ -193,26 +187,25 @@ final class ExperimentManagerTest: XCTestCase {
             )
         )
 
-        let activeContactID = "active-contact-id"
+        self.deviceInfo.stableContactID = "active-contact-id"
 
         self.remoteData.payloads = [createPayload([
             experiment1.toString,
             experiment2.toString
         ])]
 
-        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, contactID, _ in
-            XCTAssertEqual(contactID, activeContactID)
+        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, _ in
             return audience == audienceSelector2
         }
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
-            contactID: activeContactID
+            deviceInfoProvider: self.deviceInfo
         )!
 
         XCTAssertTrue(result.isMatch)
-        XCTAssertEqual(activeContactID, result.contactID)
-        XCTAssertEqual(channelID, result.channelID)
+        XCTAssertEqual("active-contact-id", result.contactID)
+        XCTAssertEqual("channel-id", result.channelID)
 
         XCTAssertEqual(
             [
@@ -252,7 +245,7 @@ final class ExperimentManagerTest: XCTestCase {
         self.remoteData.payloads = [createPayload([experiment.toString])]
 
 
-        self.audienceChecker.onEvaluate = { _, _, _, _ in
+        self.audienceChecker.onEvaluate = { _, _, _ in
             return true
         }
 
@@ -261,7 +254,7 @@ final class ExperimentManagerTest: XCTestCase {
                 messageType: "commercial",
                 campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar"]])
             ),
-            contactID: "contact ID"
+            deviceInfoProvider: self.deviceInfo
         )!
 
         XCTAssertTrue(result.isMatch)
@@ -269,7 +262,7 @@ final class ExperimentManagerTest: XCTestCase {
 
         var emptyResult = try await subject.evaluateExperiments(
             info: MessageInfo(messageType: "transactional"),
-            contactID: "contact ID"
+            deviceInfoProvider: self.deviceInfo
         )
 
         XCTAssertNil(emptyResult)
@@ -279,7 +272,7 @@ final class ExperimentManagerTest: XCTestCase {
                 messageType: "commercial",
                 campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar", "transactional campaign"]])
             ),
-            contactID: "contact ID"
+            deviceInfoProvider: self.deviceInfo
         )
 
         XCTAssertNil(emptyResult)

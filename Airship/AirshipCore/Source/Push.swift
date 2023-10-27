@@ -165,7 +165,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
         return self.apnsRegistrar.isBackgroundRefreshStatusAvailable
         #endif
     }
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
             return self.disableHelper.enabled

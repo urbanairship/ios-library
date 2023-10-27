@@ -302,7 +302,7 @@ struct ContactAudienceOverrides: Sendable {
     }
 }
 
-struct ChannelAudienceOverrides: Sendable {
+struct ChannelAudienceOverrides: Sendable, Equatable {
     let tags: [TagGroupUpdate]
     let attributes: [AttributeUpdate]
     let subscriptionLists: [SubscriptionListUpdate]
@@ -313,6 +313,3 @@ struct ChannelAudienceOverrides: Sendable {
         self.subscriptionLists = subscriptionLists
     }
 }
-
-
-

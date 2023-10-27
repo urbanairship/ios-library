@@ -2,13 +2,14 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
     var isAirshipReady: Bool { get }
     var tags: Set<String> { get }
     var channelID: String? { get }
     var locale:  Locale { get }
     var appVersion: String? { get }
+    var sdkVersion: String { get }
     var permissions: [AirshipPermission: AirshipPermissionStatus] { get async }
     var isUserOptedInPushNotifications: Bool { get async }
     var analyticsEnabled: Bool { get }
@@ -16,7 +17,7 @@ public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
     var stableContactID: String { get async }
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
     private let deviceInfoProvider: AudienceDeviceInfoProvider
 
@@ -27,6 +28,10 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     private let cachedPermissions: OneTimeAsyncValue<[AirshipPermission : AirshipPermissionStatus]>
     private let cachedIsUserOptedInPushNotifications: OneTimeAsyncValue<Bool>
     private let cachedAnalyticsEnabled: OneTimeValue<Bool>
+
+    public convenience init(contactID: String?) {
+        self.init(deviceInfoProvider: DefaultAudienceDeviceInfoProvider(contactID: contactID))
+    }
 
     public init(deviceInfoProvider: AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()) {
         self.deviceInfoProvider = deviceInfoProvider
@@ -70,6 +75,10 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         }
     }
 
+    public var sdkVersion: String {
+        return deviceInfoProvider.sdkVersion
+    }
+
     public var appVersion: String? {
         return deviceInfoProvider.appVersion
     }
@@ -109,17 +118,28 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 }
 
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider {
 
-    public init() {}
-    
+    private let contactID: String?
+
+    public init(contactID: String? = nil) {
+        self.contactID = contactID
+    }
+
     public var installDate: Date {
         Airship.shared.installDate
     }
 
+    public var sdkVersion: String {
+        AirshipVersion.get()
+    }
+
     public var stableContactID: String {
         get async {
+            if let contactID = self.contactID {
+                return contactID
+            }
             return await Airship.contact.getStableContactID()
         }
     }

@@ -1,6 +1,8 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
     var newUser: Bool?
     var notificationOptIn: Bool?
@@ -48,7 +50,6 @@ extension DeviceAudienceSelector {
     
     func evaluate(
         newUserEvaluationDate: Date = Date.distantPast,
-        contactID: String? = nil,
         deviceInfoProvider: AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()
     ) async throws -> Bool {
 
@@ -103,7 +104,7 @@ extension DeviceAudienceSelector {
             return false
         }
 
-        guard await checkHash(deviceInfoProvider: deviceInfoProvider, contactID: contactID) else {
+        guard await checkHash(deviceInfoProvider: deviceInfoProvider) else {
             AirshipLogger.trace("Hash condition not met for audience: \(self)")
             return false
         }
@@ -225,12 +226,12 @@ extension DeviceAudienceSelector {
         }
     }
 
-    private func checkHash(deviceInfoProvider: AudienceDeviceInfoProvider, contactID: String?) async -> Bool {
+    private func checkHash(deviceInfoProvider: AudienceDeviceInfoProvider) async -> Bool {
         guard let hash = self.hashSelector else {
             return true
         }
 
-        let contactID = await resolveContactID(deviceInfoProvider: deviceInfoProvider, contactID: contactID)
+        let contactID = await deviceInfoProvider.stableContactID
         guard let channelID = deviceInfoProvider.channelID else {
             return false
         }
@@ -238,11 +239,4 @@ extension DeviceAudienceSelector {
         return hash.evaluate(channelID: channelID, contactID: contactID)
     }
 
-    private func resolveContactID(deviceInfoProvider: AudienceDeviceInfoProvider, contactID: String?) async -> String {
-        if let contactID = contactID {
-            return contactID
-        }
-
-        return await deviceInfoProvider.stableContactID
-    }
 }

@@ -21,7 +21,6 @@ public struct FeatureFlag: Equatable, Sendable, Codable {
     /// Optional variables associated with the flag
     public let variables: AirshipJSON?
 
-
     let reportingInfo: ReportingInfo?
 
     init(

@@ -2,7 +2,7 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 struct AudienceHashSelector: Codable, Sendable, Equatable {
     let hash: Hash
     let bucket: Bucket

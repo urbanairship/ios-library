@@ -12,6 +12,7 @@
 #import "UAScheduleAudience+Internal.h"
 #import "UAInAppMessageSchedule.h"
 #import "UADeferredScheduleRetryRules+Internal.h"
+#import "NSDictionary+UAAdditions+Internal.h"
 
 #if __has_include("AirshipKit/AirshipKit-Swift.h")
 #import <AirshipKit/AirshipKit-Swift.h>
@@ -21,6 +22,11 @@
 @import AirshipCore;
 #endif
 
+#define kUADeferredScheduleAPIClientAudienceMatchKey @"audience_match"
+#define kUADeferredScheduleAPIClientResponseTypeKey @"type"
+#define kUADeferredScheduleAPIClientMessageKey @"message"
+#define kUADeferredScheduleAPIClientInAppMessageType @"in_app_message"
+
 static NSTimeInterval const MaxSchedules = 1000;
 static NSString *const UAInAppMessageManagerPausedKey = @"UAInAppMessageManagerPaused";
 static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairship.automation.prepare_schedule";
@@ -29,24 +35,17 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 @interface UAInAppAutomation () <UAAutomationEngineDelegate, UAInAppRemoteDataClientDelegate, UAInAppMessagingExecutionDelegate>
 @property(nonatomic, strong) UAAutomationEngine *automationEngine;
 @property(nonatomic, strong) UAPreferenceDataStore *dataStore;
-@property(nonatomic, strong) UAAutomationAudienceOverridesProvider *audienceOverridesProvider;
 @property(nonatomic, strong) UAInAppRemoteDataClient *remoteDataClient;
+@property(nonatomic, strong) UAInAppCoreSwiftBridge *inAppCoreSwiftBridge;
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
-@property(nonatomic, strong) UADeferredScheduleAPIClient *deferredScheduleAPIClient;
 @property(nonatomic, strong) UAChannel *channel;
 @property(nonatomic, strong) UAFrequencyLimitManager *frequencyLimitManager;
-@property(nonatomic) id<UAExperimentDataProvider> experimentManager;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyChecker *> *frequencyCheckers;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, assign) dispatch_once_t engineStarted;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
-@property(nonatomic, strong) NSMutableDictionary<NSString *, NSURL *> *redirectURLs;
 @property(nonatomic, strong) NSMutableDictionary<NSString *, UARemoteDataInfo *> *remoteDataInfoCache;
-
-@property(nonatomic, strong) id<UAAutomationAudienceCheckerProtocol> audienceChecker;
-@property(nonatomic, strong) InAppMeteredUsage *meteredUsage;
-
 @end
 
 @implementation UAInAppAutomation
@@ -55,46 +54,33 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     return (UAInAppAutomation *)[UAirship componentForClassName:NSStringFromClass([self class])];
 }
 
-
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
                     automationEngine:(UAAutomationEngine *)automationEngine
-           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
+                inAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
                     remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
-           deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
                frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                      privacyManager:(UAPrivacyManager *)privacyManager
-                   experimentManager:(id<UAExperimentDataProvider>) experimentManager
-                     audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker
-                        meteredUsage:(InAppMeteredUsage *)meteredUsage {
-
+                      privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithConfig:config
                        automationEngine:automationEngine
-              audienceOverridesProvider:audienceOverridesProvider
+                   inAppCoreSwiftBridge:inAppCoreSwiftBridge
                        remoteDataClient:remoteDataClient
                               dataStore:dataStore
                     inAppMessageManager:inAppMessageManager
                                 channel:channel
-              deferredScheduleAPIClient:deferredScheduleAPIClient
                   frequencyLimitManager:frequencyLimitManager
-                         privacyManager:privacyManager
-                     experimentsManager:experimentManager
-                        audienceChecker:audienceChecker
-                           meteredUsage:meteredUsage];
+                         privacyManager:privacyManager];
 }
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config
-           audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
-                          remoteData:(UARemoteDataAutomationAccess *)remoteData
+                inAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
                            dataStore:(UAPreferenceDataStore *)dataStore
                              channel:(UAChannel *)channel
                            analytics:(UAAnalytics *)analytics
-                      privacyManager:(UAPrivacyManager *)privacyManager
-                  experimentManager: (id<UAExperimentDataProvider>) experimentManager
-                        meteredUsage:(InAppMeteredUsage *) meteredUsage {
+                      privacyManager:(UAPrivacyManager *)privacyManager {
 
 
     UAAutomationStore *store = [UAAutomationStore automationStoreWithConfig:config
@@ -102,71 +88,57 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
     UAAutomationEngine *automationEngine = [UAAutomationEngine automationEngineWithAutomationStore:store];
 
-    UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithRemoteData:remoteData
-                                                                              dataStore:dataStore
-                                                                                channel:channel];
+    UAInAppRemoteDataClient *dataClient = [UAInAppRemoteDataClient clientWithInAppCoreSwiftBridge:inAppCoreSwiftBridge
+                                                                                        dataStore:dataStore
+                                                                                          channel:channel];
 
     UAInAppMessageManager *inAppMessageManager = [UAInAppMessageManager managerWithDataStore:dataStore
                                                                                    analytics:analytics];
 
-    UADeferredScheduleAPIClient *deferredScheduleAPIClient = [UADeferredScheduleAPIClient clientWithConfig:config];
 
     UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
 
     return [[UAInAppAutomation alloc] initWithConfig:config
                                     automationEngine:automationEngine
-                           audienceOverridesProvider:audienceOverridesProvider
+                                inAppCoreSwiftBridge:inAppCoreSwiftBridge
                                     remoteDataClient:dataClient
                                            dataStore:dataStore
                                  inAppMessageManager:inAppMessageManager
                                              channel:channel
-                           deferredScheduleAPIClient:deferredScheduleAPIClient
                                frequencyLimitManager:frequencyLimitManager
-                                      privacyManager:privacyManager
-                                  experimentsManager:experimentManager
-                                     audienceChecker:[[UAAutomationAudienceChecker alloc] init]
-                                        meteredUsage:meteredUsage];
+                                      privacyManager:privacyManager];
 }
 
 
 - (instancetype)initWithConfig:(UARuntimeConfig *)config
               automationEngine:(UAAutomationEngine *)automationEngine
-     audienceOverridesProvider:(UAAutomationAudienceOverridesProvider *)audienceOverridesProvider
+          inAppCoreSwiftBridge:(UAInAppCoreSwiftBridge *)inAppCoreSwiftBridge
               remoteDataClient:(UAInAppRemoteDataClient *)remoteDataClient
                      dataStore:(UAPreferenceDataStore *)dataStore
            inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                        channel:(UAChannel *)channel
-     deferredScheduleAPIClient:(UADeferredScheduleAPIClient *)deferredScheduleAPIClient
          frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
-                privacyManager:(UAPrivacyManager *)privacyManager
-            experimentsManager:(id<UAExperimentDataProvider>) experimentManager
-               audienceChecker:(id <UAAutomationAudienceCheckerProtocol>)audienceChecker
-                  meteredUsage:(InAppMeteredUsage *) meteredUsage {
+                privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super init];
 
     if (self) {
         self.automationEngine = automationEngine;
-        self.audienceOverridesProvider = audienceOverridesProvider;
+        self.inAppCoreSwiftBridge = inAppCoreSwiftBridge;
         self.remoteDataClient = remoteDataClient;
         self.dataStore = dataStore;
         self.inAppMessageManager = inAppMessageManager;
         self.channel = channel;
-        self.deferredScheduleAPIClient = deferredScheduleAPIClient;
         self.frequencyLimitManager = frequencyLimitManager;
         self.prepareSchedulePipeline = [UARetriablePipeline pipeline];
         self.frequencyCheckers = [NSMutableDictionary dictionary];
         self.privacyManager = privacyManager;
-        self.audienceChecker = audienceChecker;
         self.automationEngine.delegate = self;
         self.remoteDataClient.delegate = self;
         self.inAppMessageManager.executionDelegate = self;
         self.disableHelper = [[UAComponentDisableHelper alloc] initWithDataStore:dataStore
                                                                        className:@"UAInAppAutomation"];
-        self.redirectURLs = [NSMutableDictionary dictionary];
         self.remoteDataInfoCache = [NSMutableDictionary dictionary];
-        self.experimentManager = experimentManager;
-        self.meteredUsage = meteredUsage;
 
         UA_WEAKIFY(self)
         self.disableHelper.onChange = ^{
@@ -352,20 +324,31 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         }];
     }];
 
+    __block UAInAppAudience *audience;
     // Check audience conditions
     UARetriable *checkAudience = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
-        [self checkAudienceForSchedule:schedule completionHandler:^(BOOL success, NSError *error) {
-            if (error) {
-                retriableHandler(UARetriableResultRetry, 0);
-            } else if (success) {
-                retriableHandler(UARetriableResultSuccess, 0);
-            } else {
-                UAScheduleAudienceMissBehaviorType missBehavior = schedule.audienceMissBehavior;
-                UA_LDEBUG(@"Message audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", scheduleID, (long)missBehavior);
-                completionHandler([UAInAppAutomation prepareResultForMissedBehavior:missBehavior]);
-                retriableHandler(UARetriableResultCancel, 0);
-            }
-        }];
+
+        NSError *error;
+        audience = [self.inAppCoreSwiftBridge audienceWithSelectorJSON:schedule.audienceJSON
+                                               isNewUserEvaluationDate:schedule.isNewUserEvaluationDate
+                                                             contactID:[self.remoteDataClient remoteDataInfoFromSchedule:schedule].contactID
+                                                                 error:&error];
+        if (!audience || error) {
+            UA_LERR(@"Failed to process audience %@", error);
+            completionHandler(UAAutomationSchedulePrepareResultSkip);
+            retriableHandler(UARetriableResultCancel, 0);
+        } else {
+            [audience evaluateAudienceWithCompletionHandler:^(BOOL success, NSError *error) {
+                if (error) {
+                    retriableHandler(UARetriableResultRetry, 0);
+                } else if (success) {
+                    retriableHandler(UARetriableResultSuccess, 0);
+                } else {
+                    retriableHandler(UARetriableResultCancel, 0);
+                    completionHandler([UAInAppAutomation prepareResultForMissedBehavior:schedule.audienceMissBehavior]);
+                }
+            }];
+        }
     }];
 
     void (^prepareCompletionHandlerWrapper)(UAAutomationSchedulePrepareResult) = ^(UAAutomationSchedulePrepareResult result){
@@ -387,7 +370,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     __block UAExperimentResult *experimentResult;
     UARetriable *evaluateExperiments = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler _Nonnull retriableHandler) {
         UA_STRONGIFY(self)
-        [self evaluateExperimentsForSchedule:schedule completionHandler:^(UAExperimentResult *result, NSError *error) {
+        [self evaluateExperimentsForSchedule:schedule audience:audience completionHandler:^(UAExperimentResult *result, NSError *error) {
             if (error) {
                 UA_LDEBUG(@"Error %@ evaluating experiments for schedule: %@", error, scheduleID);
                 retriableHandler(UARetriableResultRetry, 0);
@@ -421,6 +404,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
             case UAScheduleTypeDeferred:
                 [self prepareDeferredSchedule:schedule
+                                     audience:audience
                                triggerContext:triggerContext
                              experimentResult:experimentResult
                              retriableHandler:retriableHandler
@@ -446,101 +430,97 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 }
 
 - (void)prepareDeferredSchedule:(UASchedule *)schedule
+                       audience:(UAInAppAudience *)audience
                  triggerContext:(nullable UAScheduleTriggerContext *)triggerContext
                experimentResult:(UAExperimentResult *)experimentResult
                retriableHandler:(UARetriableCompletionHandler) retriableHandler
               completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
 
+
     UAScheduleDeferredData *deferred = (UAScheduleDeferredData *)schedule.data;
+
+
     NSString *channelID = self.channel.identifier;
     if (!channelID) {
         retriableHandler(UARetriableResultRetry, 0);
         return;
     }
 
-    NSURL *url = [self.redirectURLs valueForKey:schedule.identifier] ?: deferred.URL;
+    [self.inAppCoreSwiftBridge resolveDeferredWithUrl:deferred.URL
+                                            channelID:channelID 
+                                             audience:audience
+                                          triggerType:triggerContext.trigger.typeName
+                                          triggerEvent:triggerContext.event
+                                          triggerGoal:triggerContext.trigger.goal.doubleValue
+                                          completionHandler:^(UAInAppDeferredResult *result) {
+        
+        // Success
+        if (result.isSuccess) {
+            NSDictionary *responseBody = result.responseBody ?: [NSDictionary dictionary];
 
+            BOOL audienceMatch = [responseBody numberForKey:kUADeferredScheduleAPIClientAudienceMatchKey defaultValue:@(NO)].boolValue;
+            if (audienceMatch) {
+                UAInAppMessage *message;
+                NSError *error;
 
-
-    [self.audienceOverridesProvider audienceOverridesWithChannelID:channelID
-                                                 completionHandler:^(UAAutomationAudienceOverrides *audienceOverrides) {
-
-        [self.deferredScheduleAPIClient resolveURL:url
-                                         channelID:channelID
-                                    triggerContext:triggerContext
-                                 audienceOverrides:audienceOverrides
-                                 completionHandler:^(UADeferredAPIClientResponse *response, NSError *error) {
-            if (error) {
-                if (deferred.retriableOnTimeout) {
-                    retriableHandler(UARetriableResultRetry, 0);
-                } else {
-                    retriableHandler(UARetriableResultSuccess, 0);
-                    completionHandler(UAAutomationSchedulePrepareResultPenalize);
+                NSString *responseType = [responseBody stringForKey:kUADeferredScheduleAPIClientResponseTypeKey defaultValue:nil];
+                if ([responseType isEqualToString:kUADeferredScheduleAPIClientInAppMessageType]) {
+                    NSDictionary *messageJSON = [responseBody dictionaryForKey:kUADeferredScheduleAPIClientMessageKey defaultValue:nil];
+                    message = [UAInAppMessage messageWithJSON:messageJSON defaultSource:UAInAppMessageSourceRemoteData error:&error];
                 }
-            } else if (response.result) {
-                if (!response.result.isAudienceMatch) {
-                    UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
-                    completionHandler([UAInAppAutomation prepareResultForMissedBehavior:schedule.audienceMissBehavior]);
+
+                if (error || !message) {
+                    UA_LDEBUG(@"Unable to create in-app message from response body: %@", responseBody);
+                    completionHandler(UAAutomationSchedulePrepareResultPenalize);
                     retriableHandler(UARetriableResultCancel, 0);
-                } else if (response.result.message) {
-                    [self.inAppMessageManager prepareMessage:response.result.message
+                } else {
+                    [self.inAppMessageManager prepareMessage:message
                                                   scheduleID:schedule.identifier
                                                    campaigns:schedule.campaigns
                                             reportingContext:schedule.reportingContext
                                             experimentResult:experimentResult
                                            completionHandler:completionHandler];
                     retriableHandler(UARetriableResultSuccess, 0);
-                } else {
-                    completionHandler(UAAutomationSchedulePrepareResultPenalize);
-                    retriableHandler(UARetriableResultSuccess, 0);
                 }
             } else {
-                switch (response.status) {
-                    case 307: {
-                        if (response.rules.location) {
-                            [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
-                        }
-                        if (response.rules.retryTime) {
-                            NSTimeInterval backoff = response.rules.retryTime;
-                            retriableHandler(UARetriableResultRetryAfter, backoff);
-                        } else {
-                            retriableHandler(UARetriableResultRetryWithBackoffReset, 0);
-                        }
-                        break;
-                    }
-                    case 401: {
-                        retriableHandler(UARetriableResultRetry, 0);
-                        break;
-                    }
-                    case 409: {
-                        [self.remoteDataClient notifyOutdatedSchedule:schedule completionHandler:^{
-                            completionHandler(UAAutomationSchedulePrepareResultInvalidate);
-                        }];
-                        retriableHandler(UARetriableResultCancel, 0);
-                        break;
-                    }
-                    case 429: {
-                        if (response.rules.location) {
-                            [self.redirectURLs setValue:[NSURL URLWithString:response.rules.location] forKey:schedule.identifier];
 
-                        }
-                        if (response.rules.retryTime) {
-                            NSTimeInterval backoff = response.rules.retryTime;
-                            retriableHandler(UARetriableResultRetryAfter, backoff);
-                        } else {
-                            retriableHandler(UARetriableResultRetry, 0);
-                        }
-
-                        break;
-                    }
-                    default:
-                        retriableHandler(UARetriableResultRetry, 0);
-                        break;
-                }
+                UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
+                completionHandler([UAInAppAutomation prepareResultForMissedBehavior:schedule.audienceMissBehavior]);
+                retriableHandler(UARetriableResultCancel, 0);
             }
-        }];
-    }];
 
+            return;
+        }
+
+        // Timed out
+        if (result.timedOut) {
+            if (deferred.retriableOnTimeout) {
+                retriableHandler(UARetriableResultRetry, 0);
+            } else {
+                retriableHandler(UARetriableResultSuccess, 0);
+                completionHandler(UAAutomationSchedulePrepareResultPenalize);
+            }
+            return;
+        }
+
+        // Remote-data is out of date
+        if (result.isOutOfDate) {
+            [self.remoteDataClient notifyOutdatedSchedule:schedule completionHandler:^{
+                                       completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                                   }];
+            retriableHandler(UARetriableResultCancel, 0);
+            return;
+        }
+
+        NSTimeInterval backoff = result.backOff;
+        if (backoff == 0) {
+            retriableHandler(UARetriableResultRetryWithBackoffReset, 0);
+        } else if (backoff > 0) {
+            retriableHandler(UARetriableResultRetryAfter, backoff);
+        } else {
+            retriableHandler(UARetriableResultRetry, 0);
+        }
+    }];
 }
 
 + (UAAutomationSchedulePrepareResult)prepareResultForMissedBehavior:(UAScheduleAudienceMissBehaviorType)missBehavior {
@@ -558,7 +538,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     UA_LTRACE(@"Checking if schedule %@ is ready to execute.", schedule.identifier);
 
     if (self.isPaused) {
-        UA_LTRACE(@"InAppAutoamtion currently paused. Schedule: %@ not ready.", schedule.identifier);
+        UA_LTRACE(@"InAppAutomation currently paused. Schedule: %@ not ready.", schedule.identifier);
         return UAAutomationScheduleReadyResultNotReady;
     }
 
@@ -618,12 +598,12 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     }
 }
 
-- (void)reportMeteredUsage: (nonnull UASchedule *)schedule contactId: (NSString *)contactId {
+- (void)reportMeteredUsage:(nonnull UASchedule *)schedule contactId:(NSString *)contactId {
     if (schedule.productId.length == 0) {
         return;
     }
     
-    [self.meteredUsage addImpressionWithEntityID:schedule.identifier
+    [self.inAppCoreSwiftBridge addImpressionWithEntityID:schedule.identifier
                                          product:schedule.productId
                                        contactID:contactId
                                 reportingContext:schedule.reportingContext];
@@ -744,29 +724,6 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     self.automationEngine.delegate = nil;
 }
 
-- (void)checkAudienceForSchedule:(UASchedule *)schedule completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
-    if (schedule.audienceJSON) {
-
-        UARemoteDataInfo *remoteDataInfo = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
-
-        [self.audienceChecker evaluateWithAudience:schedule.audienceJSON
-                             isNewUserEvaluationDate:schedule.isNewUserEvaluationDate ?: [NSDate distantPast]
-                                         contactID:remoteDataInfo.contactID
-                                 completionHandler:completionHandler];
-    }  else {
-        completionHandler(YES, nil);
-    }
-}
-
-// Internal method that was in a public header, should delete next major release
-// Keeping it functional to avoid breaking anyone that is using an internally documented method.
-- (void)checkAudience:(UAScheduleAudience *)audience completionHandler:(void (^)(BOOL, NSError * _Nullable))completionHandler {
-    [self.audienceChecker evaluateWithAudience:[audience toJSON]
-                       isNewUserEvaluationDate:[NSDate date]
-                                     contactID:nil
-                             completionHandler:completionHandler];
-}
-
 - (void)executionReadinessChanged {
     [self.automationEngine scheduleConditionsChanged];
 }
@@ -808,9 +765,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
 #pragma mark - Holdout groups
 - (void)evaluateExperimentsForSchedule:(UASchedule *)schedule
+                              audience:(UAInAppAudience *)audience
                      completionHandler:(void (^)(UAExperimentResult *, NSError *))completionHandler {
-
-    UARemoteDataInfo *remoteDataInfo = [self.remoteDataClient remoteDataInfoFromSchedule:schedule];
 
     // Skip actions for now
     if (schedule.type == UAScheduleTypeActions) {
@@ -823,9 +779,24 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     } else {
         UAExperimentMessageInfo *info = [[UAExperimentMessageInfo alloc] initWithMessageType:schedule.messageType ?: UADefaultScheduleMessageType
                                                                                campaignsJSON:schedule.campaigns];
-        [self.experimentManager evaluateExperimentsWithInfo:info
-                                                  contactID:remoteDataInfo.contactID
-                                          completionHandler:completionHandler];
+        [audience evaluateExperimentsWithInfo:info completionHandler:completionHandler];
+    }
+}
+
+- (void)checkAudience:(nonnull UAScheduleAudience *)audience 
+    completionHandler:(nonnull void (^)(BOOL, NSError *))completionHandler {
+
+    NSError *error;
+    UAInAppAudience *inAppAudience = [self.inAppCoreSwiftBridge audienceWithSelectorJSON:audience.toJSON
+                                                                 isNewUserEvaluationDate:[NSDate date]
+                                                                               contactID:nil
+                                                                                   error:&error];
+
+    if (!inAppAudience || error) {
+        UA_LERR(@"Failed to process audience %@", error);
+        completionHandler(error, false);
+    } else {
+        [inAppAudience evaluateAudienceWithCompletionHandler:completionHandler];
     }
 }
 

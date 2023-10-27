@@ -810,7 +810,7 @@ public class AirshipConfig: NSObject, NSCopying {
 
     }
 
-    // NOTE: For internal use only. :nodoc:
+    /// NOTE: For internal use only. :nodoc:
     @objc
     public class func isProductionProvisioningProfile(_ profilePath: String)
         -> Bool

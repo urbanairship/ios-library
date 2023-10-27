@@ -3,7 +3,7 @@
 import UIKit
 
 // Legacy
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 @objc(UATaskManager)
 public class TaskManager: NSObject, TaskManagerProtocol {
 

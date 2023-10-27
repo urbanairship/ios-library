@@ -149,13 +149,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, contactID, _ in
+        self.audienceChecker.onEvaluate = { selector, newUserDate,  _ in
             XCTAssertEqual(selector, flagInfo.audienceSelector)
             XCTAssertEqual(newUserDate, flagInfo.created)
-            XCTAssertNil(contactID)
             return true
         }
-
         let flag = try await featureFlagManager.flag(name: "foo")
         let expected = FeatureFlag(
             name: "foo",
@@ -189,7 +187,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { _, _, _, _ in
+        self.audienceChecker.onEvaluate = { _, _, _ in
             return false
         }
 
@@ -240,7 +238,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo1, flagInfo2
         ]
 
-        self.audienceChecker.onEvaluate = { selector, _, _, _ in
+        self.audienceChecker.onEvaluate = { selector, _, _ in
             return selector == flagInfo2.audienceSelector
         }
 
@@ -300,7 +298,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo,
         ]
 
-        self.audienceChecker.onEvaluate = { selector, _, _, _ in
+        self.audienceChecker.onEvaluate = { selector, _, _ in
             // match second variant
             return selector == variables[1].audienceSelector
         }
@@ -349,7 +347,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo,
         ]
 
-        self.audienceChecker.onEvaluate = { selector, _, _, _ in
+        self.audienceChecker.onEvaluate = { selector, _, _ in
             return false
         }
 
@@ -595,7 +593,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     }
 
     func testMultipleFlagsNotEligible() async throws {
-        self.audienceChecker.onEvaluate = { selector, newUserDate, contactID, _ in
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
             return false
         }
 
@@ -646,7 +644,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     }
 
     func testTrackInteractive() async throws {
-        self.audienceChecker.onEvaluate = { selector, newUserDate, contactID, _ in
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
             return false
         }
 
@@ -779,6 +777,8 @@ final class TestEventTracker: EventTracker, @unchecked Sendable {
 
 
 final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
+    var sdkVersion: String = "1.0.0"
+
 
     var isAirshipReady: Bool = false
 

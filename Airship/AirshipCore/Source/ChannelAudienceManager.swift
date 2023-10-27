@@ -25,7 +25,7 @@ protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
     var liveActivityUpdates: AsyncStream<[LiveActivityUpdate]> { get }
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     static let updateTaskID = "ChannelAudienceManager.update"
     static let updatesKey = "UAChannel.audienceUpdates"

@@ -17,7 +17,7 @@ public enum AirshipMeteredUsageType: String, Codable, Sendable {
 public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
     let eventID: String
     let entityID: String?
-    let type: AirshipMeteredUsageType
+    let usageType: AirshipMeteredUsageType
     let product: String
     let reportingContext: AirshipJSON?
     let timestamp: Date?
@@ -25,7 +25,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case eventID = "event_id"
-        case type
+        case usageType = "usage_type"
         case product
         case reportingContext = "reporting_context"
         case timestamp = "occurred"
@@ -37,7 +37,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
         return AirshipMeteredUsageEvent(
             eventID: eventID,
             entityID: nil,
-            type: type,
+            usageType: usageType,
             product: product,
             reportingContext: nil,
             timestamp: nil,

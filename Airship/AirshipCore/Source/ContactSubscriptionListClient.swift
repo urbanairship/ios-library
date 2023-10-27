@@ -2,14 +2,14 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 protocol ContactSubscriptionListAPIClientProtocol: Sendable {
     func fetchSubscriptionLists(
         contactID: String
     ) async throws ->  AirshipHTTPResponse<[String: [ChannelScope]]>
 }
 
-// NOTE: For internal use only. :nodoc:
+/// NOTE: For internal use only. :nodoc:
 final class ContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
