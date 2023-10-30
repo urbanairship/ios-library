@@ -27,6 +27,7 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
         if (!audienceOverrides.tags.isEmpty) {
             tagOverrides = TagGroupOverrides.from(updates: audienceOverrides.tags)
         }
+
         var attributeOverrides: [AttributeOperation]?
         if (!audienceOverrides.attributes.isEmpty) {
             attributeOverrides = audienceOverrides.attributes.map { $0.operation }
@@ -51,10 +52,15 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
             body: try self.encoder.encode(body)
         )
 
+        AirshipLogger.trace("Resolving deferred with request \(request) body \(body)")
+
         return try await session.performHTTPRequest(request) { data, response in
+            AirshipLogger.trace("Resolving deferred respoinse \(response)")
+
             if (response.statusCode == 200) {
                 return data
             }
+
             return nil
         }
     }

@@ -119,6 +119,8 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
     ) async -> AirshipDeferredResult<T> {
         var result: AirshipHTTPResponse<Data>?
 
+        AirshipLogger.trace("Resolving deferred \(url)")
+
         do {
             result = try await client.resolve(
                 url: url,
@@ -132,9 +134,14 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
             AirshipLogger.error("Failed to resolve deferred: \(url)")
         }
 
+
         guard let result = result else {
+            AirshipLogger.trace("Resolving deferred timed out \(url)")
             return .timedOut
         }
+
+        
+        AirshipLogger.trace("Resolving deferred result: \(result)")
 
         switch (result.statusCode) {
         case 200:
@@ -143,9 +150,12 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
                     return .retriableError()
                 }
                 let parsed = try await resultParser(body)
+
+                AirshipLogger.trace("Deferred result body: \(parsed)")
+
                 return .success(parsed)
             } catch {
-                AirshipLogger.error("Failed ot parse deferred \(error)")
+                AirshipLogger.error("Failed ot parse deferred body \(error)")
                 return .retriableError()
             }
         case 404: return .notFound

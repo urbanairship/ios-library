@@ -436,6 +436,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                retriableHandler:(UARetriableCompletionHandler) retriableHandler
               completionHandler:(void (^)(UAAutomationSchedulePrepareResult))completionHandler {
 
+    UA_LDEBUG(@"Resolving deferred for schedule: %@", schedule.identifier);
 
     UAScheduleDeferredData *deferred = (UAScheduleDeferredData *)schedule.data;
 
@@ -460,6 +461,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
             BOOL audienceMatch = [responseBody numberForKey:kUADeferredScheduleAPIClientAudienceMatchKey defaultValue:@(NO)].boolValue;
             if (audienceMatch) {
+                UA_LDEBUG(@"Deferred for schedule is a match: %@", schedule.identifier);
+
                 UAInAppMessage *message;
                 NSError *error;
 
@@ -483,7 +486,6 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                     retriableHandler(UARetriableResultSuccess, 0);
                 }
             } else {
-
                 UA_LDEBUG(@"Audience conditions not met, skipping display for schedule: %@, missBehavior: %ld", schedule.identifier, (long)schedule.audience.missBehavior);
                 completionHandler([UAInAppAutomation prepareResultForMissedBehavior:schedule.audienceMissBehavior]);
                 retriableHandler(UARetriableResultCancel, 0);
@@ -494,6 +496,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
         // Timed out
         if (result.timedOut) {
+            UA_LDEBUG(@"Deferred timed out for scheduleID: %@", schedule.identifier);
+
             if (deferred.retriableOnTimeout) {
                 retriableHandler(UARetriableResultRetry, 0);
             } else {
@@ -505,12 +509,15 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 
         // Remote-data is out of date
         if (result.isOutOfDate) {
+            UA_LDEBUG(@"Deferred is out of date for scheduleID: %@", schedule.identifier);
             [self.remoteDataClient notifyOutdatedSchedule:schedule completionHandler:^{
                                        completionHandler(UAAutomationSchedulePrepareResultInvalidate);
                                    }];
             retriableHandler(UARetriableResultCancel, 0);
             return;
         }
+
+        UA_LDEBUG(@"Deferred failed, retrying: %@", schedule.identifier);
 
         NSTimeInterval backoff = result.backOff;
         if (backoff == 0) {
