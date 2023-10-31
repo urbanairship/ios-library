@@ -37,7 +37,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
     }
     
     func testUpdateConfig() {
-        var newConfig = MeteredUsageConfig(isEnabled: nil, initialDelay: nil, interval: nil)
+        var newConfig = MeteredUsageConfig(isEnabled: nil, initialDelayMilliseconds: nil, intervalMilliseconds: nil)
         target.updateConfig(newConfig)
         XCTAssertEqual(0, workManager.workRequests.count)
         
@@ -47,52 +47,52 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(30, limit?.timeInterval)
         XCTAssertEqual(1, limit?.rate)
         
-        newConfig = MeteredUsageConfig(isEnabled: nil, initialDelay: nil, interval: 2)
+        newConfig = MeteredUsageConfig(isEnabled: nil, initialDelayMilliseconds: nil, intervalMilliseconds: 2000)
         target.updateConfig(newConfig)
         
         XCTAssertEqual(0, workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
         XCTAssertNotNil(limit)
         
-        XCTAssertEqual(newConfig.interval, limit?.timeInterval)
+        XCTAssertEqual(2, limit?.timeInterval)
         XCTAssertEqual(1, limit?.rate)
         
-        newConfig = MeteredUsageConfig(isEnabled: false, initialDelay: 1, interval: 2)
+        newConfig = MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
         target.updateConfig(newConfig)
         
         XCTAssertEqual(0, workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
         XCTAssertNotNil(limit)
         
-        XCTAssertEqual(newConfig.interval, limit?.timeInterval)
+        XCTAssertEqual(2, limit?.timeInterval)
         XCTAssertEqual(1, limit?.rate)
         
-        newConfig = MeteredUsageConfig(isEnabled: true, initialDelay: 1, interval: 2)
+        newConfig = MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
         target.updateConfig(newConfig)
         
         var workRequest = workManager.workRequests.last
         XCTAssertNotNil(workRequest)
-        XCTAssertEqual(newConfig.initialDelay, workRequest?.initialDelay)
-        
+        XCTAssertEqual(1, workRequest?.initialDelay)
+
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
         XCTAssertNotNil(limit)
         
-        XCTAssertEqual(newConfig.interval, limit?.timeInterval)
+        XCTAssertEqual(2, limit?.timeInterval)
         XCTAssertEqual(1, limit?.rate)
         
         workManager.workRequests.removeAll()
         
-        newConfig = MeteredUsageConfig(isEnabled: false, initialDelay: 1, interval: 2)
+        newConfig = MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
         target.updateConfig(newConfig)
         
         XCTAssertEqual(0, workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
         XCTAssertNotNil(limit)
         
-        XCTAssertEqual(newConfig.interval, limit?.timeInterval)
+        XCTAssertEqual(2, limit?.timeInterval)
         XCTAssertEqual(1, limit?.rate)
         
-        newConfig = MeteredUsageConfig(isEnabled: true, initialDelay: nil, interval: 2)
+        newConfig = MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: nil, intervalMilliseconds: 2000)
         target.updateConfig(newConfig)
         
         workRequest = workManager.workRequests.last
@@ -102,7 +102,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
         XCTAssertNotNil(limit)
         
-        XCTAssertEqual(newConfig.interval, limit?.timeInterval)
+        XCTAssertEqual(2, limit?.timeInterval)
         XCTAssertEqual(1, limit?.rate)
     }
     
@@ -117,7 +117,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
     func testEventStoreTheEventAndSendsData() async throws {
         privacyManager.enabledFeatures = [.analytics]
         
-        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelay: 1, interval: nil))
+        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil))
         workManager.workRequests.removeAll()
         
         let event = AirshipMeteredUsageEvent(
@@ -148,7 +148,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
     }
 
     func testAddEventConfigDisabled() async throws {
-        target.updateConfig(MeteredUsageConfig(isEnabled: false, initialDelay: 1, interval: nil))
+        target.updateConfig(MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1, intervalMilliseconds: nil))
         workManager.workRequests.removeAll()
 
         let event = AirshipMeteredUsageEvent(
@@ -170,7 +170,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
 
     func testEventStoreStripsDataIfAnalyticsDisabled() async throws {
         
-        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelay: 1, interval: nil))
+        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil))
         workManager.workRequests.removeAll()
         
         let event = AirshipMeteredUsageEvent(
@@ -229,7 +229,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         target.scheduleWork()
         XCTAssertEqual(0, workManager.workRequests.count)
         
-        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelay: 1, interval: 2))
+        target.updateConfig(MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: 2000))
         workManager.workRequests.removeAll()
         target.scheduleWork()
         
@@ -242,7 +242,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         
         workManager.workRequests.removeAll()
         target.scheduleWork(initialDelay: 2)
-        
+
         lastWork = workManager.workRequests.last
         XCTAssertNotNil(lastWork)
         XCTAssertEqual("MeteredUsage.upload", lastWork?.workID)
@@ -252,7 +252,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         
         workManager.workRequests.removeAll()
         target.scheduleWork(initialDelay: 2)
-        
+
         lastWork = workManager.workRequests.last
         XCTAssertNotNil(lastWork)
         XCTAssertEqual("MeteredUsage.upload", lastWork?.workID)

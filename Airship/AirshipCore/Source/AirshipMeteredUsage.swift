@@ -85,12 +85,12 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         self.workManager.setRateLimit(
             AirshipMeteredUsage.rateLimitID,
             rate: 1,
-            timeInterval: newConfig?.interval ?? AirshipMeteredUsage.defaultRateLimit
+            timeInterval: newConfig?.intervalMilliseconds?.timeInterval ?? AirshipMeteredUsage.defaultRateLimit
         )
 
         if oldConfig?.isEnabled != true && newConfig?.isEnabled == true {
             self.scheduleWork(
-                initialDelay: newConfig?.initialDelay ?? AirshipMeteredUsage.defaultInitialDelay
+                initialDelay: newConfig?.initialDelayMilliseconds?.timeInterval ?? AirshipMeteredUsage.defaultInitialDelay
             )
         }
     }
@@ -144,5 +144,11 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     
     private var isEnabled: Bool {
         return self.meteredUsageConfig.value?.isEnabled ?? false
+    }
+}
+
+fileprivate extension Int64 {
+    var timeInterval: TimeInterval {
+        Double(self)/1000
     }
 }
