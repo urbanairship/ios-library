@@ -620,6 +620,16 @@
 		6E6BD2502AEAFEC500B9DFC9 /* AirshipStateOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD24D2AEAFEC500B9DFC9 /* AirshipStateOverrides.swift */; };
 		6E6BD2582AEC598C00B9DFC9 /* DeferredAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2572AEC598C00B9DFC9 /* DeferredAPIClientTest.swift */; };
 		6E6BD25A2AEC626B00B9DFC9 /* DeferredResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2592AEC626B00B9DFC9 /* DeferredResolverTest.swift */; };
+		6E6BD26D2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */; };
+		6E6BD26E2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */; };
+		6E6BD26F2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */; };
+		6E6BD2722AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2702AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld */; };
+		6E6BD2732AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2702AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld */; };
+		6E6BD2742AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2702AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld */; };
+		6E6BD2762AF1C1D800B9DFC9 /* DeferredFlagResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2752AF1C1D800B9DFC9 /* DeferredFlagResolver.swift */; };
+		6E6BD2782AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */; };
+		6E6BD2792AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */; };
+		6E6BD27A2AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */; };
 		6E6C3F7F27A20C3C007F55C7 /* ChannelScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */; };
 		6E6C3F8027A20EEC007F55C7 /* ChannelScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */; };
 		6E6C3F8A27A266C0007F55C7 /* CachedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F8927A266C0007F55C7 /* CachedValue.swift */; };
@@ -701,6 +711,7 @@
 		6E7DB38528ECDC41002725F6 /* LiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB38228ECDC41002725F6 /* LiveActivity.swift */; };
 		6E7DB38E28ECFCED002725F6 /* AirshipJSONTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB38D28ECFCED002725F6 /* AirshipJSONTest.swift */; };
 		6E7DB39228ED0D7C002725F6 /* LiveActivityRegistryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB38A28ECDDD9002725F6 /* LiveActivityRegistryTest.swift */; };
+		6E7EACD12AF4192400DA286B /* AirshipCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7EACD02AF4192400DA286B /* AirshipCacheTest.swift */; };
 		6E82482229A6D9DF00136EA0 /* CancellabelValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E82482129A6D9DF00136EA0 /* CancellabelValueHolder.swift */; };
 		6E82482329A6D9DF00136EA0 /* CancellabelValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E82482129A6D9DF00136EA0 /* CancellabelValueHolder.swift */; };
 		6E82482429A6D9DF00136EA0 /* CancellabelValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E82482129A6D9DF00136EA0 /* CancellabelValueHolder.swift */; };
@@ -2419,6 +2430,10 @@
 		6E6BD24D2AEAFEC500B9DFC9 /* AirshipStateOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipStateOverrides.swift; sourceTree = "<group>"; };
 		6E6BD2572AEC598C00B9DFC9 /* DeferredAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredAPIClientTest.swift; sourceTree = "<group>"; };
 		6E6BD2592AEC626B00B9DFC9 /* DeferredResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredResolverTest.swift; sourceTree = "<group>"; };
+		6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCache.swift; sourceTree = "<group>"; };
+		6E6BD2712AF1B05500B9DFC9 /* UAAirshipCache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAAirshipCache.xcdatamodel; sourceTree = "<group>"; };
+		6E6BD2752AF1C1D800B9DFC9 /* DeferredFlagResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredFlagResolver.swift; sourceTree = "<group>"; };
+		6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTaskSleeper.swift; sourceTree = "<group>"; };
 		6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelScope.swift; sourceTree = "<group>"; };
 		6E6C3F8927A266C0007F55C7 /* CachedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedValue.swift; sourceTree = "<group>"; };
 		6E6C3F8C27A26992007F55C7 /* CachedValueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedValueTest.swift; sourceTree = "<group>"; };
@@ -2460,6 +2475,8 @@
 		6E7DB38228ECDC41002725F6 /* LiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivity.swift; sourceTree = "<group>"; };
 		6E7DB38A28ECDDD9002725F6 /* LiveActivityRegistryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistryTest.swift; sourceTree = "<group>"; };
 		6E7DB38D28ECFCED002725F6 /* AirshipJSONTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONTest.swift; sourceTree = "<group>"; };
+		6E7EACD02AF4192400DA286B /* AirshipCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCacheTest.swift; sourceTree = "<group>"; };
+		6E7EACD22AF4220E00DA286B /* FeatureFlagDeferredResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagDeferredResolverTest.swift; sourceTree = "<group>"; };
 		6E82482129A6D9DF00136EA0 /* CancellabelValueHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellabelValueHolder.swift; sourceTree = "<group>"; };
 		6E82483729A6E1BE00136EA0 /* AirshipCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCancellable.swift; sourceTree = "<group>"; };
 		6E8450AE237DFE89007D3B1E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -4005,6 +4022,7 @@
 				6E07689129FB39440014E2A9 /* AirshipUnsafeSendableWrapper.swift */,
 				6E07688D29FB0AE10014E2A9 /* AirshipMainActorWrapper.swift */,
 				6ECB627D2A36A0770095C85C /* ExternalURLProcessor.swift */,
+				6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -4593,6 +4611,7 @@
 				6E75F50429C4EAF600E3585A /* AudienceOverridesProvider.swift */,
 				6E4A4FDD2A3132850049FEFC /* AirshipSDKModule.swift */,
 				6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */,
+				6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4831,6 +4850,7 @@
 				6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */,
 				6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */,
 				6E938DBB2AC39A0500F691D9 /* FeatureFlagInteractedEventTest.swift */,
+				6E7EACD22AF4220E00DA286B /* FeatureFlagDeferredResolverTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -4854,6 +4874,7 @@
 				6E2F5AB02A67434B00CABD3D /* FeatureFlag.swift */,
 				6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */,
 				6E938DB92AC395DA00F691D9 /* FeatureFlagInteractedEvent.swift */,
+				6E6BD2752AF1C1D800B9DFC9 /* DeferredFlagResolver.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -5187,6 +5208,7 @@
 				3C927F8323A97CD9003C5FC8 /* UADefaultValueTransformerTest.m */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
 				6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */,
+				6E7EACD02AF4192400DA286B /* AirshipCacheTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -5223,6 +5245,7 @@
 				6E411B6D2538C4E600FEE4E8 /* UANotificationCategories.plist */,
 				6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */,
 				6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */,
+				6E6BD2702AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -6395,6 +6418,7 @@
 				6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */,
 				6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
 				324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */,
+				6E6BD26D2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */,
 				320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */,
 				A6A5531026D548D6002B20F6 /* JavaScriptEnvironment.swift in Sources */,
 				6E15B6EA26CC81040099C92D /* RemoteConfigDisableInfo.swift in Sources */,
@@ -6533,6 +6557,7 @@
 				A6D6D49D2A0260780072A5CA /* AirshipAction.swift in Sources */,
 				6E87BD6726D6A39A0005D20D /* Config.swift in Sources */,
 				6E82483829A6E1BE00136EA0 /* AirshipCancellable.swift in Sources */,
+				6E6BD2782AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */,
 				6E57CE3228DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
 				6E78848F29B9643C00ACAE45 /* ContactProtocol.swift in Sources */,
 				6E299FDF28D14258001305A7 /* AirshipRequestSession.swift in Sources */,
@@ -6655,6 +6680,7 @@
 				6EFD6D752729D862005B26F1 /* FormState.swift in Sources */,
 				6E739D6826B9DB9000BC6F6D /* AttributeMutations.swift in Sources */,
 				6E6ED13B2683A58D00A2CBD0 /* Dispatcher.swift in Sources */,
+				6E6BD2722AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */,
 				6EE49C182A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				32D6E87B2727F7060077C784 /* Image.swift in Sources */,
 				6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */,
@@ -6886,6 +6912,7 @@
 				6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */,
 				6E2F5AB12A67434B00CABD3D /* FeatureFlag.swift in Sources */,
 				A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */,
+				6E6BD2762AF1C1D800B9DFC9 /* DeferredFlagResolver.swift in Sources */,
 				6E2F5ABA2A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6928,6 +6955,7 @@
 				A68C749D285CAFEB00EEA2F4 /* Permission.swift in Sources */,
 				6E91E45728EF423400B6F25E /* AirshipWorkContinuation.swift in Sources */,
 				6E7112A72881D103004942E4 /* ViewState.swift in Sources */,
+				6E6BD26F2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */,
 				A68C749A285CAFB300EEA2F4 /* PromptPermissionAction.swift in Sources */,
 				A68C7499285CAFAB00EEA2F4 /* DefaultLogHandler.swift in Sources */,
 				A68C7498285CAF8C00EEA2F4 /* CachedList.swift in Sources */,
@@ -7037,6 +7065,7 @@
 				A6722A4F281A9EB80033F54D /* MediaEventTemplate.swift in Sources */,
 				A6722A50281A9EB80033F54D /* ProximityRegion.swift in Sources */,
 				A6722A51281A9EB80033F54D /* PushReceivedEvent.swift in Sources */,
+				6E6BD27A2AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */,
 				A6722A52281A9EB80033F54D /* RegionEvent.swift in Sources */,
 				A6722A53281A9EB80033F54D /* ScreenTrackingEvent.swift in Sources */,
 				6ECB62802A36A0770095C85C /* ExternalURLProcessor.swift in Sources */,
@@ -7151,6 +7180,7 @@
 				6E82483A29A6E1BE00136EA0 /* AirshipCancellable.swift in Sources */,
 				A6722A19281A9E830033F54D /* AddTagsAction.swift in Sources */,
 				A6D6D4A52A02BB1C0072A5CA /* ActionArguments.swift in Sources */,
+				6E6BD2742AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */,
 				6E5A64C62AAB7D5C00574085 /* AirshipMeteredUsage.swift in Sources */,
 				6EE49C1A2A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				6E75F50729C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
@@ -7437,6 +7467,7 @@
 				6EFAFB78295525C3008AD187 /* ChannelAPIClientTest.swift in Sources */,
 				6E65244C2A4FD4270019F353 /* DeviceTagSelectorTest.swift in Sources */,
 				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,
+				6E7EACD12AF4192400DA286B /* AirshipCacheTest.swift in Sources */,
 				CC64F11F1D8B781C009CEF27 /* UARetailEventTemplateTest.m in Sources */,
 				6E6C84462A5C8CFE00DD83A2 /* AirshipConfigTest.swift in Sources */,
 				6EFAFB8A29562474008AD187 /* AddTagsActionTest.swift in Sources */,
@@ -7505,6 +7536,7 @@
 				6EB5158728A5AA6700870C5A /* SubscriptionListEdit.swift in Sources */,
 				324D3C00273E6B4500058EE4 /* BannerView.swift in Sources */,
 				3CC95B2C2696549B00FE2ACD /* PushableComponent.swift in Sources */,
+				6E6BD26E2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */,
 				6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */,
 				6E6ED1642683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
 				6E698E13267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */,
@@ -7643,6 +7675,7 @@
 				A6AF655D271EF4360031410F /* ThomasViewModels.swift in Sources */,
 				E99605A827A075C600365AE4 /* OpenRegistrationOptions.swift in Sources */,
 				6E82483929A6E1BE00136EA0 /* AirshipCancellable.swift in Sources */,
+				6E6BD2792AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */,
 				6E1D8AD926CC66BE0049DACB /* RemoteConfigCache.swift in Sources */,
 				6E78849029B9643C00ACAE45 /* ContactProtocol.swift in Sources */,
 				6E57CE3328DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
@@ -7765,6 +7798,7 @@
 				6EFD6D5D27273257005B26F1 /* Shapes.swift in Sources */,
 				6E91B44F26883B6E00DDB1A8 /* AppBackgroundEvent.swift in Sources */,
 				6EFD6D762729D862005B26F1 /* FormState.swift in Sources */,
+				6E6BD2732AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */,
 				6EE49C192A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				6E15B72426CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				A67F87D3268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
@@ -9597,6 +9631,16 @@
 			);
 			currentVersion = 6E5A64D82AABC5A400574085 /* UAMeteredUsage.xcdatamodel */;
 			path = UAMeteredUsage.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		6E6BD2702AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				6E6BD2712AF1B05500B9DFC9 /* UAAirshipCache.xcdatamodel */,
+			);
+			currentVersion = 6E6BD2712AF1B05500B9DFC9 /* UAAirshipCache.xcdatamodel */;
+			path = UAirshipCache.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

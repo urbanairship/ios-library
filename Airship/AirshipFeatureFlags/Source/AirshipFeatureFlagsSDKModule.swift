@@ -22,11 +22,17 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
             dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
 
         let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalytics
+        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! AirshipDeferredResolverProtocol
+        let cache = dependencies[SDKDependencyKeys.cache] as! AirshipCache
 
         let manager = FeatureFlagManager(
             dataStore: dataStore,
             remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: remoteData),
-            eventTracker: analytics
+            eventTracker: analytics,
+            deferredResolver: FeatureFlagDeferredResolver(
+                cache: cache,
+                deferredResolver: deferredResolver
+            )
         )
         return AirshipFeatureFlagsSDKModule(components: [manager])
     }

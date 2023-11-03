@@ -27,6 +27,9 @@ public class SDKDependencyKeys: NSObject {
     public static let permissionsManager = "permissions_manager"
     @objc
     public static let workManager = "work_manager"
+
+    public static let deferredResolver = "deferred_resolver"
+    public static let cache = "airship_cache"
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -63,7 +66,8 @@ class ModuleLoader {
         audienceOverrides: AudienceOverridesProvider,
         experimentsManager: ExperimentDataProvider,
         meteredUsage: AirshipMeteredUsage,
-        deferredResolver: AirshipDeferredResolverProtocol
+        deferredResolver: AirshipDeferredResolverProtocol,
+        cache: AirshipCache
     ) {
 
         let dependencies: [String: Any] = [
@@ -84,6 +88,9 @@ class ModuleLoader {
             SDKDependencyKeys.privacyManager: privacyManager,
             SDKDependencyKeys.permissionsManager: permissionsManager,
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
+            SDKDependencyKeys.deferredResolver: deferredResolver,
+            SDKDependencyKeys.cache: cache
+
         ]
 
         let swiftModules = ModuleLoader.loadModules(dependencies)

@@ -13,16 +13,16 @@ public enum AirshipDeferredResult<T : Sendable&Equatable>: Sendable, Equatable {
 
 /// NOTE: For internal use only. :nodoc:
 public struct DeferredRequest: Sendable, Equatable {
-    var url: URL
-    var channelID: String
-    var contactID: String?
+    public var url: URL
+    public var channelID: String
+    public var contactID: String?
     var triggerContext: AirshipTriggerContext?
     var locale: Locale
     var notificationOptIn: Bool
     var appVersion: String
     var sdkVersion: String
 
-    init(
+    public init(
         url: URL,
         channelID: String,
         contactID: String? = nil,

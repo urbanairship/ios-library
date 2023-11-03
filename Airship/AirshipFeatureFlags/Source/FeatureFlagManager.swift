@@ -14,6 +14,12 @@ public enum FeatureFlagError: Error {
     case failedToFetchData
 }
 
+enum FeatureFlagEvaluationError: Error {
+    case connectionError
+    case outOfDate
+    case staleNotAllowed
+}
+
 /// Airship feature flag manager
 public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
@@ -27,7 +33,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         }
     }
 
-
     /// The shared FeatureFlagManager instance. `Airship.takeOff` must be called before accessing this instance.
     public static var shared: FeatureFlagManager {
         return Airship.requireComponent(ofType: FeatureFlagManager.self)
@@ -35,24 +40,23 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
     private let remoteDataAccess: FeatureFlagRemoteDataAccessProtocol
     private let audienceChecker: DeviceAudienceChecker
-    private let date: AirshipDateProtocol
     private let disableHelper: ComponentDisableHelper
     private let eventTracker: EventTracker
     private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
     private let notificationCenter: AirshipNotificationCenter
+    private let deferredResolver: FeatureFlagDeferredResolverProtocol
 
     init(
         dataStore: PreferenceDataStore,
         remoteDataAccess: FeatureFlagRemoteDataAccessProtocol,
         eventTracker: EventTracker,
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
-        date: AirshipDateProtocol = AirshipDate.shared,
         deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
-        notificationCenter: AirshipNotificationCenter = .shared
+        notificationCenter: AirshipNotificationCenter = .shared,
+        deferredResolver: FeatureFlagDeferredResolverProtocol
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
-        self.date = date
         self.eventTracker = eventTracker
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
         self.disableHelper = ComponentDisableHelper(
@@ -60,18 +64,7 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
             className: "FeatureFlags"
         )
         self.notificationCenter = notificationCenter
-    }
-
-    /// Gets and evaluates  a feature flag
-    /// - Parameter name: The flag name
-    /// - Returns: The feature flag.
-    /// - Throws: Throws `FeatureFlagError`
-    public func flag(name: String) async throws -> FeatureFlag {
-        guard self.isComponentEnabled else {
-            throw FeatureFlagError.failedToFetchData
-        }
-
-        return try await flag(name: name, allowRefresh: true)
+        self.deferredResolver = deferredResolver
     }
 
     /// Tracks a feature flag interaction event.
@@ -92,42 +85,92 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         }
     }
 
+    /// Gets and evaluates  a feature flag
+    /// - Parameter name: The flag name
+    /// - Returns: The feature flag.
+    /// - Throws: Throws `FeatureFlagError`
+    public func flag(name: String) async throws -> FeatureFlag {
+        return try await flag(name: name, allowRefresh: true)
+    }
+
     private func flag(name: String, allowRefresh: Bool) async throws -> FeatureFlag {
-        switch(await self.remoteDataAccess.status) {
-        case .upToDate:
-            let flagInfos = await flagInfos(name: name)
-            return await evaluate(name: name, flagInfos: flagInfos)
-        case .stale:
-            let flagInfos = await flagInfos(name: name)
-            if (flagInfos.isEmpty || !isStaleAllowed(flagInfos: flagInfos)) {
+        guard self.isComponentEnabled else {
+            throw FeatureFlagError.failedToFetchData
+        }
+
+        let remoteDataFeatureFlagInfo = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+        let status = await self.remoteDataAccess.status
+
+        do {
+            try self.ensureRemoteDataValid(
+                status: status,
+                remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
+            )
+
+            return try await self.evaluate(
+                remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
+            )
+        } catch {
+            switch (error) {
+            case FeatureFlagEvaluationError.connectionError:
+                throw FeatureFlagError.failedToFetchData
+            case FeatureFlagEvaluationError.outOfDate:
+                await self.remoteDataAccess.notifyOutdated(
+                    remoteDateInfo: remoteDataFeatureFlagInfo.remoteDataInfo
+                )
+
                 if (allowRefresh) {
                     await self.remoteDataAccess.waitForRefresh()
-                    return try await flag(name: name, allowRefresh: false)
+                    return try await self.flag(name: name, allowRefresh: false)
                 }
                 throw FeatureFlagError.failedToFetchData
+
+            case FeatureFlagEvaluationError.staleNotAllowed:
+                if (allowRefresh) {
+                    await self.remoteDataAccess.waitForRefresh()
+                    return try await self.flag(name: name, allowRefresh: false)
+                }
+                throw FeatureFlagError.failedToFetchData
+            default:
+                AirshipLogger.error("Unexpected error \(error)")
+                throw FeatureFlagError.failedToFetchData
             }
-            return await evaluate(name: name, flagInfos: flagInfos)
+        }
+    }
+
+    private func ensureRemoteDataValid(
+        status: RemoteDataSourceStatus,
+        remoteDataFeatureFlagInfo: RemoteDataFeatureFlagInfo
+    ) throws {
+        switch(status) {
+        case .upToDate:
+            return
+        case .stale:
+            guard !remoteDataFeatureFlagInfo.flagInfos.isEmpty else {
+                throw FeatureFlagEvaluationError.outOfDate
+            }
+
+            let disallowStale = remoteDataFeatureFlagInfo.flagInfos.first { flagInfo in
+                flagInfo.evaluationOptions?.disallowStaleValue == true
+            }
+
+            guard disallowStale == nil else {
+                throw FeatureFlagEvaluationError.staleNotAllowed
+            }
+
         case .outOfDate:
-            if (allowRefresh) {
-                await self.remoteDataAccess.waitForRefresh()
-                return try await flag(name: name, allowRefresh: false)
-            }
-            throw FeatureFlagError.failedToFetchData
-
-#if canImport(AirshipCore)
-        default: throw FeatureFlagError.failedToFetchData
-#endif
+            throw FeatureFlagEvaluationError.outOfDate
+        #if canImport(AirshipCore)
+        default: break
+        #endif
         }
     }
 
-    private func isStaleAllowed(flagInfos: [FeatureFlagInfo]) -> Bool {
-        let disallowStale = flagInfos.first { flagInfo in
-            flagInfo.evaluationOptions?.disallowStaleValue == true
-        }
-        return disallowStale == nil
-    }
-
-    private func evaluate(name: String, flagInfos: [FeatureFlagInfo]) async -> FeatureFlag {
+    private func evaluate(
+        remoteDataFeatureFlagInfo: RemoteDataFeatureFlagInfo
+    ) async throws -> FeatureFlag {
+        let name = remoteDataFeatureFlagInfo.name
+        let flagInfos = remoteDataFeatureFlagInfo.flagInfos
         let deviceInfoProvider = deviceInfoProviderFactory()
 
         guard !flagInfos.isEmpty else {
@@ -154,9 +197,23 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
             }
 
             switch (flagInfo.flagPayload) {
-            case .deferredPayload(_): continue
+            case .deferredPayload(let deferredInfo):
+                let request = DeferredRequest(
+                    url: deferredInfo.deferred.url,
+                    channelID: deviceInfoProvider.channelID!,
+                    contactID: await deviceInfoProvider.stableContactID,
+                    locale: deviceInfoProvider.locale,
+                    notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
+                )
+                
+                return try await deferredResolver.resolve(request: request, flagInfo: flagInfo)
+
             case .staticPayload(let staticInfo):
-                let variables = await evaluateVariables(staticInfo.variables, flagInfo: flagInfo, deviceInfoProvider: deviceInfoProvider)
+                let variables = await evaluateVariables(
+                    staticInfo.variables, 
+                    flagInfo: flagInfo,
+                    deviceInfoProvider: deviceInfoProvider
+                )
                 return FeatureFlag(
                     name: name,
                     isEligible: true,
@@ -224,18 +281,8 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         let data: AirshipJSON?
         let reportingMetadata: AirshipJSON?
     }
-
-    private func flagInfos(
-        name: String
-    ) async -> [FeatureFlagInfo] {
-        return await self.remoteDataAccess.flagInfos
-            .filter { $0.name == name }
-            .filter { $0.timeCriteria?.isActive(date: self.date.now) ?? true }
-            .filter { !$0.isDeferred } // ignore deferred for now
-    }
 }
 
 protocol EventTracker: Sendable {
     func addEvent(_ event: AirshipEvent)
 }
-

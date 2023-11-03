@@ -143,8 +143,15 @@ enum FeatureFlagPayload: Decodable, Equatable {
     case deferredPayload(DeferredInfo)
 
     struct DeferredInfo: Decodable, Equatable {
+        let deferred: Deferred
+    }
+
+    struct Deferred: Decodable, Equatable {
         let url: URL
-        let retryOnTimeout: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case url
+        }
     }
 
     struct StaticInfo: Decodable, Equatable {

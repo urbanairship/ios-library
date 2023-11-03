@@ -10,7 +10,6 @@ import AirshipFeatureFlags
 
 final class AirshipFeatureFlagsTest: XCTestCase {
 
-    private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let remoteDataAccess: TestFeatureFlagRemoteDataAccess = TestFeatureFlagRemoteDataAccess()
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let networkChecker: TestNetworkChecker = TestNetworkChecker()
@@ -18,6 +17,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let eventTracker: TestEventTracker = TestEventTracker()
     private let deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
+    private let deferredResolver: TestFeatureFlagResolver = TestFeatureFlagResolver()
 
     private var featureFlagManager: FeatureFlagManager!
 
@@ -27,9 +27,9 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             remoteDataAccess: self.remoteDataAccess,
             eventTracker: self.eventTracker,
             audienceChecker: self.audienceChecker,
-            date: self.date,
             deviceInfoProviderFactory: { self.deviceInfoProvider },
-            notificationCenter: notificationCenter
+            notificationCenter: notificationCenter,
+            deferredResolver: self.deferredResolver
         )
     }
 
@@ -367,78 +367,6 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         XCTAssertEqual(expected, flag)
     }
 
-    func testDeferredIgnored() async throws {
-        self.remoteDataAccess.status = .upToDate
-        self.remoteDataAccess.flagInfos = [
-            FeatureFlagInfo(
-                id: "some ID",
-                created: Date(),
-                lastUpdated: Date(),
-                name: "foo",
-                reportingMetadata: .string("reporting"),
-                flagPayload: .deferredPayload(
-                    FeatureFlagPayload.DeferredInfo(
-                        url: URL(string:"some:url")!,
-                        retryOnTimeout: true
-                    )
-                )
-            )
-        ]
-
-        let flag = try await featureFlagManager.flag(name: "foo")
-        let expected = FeatureFlag(name: "foo", isEligible: false, exists: false, variables: nil)
-        XCTAssertEqual(expected, flag)
-    }
-
-    func testInactiveIgnored() async throws {
-        self.remoteDataAccess.status = .upToDate
-        self.remoteDataAccess.flagInfos = [
-            FeatureFlagInfo(
-                id: "some ID",
-                created: Date(),
-                lastUpdated: Date(),
-                name: "foo",
-                reportingMetadata: .string("reporting"),
-                timeCriteria: AirshipTimeCriteria(
-                    start: self.date.now + 1,
-                    end: self.date.now + 2
-                ),
-                flagPayload: .staticPayload(
-                    FeatureFlagPayload.StaticInfo(
-                        variables: .fixed(nil)
-                    )
-                )
-            )
-        ]
-
-        var flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(flag, FeatureFlag(name: "foo", isEligible: false, exists: false, variables: nil))
-
-        self.date.offset += 1
-        flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag,
-            FeatureFlag(
-                name: "foo",
-                isEligible: true,
-                exists: true,
-                variables: nil,
-                reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: .string("reporting"),
-                    contactID: self.deviceInfoProvider.stableContactID,
-                    channelID: self.deviceInfoProvider.channelID
-                )
-            )
-        )
-
-        self.date.offset += 1
-        flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag, 
-            FeatureFlag(name: "foo", isEligible: false, exists: false, variables: nil)
-        )
-    }
-
     func testStaleNotDefined() async throws {
         self.remoteDataAccess.status = .stale
         self.remoteDataAccess.flagInfos = [
@@ -755,9 +683,231 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         XCTAssertEqual(0, self.eventTracker.events.count)
     }
 
+
+    func testDeferred() async throws {
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        let flag = FeatureFlag(
+            name: "foo",
+            isEligible: false,
+            exists: false,
+            variables: nil,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reporting two"),
+                contactID: self.deviceInfoProvider.stableContactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return true
+        }
+
+        await self.deferredResolver.setOnResolve { [deviceInfoProvider] request, info in
+            XCTAssertEqual(request.url, URL(string: "some-url://"))
+            XCTAssertEqual(request.contactID, deviceInfoProvider.stableContactID)
+            XCTAssertEqual(request.channelID, deviceInfoProvider.channelID)
+            XCTAssertEqual(request.locale, deviceInfoProvider.locale)
+            XCTAssertEqual(request.notificationOptIn, deviceInfoProvider.isUserOptedInPushNotifications)
+            XCTAssertEqual(flagInfo, info)
+            return flag
+        }
+
+        let result = try await featureFlagManager.flag(name: "foo")
+        XCTAssertEqual(result, flag)
+    }
+
+    func testDeferredLocalAudience() async throws {
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return false
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            XCTFail()
+            throw AirshipErrors.error("Failed")
+        }
+
+        let result = try await featureFlagManager.flag(name: "foo")
+        XCTAssertFalse(result.isEligible)
+    }
+
+
+    func testDeferredOutOfDate() async throws {
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        self.remoteDataAccess.remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some://remote-data")!,
+            lastModifiedTime: "last modified",
+            source: .app
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return true
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw FeatureFlagEvaluationError.outOfDate
+        }
+
+        do {
+            _ = try await featureFlagManager.flag(name: "foo")
+        } catch {
+            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.failedToFetchData)
+        }
+
+        XCTAssertEqual(remoteDataAccess.lastOutdatedRemoteInfo, self.remoteDataAccess.remoteDataInfo)
+    }
+
+    func testDeferredConnectionIssue() async throws {
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        self.remoteDataAccess.remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some://remote-data")!,
+            lastModifiedTime: "last modified",
+            source: .app
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return true
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw FeatureFlagEvaluationError.connectionError
+        }
+
+        do {
+            _ = try await featureFlagManager.flag(name: "foo")
+        } catch {
+            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.failedToFetchData)
+        }
+
+        XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
+    }
+
+    func testDeferredOtherError() async throws {
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        self.remoteDataAccess.remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some://remote-data")!,
+            lastModifiedTime: "last modified",
+            source: .app
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return true
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw AirshipErrors.error("other!")
+        }
+
+        do {
+            _ = try await featureFlagManager.flag(name: "foo")
+        } catch {
+            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.failedToFetchData)
+        }
+
+        XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
+    }
+
 }
 
 final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol, @unchecked Sendable {
+
+    var lastOutdatedRemoteInfo: RemoteDataInfo?
+    func remoteDataFlagInfo(name: String) async -> RemoteDataFeatureFlagInfo {
+        let flags = flagInfos.filter { info in
+            info.name == name
+        }
+        return RemoteDataFeatureFlagInfo(name: name, flagInfos: flags, remoteDataInfo: self.remoteDataInfo)
+    }
+    
+    func notifyOutdated(remoteDateInfo: RemoteDataInfo?) async {
+        lastOutdatedRemoteInfo = remoteDataInfo;
+    }
+    
     var waitForRefreshBlock: (() -> Void)?
     func waitForRefresh() async {
         self.waitForRefreshBlock?()
@@ -765,6 +915,8 @@ final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol
     
     var status: RemoteDataSourceStatus = .upToDate
     var flagInfos: [FeatureFlagInfo] = []
+    var remoteDataInfo: RemoteDataInfo?
+
 }
 
 
@@ -800,4 +952,17 @@ final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Senda
 
     var stableContactID: String = UUID().uuidString
 
+}
+
+
+final actor TestFeatureFlagResolver: FeatureFlagDeferredResolverProtocol {
+
+    var onResolve: ((DeferredRequest, FeatureFlagInfo) async throws -> FeatureFlag)?
+
+    func setOnResolve(onResolve: @escaping @Sendable (DeferredRequest, FeatureFlagInfo) async throws -> FeatureFlag) {
+        self.onResolve = onResolve
+    }
+    func resolve(request: DeferredRequest, flagInfo: FeatureFlagInfo) async throws -> FeatureFlag {
+        try await self.onResolve!(request, flagInfo)
+    }
 }
