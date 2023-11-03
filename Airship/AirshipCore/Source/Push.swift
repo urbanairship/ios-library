@@ -1393,6 +1393,7 @@ extension AirshipPush: InternalPushProtocol {
     func resetDeviceToken() {
         self.deviceToken = nil
         self.apnsRegistrar.registerForRemoteNotifications()
+        self.waitForDeviceToken = true
     }
 }
 

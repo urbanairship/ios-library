@@ -59,7 +59,7 @@ struct LiveActivity<T: ActivityAttributes>: LiveActivityProtocol {
     ///     - tokenUpdates: A closure that is called whenever the token changes
     func track(tokenUpdates: @Sendable @escaping (String) async -> Void) async {
         guard let activity = provider.getActivity(),
-              activity.activityState == .active
+              activity.activityState.isStaleOrActive
         else {
             return
         }
