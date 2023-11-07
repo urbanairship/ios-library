@@ -65,6 +65,7 @@ public class AirshipImageData: NSObject {
 
     static let minFrameDuration: TimeInterval = 0.01
     private let source: CGImageSource
+    private let imageActor: AirshipImageDataFrameActor
     
     let isAnimated: Bool
     let imageFramesCount: Int
@@ -77,6 +78,7 @@ public class AirshipImageData: NSObject {
         }
         
         self.isAnimated = imageFramesCount > 1
+        self.imageActor = AirshipImageDataFrameActor(source: source)
     }
 
     @objc
@@ -94,7 +96,7 @@ public class AirshipImageData: NSObject {
     }
     
     func getActor() -> AirshipImageDataFrameActor {
-        return AirshipImageDataFrameActor(source: source)
+        return self.imageActor
     }
 
     private class func frames(from source: CGImageSource) -> [Frame] {

@@ -26,7 +26,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     @State private var loadedImage: AirshipImageData? = nil
     @State private var currentImage: UIImage?
     @State private var imageIndex: Int = 0
-    @State private var animationTask: Task<Void, Never>?
+    @State private var imageTask: Task<Void, Never>?
     @State private var cancellable: AnyCancellable?
 
     @Environment(\.isVisible) var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
@@ -68,7 +68,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
                 self.image(Image(uiImage: image), image.size)
                     .animation(nil, value: self.imageIndex)
                     .onDisappear {
-                        animationTask?.cancel()
+                        imageTask?.cancel()
                     }
             } else {
                 self.placeholder()
@@ -77,13 +77,31 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     }
 
     private func animateIfNeeded() {
+        self.imageTask?.cancel()
+
         if isImageVisible {
-            self.animationTask?.cancel()
-            self.animationTask = Task {
+            self.imageTask = Task {
                 await animateImage()
             }
         } else {
-            self.animationTask?.cancel()
+            self.imageTask = Task {
+                await preloadFirstImage()
+            }
+        }
+    }
+
+    @MainActor
+    private func preloadFirstImage() async {
+        guard let loadedImage = self.loadedImage, self.currentImage == nil else { return }
+
+        guard loadedImage.isAnimated else {
+            self.currentImage = loadedImage.loadFrames().first?.image
+            return
+        }
+
+        let image = await loadedImage.getActor().loadFrame(at: 0)?.image
+        if !Task.isCancelled {
+            self.currentImage = image
         }
     }
 
