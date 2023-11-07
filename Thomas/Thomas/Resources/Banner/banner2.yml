@@ -2,11 +2,21 @@
 version: 1
 presentation:
   type: banner
+  placement_selectors:
+    - orientation: landscape
+      placement:
+        position: top
+        size:
+          width: 50%
+          height: 500
+        border:
+          radius: 20
   default_placement:
     size:
       width: 100%
       height: 500
     position: top
+
   duration_milliseconds: 5000
 view:
   type: state_controller

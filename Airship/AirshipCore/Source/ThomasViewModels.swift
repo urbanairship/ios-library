@@ -71,12 +71,16 @@ struct BannerPlacement: Decodable, Equatable, Sendable {
     let size: ConstrainedSize
     let position: BannerPosition
     let ignoreSafeArea: Bool?
+    let border: Border?
+    let backgroundColor: ThomasColor?
 
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
         case size = "size"
         case position = "position"
         case ignoreSafeArea = "ignore_safe_area"
+        case border = "border"
+        case backgroundColor = "background_color"
     }
 }
 
@@ -120,6 +124,8 @@ struct ModalPlacement: Decodable, Equatable, Sendable {
     let shade: ThomasColor?
     let ignoreSafeArea: Bool?
     let device: Device?
+    let border: Border?
+    let backgroundColor: ThomasColor?
 
     enum CodingKeys: String, CodingKey, Sendable {
         case margin = "margin"
@@ -128,6 +134,8 @@ struct ModalPlacement: Decodable, Equatable, Sendable {
         case shade = "shade_color"
         case ignoreSafeArea = "ignore_safe_area"
         case device = "device"
+        case border = "border"
+        case backgroundColor = "background_color"
     }
 
     struct Device: Decodable, Equatable, Sendable {
@@ -166,12 +174,14 @@ struct EmbeddedPresentationModel: Decodable, Equatable, Sendable {
 struct EmbeddedPlacement: Decodable, Equatable, Sendable {
     let margin: Margin?
     let size: ConstrainedSize
-    let ignoreSafeArea: Bool?
+    let border: Border?
+    let backgroundColor: ThomasColor?
 
     enum CodingKeys: String, CodingKey {
         case margin = "margin"
         case size = "size"
-        case ignoreSafeArea = "ignore_safe_area"
+        case border = "border"
+        case backgroundColor = "background_color"
     }
 }
 

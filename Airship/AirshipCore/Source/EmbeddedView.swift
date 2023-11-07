@@ -125,6 +125,8 @@ struct EmbeddedView: View {
         
         return ViewFactory
             .createView(model: layout.view, constraints: contentConstraints)
+            .background(placement.backgroundColor)
+            .border(placement.border)
             .margin(placement.margin)
             .background(
                 GeometryReader(content: { contentMetrics -> Color in
