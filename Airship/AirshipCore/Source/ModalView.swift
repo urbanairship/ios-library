@@ -241,6 +241,14 @@ struct ModalView: View {
 
 extension ModalPlacement {
     fileprivate func isFullScreen() -> Bool {
+        if let horiztonalMargins = self.margin?.horiztonalMargins, horiztonalMargins > 0 {
+            return false
+        }
+
+        if let verticalMargins = self.margin?.verticalMargins, verticalMargins > 0 {
+            return false
+        }
+
         if case let .percent(height) = self.size.height, height >= 100.0,
             case let .percent(width) = self.size.width, width >= 100.0
         {

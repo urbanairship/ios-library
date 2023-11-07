@@ -2,7 +2,6 @@
 
 import AirshipCore
 import Foundation
-import AirshipMessageCenter
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
