@@ -165,30 +165,39 @@ actor AirshipImageDataFrameActor {
     ) -> TimeInterval {
 
         guard
+            let properties = imageProperties(index: index, source: source)
+        else {
+            return AirshipImageData.minFrameDuration
+        }
+
+        let delayTime = properties[kCGImageAnimationDelayTime as String] as? TimeInterval
+        let gifDelayTime = properties[[kCGImagePropertyGIFUnclampedDelayTime as String]] as? TimeInterval
+
+        return max(gifDelayTime ?? delayTime ?? 0.0, AirshipImageData.minFrameDuration)
+    }
+
+    fileprivate static func imageProperties(
+        index: Int,
+        source: CGImageSource
+    ) -> [AnyHashable: Any]? {
+        guard
             let properties = CGImageSourceCopyPropertiesAtIndex(
                 source,
                 index,
                 nil
-            )
-                as? [AnyHashable: Any]
+            ) as? [AnyHashable: Any]
         else {
-            return AirshipImageData.minFrameDuration
+            return nil
         }
 
-        guard
-            let gifProperties =
-                properties[kCGImagePropertyGIFDictionary as String]
-                as? [AnyHashable: Any]
-        else {
-            return AirshipImageData.minFrameDuration
-        }
+        let gif = properties[
+            kCGImagePropertyGIFDictionary as String
+        ] as? [AnyHashable: Any]
 
-        let delayTime =
-            gifProperties[kCGImageAnimationDelayTime as String] as? TimeInterval
-        let gifDelayTime =
-            gifProperties[[kCGImagePropertyGIFUnclampedDelayTime as String]]
-            as? TimeInterval
+        let webp = properties[
+            kCGImagePropertyWebPDictionary as String
+        ] as? [AnyHashable: Any]
 
-        return max(gifDelayTime ?? delayTime ?? 0.0, AirshipImageData.minFrameDuration)
+        return gif ?? webp
     }
 }
