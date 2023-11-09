@@ -169,7 +169,13 @@ fileprivate extension NSManagedObjectContext {
             entityName: AirshipCacheData.entityName
         )
 
+        let predicate = AirshipCoreDataPredicate(
+            format: "key == %@",
+            args: [key]
+        )
+
         request.fetchLimit = 1
+        request.predicate = predicate.toNSPredicate()
 
         let fetchResult = try fetch(request)
         return fetchResult.first

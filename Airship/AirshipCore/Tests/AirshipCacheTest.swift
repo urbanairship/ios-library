@@ -52,6 +52,20 @@ final class AirshipCacheTest: XCTestCase {
         XCTAssertEqual("some other cache value", value)
     }
 
+    func testCache() async throws {
+        await self.cache.setCachedValue("some value", key: "some key", ttl: 10.0)
+        await self.cache.setCachedValue("some other value", key: "some other key", ttl: 10.0)
+
+        var value: String? = await self.cache.getCachedValue(key: "some key")
+        XCTAssertEqual("some value", value)
+
+        value = await self.cache.getCachedValue(key: "some other key")
+        XCTAssertEqual("some other value", value)
+
+        value = await self.cache.getCachedValue(key: "some null key")
+        XCTAssertNil(value)
+    }
+
     func testOverwriteCacheClearedSDKVersionChange() async throws {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
 
