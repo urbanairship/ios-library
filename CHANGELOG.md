@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.6.0 November 9, 2023
+Minor release that adds support for server side feature flag segmentation and improves support for animated webP images in Scenes.
+
+### Changes
+- Added server side segmentation for feature flags
+- Added support for Animated webP frame duration
+- Scene images will preload the first frame of each image in a scene to avoid the image animating in on page view
+- Fixed swipe voice commands for Scenes
+
+
 ## Version 17.5.1 October 18, 2023
 Patch release that fixes an issue with Live Activity registration reporting the wrong value on app restart and fixes a regression introduced in 17.5.0 with image loading in both the Preference Center and Message Center OOTB UI.
 
