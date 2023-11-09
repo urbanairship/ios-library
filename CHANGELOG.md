@@ -4,11 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
 ## Version 17.6.0 November 9, 2023
-Minor release that adds support for server side feature flag segmentation and improves support for animated webP images in Scenes.
+Minor release that adds support for server side feature flag segmentation, Impression billing, and improves support for animated webP images in Scenes.
 
 ### Changes
 - Added server side segmentation for feature flags
 - Added support for Animated webP frame duration
+- Added support for Impression billing
 - Scene images will preload the first frame of each image in a scene to avoid the image animating in on page view
 - Fixed swipe voice commands for Scenes
 
