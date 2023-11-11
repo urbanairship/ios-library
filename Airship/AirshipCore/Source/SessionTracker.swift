@@ -27,6 +27,7 @@ final class SessionTracker: SessionTrackerProtocol {
 
     private let date: AirshipDateProtocol
     private let taskSleeper: AirshipTaskSleeper
+    private let firstForeground: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
     private let appInitEventCreated: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
     private let _sessionState: Atomic<SessionState> = Atomic(SessionState())
 
@@ -108,10 +109,11 @@ final class SessionTracker: SessionTrackerProtocol {
         AirshipLogger.debug("Application did enter foreground.")
 
         // If the app is transitioning to foreground for the first time, ensure an app init event
-        guard appInitEventCreated.value else {
+        guard firstForeground.value else {
             ensureInit {
                 AirshipLogger.debug("App init - foreground")
             }
+            firstForeground.value = true
             return
         }
 
