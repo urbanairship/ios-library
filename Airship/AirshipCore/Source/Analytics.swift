@@ -55,10 +55,9 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     private let date: AirshipDateProtocol
     private let eventManager: EventManagerProtocol
     private let localeManager: AirshipLocaleManagerProtocol
-    private let appStateTracker: AppStateTrackerProtocol
     private let permissionsManager: AirshipPermissionsManager
     private let disableHelper: ComponentDisableHelper
-    private let lifeCycleEventFactory: LifeCycleEventFactoryProtocol
+    private let sessionTracker: SessionTrackerProtocol
     private let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
 
     private let sdkExtensions: Atomic<[String]> = Atomic([])
@@ -68,52 +67,25 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     private var previousScreen: String?
     private var screenStartDate: Date?
 
-    private var initialized = false
     private var isAirshipReady = false
-    private var handledFirstForegroundTransition = false
-    private let lock = AirshipLock()
 
-    private var _conversionSendID : String? = nil
-       
     /// The conversion send ID. :nodoc:
    @objc
    public var conversionSendID: String? {
-       get {
-           var result: String? = nil
-           lock.sync {
-               result = self._conversionSendID
-           }
-           return result
-       }
-       set {
-           lock.sync {
-               self._conversionSendID = newValue
-           }
-       }
+       return self.sessionTracker.sessionState.conversionSendID
     }
 
-   private var _conversionPushMetadata : String? = nil
-   
    /// The conversion push metadata. :nodoc:
    @objc
    public var conversionPushMetadata: String? {
-       get {
-           var result: String? = nil
-           lock.sync {
-               result = self._conversionPushMetadata
-           }
-           return result
-       }
-       set {
-           lock.sync {
-               self._conversionPushMetadata = newValue
-           }
-       }
+       return self.sessionTracker.sessionState.conversionMetadata
    }
 
     /// The current session ID.
     @objc
-    public private(set) var sessionID: String?
+    public var sessionID: String? {
+        return self.sessionTracker.sessionState.sessionID
+    }
 
     private let eventSubject = PassthroughSubject<AirshipEventData, Never>()
 
@@ -168,11 +140,11 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: AirshipDateProtocol = AirshipDate.shared,
         localeManager: AirshipLocaleManagerProtocol,
-        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         eventManager: EventManagerProtocol,
-        lifeCycleEventFactory: LifeCycleEventFactoryProtocol = LifeCylceEventFactory()
+        sessionTracker: SessionTrackerProtocol = SessionTracker(),
+        sessionEventFactory: SessionEventFactoryProtocol = SessionEventFactory()
     ) {
         self.config = config
         self.dataStore = dataStore
@@ -181,10 +153,9 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         self.date = date
         self.localeManager = localeManager
         self.privacyManager = privacyManager
-        self.appStateTracker = appStateTracker
         self.permissionsManager = permissionsManager
         self.eventManager = eventManager
-        self.lifeCycleEventFactory = lifeCycleEventFactory
+        self.sessionTracker = sessionTracker
 
         self.disableHelper = ComponentDisableHelper(
             dataStore: dataStore,
@@ -200,15 +171,6 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         self.eventManager.addHeaderProvider {
             await self.makeHeaders()
         }
-
-        startSession()
-
-        self.notificationCenter.addObserver(
-            self,
-            selector: #selector(applicationDidTransitionToForeground),
-            name: AppStateTracker.didTransitionToForeground,
-            object: nil
-        )
 
         self.notificationCenter.addObserver(
             self,
@@ -244,58 +206,34 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
             name: AirshipChannel.channelCreatedEvent,
             object: nil
         )
-    }
 
-    // MARK: -
-    // MARK: Application State
-    @objc
-    @MainActor
-    private func applicationDidTransitionToForeground() {
-        AirshipLogger.debug("Application transitioned to foreground.")
 
-        // If the app is transitioning to foreground for the first time, ensure an app init event
-        guard handledFirstForegroundTransition else {
-            handledFirstForegroundTransition = true
-            ensureInit()
-            return
+        Task { @MainActor in
+            for await event in self.sessionTracker.events {
+                self.addEvent(
+                    sessionEventFactory.make(event: event),
+                    date: event.date
+                )
+            }
         }
-
-        // Otherwise start a new session and emit a foreground event.
-        startSession()
-
-        // Add app_foreground event
-        self.addLifeCycleEvent(.foreground)
     }
 
     @objc
     private func applicationWillEnterForeground() {
-        AirshipLogger.debug("Application will enter foreground.")
-
         // Start tracking previous screen before backgrounding began
-        trackScreen(previousScreen)
+        if let previousScreen = self.previousScreen {
+            trackScreen(previousScreen)
+        }
     }
 
     @objc
     @MainActor
     private func applicationDidEnterBackground() {
-        AirshipLogger.debug("Application did enter background.")
-
         self.trackScreen(nil)
-
-        // Ensure an app init event
-        ensureInit()
-
-        // Add app_background event
-        self.addLifeCycleEvent(.background)
-
-        startSession()
-        conversionSendID = nil
-        conversionPushMetadata = nil
     }
 
     @objc
     private func applicationWillTerminate() {
-        AirshipLogger.debug("Application is terminating.")
         self.trackScreen(nil)
     }
 
@@ -365,13 +303,14 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         return headers
     }
 
-    // MARK: -
-    // MARK: Analytics Core Methods
-
     /// Triggers an analytics event.
     /// - Parameter event: The event to be triggered
     @objc
     public func addEvent(_ event: AirshipEvent) {
+        self.addEvent(event, date: self.date.now)
+    }
+
+    private func addEvent(_ event: AirshipEvent, date: Date) {
         guard self.isAnalyticsEnabled else {
             AirshipLogger.trace(
                 "Analytics disabled, ignoring event: \(event.eventType)"
@@ -395,7 +334,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         let eventData = AirshipEventData(
             body: body,
             id: NSUUID().uuidString,
-            date: Date(),
+            date: date,
             sessionID: sessionID,
             type: event.eventType
         )
@@ -581,32 +520,13 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         }
     }
 
-    private func startSession() {
-        self.sessionID = NSUUID().uuidString
-    }
-
-    /// needed to ensure AppInit event gets added
-    /// since App Clips get launched via Push Notification delegate
-    @MainActor
-    private func ensureInit() {
-        if !self.initialized && self.isAirshipReady {
-            self.addLifeCycleEvent(.appInit)
-            self.initialized = true
-        }
-    }
 
     @MainActor
     public func airshipReady() {
         self.isAirshipReady = true
-
-        // If analytics is initialized in the background state, we are responding to a
-        // content-available push. If it's initialized in the foreground state takeOff
-        // was probably called late. We should ensure an init event in either case.
-        if self.appStateTracker.state != .inactive {
-            ensureInit()
-        }
-
         self.updateEnablement()
+
+        self.sessionTracker.airshipReady()
     }
 }
 
@@ -618,14 +538,12 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
     func launched(fromNotification notification: [AnyHashable: Any]) {
         if AirshipUtils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
-            self.conversionSendID =
-            sendID != nil ? sendID : AirshipAnalytics.missingSendID
-            self.conversionPushMetadata =
-            notification[AirshipAnalytics.pushMetadata] as? String
-            self.ensureInit()
-        } else {
-            self.conversionSendID = nil
-            self.conversionPushMetadata = nil
+            let metadata = notification[AirshipAnalytics.pushMetadata] as? String
+
+            self.sessionTracker.launchedFromPush(
+                sendID: sendID ?? AirshipAnalytics.missingSendID,
+                metadata: metadata
+            )
         }
     }
 
@@ -672,32 +590,18 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
             )
         }
     }
-
-    @MainActor
-    private func addLifeCycleEvent(_ type: LifeCycleEventType) {
-        // call add event on the next run loop iteration to get the correct is_foreground value
-        DispatchQueue.main.async {
-            let event = self.lifeCycleEventFactory.make(type: type)
-            self.addEvent(event)
-        }
-    }
 }
 
-enum LifeCycleEventType {
-    case appInit
-    case foreground
-    case background
+
+protocol SessionEventFactoryProtocol: Sendable {
+    @MainActor
+    func make(event: SessionEvent) -> AirshipEvent
 }
 
-protocol LifeCycleEventFactoryProtocol: Sendable {
+struct SessionEventFactory: SessionEventFactoryProtocol {
     @MainActor
-    func make(type: LifeCycleEventType) -> AirshipEvent
-}
-
-fileprivate final class LifeCylceEventFactory: LifeCycleEventFactoryProtocol {
-    @MainActor
-    func make(type: LifeCycleEventType) -> AirshipEvent {
-        switch (type) {
+    func make(event: SessionEvent) -> AirshipEvent {
+        switch (event.type) {
         case .appInit:
             return AppInitEvent()
         case .background:
