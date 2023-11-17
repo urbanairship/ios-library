@@ -27,37 +27,39 @@ final class SessionTracker: SessionTrackerProtocol {
 
     private let date: AirshipDateProtocol
     private let taskSleeper: AirshipTaskSleeper
-    private let firstForeground: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
-    private let appInitEventCreated: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
+    private let isForeground: AirshipMainActorWrapper<Bool?> = AirshipMainActorWrapper(nil)
+    private let initialized: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
     private let _sessionState: Atomic<SessionState> = Atomic(SessionState())
+    private let appStateTracker: AppStateTrackerProtocol
 
-    var sessionState: SessionState {
+    nonisolated var sessionState: SessionState {
         return _sessionState.value
     }
 
     init(
         date: AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: AirshipTaskSleeper = .shared,
-        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
+        notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
+        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared
     ) {
         self.date = date
         self.taskSleeper = taskSleeper
+        self.appStateTracker = appStateTracker
         (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.makeStreamWithContinuation()
 
         notificationCenter.addObserver(
             self,
-            selector: #selector(applicationDidTransitionToForeground),
-            name: AppStateTracker.didTransitionToForeground,
+            selector: #selector(didBecomeActiveNotification),
+            name: AppStateTracker.didBecomeActiveNotification,
             object: nil
         )
 
         notificationCenter.addObserver(
             self,
-            selector: #selector(applicationDidEnterBackground),
+            selector: #selector(didEnterBackgroundNotification),
             name: AppStateTracker.didEnterBackgroundNotification,
             object: nil
         )
-
     }
 
     @MainActor
@@ -68,7 +70,7 @@ final class SessionTracker: SessionTrackerProtocol {
             state.conversionSendID = sendID
             return state
         }
-        self.ensureInit {
+        self.ensureInit(isForeground: true) {
             AirshipLogger.debug("App init - launched from push")
         }
     }
@@ -78,18 +80,21 @@ final class SessionTracker: SessionTrackerProtocol {
         let date = self.date.now
         Task { @MainActor in
             try await self.taskSleeper.sleep(timeInterval: SessionTracker.appInitWaitTime)
-            self.ensureInit(date: date) {
+            let isForeground = self.appStateTracker.state != .background
+            self.ensureInit(isForeground: isForeground, date: date) {
                 AirshipLogger.debug("App init - AirshipReady")
             }
         }
     }
 
     @MainActor
-    private func ensureInit(date: Date? = nil, onInit: () -> Void) {
-        if !self.appInitEventCreated.value {
-            self.addEvent(.appInit, date: date)
+    private func ensureInit(isForeground: Bool, date: Date? = nil, onInit: () -> Void) {
+        guard self.initialized.value else {
+            self.initialized.value = true
+            self.isForeground.value = isForeground
+            self.addEvent(isForeground ? .foregroundInit : .backgroundInit, date: date)
             onInit()
-            self.appInitEventCreated.value = true
+            return
         }
     }
 
@@ -105,38 +110,37 @@ final class SessionTracker: SessionTrackerProtocol {
 
     @objc
     @MainActor
-    private func applicationDidTransitionToForeground() {
-        AirshipLogger.debug("Application did enter foreground.")
+    private func didBecomeActiveNotification() {
+        AirshipLogger.debug("Application did become active.")
 
-        // If the app is transitioning to foreground for the first time, ensure an app init event
-        guard firstForeground.value else {
-            ensureInit {
-                AirshipLogger.debug("App init - foreground")
-            }
-            firstForeground.value = true
-            return
+        // Ensure the app init event
+        ensureInit(isForeground: true) {
+            AirshipLogger.debug("App init - foreground")
         }
 
-        // Otherwise start a new session and emit a foreground event.
-        startSession()
-
-        // Add app_foreground event
-        self.addEvent(.foreground)
+        // Background -> foreground
+        if isForeground.value == false {
+            isForeground.value = true
+            startSession()
+            addEvent(.foreground)
+        }
     }
 
     @objc
     @MainActor
-    private func applicationDidEnterBackground() {
-        AirshipLogger.debug("Application did enter background.")
+    private func didEnterBackgroundNotification() {
+        AirshipLogger.debug("Application entered background")
 
-        // Ensure an app init event
-        ensureInit {
+        // Ensure the app init event
+        ensureInit(isForeground: false) {
             AirshipLogger.debug("App init - background")
         }
 
-        // Add app_background event
-        self.addEvent(.background)
-
-        startSession()
+        // Foreground -> backgroudn
+        if isForeground.value == true {
+            isForeground.value = false
+            addEvent(.background)
+            startSession()
+        }
     }
 }

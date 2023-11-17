@@ -602,8 +602,10 @@ struct SessionEventFactory: SessionEventFactoryProtocol {
     @MainActor
     func make(event: SessionEvent) -> AirshipEvent {
         switch (event.type) {
-        case .appInit:
-            return AppInitEvent()
+        case .foregroundInit:
+            return AppInitEvent(isForeground: true)
+        case .backgroundInit:
+            return AppInitEvent(isForeground: false)
         case .background:
             return AppBackgroundEvent()
         case .foreground:

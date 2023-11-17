@@ -10,9 +10,7 @@ class AppForegroundEvent: NSObject, AirshipEvent {
         analytics: AnalyticsProtocol = Airship.requireComponent(ofType: AnalyticsProtocol.self),
         push: PushProtocol = Airship.requireComponent(ofType: PushProtocol.self)
     ) {
-        var data = AppInitEvent.gatherData(analytics: analytics, push: push)
-        data.removeValue(forKey: "foreground")
-        self._data = data
+        self._data = AppInitEvent.gatherData(analytics: analytics, push: push)
     }
 
     @objc

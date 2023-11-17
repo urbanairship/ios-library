@@ -414,7 +414,7 @@ class AnalyticsTest: XCTestCase {
 
     func testSessionEvents() async throws {
         let date = Date()
-        let events = try await self.produceEvents(count: 3) {
+        let events = try await self.produceEvents(count: 4) {
             self.sessionTracker.eventsContinuation.yield(
                 SessionEvent(type: .background, date: date)
             )
@@ -424,11 +424,14 @@ class AnalyticsTest: XCTestCase {
             )
 
             self.sessionTracker.eventsContinuation.yield(
-                SessionEvent(type: .appInit, date: date)
+                SessionEvent(type: .foregroundInit, date: date)
+            )
+            self.sessionTracker.eventsContinuation.yield(
+                SessionEvent(type: .backgroundInit, date: date)
             )
         }
-        XCTAssertEqual(["app_background", "app_foreground", "app_init"], events.map { $0.type })
-        XCTAssertEqual([date, date, date], events.map { $0.date })
+        XCTAssertEqual(["app_background", "app_foreground", "app_foreground_init", "app_background_init"], events.map { $0.type })
+        XCTAssertEqual([date, date, date, date], events.map { $0.date })
     }
 }
 
@@ -498,8 +501,10 @@ class TestLifeCycleEvent: NSObject, AirshipEvent {
 
     init(type: SessionEvent.EventType) {
         switch(type) {
-        case .appInit:
-            self.eventType = "app_init"
+        case .backgroundInit:
+            self.eventType = "app_background_init"
+        case .foregroundInit:
+            self.eventType = "app_foreground_init"
         case .background:
             self.eventType = "app_background"
         case .foreground:
