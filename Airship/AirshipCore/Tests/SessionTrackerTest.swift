@@ -68,9 +68,11 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual([1.0], self.taskSleeper.sleeps)
     }
 
+    @MainActor
     func testEvents() async throws {
         // App init
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
+
         // Background
         self.notificationCenter.post(
             name: AppStateTracker.didEnterBackgroundNotification,
