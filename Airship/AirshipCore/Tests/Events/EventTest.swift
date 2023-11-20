@@ -14,6 +14,7 @@ class EventTest: XCTestCase {
         testAnalytics.conversionPushMetadata = "base64metadataString"
 
         let event = AppInitEvent.init(
+            isForeground: true,
             analytics: testAnalytics,
             push: EventTestPush()
         )

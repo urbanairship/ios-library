@@ -43,7 +43,7 @@ jobs:
 
   run-tests:
     runs-on: macos-13-xlarge
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Test
@@ -51,7 +51,7 @@ jobs:
 
   run-package-tests:
     runs-on: macos-13-xlarge
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Install xcodegen
@@ -61,7 +61,7 @@ jobs:
 
   build-samples:
     runs-on: macos-13-xlarge
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Build samples

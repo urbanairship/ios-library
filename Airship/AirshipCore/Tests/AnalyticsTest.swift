@@ -16,7 +16,8 @@ class AnalyticsTest: XCTestCase {
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let date = UATestDate()
     private let eventManager = TestEventManager()
-    private let lifecycleEventFactory = TestLifecyleEventFactory()
+    private let sessionEventFactory = TestSessionEventFactory()
+    private let sessionTracker = TestSessionTracker()
 
     private var privacyManager: AirshipPrivacyManager!
     private var analytics: AirshipAnalytics!
@@ -36,117 +37,49 @@ class AnalyticsTest: XCTestCase {
             notificationCenter: notificationCenter,
             date: date,
             localeManager: locale,
-            appStateTracker: appStateTracker,
             privacyManager: privacyManager,
             permissionsManager: permissionsManager,
             eventManager: eventManager,
-            lifeCycleEventFactory: lifecycleEventFactory
+            sessionTracker: sessionTracker,
+            sessionEventFactory: sessionEventFactory
         )
-    }
 
-    func testFirstTransitionToForegroundEmitsAppInit() async throws {
-        self.appStateTracker.currentState = .inactive
-        await self.analytics.airshipReady()
-
-        let events = try await self.produceEvents(count: 2) {
-            await Task { @MainActor in
-                self.notificationCenter.post(
-                    name: AppStateTracker.didTransitionToForeground,
-                    object: nil
-                )
-
-                self.notificationCenter.post(
-                    name: AppStateTracker.didTransitionToForeground,
-                    object: nil
-                )
-            }.value
-        }
-
-        XCTAssertEqual("app_init", events[0].type)
-        XCTAssertEqual("app_foreground", events[1].type)
-
-        testAirship.components = [analytics]
-        testAirship.makeShared()
+        self.testAirship.components = [analytics]
+        self.testAirship.makeShared()
     }
 
     override class func tearDown() {
         TestAirshipInstance.clearShared()
     }
 
-    func testBackgroundBeforeForegroundEmitsAppInit() async throws {
-        self.appStateTracker.currentState = .inactive
-        await self.analytics.airshipReady()
-
-        let events = try await self.produceEvents(count: 2) {
-            await Task { @MainActor in
-                self.notificationCenter.post(
-                    name: AppStateTracker.didEnterBackgroundNotification,
-                    object: nil
-                )
-            }.value
-        }
-
-        XCTAssertEqual("app_init", events[0].type)
-        XCTAssertEqual("app_background", events[1].type)
-    }
-
-    func testBackgroundAfterForegroundDoesNotEmitAppInit() async throws {
-        let _ = try await self.produceEvents(count: 1) {
-            self.appStateTracker.currentState = .active
-            await self.analytics.airshipReady()
-        }
-
-        let events = try await self.produceEvents(count: 1) {
-            await Task { @MainActor in
-
-                self.notificationCenter.post(
-                    name: AppStateTracker.didEnterBackgroundNotification,
-                    object: nil
-                )
-            }.value
-        }
-
-        XCTAssertEqual("app_background", events[0].type)
-    }
 
     func testScreenTrackingBackground() async throws {
         // Foreground
-        let _ = try await self.produceEvents(count: 1) {
-            self.appStateTracker.currentState = .active
-            await self.analytics.airshipReady()
-        }
+        self.notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
         self.analytics.trackScreen("test_screen")
 
-        let events = try await self.produceEvents(count: 2) {
-            await Task { @MainActor in
-                self.notificationCenter.post(
-                    name: AppStateTracker.didEnterBackgroundNotification,
-                    object: nil
-                )
-            }.value
+        let events = try await self.produceEvents(count: 1) { @MainActor in
+            self.notificationCenter.post(
+                name: AppStateTracker.didEnterBackgroundNotification,
+                object: nil
+            )
         }
 
-        XCTAssertEqual("app_background", events[0].type)
-        XCTAssertEqual("screen_tracking", events[1].type)
+        XCTAssertEqual("screen_tracking", events[0].type)
     }
 
     func testScreenTrackingTerminate() async throws {
         // Foreground
-        let _ = try await self.produceEvents(count: 1) {
-            self.appStateTracker.currentState = .active
-            await self.analytics.airshipReady()
-        }
+        self.notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
+
+        // Track the screen
+        self.analytics.trackScreen("test_screen")
 
         self.analytics.trackScreen("test_screen")
 
-        let events = try await self.produceEvents(count: 1) {
-            await Task { @MainActor in
-                self.notificationCenter.post(
-                    name: AppStateTracker.willTerminateNotification,
-                    object: nil
-                )
-            }.value
+        let events = try await self.produceEvents(count: 1) { @MainActor in
+            self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
         }
 
         XCTAssertEqual("screen_tracking", events[0].type)
@@ -155,12 +88,10 @@ class AnalyticsTest: XCTestCase {
     func testScreenTracking() async throws {
         self.date.dateOverride = Date(timeIntervalSince1970: 100.0)
 
-        let events = try await self.produceEvents(count: 1) {
-            await Task { @MainActor in
-                self.analytics.trackScreen("test_screen")
-                self.date.offset = 3.0
-                self.analytics.trackScreen("another_screen")
-            }.value
+        let events = try await self.produceEvents(count: 1) { @MainActor in
+            self.analytics.trackScreen("test_screen")
+            self.date.offset = 3.0
+            self.analytics.trackScreen("another_screen")
         }
 
         let expectedData = [
@@ -358,7 +289,6 @@ class AnalyticsTest: XCTestCase {
             object: nil,
             queue: nil
         ) { notification in
-
             XCTAssertEqual(
                 event,
                 notification.userInfo?["event"] as? CustomEvent
@@ -442,6 +372,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual("granted", headers["X-UA-Permission-location"])
     }
 
+    @MainActor
     func produceEvents(
         count: Int,
         eventProducingAction: @escaping @Sendable () async -> Void
@@ -481,6 +412,27 @@ class AnalyticsTest: XCTestCase {
         return result
     }
 
+    func testSessionEvents() async throws {
+        let date = Date()
+        let events = try await self.produceEvents(count: 4) {
+            self.sessionTracker.eventsContinuation.yield(
+                SessionEvent(type: .background, date: date)
+            )
+
+            self.sessionTracker.eventsContinuation.yield(
+                SessionEvent(type: .foreground, date: date)
+            )
+
+            self.sessionTracker.eventsContinuation.yield(
+                SessionEvent(type: .foregroundInit, date: date)
+            )
+            self.sessionTracker.eventsContinuation.yield(
+                SessionEvent(type: .backgroundInit, date: date)
+            )
+        }
+        XCTAssertEqual(["app_background", "app_foreground", "app_foreground_init", "app_background_init"], events.map { $0.type })
+        XCTAssertEqual([date, date, date, date], events.map { $0.date })
+    }
 }
 
 class ValidEvent: NSObject, AirshipEvent {
@@ -532,14 +484,13 @@ final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
             }
             return allHeaders
         }
-
     }
 }
 
 
-final class TestLifecyleEventFactory: LifeCycleEventFactoryProtocol, @unchecked Sendable {
-    func make(type: LifeCycleEventType) -> AirshipEvent {
-        return TestLifeCycleEvent(type: type)
+final class TestSessionEventFactory: SessionEventFactoryProtocol, @unchecked Sendable {
+    func make(event: SessionEvent) -> AirshipEvent {
+        return TestLifeCycleEvent(type: event.type)
     }
 }
 
@@ -548,10 +499,12 @@ class TestLifeCycleEvent: NSObject, AirshipEvent {
     let eventType: String
     var priority: EventPriority = .normal
 
-    init(type: LifeCycleEventType) {
+    init(type: SessionEvent.EventType) {
         switch(type) {
-        case .appInit:
-            self.eventType = "app_init"
+        case .backgroundInit:
+            self.eventType = "app_background_init"
+        case .foregroundInit:
+            self.eventType = "app_foreground_init"
         case .background:
             self.eventType = "app_background"
         case .foreground:
@@ -561,5 +514,34 @@ class TestLifeCycleEvent: NSObject, AirshipEvent {
 
     func isValid() -> Bool {
         return true
+    }
+}
+
+final class TestSessionTracker: SessionTrackerProtocol {
+
+    let eventsContinuation: AsyncStream<SessionEvent>.Continuation
+    public let events: AsyncStream<SessionEvent>
+
+    private let _sessionState: Atomic<SessionState> = Atomic(SessionState())
+
+    var sessionState: SessionState {
+        return _sessionState.value
+    }
+
+    init() {
+        (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.makeStreamWithContinuation()
+    }
+
+    func airshipReady() {
+
+    }
+    
+    func launchedFromPush(sendID: String?, metadata: String?) {
+        self._sessionState.update { state in
+            var state = state
+            state.conversionMetadata = metadata
+            state.conversionSendID = sendID
+            return state
+        }
     }
 }

@@ -244,6 +244,15 @@
 		6E14C9B928B6EE4700A55E65 /* AddCustomEventDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C9B828B6EE4700A55E65 /* AddCustomEventDebugView.swift */; };
 		6E152BCA2743235800788402 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E152BC92743235800788402 /* Icons.swift */; };
 		6E152BCB2743235800788402 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E152BC92743235800788402 /* Icons.swift */; };
+		6E1589502AFEF19F00954A04 /* SessionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15894F2AFEF19F00954A04 /* SessionTracker.swift */; };
+		6E1589512AFEF19F00954A04 /* SessionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15894F2AFEF19F00954A04 /* SessionTracker.swift */; };
+		6E1589522AFEF19F00954A04 /* SessionTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15894F2AFEF19F00954A04 /* SessionTracker.swift */; };
+		6E1589542AFF021D00954A04 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1589532AFF021D00954A04 /* SessionState.swift */; };
+		6E1589552AFF021D00954A04 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1589532AFF021D00954A04 /* SessionState.swift */; };
+		6E1589562AFF021D00954A04 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1589532AFF021D00954A04 /* SessionState.swift */; };
+		6E1589582AFF023400954A04 /* SessionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1589572AFF023400954A04 /* SessionEvent.swift */; };
+		6E1589592AFF023400954A04 /* SessionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1589572AFF023400954A04 /* SessionEvent.swift */; };
+		6E15895A2AFF023400954A04 /* SessionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1589572AFF023400954A04 /* SessionEvent.swift */; };
 		6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */; };
 		6E15B6DC26CC749F0099C92D /* RemoteConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */; };
 		6E15B6E426CC779A0099C92D /* RemoteConfigModuleAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B6DF26CC779A0099C92D /* RemoteConfigModuleAdapter.swift */; };
@@ -526,6 +535,7 @@
 		6E5A64D92AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */; };
 		6E5A64DA2AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */; };
 		6E5A64DB2AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */; };
+		6E5B1A052AFF090B0019CA61 /* SessionTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5B1A042AFF090B0019CA61 /* SessionTrackerTest.swift */; };
 		6E60EF6629DF4BB5003F7A8D /* ApplicationMetricsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */; };
 		6E60EF6A29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
 		6E60EF6B29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
@@ -2170,6 +2180,9 @@
 		6E14C9B628B6E46800A55E65 /* EventListDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListDebugView.swift; sourceTree = "<group>"; };
 		6E14C9B828B6EE4700A55E65 /* AddCustomEventDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomEventDebugView.swift; sourceTree = "<group>"; };
 		6E152BC92743235800788402 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
+		6E15894F2AFEF19F00954A04 /* SessionTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTracker.swift; sourceTree = "<group>"; };
+		6E1589532AFF021D00954A04 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
+		6E1589572AFF023400954A04 /* SessionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionEvent.swift; sourceTree = "<group>"; };
 		6E15B6D826CC749F0099C92D /* RemoteConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigManager.swift; sourceTree = "<group>"; };
 		6E15B6DF26CC779A0099C92D /* RemoteConfigModuleAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigModuleAdapter.swift; sourceTree = "<group>"; };
 		6E15B6E726CC81040099C92D /* RemoteConfigDisableInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigDisableInfo.swift; sourceTree = "<group>"; };
@@ -2380,6 +2393,7 @@
 		6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsageEvent.swift; sourceTree = "<group>"; };
 		6E5A64D32AABBED600574085 /* MeteredUsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageStore.swift; sourceTree = "<group>"; };
 		6E5A64D82AABC5A400574085 /* UAMeteredUsage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAMeteredUsage.xcdatamodel; sourceTree = "<group>"; };
+		6E5B1A042AFF090B0019CA61 /* SessionTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTrackerTest.swift; sourceTree = "<group>"; };
 		6E5C32B727C9A2C9005B2DDE /* AirshipRelease.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipRelease.h; sourceTree = "<group>"; };
 		6E5C32D527C9A54A005B2DDE /* AirshipRelease_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipRelease_tvOS.h; sourceTree = "<group>"; };
 		6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationMetricsTest.swift; sourceTree = "<group>"; };
@@ -3584,6 +3598,16 @@
 			path = Push;
 			sourceTree = "<group>";
 		};
+		6E15894E2AFEF18900954A04 /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				6E15894F2AFEF19F00954A04 /* SessionTracker.swift */,
+				6E1589532AFF021D00954A04 /* SessionState.swift */,
+				6E1589572AFF023400954A04 /* SessionEvent.swift */,
+			);
+			name = Session;
+			sourceTree = "<group>";
+		};
 		6E1892C5268D159900417887 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -3942,6 +3966,7 @@
 		6E411D512538D00300FEE4E8 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				6E15894E2AFEF18900954A04 /* Session */,
 				3CA84AB626DE257200A59685 /* Analytics.swift */,
 				3CA84AB726DE257200A59685 /* AnalyticsProtocol.swift */,
 				3CA84AA626DE255200A59685 /* EventStore.swift */,
@@ -4126,6 +4151,14 @@
 				6E5A64D32AABBED600574085 /* MeteredUsageStore.swift */,
 			);
 			name = MeteredUsage;
+			sourceTree = "<group>";
+		};
+		6E5B1A012AFF08F00019CA61 /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				6E5B1A042AFF090B0019CA61 /* SessionTrackerTest.swift */,
+			);
+			name = Session;
 			sourceTree = "<group>";
 		};
 		6E5C32B627C9A2C9005B2DDE /* AirshipRelease */ = {
@@ -5096,6 +5129,7 @@
 		CC04F2151DCAB73000B4842D /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				6E5B1A012AFF08F00019CA61 /* Session */,
 				32E339E22A334A2000CD3BE5 /* AddCustomEventActionTest.swift */,
 				CC04F2171DCAB75E00B4842D /* Events */,
 				CC64F07D1D8B781C009CEF27 /* UAAssociatedIdentifiersTest.m */,
@@ -6427,6 +6461,7 @@
 				6E15B71426CEB4190099C92D /* RemoteDataStorePayload.swift in Sources */,
 				A6D6D49F2A02608C0072A5CA /* ActionResult.swift in Sources */,
 				6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
+				6E1589582AFF023400954A04 /* SessionEvent.swift in Sources */,
 				6EFD6D89272A53FB005B26F1 /* PagerIndicator.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E49D7C828401D2E00C7BB9D /* APNSRegistrar.swift in Sources */,
@@ -6493,6 +6528,7 @@
 				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
 				6EE49C0C2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				6E91B4692689327D00DDB1A8 /* CustomEvent.swift in Sources */,
+				6E1589542AFF021D00954A04 /* SessionState.swift in Sources */,
 				6E49D7C628401D2E00C7BB9D /* Badger.swift in Sources */,
 				6E96ECF6293FCE080053CC91 /* EventUploadScheduler.swift in Sources */,
 				6E71129D2880DACB004942E4 /* EventHandlerViewModifier.swift in Sources */,
@@ -6644,6 +6680,7 @@
 				6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */,
 				6E8BF45126852E4B009A8BD4 /* TaskRequestOptions.swift in Sources */,
 				6E1C9C45271F74E7009EF9EF /* BorderViewModifier.swift in Sources */,
+				6E1589502AFEF19F00954A04 /* SessionTracker.swift in Sources */,
 				6EC7E48D26A738C80038CFDD /* ContactConflictEvent.swift in Sources */,
 				60C1DB102A8B743C00A1D3DA /* AirshipEmbeddedViewManager.swift in Sources */,
 				6EF1933C2838062B005F192A /* AirshipLogHandler.swift in Sources */,
@@ -6943,6 +6980,7 @@
 				6E692B0629E0DA5100D96CCC /* JavaScriptCommandDelegate.swift in Sources */,
 				A68C74A5285CB08D00EEA2F4 /* APNSRegistrar.swift in Sources */,
 				6E91E45A28EF423400B6F25E /* AirshipWorkResult.swift in Sources */,
+				6E15895A2AFF023400954A04 /* SessionEvent.swift in Sources */,
 				6E5A64CE2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */,
 				A68C74A4285CB08700EEA2F4 /* PushNotificationDelegate.swift in Sources */,
 				A68C74A3285CB08000EEA2F4 /* NotificationRegistrar.swift in Sources */,
@@ -6975,6 +7013,7 @@
 				A6722A83281A9EDA0033F54D /* ContactConflictEvent.swift in Sources */,
 				A6722A84281A9EDA0033F54D /* AirshipContact.swift in Sources */,
 				A6722A86281A9EDA0033F54D /* EmailRegistrationOptions.swift in Sources */,
+				6E1589562AFF021D00954A04 /* SessionState.swift in Sources */,
 				6E91E43C28EF423400B6F25E /* WorkBackgroundTasks.swift in Sources */,
 				A6722A87281A9EDA0033F54D /* SMSRegistrationOptions.swift in Sources */,
 				6EC755AA2A4F8FBC00851ABB /* DeviceAudienceSelector.swift in Sources */,
@@ -7259,6 +7298,7 @@
 				A67229FA281A9E640033F54D /* ModalView.swift in Sources */,
 				A67229FB281A9E640033F54D /* BannerView.swift in Sources */,
 				6E44626929E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
+				6E1589522AFEF19F00954A04 /* SessionTracker.swift in Sources */,
 				A67229FC281A9E640033F54D /* AirshipWebview.swift in Sources */,
 				A67229FD281A9E640033F54D /* Icons.swift in Sources */,
 				A67229FE281A9E640033F54D /* AirshipProgressView.swift in Sources */,
@@ -7287,6 +7327,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6ECB62862A36C1EE0095C85C /* NativeBridgeActionHandlerTest.swift in Sources */,
+				6E5B1A052AFF090B0019CA61 /* SessionTrackerTest.swift in Sources */,
 				6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */,
 				32C68D0529424449006BBB29 /* RemoteDataTest.swift in Sources */,
 				6E1767F729B923D100D65F60 /* ChannelAuthTokenAPIClientTest.swift in Sources */,
@@ -7545,6 +7586,7 @@
 				6EFD6D8A272A53FB005B26F1 /* PagerIndicator.swift in Sources */,
 				A6D6D4A62A02BB200072A5CA /* ActionResult.swift in Sources */,
 				6E664BDA26C4CD8700A2C8E5 /* PasteboardAction.swift in Sources */,
+				6E1589592AFF023400954A04 /* SessionEvent.swift in Sources */,
 				6EC755A72A4F8FBB00851ABB /* DeviceAudienceSelector.swift in Sources */,
 				6E6C3F9F27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E49D7C928401D2E00C7BB9D /* APNSRegistrar.swift in Sources */,
@@ -7611,6 +7653,7 @@
 				6E510C1E2721DA77006D9126 /* ViewConstraints.swift in Sources */,
 				6E91B44126868C3400DDB1A8 /* RegionEvent.swift in Sources */,
 				6EE49C0D2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
+				6E1589552AFF021D00954A04 /* SessionState.swift in Sources */,
 				6E49D7C728401D2E00C7BB9D /* Badger.swift in Sources */,
 				32F01B0729E83C7A007A2131 /* PagerGestureMap.swift in Sources */,
 				6E96ECF7293FCE080053CC91 /* EventUploadScheduler.swift in Sources */,
@@ -7762,6 +7805,7 @@
 				6E664BA226C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
 				6EB3FCF02ABCFA680018594E /* RemoteDataProtocol.swift in Sources */,
 				6E6ED14A2683D8E200A2CBD0 /* LocaleManager.swift in Sources */,
+				6E1589512AFEF19F00954A04 /* SessionTracker.swift in Sources */,
 				6E6ED16A2683DBC300A2CBD0 /* NetworkMonitor.swift in Sources */,
 				6E411CAC2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */,
 				60E7DDAC2ABC4CF500072FA0 /* AirshipEmbeddedViewManager.swift in Sources */,

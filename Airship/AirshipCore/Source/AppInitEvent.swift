@@ -7,10 +7,11 @@ final class AppInitEvent: NSObject, AirshipEvent {
 
     @MainActor
     init(
+        isForeground: Bool,
         analytics: AnalyticsProtocol = Airship.requireComponent(ofType: AnalyticsProtocol.self),
         push: PushProtocol = Airship.requireComponent(ofType: PushProtocol.self)
     ) {
-        self._data = AppInitEvent.gatherData(analytics: analytics, push: push)
+        self._data = AppInitEvent.gatherData(analytics: analytics, push: push, isForeground: isForeground)
     }
 
     @objc
@@ -31,7 +32,8 @@ final class AppInitEvent: NSObject, AirshipEvent {
     @MainActor
     static func gatherData(
         analytics: AnalyticsProtocol,
-        push: PushProtocol
+        push: PushProtocol,
+        isForeground: Bool? = nil
     ) -> [AnyHashable: Any] {
         var data: [AnyHashable: Any] = [:]
 
@@ -67,8 +69,10 @@ final class AppInitEvent: NSObject, AirshipEvent {
         data["package_version"] = packageVersion
 
         // Foreground
-        let isInForeground = AppStateTracker.shared.state != .background
-        data["foreground"] = isInForeground ? "true" : "false"
+        if let isForeground = isForeground {
+            data["foreground"] = isForeground ? "true" : "false"
+        }
+
 
         return data
     }

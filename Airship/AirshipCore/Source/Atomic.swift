@@ -28,6 +28,12 @@ final class Atomic<T: Equatable & Sendable>: @unchecked Sendable {
 
     }
 
+    func update(onModify: (T) -> T) {
+        lock.sync {
+            self.value = onModify(self.value)
+        }
+    }
+
     @discardableResult
     func setValue(_ value: T, onChange:(() -> Void)? = nil) -> Bool {
         var changed = false
