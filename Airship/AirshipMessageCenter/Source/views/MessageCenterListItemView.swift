@@ -96,73 +96,79 @@ extension EnvironmentValues {
 
 private struct MessageCenterListContentView: View {
 
+    private static let iconWidth: Double = 60.0
+    private static let placeHolderImageName: String = "photo"
+    private static let unreadIndicatorImageName: String = "circle.fill"
+    private static let unreadIndicatorSize: Double = 8.0
+    private static let noIconSpacerWidth: Double = 20.0
+
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
     let message: MessageCenterMessage
 
-    private var placeHolder: some View {
-        var image = Image(systemName: "photo")
-        if let placeholderIcon = theme.placeholderIcon {
-            image = placeholderIcon
-        }
-        return
-            image
-            .resizable()
-            .scaledToFit()
-            .foregroundColor(.primary)
-            .frame(width: theme.iconsEnabled ? 60 : 20.0)
-            .opacity(theme.iconsEnabled ? 1.0 : 0.0)
-
-    }
 
     @ViewBuilder
-    func makeIcon(_ listIcon: String?) -> some View {
-        if let listIcon = listIcon {
+    func makeIcon() -> some View {
+        if let listIcon = self.message.listIcon {
             AirshipAsyncImage(url: listIcon) { image, _ in
                 image.resizable()
                     .scaledToFit()
-                    .frame(width: theme.iconsEnabled ? 60 : 20.0)
+                    .frame(width: MessageCenterListContentView.iconWidth)
             } placeholder: {
-                return self.placeHolder
+                return makeImagePlaceHolder()
             }
         } else {
-            self.placeHolder
+            makeImagePlaceHolder()
         }
     }
 
+    private func makeImagePlaceHolder() -> some View {
+        let placeHolderImage = theme.placeholderIcon ?? Image(
+            systemName: MessageCenterListContentView.placeHolderImageName
+        )
+
+        return placeHolderImage
+            .resizable()
+            .scaledToFit()
+            .foregroundColor(.primary)
+            .frame(width: MessageCenterListContentView.iconWidth)
+    }
+
     @ViewBuilder
-    func makeUnreadIndicator(_ unread: Bool) -> some View {
-        if unread {
-            Image(systemName: "circle.fill")
+    func makeUnreadIndicator() -> some View {
+        if self.message.unread {
+            Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
                 .foregroundColor(
                     theme.unreadIndicatorColor ?? theme.cellTintColor
                 )
-                .frame(width: 8, height: 8)
+                .frame(
+                    width: MessageCenterListContentView.unreadIndicatorSize,
+                    height: MessageCenterListContentView.unreadIndicatorSize
+                )
         }
     }
 
     @ViewBuilder
-    func makeTitle(_ title: String) -> some View {
-        Text(title)
-            .font(theme.cellTitleFont)
-            .foregroundColor(theme.cellTitleColor)
-    }
+    func makeMessageInfo() -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(self.message.title)
+                .font(theme.cellTitleFont)
+                .foregroundColor(theme.cellTitleColor)
+                .accessibilityHidden(true)
 
-    @ViewBuilder
-    func makeSubtitle(_ subtitle: String?) -> some View {
-        if let subtitle = subtitle {
-            Text(subtitle)
-                .font(.subheadline)
+            if let subtitle = self.message.subtitle {
+                Text(subtitle)
+                    .font(.subheadline)
+                    .accessibilityHidden(true)
+
+            }
+
+            Text(self.message.sentDate, style: .date)
+                .font(theme.cellDateFont)
+                .foregroundColor(theme.cellDateColor)
+                .accessibilityHidden(true)
         }
-    }
-
-    @ViewBuilder
-    func makeMessageSentDate(_ messageSent: Date) -> some View {
-        let messageSent = messageSent
-        Text(messageSent, style: .date)
-            .font(theme.cellDateFont)
-            .foregroundColor(theme.cellDateColor)
     }
 
     @ViewBuilder
@@ -170,18 +176,18 @@ private struct MessageCenterListContentView: View {
         let message = message
         
         HStack(alignment: .top, spacing: 5) {
-            makeIcon(message.listIcon)
-            VStack(alignment: .leading, spacing: 5) {
-                makeTitle(message.title)
-                    .accessibilityHidden(true)
-                makeSubtitle(message.subtitle)
-                    .accessibilityHidden(true)
-                makeMessageSentDate(message.sentDate)
-                    .accessibilityHidden(true)
+            if (theme.iconsEnabled) {
+                makeIcon()
+                makeMessageInfo()
+            } else {
+                Spacer().frame(
+                    width: MessageCenterListContentView.noIconSpacerWidth
+                )
+                makeMessageInfo()
             }
             Spacer()
         }
-        .overlay(makeUnreadIndicator(message.unread), alignment: .topLeading)
+        .overlay(makeUnreadIndicator(), alignment: .topLeading)
         .padding(8)
         .accessibilityLabel(String(format: message.unread ? "ua_message_unread_description".messageCenterlocalizedString : "ua_message_description".messageCenterlocalizedString, message.title,  AirshipDateFormatter.string(fromDate: message.sentDate, format: .relativeFull)))
         .accessibilityHint("ua_message_cell_description".messageCenterlocalizedString)
