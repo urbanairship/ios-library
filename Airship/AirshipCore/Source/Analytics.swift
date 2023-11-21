@@ -110,6 +110,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         self.isComponentEnabled
     }
 
+    @MainActor
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -133,6 +134,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         )
     }
 
+    @MainActor
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -242,6 +244,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     // MARK: Analytics Headers
 
     /// :nodoc:
+    @MainActor
     public func addHeaderProvider(
         _ headerProvider: @Sendable @escaping () async -> [String: String]
     ) {

@@ -23,14 +23,20 @@ class AnalyticsTest: XCTestCase {
     private var analytics: AirshipAnalytics!
     private let testAirship = TestAirshipInstance()
 
-    override func setUpWithError() throws {
+
+    override func setUp() async throws {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: .all,
             notificationCenter: notificationCenter
         )
 
-        self.analytics = AirshipAnalytics(
+        self.analytics = await makeAnalytics()
+    }
+
+    @MainActor
+    func makeAnalytics() -> AirshipAnalytics {
+        return AirshipAnalytics(
             config: RuntimeConfig(config: config, dataStore: dataStore),
             dataStore: dataStore,
             channel: channel,
@@ -337,7 +343,7 @@ class AnalyticsTest: XCTestCase {
     }
 
     func testAnalyticsHeaderExtension() async throws {
-        self.analytics.addHeaderProvider {
+        await self.analytics.addHeaderProvider {
             return ["neat": "story"]
         }
 

@@ -75,6 +75,7 @@ protocol InternalAnalyticsProtocol: AnalyticsProtocol {
     @MainActor
     func launched(fromNotification notification: [AnyHashable: Any])
 
+    @MainActor
     func addHeaderProvider(_ headerProvider: @Sendable @escaping () async -> [String: String])
 
 }

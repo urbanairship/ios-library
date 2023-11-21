@@ -6,12 +6,15 @@ protocol EventManagerProtocol: AnyObject, Sendable {
     func deleteEvents() async throws
     func scheduleUpload(eventPriority: EventPriority) async
 
+    @MainActor
     func addHeaderProvider(
         _ headerProvider: @Sendable @escaping () async -> [String: String]
     )
 }
 
 final class EventManager: EventManagerProtocol {
+
+    private let headerBlocks: AirshipMainActorWrapper<[@Sendable () async -> [String: String]]> = AirshipMainActorWrapper([])
 
     private let _uploadsEnabled = Atomic<Bool>(false)
     var uploadsEnabled: Bool  {
@@ -70,12 +73,11 @@ final class EventManager: EventManagerProtocol {
         try await self.eventStore.deleteAllEvents()
     }
 
+    @MainActor
     func addHeaderProvider(
         _ headerProvider: @Sendable @escaping () async -> [String : String]
     ) {
-        Task {
-            await self.state.addHeaderProvider(headerProvider)
-        }
+        self.headerBlocks.value.append(headerProvider)
     }
 
     func scheduleUpload(eventPriority: EventPriority) async {
@@ -104,7 +106,7 @@ final class EventManager: EventManagerProtocol {
             return .success
         }
 
-        let headers = await self.state.prepareHeaders()
+        let headers = await self.prepareHeaders()
         let response = try await self.eventAPIClient.uploadEvents(
             events,
             channelID: channelID,
@@ -147,6 +149,21 @@ final class EventManager: EventManagerProtocol {
             maxBatchSizeKB: await self.state.maxBatchSizeKB
         )
     }
+
+    @MainActor
+    private func prepareHeaders() async -> [String: String] {
+        let providers = self.headerBlocks.value
+
+        var allHeaders: [String: String] = [:]
+        for headerBlock in providers {
+            let headers = await headerBlock()
+            allHeaders.merge(headers) { (_, new) in
+                AirshipLogger.warn("Analytic header merge conflict \(new)")
+                return new
+            }
+        }
+        return allHeaders
+    }
 }
 
 fileprivate actor EventManagerState {
@@ -163,7 +180,6 @@ fileprivate actor EventManagerState {
     // The actual amount of time in seconds that elapse between event-server posts
     private static let minBatchInterval: TimeInterval = 60
     private static let maxBatchInterval: TimeInterval = 604800 // 7 days
-    private var headerBlocks: [(@Sendable () async -> [String: String])] = []
 
     private var _tuningInfo: EventUploadTuningInfo?
     private var tuningInfo: EventUploadTuningInfo? {
@@ -221,23 +237,5 @@ fileprivate actor EventManagerState {
 
     func updateTuniningInfo(_ tuningInfo: EventUploadTuningInfo?) {
         self.tuningInfo = tuningInfo
-    }
-
-    func addHeaderProvider(
-        _ headerProvider: @Sendable @escaping () async -> [String: String]
-    ) {
-        self.headerBlocks.append(headerProvider)
-    }
-
-    func prepareHeaders() async -> [String: String] {
-        var allHeaders: [String: String] = [:]
-        for headerBlock in self.headerBlocks {
-            let headers = await headerBlock()
-            allHeaders.merge(headers) { (_, new) in
-                AirshipLogger.warn("Analytic header merge conflict \(new)")
-                return new
-            }
-        }
-        return allHeaders
     }
 }

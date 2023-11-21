@@ -1,10 +1,10 @@
 import Foundation
 
 
-final class Atomic<T: Equatable & Sendable>: @unchecked Sendable {
+final class Atomic<T: Sendable>: @unchecked Sendable {
 
-    private let lock = AirshipLock()
-    private var _value: T
+    fileprivate let lock = AirshipLock()
+    fileprivate var _value: T
 
     init(_ value: T) {
         self._value = value
@@ -24,8 +24,6 @@ final class Atomic<T: Equatable & Sendable>: @unchecked Sendable {
                 self._value = newValue
             }
         }
-
-
     }
 
     func update(onModify: (T) -> T) {
@@ -33,6 +31,9 @@ final class Atomic<T: Equatable & Sendable>: @unchecked Sendable {
             self.value = onModify(self.value)
         }
     }
+}
+
+extension Atomic where T: Equatable {
 
     @discardableResult
     func setValue(_ value: T, onChange:(() -> Void)? = nil) -> Bool {
@@ -60,7 +61,6 @@ final class Atomic<T: Equatable & Sendable>: @unchecked Sendable {
         }
         return result
     }
-
 }
 
 

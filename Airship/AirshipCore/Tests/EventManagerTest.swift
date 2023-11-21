@@ -86,7 +86,7 @@ final class EventManagerTest: XCTestCase {
 
         let headers = ["some": "header"]
 
-        self.eventManager.addHeaderProvider {
+        await self.eventManager.addHeaderProvider {
             return headers
         }
 
@@ -170,11 +170,11 @@ final class EventManagerTest: XCTestCase {
         self.eventManager.uploadsEnabled = true
         var requestCalled = false
 
-        self.eventManager.addHeaderProvider {
+        await self.eventManager.addHeaderProvider {
             ["foo": "1", "baz": "1"]
         }
 
-        self.eventManager.addHeaderProvider {
+        await self.eventManager.addHeaderProvider {
             ["foo": "2", "bar": "2"]
         }
 
