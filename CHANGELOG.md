@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.6.1 November 20, 2023
+Patch release that adds debug symbols to the prebuilt xcframeworks and includes fixes for SPM and Message Center.
+
+### Changes
+- Fixed SPM packages not building due to a duplicate symbol
+- Fixed Message Center list view showing a small image icon if a list icon is available and the theme does not enable list icons
+- Added debug symbols to xcframeworks to make stack traces easier to read
+
 ## Version 17.6.0 November 9, 2023
 Minor release that adds support for server side feature flag segmentation, Impression billing, and improves support for animated webP images in Scenes.
 
