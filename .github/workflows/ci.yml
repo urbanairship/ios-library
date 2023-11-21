@@ -46,8 +46,13 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Install yeetd
+        run: |
+          wget https://github.com/biscuitehh/yeetd/releases/download/1.0/yeetd-normal.pkg
+          sudo installer -pkg yeetd-normal.pkg -target /
+          yeetd &
       - name: Test
-        run: make test XCODE=14.3.1 TEST_DESTINATION="platform=iOS Simulator,OS=16.4,name=iPhone 14" TEST_DESTINATION_TVOS="platform=tvOS Simulator,OS=16.4,name=Apple TV"
+        run: make test
 
   run-package-tests:
     runs-on: macos-13-xlarge
