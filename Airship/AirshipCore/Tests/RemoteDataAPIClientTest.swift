@@ -49,13 +49,14 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
         )
         self.testSession.data = RemoteDataAPIClientTest.validResponse.data(using: .utf8)
 
+        let exampleURL = self.exampleURL
         let response = try await self.remoteDataAPIClient.fetchRemoteData(
-            url: self.exampleURL,
+            url: exampleURL,
             auth: .contactAuthToken(identifier: "some contact ID"),
             lastModified: "current last modified"
         ) { lastModified in
             XCTAssertEqual(lastModified, "new last modified")
-            return RemoteDataInfo(url: self.exampleURL, lastModifiedTime: lastModified, source: .contact)
+            return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .contact)
         }
 
         let expectedResult = RemoteDataResult(
@@ -101,13 +102,14 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             headerFields: ["Last-Modified": "new last modified"]
         )
 
+        let exampleURL = self.exampleURL
         let response = try await self.remoteDataAPIClient.fetchRemoteData(
             url: self.exampleURL,
             auth: .contactAuthToken(identifier: "some contact ID"),
             lastModified: "current last modified"
         ) { lastModified in
             XCTFail("Should not be reached")
-            return RemoteDataInfo(url: self.exampleURL, lastModifiedTime: lastModified, source: .contact)
+            return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .contact)
         }
 
         XCTAssertEqual(304, response.statusCode)
@@ -124,12 +126,13 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
 
         self.testSession.data = "{ \"ok\": true }".data(using: .utf8)
 
+        let exampleURL = self.exampleURL
         let response = try await self.remoteDataAPIClient.fetchRemoteData(
             url: self.exampleURL,
             auth: .contactAuthToken(identifier: "some contact ID"),
             lastModified: "current last modified"
         ) { lastModified in
-            return RemoteDataInfo(url: self.exampleURL, lastModifiedTime: lastModified, source: .contact)
+            return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .contact)
         }
 
         let expectedResult = RemoteDataResult(
@@ -155,13 +158,14 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
 
         self.testSession.data = "{ \"ok\": true }".data(using: .utf8)
 
+        let exampleURL = self.exampleURL
         let response = try await self.remoteDataAPIClient.fetchRemoteData(
             url: self.exampleURL,
             auth: .basicAppAuth,
             lastModified: nil
         ) { lastModified in
             XCTAssertNil(lastModified)
-            return RemoteDataInfo(url: self.exampleURL, lastModifiedTime: lastModified, source: .app)
+            return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .app)
         }
 
         let expectedResult = RemoteDataResult(

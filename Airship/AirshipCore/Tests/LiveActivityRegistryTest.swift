@@ -329,7 +329,7 @@ private final class TestLiveActivity: LiveActivityProtocol, @unchecked Sendable 
         self.statusUpdatesContinuation = statusUpdateEscapee!
     }
 
-    func track(tokenUpdates: @escaping (String) async -> Void) async {
+    func track(tokenUpdates: @Sendable @escaping (String) async -> Void) async {
         guard self.isUpdatable else {
             return
         }

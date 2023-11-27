@@ -3,7 +3,7 @@
 import XCTest
 @testable import AirshipCore
 
-final class TestChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol {
+final class TestChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, @unchecked Sendable {
 
     var handler: ((String) async throws -> AirshipHTTPResponse<ChannelAuthTokenResponse>)?
 

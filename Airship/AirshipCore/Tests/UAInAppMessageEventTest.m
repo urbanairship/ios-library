@@ -66,7 +66,7 @@
                                                                          message:self.message
                                                                             from:from
                                                                               to:to];
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -94,7 +94,7 @@
                                                                           metadata:@{ @"key": @"value"}
                                                                            message:self.message];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -122,7 +122,7 @@
                                                                                   metadata:@{ @"key": @"value"}
                                                                                    message:self.message];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -173,7 +173,7 @@
                                                                           pagerInfo:pagerInfo
                                                                         viewedPages:pages];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -210,7 +210,7 @@
                                                                               message:self.message
                                                                             pagerInfo:pagerInfo];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -242,7 +242,7 @@
                                                                           message:self.message
                                                                         formResult:formResult];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -276,7 +276,7 @@
                                                                            message:self.message
                                                                           formInfo:formInfo];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -304,7 +304,7 @@
                                                                         metadata:@{ @"key": @"value"}
                                                                         buttonID:@"some-button"];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -342,7 +342,7 @@
                                                                       pagerInfo:pagerInfo
                                                                       viewCount:4];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -365,7 +365,7 @@
 
     UAInAppReporting *reporting = [UAInAppReporting legacyDirectOpenEventWithScheduleID:self.scheduleID];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -390,7 +390,7 @@
     UAInAppReporting *reporting = [UAInAppReporting legacyReplacedEventWithScheduleID:self.scheduleID
                                                                         replacementID:@"replacement id"];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -420,7 +420,7 @@
                                                                           message:self.message
                                                                        resolution:resolution
                                                                       displayTime:100.0];
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -450,7 +450,7 @@
                                                                           message:self.message
                                                                        resolution:resolution
                                                                       displayTime:100.0];
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -490,7 +490,7 @@
                                                                           message:self.message
                                                                        resolution:resolution
                                                                       displayTime:100.0];
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -520,7 +520,7 @@
                                                                           message:self.message
                                                                        resolution:resolution
                                                                       displayTime:100.0];
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -546,7 +546,7 @@
 
     UAInAppReporting *reporting = [UAInAppReporting interruptedEventWithScheduleID:self.scheduleID
                                                                             source:self.message.source];
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -573,7 +573,7 @@
                                                                          startingStatus:@"denied"
                                                                            endingStatus:@"granted"];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -599,7 +599,7 @@
     UAInAppReporting *reporting = [UAInAppReporting displayEventWithScheduleID:self.scheduleID message:self.message];
     reporting.campaigns = campaigns;
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -669,7 +669,7 @@
     reporting.layoutContext = layoutContext;
     reporting.experimentResult = experimentResult;
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);
@@ -702,7 +702,7 @@
                                                                       message:self.message
                                                              experimentResult:experiment];
 
-    [reporting record:self.analytics];
+    [reporting record:(id<UAAnalyticsProtocol>)self.analytics];
     id<UAEvent> event = self.analytics.events[0];
 
     XCTAssertEqualObjects(event.data, expectedData);

@@ -433,7 +433,7 @@
     XCTAssertFalse([self.URLAllowList isAllowed:nonMatchingURL scope:scope]);
 
     // Enable URL allow list delegate
-    [[[self.mockURLAllowListDelegate stub] andDo:^(NSInvocation *invocation) {
+    (void)[[[self.mockURLAllowListDelegate stub] andDo:^(NSInvocation *invocation) {
         NSURL *url;
         BOOL returnValue;
         [invocation getArgument:&url atIndex:2];

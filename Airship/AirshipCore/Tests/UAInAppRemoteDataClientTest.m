@@ -31,7 +31,7 @@
 
     // mock remote data
     self.mockinAppCoreSwiftBridge = [self mockForClass:[UAInAppCoreSwiftBridge class]];
-    [[[self.mockinAppCoreSwiftBridge stub] andDo:^(NSInvocation *invocation) {
+    (void)[[[self.mockinAppCoreSwiftBridge stub] andDo:^(NSInvocation *invocation) {
         void *arg;
 
         // verify payload types

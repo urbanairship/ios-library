@@ -97,7 +97,7 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         let expectation = XCTestExpectation()
-        await self.contactProvider.setNotifyOutdatedCallback { info in
+        await self.contactProvider.setNotifyOutdatedCallback { @Sendable info in
             XCTAssertEqual(remoteDataInfo, info)
             expectation.fulfill()
         }
@@ -115,7 +115,7 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         let expectation = XCTestExpectation()
-        await self.appProvider.setNotifyOutdatedCallback { info in
+        await self.appProvider.setNotifyOutdatedCallback { @Sendable info in
             XCTAssertEqual(remoteDataInfo, info)
             expectation.fulfill()
         }
@@ -133,8 +133,9 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         let expectation = XCTestExpectation()
-        await self.contactProvider.setIsCurrentCallback { locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        let testLocaleManager = self.testLocaleManager
+        await self.contactProvider.setIsCurrentCallback { @Sendable locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return false
         }
@@ -153,8 +154,9 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         let expectation = XCTestExpectation()
-        await self.appProvider.setIsCurrentCallback { locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        let testLocaleManager = self.testLocaleManager
+        await self.appProvider.setIsCurrentCallback { @Sendable locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return true
         }
@@ -167,8 +169,10 @@ final class RemoteDataTest: AirshipBaseTest {
 
     func testContactStatus() async {
         let expectation = XCTestExpectation()
-        await self.contactProvider.setStatusCallback { _, locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        let testLocaleManager = self.testLocaleManager
+
+        await self.contactProvider.setStatusCallback { @Sendable _, locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return .upToDate
         }
@@ -181,8 +185,10 @@ final class RemoteDataTest: AirshipBaseTest {
 
     func testAppStatus() async {
         let expectation = XCTestExpectation()
-        await self.appProvider.setStatusCallback { _, locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        let testLocaleManager = self.testLocaleManager
+
+        await self.appProvider.setStatusCallback { @Sendable _, locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return .stale
         }
@@ -257,10 +263,10 @@ final class RemoteDataTest: AirshipBaseTest {
     }
 
     func testPayloadUpdates() async {
-        await self.contactProvider.setRefreshCallback { _, _, _ in
+        await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .newData
         }
-        await self.appProvider.setRefreshCallback{ _, _, _ in
+        await self.appProvider.setRefreshCallback{ @Sendable _, _, _ in
             return .newData
         }
 
@@ -279,18 +285,20 @@ final class RemoteDataTest: AirshipBaseTest {
 
 
     func testRefreshSuccess() async {
-        await self.contactProvider.setRefreshCallback { _, _, _ in
+        await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .newData
         }
-        await self.appProvider.setRefreshCallback{ _, _, _ in
+        await self.appProvider.setRefreshCallback{ @Sendable _, _, _ in
             return .skipped
         }
 
         self.testWorkManager.autoLaunchRequests = true
         let refreshFinished = expectation(description: "refresh finished")
+
+        let remoteData = self.remoteData
         Task.detached {
-            let result = await self.remoteData.refresh()
-            XCTAssertTrue(result)
+            let result = await remoteData?.refresh()
+            XCTAssertTrue(result == true)
             refreshFinished.fulfill()
         }
 
@@ -300,17 +308,18 @@ final class RemoteDataTest: AirshipBaseTest {
     }
 
     func testRefreshFailed() async {
-        await self.contactProvider.setRefreshCallback { _, _, _ in
+        await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .failed
         }
-        await self.appProvider.setRefreshCallback{ _, _, _ in
+        await self.appProvider.setRefreshCallback{ @Sendable _, _, _ in
             return .newData
         }
 
         self.testWorkManager.autoLaunchRequests = true
         let refreshFinished = expectation(description: "refresh finished")
+        let remoteData = self.remoteData
         Task.detached {
-            let result = await self.remoteData.refresh()
+            let result = await remoteData!.refresh()
             XCTAssertFalse(result)
             refreshFinished.fulfill()
         }
@@ -320,17 +329,18 @@ final class RemoteDataTest: AirshipBaseTest {
     }
 
     func testRefreshSource() async {
-        await self.contactProvider.setRefreshCallback { _, _, _ in
+        await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .failed
         }
-        await self.appProvider.setRefreshCallback{ _, _, _ in
+        await self.appProvider.setRefreshCallback{ @Sendable _, _, _ in
             return .newData
         }
 
         self.testWorkManager.autoLaunchRequests = true
         let refreshFinished = expectation(description: "refresh finished")
+        let remoteData = self.remoteData
         Task.detached {
-            let result = await self.remoteData.refresh(source: .app)
+            let result = await remoteData!.refresh(source: .app)
             XCTAssertTrue(result)
             refreshFinished.fulfill()
         }
@@ -345,14 +355,16 @@ final class RemoteDataTest: AirshipBaseTest {
     func testRefreshProviders() async {
         let expectation = XCTestExpectation()
         expectation.expectedFulfillmentCount = 2
-        await self.contactProvider.setRefreshCallback { _, locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        let testLocaleManager = self.testLocaleManager
+
+        await self.contactProvider.setRefreshCallback { @Sendable _, locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return .skipped
         }
 
-        await self.appProvider.setRefreshCallback{ _, locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return .newData
         }
@@ -367,14 +379,16 @@ final class RemoteDataTest: AirshipBaseTest {
     func testRefreshProviderFailed() async {
         let expectation = XCTestExpectation()
         expectation.expectedFulfillmentCount = 2
-        await self.contactProvider.setRefreshCallback { _, locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        let testLocaleManager = self.testLocaleManager
+
+        await self.contactProvider.setRefreshCallback { @Sendable _, locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return .failed
         }
 
-        await self.appProvider.setRefreshCallback{ _, locale, _ in
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+        await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return .newData
         }
@@ -389,12 +403,13 @@ final class RemoteDataTest: AirshipBaseTest {
         let changeToken = Atomic<String?>(nil)
 
         // Capture the change token
-        await self.contactProvider.setRefreshCallback { change, locale, _ in
+        let testLocaleManager = self.testLocaleManager
+        await self.contactProvider.setRefreshCallback { @Sendable change, locale, _ in
             changeToken.value = change
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             return .failed
         }
-        await self.appProvider.setRefreshCallback{ _, locale, _ in
+        await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
             return .newData
         }
 
@@ -420,12 +435,13 @@ final class RemoteDataTest: AirshipBaseTest {
         let changeToken = Atomic<String?>(nil)
 
         // Capture the change token
-        await self.contactProvider.setRefreshCallback { change, locale, _ in
+        let testLocaleManager = self.testLocaleManager
+        await self.contactProvider.setRefreshCallback { @Sendable change, locale, _ in
             changeToken.value = change
-            XCTAssertEqual(self.testLocaleManager.currentLocale, locale)
+            XCTAssertEqual(testLocaleManager.currentLocale, locale)
             return .failed
         }
-        await self.appProvider.setRefreshCallback{ _, locale, _ in
+        await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
             return .newData
         }
         await self.launchRefreshTask()

@@ -57,7 +57,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     self.testStore = [UAAutomationStore automationStoreWithConfig:self.config
                                                      scheduleLimit:UAAUTOMATIONENGINETESTS_SCHEDULE_LIMIT
                                                          inMemory:YES
-                                                             date:self.testDate];
+                                                             date:(UAirshipDate *)self.testDate];
 
 
     self.mockTaskManager = [self mockForClass:[UATaskManager class]];
@@ -94,7 +94,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
                                                                  notificationCenter:self.notificationCenter
                                                                          dispatcher:self.dispatcher
                                                                         application:self.mockedApplication
-                                                                               date:self.testDate];
+                                                                               date:(UAirshipDate *)self.testDate];
 
     self.automationEngine.delegate = self.mockDelegate;
     [self.automationEngine start];

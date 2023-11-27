@@ -62,7 +62,7 @@ class DeepLinkActionTest: XCTestCase {
             situation: .manualInvocation
         )
 
-        let result = try await action.perform(arguments: args)
+        _ = try await action.perform(arguments: args)
 
         XCTAssertEqual("http://some-valid-url", deepLinkDelegate.lastDeepLink?.absoluteString)
         XCTAssertNil(self.testURLOpener.lastURL)
@@ -77,7 +77,7 @@ class DeepLinkActionTest: XCTestCase {
             situation: .manualInvocation
         )
 
-        let result = try await action.perform(arguments: args)
+        _ = try await action.perform(arguments: args)
         XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
     }
 

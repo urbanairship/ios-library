@@ -220,10 +220,11 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             auth: .channelAuthToken(identifier: "some identifier")
         )
 
+        let airshipSession = self.airshipSession
         await withTaskGroup(of: Void.self) { [escapee] group in
             for _ in 1...4 {
                 group.addTask {
-                    let _ = try? await self.airshipSession.performHTTPRequest(request)
+                    let _ = try? await airshipSession?.performHTTPRequest(request)
                 }
             }
 

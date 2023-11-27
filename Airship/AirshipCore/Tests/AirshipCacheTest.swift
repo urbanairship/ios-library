@@ -48,7 +48,7 @@ final class AirshipCacheTest: XCTestCase {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
         await self.cache.setCachedValue("some other cache value", key: "some key", ttl: 10.0)
 
-        var value: String? = await self.cache.getCachedValue(key: "some key")
+        let value: String? = await self.cache.getCachedValue(key: "some key")
         XCTAssertEqual("some other cache value", value)
     }
 

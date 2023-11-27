@@ -2,7 +2,7 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestContactAPIClient: ContactsAPIClientProtocol {
+class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
 
     var resolveCallback:
         ((String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?

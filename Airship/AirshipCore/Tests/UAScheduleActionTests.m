@@ -27,7 +27,7 @@
     [super setUp];
 
     self.mockAutomation = [self mockForClass:[UAInAppAutomation class]];
-    [[[self.mockAutomation stub] andReturn:self.mockAutomation] shared];
+    (void)[[[self.mockAutomation stub] andReturn:self.mockAutomation] shared];
     self.action = [[UAScheduleAction alloc] init];
 }
 

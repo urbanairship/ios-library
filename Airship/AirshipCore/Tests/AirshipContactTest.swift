@@ -433,13 +433,15 @@ class AirshipContactTest: XCTestCase {
             )
         }
 
+        let contactManager = self.contactManager
+
         DispatchQueue.main.async {
             Task {
-                await self.contactManager.setCurrentContactIDInfo(
+                await contactManager.setCurrentContactIDInfo(
                     ContactIDInfo(contactID: "some-other-contact-id", isStable: false)
                 )
 
-                await self.contactManager.setCurrentContactIDInfo(
+                await contactManager.setCurrentContactIDInfo(
                     ContactIDInfo(contactID: "some-stable-contact-id", isStable: true)
                 )
             }
@@ -573,14 +575,13 @@ class AirshipContactTest: XCTestCase {
         await self.contactManager.dispatchAudienceUpdate(updateFoo)
         await self.contactManager.dispatchAudienceUpdate(updateBar)
 
-
+        let contactManager = self.contactManager
         Task.detached(priority: .high) {
-            await self.contactManager.setCurrentContactIDInfo(
+            await contactManager.setCurrentContactIDInfo(
                 ContactIDInfo(contactID: "foo", isStable: false)
             )
 
-
-            await self.contactManager.setCurrentContactIDInfo(
+            await contactManager.setCurrentContactIDInfo(
                 ContactIDInfo(contactID: "bar", isStable: true)
             )
         }
@@ -659,8 +660,11 @@ class AirshipContactTest: XCTestCase {
 
     private func verifyOperations(_ operations: [ContactOperation], file: StaticString = #filePath, line: UInt = #line) async {
         let expectation = XCTestExpectation()
+        let contactManager = self.contactManager
+        let file = file
+        let line = line
         self.contactQueue.enqueue {
-            let contactOperations = await self.contactManager.operations
+            let contactOperations = await contactManager.operations
             XCTAssertEqual(operations, contactOperations, file: file, line: line)
             expectation.fulfill()
         }

@@ -151,7 +151,6 @@ final class DeferredResolverTest: XCTestCase {
             notificationOptIn: true
         )
 
-        let body = "some body".data(using: .utf8)
         self.client.onResolve = { _, _, _, _, _, _ in
             throw AirshipErrors.error("timed out")
         }

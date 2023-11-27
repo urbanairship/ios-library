@@ -70,7 +70,7 @@
         callback(self.audienceMatch, nil);
     }] evaluateAudienceWithCompletionHandler:OCMOCK_ANY];
 
-    [[[self.mockInAppCoreSwiftBridge stub] andReturn:self.mockAudience] audienceWithSelectorJSON:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY error:[OCMArg setTo:nil]];
+    (void)[[[self.mockInAppCoreSwiftBridge stub] andReturn:self.mockAudience] audienceWithSelectorJSON:OCMOCK_ANY isNewUserEvaluationDate:OCMOCK_ANY contactID:OCMOCK_ANY error:[OCMArg setTo:nil]];
 
     [[[self.mockAutomationEngine stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -2289,9 +2289,6 @@
 
     id mockInfo = [self mockForClass:[UARemoteDataInfo class]];
     [[[self.mockRemoteDataClient stub] andReturn:mockInfo] remoteDataInfoFromSchedule:schedule];
-
-
-    UAExperimentMessageInfo *expectedInfo = [[UAExperimentMessageInfo alloc] initWithMessageType:@"some-type" campaignsJSON:schedule.campaigns];
 
     [[(id)self.mockAudience reject] evaluateExperimentsWithInfo:OCMOCK_ANY
                                               completionHandler:OCMOCK_ANY];

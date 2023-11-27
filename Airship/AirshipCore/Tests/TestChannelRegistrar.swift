@@ -2,7 +2,7 @@ import Foundation
 import Combine
 @testable import AirshipCore
 
-class TestChannelRegistrar:  ChannelRegistrarProtocol {
+class TestChannelRegistrar:  ChannelRegistrarProtocol, @unchecked Sendable {
 
     let updatesSubject = PassthroughSubject<ChannelRegistrationUpdate, Never>()
     public var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> {

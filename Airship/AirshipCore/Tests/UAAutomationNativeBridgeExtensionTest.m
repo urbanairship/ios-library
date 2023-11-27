@@ -75,7 +75,6 @@
     [[javaScriptEnvironment expect] addDictionaryGetter:@"getMessageExtras" value:self.message.extras];
 
     // Extend the environment
-    UAAutomationNativeBridgeExtension *extension = self.extension;
     id extended = [self expectationWithDescription:@"Performing command"];
 
     [self.extension.nativeBridgeExtension extendJavaScriptEnvironment:javaScriptEnvironment webView:self.mockWebView completionHandler:^{

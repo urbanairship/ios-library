@@ -67,7 +67,7 @@ class EnableFeatureActionTest: XCTestCase {
         }
 
       
-        let result = try await self.action.perform(arguments: arguments)
+        _ = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
@@ -89,7 +89,7 @@ class EnableFeatureActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-        let result = try await self.action.perform(arguments: arguments)
+        _ = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 
@@ -111,7 +111,7 @@ class EnableFeatureActionTest: XCTestCase {
             return (.notDetermined, .notDetermined)
         }
 
-        let result = try await self.action.perform(arguments: arguments)
+        _ = try await self.action.perform(arguments: arguments)
         await self.fulfillmentCompat(of: [prompted], timeout: 10)
     }
 

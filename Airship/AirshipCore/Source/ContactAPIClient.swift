@@ -269,6 +269,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
             body: try self.encoder.encode(requestBody)
         )
 
+        let decoder = self.decoder
         let createResponse: AirshipHTTPResponse<ChannelCreateResult> = try await self.session.performHTTPRequest(
             request
         ) { (data, response) in
@@ -280,7 +281,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 return nil
             }
 
-            return try self.decoder.decode(ChannelCreateResult.self, from: data)
+            return try decoder.decode(ChannelCreateResult.self, from: data)
         }
 
         guard createResponse.isSuccess, let channelID = createResponse.result?.channelID else {
@@ -311,6 +312,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
             body: try self.encoder.encode(identifyRequest)
         )
 
+        let decoder = self.decoder
         return try await session.performHTTPRequest(request) { (data, response) in
             AirshipLogger.debug("Contact identify request finished with response: \(response)")
 
@@ -318,7 +320,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 return nil
             }
 
-            return try self.decoder.decode(ContactIdentifyResult.self, from: data)
+            return try decoder.decode(ContactIdentifyResult.self, from: data)
         }
     }
 

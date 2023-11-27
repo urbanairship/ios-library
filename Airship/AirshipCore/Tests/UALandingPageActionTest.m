@@ -32,7 +32,7 @@
     [[[self.mockConfig stub] andReturn:@"app-secret"] appSecret];
 
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
-    [[[self.mockInAppAutomation stub] andReturn:self.mockInAppAutomation] shared];
+    (void)[[[self.mockInAppAutomation stub] andReturn:self.mockInAppAutomation] shared];
 
     self.airship = [[UATestAirshipInstance alloc] init];
     self.airship.components = @[self.mockInAppAutomation];

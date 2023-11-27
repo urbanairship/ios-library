@@ -65,11 +65,12 @@ class RemoteDataProviderTest: XCTestCase {
     }
 
     func testRefreshDisabled() async throws {
+        let source = self.delegate.source
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             let remoteDataInfo = RemoteDataInfo(
                 url: URL(string: "example://")!,
                 lastModifiedTime: "some last modified",
-                source: self.delegate.source
+                source: source
             )
 
             let refreshResult = RemoteDataResult(

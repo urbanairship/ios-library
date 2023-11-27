@@ -249,7 +249,7 @@ final class ExperimentManagerTest: XCTestCase {
             return true
         }
 
-        var result = try await subject.evaluateExperiments(
+        let result = try await subject.evaluateExperiments(
             info: MessageInfo(
                 messageType: "commercial",
                 campaigns: try! AirshipJSON.wrap(["categories": ["foo", "bar"]])

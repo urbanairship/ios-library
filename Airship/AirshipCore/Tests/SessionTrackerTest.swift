@@ -245,13 +245,16 @@ final class SessionTrackerTest: XCTestCase {
             }
         }
 
-        Task {
+        let timeoutTask = Task {
             try? await DefaultAirshipTaskSleeper().sleep(timeInterval:2.0)
-            XCTFail("Failed to get events", line: line)
-            verifyTask.cancel()
+            if Task.isCancelled == false {
+                XCTFail("Failed to get events", line: line)
+                verifyTask.cancel()
+            }
         }
 
         await verifyTask.value
+        timeoutTask.cancel()
     }
 }
 

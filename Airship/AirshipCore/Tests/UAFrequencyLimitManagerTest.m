@@ -16,7 +16,7 @@
     self.store = [UAFrequencyLimitStore storeWithName:[NSUUID UUID].UUIDString inMemory:YES];
     self.date = [[UATestDate alloc] init];
     self.manager = [UAFrequencyLimitManager managerWithDataStore:self.store
-                                                            date:self.date
+                                                            date:(UAirshipDate *)self.date
                                                       dispatcher:[[UATestDispatcher alloc] init]];
 }
 

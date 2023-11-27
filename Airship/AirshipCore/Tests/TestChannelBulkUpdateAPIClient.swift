@@ -2,7 +2,7 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
+class TestChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol, @unchecked Sendable {
 
     var updateCallback:
         ((String, AudienceUpdate) async throws ->  AirshipHTTPResponse<Void>)?

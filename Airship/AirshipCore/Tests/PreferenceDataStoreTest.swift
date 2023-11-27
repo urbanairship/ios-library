@@ -191,7 +191,7 @@ class PreferenceDataStoreTest: XCTestCase {
     }
     
     func testAppRestoredDeviceIDChange() async throws {
-        var dataStore = PreferenceDataStore(
+        let dataStore = PreferenceDataStore(
             appKey: self.appKey,
             dispatcher: TestDispatcher(),
             deviceID: testDeviceID

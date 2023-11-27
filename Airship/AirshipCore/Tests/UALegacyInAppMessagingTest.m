@@ -38,7 +38,7 @@
 
     self.mockInAppAutomation = [self mockForClass:[UAInAppAutomation class]];
 
-    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:self.analytics
+    self.inAppMessaging = [UALegacyInAppMessaging inAppMessagingWithAnalytics:(id<UAAnalyticsProtocol>)self.analytics
                                                                     dataStore:self.dataStore
                                                               inAppAutomation:self.mockInAppAutomation];
 

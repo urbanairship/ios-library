@@ -2,7 +2,7 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol {
+class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol, @unchecked Sendable {
     var fetchSubscriptionListsCallback:
         ((String) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]>)?
 

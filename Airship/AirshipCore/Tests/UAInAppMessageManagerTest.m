@@ -65,7 +65,7 @@ NSString * const UAInAppMessageManagerTestScheduleID = @"schedule ID";
     [self.airship makeShared];
 
     self.manager = [UAInAppMessageManager managerWithDataStore:self.dataStore
-                                                     analytics:self.analytics
+                                                     analytics:(id<UAAnalyticsProtocol>)self.analytics
                                                     dispatcher:self.testDispatcher
                                             displayCoordinator:self.mockDefaultDisplayCoordinator
                                                   assetManager:self.mockAssetManager];

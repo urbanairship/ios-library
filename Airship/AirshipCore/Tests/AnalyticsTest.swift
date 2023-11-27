@@ -49,9 +49,6 @@ class AnalyticsTest: XCTestCase {
             sessionTracker: sessionTracker,
             sessionEventFactory: sessionEventFactory
         )
-
-        self.testAirship.components = [analytics]
-        self.testAirship.makeShared()
     }
 
     override class func tearDown() {
@@ -60,13 +57,14 @@ class AnalyticsTest: XCTestCase {
 
 
     func testScreenTrackingBackground() async throws {
+        let notificationCenter = self.notificationCenter
         // Foreground
-        self.notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
+        notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
         self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
-            self.notificationCenter.post(
+            notificationCenter.post(
                 name: AppStateTracker.didEnterBackgroundNotification,
                 object: nil
             )
@@ -76,8 +74,10 @@ class AnalyticsTest: XCTestCase {
     }
 
     func testScreenTrackingTerminate() async throws {
+        let notificationCenter = self.notificationCenter
+
         // Foreground
-        self.notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
+        notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
         // Track the screen
         self.analytics.trackScreen("test_screen")
@@ -85,33 +85,40 @@ class AnalyticsTest: XCTestCase {
         self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
-            self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
+            notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
         }
 
         XCTAssertEqual("screen_tracking", events[0].type)
     }
 
     func testScreenTracking() async throws {
-        self.date.dateOverride = Date(timeIntervalSince1970: 100.0)
+        let date = self.date
+        let analytics = self.analytics
+        let currentTime = Date().timeIntervalSince1970
+        let timeOffset = 3.0
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
-            self.analytics.trackScreen("test_screen")
-            self.date.offset = 3.0
-            self.analytics.trackScreen("another_screen")
+            analytics?.trackScreen("test_screen")
+            date.offset = timeOffset
+            analytics?.trackScreen("another_screen")
         }
 
-        let expectedData = [
-            "screen": "test_screen",
-            "entered_time": "100.000",
-            "exited_time": "103.000",
-            "duration": "3.000"
-        ]
+        let unwrappedBody: [String: Any] = events[0].unwrappedBody
 
         XCTAssertEqual("screen_tracking", events[0].type)
-        XCTAssertEqual(
-            try AirshipJSON.wrap(expectedData),
-            events[0].body
-        )
+        XCTAssertEqual("test_screen", unwrappedBody["screen"] as? String)
+        XCTAssertEqual("3.000", unwrappedBody["duration"] as? String)
+
+        compareTimestamps(unwrappedBody, key: "entered_time", expectedValue: currentTime)
+        compareTimestamps(unwrappedBody, key: "exited_time", expectedValue: currentTime + timeOffset)
+    }
+
+    private func compareTimestamps(_ unwrappedBody: [String: Any], key: String, expectedValue: TimeInterval) {
+        if let stringValue = unwrappedBody[key] as? String, let actualValue = Double(stringValue) {
+            XCTAssertEqual(actualValue, expectedValue, accuracy: 1, "Timestamp for \(key) does not match")
+        } else {
+            XCTFail("Timestamp for \(key) could not be extracted or converted to Double")
+        }
     }
 
     @MainActor
@@ -184,9 +191,10 @@ class AnalyticsTest: XCTestCase {
     }
 
     func testAssociateDeviceIdentifiers() async throws {
+        let analytics = self.analytics
         let events = try await self.produceEvents(count: 1) {
             let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
-            self.analytics.associateDeviceIdentifiers(ids)
+            analytics?.associateDeviceIdentifiers(ids)
         }
 
         let expectedData = [
@@ -420,19 +428,20 @@ class AnalyticsTest: XCTestCase {
 
     func testSessionEvents() async throws {
         let date = Date()
+        let sessionTracker = self.sessionTracker
         let events = try await self.produceEvents(count: 4) {
-            self.sessionTracker.eventsContinuation.yield(
+            sessionTracker.eventsContinuation.yield(
                 SessionEvent(type: .background, date: date)
             )
 
-            self.sessionTracker.eventsContinuation.yield(
+            sessionTracker.eventsContinuation.yield(
                 SessionEvent(type: .foreground, date: date)
             )
 
-            self.sessionTracker.eventsContinuation.yield(
+            sessionTracker.eventsContinuation.yield(
                 SessionEvent(type: .foregroundInit, date: date)
             )
-            self.sessionTracker.eventsContinuation.yield(
+            sessionTracker.eventsContinuation.yield(
                 SessionEvent(type: .backgroundInit, date: date)
             )
         }
