@@ -10,6 +10,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .update(_, _, _): return .update
         case .identify(_): return .identify
         case .resolve: return .resolve
+        case .verify(_): return .verify
         case .reset: return .reset
         case .registerEmail(_, _): return .registerEmail
         case .registerSMS(_, _): return .registerSMS
@@ -23,6 +24,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case identify
         case resolve
         case reset
+        case verify
         case registerEmail
         case registerSMS
         case registerOpen
@@ -37,6 +39,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
     case identify(String)
     case resolve
     case reset
+    case verify(Date)
     case registerEmail(
         address: String,
         options: EmailRegistrationOptions
@@ -74,6 +77,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case identifier
         case channelID
         case channelType
+        case date
     }
 
 
@@ -100,6 +104,11 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .reset:
             try container.encodeNil(forKey: .payload)
             try container.encode(OperationType.reset, forKey: .type)
+
+        case .verify(let date):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(date, forKey: .date)
+            try container.encode(OperationType.verify, forKey: .type)
 
         case .registerEmail(let address, let options):
             var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
@@ -212,10 +221,21 @@ enum ContactOperation: Codable, Equatable, Sendable {
                     forKey: .channelType
                 )
             )
+            
         case .resolve:
             self = .resolve
+
         case .reset:
             self = .reset
+
+        case .verify:
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .verify(
+                try payloadContainer.decode(
+                    Date.self,
+                    forKey: .date
+                )
+            )
         }
     }
 }

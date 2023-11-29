@@ -152,14 +152,49 @@ class AirshipContactTest: XCTestCase {
         await verifyOperations([.resolve])
     }
 
-    func testExtendRegistrationPaylaodNilContactID() async throws {
-        XCTAssertEqual(1, self.channel.extenders.count)
+    func testExtendRegistrationPaylaodWaitsForStableVerifiedContactID() async throws {
+        await self.contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(contactID: "some-contact-id", isStable: false)
+        )
 
-        let payload = await self.channel.channelPayload
-        XCTAssertNil(payload.channel.contactID)
+        let contactManager = self.contactManager
+        let channel = self.channel
+        let date = self.date.now
+
+        let payloadTaskStarted = self.expectation(description: "payload task started")
+
+        let payloadTask = Task {
+            payloadTaskStarted.fulfill()
+            return await channel.channelPayload
+        }
+
+        await fulfillment(of: [payloadTaskStarted])
+        await contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(
+                contactID: "some-other-contact-id",
+                isStable: false,
+                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVefiedContactIDAge)
+            )
+        )
+
+        await contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(
+                contactID: "some-stable-contact-id",
+                isStable: true,
+                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVefiedContactIDAge)
+            )
+        )
+        await contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, resolveDate: date)
+        )
+
+        let payload = await payloadTask.value
+        XCTAssertEqual("some-stable-verified-contact-id", payload.channel.contactID)
+        await verifyOperations([.verify(date)])
     }
 
-    func testExtendRegistrationPaylaod() async throws {
+    func testExtendRegistrationPaylaodOnChannelCreate() async throws {
+        self.channel.identifier = nil
         await self.contactManager.setCurrentContactIDInfo(
             ContactIDInfo(contactID: "some-contact-id", isStable: false)
         )
@@ -177,14 +212,15 @@ class AirshipContactTest: XCTestCase {
     }
 
 
-    func testForegroundSkipsResolvesLessThan24Hours() async throws {
+    func testForegroundSkipsResolves() async throws {
         notificationCenter.post(
             name: AppStateTracker.didBecomeActiveNotification
         )
 
         await verifyOperations([.resolve])
 
-        self.date.offset += 24 * 60 * 60 - 1
+        // Default is 60 seconds
+        self.date.offset += AirshipContact.defaultForegroundResolveInterval - 1.0
 
         notificationCenter.post(
             name: AppStateTracker.didBecomeActiveNotification

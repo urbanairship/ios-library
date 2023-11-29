@@ -30,7 +30,10 @@ actor ContactManager: ContactManagerProtocol {
 
     private var isEnabled: Bool = false
     
-    private var lastIdentifyOperation = Date.distantPast
+    private var lastIdentifyOperationDate = Date.distantPast
+
+    private var lastSuccessfulIdentifyDate = Date.distantPast
+
 
     private var operationEntries: [ContactOperationEntry] {
         get {
@@ -154,7 +157,8 @@ actor ContactManager: ContactManagerProtocol {
             contactID: UUID().uuidString,
             isAnonymous: true,
             namedUserID: nil,
-            channelAssociatedDate: self.date.now
+            channelAssociatedDate: self.date.now,
+            resolveDate: self.date.now
         )
 
         self.yieldContactUpdates()
@@ -217,9 +221,11 @@ actor ContactManager: ContactManagerProtocol {
             return nil
         }
 
+
         return ContactIDInfo(
             contactID: lastContactInfo.contactID,
-            isStable: self.isContactIDStable()
+            isStable: self.isContactIDStable(),
+            resolveDate: lastContactInfo.resolveDate ?? .distantPast
         )
     }
 
@@ -342,6 +348,11 @@ actor ContactManager: ContactManagerProtocol {
             }
 
         case .resolve:
+            return try await doIdentify {
+                return try await self.performResolveOperation()
+            }
+
+        case .verify(_):
             return try await doIdentify {
                 return try await self.performResolveOperation()
             }
@@ -690,6 +701,11 @@ actor ContactManager: ContactManagerProtocol {
             // Skip if we have a valid token for the current contact info
             return tokenIfValid() != nil
 
+        case .verify(let date):
+            // Skip if we have a valid token and the resolveDate is newer than the verify date
+            let resolveDate = self.lastContactInfo?.resolveDate ?? .distantPast
+            return tokenIfValid() != nil && date <= resolveDate
+
         default: return false
         }
     }
@@ -697,7 +713,8 @@ actor ContactManager: ContactManagerProtocol {
     private func updateContactInfo(
         result: ContactIdentifyResult,
         namedUserID: String? = nil,
-        operationType: ContactOperation.OperationType
+        operationType: ContactOperation.OperationType,
+        resolveDate: Date? = nil
     ) async {
         let expiration = self.date.now.addingTimeInterval(
             Double(result.tokenExpiresInMilliseconds)/1000.0
@@ -722,7 +739,8 @@ actor ContactManager: ContactManagerProtocol {
             contactID: result.contact.contactID,
             isAnonymous: result.contact.isAnonymous,
             namedUserID: resolvedNamedUser,
-            channelAssociatedDate: result.contact.channelAssociatedDate
+            channelAssociatedDate: result.contact.channelAssociatedDate,
+            resolveDate: self.date.now
         )
 
         // Conflict events
@@ -766,7 +784,7 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func updateLastIdentifyOperationDate() {
-        self.lastIdentifyOperation = self.date.now
+        self.lastIdentifyOperationDate = self.date.now
     }
 
     private func yieldContactUpdates() {
@@ -787,7 +805,7 @@ actor ContactManager: ContactManagerProtocol {
         try await self.identifySerialQueue.run {
             // We handle identify rate limit internally since both work and auth token might cause identify to be called
             let remainingTime = self.internalIdentifyRateLimit - self.date.now.timeIntervalSince(
-                await self.lastIdentifyOperation
+                await self.lastIdentifyOperationDate
             )
 
             if (remainingTime > 0) {
@@ -868,6 +886,7 @@ fileprivate struct InternalContactInfo: Codable, Equatable {
     let isAnonymous: Bool
     let namedUserID: String?
     let channelAssociatedDate: Date?
+    let resolveDate: Date?
 }
 
 fileprivate struct ContactOperationGroup {

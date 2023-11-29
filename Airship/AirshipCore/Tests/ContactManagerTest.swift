@@ -139,13 +139,74 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: self.anonIdentifyResponse.contact.contactID, isStable: true)
+                ContactIDInfo(
+                    contactID: self.anonIdentifyResponse.contact.contactID,
+                    isStable: true,
+                    resolveDate: self.date.now
+                )
             )
         ])
     }
 
     func testResolvedFailed() async throws {
         await self.contactManager.addOperation(.resolve)
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 500,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .failure)
+    }
+
+    func testVerify() async throws {
+        await self.contactManager.addOperation(.verify(self.date.now))
+
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            XCTAssertEqual(self.channel.identifier, channelID)
+            XCTAssertNil(contactID)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+        await fulfillmentCompat(of: [resolve])
+
+        let contactInfo = await self.contactManager.currentContactIDInfo()
+        XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
+
+        await self.verifyUpdates([
+            .contactIDUpdate(
+                ContactIDInfo(
+                    contactID: self.anonIdentifyResponse.contact.contactID,
+                    isStable: true,
+                    resolveDate: self.date.now
+                )
+            )
+        ])
+    }
+
+    func testVerifyFailed() async throws {
+        await self.contactManager.addOperation(.verify(self.date.now))
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -227,10 +288,18 @@ final class ContactManagerTest: XCTestCase {
         await self.verifyUpdates(
             [
                 .contactIDUpdate(
-                    ContactIDInfo(contactID: self.anonIdentifyResponse.contact.contactID, isStable: false)
+                    ContactIDInfo(
+                        contactID: self.anonIdentifyResponse.contact.contactID,
+                        isStable: false,
+                        resolveDate: self.date.now
+                    )
                 ),
                 .contactIDUpdate(
-                    ContactIDInfo(contactID: self.nonAnonIdentifyResponse.contact.contactID, isStable: true)
+                    ContactIDInfo(
+                        contactID: self.nonAnonIdentifyResponse.contact.contactID,
+                        isStable: true,
+                        resolveDate: self.date.now
+                    )
                 ),
             ]
         )
@@ -337,10 +406,18 @@ final class ContactManagerTest: XCTestCase {
         await self.verifyUpdates(
             [
                 .contactIDUpdate(
-                    ContactIDInfo(contactID: self.nonAnonIdentifyResponse.contact.contactID, isStable: false)
+                    ContactIDInfo(
+                        contactID: self.nonAnonIdentifyResponse.contact.contactID,
+                        isStable: false,
+                        resolveDate: self.date.now
+                    )
                 ),
                 .contactIDUpdate(
-                    ContactIDInfo(contactID: self.anonIdentifyResponse.contact.contactID, isStable: true)
+                    ContactIDInfo(
+                        contactID: self.anonIdentifyResponse.contact.contactID,
+                        isStable: true,
+                        resolveDate: self.date.now
+                    )
                 )
             ]
         )
@@ -367,7 +444,11 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: self.anonIdentifyResponse.contact.contactID, isStable: true)
+                ContactIDInfo(
+                    contactID: self.anonIdentifyResponse.contact.contactID,
+                    isStable: true,
+                    resolveDate: self.date.now
+                )
             )
         ])
     }
@@ -480,7 +561,11 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: contactInfo!.contactID, isStable: true)
+                ContactIDInfo(
+                    contactID: contactInfo!.contactID,
+                    isStable: true,
+                    resolveDate: self.date.now
+                )
             )
         ])
     }
@@ -514,7 +599,11 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: contactInfo.contactID, isStable: true)
+                ContactIDInfo(
+                    contactID: contactInfo.contactID,
+                    isStable: true,
+                    resolveDate: self.date.now
+                )
             )
         ])
 
@@ -522,7 +611,11 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: contactInfo.contactID, isStable: false)
+                ContactIDInfo(
+                    contactID: contactInfo.contactID,
+                    isStable: false,
+                    resolveDate: self.date.now
+                )
             )
         ])
     }
@@ -533,7 +626,11 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: contactInfo.contactID, isStable: true)
+                ContactIDInfo(
+                    contactID: contactInfo.contactID,
+                    isStable: true,
+                    resolveDate: self.date.now
+                )
             )
         ])
 
@@ -541,7 +638,11 @@ final class ContactManagerTest: XCTestCase {
 
         await self.verifyUpdates([
             .contactIDUpdate(
-                ContactIDInfo(contactID: contactInfo.contactID, isStable: false)
+                ContactIDInfo(
+                    contactID: contactInfo.contactID,
+                    isStable: false,
+                    resolveDate: self.date.now
+                )
             )
         ])
     }

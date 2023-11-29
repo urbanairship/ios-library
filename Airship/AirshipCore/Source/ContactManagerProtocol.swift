@@ -28,6 +28,13 @@ struct ContactAudienceUpdate: Equatable, Sendable {
 struct ContactIDInfo: Equatable, Sendable {
     let contactID: String
     let isStable: Bool
+    let resolveDate: Date
+
+    init(contactID: String, isStable: Bool, resolveDate: Date = Date.distantPast) {
+        self.contactID = contactID
+        self.isStable = isStable
+        self.resolveDate = resolveDate
+    }
 }
 
 enum ContactUpdate: Equatable, Sendable {

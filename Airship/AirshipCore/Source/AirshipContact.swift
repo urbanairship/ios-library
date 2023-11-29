@@ -12,8 +12,16 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
     static let legacyNamedUserKey = "UANamedUserID"
-    private static let foregroundResolveInterval: TimeInterval = 24 * 60 * 60  // 24 hours
-    private static let maxSubscriptionListCacheAge: TimeInterval = 600
+
+    // Inteval for how often we emit a resolve operation on foreground
+    static let defaultForegroundResolveInterval: TimeInterval = 60.0 // 1 min
+
+
+    // Max age of a contact ID update that we consider verified for CRA
+    static let defaultVefiedContactIDAge: TimeInterval = 600.0 // 10 mins
+
+    // Subscription list cache age
+    private static let maxSubscriptionListCacheAge: TimeInterval = 600.0 // 10 mins
 
     @objc
     public static let contactConflictEvent = NSNotification.Name(
@@ -210,7 +218,13 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         channel.addRegistrationExtender { [weak self] payload in
             await self?.setupTask?.value
             var payload = payload
-            payload.channel.contactID = await self?.contactID
+
+            if (channel.identifier != nil) {
+                payload.channel.contactID = await self?.getStableVerifiedContactID()
+            } else {
+                payload.channel.contactID = await self?.contactID
+            }
+
             return payload
         }
 
@@ -495,7 +509,8 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         editor.apply()
     }
 
-    public func getStableContactID() async -> String {
+
+    private func waitForContactIDInfo(filter: @Sendable @escaping (ContactIDInfo) -> Bool) async -> ContactIDInfo {
         // Stableness is determined by a reset or identify operation.  Since
         // pending operations are added through the serialQueue to ensure order, some might still
         // be in the queue. To avoid ignoring any of those, wait for current operations on the queue
@@ -503,17 +518,41 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         await self.serialQueue.waitForCurrentOperations()
 
         var subscription: AnyCancellable?
-        let result: String = await withCheckedContinuation { continuation in
+        let result: ContactIDInfo = await withCheckedContinuation { continuation in
             subscription = self.contactIDUpdates
                 .first { update in
-                    update.isStable
+                    filter(update)
                 }
                 .sink { update in
-                    continuation.resume(returning: update.contactID)
+                    continuation.resume(returning: update)
                 }
         }
         subscription?.cancel()
         return result
+    }
+
+    public func getStableContactID() async -> String {
+        return await waitForContactIDInfo { update in
+            update.isStable
+        }.contactID
+    }
+
+    private func getStableVerifiedContactID() async -> String {
+        let now = self.date.now
+
+        let stableIDInfo = await waitForContactIDInfo { update in
+            update.isStable
+        }
+
+        let secondsSinceLastResolve = now.timeIntervalSince(stableIDInfo.resolveDate)
+        guard secondsSinceLastResolve >= Self.maxSubscriptionListCacheAge else {
+            return stableIDInfo.contactID
+        }
+
+        addOperation(.verify(now))
+        return await waitForContactIDInfo { update in
+            update.isStable && update.resolveDate >= now
+        }.contactID
     }
 
     @objc(fetchSubscriptionListsWithCompletionHandler:)
@@ -561,7 +600,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
             AirshipLogger.debug("Fetched lists finished with response: \(response)")
             self.cachedSubscriptionLists.set(
                 value: (contactID, lists),
-                expiresIn: AirshipContact.maxSubscriptionListCacheAge
+                expiresIn: Self.maxSubscriptionListCacheAge
             )
             return lists
         }
@@ -596,7 +635,9 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
             return
         }
 
-        if (self.date.now.timeIntervalSince(self.lastResolveDate) >= AirshipContact.foregroundResolveInterval) {
+        let lastActive = self.date.now.timeIntervalSince(self.lastResolveDate)
+
+        if (lastActive >= Self.defaultForegroundResolveInterval) {
             self.lastResolveDate = self.date.now
             self.addOperation(.resolve)
         }

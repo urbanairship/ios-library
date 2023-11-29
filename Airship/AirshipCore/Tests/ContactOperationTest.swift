@@ -13,7 +13,8 @@ class ContactOperationTests: XCTestCase {
 
     // SDK 17 payload
     private let updatedPayload = """
-[{\"type\":\"update\",\"payload\":{\"tagUpdates\":[{\"group\":\"group\",\"tags\":[\"tags\"],\"type\":2}]}},{\"type\":\"resolve\",\"payload\":null},{\"type\":\"identify\",\"payload\":{\"identifier\":\"some-user\"}},{\"type\":\"reset\",\"payload\":null},{\"type\":\"registerEmail\",\"payload\":{\"address\":\"ua@airship.com\",\"options\":{\"doubleOptIn\":true,\"transactionalOptedIn\":700424522.44925797,\"properties\":{\"interests\":\"newsletter\"}}}},{\"type\":\"registerSMS\",\"payload\":{\"options\":{\"senderID\":\"28855\"},\"msisdn\":\"15035556789\"}},{\"type\":\"registerOpen\",\"payload\":{\"address\":\"open_address\",\"options\":{\"identifiers\":{\"model\":\"4\"},\"platformName\":\"my_platform\"}}}]
+[{\"type\":\"update\",\"payload\":{\"tagUpdates\":[{\"group\":\"group\",\"tags\":[\"tags\"],\"type\":2}]}},{\"type\":\"resolve\",\"payload\":null},{\"type\":\"identify\",\"payload\":{\"identifier\":\"some-user\"}},{\"type\":\"reset\",\"payload\":null},{\"type\":\"registerEmail\",\"payload\":{\"address\":\"ua@airship.com\",\"options\":{\"doubleOptIn\":true,\"transactionalOptedIn\":700424522.44925797,\"properties\":{\"interests\":\"newsletter\"}}}},{\"type\":\"registerSMS\",\"payload\":{\"options\":{\"senderID\":\"28855\"},\"msisdn\":\"15035556789\"}},{\"type\":\"registerOpen\",\"payload\":{\"address\":\"open_address\",\"options\":{\"identifiers\":{\"model\":\"4\"},\"platformName\":\"my_platform\"}}},
+    {\"type\":\"verify\",\"payload\":{\"date\":500.0}}]
 """
 
     func testLegacyDecode() throws {
@@ -62,7 +63,8 @@ class ContactOperationTests: XCTestCase {
                     platformName: "my_platform",
                     identifiers: ["model": "4"]
                 )
-            )
+            ),
+            ContactOperation.verify(Date(timeIntervalSinceReferenceDate: 500))
         ]
 
         let fromExpected = try JSONEncoder().encode(expected)
