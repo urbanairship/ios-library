@@ -57,7 +57,14 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
 
     @MainActor
     private var isForegrounded: Bool? = nil
- 
+    
+    @objc(isForgrounded)
+    @MainActor
+    public var _isForegrounded: Bool {
+        ensureForegroundSet()
+        return isForegrounded == true
+    }
+
     @objc
     @MainActor
     public var state: ApplicationState {
