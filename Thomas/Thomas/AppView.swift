@@ -11,7 +11,7 @@ struct AppView: View {
                 .tabItem {
                     Label(
                         "Embedded",
-                        systemImage: "house.fill"
+                        systemImage: "rectangle.inset.filled"
                     )
                 }
             
@@ -22,7 +22,7 @@ struct AppView: View {
             .tabItem {
                 Label(
                     "Modals",
-                    systemImage: "house.fill"
+                    systemImage: "rectangle.center.inset.filled"
                 )
             }
             NavigationView {
@@ -33,7 +33,7 @@ struct AppView: View {
             .tabItem {
                 Label(
                     "Banners",
-                    systemImage: "house.fill"
+                    systemImage: "rectangle.topthird.inset.filled"
                 )
             }
 
