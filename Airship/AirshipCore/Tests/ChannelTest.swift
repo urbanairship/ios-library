@@ -16,7 +16,7 @@ class ChannelTest: XCTestCase {
     private var privacyManager: AirshipPrivacyManager!
     private var channel: AirshipChannel!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
 
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
@@ -24,9 +24,10 @@ class ChannelTest: XCTestCase {
             notificationCenter: self.notificationCenter
         )
 
-        self.channel = createChannel()
+        self.channel = await createChannel()
     }
 
+    @MainActor
     private func createChannel() -> AirshipChannel {
         return AirshipChannel(
             dataStore: self.dataStore,
@@ -121,7 +122,8 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual(expected, self.channel.tags)
     }
 
-    func testChannelCreationFlagDisabled() throws {
+    @MainActor
+    func testChannelCreationFlagDisabled() async throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
         self.config.isChannelCreationDelayEnabled = true
         self.channelRegistrar.registerCalled = false
@@ -130,12 +132,12 @@ class ChannelTest: XCTestCase {
         XCTAssertFalse(self.channelRegistrar.registerCalled)
     }
 
-    func testEnableChannelCreation() throws {
+    func testEnableChannelCreation() async throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
         self.config.isChannelCreationDelayEnabled = true
         self.channelRegistrar.registerCalled = false
 
-        self.channel = createChannel()
+        self.channel = await createChannel()
         self.channel.enableChannelCreation()
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
@@ -309,9 +311,9 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual("foo", self.audienceManager.channelID)
     }
 
-    func testInitialIdentifierPassedToAudienceManager() throws {
+    func testInitialIdentifierPassedToAudienceManager() async throws {
         self.channelRegistrar.channelID = "foo"
-        self.channel = createChannel()
+        self.channel = await createChannel()
         XCTAssertEqual("foo", self.audienceManager.channelID)
     }
 
@@ -383,20 +385,20 @@ class ChannelTest: XCTestCase {
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
 
-    func testMigratePushTagsToChannelTags() throws {
+    func testMigratePushTagsToChannelTags() async throws {
         self.privacyManager.enableFeatures(.all)
 
         self.dataStore.setObject(["cool", "rad"], forKey: "UAPushTags")
-        self.channel = createChannel()
+        self.channel = await createChannel()
 
         XCTAssertEqual(["cool", "rad"], self.channel.tags)
     }
 
-    func testMigratePushTagsToChannelTagsAlreadyMigrated() throws {
+    func testMigratePushTagsToChannelTagsAlreadyMigrated() async throws {
         self.privacyManager.enableFeatures(.all)
         self.channel.tags = ["some-random-value"]
 
-        self.channel = createChannel()
+        self.channel = await createChannel()
         XCTAssertEqual(["some-random-value"], self.channel.tags)
     }
 

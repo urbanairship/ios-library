@@ -18,8 +18,10 @@ class AirshipContactTest: XCTestCase {
 
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
+    private var config: RuntimeConfig!
 
     override func setUp() async throws {
+        self.config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all,
@@ -33,7 +35,6 @@ class AirshipContactTest: XCTestCase {
     }
 
     func setupContact()  {
-        let config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
         contactQueue = AsyncSerialQueue(priority: .high)
 
         self.contact =  AirshipContact(
@@ -152,7 +153,7 @@ class AirshipContactTest: XCTestCase {
         await verifyOperations([.resolve])
     }
 
-    func testExtendRegistrationPaylaodWaitsForStableVerifiedContactID() async throws {
+    func testStableVerifiedContactID() async throws {
         await self.contactManager.setCurrentContactIDInfo(
             ContactIDInfo(contactID: "some-contact-id", isStable: false)
         )
@@ -184,6 +185,57 @@ class AirshipContactTest: XCTestCase {
                 resolveDate: date.addingTimeInterval(-AirshipContact.defaultVefiedContactIDAge)
             )
         )
+        await contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, resolveDate: date)
+        )
+
+        let payload = await payloadTask.value
+        XCTAssertEqual("some-stable-verified-contact-id", payload.channel.contactID)
+        await verifyOperations([.verify(date)])
+    }
+
+    func testStableVerifiedContactIDAlreadyUpToDate() async throws {
+        let date = self.date.now
+
+        await self.contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, resolveDate: date)
+        )
+
+        let channel = self.channel
+
+        let payload = await channel.channelPayload
+        XCTAssertEqual("some-contact-id", payload.channel.contactID)
+        await verifyOperations([])
+    }
+
+    func testMaxAgeStableVerifiedContactID() async throws {
+        await self.config.updateRemoteConfig(
+            RemoteConfig(
+                contactConfig: .init(
+                    foregroundIntervalMilliseconds: nil,
+                    channelRegistrationMaxResolveAgeMilliseconds: 1000
+                )
+            )
+        )
+
+        let date = self.date.now
+
+        await self.contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, resolveDate: date.addingTimeInterval(-1))
+        )
+
+        let contactManager = self.contactManager
+        let channel = self.channel
+
+        let payloadTaskStarted = self.expectation(description: "payload task started")
+
+        let payloadTask = Task {
+            payloadTaskStarted.fulfill()
+            return await channel.channelPayload
+        }
+
+        await fulfillment(of: [payloadTaskStarted])
+
         await contactManager.setCurrentContactIDInfo(
             ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, resolveDate: date)
         )
@@ -229,6 +281,39 @@ class AirshipContactTest: XCTestCase {
         await verifyOperations([.resolve])
 
         self.date.offset += 1
+
+        notificationCenter.post(
+            name: AppStateTracker.didBecomeActiveNotification
+        )
+
+        await verifyOperations([.resolve, .resolve])
+    }
+
+    func testForegroundSkipsResolvesConfigValue() async throws {
+        await self.config.updateRemoteConfig(
+            RemoteConfig(
+                contactConfig: .init(
+                    foregroundIntervalMilliseconds: 1000,
+                    channelRegistrationMaxResolveAgeMilliseconds: nil
+                )
+            )
+        )
+
+        notificationCenter.post(
+            name: AppStateTracker.didBecomeActiveNotification
+        )
+
+        await verifyOperations([.resolve])
+
+        self.date.offset += 0.5
+
+        notificationCenter.post(
+            name: AppStateTracker.didBecomeActiveNotification
+        )
+
+        await verifyOperations([.resolve])
+
+        self.date.offset += 0.5
 
         notificationCenter.post(
             name: AppStateTracker.didBecomeActiveNotification

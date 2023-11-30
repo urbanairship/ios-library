@@ -51,7 +51,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
     private let notificationCenter: AirshipNotificationCenter
     private let appStateTracker: AppStateTrackerProtocol
     private let tagsLock = AirshipLock()
-    private var subscriptions: Set<AnyCancellable> = Set()
+    private let subscriptions: AirshipMainActorWrapper<Set<AnyCancellable>> = AirshipMainActorWrapper(Set())
 
     #if canImport(ActivityKit)
     private let liveActivityRegistry: LiveActivityRegistry
@@ -127,6 +127,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         return Airship.channel
     }
 
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
@@ -182,7 +183,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
             .sink { [weak self] update in
                 self?.processChannelUpdate(update)
             }
-            .store(in: &self.subscriptions)
+            .store(in: &self.subscriptions.value)
 
         self.channelRegistrar.addChannelRegistrationExtender(
             extender: self.extendPayload
@@ -215,7 +216,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         #endif
     }
 
-    /// NOTE: For internal use only. :nodoc:
+    @MainActor
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,

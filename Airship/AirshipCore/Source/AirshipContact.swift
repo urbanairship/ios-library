@@ -13,9 +13,8 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
     static let legacyNamedUserKey = "UANamedUserID"
 
-    // Inteval for how often we emit a resolve operation on foreground
-    static let defaultForegroundResolveInterval: TimeInterval = 60.0 // 1 min
-
+    // Interval for how often we emit a resolve operation on foreground
+    static let defaultForegroundResolveInterval: TimeInterval = 3600.0 // 1 hour
 
     // Max age of a contact ID update that we consider verified for CRA
     static let defaultVefiedContactIDAge: TimeInterval = 600.0 // 10 mins
@@ -124,6 +123,17 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     public static var shared: AirshipContact {
         return Airship.contact
     }
+
+    private var foregroundInterval: TimeInterval {
+        let interval = self.config.remoteConfig.contactConfig?.foregroundInterval
+        return interval ?? Self.defaultForegroundResolveInterval
+    }
+
+    private var verifiedContactIDMaxAge: TimeInterval {
+        let age = self.config.remoteConfig.contactConfig?.channelRegistrationMaxResolveAge
+        return age ?? Self.defaultVefiedContactIDAge
+    }
+
 
     /**
      * Internal only
@@ -545,7 +555,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         }
 
         let secondsSinceLastResolve = now.timeIntervalSince(stableIDInfo.resolveDate)
-        guard secondsSinceLastResolve >= Self.maxSubscriptionListCacheAge else {
+        guard secondsSinceLastResolve >= self.verifiedContactIDMaxAge else {
             return stableIDInfo.contactID
         }
 
@@ -637,7 +647,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
 
         let lastActive = self.date.now.timeIntervalSince(self.lastResolveDate)
 
-        if (lastActive >= Self.defaultForegroundResolveInterval) {
+        if (lastActive >= self.foregroundInterval) {
             self.lastResolveDate = self.date.now
             self.addOperation(.resolve)
         }

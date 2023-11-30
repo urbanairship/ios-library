@@ -19,14 +19,6 @@ NS_SWIFT_NAME(AirshipComponent)
 @optional
 
 /**
- * Called when remote config is loaded. If no config is available for the component, config will be nil.
- * @note For internal use only. :nodoc:
- *
- * @config The config or nil if no config is available for the module.
- */
-- (void)applyRemoteConfig:(nullable id)config;
-
-/**
  * Called when the shared UAirship instance is ready.
  * Subclasses can override this method to perform additional setup after initialization.
  * @note For internal use only. :nodoc:

@@ -523,9 +523,6 @@
 		6E5A64C82AABBE7100574085 /* MeteredUsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64C72AABBE7100574085 /* MeteredUsageAPIClient.swift */; };
 		6E5A64C92AABBE7100574085 /* MeteredUsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64C72AABBE7100574085 /* MeteredUsageAPIClient.swift */; };
 		6E5A64CA2AABBE7100574085 /* MeteredUsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64C72AABBE7100574085 /* MeteredUsageAPIClient.swift */; };
-		6E5A64CC2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CB2AABBE9E00574085 /* MeteredUsageConfig.swift */; };
-		6E5A64CD2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CB2AABBE9E00574085 /* MeteredUsageConfig.swift */; };
-		6E5A64CE2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CB2AABBE9E00574085 /* MeteredUsageConfig.swift */; };
 		6E5A64D02AABBEAF00574085 /* AirshipMeteredUsageEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */; };
 		6E5A64D12AABBEAF00574085 /* AirshipMeteredUsageEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */; };
 		6E5A64D22AABBEAF00574085 /* AirshipMeteredUsageEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */; };
@@ -2389,7 +2386,6 @@
 		6E598D7E2003EB76005B234B /* UAActiveTimer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAActiveTimer.m; sourceTree = "<group>"; };
 		6E5A64C32AAB7D5C00574085 /* AirshipMeteredUsage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsage.swift; sourceTree = "<group>"; };
 		6E5A64C72AABBE7100574085 /* MeteredUsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageAPIClient.swift; sourceTree = "<group>"; };
-		6E5A64CB2AABBE9E00574085 /* MeteredUsageConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageConfig.swift; sourceTree = "<group>"; };
 		6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsageEvent.swift; sourceTree = "<group>"; };
 		6E5A64D32AABBED600574085 /* MeteredUsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageStore.swift; sourceTree = "<group>"; };
 		6E5A64D82AABC5A400574085 /* UAMeteredUsage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAMeteredUsage.xcdatamodel; sourceTree = "<group>"; };
@@ -4146,7 +4142,6 @@
 			children = (
 				6E5A64C32AAB7D5C00574085 /* AirshipMeteredUsage.swift */,
 				6E5A64C72AABBE7100574085 /* MeteredUsageAPIClient.swift */,
-				6E5A64CB2AABBE9E00574085 /* MeteredUsageConfig.swift */,
 				6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */,
 				6E5A64D32AABBED600574085 /* MeteredUsageStore.swift */,
 			);
@@ -6659,7 +6654,6 @@
 				6EFD6D7127290C16005B26F1 /* TextInput.swift in Sources */,
 				6E5A64D02AABBEAF00574085 /* AirshipMeteredUsageEvent.swift in Sources */,
 				6E5A64C82AABBE7100574085 /* MeteredUsageAPIClient.swift in Sources */,
-				6E5A64CC2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */,
 				6EC755992A4E115400851ABB /* DeviceAudienceSelector.swift in Sources */,
 				6E44626729E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
 				6E1C9C4D271F78AE009EF9EF /* MarginViewModifier.swift in Sources */,
@@ -6981,7 +6975,6 @@
 				A68C74A5285CB08D00EEA2F4 /* APNSRegistrar.swift in Sources */,
 				6E91E45A28EF423400B6F25E /* AirshipWorkResult.swift in Sources */,
 				6E15895A2AFF023400954A04 /* SessionEvent.swift in Sources */,
-				6E5A64CE2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */,
 				A68C74A4285CB08700EEA2F4 /* PushNotificationDelegate.swift in Sources */,
 				A68C74A3285CB08000EEA2F4 /* NotificationRegistrar.swift in Sources */,
 				A68C74A2285CB07A00EEA2F4 /* UNNotificationRegistrar.swift in Sources */,
@@ -7784,7 +7777,6 @@
 				E99605A527A075B800365AE4 /* SMSRegistrationOptions.swift in Sources */,
 				6E5A64D12AABBEAF00574085 /* AirshipMeteredUsageEvent.swift in Sources */,
 				6E5A64C92AABBE7100574085 /* MeteredUsageAPIClient.swift in Sources */,
-				6E5A64CD2AABBE9E00574085 /* MeteredUsageConfig.swift in Sources */,
 				C00ED4D026C729390040C5D0 /* URLAllowList.swift in Sources */,
 				6E44626829E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
 				A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */,

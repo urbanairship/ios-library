@@ -82,14 +82,14 @@ class RuntimeConfigTest: XCTestCase {
         )
     }
 
-    func testRemoteConfigOverride() throws {
-        var updatedCount = 0
+    func testRemoteConfigOverride() async throws {
+        let updatedCount = Atomic<Int>(0)
         self.notificationCenter.addObserver(
             forName: RuntimeConfig.configUpdatedEvent,
             object: nil,
             queue: nil
         ) { _ in
-            updatedCount += 1
+            updatedCount.value += 1
         }
 
         let config = RuntimeConfig(
@@ -99,60 +99,48 @@ class RuntimeConfigTest: XCTestCase {
             notificationCenter: self.notificationCenter
         )
 
-        let remoteConfig = RemoteConfig(
+        let airshipConfig = RemoteConfig.AirshipConfig(
             remoteDataURL: "cool://remote",
             deviceAPIURL: "cool://devices",
             analyticsURL: "cool://analytics",
             meteredUsageURL: "cool://meteredUsage"
         )
 
-        self.notificationCenter.post(
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil,
-            userInfo: [RemoteConfigManager.remoteConfigKey: remoteConfig]
+        await config.updateRemoteConfig(
+            RemoteConfig(airshipConfig: airshipConfig)
         )
 
         XCTAssertEqual("cool://devices", config.deviceAPIURL)
         XCTAssertEqual("cool://analytics", config.analyticsURL)
         XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
         XCTAssertEqual("cool://meteredUsage", config.meteredUsageURL)
-        XCTAssertNil(config.chatURL)
-        XCTAssertNil(config.chatWebSocketURL)
-        XCTAssertEqual(1, updatedCount)
+        XCTAssertEqual(1, updatedCount.value)
 
-        self.notificationCenter.post(
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil,
-            userInfo: [RemoteConfigManager.remoteConfigKey: remoteConfig]
+        await config.updateRemoteConfig(
+            RemoteConfig(airshipConfig: airshipConfig)
         )
 
         XCTAssertEqual("cool://devices", config.deviceAPIURL)
         XCTAssertEqual("cool://analytics", config.analyticsURL)
         XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
         XCTAssertEqual("cool://meteredUsage", config.meteredUsageURL)
-        XCTAssertNil(config.chatURL)
-        XCTAssertNil(config.chatWebSocketURL)
-        XCTAssertEqual(1, updatedCount)
+        XCTAssertEqual(1, updatedCount.value)
 
-        let differntConfig = RemoteConfig(
+        let differentConfig = RemoteConfig.AirshipConfig(
             remoteDataURL: "neat://remote",
             deviceAPIURL: "neat://devices",
             analyticsURL: "neat://analytics",
             meteredUsageURL: "neat://meteredUsage"
         )
 
-        self.notificationCenter.post(
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil,
-            userInfo: [RemoteConfigManager.remoteConfigKey: differntConfig]
+        await config.updateRemoteConfig(
+            RemoteConfig(airshipConfig: differentConfig)
         )
 
         XCTAssertEqual("neat://devices", config.deviceAPIURL)
         XCTAssertEqual("neat://analytics", config.analyticsURL)
         XCTAssertEqual("neat://remote", config.remoteDataAPIURL)
         XCTAssertEqual("neat://meteredUsage", config.meteredUsageURL)
-        XCTAssertNil(config.chatURL)
-        XCTAssertNil(config.chatWebSocketURL)
-        XCTAssertEqual(2, updatedCount)
+        XCTAssertEqual(2, updatedCount.value)
     }
 }

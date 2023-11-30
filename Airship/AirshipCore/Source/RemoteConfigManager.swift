@@ -5,38 +5,31 @@ import Combine
 /// NOTE: For internal use only. :nodoc:
 final class RemoteConfigManager: @unchecked Sendable {
 
-    @objc
-    public static let remoteConfigUpdatedEvent = Notification.Name(
-        "com.urbanairship.airship_remote_config_updated"
-    )
-
-    @objc
-    public static let remoteConfigKey = "remote_config"
-
     private let decoder = JSONDecoder()
     private var subscription: AnyCancellable?
     private let moduleAdapter: RemoteConfigModuleAdapterProtocol
     private let remoteData: RemoteDataProtocol
     private let privacyManager: AirshipPrivacyManager
-    private let appVersion: String
     private let notificationCenter: AirshipNotificationCenter
-    private let lock = AirshipLock()
-    private let meteredUsage: AirshipMeteredUsage
+
+    private let appVersion: String
+    private let lock: AirshipLock = AirshipLock()
+    private let config: RuntimeConfig
 
     init(
+        config: RuntimeConfig,
         remoteData: RemoteDataProtocol,
         privacyManager: AirshipPrivacyManager,
-        meteredUsage: AirshipMeteredUsage,
         moduleAdapter: RemoteConfigModuleAdapterProtocol = RemoteConfigModuleAdapter(),
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? ""
     ) {
+        self.config = config
         self.remoteData = remoteData
         self.privacyManager = privacyManager
         self.moduleAdapter = moduleAdapter
-        self.appVersion = appVersion
         self.notificationCenter = notificationCenter
-        self.meteredUsage = meteredUsage
+        self.appVersion = appVersion
     }
 
     func airshipReady() {
@@ -55,16 +48,12 @@ final class RemoteConfigManager: @unchecked Sendable {
 
         // Combine the data, overriding the common config (first) with
         // the platform config (second).
-        payloads?
-            .forEach { payload in
-                combinedData.merge(payload.data) { (_, new) in new }
-            }
+        payloads?.forEach { payload in
+            combinedData.merge(payload.data) { (_, new) in new }
+        }
 
         // Disable features
         applyDisableInfos(combinedData)
-
-        // Module config
-        applyConfigs(combinedData)
 
         //Remote config
         applyRemoteConfig(combinedData)
@@ -116,62 +105,21 @@ final class RemoteConfigManager: @unchecked Sendable {
         remoteData.remoteDataRefreshInterval = remoteDataRefreshInterval
     }
 
-    func applyConfigs(_ data: [AnyHashable: Any]) {
-        RemoteConfigModule.allCases.forEach {
-            self.moduleAdapter.applyConfig(data[$0.rawValue], module: $0)
-        }
-    }
-
     func applyRemoteConfig(_ data: [AnyHashable: Any]) {
-        self.updateMeteredUsageConfig(data)
-        
-        guard let remoteConfigData = data["airship_config"] else {
-            return
-        }
-
-        if let fetchContactData = data["fetch_contact_remote_data"] as? Bool {
-            remoteData.setContactSourceEnabled(enabled: fetchContactData)
-        }
-
-        var parsedConfig: RemoteConfig?
         do {
             let data = try JSONSerialization.data(
-                withJSONObject: remoteConfigData,
+                withJSONObject: data,
                 options: []
             )
-            parsedConfig = try self.decoder.decode(
+            let remoteConfig = try self.decoder.decode(
                 RemoteConfig.self,
                 from: data
             )
+            Task { @MainActor [config] in
+                config.updateRemoteConfig(remoteConfig)
+            }
         } catch {
             AirshipLogger.error("Invalid remote config \(error)")
-            return
-        }
-
-        guard let remoteConfig = parsedConfig else {
-            return
-        }
-
-        self.notificationCenter.post(
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil,
-            userInfo: [RemoteConfigManager.remoteConfigKey: remoteConfig]
-        )
-    }
-    
-    private func updateMeteredUsageConfig(_ source: [AnyHashable: Any]) {
-        guard let raw = source["metered_usage"] else { return }
-        
-        do {
-            let data = try JSONSerialization.data(
-                withJSONObject: raw,
-                options: []
-            )
-            
-            let parsed = try self.decoder.decode(MeteredUsageConfig.self, from: data)
-            meteredUsage.updateConfig(parsed)
-        } catch {
-            AirshipLogger.error("Invalid metered usage config \(error)")
             return
         }
     }

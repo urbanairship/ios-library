@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 /// Airship config needed for runtime. Generated from `UAConfig` during takeOff.
 @objc(UARuntimeConfig)
@@ -13,17 +14,18 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     )
 
     // US
-    private static let configUSDeviceAPIURL =
-        "https://device-api.urbanairship.com"
+    private static let configUSDeviceAPIURL = "https://device-api.urbanairship.com"
     private static let configUSAnalyticsURL = "https://combine.urbanairship.com"
-    private static let configUSRemoteDataAPIURL =
-        "https://remote-data.urbanairship.com"
+    private static let configUSRemoteDataAPIURL = "https://remote-data.urbanairship.com"
 
     // EU
     private static let configEUDeviceAPIURL = "https://device-api.asnapieu.com"
     private static let configEUAnalyticsURL = "https://combine.asnapieu.com"
-    private static let configEURemoteDataAPIURL =
-        "https://remote-data.asnapieu.com"
+    private static let configEURemoteDataAPIURL = "https://remote-data.asnapieu.com"
+
+    private let defaultRemoteDataAPIURL: String?
+    private let defaultAnalyticsURL: String?
+    private let defaultDeviceAPIURL: String?
 
     /// The current app key (resolved using the inProduction flag).
     @objc
@@ -154,13 +156,15 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     private let remoteConfigCache: RemoteConfigCache
     private let notificationCenter: NotificationCenter
 
-    private let defaultDeviceAPIURL: String?
+    /// NOTE: For internal use only. :nodoc:
+    var remoteConfig: RemoteConfig {
+        return self.remoteConfigCache.remoteConfig
+    }
 
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     @objc
     public var deviceAPIURL: String? {
-        let url =
-            remoteConfigCache.remoteConfig?.deviceAPIURL
+        let url = remoteConfig.airshipConfig?.deviceAPIURL
             ?? self.defaultDeviceAPIURL
         if url?.isEmpty == false {
             return url
@@ -180,16 +184,12 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         }
     }
 
-    private let defaultRemoteDataAPIURL: String?
-    private let defaultAnalyticsURL: String?
-    private let defaultChatURL: String?
-    private let defaultChatWebSocketURL: String?
+
 
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     @objc
     public var remoteDataAPIURL: String? {
-        let url =
-            remoteConfigCache.remoteConfig?.remoteDataURL
+        let url = remoteConfig.airshipConfig?.remoteDataURL
             ?? self.defaultRemoteDataAPIURL
         if url?.isEmpty == false {
             return url
@@ -208,8 +208,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     @objc
     public var analyticsURL: String? {
-        let url =
-            remoteConfigCache.remoteConfig?.analyticsURL
+        let url = remoteConfig.airshipConfig?.analyticsURL
             ?? self.defaultAnalyticsURL
         if url?.isEmpty == false {
             return url
@@ -229,20 +228,8 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         }
     }
 
-    /// - NOTE: This option is reserved for internal debugging. :nodoc:
-    @objc
-    public var chatURL: String? {
-        return nil
-    }
-
-    /// - NOTE: This option is reserved for internal debugging. :nodoc:
-    @objc
-    public var chatWebSocketURL: String? {
-        return nil
-    }
-
     var meteredUsageURL: String? {
-        return remoteConfigCache.remoteConfig?.meteredUsageURL
+        return remoteConfigCache.remoteConfig.airshipConfig?.meteredUsageURL
     }
 
     @objc
@@ -309,51 +296,49 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.itunesID = config.itunesID
         self.enabledFeatures = config.enabledFeatures
         self.site = config.site
+        self.autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
         self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()
         self.defaultDeviceAPIURL = config.deviceAPIURL?.normalizeURLString()
-        self.autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
-
         if let initialConfigURL = config.initialConfigURL {
             self.defaultRemoteDataAPIURL = initialConfigURL.normalizeURLString()
         } else {
-            self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?
-                .normalizeURLString()
+            self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
         }
 
-        self.defaultChatURL = config.chatURL?.normalizeURLString()
-        self.defaultChatWebSocketURL = config.chatWebSocketURL?
-            .normalizeURLString()
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
         super.init()
-
-        self.notificationCenter.addObserver(
-            self,
-            selector: #selector(remoteConfigUpdated(notification:)),
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil
-        )
     }
 
-    @objc
-    private func remoteConfigUpdated(notification: Notification) {
-        guard
-            let config =
-                notification.userInfo?[RemoteConfigManager.remoteConfigKey]
-                as? RemoteConfig
-        else {
-            AirshipLogger.error("Missing remote config")
-            return
-        }
-
-        if config != self.remoteConfigCache.remoteConfig {
+    @MainActor
+    func updateRemoteConfig(_ config: RemoteConfig) {
+        let old = self.remoteConfig
+        if config != old {
             self.remoteConfigCache.remoteConfig = config
             self.notificationCenter.post(
                 name: RuntimeConfig.configUpdatedEvent,
                 object: nil
             )
+
+            self.remoteConfigListeners.value.forEach { listener in
+                listener(old, config)
+            }
         }
     }
+
+    @MainActor
+    func addRemoteConfigListener(
+        notifyCurrent: Bool = true,
+        listener: @MainActor @Sendable @escaping (RemoteConfig?, RemoteConfig) -> Void
+    ) {
+        if (notifyCurrent) {
+            listener(nil, self.remoteConfig)
+        }
+
+        self.remoteConfigListeners.value.append(listener)
+    }
+
+    let remoteConfigListeners: AirshipMainActorWrapper<[@MainActor @Sendable (RemoteConfig?, RemoteConfig) -> Void]> = AirshipMainActorWrapper([])
 }
 
 extension String {

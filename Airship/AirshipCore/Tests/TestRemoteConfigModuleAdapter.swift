@@ -4,7 +4,6 @@ import Foundation
 
 class TestRemoteConfigModuleAdapter: RemoteConfigModuleAdapterProtocol {
 
-    var moduleConfig: [RemoteConfigModule: Any?] = [:]
     var enabledModules: Set<RemoteConfigModule> = Set()
     var disabledModules: Set<RemoteConfigModule> = Set()
 
@@ -19,9 +18,5 @@ class TestRemoteConfigModuleAdapter: RemoteConfigModuleAdapterProtocol {
             enabledModules.remove(module)
             disabledModules.insert(module)
         }
-    }
-
-    public func applyConfig(_ config: Any?, module: RemoteConfigModule) {
-        moduleConfig[module] = config
     }
 }

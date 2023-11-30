@@ -9,8 +9,8 @@ final class RemoteDataTest: AirshipBaseTest {
 
     private static let RefreshTask = "RemoteData.refresh"
 
-    private let contactProvider: TestRemoteDataProvider = TestRemoteDataProvider(source: .contact)
-    private let appProvider: TestRemoteDataProvider = TestRemoteDataProvider(source: .app)
+    private let contactProvider: TestRemoteDataProvider = TestRemoteDataProvider(source: .contact, enabled: false)
+    private let appProvider: TestRemoteDataProvider = TestRemoteDataProvider(source: .app, enabled: true)
 
     private let testDate: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
@@ -24,10 +24,16 @@ final class RemoteDataTest: AirshipBaseTest {
         AirshipPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
     }()
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        self.config = RuntimeConfig(
+            config: AirshipConfig.config(),
+            dataStore: dataStore
+        )
+        
         self.testDate.dateOverride = Date()
         self.testLocaleManager.currentLocale =  Locale(identifier: "en-US")
-        self.remoteData = RemoteData(
+        self.remoteData = await RemoteData(
+            config: config,
             dataStore: self.dataStore,
             localeManager: self.testLocaleManager,
             privacyManager: self.privacyManager,
@@ -40,8 +46,18 @@ final class RemoteDataTest: AirshipBaseTest {
         )
     }
 
-    func testRemoteConfigUpdatedEnqueuesRefresh() {
+    func testRemoteConfigUpdatedEnqueuesRefresh() async {
         XCTAssertEqual(0, testWorkManager.workRequests.count)
+        await self.config.updateRemoteConfig(
+            RemoteConfig(
+                airshipConfig: .init(
+                    remoteDataURL: "someURL",
+                    deviceAPIURL: "someURL",
+                    analyticsURL: "someURL",
+                    meteredUsageURL: "someURL"
+                )
+            )
+        )
         notificationCenter.post(
             name: RuntimeConfig.configUpdatedEvent
         )
@@ -501,7 +517,7 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
     let source: RemoteDataSource
 
     private var payloads: [RemoteDataPayload] = []
-    var enabled: Bool = true
+    var enabled: Bool
 
     private var notifyOutdatedCallback: ((RemoteDataInfo) -> Void)?
     func setNotifyOutdatedCallback(callback: @escaping (RemoteDataInfo) -> Void) {
@@ -518,8 +534,9 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
         self.refreshCallback = callback
     }
 
-    init(source: RemoteDataSource) {
+    init(source: RemoteDataSource, enabled: Bool) {
         self.source = source
+        self.enabled = enabled
     }
 
     func setPayloads(_ payloads: [RemoteDataPayload]) {

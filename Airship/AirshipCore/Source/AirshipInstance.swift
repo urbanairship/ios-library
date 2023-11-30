@@ -115,7 +115,6 @@ class AirshipInstance: AirshipInstanceProtocol {
             badger: sharedApp
         )
 
-
         let contact = AirshipContact(
             dataStore: dataStore,
             config: self.config,
@@ -182,9 +181,9 @@ class AirshipInstance: AirshipInstanceProtocol {
         self.components = components
 
         self.remoteConfigManager = RemoteConfigManager(
+            config: self.config,
             remoteData: remoteData,
-            privacyManager: self.privacyManager,
-            meteredUsage: meteredUsage
+            privacyManager: self.privacyManager
         )
 
         self.actionRegistry.registerActions(

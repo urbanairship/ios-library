@@ -7,23 +7,36 @@ final class MeteredUsageApiClientTest: XCTestCase {
     
     private let requestSession = TestAirshipRequestSession()
     private let configDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private let notificationCenter = NotificationCenter()
     private var target: MeteredUsageAPIClient!
+    private var config: RuntimeConfig!
     
-    override func setUp() {
-        let config = RuntimeConfig(
+
+    @MainActor
+    override func setUp() async throws {
+        self.config = RuntimeConfig(
             config: AirshipConfig.config(),
             dataStore: configDataStore,
-            requestSession: requestSession,
-            notificationCenter: notificationCenter)
-        
+            requestSession: requestSession
+        )
+
+        self.config.updateRemoteConfig(
+            RemoteConfig(
+                airshipConfig: RemoteConfig.AirshipConfig(
+                    remoteDataURL: "test://remoteUrl",
+                    deviceAPIURL: "test://device",
+                    analyticsURL: "test://analytics",
+                    meteredUsageURL: "test://meteredUsage"
+                )
+            )
+        )
+
         target = MeteredUsageAPIClient(config: config, session: requestSession)
     }
-    
-    func testUploadEvents() async throws {
-        
+
+    func testUploadEventsNoConfig() async throws {
+        await self.config.updateRemoteConfig(RemoteConfig())
         let timestamp = Date()
-        
+
         let events = [
             AirshipMeteredUsageEvent(
                 eventID: "event.1",
@@ -69,25 +82,62 @@ final class MeteredUsageApiClientTest: XCTestCase {
             httpVersion: "1",
             headerFields: nil)
 
+        await self.config.updateRemoteConfig(RemoteConfig())
         var errorOnNoConfig = false
         do {
             let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
+            XCTFail("Should throw")
         } catch {
-            errorOnNoConfig = true
         }
+    }
 
-        XCTAssertTrue(errorOnNoConfig)
+    func testUploadEvents() async throws {
+        let timestamp = Date()
 
-        let remoteConfig = RemoteConfig(
-            remoteDataURL: "test://remoteUrl",
-            deviceAPIURL: "test://device",
-            analyticsURL: "test://analytics",
-            meteredUsageURL: "test://meteredUsage")
+        let events = [
+            AirshipMeteredUsageEvent(
+                eventID: "event.1",
+                entityID: "message.id",
+                usageType: .inAppExperienceImpression,
+                product: "message",
+                reportingContext: try! AirshipJSON.wrap("event.1"),
+                timestamp: timestamp,
+                contactId: "contact-id-1"
+            ),
+            AirshipMeteredUsageEvent(
+                eventID: "event.2",
+                entityID: "landing-page.id",
+                usageType: .inAppExperienceImpression,
+                product: "landingpage",
+                reportingContext: try! AirshipJSON.wrap("event.2"),
+                timestamp: timestamp,
+                contactId: "contact-id-2"
+            ),
+            AirshipMeteredUsageEvent(
+                eventID: "event.3",
+                entityID: "scene.id",
+                usageType: .inAppExperienceImpression,
+                product: "Scene",
+                reportingContext: try! AirshipJSON.wrap("event.3"),
+                timestamp: timestamp,
+                contactId: "contact-id-3"
+            ),
+            AirshipMeteredUsageEvent(
+                eventID: "event.4",
+                entityID: "survey.id",
+                usageType: .inAppExperienceImpression,
+                product: "Survey",
+                reportingContext: try! AirshipJSON.wrap("event.4"),
+                timestamp: timestamp,
+                contactId: "contact-id-4"
+            )
+        ]
 
-        notificationCenter.post(
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil,
-            userInfo: [RemoteConfigManager.remoteConfigKey: remoteConfig])
+        requestSession.response = HTTPURLResponse(
+            url: URL(string: "test://repose.url")!,
+            statusCode: 200,
+            httpVersion: "1",
+            headerFields: nil)
 
         let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
 
@@ -151,7 +201,6 @@ final class MeteredUsageApiClientTest: XCTestCase {
     }
     
     func testUploadStrippedEvents() async throws {
-        
         let timestamp = Date()
         
         let events = [
@@ -198,26 +247,6 @@ final class MeteredUsageApiClientTest: XCTestCase {
             statusCode: 200,
             httpVersion: "1",
             headerFields: nil)
-
-        var errorOnNoConfig = false
-        do {
-            let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
-        } catch {
-            errorOnNoConfig = true
-        }
-
-        XCTAssertTrue(errorOnNoConfig)
-
-        let remoteConfig = RemoteConfig(
-            remoteDataURL: "test://remoteUrl",
-            deviceAPIURL: "test://device",
-            analyticsURL: "test://analytics",
-            meteredUsageURL: "test://meteredUsage")
-
-        notificationCenter.post(
-            name: RemoteConfigManager.remoteConfigUpdatedEvent,
-            object: nil,
-            userInfo: [RemoteConfigManager.remoteConfigKey: remoteConfig])
 
         let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
 

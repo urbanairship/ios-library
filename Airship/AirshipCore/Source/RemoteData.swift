@@ -34,7 +34,7 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
     private let lastActiveRefreshDate: AirshipMainActorWrapper<Date> = AirshipMainActorWrapper(Date.distantPast)
     private let changeTokenLock: AirshipLock = AirshipLock()
     private let contactSubscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
-    private let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
+    let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
 
     public var remoteDataRefreshInterval: TimeInterval {
         get {
@@ -65,7 +65,6 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
     private let disableHelper: ComponentDisableHelper
 
 
-
     /// NOTE: For internal use only. :nodoc:
     public var isComponentEnabled: Bool {
         get {
@@ -76,6 +75,7 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
         }
     }
 
+    @MainActor
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -83,9 +83,9 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
         privacyManager: AirshipPrivacyManager,
         contact: InternalAirshipContactProtocol
     ) {
-
         let client = RemoteDataAPIClient(config: config)
         self.init(
+            config: config,
             dataStore: dataStore,
             localeManager: localeManager,
             privacyManager: privacyManager,
@@ -113,9 +113,12 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
                 )
             ]
         )
+
     }
 
+    @MainActor
     init(
+        config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         localeManager: AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
@@ -139,7 +142,6 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
             dataStore: dataStore,
             className: "UARemoteData"
         )
-
         
         self.refreshStatusSubjectMap = self.providers.reduce(
             into: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]()
@@ -173,13 +175,6 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(enqueueRefreshTask),
-            name: RuntimeConfig.configUpdatedEvent,
-            object: nil
-        )
-
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(enqueueRefreshTask),
             name: AirshipPrivacyManager.changeEvent,
             object: nil
         )
@@ -190,16 +185,23 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
         ) { [weak self] _ in
             return try await self?.handleRefreshTask() ?? .success
         }
+
+        onConfigUpdated(config.remoteConfig, isUpdate: false)
+        config.addRemoteConfigListener(notifyCurrent: false) { [weak self] _, new in
+            self?.onConfigUpdated(new, isUpdate: true)
+        }
     }
 
-    public func setContactSourceEnabled(enabled: Bool) {
+    private func onConfigUpdated(_ remoteConfig: RemoteConfig?, isUpdate: Bool) {
         self.serialQueue.enqueue { [providers] in
             let provider = providers.first { $0.source == .contact }
-            if (await provider?.setEnabled(enabled) == true) {
+            let updated = await provider?.setEnabled(remoteConfig?.fetchContactRemoteData ?? false)
+            if (isUpdate || updated == true) {
                 self.enqueueRefreshTask()
             }
         }
     }
+    
 
     public func status(
         source: RemoteDataSource

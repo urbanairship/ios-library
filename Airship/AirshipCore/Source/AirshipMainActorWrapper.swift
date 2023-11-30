@@ -3,7 +3,7 @@
 import Foundation
 
 
-final class AirshipMainActorWrapper<T: Sendable>: @unchecked Sendable {
+final class AirshipMainActorWrapper<T>: @unchecked Sendable {
     @MainActor
     var value: T
 

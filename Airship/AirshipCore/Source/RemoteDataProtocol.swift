@@ -30,5 +30,4 @@ public protocol RemoteDataProtocol: AnyObject, Sendable {
     func refresh(source: RemoteDataSource) async -> Bool
 
     var remoteDataRefreshInterval: TimeInterval { get set }
-    func setContactSourceEnabled(enabled: Bool)
 }

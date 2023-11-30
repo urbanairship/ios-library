@@ -2,7 +2,6 @@
 
 protocol RemoteConfigModuleAdapterProtocol {
     func setComponentsEnabled(_ enabled: Bool, module: RemoteConfigModule)
-    func applyConfig(_ config: Any?, module: RemoteConfigModule)
 }
 
 enum RemoteConfigModule: String, CaseIterable {
@@ -42,9 +41,5 @@ class RemoteConfigModuleAdapter: RemoteConfigModuleAdapterProtocol {
 
     func setComponentsEnabled(_ enabled: Bool, module: RemoteConfigModule) {
         self.components(module).forEach { $0.isComponentEnabled = enabled }
-    }
-
-    func applyConfig(_ config: Any?, module: RemoteConfigModule) {
-        self.components(module).forEach { $0.applyRemoteConfig?(config) }
     }
 }

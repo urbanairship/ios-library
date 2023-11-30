@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 /// NOTE: For internal use only. :nodoc:
 protocol AirshipMeteredUsageProtocol: Sendable {
@@ -16,14 +17,16 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     private static let defaultRateLimit: TimeInterval = 30.0
     private static let defaultInitialDelay: TimeInterval = 15.0
 
+    private let config: RuntimeConfig
+
     private let dataStore: PreferenceDataStore
     private let channel: AirshipChannelProtocol
     private let client: MeteredUsageAPIClientProtocol
     private let workManager: AirshipWorkManagerProtocol
     private let store: MeteredUsageStore
     private let privacyManager: AirshipPrivacyManager
-    private let meteredUsageConfig: Atomic<MeteredUsageConfig?> = Atomic(nil)
 
+    @MainActor
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -31,6 +34,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         privacyManager: AirshipPrivacyManager
     ) {
         self.init(
+            config: config,
             dataStore: dataStore,
             channel: channel,
             privacyManager: privacyManager,
@@ -39,7 +43,9 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         )
     }
 
+    @MainActor
     init(
+        config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: AirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
@@ -48,6 +54,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
+        self.config = config
         self.dataStore = dataStore
         self.channel = channel
         self.privacyManager = privacyManager
@@ -72,25 +79,26 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
                 conflictPolicy: .replace
             )
         )
+
+        self.config.addRemoteConfigListener { [weak self] old, new in
+            self?.updateConfig(
+                old: old?.meteredUsageConfig,
+                new: new.meteredUsageConfig
+            )
+        }
     }
 
-    func updateConfig(_ newConfig: MeteredUsageConfig?) {
-        let oldConfig = self.meteredUsageConfig.value
-        guard oldConfig != newConfig else {
-            return
-        }
-
-        self.meteredUsageConfig.value = newConfig
-
+    @MainActor
+    private func updateConfig(old: RemoteConfig.MeteredUsageConfig?, new: RemoteConfig.MeteredUsageConfig?) {
         self.workManager.setRateLimit(
             AirshipMeteredUsage.rateLimitID,
             rate: 1,
-            timeInterval: newConfig?.intervalMilliseconds?.timeInterval ?? AirshipMeteredUsage.defaultRateLimit
+            timeInterval: new?.interval ?? AirshipMeteredUsage.defaultRateLimit
         )
 
-        if oldConfig?.isEnabled != true && newConfig?.isEnabled == true {
+        if old?.isEnabled != true && new?.isEnabled == true {
             self.scheduleWork(
-                initialDelay: newConfig?.initialDelayMilliseconds?.timeInterval ?? AirshipMeteredUsage.defaultInitialDelay
+                initialDelay: new?.intialDelay ?? AirshipMeteredUsage.defaultInitialDelay
             )
         }
     }
@@ -143,12 +151,6 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     }
     
     private var isEnabled: Bool {
-        return self.meteredUsageConfig.value?.isEnabled ?? false
-    }
-}
-
-fileprivate extension Int64 {
-    var timeInterval: TimeInterval {
-        Double(self)/1000
+        return self.config.remoteConfig.meteredUsageConfig?.isEnabled ?? false
     }
 }
