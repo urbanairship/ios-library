@@ -170,6 +170,10 @@ public class PreferenceCenterState: ObservableObject {
                     self.contactSubscriptions[listID] = scopes
                 }
             }
+#if canImport(AirshipCore)
+        @unknown default:
+            AirshipLogger.error("Unknown scooped subscription list edit \(edit)")
+#endif
         }
     }
 
@@ -181,6 +185,10 @@ public class PreferenceCenterState: ObservableObject {
             self.channelSubscriptions.insert(listID)
         case .unsubscribe(let listID):
             self.channelSubscriptions.remove(listID)
+#if canImport(AirshipCore)
+        @unknown default:
+            AirshipLogger.error("Unknown subscription list edit \(edit)")
+#endif
         }
     }
 

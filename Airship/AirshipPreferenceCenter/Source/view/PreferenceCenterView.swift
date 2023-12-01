@@ -202,13 +202,9 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         state: PreferenceCenterState
     ) -> some View {
         let theme = configuration.preferenceCenterTheme
-        var title = state.config.display?.title
-        if title?.isEmpty != false {
-            title =
-                configuration.preferenceCenterTheme.viewController?
-                .navigationBar?
-                .title
-        }
+        let title = state.config.display?.title ?? configuration.preferenceCenterTheme.viewController?
+            .navigationBar?
+            .title
 
         return ScrollView {
             LazyVStack(alignment: .leading) {
@@ -229,6 +225,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             .padding(16)
             Spacer()
         }
+        .navigationTitle(title ?? "ua_preference_center_title".preferenceCenterlocalizedString)
     }
 
     @ViewBuilder
@@ -415,9 +412,7 @@ public struct PreferenceCenterView: View {
                     }
                 }
             }
-            .navigationTitle(
-                theme.viewController?.navigationBar?.title ?? "ua_preference_center_title".preferenceCenterlocalizedString
-            )
+        
         if #available(iOS 16.0, *) {
             NavigationStack {
                 ZStack{
