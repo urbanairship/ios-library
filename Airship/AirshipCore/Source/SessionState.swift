@@ -8,7 +8,7 @@ struct SessionState: Equatable, Sendable {
     var conversionMetadata: String?
 
     init(
-        sessionID: String = NSUUID().uuidString,
+        sessionID: String = UUID().uuidString,
         conversionSendID: String? = nil,
         conversionMetadata: String? = nil
     ) {

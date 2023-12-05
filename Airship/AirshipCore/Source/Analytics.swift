@@ -606,13 +606,13 @@ struct SessionEventFactory: SessionEventFactoryProtocol {
     func make(event: SessionEvent) -> AirshipEvent {
         switch (event.type) {
         case .foregroundInit:
-            return AppInitEvent(isForeground: true)
+            return AppInitEvent(isForeground: true, sessionState: event.sessionState)
         case .backgroundInit:
-            return AppInitEvent(isForeground: false)
+            return AppInitEvent(isForeground: false, sessionState: event.sessionState)
         case .background:
-            return AppBackgroundEvent()
+            return AppBackgroundEvent(sessionState: event.sessionState)
         case .foreground:
-            return AppForegroundEvent()
+            return AppForegroundEvent(sessionState: event.sessionState)
         }
     }
 }

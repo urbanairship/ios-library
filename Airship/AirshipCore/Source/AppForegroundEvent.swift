@@ -7,10 +7,10 @@ class AppForegroundEvent: NSObject, AirshipEvent {
 
     @MainActor
     init(
-        analytics: AnalyticsProtocol = Airship.requireComponent(ofType: AnalyticsProtocol.self),
+        sessionState: SessionState,
         push: PushProtocol = Airship.requireComponent(ofType: PushProtocol.self)
     ) {
-        self._data = AppInitEvent.gatherData(analytics: analytics, push: push)
+        self._data = AppInitEvent.gatherData(sessionState: sessionState, push: push)
     }
 
     @objc

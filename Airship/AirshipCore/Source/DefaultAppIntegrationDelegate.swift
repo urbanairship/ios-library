@@ -327,6 +327,10 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     private func notificationAction(categoryID: String, actionID: String)
         -> UNNotificationAction?
     {
+        guard actionID != UNNotificationDefaultActionIdentifier else {
+            return nil
+        }
+
         var category: UNNotificationCategory?
         #if !os(tvOS)
         category = self.push.combinedCategories.first(where: {

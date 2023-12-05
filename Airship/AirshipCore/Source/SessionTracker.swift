@@ -29,8 +29,9 @@ final class SessionTracker: SessionTrackerProtocol {
     private let taskSleeper: AirshipTaskSleeper
     private let isForeground: AirshipMainActorWrapper<Bool?> = AirshipMainActorWrapper(nil)
     private let initialized: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
-    private let _sessionState: Atomic<SessionState> = Atomic(SessionState())
+    private let _sessionState: Atomic<SessionState>
     private let appStateTracker: AppStateTrackerProtocol
+    private let sessionStateFactory: @Sendable () -> SessionState
 
     nonisolated var sessionState: SessionState {
         return _sessionState.value
@@ -40,12 +41,15 @@ final class SessionTracker: SessionTrackerProtocol {
         date: AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: AirshipTaskSleeper = .shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared
+        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
+        sessionStateFactory: @Sendable @escaping () -> SessionState = { SessionState() }
     ) {
         self.date = date
         self.taskSleeper = taskSleeper
         self.appStateTracker = appStateTracker
         (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.makeStreamWithContinuation()
+        self.sessionStateFactory = sessionStateFactory
+        self._sessionState = Atomic(sessionStateFactory())
 
         notificationCenter.addObserver(
             self,
@@ -64,6 +68,8 @@ final class SessionTracker: SessionTrackerProtocol {
 
     @MainActor
     func launchedFromPush(sendID: String?, metadata: String?) {
+        AirshipLogger.debug("Launched from push")
+
         self._sessionState.update { state in
             var state = state
             state.conversionMetadata = metadata
@@ -98,13 +104,12 @@ final class SessionTracker: SessionTrackerProtocol {
         }
     }
 
-    private func startSession() {
-        self._sessionState.value = SessionState()
-    }
-
+    @MainActor
     private func addEvent(_ type: SessionEvent.EventType, date: Date? = nil) {
+        AirshipLogger.debug("Added session event \(type) state: \(self.sessionState)")
+
         self.eventsContinuation.yield(
-            SessionEvent(type: type, date: date ?? self.date.now)
+            SessionEvent(type: type, date: date ?? self.date.now, sessionState: self.sessionState)
         )
     }
 
@@ -121,7 +126,12 @@ final class SessionTracker: SessionTrackerProtocol {
         // Background -> foreground
         if isForeground.value == false {
             isForeground.value = true
-            startSession()
+            self._sessionState.update { [sessionStateFactory] old in
+                var session = sessionStateFactory()
+                session.conversionMetadata = old.conversionMetadata
+                session.conversionSendID = old.conversionSendID
+                return session
+            }
             addEvent(.foreground)
         }
     }
@@ -140,7 +150,8 @@ final class SessionTracker: SessionTrackerProtocol {
         if isForeground.value == true {
             isForeground.value = false
             addEvent(.background)
-            startSession()
+
+            self._sessionState.value = self.sessionStateFactory()
         }
     }
 }

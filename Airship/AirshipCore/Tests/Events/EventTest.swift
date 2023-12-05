@@ -9,13 +9,14 @@ class EventTest: XCTestCase {
 
     @MainActor
     func testAppInitEvent() throws {
-        let testAnalytics = TestAnalytics()
-        testAnalytics.conversionSendID = "push ID"
-        testAnalytics.conversionPushMetadata = "base64metadataString"
+        let sessionState = SessionState(
+            conversionSendID: "push ID",
+            conversionMetadata: "base64metadataString"
+        )
 
         let event = AppInitEvent.init(
             isForeground: true,
-            analytics: testAnalytics,
+            sessionState: sessionState,
             push: EventTestPush()
         )
 
@@ -44,12 +45,13 @@ class EventTest: XCTestCase {
 
     @MainActor
     func testForegroundEvent() throws {
-        let testAnalytics = TestAnalytics()
-        testAnalytics.conversionSendID = "push ID"
-        testAnalytics.conversionPushMetadata = "base64metadataString"
+        let sessionState = SessionState(
+            conversionSendID: "push ID",
+            conversionMetadata: "base64metadataString"
+        )
 
         let event = AppForegroundEvent.init(
-            analytics: testAnalytics,
+            sessionState: sessionState,
             push: EventTestPush()
         )
 
@@ -81,13 +83,13 @@ class EventTest: XCTestCase {
     }
 
     func testAppExitEvent() throws {
-        let testAnalytics = TestAnalytics()
-        testAnalytics.conversionSendID = "push ID"
-        testAnalytics.conversionPushMetadata = "base64metadataString"
+        let sessionState = SessionState(
+            conversionSendID: "push ID",
+            conversionMetadata: "base64metadataString"
+        )
 
-        let event = AppExitEvent.init(analytics: testAnalytics)
-
-        let data = event.gatherData()
+        let event = AppExitEvent(sessionState: sessionState)
+        let data = event.data
 
         XCTAssertEqual(event.eventType, "app_exit")
         XCTAssertEqual(data["connection_type"] as! String, "wifi")
@@ -96,11 +98,12 @@ class EventTest: XCTestCase {
     }
 
     func testAppBackgroundEvent() throws {
-        let testAnalytics = TestAnalytics()
-        testAnalytics.conversionSendID = "push ID"
-        testAnalytics.conversionPushMetadata = "base64metadataString"
+        let sessionState = SessionState(
+            conversionSendID: "push ID",
+            conversionMetadata: "base64metadataString"
+        )
 
-        let event = AppBackgroundEvent.init(analytics: testAnalytics)
+        let event = AppBackgroundEvent(sessionState: sessionState)
 
         XCTAssertEqual(event.eventType, "app_background")
     }

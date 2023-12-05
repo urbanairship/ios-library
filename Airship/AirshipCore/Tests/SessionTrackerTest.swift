@@ -13,11 +13,18 @@ final class SessionTrackerTest: XCTestCase {
 
     var tracker: SessionTracker!
 
+    var sessionCount = Atomic<Int>(1)
+
     override func setUpWithError() throws {
         self.tracker = SessionTracker(
             date: date,
             taskSleeper: taskSleeper,
-            appStateTracker: appStateTracker
+            appStateTracker: appStateTracker,
+            sessionStateFactory: { [sessionCount] in
+                let state = SessionState(sessionID: "\(sessionCount.value)")
+                sessionCount.value = sessionCount.value + 1
+                return state
+            }
         )
     }
 
@@ -44,54 +51,108 @@ final class SessionTrackerTest: XCTestCase {
         }
 
         await ensureEvents([
-            SessionEvent(type: .backgroundInit, date: self.date.now),
+            SessionEvent(
+                type: .backgroundInit,
+                date: self.date.now,
+                sessionState: SessionState(sessionID: "1")
+            ),
         ])
+
+        XCTAssertEqual(self.tracker.sessionState.sessionID, "1")
     }
 
     func testLaunchFromPushEmitsAppInit() async throws {
-        await self.tracker.launchedFromPush(sendID: "some sender", metadata: "some metadata")
+        await self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+
+        let expectedSessionState = SessionState(
+            sessionID: "1",
+            conversionSendID: "some sendID",
+            conversionMetadata: "some metadata"
+        )
 
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now),
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
+
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
     func testAirshipReadyEmitsAppInitActiveState() async throws {
         self.appStateTracker.currentState = .active
 
+        let expectedSessionState = SessionState(
+            sessionID: "1"
+        )
+
         await self.tracker.airshipReady()
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now),
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
-        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
-    }
 
+        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+    }
 
     func testAirshipReadyEmitsAppInitInActiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
+        let expectedSessionState = SessionState(
+            sessionID: "1"
+        )
+
         await self.tracker.airshipReady()
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now),
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
+
         XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
     func testAirshipReadyEmitsAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
+        let expectedSessionState = SessionState(
+            sessionID: "1"
+        )
+
         await self.tracker.airshipReady()
         await ensureEvents([
-            SessionEvent(type: .backgroundInit, date: self.date.now),
+            SessionEvent(
+                type: .backgroundInit,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
+
         XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
     func testLaunchFromPushAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
+
+        let expectedSessionState = SessionState(
+            sessionID: "1",
+            conversionSendID: "some sendID",
+            conversionMetadata: "some metadata"
+        )
+
         Task {  @MainActor [tracker, notificationCenter] in
             // launch from push
-            tracker?.launchedFromPush(sendID: "some sender", metadata: "some metadata")
+            tracker?.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
             // This would normally be called with a delay, so calling it after
             tracker?.airshipReady()
@@ -101,25 +162,31 @@ final class SessionTrackerTest: XCTestCase {
                 name: AppStateTracker.didBecomeActiveNotification,
                 object: nil
             )
-
-            // Background
-            notificationCenter.post(
-                name: AppStateTracker.didEnterBackgroundNotification,
-                object: nil
-            )
         }
 
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now),
-            SessionEvent(type: .background, date: self.date.now)
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
+
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
     func testLaunchFromPushAppInActiveState() async throws {
         self.appStateTracker.currentState = .inactive
+
+        let expectedSessionState = SessionState(
+            sessionID: "1",
+            conversionSendID: "some sendID",
+            conversionMetadata: "some metadata"
+        )
+
         Task { @MainActor [tracker, notificationCenter] in
             // launch from push
-            tracker?.launchedFromPush(sendID: "some sender", metadata: "some metadata")
+            tracker?.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
             // This would normally be called with a delay, so calling it after
             tracker?.airshipReady()
@@ -129,18 +196,17 @@ final class SessionTrackerTest: XCTestCase {
                 name: AppStateTracker.didBecomeActiveNotification,
                 object: nil
             )
-
-            // Background
-            notificationCenter.post(
-                name: AppStateTracker.didEnterBackgroundNotification,
-                object: nil
-            )
         }
 
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now),
-            SessionEvent(type: .background, date: self.date.now)
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
+
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
     func testLaunchAppBackgroundState() async throws {
@@ -150,8 +216,15 @@ final class SessionTrackerTest: XCTestCase {
         await self.tracker.airshipReady()
 
         await ensureEvents([
-            SessionEvent(type: .backgroundInit, date: self.date.now)
+            SessionEvent(
+                type: .backgroundInit,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1"
+                )
+            )
         ])
+
 
         Task { @MainActor [notificationCenter] in
             // Foreground
@@ -167,10 +240,26 @@ final class SessionTrackerTest: XCTestCase {
             )
         }
 
+        let expectedSessionState = SessionState(
+            sessionID: "2"
+        )
+
         await ensureEvents([
-            SessionEvent(type: .foreground, date: self.date.now),
-            SessionEvent(type: .background, date: self.date.now)
+            SessionEvent(
+                type: .foreground,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            ),
+            SessionEvent(
+                type: .background,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
         ])
+
+        // Background should reset state
+        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "3"))
+
     }
 
     func testLaunchAppInactiveState() async throws {
@@ -180,7 +269,13 @@ final class SessionTrackerTest: XCTestCase {
         await self.tracker.airshipReady()
 
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now)
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1"
+                )
+            )
         ])
 
         Task { @MainActor [notificationCenter] in
@@ -198,10 +293,18 @@ final class SessionTrackerTest: XCTestCase {
         }
 
         await ensureEvents([
-            SessionEvent(type: .background, date: self.date.now)
+            SessionEvent(
+                type: .background,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1"
+                )
+            )
         ])
-    }
 
+        // Background should reset state
+        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "2"))
+    }
 
     func testLaunchAppActiveState() async throws {
         self.appStateTracker.currentState = .active
@@ -210,7 +313,13 @@ final class SessionTrackerTest: XCTestCase {
         await self.tracker.airshipReady()
 
         await ensureEvents([
-            SessionEvent(type: .foregroundInit, date: self.date.now)
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1"
+                )
+            )
         ])
 
         Task { @MainActor [notificationCenter] in
@@ -228,8 +337,118 @@ final class SessionTrackerTest: XCTestCase {
         }
 
         await ensureEvents([
-            SessionEvent(type: .background, date: self.date.now)
+            SessionEvent(
+                type: .background,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1"
+                )
+            )
         ])
+
+        // Background should reset state
+        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "2"))
+    }
+
+    func testLaunchContentAvailablePush() async throws {
+        self.appStateTracker.currentState = .background
+
+        // App init
+        await self.tracker.airshipReady()
+
+        await ensureEvents([
+            SessionEvent(
+                type: .backgroundInit,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1"
+                )
+            )
+        ])
+
+
+        Task { @MainActor [tracker, notificationCenter] in
+            // launch from push
+            tracker?.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+
+            // Foreground
+            notificationCenter.post(
+                name: AppStateTracker.didBecomeActiveNotification,
+                object: nil
+            )
+        }
+
+        let expectedSessionState = SessionState(
+            sessionID: "2",
+            conversionSendID: "some sendID",
+            conversionMetadata: "some metadata"
+        )
+
+        await ensureEvents([
+            SessionEvent(
+                type: .foreground,
+                date: self.date.now,
+                sessionState: expectedSessionState
+            )
+        ])
+
+        // Foreground should generate new session ID
+        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+    }
+
+    func testBackgroundClearPush() async throws {
+        self.appStateTracker.currentState = .background
+
+        await self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+
+        await ensureEvents([
+            SessionEvent(
+                type: .foregroundInit,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1",
+                    conversionSendID: "some sendID",
+                    conversionMetadata: "some metadata"
+                )
+            )
+        ])
+
+
+        Task { @MainActor [notificationCenter] in
+            // Background
+            notificationCenter.post(
+                name: AppStateTracker.didEnterBackgroundNotification,
+                object: nil
+            )
+
+            // Foreground
+            notificationCenter.post(
+                name: AppStateTracker.didBecomeActiveNotification,
+                object: nil
+            )
+        }
+
+        await ensureEvents([
+            SessionEvent(
+                type: .background,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "1",
+                    conversionSendID: "some sendID",
+                    conversionMetadata: "some metadata"
+                )
+            ),
+            SessionEvent(
+                type: .foreground,
+                date: self.date.now,
+                sessionState: SessionState(
+                    sessionID: "3"
+                )
+            )
+        ])
+
+        // Foreground should generate new session ID
+        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "3"))
     }
 
     private func ensureEvents(_ events: [SessionEvent], line: UInt = #line) async {

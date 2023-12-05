@@ -2,13 +2,10 @@
 
 /// - Note: For Internal use only :nodoc:
 class AppExitEvent: NSObject, AirshipEvent {
-    private lazy var analytics = Airship.requireComponent(
-        ofType: AnalyticsProtocol.self
-    )
+    private let _data: [AnyHashable: Any]
 
-    convenience init(analytics: AnalyticsProtocol) {
-        self.init()
-        self.analytics = analytics
+    init(sessionState: SessionState) {
+        self._data = Self.gatherData(sessionState: sessionState)
     }
 
     @objc
@@ -21,16 +18,17 @@ class AppExitEvent: NSObject, AirshipEvent {
         return "app_exit"
     }
 
+   
     @objc
     public var data: [AnyHashable: Any] {
-        return self.gatherData()
+        return self._data
     }
 
-    open func gatherData() -> [AnyHashable: Any] {
+    private static func gatherData(sessionState: SessionState) -> [AnyHashable: Any] {
         var data: [AnyHashable: Any] = [:]
 
-        data["push_id"] = self.analytics.conversionSendID
-        data["metadata"] = self.analytics.conversionPushMetadata
+        data["push_id"] = sessionState.conversionSendID
+        data["metadata"] = sessionState.conversionMetadata
         #if !os(watchOS)
         data["connection_type"] = AirshipUtils.connectionType()
         #endif

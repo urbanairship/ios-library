@@ -8,10 +8,10 @@ final class AppInitEvent: NSObject, AirshipEvent {
     @MainActor
     init(
         isForeground: Bool,
-        analytics: AnalyticsProtocol = Airship.requireComponent(ofType: AnalyticsProtocol.self),
+        sessionState: SessionState,
         push: PushProtocol = Airship.requireComponent(ofType: PushProtocol.self)
     ) {
-        self._data = AppInitEvent.gatherData(analytics: analytics, push: push, isForeground: isForeground)
+        self._data = AppInitEvent.gatherData(sessionState: sessionState, push: push, isForeground: isForeground)
     }
 
     @objc
@@ -31,14 +31,14 @@ final class AppInitEvent: NSObject, AirshipEvent {
     
     @MainActor
     static func gatherData(
-        analytics: AnalyticsProtocol,
+        sessionState: SessionState,
         push: PushProtocol,
         isForeground: Bool? = nil
     ) -> [AnyHashable: Any] {
         var data: [AnyHashable: Any] = [:]
 
-        data["push_id"] = analytics.conversionSendID
-        data["metadata"] = analytics.conversionPushMetadata
+        data["push_id"] = sessionState.conversionSendID
+        data["metadata"] = sessionState.conversionMetadata
         data["carrier"] = AirshipUtils.carrierName()
         #if !os(watchOS)
         data["connection_type"] = AirshipUtils.connectionType()
