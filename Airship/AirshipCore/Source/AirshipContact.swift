@@ -335,6 +335,18 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         self.addOperation(.reset)
     }
 
+
+    /// Can be called after the app performs a remote named user association for the channel instead
+    /// of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
+    /// data. Applications should only call this method when the user login has changed.
+    @objc
+    public func notifyRemoteLogin() {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            return
+        }
+        self.addOperation(.verify(self.date.now, required: true))
+    }
+
     /// Begins a tag groups editing session.
     /// - Returns: A TagGroupsEditor
     @objc

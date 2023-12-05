@@ -5,6 +5,9 @@ import Combine
 
 @objc(UATestContact)
 class TestContact: NSObject, InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
+    func notifyRemoteLogin() {
+
+    }
 
     var contactIDInfo: AirshipCore.ContactIDInfo? = nil
 

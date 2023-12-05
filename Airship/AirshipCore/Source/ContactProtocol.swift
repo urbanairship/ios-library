@@ -42,6 +42,14 @@ public protocol AirshipContactBaseProtocol: Sendable {
     func reset()
 
     /**
+     * Can be called after the app performs a remote named user association for the channel instead
+     * of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
+     * data. Applications should only call this method when the user login has changed.
+     */
+    @objc
+    func notifyRemoteLogin()
+
+    /**
      * Edits tags.
      * - Returns: A tag groups editor.
      */

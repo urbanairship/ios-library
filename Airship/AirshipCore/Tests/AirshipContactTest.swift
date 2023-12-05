@@ -572,6 +572,11 @@ class AirshipContactTest: XCTestCase {
         XCTAssertEqual(expected, lists)
     }
 
+    func testNotifyRemoteLogin() async throws {
+        self.contact.notifyRemoteLogin()
+        await verifyOperations([.verify(self.date.now, required: true)])
+    }
+
     func testFetchSubscriptionListsOverrides() async throws {
         await self.contactManager.setCurrentContactIDInfo(
             ContactIDInfo(contactID: "some-contact-id", isStable: true)

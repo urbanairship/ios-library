@@ -352,7 +352,7 @@ actor ContactManager: ContactManagerProtocol {
                 return try await self.performResolveOperation()
             }
 
-        case .verify(_):
+        case .verify(_, _):
             return try await doIdentify {
                 return try await self.performResolveOperation()
             }
@@ -668,6 +668,8 @@ actor ContactManager: ContactManagerProtocol {
         return !self.operationEntries.contains { entry in
             switch entry.operation {
             case .reset: return true
+            case .verify(_, let required):
+                return required == true
             case .identify(let identifier):
                 if lastContactInfo.namedUserID != identifier {
                     return true
@@ -701,7 +703,7 @@ actor ContactManager: ContactManagerProtocol {
             // Skip if we have a valid token for the current contact info
             return tokenIfValid() != nil
 
-        case .verify(let date):
+        case .verify(let date, _):
             // Skip if we have a valid token and the resolveDate is newer than the verify date
             let resolveDate = self.lastContactInfo?.resolveDate ?? .distantPast
             return tokenIfValid() != nil && date <= resolveDate

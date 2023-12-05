@@ -205,6 +205,51 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
+    func testRequiredVerify() async throws {
+        // Resolve is called first if we do not have a valid token
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            XCTAssertEqual(self.channel.identifier, channelID)
+            XCTAssertNil(contactID)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        await self.contactManager.addOperation(.resolve)
+        _ = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        await fulfillmentCompat(of: [resolve])
+
+        await self.contactManager.addOperation(.verify(self.date.now + 1, required: true))
+
+        await self.verifyUpdates(
+            [
+                .contactIDUpdate(
+                    ContactIDInfo(
+                        contactID: self.anonIdentifyResponse.contact.contactID,
+                        isStable: true,
+                        resolveDate: self.date.now
+                    )
+                ),
+                .contactIDUpdate(
+                    ContactIDInfo(
+                        contactID: self.anonIdentifyResponse.contact.contactID,
+                        isStable: false,
+                        resolveDate: self.date.now
+                    )
+                )
+            ]
+        )
+    }
+
     func testVerifyFailed() async throws {
         await self.contactManager.addOperation(.verify(self.date.now))
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in

@@ -10,7 +10,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .update(_, _, _): return .update
         case .identify(_): return .identify
         case .resolve: return .resolve
-        case .verify(_): return .verify
+        case .verify(_, _): return .verify
         case .reset: return .reset
         case .registerEmail(_, _): return .registerEmail
         case .registerSMS(_, _): return .registerSMS
@@ -39,7 +39,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
     case identify(String)
     case resolve
     case reset
-    case verify(Date)
+    case verify(Date, required: Bool? = nil)
     case registerEmail(
         address: String,
         options: EmailRegistrationOptions
@@ -78,6 +78,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case channelID
         case channelType
         case date
+        case required
     }
 
 
@@ -105,9 +106,10 @@ enum ContactOperation: Codable, Equatable, Sendable {
             try container.encodeNil(forKey: .payload)
             try container.encode(OperationType.reset, forKey: .type)
 
-        case .verify(let date):
+        case .verify(let date, let required):
             var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
             try payloadContainer.encode(date, forKey: .date)
+            try payloadContainer.encodeIfPresent(required, forKey: .required)
             try container.encode(OperationType.verify, forKey: .type)
 
         case .registerEmail(let address, let options):
@@ -234,6 +236,10 @@ enum ContactOperation: Codable, Equatable, Sendable {
                 try payloadContainer.decode(
                     Date.self,
                     forKey: .date
+                ),
+                required: try payloadContainer.decodeIfPresent(
+                    Bool.self,
+                    forKey: .required
                 )
             )
         }
