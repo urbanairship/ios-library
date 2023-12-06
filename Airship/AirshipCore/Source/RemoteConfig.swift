@@ -22,7 +22,7 @@ struct RemoteConfig: Codable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case airshipConfig = "airship_config"
-        case meteredUsageConfig = "metered_usage_config"
+        case meteredUsageConfig = "metered_usage"
         case fetchContactRemoteData = "fetch_contact_remote_data"
         case contactConfig = "contact_config"
     }
