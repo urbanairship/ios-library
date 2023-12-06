@@ -540,7 +540,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 }
 
 - (BOOL)isForegrounded {
-    return self.appStateTracker.state == UAApplicationStateActive;
+    return self.appStateTracker.isForgrounded;
 }
 
 - (void)cleanSchedules {
@@ -916,7 +916,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
  */
 - (void)createStateConditions {
     UAAutomationStateCondition *activeSessionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {
-        return self.appStateTracker.state == UAApplicationStateActive;
+        return self.isForegrounded;
     } argumentGenerator:nil stateChangeDate:self.date.now];
 
     UAAutomationStateCondition *versionCondition = [[UAAutomationStateCondition alloc] initWithPredicate:^BOOL {

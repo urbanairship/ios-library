@@ -609,7 +609,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
 }
 
 - (void)testActiveSessionLateSubscription {
-    [[[self.mockedApplication stub] andReturnValue:OCMOCK_VALUE(UIApplicationStateActive)] applicationState];
+    [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@YES] isForgrounded];
 
     UAScheduleTrigger *trigger = [UAScheduleTrigger activeSessionTriggerWithCount:1];
     [self verifyStateTrigger:trigger];
@@ -744,7 +744,7 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
     }];
 
     [self verifyDelay:delay fulfillmentBlock:^{
-        [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@(UAApplicationStateActive)] state];
+        [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@YES] isForgrounded];
         [self simulateForegroundTransition];
     }];
 }
@@ -1380,10 +1380,12 @@ static NSString * const UAAutomationEngineIntervalTaskID = @"UAAutomationEngine.
  * Helper method for simulating a full transition from the background to the active state.
  */
 - (void)simulateForegroundTransition {
+    [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@YES] isForgrounded];
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToForeground object:nil];
 }
 
 - (void)simulateBackgroundTransition {
+    [(UAAppStateTracker *)[[self.mockAppStateTracker expect] andReturnValue:@NO] isForgrounded];
     [self.notificationCenter postNotificationName:UAAppStateTracker.didTransitionToBackground object:nil];
 }
 
