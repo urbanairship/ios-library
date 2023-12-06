@@ -64,11 +64,23 @@ public struct MessageCenterView: View {
             NavigationStack {
                 content
             }
+            .onAppear {
+                self.controller.displayMessageCenter(true)
+            }
+            .onDisappear {
+                self.controller.displayMessageCenter(false)
+            }
         } else {
             NavigationView {
                 content
             }
             .navigationViewStyle(.stack)
+            .onAppear {
+                self.controller.displayMessageCenter(true)
+            }
+            .onDisappear {
+                self.controller.displayMessageCenter(false)
+            }
         }
     }
 }

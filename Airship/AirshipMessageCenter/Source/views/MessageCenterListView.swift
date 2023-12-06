@@ -57,10 +57,17 @@ public struct MessageCenterListView: View {
         messageID: String
     ) -> some View {
         let cell = NavigationLink(
-            destination: MessageCenterMessageView(
-                messageID: messageID,
-                title: item.message.title
-            )
+            destination: 
+                MessageCenterMessageView(
+                    messageID: messageID,
+                    title: item.message.title
+                )
+                .onAppear {
+                    self.controller.displayMessage(messageID)
+                }
+                .onDisappear {
+                    self.controller.displayMessage(nil)
+                }
         ) {
             MessageCenterListItemView(viewModel: item)
         }
@@ -99,7 +106,7 @@ public struct MessageCenterListView: View {
                 }
             }
             .onAppear{
-                let _ = self.controller.$messageID
+                let _ = self.controller.$visibleMessageID
                     .sink {
                         isActive = ($0 != nil)
                     }
@@ -150,15 +157,18 @@ public struct MessageCenterListView: View {
         
         let destination = self.messageStyle.makeBody(
             configuration: MessageViewStyleConfiguration(
-                messageID: self.controller.messageID ?? "",
+                messageID: self.controller.visibleMessageID ?? "",
                 title: self.viewModel.messageItem(
-                    forID: self.controller.messageID ?? ""
+                    forID: self.controller.visibleMessageID ?? ""
                 )?.message.title,
                 dismissAction: nil
             )
         )
+            .onAppear {
+                self.controller.displayMessage(self.controller.visibleMessageID)
+            }
             .onDisappear {
-                self.controller.messageID = nil
+                self.controller.displayMessage(nil)
             }
         
         if #available(iOS 16.0, *) {
@@ -166,7 +176,7 @@ public struct MessageCenterListView: View {
                 .background(
                     NavigationLink(
                         "",
-                        value: self.controller.messageID)
+                        value: self.controller.visibleMessageID)
                     .navigationDestination(isPresented: $isActive) {
                         destination
                     }

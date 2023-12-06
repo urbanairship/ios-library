@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -28,7 +29,7 @@ public protocol MessageCenterDisplayDelegate {
 
 /// Airship Message Center module.
 @objc(UAMessageCenter)
-public class MessageCenter: NSObject {
+public class MessageCenter: NSObject, ObservableObject {
 
     /// Message center display delegate.
     @objc
@@ -43,7 +44,10 @@ public class MessageCenter: NSObject {
 
     private var currentDisplay: Disposable?
 
-    private var controller: MessageCenterController = MessageCenterController()
+    /// The message center controller.
+    @Published
+    @objc
+    public var controller: MessageCenterController
 
     /// Message center theme.
     public var theme: MessageCenterTheme?
@@ -71,7 +75,8 @@ public class MessageCenter: NSObject {
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
-        inbox: MessageCenterInbox
+        inbox: MessageCenterInbox,
+        controller: MessageCenterController
     ) {
         self.inbox = inbox
         self.privacyManager = privacyManager
@@ -80,7 +85,8 @@ public class MessageCenter: NSObject {
             dataStore: dataStore,
             className: "MessageCenter"
         )
-
+        self.controller = controller
+        
         super.init()
 
         notificationCenter.addObserver(
@@ -106,17 +112,20 @@ public class MessageCenter: NSObject {
         workManager: AirshipWorkManagerProtocol
     ) {
 
+        let controller = MessageCenterController()
         let inbox = MessageCenterInbox(
             with: config,
             dataStore: dataStore,
             channel: channel,
-            workManager: workManager
+            workManager: workManager, 
+            controller: controller
         )
 
         self.init(
             dataStore: dataStore,
             privacyManager: privacyManager,
-            inbox: inbox
+            inbox: inbox,
+            controller: controller
         )
     }
 
@@ -128,10 +137,9 @@ public class MessageCenter: NSObject {
             return
         }
 
-        self.controller.navigate(messageID: nil)
-
         guard let displayDelegate = self.displayDelegate else {
             AirshipLogger.trace("Launching OOTB message center")
+            self.controller.displayMessageCenter(true)
             Task {
                 await openDefaultMessageCenter()
             }
@@ -152,10 +160,9 @@ public class MessageCenter: NSObject {
             return
         }
 
-        self.controller.navigate(messageID: messageID)
-
         guard let displayDelegate = self.displayDelegate else {
             AirshipLogger.trace("Launching OOTB message center")
+            self.controller.displayMessage(messageID)
             Task {
                 await openDefaultMessageCenter()
             }

@@ -88,6 +88,7 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
 /// Airship Message Center inbox.
 @objc(UAMessageCenterInbox)
 public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
+    
     private enum UpdateType {
         case local
         case refreshSucess
@@ -103,6 +104,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     )
 
     private let store: MessageCenterStore
+    private let controller: MessageCenterController
     private let channel: InternalAirshipChannelProtocol
     private let client: MessageCenterAPIClient
     private let config: RuntimeConfig
@@ -175,7 +177,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             return await _getUnreadCount()
         }
     }
-
+    
     private var subscriptions: Set<AnyCancellable> = Set()
 
     init(
@@ -185,7 +187,8 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         store: MessageCenterStore,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: AirshipDateProtocol = AirshipDate.shared,
-        workManager: AirshipWorkManagerProtocol
+        workManager: AirshipWorkManagerProtocol,
+        controller: MessageCenterController
     ) {
         self.channel = channel
         self.client = client
@@ -194,6 +197,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         self.notificationCenter = notificationCenter
         self.date = date
         self.workManager = workManager
+        self.controller = controller
 
         super.init()
 
@@ -267,7 +271,8 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: InternalAirshipChannelProtocol,
-        workManager: AirshipWorkManagerProtocol
+        workManager: AirshipWorkManagerProtocol,
+        controller: MessageCenterController
     ) {
         self.init(
             channel: channel,
@@ -280,7 +285,8 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                 config: config,
                 dataStore: dataStore
             ),
-            workManager: workManager
+            workManager: workManager, 
+            controller: controller
         )
     }
 
