@@ -18,23 +18,18 @@ public enum MessageCenterState: Equatable {
 public class MessageCenterController: NSObject, ObservableObject {
     
     @Published
-    private(set) var visibleMessageID: String? = nil
+    var messageID: String? = nil
+
+    @Published
+    var visibleMessageID: String? = nil
     
     @Published
-    private var isMessageCenterVisible: Bool = false
+    var isMessageCenterVisible: Bool = false
     
     private var subscriptions: Set<AnyCancellable> = Set()
     
     private let updateSubject = PassthroughSubject<MessageCenterState, Never>()
-    
-    func displayMessageCenter(_ display: Bool) {
-        self.isMessageCenterVisible = display
-    }
-    
-    func displayMessage(_ messageId: String?) {
-        self.visibleMessageID = messageId
-    }
-    
+
     /// Publisher that emits the message center state.
     public var statePublisher: AnyPublisher<MessageCenterState, Never> {
         self.updateSubject
@@ -47,7 +42,7 @@ public class MessageCenterController: NSObject, ObservableObject {
     ///     - messageID: The message ID to navigate to.
     @objc
     public func navigate(messageID: String?) {
-        self.displayMessage(messageID)
+        self.messageID = messageID
     }
     
     @objc

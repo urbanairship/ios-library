@@ -131,6 +131,7 @@ public class MessageCenter: NSObject, ObservableObject {
 
     /// Display the message center.
     @objc
+    @MainActor
     public func display() {
         guard self.enabled else {
             AirshipLogger.warn("Message center disabled. Unable to display.")
@@ -139,10 +140,8 @@ public class MessageCenter: NSObject, ObservableObject {
 
         guard let displayDelegate = self.displayDelegate else {
             AirshipLogger.trace("Launching OOTB message center")
-            self.controller.displayMessageCenter(true)
-            Task {
-                await openDefaultMessageCenter()
-            }
+            showDefaultMessageCenter()
+            self.controller.navigate(messageID: nil)
             return
         }
 
@@ -154,6 +153,7 @@ public class MessageCenter: NSObject, ObservableObject {
     /// - Parameters:
     ///     - messageID:  The messageID of the message.
     @objc(displayWithMessageID:)
+    @MainActor
     public func display(messageID: String) {
         guard self.enabled else {
             AirshipLogger.warn("Message center disabled. Unable to display.")
@@ -162,10 +162,8 @@ public class MessageCenter: NSObject, ObservableObject {
 
         guard let displayDelegate = self.displayDelegate else {
             AirshipLogger.trace("Launching OOTB message center")
-            self.controller.displayMessage(messageID)
-            Task {
-                await openDefaultMessageCenter()
-            }
+            showDefaultMessageCenter()
+            self.controller.navigate(messageID: messageID)
             return
         }
 
@@ -181,33 +179,15 @@ public class MessageCenter: NSObject, ObservableObject {
         if let displayDelegate = self.displayDelegate {
             displayDelegate.dismissMessageCenter()
         } else {
-            currentDisplay?.dispose()
+            Task { @MainActor in
+                self.dismissDefaultMessageCenter()
+            }
         }
     }
 
     private func updateEnableState() {
         self.inbox.enabled = self.enabled
     }
-
-    @MainActor
-    private func openDefaultMessageCenter() async {
-        guard let scene = try? AirshipUtils.findWindowScene() else {
-            AirshipLogger.error(
-                "Unable to display message center, missing scene."
-            )
-            return
-        }
-
-        currentDisplay?.dispose()
-
-        AirshipLogger.debug("Opening default message center UI")
-
-        self.currentDisplay = showMessageCenter(
-            scene: scene,
-            theme: theme
-        )
-    }
-
 }
 
 extension MessageCenter: AirshipComponent, PushableComponent {
@@ -226,6 +206,7 @@ extension MessageCenter: AirshipComponent, PushableComponent {
         }
     }
 
+    @MainActor
     func deepLink(deepLink: URL) -> Bool {
         if !(deepLink.scheme == Airship.deepLinkScheme) {
             return false
@@ -254,6 +235,7 @@ extension MessageCenter: AirshipComponent, PushableComponent {
 
     // MARK: PushableComponent
 
+    @MainActor
     public func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
@@ -290,13 +272,21 @@ extension MessageCenter: AirshipComponent, PushableComponent {
 extension MessageCenter {
 
     @MainActor
-    fileprivate func showMessageCenter(
-        scene: UIWindowScene,
-        theme: MessageCenterTheme?
-    ) -> Disposable {
+    fileprivate func showDefaultMessageCenter() {
+        guard self.currentDisplay == nil else {
+            return
+        }
+
+        guard let scene = try? AirshipUtils.findWindowScene() else {
+            AirshipLogger.error(
+                "Unable to display message center, missing scene."
+            )
+            return
+        }
+
         var window: UIWindow? = UIWindow(windowScene: scene)
 
-        let disposable = Disposable {
+        self.currentDisplay = Disposable {
             window?.windowLevel = .normal
             window?.isHidden = true
             window = nil
@@ -306,14 +296,19 @@ extension MessageCenter {
             theme: theme,
             controller: self.controller
         ) {
-            disposable.dispose()
+            self.currentDisplay?.dispose()
+            self.currentDisplay = nil
         }
 
         window?.isHidden = false
         window?.windowLevel = .alert
         window?.makeKeyAndVisible()
         window?.rootViewController = viewController
+    }
 
-        return disposable
+    @MainActor
+    fileprivate func dismissDefaultMessageCenter() {
+        self.currentDisplay?.dispose()
+        self.currentDisplay = nil
     }
 }

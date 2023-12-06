@@ -23,8 +23,6 @@ public struct MessageCenterListView: View {
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
-    @Environment(\.airshipMessageViewStyle)
-    private var messageStyle
 
     @StateObject
     private var viewModel = MessageCenterListViewModel()
@@ -52,22 +50,29 @@ public struct MessageCenterListView: View {
     }
 
     @ViewBuilder
+    private func makeDestination(messageID: String, title: String?) -> some View {
+        MessageCenterMessageView(
+            messageID: messageID,
+            title: title
+        )
+        .onAppear {
+            self.controller.visibleMessageID = messageID
+        }
+        .onDisappear {
+            if (messageID == self.controller.visibleMessageID) {
+                self.controller.visibleMessageID = nil
+            }
+        }
+        .id(messageID)
+    }
+
+    @ViewBuilder
     private func makeCell(
         item: MessageCenterListItemViewModel,
         messageID: String
     ) -> some View {
         let cell = NavigationLink(
-            destination: 
-                MessageCenterMessageView(
-                    messageID: messageID,
-                    title: item.message.title
-                )
-                .onAppear {
-                    self.controller.displayMessage(messageID)
-                }
-                .onDisappear {
-                    self.controller.displayMessage(nil)
-                }
+            destination: makeDestination(messageID: messageID, title: item.message.title)
         ) {
             MessageCenterListItemView(viewModel: item)
         }
@@ -105,11 +110,8 @@ public struct MessageCenterListView: View {
                     self.$selection.wrappedValue.removeAll()
                 }
             }
-            .onAppear{
-                let _ = self.controller.$visibleMessageID
-                    .sink {
-                        isActive = ($0 != nil)
-                    }
+            .onReceive(self.controller.$messageID) { messageID in
+                isActive = (messageID != nil)
             }
         }
 
@@ -124,7 +126,6 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeContent() -> some View {
-        
         let content = ZStack {
             makeList()
                 .opacity(self.listOpacity)
@@ -154,42 +155,24 @@ public struct MessageCenterListView: View {
                 }
             }
         }
-        
-        let destination = self.messageStyle.makeBody(
-            configuration: MessageViewStyleConfiguration(
-                messageID: self.controller.visibleMessageID ?? "",
-                title: self.viewModel.messageItem(
-                    forID: self.controller.visibleMessageID ?? ""
-                )?.message.title,
-                dismissAction: nil
-            )
+
+        let selected = self.controller.messageID ?? ""
+        let destination = makeDestination(
+            messageID: selected,
+            title: self.viewModel.messageItem(forID: selected)?.message.title
         )
-            .onAppear {
-                self.controller.displayMessage(self.controller.visibleMessageID)
-            }
-            .onDisappear {
-                self.controller.displayMessage(nil)
-            }
-        
+
         if #available(iOS 16.0, *) {
-            content
-                .background(
-                    NavigationLink(
-                        "",
-                        value: self.controller.visibleMessageID)
-                    .navigationDestination(isPresented: $isActive) {
-                        destination
-                    }
-                )
+            content.background(
+                NavigationLink("", value: selected)
+                .navigationDestination(isPresented: $isActive) {
+                    destination
+                }
+            )
         } else {
-            content
-                .background(
-                    NavigationLink(
-                        "",
-                        destination: destination,
-                        isActive: $isActive
-                    )
-                )
+            content.background(
+                NavigationLink("", destination: destination, isActive: $isActive)
+            )
         }
     }
 

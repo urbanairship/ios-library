@@ -43,6 +43,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
         XCTAssertEqual("some error", error.localizedDescription)
     }
 
+    @MainActor
     func testDidReceiveRemoteNotification() throws {
         let expectedUserInfo = ["neat": "story"]
 

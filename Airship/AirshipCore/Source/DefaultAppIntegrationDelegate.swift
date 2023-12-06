@@ -53,6 +53,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(watchOS)
+    @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool,
@@ -76,6 +77,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
     }
     #else
+    @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool,
@@ -100,6 +102,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
     #endif
 
+    @MainActor
     public func willPresentNotification(
         notification: UNNotification,
         presentationOptions: UNNotificationPresentationOptions,
@@ -205,6 +208,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
     }
 
+    @MainActor
     private func processPush(
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool,

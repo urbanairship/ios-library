@@ -65,10 +65,10 @@ public struct MessageCenterView: View {
                 content
             }
             .onAppear {
-                self.controller.displayMessageCenter(true)
+                self.controller.isMessageCenterVisible = true
             }
             .onDisappear {
-                self.controller.displayMessageCenter(false)
+                self.controller.isMessageCenterVisible = false
             }
         } else {
             NavigationView {
@@ -76,10 +76,10 @@ public struct MessageCenterView: View {
             }
             .navigationViewStyle(.stack)
             .onAppear {
-                self.controller.displayMessageCenter(true)
+                self.controller.isMessageCenterVisible = true
             }
             .onDisappear {
-                self.controller.displayMessageCenter(false)
+                self.controller.isMessageCenterVisible = false
             }
         }
     }
