@@ -3,6 +3,17 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.7.0 December 6, 2023
+Minor release that adds a new MessageCenter listener for current message state and a new method `Airship.contact.notifyRemoteLogin()` that will refresh the local state on the device for named user associations that occur through the server instead of the SDK.
+
+### Changes
+- Added new method `Airship.contact.notifyRemoteLogin()`
+- Added `MessageCenterController.statePublisher` to listen for the state of the Message Center
+- Fixed Preference Center title
+- Fixed direct open tracking regression introduced in 17.6.1
+- Fixed direct open tracking when opening a content-available=1 notification from a cold start
+- Fixed a possible issue with an IAX session trigger if at start a system prompt is displayed
+
 ## Version 17.6.1 November 20, 2023
 Patch release that adds debug symbols to the prebuilt xcframeworks and includes fixes for SPM and Message Center.
 
