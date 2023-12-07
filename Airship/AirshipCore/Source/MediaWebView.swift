@@ -25,9 +25,13 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        if isLoaded {
+        switch (isVisible, isLoaded) {
+        case (true, true):
             handleAutoplayingVideos(uiView: uiView)
-        } else {
+        case (false, true):
+            resetMedias(uiView: uiView)
+            pauseMedias(uiView: uiView)
+        default:
             pauseMedias(uiView: uiView)
         }
     }
@@ -157,6 +161,15 @@ struct MediaWebView: UIViewRepresentable {
             uiView.evaluateJavaScript("videoElement.pause();")
         } else if type == .youtube {
             uiView.evaluateJavaScript("player.pauseVideo();")
+        }
+    }
+
+    @MainActor
+    func resetMedias(uiView: WKWebView) {
+        if type == .video {
+            uiView.evaluateJavaScript("videoElement.currentTime = 0;")
+        } else if type == .youtube {
+            uiView.evaluateJavaScript("player.seekTo(0);")
         }
     }
 

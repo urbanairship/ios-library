@@ -132,15 +132,9 @@ view:
                                                 width: 100%
                                               view:
                                                 media_fit: center_inside
-                                                media_type: youtube
+                                                media_type: image
                                                 type: media
-                                                url: https://www.youtube.com/embed/xUOQZeN8A7o
-                                                video:
-                                                  aspect_ratio: 1.77777777777778
-                                                  autoplay: true
-                                                  loop: true
-                                                  muted: true
-                                                  show_controls: true
+                                                url: https://media3.giphy.com/media/tBvPFCFQHSpEI/giphy.gif
                                             - size:
                                                 height: 100%
                                                 width: 100%
