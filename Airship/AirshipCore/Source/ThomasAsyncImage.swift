@@ -28,6 +28,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     @State private var imageIndex: Int = 0
     @State private var imageTask: Task<Void, Never>?
     @State private var cancellable: AnyCancellable?
+    @State private var loopsCompleted: Int = 0
 
     @Environment(\.isVisible) var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
                                                     //that's why we need to store the actual value in a separate @State variable
@@ -56,10 +57,13 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
                         )
                 }
             }
-            .onChange(of: isVisible, perform: { newValue in
+            .onChange(of: isVisible) { newValue in
                 self.isImageVisible = newValue
+                if newValue {
+                    self.loopsCompleted = 0 // Reset gif frame loop counter every time isVisible changes
+                }
                 animateIfNeeded()
-            })
+            }
     }
 
     private var content: some View {
@@ -121,7 +125,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
         self.currentImage = frame?.image
 
-        while !Task.isCancelled {
+        while !Task.isCancelled && (loadedImage.loopCount == nil || loopsCompleted < loadedImage.loopCount!) {
             let duration = frame?.duration ?? AirshipImageData.minFrameDuration
 
             async let delay: () = Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
@@ -134,6 +138,12 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
             } catch {} // most likely it's a task cancelled exception when animation is stopped
 
             imageIndex = nextIndex
+
+            /// Consider a loop completed when we reach the last frame
+            if imageIndex == loadedImage.imageFramesCount - 1 {
+                /// Stops the GIF when loopsCompleted == loopCount when loopCount is specified
+                self.loopsCompleted += 1
+            }
 
             if !Task.isCancelled {
                 self.currentImage = frame?.image

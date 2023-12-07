@@ -54,6 +54,18 @@ extension UIImage {
     }
 }
 
+extension CGImageSource {
+    func gifLoopCount() -> Int? {
+        guard let properties = CGImageSourceCopyProperties(self, nil) as NSDictionary?,
+              let gifDictionary = properties[kCGImagePropertyGIFDictionary] as? NSDictionary else {
+            return nil
+        }
+
+        let loopCount = gifDictionary[kCGImagePropertyGIFLoopCount] as? Int
+        return loopCount
+    }
+}
+
 /// - Note: for internal use only.  :nodoc:
 @objc(UAirshipImageData)
 public class AirshipImageData: NSObject {
@@ -69,6 +81,7 @@ public class AirshipImageData: NSObject {
     
     let isAnimated: Bool
     let imageFramesCount: Int
+    let loopCount: Int?
 
     init(_ source: CGImageSource) throws {
         self.source = source
@@ -76,7 +89,8 @@ public class AirshipImageData: NSObject {
         if imageFramesCount < 1 {
             throw AirshipErrors.error("Invalid image, no frames.")
         }
-        
+
+        self.loopCount = source.gifLoopCount()
         self.isAnimated = imageFramesCount > 1
         self.imageActor = AirshipImageDataFrameActor(source: source)
     }
@@ -87,7 +101,7 @@ public class AirshipImageData: NSObject {
         else {
             throw AirshipErrors.error("Invalid image data")
         }
-        
+
         try self.init(source)
     }
     
