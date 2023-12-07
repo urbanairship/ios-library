@@ -21,6 +21,7 @@ struct Media: View {
                 image
                     .fitMedia(
                         mediaFit: self.model.mediaFit,
+                        cropPosition: self.model.cropPosition,
                         constraints: constraints,
                         imageSize: imageSize
                     )
@@ -60,6 +61,7 @@ extension Image {
     @ViewBuilder
     func fitMedia(
         mediaFit: MediaFit,
+        cropPosition: Position?,
         constraints: ViewConstraints,
         imageSize: CGSize
     ) -> some View {
@@ -71,45 +73,49 @@ extension Image {
 
         switch mediaFit {
         case .center:
-            center(constraints: filledInConstraints)
+            cropAligned(constraints: filledInConstraints)
+        case .fitCrop:
+            cropAligned(constraints: filledInConstraints, alignment: cropPositionToAlignment(position: cropPosition))
         case .centerCrop:
             // If we do not have a fixed size in any direction then we should
             // use centerInside instead to match Android
             if isUnbounded(constraints) {
                 centerInside(constraints: filledInConstraints)
             } else {
-                centerCrop(constraints: filledInConstraints)
+                cropAligned(constraints: filledInConstraints)
             }
         case .centerInside:
             centerInside(constraints: filledInConstraints)
         }
     }
-
-    private func center(constraints: ViewConstraints) -> some View {
-        self.constraints(constraints, fixedSize: true)
-            .clipped()
+    
+    private func cropPositionToAlignment(position: Position?) -> Alignment {
+        guard let position = position else { return .center }
+        return Alignment(
+            horizontal: position.horizontal.toAlignment(),
+            vertical: position.vertical.toAlignment())
     }
 
-    private func centerCrop(constraints: ViewConstraints) -> some View {
-
+    private func cropAligned(constraints: ViewConstraints, alignment: Alignment = .center) -> some View {
         /*
-         .scaledToFill() breaks v/hstacks by taking up as much possible space as it can
-         instead of sharing it with other elements. Moving the image to an overlay prevents the image from expanding.
+            .scaledToFill() breaks v/hstacks by taking up as much possible space as it can
+            instead of sharing it with other elements. Moving the image to an overlay prevents the image from expanding.
          */
         Color.clear
             .overlay(
-                GeometryReader { proxy in
-                    self.resizable()
-                        .scaledToFill()
-                        .frame(
-                            width: proxy.size.width,
-                            height: proxy.size.height
-                        )
-                        .allowsHitTesting(false)
-                }
-            )
-            .constraints(constraints, fixedSize: true)
-            .clipped()
+             GeometryReader { proxy in
+                 self.resizable()
+                     .scaledToFill()
+                     .frame(
+                         width: proxy.size.width,
+                         height: proxy.size.height,
+                         alignment: alignment
+                     )
+                     .allowsHitTesting(false)
+             }
+         )
+         .constraints(constraints, alignment: alignment, fixedSize: true)
+         .clipped()
     }
 
     private func centerInside(constraints: ViewConstraints) -> some View {

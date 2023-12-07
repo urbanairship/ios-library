@@ -708,6 +708,7 @@ struct MediaModel: BaseModel, Accessible {
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
     let video: Video?
+    let cropPosition: Position?
 
     enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"
@@ -720,6 +721,7 @@ struct MediaModel: BaseModel, Accessible {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case video = "video"
+        case cropPosition = "position"
     }
 }
 
@@ -1760,8 +1762,11 @@ enum MediaType: String, Decodable, Equatable, Sendable {
 }
 
 enum MediaFit: String, Decodable, Equatable, Sendable {
+    @available(*, deprecated, message: "Use fit_crop + position instead")
     case center = "center"
+    case fitCrop = "fit_crop"
     case centerInside = "center_inside"
+    @available(*, deprecated, message: "Use fit_crop + position instead")
     case centerCrop = "center_crop"
 }
 
