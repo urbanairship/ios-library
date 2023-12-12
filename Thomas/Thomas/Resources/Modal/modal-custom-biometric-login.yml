@@ -1,0 +1,120 @@
+---
+version: 1
+presentation:
+  dismiss_on_touch_outside: true
+  type: modal
+  default_placement:
+    size:
+      width: 100%
+      height: 100%
+    shade_color:
+      default:
+        hex: "#000000"
+        alpha: 0.6
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#000000"
+      alpha: 1
+  border:
+    stroke_color:
+      default:
+        hex: "#000000"
+        alpha: 1
+    stroke_width: 1
+    radius: 0
+  items:
+    # TOP-LEVEL LINEAR LAYOUT
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: 100%
+        width: 100%
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+          # SCROLL LAYOUT
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: 100%
+            view:
+              type: scroll_layout
+              direction: vertical
+              view:
+                # SCROLL CONTENT (LINEAR LAYOUT)
+                type: linear_layout
+                direction: vertical
+                size:
+                  width: 100%
+                  height: 100%
+                items:
+                  # Camera View
+                  - size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: custom_view
+                      name: biometric_login_custom_view
+                      height: 720
+                      keys:
+                        login_description: "I'm a biometric login view in a glassmorphic style"
+                      background_color:
+                      selectors:
+                        - platform: ios
+                          dark_mode: false
+                          color:
+                            hex: "#FFFFFF"
+                            alpha: 1
+                        - platform: ios
+                          dark_mode: true
+                          color:
+                            hex: "#000000"
+                            alpha: 1
+                      default:
+                        hex: "#FF00FF"
+                        alpha: 1
+                  # BODY
+                  - size:
+                      width: 100%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 8
+                    view:
+                      type: label
+                      text: Camera permissions will be requested automatically if we're not already authorized. We inherit our authorization from the containing application.
+                      text_appearance:
+                        color:
+                          default:
+                            hex: "#FFFFFF"
+                            alpha: 1
+                        alignment: start
+                        styles: [italic]
+                        font_families: [permanent_marker]
+                        font_size: 14
+    # TOP-RIGHT ICON BUTTON
+    - position:
+        horizontal: end
+        vertical: top
+      size:
+        width: 24
+        height: 24
+      view:
+        type: image_button
+        identifier: close_button
+        button_click: [dismiss]
+        image:
+          type: icon
+          icon: close
+          color:
+            default:
+              hex: "#FFFFFF"
+              alpha: 1

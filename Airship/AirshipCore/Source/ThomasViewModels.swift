@@ -251,6 +251,7 @@ enum ViewModelType: String, Decodable {
     case container = "container"
     case linearLayout = "linear_layout"
     case webView = "web_view"
+    case customView = "custom_view"
     case scrollLayout = "scroll_layout"
     case media = "media"
     case label = "label"
@@ -310,6 +311,7 @@ indirect enum ViewModel: Decodable, Equatable, Sendable {
     #if !os(tvOS) && !os(watchOS)
     case webView(WebViewModel)
     #endif
+    case customView(CustomViewModel)
     case scrollLayout(ScrollLayoutModel)
     case media(MediaModel)
     case label(LabelModel)
@@ -430,6 +432,10 @@ indirect enum ViewModel: Decodable, Equatable, Sendable {
         case .stateController:
             self = .stateController(
                 try singleValueContainer.decode(StateControllerModel.self)
+            )
+        case .customView:
+            self = .customView(
+                try singleValueContainer.decode(CustomViewModel.self)
             )
         }
     }
@@ -690,6 +696,29 @@ struct WebViewModel: BaseModel {
         case border = "border"
         case backgroundColor = "background_color"
         case url = "url"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case enableBehaviors = "enabled"
+    }
+}
+
+struct CustomViewModel: BaseModel {
+    let name: String?
+    let json: AirshipJSON?
+    let height: CGFloat?
+    let type = ViewModelType.customView
+    let border: Border?
+    let backgroundColor: ThomasColor?
+    let visibility: VisibilityInfo?
+    let eventHandlers: [EventHandler]?
+    let enableBehaviors: [EnableBehavior]?
+
+    enum CodingKeys: String, CodingKey {
+        case name = "name"
+        case json = "keys"
+        case height = "height"
+        case border = "border"
+        case backgroundColor = "background_color"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"

@@ -101,6 +101,8 @@ extension Layout {
             return nil
         case .stateController(_):
             return nil
+        case .customView(_):
+            return nil
         }
     }
 }

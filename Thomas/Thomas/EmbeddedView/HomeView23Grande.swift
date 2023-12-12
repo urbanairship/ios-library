@@ -17,16 +17,13 @@ struct HomeView23Grande: View {
                 .frame(maxWidth: .infinity)
                 .background(Color.white)
 
-
-
                 ScrollView(showsIndicators: false) {
 
 
-                    AirshipEmbeddedView(id: "home_banner", bounds: .horizontal) {
-                        EmptyView()
-                    }.setAirshipEmbeddedStyle(DismissableStyle())
+                    AirshipEmbeddedView(id: "home_banner", bounds: .horizontal) {}
+                        .setAirshipEmbeddedStyle(DismissableStyle())
 
-                    
+
                     Spacer(minLength: 30)
 
                     VStack(spacing:0) {

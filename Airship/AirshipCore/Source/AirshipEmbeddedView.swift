@@ -32,7 +32,6 @@ public struct AirshipEmbeddedView<Content: View>: View {
     @StateObject
     private var viewModel: EmbeddedViewModel
 
-
     private let placeholder: () -> Content
     private let id: String
 

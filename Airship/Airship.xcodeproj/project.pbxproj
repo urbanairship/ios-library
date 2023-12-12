@@ -1301,6 +1301,12 @@
 		847B000B267CD85E007CD249 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847B0012267CE558007CD249 /* PreferenceCenterSDKModule.swift */; };
 		847BFFFD267CD73A007CD249 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
+		9908E60E2B000DBA00DB3E2E /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
+		9908E6122B0189F800DB3E2E /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
+		9919EE422B2263B300A46BFE /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
+		9919EE432B2263B300A46BFE /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
+		9919EE442B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
+		9919EE452B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
 		991A94651FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */; };
 		991A94671FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */; };
 		991A94691FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */; };
@@ -2754,6 +2760,8 @@
 		847BFFF6267CD73A007CD249 /* AirshipPreferenceCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipPreferenceCenter.h; sourceTree = "<group>"; };
 		847BFFF7267CD73A007CD249 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		847BFFFC267CD73A007CD249 /* AirshipPreferenceCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipPreferenceCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9908E60D2B000DBA00DB3E2E /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
+		9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArishipCustomViewManager.swift; sourceTree = "<group>"; };
 		991A94641FCF2C6B00B57D24 /* UAInAppMessageTextInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageTextInfoTest.m; sourceTree = "<group>"; };
 		991A94661FCF2C7F00B57D24 /* UAInAppMessageButtonInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButtonInfoTest.m; sourceTree = "<group>"; };
 		991A94681FCF2CEF00B57D24 /* UAInAppMessageMediaInfoTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaInfoTest.m; sourceTree = "<group>"; };
@@ -3674,6 +3682,7 @@
 				3215CA9C2739349700B7D97E /* ModalView.swift */,
 				324D3BFE273E6B4500058EE4 /* BannerView.swift */,
 				A658DE182728498900007672 /* AirshipWebview.swift */,
+				9908E6102B01841A00DB3E2E /* Custom */,
 				6E152BC92743235800788402 /* Icons.swift */,
 				6E6541DF2758976D009676CA /* AirshipProgressView.swift */,
 				6EF66D902769B69C00ABCB76 /* RootView.swift */,
@@ -4856,6 +4865,15 @@
 				847BFFF7267CD73A007CD249 /* Info.plist */,
 			);
 			path = AirshipPreferenceCenter;
+			sourceTree = "<group>";
+		};
+		9908E6102B01841A00DB3E2E /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				9908E60D2B000DBA00DB3E2E /* CustomView.swift */,
+				9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */,
+			);
+			name = Custom;
 			sourceTree = "<group>";
 		};
 		A61517AD26A97419008A41C4 /* Subscription Lists */ = {
@@ -6560,6 +6578,7 @@
 				6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
 				A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
 				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
+				9908E60E2B000DBA00DB3E2E /* CustomView.swift in Sources */,
 				6E739D6626B9BDC100BC6F6D /* ChannelBulkUpdateAPIClient.swift in Sources */,
 				6EF1933E28380644005F192A /* DefaultLogHandler.swift in Sources */,
 				6E2F5A862A65F00200CABD3D /* RemoteDataSourceStatus.swift in Sources */,
@@ -6681,6 +6700,7 @@
 				6EC7E48D26A738C80038CFDD /* ContactConflictEvent.swift in Sources */,
 				60C1DB102A8B743C00A1D3DA /* AirshipEmbeddedViewManager.swift in Sources */,
 				6EF1933C2838062B005F192A /* AirshipLogHandler.swift in Sources */,
+				9908E6122B0189F800DB3E2E /* ArishipCustomViewManager.swift in Sources */,
 				6E664BA126C43F5400A2C8E5 /* ActivityViewController.swift in Sources */,
 				6E91B45226883B6E00DDB1A8 /* AppExitEvent.swift in Sources */,
 				6E82482229A6D9DF00136EA0 /* CancellabelValueHolder.swift in Sources */,
@@ -7001,6 +7021,7 @@
 				607951412A1E74AC0086578F /* MessageCriteria.swift in Sources */,
 				A6722A7C281A9EDA0033F54D /* LocaleManager.swift in Sources */,
 				6E91E44E28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
+				9919EE432B2263B300A46BFE /* CustomView.swift in Sources */,
 				6EDE29412A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */,
 				6E29474F2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				A6722A7D281A9EDA0033F54D /* AssociatedChannel.swift in Sources */,
@@ -7131,6 +7152,7 @@
 				A6722A6A281A9EB80033F54D /* TagEditor.swift in Sources */,
 				A6722A6B281A9EB90033F54D /* ChannelType.swift in Sources */,
 				A6722A6C281A9EB90033F54D /* URLAllowList.swift in Sources */,
+				9919EE452B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */,
 				A6722A6D281A9EB90033F54D /* RuntimeConfig.swift in Sources */,
 				A6722A6E281A9EB90033F54D /* RemoteConfigCache.swift in Sources */,
 				A6722A6F281A9EB90033F54D /* Config.swift in Sources */,
@@ -7753,6 +7775,7 @@
 				6E49D7B928401D2E00C7BB9D /* Atomic.swift in Sources */,
 				A6D6D4A22A02BB180072A5CA /* AirshipAction.swift in Sources */,
 				3CA84AB926DE257200A59685 /* Analytics.swift in Sources */,
+				9919EE442B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */,
 				6E71129C2880DACB004942E4 /* ViewState.swift in Sources */,
 				6E49D7B528401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
 				6E91E44128EF423400B6F25E /* Worker.swift in Sources */,
@@ -7785,6 +7808,7 @@
 				6E44626829E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
 				A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */,
 				6E4E5B3E26E7F91600198175 /* Attributes.swift in Sources */,
+				9919EE422B2263B300A46BFE /* CustomView.swift in Sources */,
 				6E29474E2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				6E692B0829E0DA5200D96CCC /* NativeBridgeExtensionDelegate.swift in Sources */,
 				6E43219326EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,

@@ -60,6 +60,8 @@ struct ViewFactory {
             Score(model: model, constraints: constraints)
         case .stateController(let model):
             StateController(model: model, constraints: constraints)
+        case .customView(let model):
+            CustomView(model: model, constraints: constraints)
         }
     }
 

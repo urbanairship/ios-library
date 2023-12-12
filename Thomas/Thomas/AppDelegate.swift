@@ -2,6 +2,8 @@
 
 import AirshipCore
 import Foundation
+import SwiftUI
+import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -31,10 +33,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // etc.
 
         // Call takeOff (which creates the UAirship singleton)
-        Airship.takeOff(config, launchOptions: launchOptions)
+        Airship.takeOff(launchOptions: launchOptions)
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
+
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "1a0dc64aa99c090d97d0da6a8ac47281" ]
+
+        /// Register CustomView examples
+        CustomViewExampleHelper.registerAdView()
+        CustomViewExampleHelper.registerWeatherView()
+        CustomViewExampleHelper.registerMapRouteView()
+        CustomViewExampleHelper.registerCameraView()
+        CustomViewExampleHelper.registerBiometricLoginView()
 
         // Set the icon badge to zero on startup (optional)
         Airship.push.resetBadge()
