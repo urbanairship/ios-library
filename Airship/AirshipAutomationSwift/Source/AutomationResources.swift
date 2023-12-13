@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
-class AutomationResources: NSObject {
+import Foundation
+
+class AutomationResources {
     
     public static let bundle = findBundle()
     

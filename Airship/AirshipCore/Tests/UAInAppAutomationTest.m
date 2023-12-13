@@ -12,12 +12,12 @@
 #import "UAInAppAutomation+Internal.h"
 #import "UAInAppMessageCustomDisplayContent+Internal.h"
 #import "UADeferredSchedule+Internal.h"
-#import "UAFrequencyLimitManager+Internal.h"
 #import "AirshipTests-Swift.h"
 #import "UARetriable+Internal.h"
 #import "UAScheduleTriggerContext+Internal.h"
 
 @import AirshipCore;
+@import AirshipAutomationSwift;
 
 @interface UAInAppAutomationTest : UAAirshipBaseTest
 @property(nonatomic, strong) UAInAppAutomation *inAppAutomation;
@@ -58,7 +58,7 @@
     self.mockRemoteDataClient = [self mockForClass:[UAInAppRemoteDataClient class]];
     self.mockInAppMessageManager = [self mockForClass:[UAInAppMessageManager class]];
     self.mockChannel = [self mockForClass:[UAChannel class]];
-    self.mockFrequencyLimitManager = [self mockForClass:[UAFrequencyLimitManager class]];
+    self.mockFrequencyLimitManager = [self mockForProtocol:@protocol(UAFrequencyLimitManagerProtocol)];
 
     self.mockAudience = [self mockForClass:[UAInAppAudience class]];
 
@@ -197,9 +197,9 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:@[@"barConstraint", @"fooConstraint"] completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:@[@"barConstraint", @"fooConstraint"] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -250,16 +250,17 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@NO] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@YES] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -310,16 +311,17 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@YES] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@NO] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return YES;
-        } checkAndIncrement:^BOOL{
-            return NO;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[self.mockInAppMessageManager reject] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -368,9 +370,10 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -403,17 +406,17 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@NO] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@YES] checkAndIncrement];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -447,16 +450,16 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@YES] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@NO] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return YES;
-        } checkAndIncrement:^BOOL{
-            return NO;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -516,9 +519,10 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
         void (^block)(UAInAppMessagePrepareResult);
@@ -599,16 +603,16 @@
         block(UAInAppMessagePrepareResultSuccess);
     }] prepareMessage:message scheduleID:@"schedule ID" campaigns:@{@"some": @"campaigns object"} reportingContext:@{} experimentResult:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@NO] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@YES] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
     NSDictionary *deferredResult = @{
@@ -686,16 +690,17 @@
                                          experimentResult:OCMOCK_ANY
                                         completionHandler:OCMOCK_ANY];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@YES] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@NO] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return YES;
-        } checkAndIncrement:^BOOL{
-            return NO;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[self.mockInAppCoreSwiftBridge reject] resolveDeferredWithUrl: OCMOCK_ANY
                                                          channelID: OCMOCK_ANY
@@ -747,13 +752,9 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
     [[self.mockInAppCoreSwiftBridge stub] resolveDeferredWithUrl: deferred.URL
@@ -938,9 +939,10 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
 
     NSDictionary *deferredResult = @{
@@ -1010,9 +1012,10 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     NSDictionary *deferredResult = @{
         @"audience_match": @YES
@@ -1101,9 +1104,10 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     self.audienceMatch = NO;
 
@@ -1143,9 +1147,10 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     self.audienceMatch = NO;
 
@@ -1186,9 +1191,9 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     self.audienceMatch = NO;
 
@@ -1229,9 +1234,9 @@
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     self.audienceMatch = NO;
 
@@ -1281,16 +1286,17 @@
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@NO] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@YES] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1332,16 +1338,22 @@
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andDo:^(NSInvocation *invocation) {
+        NSValue *result = [NSNumber numberWithBool:overLimit];
+        [invocation setReturnValue:&result];
+    }] isOverLimit];
+    [[[mockChecker stub] andDo:^(NSInvocation *invocation) {
+        NSValue *result = [NSNumber numberWithBool:checkAndIncrement];
+        [invocation setReturnValue:&result];
+    }] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return overLimit;
-        } checkAndIncrement:^BOOL{
-            return checkAndIncrement;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
 
@@ -1355,7 +1367,7 @@
     // Put checker over the limit
     overLimit = YES;
     checkAndIncrement = NO;
-
+    
     UAAutomationScheduleReadyResult result = [self.engineDelegate isScheduleReadyToExecute:schedule];
 
     XCTAssertEqual(UAAutomationScheduleReadyResultSkip, result);
@@ -1503,16 +1515,16 @@
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@NO] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@YES] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -1574,16 +1586,22 @@
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andDo:^(NSInvocation *invocation) {
+        NSValue *result = [NSNumber numberWithBool:overLimit];
+        [invocation setReturnValue:&result];
+    }] isOverLimit];
+    [[[mockChecker stub] andDo:^(NSInvocation *invocation) {
+        NSValue *result = [NSNumber numberWithBool:checkAndIncrement];
+        [invocation setReturnValue:&result];
+    }] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return overLimit;
-        } checkAndIncrement:^BOOL{
-            return checkAndIncrement;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -1669,16 +1687,16 @@
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andReturnValue:@NO] isOverLimit];
+    [[[mockChecker stub] andReturnValue:@YES] checkAndIncrement];
+
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return NO;
-        } checkAndIncrement:^BOOL{
-            return YES;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockRemoteDataClient stub] andDo:^(NSInvocation *invocation) {
         void *arg;
@@ -1788,19 +1806,26 @@
 
     [[[self.mockInAppMessageManager expect] andReturnValue:@(UAAutomationScheduleReadyResultContinue)] isReadyToDisplay:@"schedule ID"];
 
+
     __block BOOL overLimit = NO;
     __block BOOL checkAndIncrement = YES;
+
+    id mockChecker = [self mockForProtocol:@protocol(UAFrequencyChecker)];
+    [[[mockChecker stub] andDo:^(NSInvocation *invocation) {
+        NSValue *result = [NSNumber numberWithBool:overLimit];
+        [invocation setReturnValue:&result];
+    }] isOverLimit];
+    [[[mockChecker stub] andDo:^(NSInvocation *invocation) {
+        NSValue *result = [NSNumber numberWithBool:checkAndIncrement];
+        [invocation setReturnValue:&result];
+    }] checkAndIncrement];
 
     [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
-            return overLimit;
-        } checkAndIncrement:^BOOL{
-            return checkAndIncrement;
-        }]);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(mockChecker, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:@"schedule ID"
@@ -1898,12 +1923,12 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
     
     [[self.mockAudience stub] evaluateExperimentsWithInfo:OCMOCK_ANY
                                         completionHandler:[OCMArg checkWithBlock:^BOOL(id obj) {
@@ -2245,12 +2270,12 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[self.mockInAppMessageManager expect] prepareMessage:message
                                                scheduleID:schedule.identifier
@@ -2308,12 +2333,12 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [[self.mockInAppMessageManager expect] prepareMessage:message
@@ -2382,12 +2407,12 @@
         callback(YES);
     }] bestEffortRefresh:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
-    [[[self.mockFrequencyLimitManager stub] andDo:^(NSInvocation *invocation) {
+    [[[self.mockFrequencyLimitManager expect] andDo:^(NSInvocation *invocation) {
         void *arg;
         [invocation getArgument:&arg atIndex:3];
-        void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
-    }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+        void(^callback)(id<UAFrequencyChecker>, NSError *) = (__bridge void (^)(id<UAFrequencyChecker>, NSError *))arg;
+        callback(nil, nil);
+    }] getFrequencyCheckerWithConstraintIDs:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
     [[self.mockInAppMessageManager expect] prepareMessage:message

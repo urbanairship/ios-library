@@ -40,10 +40,7 @@ static NSString * const UAInAppRemoteDataClientMetadataKey = @"com.urbanairship.
 static NSString * const UAInAppRemoteDataClientInfoKey = @"com.urbanairship.iaa.REMOTE_DATA_INFO";
 
 static NSString * const UAFrequencyConstraintsKey = @"frequency_constraints";
-static NSString * const UAFrequencyConstraintPeriodKey = @"period";
-static NSString * const UAFrequencyConstraintBoundaryKey = @"boundary";
-static NSString * const UAFrequencyConstraintRangeKey = @"range";
-static NSString * const UAFrequencyConstraintIDKey = @"id";
+
 
 static NSString * const UAInAppMessages = @"in_app_messages";
 static NSString * const UAInAppMessagesCreatedJSONKey = @"created";
@@ -291,14 +288,8 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     NSMutableArray<NSString *> *scheduleIDs = [NSMutableArray array];
     NSMutableArray<UASchedule *> *newSchedules = [NSMutableArray array];
 
-    NSMutableArray *constraints = [NSMutableArray array];
-    for (id constraintJSON in constraintJSONList) {
-        UAFrequencyConstraint *constraint = [UAInAppRemoteDataClient parseConstraintWithJSON:constraintJSON];
-        if (constraint) {
-            [constraints addObject:constraint];
-        }
-    }
-    [self.delegate updateConstraints:constraints];
+    NSData *data = [NSJSONSerialization dataWithJSONObject:constraintJSONList options:NSJSONWritingFragmentsAllowed error:nil];
+    [self.delegate setConstraints:data];
 
     // Dispatch group
     dispatch_group_t dispatchGroup = dispatch_group_create();
@@ -585,40 +576,6 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
     }
 
     return nil;
-}
-
-+ (UAFrequencyConstraint *)parseConstraintWithJSON:(id)JSON {
-    NSString *ID = [JSON stringForKey:UAFrequencyConstraintIDKey defaultValue:nil];
-    NSNumber *range = [JSON numberForKey:UAFrequencyConstraintRangeKey defaultValue:nil];
-    NSNumber *boundary = [JSON numberForKey:UAFrequencyConstraintBoundaryKey defaultValue:nil];
-    NSString *period = [JSON stringForKey:UAFrequencyConstraintPeriodKey defaultValue:nil];
-
-    if (!ID || !range || !boundary || !period) {
-        UA_LERR(@"Invalid constraint: %@", JSON);
-        return nil;
-    }
-
-    NSTimeInterval rangeInSeconds = [range doubleValue];
-    if ([period isEqual:@"seconds"]) {
-        rangeInSeconds = [range doubleValue];
-    } else if ([period isEqual:@"minutes"]) {
-        rangeInSeconds = [range doubleValue] * 60;
-    } else if ([period isEqual:@"hours"]) {
-        rangeInSeconds = [range doubleValue] * 60 * 60;
-    } else if ([period isEqual:@"days"]) {
-        rangeInSeconds = [range doubleValue] * 60 * 60 * 24;
-    } else if ([period isEqual:@"weeks"]) {
-        rangeInSeconds = [range doubleValue] * 60 * 60 * 24 * 7;
-    } else if ([period isEqual:@"months"]) {
-        rangeInSeconds = [range doubleValue] * 60 * 60 * 24 * 30;
-    } else if ([period isEqual:@"years"]) {
-        rangeInSeconds = [range doubleValue] * 60 * 60 * 24 * 365;
-    } else {
-        UA_LERR(@"Invalid period %@ in constraint: %@", period, JSON);
-        return nil;
-    }
-
-    return [UAFrequencyConstraint frequencyConstraintWithIdentifier:ID range:rangeInSeconds count:[boundary unsignedIntegerValue]];
 }
 
 + (UASchedule *)parseScheduleWithJSON:(id)JSON

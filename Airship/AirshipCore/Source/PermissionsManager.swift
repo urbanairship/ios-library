@@ -14,7 +14,7 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
         AirshipPermission: [() async -> Void]
     ] = [:]
 
-    private var queue: SerialQueue = SerialQueue()
+    private var queue: AirshipSerialQueue = AirshipSerialQueue()
 
     private var extenders: [
         AirshipPermission: [(AirshipPermissionStatus) async -> Void]

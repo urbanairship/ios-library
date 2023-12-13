@@ -34,7 +34,7 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
     private let lastActiveRefreshDate: AirshipMainActorWrapper<Date> = AirshipMainActorWrapper(Date.distantPast)
     private let changeTokenLock: AirshipLock = AirshipLock()
     private let contactSubscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
-    let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
+    let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
     public var remoteDataRefreshInterval: TimeInterval {
         get {

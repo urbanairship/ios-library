@@ -13,6 +13,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				6E5917892B28E93A0084BBBF /* PBXTargetDependency */,
 				6E6B493E2A787D0A00AF98D8 /* PBXTargetDependency */,
 				6EAAE87528C2AD80003CAE53 /* PBXTargetDependency */,
 				6EAAE87728C2AD80003CAE53 /* PBXTargetDependency */,
@@ -50,8 +51,6 @@
 		3231128229D5E67200CF0D86 /* FrequencyLimitStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */; };
 		3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */; };
 		3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127D29D5E67200CF0D86 /* Occurrence.swift */; };
-		3231128529D5E67200CF0D86 /* FrequencyConstraintData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127E29D5E67200CF0D86 /* FrequencyConstraintData.swift */; };
-		3231128629D5E67200CF0D86 /* OccurrenceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127F29D5E67200CF0D86 /* OccurrenceData.swift */; };
 		3231128729D5E67200CF0D86 /* FrequencyConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231128029D5E67200CF0D86 /* FrequencyConstraint.swift */; };
 		3231128829D5E67200CF0D86 /* FrequencyChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231128129D5E67200CF0D86 /* FrequencyChecker.swift */; };
 		3231128C29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3231128A29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodeld */; };
@@ -123,10 +122,6 @@
 		3CA0E2CD237CD05F00EE76CF /* AirshipDebugManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */; };
 		3CA0E2D0237CD0BD00EE76CF /* AirshipDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA0E228237CCBA600EE76CF /* AirshipDebug.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */; };
-		3CA6C3252554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */; };
-		3CA6C3272554E89600F71ABF /* UAFrequencyConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */; };
-		3CA6C3432554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */; };
-		3CA6C3452554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */; };
 		3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AA626DE255200A59685 /* EventStore.swift */; };
 		3CA84AAF26DE255200A59685 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AA626DE255200A59685 /* EventStore.swift */; };
 		3CA84AB826DE257200A59685 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AB626DE257200A59685 /* Analytics.swift */; };
@@ -140,17 +135,6 @@
 		3CC95B20268E785900FE2ACD /* NotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */; };
 		3CC95B2B2696549B00FE2ACD /* PushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */; };
 		3CC95B2C2696549B00FE2ACD /* PushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */; };
-		3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */; };
-		3CF5E80B255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */; };
-		3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */; };
-		3CF5E81D25561FCC0074B2A0 /* UAOccurrence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */; };
-		3CF5E861255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */; };
-		3CF5E863255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */; };
-		3CF5E873255A27380074B2A0 /* UAOccurrenceData+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */; };
-		3CF5E875255A27380074B2A0 /* UAOccurrenceData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */; };
-		3CF5E89D255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */; };
-		3CF5E89F255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */; };
-		3CF5E8C6255E28980074B2A0 /* UAFrequencyLimitManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */; };
 		3CF62FB225883BEB0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3CF62FAF25883BE90007502B /* UAAutomationNativeBridgeExtension+Internal.h */; };
 		3CF62FB425883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF62FB025883BE90007502B /* UAAutomationNativeBridgeExtension.m */; };
 		3CF63039258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF63038258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m */; };
@@ -216,7 +200,6 @@
 		6E0B8738294A9C130064B7BD /* AirshipAutomationSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E0B8744294A9C950064B7BD /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6E0B8745294A9C950064B7BD /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E0B874C294A9D590064B7BD /* AirshipAutomationSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B874B294A9D590064B7BD /* AirshipAutomationSDKModule.swift */; };
 		6E0B8760294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B875F294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift */; };
 		6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
 		6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
@@ -334,7 +317,6 @@
 		6E299FDF28D14258001305A7 /* AirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E299FDE28D14258001305A7 /* AirshipRequestSession.swift */; };
 		6E299FE028D14258001305A7 /* AirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E299FDE28D14258001305A7 /* AirshipRequestSession.swift */; };
 		6E299FE128D14258001305A7 /* AirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E299FDE28D14258001305A7 /* AirshipRequestSession.swift */; };
-		6E2A85C02582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */; };
 		6E2D6AEE26B083DB00B7C226 /* ChannelAudienceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AED26B083DB00B7C226 /* ChannelAudienceManager.swift */; };
 		6E2D6AEF26B096B600B7C226 /* ChannelAudienceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AED26B083DB00B7C226 /* ChannelAudienceManager.swift */; };
 		6E2D6AF226B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */; };
@@ -1760,6 +1742,13 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
+		6E20987A2B23AEF1007E0204 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
+			remoteInfo = AirshipAutomationSwift;
+		};
 		6E2947492AD47E0C009EC6DD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -1801,6 +1790,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
+		};
+		6E5917882B28E93A0084BBBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
+			remoteInfo = AirshipAutomationSwift;
 		};
 		6E6B493D2A787D0A00AF98D8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1998,8 +1994,6 @@
 		3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitStore.swift; sourceTree = "<group>"; };
 		3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitManager.swift; sourceTree = "<group>"; };
 		3231127D29D5E67200CF0D86 /* Occurrence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Occurrence.swift; sourceTree = "<group>"; };
-		3231127E29D5E67200CF0D86 /* FrequencyConstraintData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyConstraintData.swift; sourceTree = "<group>"; };
-		3231127F29D5E67200CF0D86 /* OccurrenceData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OccurrenceData.swift; sourceTree = "<group>"; };
 		3231128029D5E67200CF0D86 /* FrequencyConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyConstraint.swift; sourceTree = "<group>"; };
 		3231128129D5E67200CF0D86 /* FrequencyChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyChecker.swift; sourceTree = "<group>"; };
 		3231128B29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
@@ -2058,10 +2052,6 @@
 		3CA0E305237E396100EE76CF /* UAInbox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAInbox.xcdatamodel; sourceTree = "<group>"; };
 		3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipMessageCenter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CA0E47F237E505200EE76CF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAFrequencyConstraint+Internal.h"; path = "AirshipAutomation/Source/UAFrequencyConstraint+Internal.h"; sourceTree = SOURCE_ROOT; };
-		3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAFrequencyConstraint.m; path = AirshipAutomation/Source/UAFrequencyConstraint.m; sourceTree = SOURCE_ROOT; };
-		3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAFrequencyChecker+Internal.h"; path = "AirshipAutomation/Source/UAFrequencyChecker+Internal.h"; sourceTree = SOURCE_ROOT; };
-		3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAFrequencyChecker.m; path = AirshipAutomation/Source/UAFrequencyChecker.m; sourceTree = SOURCE_ROOT; };
 		3CA84AA626DE255200A59685 /* EventStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		3CA84AB626DE257200A59685 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		3CA84AB726DE257200A59685 /* AnalyticsProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsProtocol.swift; sourceTree = "<group>"; };
@@ -2078,17 +2068,6 @@
 		3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategories.swift; sourceTree = "<group>"; };
 		3CC95B2A2696549B00FE2ACD /* PushableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushableComponent.swift; sourceTree = "<group>"; };
 		3CD9C1D021D1A43600B129A6 /* UAInAppMessageResolution+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageResolution+Internal.h"; sourceTree = "<group>"; };
-		3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyLimitManager+Internal.h"; sourceTree = "<group>"; };
-		3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManager.m; sourceTree = "<group>"; };
-		3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAOccurrence+Internal.h"; sourceTree = "<group>"; };
-		3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAOccurrence.m; sourceTree = "<group>"; };
-		3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyConstraintData+Internal.h"; sourceTree = "<group>"; };
-		3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyConstraintData.m; sourceTree = "<group>"; };
-		3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAOccurrenceData+Internal.h"; sourceTree = "<group>"; };
-		3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAOccurrenceData.m; sourceTree = "<group>"; };
-		3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAFrequencyLimitStore+Internal.h"; sourceTree = "<group>"; };
-		3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitStore.m; sourceTree = "<group>"; };
-		3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAFrequencyLimitManagerTest.m; sourceTree = "<group>"; };
 		3CF62FAF25883BE90007502B /* UAAutomationNativeBridgeExtension+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UAAutomationNativeBridgeExtension+Internal.h"; path = "AirshipAutomation/Source/UAAutomationNativeBridgeExtension+Internal.h"; sourceTree = SOURCE_ROOT; };
 		3CF62FB025883BE90007502B /* UAAutomationNativeBridgeExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = UAAutomationNativeBridgeExtension.m; path = AirshipAutomation/Source/UAAutomationNativeBridgeExtension.m; sourceTree = SOURCE_ROOT; };
 		3CF63038258965F50007502B /* UAAutomationNativeBridgeExtensionTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAAutomationNativeBridgeExtensionTest.m; sourceTree = "<group>"; };
@@ -2161,7 +2140,6 @@
 		6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipAutomationSwift.h; sourceTree = "<group>"; };
 		6E0B8731294A9C130064B7BD /* AirshipAutomationSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipAutomationSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E0B8749294A9CCA0064B7BD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6E0B874B294A9D590064B7BD /* AirshipAutomationSDKModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAutomationSDKModule.swift; sourceTree = "<group>"; };
 		6E0B875F294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmHashFingerprint64Test.swift; sourceTree = "<group>"; };
 		6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FarmHashFingerprint64.swift; sourceTree = "<group>"; };
 		6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThomasAsyncImage.swift; sourceTree = "<group>"; };
@@ -2244,7 +2222,6 @@
 		6E299FD628D13E54001305A7 /* AirshipRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipRequest.swift; sourceTree = "<group>"; };
 		6E299FDA28D14208001305A7 /* AirshipResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipResponse.swift; sourceTree = "<group>"; };
 		6E299FDE28D14258001305A7 /* AirshipRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipRequestSession.swift; sourceTree = "<group>"; };
-		6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
 		6E2D6AED26B083DB00B7C226 /* ChannelAudienceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAudienceManager.swift; sourceTree = "<group>"; };
 		6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClientTest.swift; sourceTree = "<group>"; };
 		6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAudienceManagerTest.swift; sourceTree = "<group>"; };
@@ -3227,8 +3204,6 @@
 				3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */,
 				3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */,
 				3231127D29D5E67200CF0D86 /* Occurrence.swift */,
-				3231127E29D5E67200CF0D86 /* FrequencyConstraintData.swift */,
-				3231127F29D5E67200CF0D86 /* OccurrenceData.swift */,
 				3231128029D5E67200CF0D86 /* FrequencyConstraint.swift */,
 				3231128129D5E67200CF0D86 /* FrequencyChecker.swift */,
 			);
@@ -3391,35 +3366,6 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		3CF5E7E02554F6150074B2A0 /* Limits */ = {
-			isa = PBXGroup;
-			children = (
-				3CA6C3222554E89600F71ABF /* UAFrequencyConstraint+Internal.h */,
-				3CA6C3232554E89600F71ABF /* UAFrequencyConstraint.m */,
-				3CF5E85E255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h */,
-				3CF5E85F255A270A0074B2A0 /* UAFrequencyConstraintData.m */,
-				3CA6C3402554ED8B00F71ABF /* UAFrequencyChecker+Internal.h */,
-				3CA6C3412554ED8B00F71ABF /* UAFrequencyChecker.m */,
-				3CF5E806255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h */,
-				3CF5E807255619DC0074B2A0 /* UAFrequencyLimitManager.m */,
-				3CF5E81825561FCC0074B2A0 /* UAOccurrence+Internal.h */,
-				3CF5E81925561FCC0074B2A0 /* UAOccurrence.m */,
-				3CF5E870255A27380074B2A0 /* UAOccurrenceData+Internal.h */,
-				3CF5E871255A27380074B2A0 /* UAOccurrenceData.m */,
-				3CF5E89A255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h */,
-				3CF5E89B255A2AF10074B2A0 /* UAFrequencyLimitStore.m */,
-			);
-			name = Limits;
-			sourceTree = "<group>";
-		};
-		3CF5E8C4255E28590074B2A0 /* Limits */ = {
-			isa = PBXGroup;
-			children = (
-				3CF5E8C5255E28980074B2A0 /* UAFrequencyLimitManagerTest.m */,
-			);
-			name = Limits;
-			sourceTree = "<group>";
-		};
 		3CF6304625896F080007502B /* NativeBridge */ = {
 			isa = PBXGroup;
 			children = (
@@ -3552,7 +3498,6 @@
 				3231128D29D5E6C600CF0D86 /* Tests */,
 				3231128929D5E69400CF0D86 /* Resources */,
 				6E0B8740294A9C500064B7BD /* Source */,
-				6E0B874B294A9D590064B7BD /* AirshipAutomationSDKModule.swift */,
 			);
 			path = AirshipAutomationSwift;
 			sourceTree = "<group>";
@@ -4262,7 +4207,6 @@
 		6E84509D237DFE89007D3B1E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */,
 				1B2F3B0324B7525500A5DE8C /* UAAutomation.xcdatamodeld */,
 				6E84547B237E2320007D3B1E /* UAInAppMessageBannerContentView.xib */,
 				6E845482237E2320007D3B1E /* UAInAppMessageBannerView.xib */,
@@ -4286,7 +4230,6 @@
 				6E4E5B4726E81EF700198175 /* UAAsyncOperation+Internal.h */,
 				6E4E5B4A26E81EF700198175 /* UAAsyncOperation.m */,
 				3CF6304625896F080007502B /* NativeBridge */,
-				3CF5E7E02554F6150074B2A0 /* Limits */,
 				6E84544E237E05F3007D3B1E /* AirshipAutomation.h */,
 				1BAE376524F559950095C6E3 /* Public */,
 				6EA734AD24B7A9DC0012B737 /* InAppAutomation */,
@@ -4702,7 +4645,6 @@
 		6EA734B724BE5E680012B737 /* InAppAutomation */ = {
 			isa = PBXGroup;
 			children = (
-				3CF5E8C4255E28590074B2A0 /* Limits */,
 				6EA734B824BE5E920012B737 /* UAInAppAutomationTest.m */,
 			);
 			name = InAppAutomation;
@@ -5447,7 +5389,6 @@
 			files = (
 				3C13BFB62384AC0E0071E80C /* UAAutomationResources.h in Headers */,
 				3CF62FB225883BEB0007502B /* UAAutomationNativeBridgeExtension+Internal.h in Headers */,
-				3CF5E81B25561FCC0074B2A0 /* UAOccurrence+Internal.h in Headers */,
 				6E8453C4237E0540007D3B1E /* UAInAppMessageHTMLDisplayContent.h in Headers */,
 				6E0B8724294A93780064B7BD /* UAPadding.h in Headers */,
 				6E8453C5237E0540007D3B1E /* UAInAppMessageHTMLAdapter.h in Headers */,
@@ -5468,7 +5409,6 @@
 				6E8453D0237E0540007D3B1E /* UAInAppMessageFullScreenDisplayContent.h in Headers */,
 				6EA734B224B7AA600012B737 /* UAInAppAutomation+Internal.h in Headers */,
 				6E8453D1237E0540007D3B1E /* UALegacyInAppMessage.h in Headers */,
-				3CA6C3252554E89600F71ABF /* UAFrequencyConstraint+Internal.h in Headers */,
 				6E8453D2237E0540007D3B1E /* UALegacyInAppMessaging.h in Headers */,
 				6E8453D3237E0540007D3B1E /* UAInAppMessageAssetManager.h in Headers */,
 				6E845463237E0DCF007D3B1E /* UAAirshipAutomationCoreImport.h in Headers */,
@@ -5508,11 +5448,9 @@
 				6E8453F5237E0540007D3B1E /* UAAutomationSDKModule.h in Headers */,
 				6E84538A237E0523007D3B1E /* UAInAppMessageHTMLDisplayContent+Internal.h in Headers */,
 				6E84538B237E0523007D3B1E /* UAInAppMessageHTMLViewController+Internal.h in Headers */,
-				3CF5E861255A270A0074B2A0 /* UAFrequencyConstraintData+Internal.h in Headers */,
 				6E84538C237E0523007D3B1E /* UAInAppMessageCustomDisplayContent+Internal.h in Headers */,
 				6E84538D237E0523007D3B1E /* UAInAppMessageBannerDisplayContent+Internal.h in Headers */,
 				6E84538E237E0523007D3B1E /* UAInAppMessageBannerController+Internal.h in Headers */,
-				3CF5E873255A27380074B2A0 /* UAOccurrenceData+Internal.h in Headers */,
 				6E4E5B4F26E81EF700198175 /* UAAsyncOperation+Internal.h in Headers */,
 				6E84538F237E0523007D3B1E /* UAInAppMessageBannerView+Internal.h in Headers */,
 				6E845390237E0523007D3B1E /* UAInAppMessageBannerContentView+Internal.h in Headers */,
@@ -5528,7 +5466,6 @@
 				321D47022A17A4590002CE1B /* UAScheduleData+Internal.h in Headers */,
 				6E845399237E0523007D3B1E /* UAInAppMessageSceneManager+Internal.h in Headers */,
 				6E84544F237E05F3007D3B1E /* AirshipAutomation.h in Headers */,
-				3CA6C3432554ED8B00F71ABF /* UAFrequencyChecker+Internal.h in Headers */,
 				6E8453A0237E0524007D3B1E /* UAInAppReporting+Internal.h in Headers */,
 				6E8453A2237E0524007D3B1E /* UAInAppMessageResolution+Internal.h in Headers */,
 				6E8453A4237E0524007D3B1E /* UAInAppMessage+Internal.h in Headers */,
@@ -5538,7 +5475,6 @@
 				6EA734B624B7AA600012B737 /* UAInAppAutomation.h in Headers */,
 				6E8453A8237E0524007D3B1E /* UAInAppMessageTextView+Internal.h in Headers */,
 				6E8453A9237E0524007D3B1E /* UAInAppMessageDismissButton+Internal.h in Headers */,
-				3CF5E89D255A2AF10074B2A0 /* UAFrequencyLimitStore+Internal.h in Headers */,
 				6E8453AA237E0524007D3B1E /* UAInAppMessageButtonView+Internal.h in Headers */,
 				6E8453AB237E0524007D3B1E /* UAInAppMessageButton+Internal.h in Headers */,
 				6E8453AC237E0524007D3B1E /* UAInAppMessageMediaView+Internal.h in Headers */,
@@ -5547,7 +5483,6 @@
 				6E8453AF237E0524007D3B1E /* UAInAppMessageUtils+Internal.h in Headers */,
 				6E8453B0237E0524007D3B1E /* UAInAppRemoteDataClient+Internal.h in Headers */,
 				A66C656427C93777006B7F2B /* UADeferredScheduleRetryRules+Internal.h in Headers */,
-				3CF5E809255619DC0074B2A0 /* UAFrequencyLimitManager+Internal.h in Headers */,
 				6E50629824E1ABDB00689C6D /* UAActionSchedule.h in Headers */,
 				6E8453B1237E0524007D3B1E /* UAScheduleAudience+Internal.h in Headers */,
 				6E8453B2237E0524007D3B1E /* UATagSelector+Internal.h in Headers */,
@@ -5795,6 +5730,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E20987B2B23AEF1007E0204 /* PBXTargetDependency */,
 				6E845452237E08EE007D3B1E /* PBXTargetDependency */,
 			);
 			name = AirshipAutomation;
@@ -6757,13 +6693,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */,
-				3231128629D5E67200CF0D86 /* OccurrenceData.swift in Sources */,
 				3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */,
 				3231128729D5E67200CF0D86 /* FrequencyConstraint.swift in Sources */,
-				3231128529D5E67200CF0D86 /* FrequencyConstraintData.swift in Sources */,
 				3231128829D5E67200CF0D86 /* FrequencyChecker.swift in Sources */,
 				3231128C29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodeld in Sources */,
-				6E0B874C294A9D590064B7BD /* AirshipAutomationSDKModule.swift in Sources */,
 				3231128229D5E67200CF0D86 /* FrequencyLimitStore.swift in Sources */,
 				3231126A29D5E4F600CF0D86 /* AutomationResources.swift in Sources */,
 			);
@@ -6826,13 +6759,11 @@
 				6E8453F7237E0575007D3B1E /* UAInAppMessageHTMLDisplayContent.m in Sources */,
 				6E8453F8237E0575007D3B1E /* UAInAppMessageHTMLViewController.m in Sources */,
 				6E8453F9237E0575007D3B1E /* UAInAppMessageHTMLAdapter.m in Sources */,
-				6E2A85C02582969D0067E824 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6E8453FA237E0575007D3B1E /* UAInAppMessageHTMLStyle.m in Sources */,
 				6E50629424E1A62C00689C6D /* UAInAppMessageSchedule.m in Sources */,
 				6E8453FB237E0575007D3B1E /* UAInAppMessageCustomDisplayContent.m in Sources */,
 				6E8453FC237E0575007D3B1E /* UAInAppMessageBannerAdapter.m in Sources */,
 				6E8453FD237E0575007D3B1E /* UAInAppMessageBannerDisplayContent.m in Sources */,
-				3CF5E89F255A2AF10074B2A0 /* UAFrequencyLimitStore.m in Sources */,
 				6E8453FE237E0575007D3B1E /* UAInAppMessageBannerStyle.m in Sources */,
 				A66C656527C93777006B7F2B /* UADeferredScheduleRetryRules.m in Sources */,
 				6E8453FF237E0575007D3B1E /* UAInAppMessageBannerController.m in Sources */,
@@ -6846,7 +6777,6 @@
 				6E845405237E0575007D3B1E /* UAInAppMessageModalViewController.m in Sources */,
 				6E845406237E0575007D3B1E /* UAInAppMessageFullScreenAdapter.m in Sources */,
 				6E845407237E0575007D3B1E /* UAInAppMessageFullScreenStyle.m in Sources */,
-				3CF5E863255A270A0074B2A0 /* UAFrequencyConstraintData.m in Sources */,
 				6EA42DA02735FA1700B2A532 /* UAInAppMessageAirshipLayoutDisplayContent.m in Sources */,
 				6E4E5B5026E81EF700198175 /* NSObject+UAAdditions.m in Sources */,
 				6E845408237E0575007D3B1E /* UAInAppMessageFullScreenDisplayContent.m in Sources */,
@@ -6858,7 +6788,6 @@
 				6E84540E237E0575007D3B1E /* UAInAppMessageAssets.m in Sources */,
 				6E84540F237E0575007D3B1E /* UAInAppMessageDefaultPrepareAssetsDelegate.m in Sources */,
 				6E845410237E0575007D3B1E /* UAInAppMessageSceneManager.m in Sources */,
-				3CF5E875255A27380074B2A0 /* UAOccurrenceData.m in Sources */,
 				6EEAE81624CF93150046E311 /* UAScheduleDeferredData.m in Sources */,
 				3CF62FB425883BEB0007502B /* UAAutomationNativeBridgeExtension.m in Sources */,
 				6E845466237E1C62007D3B1E /* UARetriable.m in Sources */,
@@ -6869,12 +6798,10 @@
 				6E845419237E0575007D3B1E /* UAInAppMessageResolution.m in Sources */,
 				6E4E5B5226E81EF700198175 /* UAAsyncOperation.m in Sources */,
 				6E84541B237E0575007D3B1E /* UAInAppMessage.m in Sources */,
-				3CA6C3452554ED8B00F71ABF /* UAFrequencyChecker.m in Sources */,
 				6E84541C237E0575007D3B1E /* UAInAppMessageDisplayContent.m in Sources */,
 				6E84541D237E0575007D3B1E /* UAInAppMessageTextInfo.m in Sources */,
 				6E84541E237E0575007D3B1E /* UAInAppMessageTextStyle.m in Sources */,
 				6E84541F237E0575007D3B1E /* UAInAppMessageButtonStyle.m in Sources */,
-				3CF5E80B255619DC0074B2A0 /* UAFrequencyLimitManager.m in Sources */,
 				6E845420237E0575007D3B1E /* UAInAppMessageMediaStyle.m in Sources */,
 				6E845421237E0575007D3B1E /* UAInAppMessageButtonInfo.m in Sources */,
 				6E845422237E0575007D3B1E /* UAInAppMessageMediaInfo.m in Sources */,
@@ -6884,7 +6811,6 @@
 				6E845425237E0575007D3B1E /* UAInAppMessageButtonView.m in Sources */,
 				6E845426237E0575007D3B1E /* UAInAppMessageButton.m in Sources */,
 				6E845427237E0575007D3B1E /* UAInAppMessageMediaView.m in Sources */,
-				3CA6C3272554E89600F71ABF /* UAFrequencyConstraint.m in Sources */,
 				6E845465237E1C26007D3B1E /* UAActiveTimer.m in Sources */,
 				6E845429237E0575007D3B1E /* UAInAppMessageManager.m in Sources */,
 				6E84542A237E0575007D3B1E /* UAInAppMessageUtils.m in Sources */,
@@ -6893,7 +6819,6 @@
 				6E84542D237E0575007D3B1E /* UATagSelector.m in Sources */,
 				6EA734B424B7AA600012B737 /* UAInAppAutomation.m in Sources */,
 				6E845467237E1C62007D3B1E /* UARetriablePipeline.m in Sources */,
-				3CF5E81D25561FCC0074B2A0 /* UAOccurrence.m in Sources */,
 				6E5062A024E1B2DE00689C6D /* UADeferredSchedule.m in Sources */,
 				6E845430237E0575007D3B1E /* UAInAppMessageImmediateDisplayCoordinator.m in Sources */,
 				6E845431237E0575007D3B1E /* UAInAppMessageDefaultDisplayCoordinator.m in Sources */,
@@ -7498,7 +7423,6 @@
 				A615E215264EAFB9004FA211 /* UAPrivacyManagerTest.m in Sources */,
 				6EEAE81824CF9FBF0046E311 /* UAScheduleDeferredDataTest.m in Sources */,
 				CC64F1211D8B781C009CEF27 /* UAScheduleTriggerTests.m in Sources */,
-				3CF5E8C6255E28980074B2A0 /* UAFrequencyLimitManagerTest.m in Sources */,
 				CC64F0EC1D8B781C009CEF27 /* UACancelSchedulesActionTests.m in Sources */,
 				6E6C3F8D27A26992007F55C7 /* CachedValueTest.swift in Sources */,
 				6E4007162A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift in Sources */,
@@ -7918,6 +7842,11 @@
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E0B8746294A9C950064B7BD /* PBXContainerItemProxy */;
 		};
+		6E20987B2B23AEF1007E0204 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E0B8729294A9C120064B7BD /* AirshipAutomationSwift */;
+			targetProxy = 6E20987A2B23AEF1007E0204 /* PBXContainerItemProxy */;
+		};
 		6E29474A2AD47E0C009EC6DD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */;
@@ -7947,6 +7876,11 @@
 			isa = PBXTargetDependency;
 			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
 			targetProxy = 6E4A467328EF44F600A25617 /* PBXContainerItemProxy */;
+		};
+		6E5917892B28E93A0084BBBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E0B8729294A9C120064B7BD /* AirshipAutomationSwift */;
+			targetProxy = 6E5917882B28E93A0084BBBF /* PBXContainerItemProxy */;
 		};
 		6E6B493E2A787D0A00AF98D8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -9652,17 +9586,6 @@
 			);
 			currentVersion = A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */;
 			path = UAInbox.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-		6E2A85BD2582969D0067E824 /* UAFrequencyLimits.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */,
-			);
-			currentVersion = 6E2A85BE2582969D0067E824 /* UAFrequencyLimits.xcdatamodel */;
-			name = UAFrequencyLimits.xcdatamodeld;
-			path = Resources/UAFrequencyLimits.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

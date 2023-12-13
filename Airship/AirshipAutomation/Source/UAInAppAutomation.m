@@ -20,6 +20,7 @@
 #import "AirshipKit-Swift.h"
 #else
 @import AirshipCore;
+@import AirshipAutomationSwift;
 #endif
 
 #define kUADeferredScheduleAPIClientAudienceMatchKey @"audience_match"
@@ -40,8 +41,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
 @property(nonatomic, strong) UARetriablePipeline *prepareSchedulePipeline;
 @property(nonatomic, strong) UAInAppMessageManager *inAppMessageManager;
 @property(nonatomic, strong) UAChannel *channel;
-@property(nonatomic, strong) UAFrequencyLimitManager *frequencyLimitManager;
-@property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyChecker *> *frequencyCheckers;
+@property(nonatomic, strong) id<UAFrequencyLimitManagerProtocol> frequencyLimitManager;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, id<UAFrequencyChecker>> *frequencyCheckers;
 @property(nonatomic, strong) UAPrivacyManager *privacyManager;
 @property(nonatomic, assign) dispatch_once_t engineStarted;
 @property(nonatomic, strong) UAComponentDisableHelper *disableHelper;
@@ -61,7 +62,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
-               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+               frequencyLimitManager:(id<UAFrequencyLimitManagerProtocol>)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager {
 
     return [[self alloc] initWithConfig:config
@@ -96,7 +97,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                                                                                    analytics:analytics];
 
 
-    UAFrequencyLimitManager *frequencyLimitManager = [UAFrequencyLimitManager managerWithConfig:config];
+    UAFrequencyLimitManager *frequencyLimitManager = [[UAFrequencyLimitManager alloc] initWithConfig:config];
 
     return [[UAInAppAutomation alloc] initWithConfig:config
                                     automationEngine:automationEngine
@@ -117,7 +118,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
                      dataStore:(UAPreferenceDataStore *)dataStore
            inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                        channel:(UAChannel *)channel
-         frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+         frequencyLimitManager:(id<UAFrequencyLimitManagerProtocol>)frequencyLimitManager
                 privacyManager:(UAPrivacyManager *)privacyManager {
 
     self = [super init];
@@ -309,19 +310,27 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
         }];
     }];
 
-
-    __block UAFrequencyChecker *checker;
+    __block id<UAFrequencyChecker> checker;
     UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
-        [self.frequencyLimitManager getFrequencyChecker:schedule.frequencyConstraintIDs completionHandler:^(UAFrequencyChecker *c) {
-            checker = c;
-            if (checker.isOverLimit) {
-                // If we're over the limit, skip the rest of the prepare steps and cancel the pipeline
-                completionHandler(UAAutomationSchedulePrepareResultSkip);
-                retriableHandler(UARetriableResultCancel, 0);
-            } else {
-                retriableHandler(UARetriableResultSuccess, 0);
-            }
+        [UADispatcher.main dispatchAsync:^{
+            [self.frequencyLimitManager getFrequencyCheckerWithConstraintIDs:schedule.frequencyConstraintIDs
+                                                           completionHandler:^(id<UAFrequencyChecker> c, NSError *error) {
+
+                if (error) {
+                    retriableHandler(UARetriableResultRetry, 0);
+                    return;
+                }
+                checker = c;
+                if (checker.isOverLimit) {
+                    // If we're over the limit, skip the rest of the prepare steps and cancel the pipeline
+                    completionHandler(UAAutomationSchedulePrepareResultSkip);
+                    retriableHandler(UARetriableResultCancel, 0);
+                } else {
+                    retriableHandler(UARetriableResultSuccess, 0);
+                }
+            }];
         }];
+
     }];
 
     __block UAInAppAudience *audience;
@@ -562,7 +571,7 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
             break;
     }
 
-    UAFrequencyChecker *checker = self.frequencyCheckers[schedule.identifier];
+    id<UAFrequencyChecker> checker = self.frequencyCheckers[schedule.identifier];
     if (checker && !checker.checkAndIncrement) {
         // Abort execution if necessary and skip
         if (schedule.type == UAScheduleTypeInAppMessage) {
@@ -709,8 +718,14 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     [self updateEnginePauseState];
 }
 
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
-     [self.frequencyLimitManager updateConstraints:constraints];
+- (void)setConstraints:(NSData *)constraintData {
+    [self.frequencyLimitManager setConstraintsWithData:constraintData completionHandler:^(NSError *error) {
+        if (error) {
+            UA_LDEBUG(@"Updated constraints with error %@.", error);
+        } else {
+            UA_LDEBUG(@"Updated constraints.");
+        }
+    }];
 }
 
 - (void)setPaused:(BOOL)paused {

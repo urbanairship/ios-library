@@ -4,7 +4,6 @@
 #import "UAAirshipAutomationCoreImport.h"
 #import "UASchedule.h"
 #import "UAScheduleEdits.h"
-#import "UAFrequencyConstraint+Internal.h"
 
 @class UAInAppCoreSwiftBridge;
 @class UAPreferenceDataStore;
@@ -49,9 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Called with updated constraints.
- * @param constraints The updated constraints.
+ * @param constraintData The updated constraints.
  */
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints;
+- (void)setConstraints:(NSData *)constraintData;
 
 @end
 

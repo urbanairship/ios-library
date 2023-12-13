@@ -13,4 +13,12 @@ public final class AirshipLock: Sendable {
         closure()
         self.lock.unlock()
     }
+
+    
+    public func sync<T>(closure: () -> T) -> T {
+        self.lock.lock()
+        let t = closure()
+        self.lock.unlock()
+        return t
+    }
 }

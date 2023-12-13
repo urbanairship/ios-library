@@ -15,7 +15,7 @@ let package = Package(
         ),
         .library(
             name: "AirshipAutomation",
-            targets: ["AirshipAutomation"]
+            targets: ["AirshipAutomation", "AirshipAutomationSwift"]
         ),
         .library(
             name: "AirshipMessageCenter",
@@ -104,7 +104,7 @@ let package = Package(
         ),
         .target(
             name: "AirshipAutomation",
-            dependencies: [.target(name: "AirshipCore")],
+            dependencies: [.target(name: "AirshipCore"), .target(name: "AirshipAutomationSwift")],
             path: "Airship/AirshipAutomation",
             exclude: [
                 "Source/AirshipAutomation.h",
@@ -121,6 +121,20 @@ let package = Package(
             ],
             linkerSettings: [
                 .linkedFramework("UIKit")
+            ]
+        ),
+        .target(
+            name: "AirshipAutomationSwift",
+            dependencies: [.target(name: "AirshipCore")],
+            path: "Airship/AirshipAutomationSwift",
+            exclude: [
+                "Source/AirshipAutomationSwift.h",
+                "generate_header_imports.sh",
+                "Info.plist",
+            ],
+            sources: ["Source"],
+            resources: [
+                .process("Resources")
             ]
         ),
         .target(

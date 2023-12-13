@@ -43,8 +43,8 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
-    private let fetchSubscriptinListQueue: SerialQueue = SerialQueue()
-    private let serialQueue: AsyncSerialQueue
+    private let fetchSubscriptinListQueue: AirshipSerialQueue = AirshipSerialQueue()
+    private let serialQueue: AirshipAsyncSerialQueue
 
     private var lastResolveDate: Date {
          get {
@@ -149,7 +149,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: AudienceOverridesProvider,
         contactManager: ContactManagerProtocol,
-        serialQueue: AsyncSerialQueue = AsyncSerialQueue(priority: .high)
+        serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
     ) {
 
         self.dataStore = dataStore

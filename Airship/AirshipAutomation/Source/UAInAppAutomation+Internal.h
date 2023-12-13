@@ -8,13 +8,13 @@
 #import "UASchedule.h"
 #import "UAInAppRemoteDataClient+Internal.h"
 #import "UAAirshipAutomationCoreImport.h"
-#import "UAFrequencyLimitManager+Internal.h"
 
 @class UAPreferenceDataStore;
 @class UAChannel;
 @class UAAnalytics;
 @class UAPrivacyManager;
 @class UAInAppCoreSwiftBridge;
+@protocol UAFrequencyLimitManagerProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
                            dataStore:(UAPreferenceDataStore *)dataStore
                  inAppMessageManager:(UAInAppMessageManager *)inAppMessageManager
                              channel:(UAChannel *)channel
-               frequencyLimitManager:(UAFrequencyLimitManager *)frequencyLimitManager
+               frequencyLimitManager:(id<UAFrequencyLimitManagerProtocol>)frequencyLimitManager
                       privacyManager:(UAPrivacyManager *)privacyManager;
 
 + (instancetype)automationWithConfig:(UARuntimeConfig *)config

@@ -13,7 +13,7 @@ actor AirshipDeviceID: AirshipDeviceIDProtocol {
     private static let deviceKeychainID = "com.urbanairship.deviceID"
     private var cached: String? = nil
     private let keychain: AirshipKeychainAccessProtocol
-    private var queue: SerialQueue = SerialQueue()
+    private var queue: AirshipSerialQueue = AirshipSerialQueue()
     private let appKey: String
 
     init(

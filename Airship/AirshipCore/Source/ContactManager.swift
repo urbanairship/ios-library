@@ -13,7 +13,7 @@ actor ContactManager: ContactManagerProtocol {
     
     private let cachedAuthToken: CachedValue<AuthToken> = CachedValue()
     private var dataStore: PreferenceDataStore
-    private let identifySerialQueue: SerialQueue = SerialQueue()
+    private let identifySerialQueue: AirshipSerialQueue = AirshipSerialQueue()
     private let channel: AirshipChannelProtocol
     private let apiClient: ContactsAPIClientProtocol
     private let workManager: AirshipWorkManagerProtocol

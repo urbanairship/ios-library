@@ -58,7 +58,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     private let permissionsManager: AirshipPermissionsManager
     private let disableHelper: ComponentDisableHelper
     private let sessionTracker: SessionTrackerProtocol
-    private let serialQueue: AsyncSerialQueue = AsyncSerialQueue()
+    private let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
     private let sdkExtensions: Atomic<[String]> = Atomic([])
 

@@ -14,7 +14,7 @@ class AirshipContactTest: XCTestCase {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private let contactManager: TestContactManager = TestContactManager()
-    private var contactQueue: AsyncSerialQueue!
+    private var contactQueue: AirshipAsyncSerialQueue!
 
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
@@ -35,7 +35,7 @@ class AirshipContactTest: XCTestCase {
     }
 
     func setupContact()  {
-        contactQueue = AsyncSerialQueue(priority: .high)
+        contactQueue = AirshipAsyncSerialQueue(priority: .high)
 
         self.contact =  AirshipContact(
             dataStore: self.dataStore,

@@ -22,7 +22,7 @@ class PushTest: XCTestCase {
     private var config = AirshipConfig()
     private var privacyManager: AirshipPrivacyManager!
     private var push: AirshipPush!
-    private var serialQueue: AsyncSerialQueue = AsyncSerialQueue(priority: .high)
+    private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
         self.privacyManager = AirshipPrivacyManager(

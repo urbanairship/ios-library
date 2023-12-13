@@ -149,7 +149,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
     @MainActor
     private var pushEnabled = false
 
-    private let serialQueue: AsyncSerialQueue
+    private let serialQueue: AirshipAsyncSerialQueue
 
 
     @MainActor
@@ -190,7 +190,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
             UNNotificationRegistrar(),
         apnsRegistrar: APNSRegistrar,
         badger: Badger,
-        serialQueue: AsyncSerialQueue = AsyncSerialQueue()
+        serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
     ) {
 
         self.config = config
@@ -405,6 +405,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
     @MainActor
     public private(set) var deviceToken: String? {
         set {
+            
             guard let deviceToken = newValue else {
                 self.dataStore.removeObject(forKey: AirshipPush.deviceTokenKey)
                 self.updateNotificationStatus()

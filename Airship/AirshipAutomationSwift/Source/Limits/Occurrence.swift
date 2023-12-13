@@ -2,15 +2,7 @@
 
 import Foundation
 
-class Occurrence {
-    let parentConstraintID: String
+struct Occurrence: Sendable, Equatable, Hashable {
+    let constraintID: String
     let timestamp: Date
-    
-    init(
-        withParentConstraintID parentConstraintID: String,
-        timestamp: Date
-    ) {
-        self.parentConstraintID = parentConstraintID
-        self.timestamp = timestamp
-    }
 }

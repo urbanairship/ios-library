@@ -7,7 +7,7 @@ import Foundation
 import AirshipCore
 #endif
 
-enum FrequencyLimitStoreError: Error {
+enum FrequencyLimitStoreError: Error, Sendable {
     case coreDataUnavailble
     case coreDataError
 }
@@ -23,10 +23,10 @@ actor FrequencyLimitStore {
         let bundle = AutomationResources.bundle
         if let modelURL = bundle.url(forResource: "UAFrequencyLimits", withExtension:"momd") {
             self.coreData = UACoreData(
-                modelURL:modelURL,
-                inMemory:inMemory,
-                stores:[name],
-                mergePolicy:NSMergeByPropertyObjectTrumpMergePolicy)
+                modelURL: modelURL,
+                inMemory: inMemory,
+                stores: [name],
+                mergePolicy: NSMergeByPropertyObjectTrumpMergePolicy)
         } else {
             self.coreData = nil
         }
@@ -51,8 +51,7 @@ actor FrequencyLimitStore {
 
     func fetchConstraints(
         _ constraintIDs: [String]? = nil
-    ) async throws -> [FrequencyConstraint] {
-        
+    ) async throws -> [ConstraintInfo] {
         guard let coreData = self.coreData else {
             throw FrequencyLimitStoreError.coreDataUnavailble
         }
@@ -62,12 +61,15 @@ actor FrequencyLimitStore {
         )
         
         return try await coreData.performWithResult { context in
-            let data = try self.fetchConstraintsData(
+            let result = try self.fetchConstraintsData(
                 forIDs: constraintIDs,
-                context: context)
-            return self.constraints(fromData: data)
-        }
+                context: context
+            )
 
+            return result.map { data in
+                return self.makeInfo(data: data)
+            }
+        }
     }
 
     func deleteConstraints(
@@ -93,57 +95,34 @@ actor FrequencyLimitStore {
         }
     }
 
-    func deleteConstraint(
-        _ constraint: FrequencyConstraint
-    ) async throws {
-        return try await self.deleteConstraints([constraint.identifier])
-    }
-
-    func fetchOccurrences(
-        forConstraintID constraintID: String
-    ) async throws -> [Occurrence] {
-        
-        guard let coreData = self.coreData else {
-            throw FrequencyLimitStoreError.coreDataUnavailble
-        }
-
-        AirshipLogger.trace(
-            "Fetching occurrences data for constraint ID : \(constraintID)"
-        )
-
-        return try await coreData.performWithResult { context in
-            let data = try self.fetchOccurrencesData(
-                forConstraintID: constraintID,
-                context: context)
-            return self.occurrences(fromData: data)
-        }
-    }
 
     func saveOccurrences(
-        occurrences: [Occurrence]
+        _ occurrences: Set<Occurrence>
     ) async throws {
         
         guard let coreData = self.coreData else {
             throw FrequencyLimitStoreError.coreDataUnavailble
         }
         
-        AirshipLogger.trace("Saving occurrences data")
-        
+        AirshipLogger.trace("Saving occurrences \(occurrences)")
+
+        let map: [String: [Occurrence]] = Dictionary(grouping: occurrences, by: { $0.constraintID })
+
         try await coreData.perform { context in
-            
-            try occurrences.forEach { occurrence in
+
+            try map.forEach { constraintID, occurrences in
                 let constraintsData = try self.fetchConstraintsData(
-                    forIDs: [occurrence.parentConstraintID],
-                    context: context)
-                
-                guard let constraintData = constraintsData.first else {
-                    throw FrequencyLimitStoreError.coreDataUnavailble
+                    forIDs: [constraintID],
+                    context: context
+                )
+
+                if let constraintData = constraintsData.first {
+                    try occurrences.forEach { occurrence in
+                        let occurrenceData = try self.makeOccurenceData(context: context)
+                        occurrenceData.timestamp = occurrence.timestamp
+                        constraintData.occurrence.insert(occurrenceData)
+                    }
                 }
-                
-                try self.addData(
-                    forOccurrence: occurrence,
-                    constraintData: constraintData,
-                    context: context)
             }
             
             UACoreData.safeSave(context)
@@ -151,32 +130,28 @@ actor FrequencyLimitStore {
         
     }
 
-    func saveOrUpdateConstraint(
+    func upsertConstraint(
         _ constraint: FrequencyConstraint
     ) async throws {
-        
         guard let coreData = self.coreData else {
             throw FrequencyLimitStoreError.coreDataUnavailble
         }
 
         AirshipLogger.trace(
-            "Saving constraint : \(constraint.identifier)"
+            "Update constraint : \(constraint.identifier)"
         )
 
         try await coreData.perform { context in
             
             let result = try self.fetchConstraintsData(
                 forIDs: [constraint.identifier],
-                context: context)
-            
-            if let data = result.first {
-                data.identifier = constraint.identifier
-                data.count = constraint.count
-                data.range = constraint.range
-            } else {
-                try self.addData(forConstraint: constraint, context: context)
-            }
-            
+                context: context
+            )
+
+            let data = try (result.first ?? self.makeConstraintData(context: context))
+            data.identifier = constraint.identifier
+            data.count = constraint.count
+            data.range = constraint.range
             UACoreData.safeSave(context)
         }
     }
@@ -184,92 +159,111 @@ actor FrequencyLimitStore {
     // MARK: -
     // MARK: Helpers
 
-    nonisolated func fetchConstraintsData(
+    fileprivate nonisolated func fetchConstraintsData(
         forIDs constraintIDs: [String]? = nil,
         context: NSManagedObjectContext
     ) throws -> [FrequencyConstraintData] {
         
         let request: NSFetchRequest<FrequencyConstraintData> = FrequencyConstraintData.fetchRequest()
-        
+        request.includesPropertyValues = true
+
         if let constraintIDs = constraintIDs {
             request.predicate = NSPredicate(format: "identifier IN %@", constraintIDs)
         }
         
         return try context.fetch(request)
     }
-    
-    nonisolated func fetchOccurrencesData(
-        forConstraintID constraintID:String,
-        context:NSManagedObjectContext
-    ) throws -> [OccurrenceData] {
-        let request: NSFetchRequest<OccurrenceData> = OccurrenceData.fetchRequest()
-        request.predicate = NSPredicate(format: "constraint.identifier == %@", constraintID)
-        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending:true)]
-        
-        return try context.fetch(request)
-    }
-    
-    nonisolated func addData(
-        forConstraint constraint: FrequencyConstraint,
+
+    fileprivate nonisolated func makeConstraintData(
         context: NSManagedObjectContext
-    ) throws {
-        
+    ) throws -> FrequencyConstraintData {
         guard let data = NSEntityDescription.insertNewObject(
             forEntityName: FrequencyConstraintData.frequencyConstraintDataEntity,
             into:context) as? FrequencyConstraintData
         else {
             throw FrequencyLimitStoreError.coreDataError
         }
-        
-        data.identifier = constraint.identifier
-        data.count = constraint.count
-        data.range = constraint.range
+
+        return data
     }
     
-    nonisolated func addData(
-        forOccurrence occurrence:Occurrence,
-        constraintData:FrequencyConstraintData,
+    fileprivate nonisolated func makeOccurenceData(
         context:NSManagedObjectContext
-    ) throws {
-        
-        guard let data = NSEntityDescription.insertNewObject(
-            forEntityName: OccurrenceData.occurenceDataEntity,
-            into:context) as? OccurrenceData
+    ) throws -> OccurrenceData {
+
+        guard 
+            let data = NSEntityDescription.insertNewObject(
+                forEntityName: OccurrenceData.occurenceDataEntity,
+                into:context
+            ) as? OccurrenceData
         else {
             throw FrequencyLimitStoreError.coreDataError
         }
-        
-        data.timestamp = occurrence.timestamp
-        data.constraint = constraintData
-    }
-    
-    // MARK: -
-    // MARK: Conversion
 
-    nonisolated func constraints(
-        fromData constraintsData: [FrequencyConstraintData]
-    ) -> [FrequencyConstraint] {
-        
-        return constraintsData.compactMap{
-            FrequencyConstraint(
-                identifier: $0.identifier,
-                range: $0.range,
-                count: $0.count)
-        }
-        
+        return data
     }
-    
-    nonisolated func occurrences(
-        fromData occurrencesData: [OccurrenceData]
-    ) -> [Occurrence] {
-        
-        return occurrencesData.compactMap {
-            Occurrence(
-                withParentConstraintID: $0.constraint.identifier,
-                timestamp:$0.timestamp)
-        }
-        
+
+    fileprivate nonisolated func makeInfo(data: FrequencyConstraintData) -> ConstraintInfo {
+        return ConstraintInfo(
+            constraint: FrequencyConstraint(
+                identifier: data.identifier,
+                range: data.range,
+                count: data.count
+            ),
+            occurrences: data.occurrence.map({ occurrenceData in
+                Occurrence(
+                    constraintID: data.identifier,
+                    timestamp: occurrenceData.timestamp
+                )
+            })
+        )
     }
-    
+
 }
 
+
+
+struct ConstraintInfo: Hashable, Equatable, Sendable {
+    var constraint: FrequencyConstraint
+    var occurrences: [Occurrence]
+}
+
+
+/// Represents a constraint on occurrences within a given time period.
+/// 
+@objc(UAFrequencyConstraintData)
+fileprivate class FrequencyConstraintData: NSManagedObject {
+
+    static let frequencyConstraintDataEntity = "UAFrequencyConstraintData"
+
+    @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
+        return NSFetchRequest<T>(entityName: FrequencyConstraintData.frequencyConstraintDataEntity)
+    }
+
+    /// The constraint identifier.
+    @NSManaged var identifier: String
+
+     /// The time range.
+    @NSManaged var range: TimeInterval
+
+    /// The number of allowed occurences.
+    @NSManaged var count: UInt
+
+    /// The occurrences
+    @NSManaged var occurrence: Set<OccurrenceData>
+}
+
+
+@objc(UAOccurrenceData)
+fileprivate class OccurrenceData: NSManagedObject {
+
+    static let occurenceDataEntity = "UAOccurrenceData"
+
+    @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
+        return NSFetchRequest<T>(entityName: OccurrenceData.occurenceDataEntity)
+    }
+
+    /// The timestamp
+    @NSManaged var timestamp: Date
+
+}
