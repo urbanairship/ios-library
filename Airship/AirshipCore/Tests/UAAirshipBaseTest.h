@@ -6,7 +6,7 @@
 
 
 NS_ASSUME_NONNULL_BEGIN
-
+//TODO: remove and use the swift implementation
 @interface UAAirshipBaseTest : UABaseTest
 
 /**
