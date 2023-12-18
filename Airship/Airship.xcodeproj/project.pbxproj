@@ -307,6 +307,7 @@
 		6E1D8AD226CC5D490049DACB /* RemoteConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */; };
 		6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
 		6E1D8AD926CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
+		6E1D90022B2D1AB4004BA130 /* RetryingQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D90012B2D1AB4004BA130 /* RetryingQueueTests.swift */; };
 		6E20BF6724F5C21D005347EC /* UAScheduleTriggerContextTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */; };
 		6E21852B237D32B30084933A /* EventData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21852A237D32B30084933A /* EventData.swift */; };
 		6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */; };
@@ -1188,6 +1189,7 @@
 		6EDF1DA42B2A2C6F00E23BC4 /* InAppMessageColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1DA32B2A2C6F00E23BC4 /* InAppMessageColor.swift */; };
 		6EDF1DA62B2A300100E23BC4 /* InAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1DA52B2A300100E23BC4 /* InAppMessage.swift */; };
 		6EDF1DAD2B2A73FC00E23BC4 /* InAppMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1DAA2B2A6D9900E23BC4 /* InAppMessageTest.swift */; };
+		6EDF1DB82B2BB2B800E23BC4 /* RetryingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1DB72B2BB2B800E23BC4 /* RetryingQueue.swift */; };
 		6EE49BDD2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE49BDE2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
 		6EE49BDF2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */; };
@@ -1751,6 +1753,13 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
+		6E107F032B30B887007AFC4D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
 		6E20987A2B23AEF1007E0204 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -2231,6 +2240,7 @@
 		6E1C9C4C271F78AE009EF9EF /* MarginViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarginViewModifier.swift; sourceTree = "<group>"; };
 		6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
 		6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigCache.swift; sourceTree = "<group>"; };
+		6E1D90012B2D1AB4004BA130 /* RetryingQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryingQueueTests.swift; sourceTree = "<group>"; };
 		6E20BF6624F5C21D005347EC /* UAScheduleTriggerContextTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAScheduleTriggerContextTest.m; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
 		6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterState.swift; sourceTree = "<group>"; };
@@ -2696,6 +2706,7 @@
 		6EDF1DA32B2A2C6F00E23BC4 /* InAppMessageColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageColor.swift; sourceTree = "<group>"; };
 		6EDF1DA52B2A300100E23BC4 /* InAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessage.swift; sourceTree = "<group>"; };
 		6EDF1DAA2B2A6D9900E23BC4 /* InAppMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTest.swift; sourceTree = "<group>"; };
+		6EDF1DB72B2BB2B800E23BC4 /* RetryingQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetryingQueue.swift; sourceTree = "<group>"; };
 		6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNotificationStatus.swift; sourceTree = "<group>"; };
 		6EE49BE02A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRemoteDataProviderDelegate.swift; sourceTree = "<group>"; };
 		6EE49C072A0BE9F600AB1CF4 /* RemoteDataURLFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataURLFactory.swift; sourceTree = "<group>"; };
@@ -3239,6 +3250,7 @@
 		3231128D29D5E6C600CF0D86 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E1D8FFF2B2D1A94004BA130 /* Utils */,
 				6EDF1DA92B2A6D7B00E23BC4 /* InAppMessage */,
 				3231128E29D5E6C600CF0D86 /* Limits */,
 				605073822B2CD38200209B51 /* ActiveTimerTest.swift */,
@@ -3524,6 +3536,7 @@
 		6E0B8740294A9C500064B7BD /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E1D90002B2D1A9B004BA130 /* Utils */,
 				6EDF1D912B292F8600E23BC4 /* InAppMessage */,
 				3231127A29D5E67200CF0D86 /* Limits */,
 				6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */,
@@ -3672,6 +3685,22 @@
 				6E1C9C4C271F78AE009EF9EF /* MarginViewModifier.swift */,
 			);
 			name = ViewModifiers;
+			sourceTree = "<group>";
+		};
+		6E1D8FFF2B2D1A94004BA130 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6E1D90012B2D1AB4004BA130 /* RetryingQueueTests.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		6E1D90002B2D1A9B004BA130 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6EDF1DB72B2BB2B800E23BC4 /* RetryingQueue.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		6E2486FA2899BB0E00657CE4 /* view */ = {
@@ -5705,6 +5734,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E107F042B30B887007AFC4D /* PBXTargetDependency */,
 				6E0B8734294A9C130064B7BD /* PBXTargetDependency */,
 			);
 			name = AirshipAutomationSwiftTests;
@@ -6746,6 +6776,7 @@
 				6EDF1D982B2A25C800E23BC4 /* InAppMessageMediaInfo.swift in Sources */,
 				6EDF1DA62B2A300100E23BC4 /* InAppMessage.swift in Sources */,
 				6EDF1D962B2A25B400E23BC4 /* InAppMessageButtonInfo.swift in Sources */,
+				6EDF1DB82B2BB2B800E23BC4 /* RetryingQueue.swift in Sources */,
 				3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */,
 				6EDF1DA42B2A2C6F00E23BC4 /* InAppMessageColor.swift in Sources */,
 				3231128729D5E67200CF0D86 /* FrequencyConstraint.swift in Sources */,
@@ -6770,6 +6801,7 @@
 				6EDF1DAD2B2A73FC00E23BC4 /* InAppMessageTest.swift in Sources */,
 				325D53F729648150003421B4 /* TestDate.swift in Sources */,
 				3231129129D5E6D900CF0D86 /* FrequencyLimitManagerTest.swift in Sources */,
+				6E1D90022B2D1AB4004BA130 /* RetryingQueueTests.swift in Sources */,
 				325D53FB2964885B003421B4 /* AirshipBaseTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7899,6 +7931,11 @@
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E0B8746294A9C950064B7BD /* PBXContainerItemProxy */;
+		};
+		6E107F042B30B887007AFC4D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 6E107F032B30B887007AFC4D /* PBXContainerItemProxy */;
 		};
 		6E20987B2B23AEF1007E0204 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

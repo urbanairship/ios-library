@@ -9,7 +9,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
     private var manager: FrequencyLimitManager!
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date(timeIntervalSince1970: 0))
     private let store: FrequencyLimitStore = FrequencyLimitStore(
-        name: UUID().uuidString,
+        appKey: UUID().uuidString,
         inMemory: true
     )
 

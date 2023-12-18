@@ -17,7 +17,7 @@ actor FrequencyLimitStore {
     private let coreData: UACoreData?
 
     init(
-        name: String,
+        appKey: String,
         inMemory: Bool
     ) {
         let bundle = AutomationResources.bundle
@@ -25,8 +25,8 @@ actor FrequencyLimitStore {
             self.coreData = UACoreData(
                 modelURL: modelURL,
                 inMemory: inMemory,
-                stores: [name],
-                mergePolicy: NSMergeByPropertyObjectTrumpMergePolicy)
+                stores: ["Frequency-limits-\(appKey).sqlite"]
+            )
         } else {
             self.coreData = nil
         }
@@ -36,8 +36,9 @@ actor FrequencyLimitStore {
         config: RuntimeConfig
     ) {
         self.init(
-            name: String(format:"Frequency-limits-%@.sqlite", config.appKey),
-            inMemory: false)
+            appKey: config.appKey,
+            inMemory: false
+        )
     }
     
     init(

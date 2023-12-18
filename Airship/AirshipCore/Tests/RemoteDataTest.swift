@@ -58,9 +58,7 @@ final class RemoteDataTest: AirshipBaseTest {
                 )
             )
         )
-        notificationCenter.post(
-            name: RuntimeConfig.configUpdatedEvent
-        )
+        await self.remoteData.serialQueue.waitForCurrentOperations()
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
 
