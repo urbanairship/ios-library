@@ -151,12 +151,15 @@
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6018AF572B29C20A008E528B /* SearchEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */; };
+		605073832B2CD38200209B51 /* ActiveTimerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605073822B2CD38200209B51 /* ActiveTimerTest.swift */; };
+		605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */; };
 		6058771D2AC73C940021628E /* AirshipMeteredUsageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6058771C2AC73C7E0021628E /* AirshipMeteredUsageTest.swift */; };
 		605877202ACAC8700021628E /* MeteredUsageApiClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6058771E2ACAC86A0021628E /* MeteredUsageApiClientTest.swift */; };
 		6068E0062B2A190300349E82 /* CustomEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068E0052B2A190300349E82 /* CustomEventTest.swift */; };
 		6068E0082B2A2A6700349E82 /* AccountEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068E0072B2A2A6700349E82 /* AccountEventTemplateTest.swift */; };
 		6068E0322B2B785A00349E82 /* MediaEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068E0312B2B785A00349E82 /* MediaEventTemplateTest.swift */; };
 		6068E0342B2B7CA100349E82 /* RetailEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068E0332B2B7CA100349E82 /* RetailEventTemplateTest.swift */; };
+		6068E03B2B2CBCF200349E82 /* ActiveTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6068E03A2B2CBCF200349E82 /* ActiveTimer.swift */; };
 		607951222A1CD1A50086578F /* ExperimentManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */; };
 		6079513C2A1E74A40086578F /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCB2A153C0700E07524 /* Experiment.swift */; };
 		6079513D2A1E74A40086578F /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCB2A153C0700E07524 /* Experiment.swift */; };
@@ -2116,12 +2119,14 @@
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEventTemplateTest.swift; sourceTree = "<group>"; };
 		60303EEF2AE26585008EE716 /* UAAutomation 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 12.xcdatamodel"; sourceTree = "<group>"; };
+		605073822B2CD38200209B51 /* ActiveTimerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTimerTest.swift; sourceTree = "<group>"; };
 		6058771C2AC73C7E0021628E /* AirshipMeteredUsageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsageTest.swift; sourceTree = "<group>"; };
 		6058771E2ACAC86A0021628E /* MeteredUsageApiClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageApiClientTest.swift; sourceTree = "<group>"; };
 		6068E0052B2A190300349E82 /* CustomEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventTest.swift; sourceTree = "<group>"; };
 		6068E0072B2A2A6700349E82 /* AccountEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountEventTemplateTest.swift; sourceTree = "<group>"; };
 		6068E0312B2B785A00349E82 /* MediaEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaEventTemplateTest.swift; sourceTree = "<group>"; };
 		6068E0332B2B7CA100349E82 /* RetailEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailEventTemplateTest.swift; sourceTree = "<group>"; };
+		6068E03A2B2CBCF200349E82 /* ActiveTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTimer.swift; sourceTree = "<group>"; };
 		6079511F2A1CD19F0086578F /* ExperimentManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentManagerTest.swift; sourceTree = "<group>"; };
 		607FBB792A38D71A003076FD /* InAppCoreSwiftBridgeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppCoreSwiftBridgeTest.swift; sourceTree = "<group>"; };
 		6087DB872B278F7600449BA8 /* JsonValueMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonValueMatcherTest.swift; sourceTree = "<group>"; };
@@ -3236,6 +3241,7 @@
 			children = (
 				6EDF1DA92B2A6D7B00E23BC4 /* InAppMessage */,
 				3231128E29D5E6C600CF0D86 /* Limits */,
+				605073822B2CD38200209B51 /* ActiveTimerTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -3522,6 +3528,7 @@
 				3231127A29D5E67200CF0D86 /* Limits */,
 				6E0B872C294A9C130064B7BD /* AirshipAutomationSwift.h */,
 				3231126929D5E4F600CF0D86 /* AutomationResources.swift */,
+				6068E03A2B2CBCF200349E82 /* ActiveTimer.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6734,6 +6741,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6068E03B2B2CBCF200349E82 /* ActiveTimer.swift in Sources */,
 				3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */,
 				6EDF1D982B2A25C800E23BC4 /* InAppMessageMediaInfo.swift in Sources */,
 				6EDF1DA62B2A300100E23BC4 /* InAppMessage.swift in Sources */,
@@ -6757,6 +6765,8 @@
 			files = (
 				325D53FA29648818003421B4 /* TestAirshipRequestSession.swift in Sources */,
 				325D53F629646E53003421B4 /* TestChannel.swift in Sources */,
+				605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */,
+				605073832B2CD38200209B51 /* ActiveTimerTest.swift in Sources */,
 				6EDF1DAD2B2A73FC00E23BC4 /* InAppMessageTest.swift in Sources */,
 				325D53F729648150003421B4 /* TestDate.swift in Sources */,
 				3231129129D5E6D900CF0D86 /* FrequencyLimitManagerTest.swift in Sources */,
