@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.7.1 December 18, 2023
+Patch release that fixes an issue with app background events being attributed to the wrong session ID. This issue was introduced in 17.5.0 and impacts
+session duration times in Performance Analytics. Applications that rely on that report should update.
+
+### Changes
+- Fixed background app event session ID
+
 ## Version 17.7.0 December 6, 2023
 Minor release that adds a new MessageCenter listener for current message state and a new method `Airship.contact.notifyRemoteLogin()` that will refresh the local state on the device for named user associations that occur through the server instead of the SDK.
 

@@ -214,7 +214,8 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
             for await event in self.sessionTracker.events {
                 self.addEvent(
                     sessionEventFactory.make(event: event),
-                    date: event.date
+                    date: event.date,
+                    sessionID: event.sessionState.sessionID
                 )
             }
         }
@@ -310,10 +311,14 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     /// - Parameter event: The event to be triggered
     @objc
     public func addEvent(_ event: AirshipEvent) {
-        self.addEvent(event, date: self.date.now)
+        self.addEvent(
+            event,
+            date: self.date.now,
+            sessionID: self.sessionTracker.sessionState.sessionID
+        )
     }
 
-    private func addEvent(_ event: AirshipEvent, date: Date) {
+    private func addEvent(_ event: AirshipEvent, date: Date, sessionID: String) {
         guard self.isAnalyticsEnabled else {
             AirshipLogger.trace(
                 "Analytics disabled, ignoring event: \(event.eventType)"
@@ -321,11 +326,6 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
             return
         }
 
-        guard let sessionID = self.sessionID else {
-            AirshipLogger.error("Missing session ID")
-            return
-        }
-        
         guard
             event.isValid?() != false,
             let body = try? AirshipJSON.wrap(event.data as? [String: Any])
