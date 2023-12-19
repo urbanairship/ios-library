@@ -125,7 +125,11 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
         self.currentImage = frame?.image
 
-        while !Task.isCancelled && (loadedImage.loopCount == nil || loopsCompleted < loadedImage.loopCount!) {
+        /// GIFs will sometimes have a 0 in their loop count metadata to denote infinite loops
+        let loopCount = loadedImage.loopCount ?? 0
+
+        /// Continue looping if loop count is nil (coalesces to zero), zero or nonzero and greater than the loops completed
+        while !Task.isCancelled && (loopCount <= 0 || loopCount > loopsCompleted) {
             let duration = frame?.duration ?? AirshipImageData.minFrameDuration
 
             async let delay: () = Task.sleep(nanoseconds: UInt64(duration * 1_000_000_000))
