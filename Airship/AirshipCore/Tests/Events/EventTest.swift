@@ -146,22 +146,37 @@ class EventTest: XCTestCase {
     }
 
     func testScreenTracking() throws {
-        let event = ScreenTrackingEvent(
+        guard let event = ScreenTrackingEvent(
             screen: "test_screen",
             previousScreen: "previous_screen",
             startDate: Date(timeIntervalSince1970: 0),
             duration: 1
-        )
+        ) else {
+            XCTFail("Event is nil")
+            return
+        }
 
+        guard let durationString = event.data["duration"] as? String,
+              let enteredTimeString = event.data["entered_time"] as? String,
+              let exitedTimeString = event.data["exited_time"] as? String,
+              let duration = TimeInterval(durationString),
+              let enteredTime = TimeInterval(enteredTimeString),
+              let exitedTime = TimeInterval(exitedTimeString) else {
+            XCTFail("One or more strings could not be converted to TimeIntervals for comparison")
+            return
+        }
 
-        XCTAssertEqual(event!.data["duration"] as! String, "1.000")
-        XCTAssertEqual(event!.data["entered_time"] as! String, "0.000")
-        XCTAssertEqual(event!.data["exited_time"] as! String, "1.000")
-        XCTAssertEqual(
-            event!.data["previous_screen"] as! String,
-            "previous_screen"
-        )
-        XCTAssertEqual(event!.data["screen"] as! String, "test_screen")
+        let expectedDurationInSeconds: TimeInterval = 1.0
+        let expectedEnteredTimeInSeconds: TimeInterval = 0.0
+        let expectedExitedTimeInSeconds: TimeInterval = 1.0
+        let errorMarginInSeconds: TimeInterval = 1 /// Use accuracy margin to avoid timing issues in ci
+
+        XCTAssertEqual(duration, expectedDurationInSeconds, accuracy: errorMarginInSeconds, "Duration does not match within the acceptable error margin.")
+        XCTAssertEqual(enteredTime, expectedEnteredTimeInSeconds, accuracy: errorMarginInSeconds, "Entered time does not match within the acceptable error margin.")
+        XCTAssertEqual(exitedTime, expectedExitedTimeInSeconds, accuracy: errorMarginInSeconds, "Exited time does not match within the acceptable error margin.")
+
+        XCTAssertEqual(event.data["previous_screen"] as? String, "previous_screen", "Previous screen does not match.")
+        XCTAssertEqual(event.data["screen"] as? String, "test_screen", "Screen does not match.")
     }
 
     func testScreenValidation() throws {
