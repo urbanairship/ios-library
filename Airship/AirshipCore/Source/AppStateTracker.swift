@@ -1,15 +1,23 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
+/// NOTE: For internal use only. :nodoc:
 public protocol AppStateTrackerProtocol: Sendable {
     /**
      * Current application state.
      */
     @MainActor
     var state: ApplicationState { get }
+
+    /**
+     * Waits for active
+     */
+    func waitForActive() async
 }
 
+/// NOTE: For internal use only. :nodoc:
 @objc(UAAppStateTracker)
 public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecked Sendable {
 
@@ -126,6 +134,22 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
         if isForegrounded == nil {
             isForegrounded = self.state == .active
         }
+    }
+
+    @MainActor
+    public func waitForActive() async {
+        var subscription: AnyCancellable?
+        await withCheckedContinuation { continuation in
+            subscription = self.notificationCenter.publisher(
+                for: AppStateTracker.didBecomeActiveNotification
+            )
+            .first()
+            .sink { _ in
+                continuation.resume()
+            }
+        }
+
+        subscription?.cancel()
     }
 }
 

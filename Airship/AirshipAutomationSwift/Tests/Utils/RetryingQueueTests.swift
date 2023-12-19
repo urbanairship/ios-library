@@ -10,43 +10,6 @@ final class RetryingQueueTests: XCTestCase {
 
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
-    func testThings() async throws {
-        let queue = RetryingQueue<Int>()
-
-
-        await withTaskGroup(of: Int.self) { group in
-            group.addTask {
-                await queue.run(name: "task 1") { state in
-                    try await Task.sleep(nanoseconds: UInt64(2 * 1_000_000_000))
-                    return .success(result: 1)
-                }
-            }
-
-            group.addTask {
-                await queue.run(name: "task 2") { state in
-                    let isFirstRun = await state.value(key: "isFirstRun") ?? true
-                    await state.setValue(false, key: "isFirstRun")
-
-                    if (isFirstRun) {
-                        return .retryAfter(3)
-                    }
-
-                    try await Task.sleep(nanoseconds: UInt64(500_000_000))
-                    return .success(result: 2)
-                }
-            }
-
-            group.addTask {
-                await queue.run(name: "task 3") { state in
-                    try await Task.sleep(nanoseconds: UInt64(1_000_000_000))
-                    return .success(result: 3)
-                }
-            }
-
-            await group.waitForAll()
-        }
-    }
-
     func testState() async throws {
         let queue = RetryingQueue<Int>(taskSleeper: taskSleeper)
 
@@ -250,7 +213,7 @@ actor ActorValue<T: Sendable> {
     }
 }
 
-fileprivate final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
+final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
     var sleeps : [TimeInterval] = []
 
     func sleep(timeInterval: TimeInterval) async throws {
