@@ -342,6 +342,8 @@
 		6E2D6AF226B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */; };
 		6E2D6AF426B0C3C500B7C226 /* ChannelAudienceManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */; };
 		6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */; };
+		6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E3CA12B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift */; };
+		6E2E3CA62B327A6C00B8515B /* InAppMessageNativeBridgeExtensionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E3CA42B32726400B8515B /* InAppMessageNativeBridgeExtensionTest.swift */; };
 		6E2F5A742A60833700CABD3D /* FeatureFlagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */; };
 		6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A752A60871E00CABD3D /* FeatureFlagPayload.swift */; };
 		6E2F5A802A6224D700CABD3D /* AirshipJSONView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A7F2A6224D700CABD3D /* AirshipJSONView.swift */; };
@@ -2268,6 +2270,8 @@
 		6E2D6AF126B0B64E00B7C226 /* SubscriptionListAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClientTest.swift; sourceTree = "<group>"; };
 		6E2D6AF326B0C3C500B7C226 /* ChannelAudienceManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAudienceManagerTest.swift; sourceTree = "<group>"; };
 		6E2D6AF526B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSubscriptionListAPIClient.swift; sourceTree = "<group>"; };
+		6E2E3CA12B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageNativeBridgeExtension.swift; sourceTree = "<group>"; };
+		6E2E3CA42B32726400B8515B /* InAppMessageNativeBridgeExtensionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageNativeBridgeExtensionTest.swift; sourceTree = "<group>"; };
 		6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagManager.swift; sourceTree = "<group>"; };
 		6E2F5A752A60871E00CABD3D /* FeatureFlagPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagPayload.swift; sourceTree = "<group>"; };
 		6E2F5A7F2A6224D700CABD3D /* AirshipJSONView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONView.swift; sourceTree = "<group>"; };
@@ -3760,6 +3764,22 @@
 			name = "Subscription Lists";
 			sourceTree = "<group>";
 		};
+		6E2E3CA02B3271BC00B8515B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6E2E3CA12B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		6E2E3CA32B32725900B8515B /* View */ = {
+			isa = PBXGroup;
+			children = (
+				6E2E3CA42B32726400B8515B /* InAppMessageNativeBridgeExtensionTest.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		6E4116852135C4D7005CC871 /* Operations */ = {
 			isa = PBXGroup;
 			children = (
@@ -4821,6 +4841,7 @@
 		6EDF1D912B292F8600E23BC4 /* InAppMessage */ = {
 			isa = PBXGroup;
 			children = (
+				6E2E3CA02B3271BC00B8515B /* View */,
 				6E16208B2B31169F009240B2 /* Display Coordinators */,
 				6EDF1DA52B2A300100E23BC4 /* InAppMessage.swift */,
 				6EDF1DA32B2A2C6F00E23BC4 /* InAppMessageColor.swift */,
@@ -4844,6 +4865,7 @@
 		6EDF1DA92B2A6D7B00E23BC4 /* InAppMessage */ = {
 			isa = PBXGroup;
 			children = (
+				6E2E3CA32B32725900B8515B /* View */,
 				6E1620902B3118BF009240B2 /* Display Coordinators */,
 				6EDF1DAA2B2A6D9900E23BC4 /* InAppMessageTest.swift */,
 			);
@@ -6810,6 +6832,7 @@
 				6EDF1DB82B2BB2B800E23BC4 /* RetryingQueue.swift in Sources */,
 				3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */,
 				6E16208F2B3116BA009240B2 /* DefaultDisplayCoordinator.swift in Sources */,
+				6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */,
 				6E16208D2B3116AE009240B2 /* ImmediateDisplayCoordinator.swift in Sources */,
 				6EDF1DA42B2A2C6F00E23BC4 /* InAppMessageColor.swift in Sources */,
 				3231128729D5E67200CF0D86 /* FrequencyConstraint.swift in Sources */,
@@ -6832,6 +6855,7 @@
 				325D53F629646E53003421B4 /* TestChannel.swift in Sources */,
 				6E1620952B311D8A009240B2 /* DefaultDisplayCoordinatorTest.swift in Sources */,
 				605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */,
+				6E2E3CA62B327A6C00B8515B /* InAppMessageNativeBridgeExtensionTest.swift in Sources */,
 				605073832B2CD38200209B51 /* ActiveTimerTest.swift in Sources */,
 				6EDF1DAD2B2A73FC00E23BC4 /* InAppMessageTest.swift in Sources */,
 				325D53F729648150003421B4 /* TestDate.swift in Sources */,
