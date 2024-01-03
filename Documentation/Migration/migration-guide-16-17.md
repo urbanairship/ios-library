@@ -422,6 +422,55 @@ MessageCenterView(controller: controller)
     .messageCenterTheme(CustomMessageCenter.messageCenterTheme)
 ```
 
+### Load custom message center message view
+
+#### Fetch user credentials:
+
+SDK 16:
+```
+MessageCenter.shared.user.getData { user in
+    // ...
+}
+```
+
+SDK 17:
+```
+let user = await MessageCenter.shared.inbox.user
+```
+
+#### Load  webView:
+
+The example below shows how to fetch the credentials, set auth on the request, and load a message into the webview. 
+This code assumes a custom view controller with an embedded WKWebView, as well as a `MessageCenterMessage` ready to be loaded.
+
+SDK 16:
+```
+let requestObj = NSMutableURLRequest(url:message.messageURL) 
+MessageCenter.shared.user.getData { data in 
+
+    // set the auth 
+    let auth = Utils.authHeaderString(withName: data.username, password: data.password) 
+    requestObj.setValue(auth, forHTTPHeaderField:"Authorization")
+
+    // load the request 
+    self.webView.load(requestObj) 
+
+}, queue: DispatchQueue.main)
+```
+
+SDK 17:
+
+```
+var request = URLRequest(url: message.bodyURL)
+let user = await MessageCenter.shared.inbox.user
+                
+// set the auth
+request.setValue(user.basicAuthString, forHTTPHeaderField: "Authorization")
+                
+// load the request
+self.webView.load(request)
+```
+
 ## Preference Center
 
 ### Preference Center UI
@@ -558,3 +607,4 @@ let result = await ActionRunner.run(
 )
             
 ```
+
