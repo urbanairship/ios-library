@@ -30,7 +30,7 @@ public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
         case deviceTypes = "device_types"
     }
 
-    init(newUser: Bool? = nil, notificationOptIn: Bool? = nil, locationOptIn: Bool? = nil, languageIDs: [String]? = nil, tagSelector: DeviceTagSelector? = nil, versionPredicate: JSONPredicate? = nil, requiresAnalytics: Bool? = nil, permissionPredicate: JSONPredicate? = nil, testDevices: [String]? = nil, hashSelector: AudienceHashSelector? = nil, deviceTypes: [String]? = nil) {
+    public init(newUser: Bool? = nil, notificationOptIn: Bool? = nil, locationOptIn: Bool? = nil, languageIDs: [String]? = nil, tagSelector: DeviceTagSelector? = nil, versionPredicate: JSONPredicate? = nil, requiresAnalytics: Bool? = nil, permissionPredicate: JSONPredicate? = nil, testDevices: [String]? = nil, hashSelector: AudienceHashSelector? = nil, deviceTypes: [String]? = nil) {
         self.newUser = newUser
         self.notificationOptIn = notificationOptIn
         self.locationOptIn = locationOptIn
@@ -46,8 +46,8 @@ public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
 }
 
 
-extension DeviceAudienceSelector {
-    
+public extension DeviceAudienceSelector {
+
     func evaluate(
         newUserEvaluationDate: Date = Date.distantPast,
         deviceInfoProvider: AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()

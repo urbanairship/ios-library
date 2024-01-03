@@ -7,10 +7,10 @@ import AirshipCore
 #endif
 
 /// In-App Message
-public struct InAppMessage: Codable, Equatable {
+public struct InAppMessage: Codable, Equatable, Sendable {
 
     /// Display behavior
-    public enum DisplayBehavior: String, Codable, Equatable {
+    public enum DisplayBehavior: String, Codable, Equatable, Sendable {
         /// Immediate display, allows it to be dispalyed on top of other IAX
         case immediate
 
