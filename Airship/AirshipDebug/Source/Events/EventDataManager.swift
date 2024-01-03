@@ -26,7 +26,7 @@ class EventDataManager {
             inMemory: false,
             stores: ["AirshipDebugEventData-\(appKey).sqlite"]
         )
-
+        
         self.trimDatabase()
     }
 
