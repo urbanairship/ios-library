@@ -10,18 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-sdk-xcode14:
-    runs-on: macos-13-xlarge
-    steps:
-      - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
-          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-      - uses: actions/checkout@v4
-      - name: Build SDK
-        run: make build-xcframeworks XCODE=14.3.1
-
   build-sdk:
     runs-on: macos-13-xlarge
     steps:

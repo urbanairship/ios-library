@@ -39,7 +39,7 @@ jobs:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - name: Build SDK
-        run: make build-package XCODE=14.3.1
+        run: make build-package
       - name: Upload zip distribution
         uses: actions/upload-artifact@v3
         with:
@@ -49,36 +49,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: airship-carthage
-          path: ./build/Airship.xcframeworks.zip
-      - name: Upload Documentation
-        uses: actions/upload-artifact@v3
-        with:
-          name: docs
-          path: ./build/Documentation
-
-  build-package-xcode15:
-    needs: check-version
-    runs-on: macos-13-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Coreutils
-        run: brew install coreutils
-      - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
-          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-      - name: Build SDK
-        run: make build-package
-      - name: Upload zip distribution
-        uses: actions/upload-artifact@v3
-        with:
-          name: airship-xcode15
-          path: ./build/Airship.zip
-      - name: Upload zip distribution
-        uses: actions/upload-artifact@v3
-        with:
-          name: airship-carthage-xcode15
           path: ./build/Airship.xcframeworks.zip
       - name: Upload Documentation
         uses: actions/upload-artifact@v3
@@ -112,7 +82,7 @@ jobs:
 
   deploy-github:
     runs-on: macos-13-xlarge
-    needs: [run-tests, build-package, build-samples, build-package-xcode15]
+    needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -136,18 +106,8 @@ jobs:
       - name: Download Carthage zip distribution
         uses: actions/download-artifact@v3
         with:
-          name: airship-carthage-xcode15
-          path: ./build
-      - name: Download Xcode15 zip distribution
-        uses: actions/download-artifact@v3
-        with:
-          name: airship-xcode15
-          path: ./buildXcode15
-      - name: Download Xcode15 Carthage zip distribution
-        uses: actions/download-artifact@v3
-        with:
           name: airship-carthage
-          path: ./buildXcode15
+          path: ./build
       - name: Github Release
         id: create_release
         uses: actions/create-release@v1.1.4
@@ -177,32 +137,10 @@ jobs:
           asset_path: ./build/Airship.xcframeworks.zip
           asset_name: Airship.xcframeworks.zip
           asset_content_type: application/zip
-      - name: Upload Xcode15 zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./buildXcode15/Airship.zip
-          asset_name: Airship-Xcode15.zip
-          asset_content_type: application/zip
-      - name: Upload Xcode 15 carthage zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./buildXcode15/Airship.xcframeworks.zip
-          asset_name: Airship-Xcode15.xcframeworks.zip
-          asset_content_type: application/zip
-      - name: Update prebuilt Xcode 14 repo
+      - name: Update prebuilt repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
         run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
-      - name: Update prebuilt Xcode 15 repo
-        env:
-          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
-        run: gh --repo urbanairship/ios-library-prebuilt --ref xcode-15 workflow run release.yml
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: always()
