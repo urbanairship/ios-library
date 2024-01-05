@@ -3,7 +3,7 @@
 import Foundation
 
 /// - Note: for internal use only.  :nodoc:
-protocol AirshipCancellable: Sendable {
+public protocol AirshipCancellable: Sendable {
     func cancel()
 }
 

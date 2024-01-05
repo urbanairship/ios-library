@@ -24,7 +24,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
         expirationHandler: (@Sendable () -> Void)? = nil
     ) throws -> AirshipCancellable {
         #if os(watchOS)
-        let cancellable: CancellabelValueHolder<UInt> = CancellabelValueHolder(value: 0) { _ in
+        let cancellable: CancellableValueHolder<UInt> = CancellableValueHolder(value: 0) { _ in
         }
         return cancellable
         #else
@@ -34,7 +34,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
         let requestID = nextRequestID.value
         nextRequestID.value += 1
 
-        let cancellable: CancellabelValueHolder<UInt> = CancellabelValueHolder(value: requestID) { requestID in
+        let cancellable: CancellableValueHolder<UInt> = CancellableValueHolder(value: requestID) { requestID in
             Task { @MainActor in
                 self.cancel(requestID: requestID)
             }

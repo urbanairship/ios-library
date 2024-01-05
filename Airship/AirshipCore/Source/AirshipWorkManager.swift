@@ -47,7 +47,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private func applicationDidEnterBackground() {
         backgroundWaitTask.value?.cancel()
 
-        let cancellable: CancellabelValueHolder<Task<Void, Never>> = CancellabelValueHolder { task in
+        let cancellable: CancellableValueHolder<Task<Void, Never>> = CancellableValueHolder { task in
             task.cancel()
         }
 
@@ -84,7 +84,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
             workID,
             type: type
         ) { workRequest in
-            let cancellable: CancellabelValueHolder<AirshipWorkContinuation> = CancellabelValueHolder { continuation in
+            let cancellable: CancellableValueHolder<AirshipWorkContinuation> = CancellableValueHolder { continuation in
                 continuation.cancel()
             }
             

@@ -84,7 +84,7 @@ actor Worker {
             let task: Task<Void, Error> = Task {
                 var attempt = 1
                 while self.isValidRequest(next) == true {
-                    let cancellableValueHolder: CancellabelValueHolder<Task<Void, Error>> = CancellabelValueHolder { task in
+                    let cancellableValueHolder: CancellableValueHolder<Task<Void, Error>> = CancellableValueHolder { task in
                         task.cancel()
                     }
                     

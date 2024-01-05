@@ -425,7 +425,7 @@ fileprivate final class TestURLRequestSession: URLRequestSessionProtocol, @unche
             response?.error
         )
 
-        return CancellabelValueHolder<String>() { _ in}
+        return CancellableValueHolder<String>() { _ in}
     }
     
 }

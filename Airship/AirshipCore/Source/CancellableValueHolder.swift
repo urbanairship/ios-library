@@ -4,13 +4,13 @@
 /// on the holder will cause it to immediately be cancelled with the block and the value to be
 /// cleared.
 /// - Note: for internal use only.  :nodoc:
-final class CancellabelValueHolder<T: Sendable>: AirshipCancellable, @unchecked Sendable {
+public final class CancellableValueHolder<T: Sendable>: AirshipCancellable, @unchecked Sendable {
     private let lock: AirshipLock = AirshipLock()
     private let onCancel: (T) -> Void
     private var isCancelled: Bool = false
     private var _value: T?
     
-    var value: T? {
+    public var value: T? {
         get {
             var value: T? = nil
             lock.sync {
@@ -32,16 +32,16 @@ final class CancellabelValueHolder<T: Sendable>: AirshipCancellable, @unchecked 
     }
     
     
-    init(value: T, onCancel: @escaping @Sendable (T) -> Void) {
+    public init(value: T, onCancel: @escaping @Sendable (T) -> Void) {
         self._value = value
         self.onCancel = onCancel
     }
     
-    init(onCancel: @escaping @Sendable (T) -> Void) {
+    public init(onCancel: @escaping @Sendable (T) -> Void) {
         self.onCancel = onCancel
     }
     
-    func cancel() {
+    public func cancel() {
         lock.sync {
             guard isCancelled == false else { return }
             isCancelled = true
@@ -52,8 +52,8 @@ final class CancellabelValueHolder<T: Sendable>: AirshipCancellable, @unchecked 
         }
     }
     
-    static func cancellableHolder() -> CancellabelValueHolder<AirshipCancellable> {
-        return CancellabelValueHolder<AirshipCancellable>() { cancellable in
+    public static func cancellableHolder() -> CancellableValueHolder<AirshipCancellable> {
+        return CancellableValueHolder<AirshipCancellable>() { cancellable in
             cancellable.cancel()
         }
     }

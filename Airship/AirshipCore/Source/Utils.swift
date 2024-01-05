@@ -607,3 +607,9 @@ extension Date {
         self = Date(timeIntervalSince1970: TimeInterval(milliseconds / 1000))
     }
 }
+
+public extension URL {
+    var assetFilename: String {
+        return AirshipUtils.sha256Hash(input: self.path)
+    }
+}

@@ -159,7 +159,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
         autoCancel: Bool = false,
         responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> (shouldRetry: Bool, response: AirshipHTTPResponse<T>) {
-        let cancellable = CancellabelValueHolder<AirshipCancellable>() { cancellable in
+        let cancellable = CancellableValueHolder<AirshipCancellable>() { cancellable in
             cancellable.cancel()
         }
 
@@ -475,7 +475,7 @@ extension URLSession: URLRequestSessionProtocol {
         )
         task.resume()
 
-        return CancellabelValueHolder(value: task) { task in
+        return CancellableValueHolder(value: task) { task in
             task.cancel()
         }
     }
