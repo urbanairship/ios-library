@@ -11,7 +11,7 @@ final class InAppCoreSwiftBridgeTest: XCTestCase {
     private let networkChecker: TestNetworkChecker = TestNetworkChecker()
     private let contact: TestContact = TestContact()
     private let meteredUsage: TestMeteredUsage = TestMeteredUsage()
-    private let experiments: TestExperiments = TestExperiments()
+    private let experiments: TestExperimentDataProvider = TestExperimentDataProvider()
     private let deferredResolver: TestDeferredResolver = TestDeferredResolver()
 
     private let defe: TestContact = TestContact()
@@ -452,36 +452,3 @@ fileprivate final class TestMeteredUsage: AirshipMeteredUsageProtocol, @unchecke
     }
 }
 
-fileprivate final class TestExperiments: ExperimentDataProvider, @unchecked Sendable {
-    var onEvaluate: ((MessageInfo, AudienceDeviceInfoProvider) async throws -> ExperimentResult?)? = nil
-
-    func evaluateExperiments(
-        info: MessageInfo,
-        deviceInfoProvider: AudienceDeviceInfoProvider
-    ) async throws -> ExperimentResult? {
-        return try await onEvaluate?(info, deviceInfoProvider)
-    }
-}
-
-fileprivate final class TestDeferredResolver: AirshipDeferredResolverProtocol, @unchecked Sendable {
-    var onData: ((DeferredRequest) async -> AirshipDeferredResult<Data>)?
-
-    func resolve<T>(
-        request: DeferredRequest,
-        resultParser: @escaping @Sendable (Data) async throws -> T
-    ) async -> AirshipDeferredResult<T> where T : Sendable {
-        switch(await onData?(request) ?? .timedOut) {
-        case .success(let data):
-            do {
-                let value = try await resultParser(data)
-                return .success(value)
-            } catch {
-                return .retriableError()
-            }
-        case .timedOut: return .timedOut
-        case .outOfDate: return .outOfDate
-        case .notFound: return .notFound
-        case .retriableError(retryAfter: let retryAfter): return .retriableError(retryAfter: retryAfter)
-        }
-    }
-}

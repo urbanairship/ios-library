@@ -12,8 +12,8 @@ public final class RemoteDataPayload: NSObject, Sendable {
     @objc
     public let timestamp: Date
 
-    private let _data: AirshipJSON
-    
+    public let _data: AirshipJSON
+
     /// The actual data associated with this payload
     @objc
     public var data: [AnyHashable: Any] {

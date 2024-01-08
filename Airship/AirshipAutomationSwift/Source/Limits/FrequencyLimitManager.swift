@@ -8,18 +8,29 @@ import AirshipCore
 
 
 @objc(UAFrequencyLimitManagerProtocol)
-public protocol FrequencyLimitManagerProtocol: Sendable {
+public protocol _FrequencyLimitManagerProtocol: Sendable {
     @MainActor
     func getFrequencyChecker(
-        constraintIDs: [String]
+        constraintIDs: [String]?
     ) async throws -> FrequencyCheckerProtocol?
 
     // Temp method until we have the updated in swift
     func setConstraints(data: Data) async throws
 }
 
+protocol FrequencyLimitManagerProtocol: Sendable {
+    @MainActor
+    func getFrequencyChecker(
+        constraintIDs: [String]?
+    ) async throws -> FrequencyCheckerProtocol?
+
+
+    func setConstraints(_ constraints: [FrequencyConstraint]) async throws
+}
+
+
 @objc(UAFrequencyLimitManager)
-public final class FrequencyLimitManager: NSObject, FrequencyLimitManagerProtocol, @unchecked Sendable {
+public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtocol, @unchecked Sendable {
     private let frequencyLimitStore: FrequencyLimitStore
     private let date: AirshipDateProtocol
     private let storeQueue: AirshipSerialQueue
@@ -44,13 +55,16 @@ public final class FrequencyLimitManager: NSObject, FrequencyLimitManagerProtoco
     @MainActor
     @objc
     public func getFrequencyChecker(
-        constraintIDs: [String]
+        constraintIDs: [String]?
     ) async throws -> FrequencyCheckerProtocol? {
         self.checkers.removeAll { checkerBlock in
             checkerBlock() == nil
         }
 
-        guard !constraintIDs.isEmpty else {
+        guard 
+            let constraintIDs = constraintIDs,
+            !constraintIDs.isEmpty
+        else {
             return nil
         }
 
@@ -191,3 +205,5 @@ public final class FrequencyLimitManager: NSObject, FrequencyLimitManagerProtoco
     }
 }
 
+
+extension FrequencyLimitManager: FrequencyLimitManagerProtocol {}

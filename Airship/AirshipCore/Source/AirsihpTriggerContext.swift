@@ -7,4 +7,10 @@ public struct AirshipTriggerContext: Encodable, Sendable, Equatable {
     let type: String
     let goal: Double
     let event: AirshipJSON
+
+    public init(type: String, goal: Double, event: AirshipJSON) {
+        self.type = type
+        self.goal = goal
+        self.event = event
+    }
 }

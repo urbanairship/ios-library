@@ -3,7 +3,7 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-protocol ExperimentDataProvider: Sendable {
+public protocol ExperimentDataProvider: Sendable {
     func evaluateExperiments(
         info: MessageInfo,
         deviceInfoProvider: AudienceDeviceInfoProvider
@@ -38,7 +38,7 @@ public final class MessageInfo: NSObject {
 
 /// NOTE: For internal use only. :nodoc:
 @objc(UAExperimentResult)
-public final class ExperimentResult: NSObject, Codable {
+public final class ExperimentResult: NSObject, Codable, Sendable {
     @objc public let channelID: String
     @objc public let contactID: String
 

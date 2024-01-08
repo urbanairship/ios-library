@@ -299,7 +299,6 @@ private extension MessageInfo {
     static let empty = MessageInfo(messageType: "", campaigns: nil)
 }
 
-
 fileprivate extension Experiment {
     var toString: String {
         let encoder = JSONEncoder()

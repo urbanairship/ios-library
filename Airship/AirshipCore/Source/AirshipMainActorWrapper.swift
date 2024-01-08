@@ -3,11 +3,11 @@
 import Foundation
 
 
-final class AirshipMainActorWrapper<T>: @unchecked Sendable {
+public final class AirshipMainActorWrapper<T>: @unchecked Sendable {
     @MainActor
-    var value: T
+    public var value: T
 
-    init(_ value: T) {
+    public init(_ value: T) {
         self.value = value
     }
 }

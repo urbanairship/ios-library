@@ -372,7 +372,7 @@ final class InAppMessageTest: XCTestCase {
                     allowFullscreen: false
                 )
             ),
-            source: .appDefined
+            source: nil
         )
 
         try verify(json: json, expected: expected)

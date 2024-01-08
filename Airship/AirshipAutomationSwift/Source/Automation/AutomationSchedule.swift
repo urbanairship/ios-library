@@ -32,7 +32,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     public var end: Date?
 
     /// On device automation selector
-    public var audience: DeviceAudienceSelector?
+    public var audience: AutomationAudience?
 
     /// Optional automation delay. Delay occurs after the schedule has been triggered and prepared
     /// but before the schedule is executed.
@@ -53,12 +53,12 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     public var editGracePeriodDays: UInt?
 
     /// internal
-    let metadata: AirshipJSON?
-    let frequencyConstraintIDs: [String]?
-    let messageType: String?
-    let campaigns: AirshipJSON?
-    let reportingContext: AirshipJSON?
-    let productID: String?
+    var metadata: AirshipJSON?
+    var frequencyConstraintIDs: [String]?
+    var messageType: String?
+    var campaigns: AirshipJSON?
+    var reportingContext: AirshipJSON?
+    var productID: String?
     let lastUpdated: Date
     let created: Date
 
@@ -104,7 +104,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         limit: UInt? = nil,
         start: Date? = nil,
         end: Date? = nil,
-        audience: DeviceAudienceSelector? = nil,
+        audience: AutomationAudience? = nil,
         delay: AutomationDelay? = nil,
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
@@ -145,7 +145,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         limit: UInt? = nil,
         start: Date? = nil,
         end: Date? = nil,
-        audience: DeviceAudienceSelector? = nil,
+        audience: AutomationAudience? = nil,
         delay: AutomationDelay? = nil,
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
@@ -191,7 +191,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.limit = try container.decodeIfPresent(UInt.self, forKey: .limit)
         self.start = try container.decodeIfPresent(String.self, forKey: .start)?.toDate()
         self.end = try container.decodeIfPresent(String.self, forKey: .end)?.toDate()
-        self.audience = try container.decodeIfPresent(DeviceAudienceSelector.self, forKey: .audience)
+        self.audience = try container.decodeIfPresent(AutomationAudience.self, forKey: .audience)
         self.delay = try container.decodeIfPresent(AutomationDelay.self, forKey: .delay)
         self.interval = try container.decodeIfPresent(TimeInterval.self, forKey: .interval)
         self.campaigns = try container.decodeIfPresent(AirshipJSON.self, forKey: .campaigns)
@@ -299,5 +299,19 @@ fileprivate extension String {
 fileprivate extension Date {
     func toISOString() -> String {
         return AirshipUtils.ISODateFormatterUTC().string(from: self)
+    }
+}
+
+extension AutomationSchedule {
+    var isInAppMessageType: Bool {
+        switch (data) {
+        case .actions(_): return false
+        case .inAppMessage(_): return true
+        case .deferred(let deferred):
+            switch(deferred.type) {
+            case .actions: return false
+            case .inAppMessage: return true
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ public final class RemoteDataInfo: NSObject, Sendable, Codable, NSCopying {
     @objc
     public let contactID: String?
 
-    init(url: URL, lastModifiedTime: String?, source: RemoteDataSource, contactID: String? = nil) {
+    public init(url: URL, lastModifiedTime: String?, source: RemoteDataSource, contactID: String? = nil) {
         self.url = url
         self.lastModifiedTime = lastModifiedTime
         self.source = source

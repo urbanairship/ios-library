@@ -90,11 +90,13 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     ) {
         self.name = name
         self.displayContent = displayContent
+        self.source = source
         self.extras = extras
         self.actions = actions
         self.isReportingEnabled = isReportingEnabled
         self.displayBehavior = displayBehavior
         self.renderedLocale = nil
+
     }
 
     public init(from decoder: Decoder) throws {

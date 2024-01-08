@@ -10,6 +10,7 @@ final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
     var waitForRefreshAttemptBlock: ((RemoteDataSource, TimeInterval?) -> Void)?
     var waitForRefreshBlock: ((RemoteDataSource, TimeInterval?) -> Void)?
 
+    var notifiedOutdatedInfos: [RemoteDataInfo] = []
 
     let updatesSubject = PassthroughSubject<[RemoteDataPayload], Never>()
     var isCurrent = true
@@ -36,7 +37,7 @@ final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
     }
 
     func notifyOutdated(remoteDataInfo: RemoteDataInfo) async {
-
+        self.notifiedOutdatedInfos.append(remoteDataInfo)
     }
 
     func status(source: RemoteDataSource) async -> RemoteDataSourceStatus {
