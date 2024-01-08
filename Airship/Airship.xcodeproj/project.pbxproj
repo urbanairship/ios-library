@@ -151,6 +151,8 @@
 		45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DCD83D2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6018AF572B29C20A008E528B /* SearchEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */; };
+		6050738A2B32F85100209B51 /* ThomasViewModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605073892B32F85100209B51 /* ThomasViewModelTest.swift */; };
+		605073902B347B6400209B51 /* ThomasPresentationModelCodingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6050738F2B347B6400209B51 /* ThomasPresentationModelCodingTest.swift */; };
 		605073832B2CD38200209B51 /* ActiveTimerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605073822B2CD38200209B51 /* ActiveTimerTest.swift */; };
 		605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */; };
 		6058771D2AC73C940021628E /* AirshipMeteredUsageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6058771C2AC73C7E0021628E /* AirshipMeteredUsageTest.swift */; };
@@ -2175,6 +2177,8 @@
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEventTemplateTest.swift; sourceTree = "<group>"; };
 		60303EEF2AE26585008EE716 /* UAAutomation 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAAutomation 12.xcdatamodel"; sourceTree = "<group>"; };
+		605073892B32F85100209B51 /* ThomasViewModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewModelTest.swift; sourceTree = "<group>"; };
+		6050738F2B347B6400209B51 /* ThomasPresentationModelCodingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPresentationModelCodingTest.swift; sourceTree = "<group>"; };
 		605073822B2CD38200209B51 /* ActiveTimerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveTimerTest.swift; sourceTree = "<group>"; };
 		6058771C2AC73C7E0021628E /* AirshipMeteredUsageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsageTest.swift; sourceTree = "<group>"; };
 		6058771E2ACAC86A0021628E /* MeteredUsageApiClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageApiClientTest.swift; sourceTree = "<group>"; };
@@ -3768,6 +3772,8 @@
 				6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */,
 				6E382C20276D3E990091A351 /* ThomasValidationTests.swift */,
 				6ED040EA278B5D7C00FCF773 /* FormStateTest.swift */,
+				605073892B32F85100209B51 /* ThomasViewModelTest.swift */,
+				6050738F2B347B6400209B51 /* ThomasPresentationModelCodingTest.swift */,
 			);
 			name = Thomas;
 			sourceTree = "<group>";
@@ -7640,6 +7646,7 @@
 				CC64F1141D8B781C009CEF27 /* UAJavaScriptEnvironmentTest.m in Sources */,
 				6E92ECA7284AC1120038802D /* EnableFeatureActionTest.swift in Sources */,
 				459D40532092460D00C40E2D /* UAInAppMessageModalStyleTest.m in Sources */,
+				6050738A2B32F85100209B51 /* ThomasViewModelTest.swift in Sources */,
 				6E6EF9E7270625C400D30C35 /* EventTest.swift in Sources */,
 				CC64F1071D8B781C009CEF27 /* UAInteractiveNotificationEventTest.m in Sources */,
 				6E590E6E29A94CA90036DFAB /* AppStateTrackerTest.swift in Sources */,
@@ -7813,6 +7820,7 @@
 				6E0B8760294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift in Sources */,
 				45DCD83E2087C57C00BCF10F /* UAInAppMessageFullScreenStyleTest.m in Sources */,
 				3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */,
+				605073902B347B6400209B51 /* ThomasPresentationModelCodingTest.swift in Sources */,
 				6EFAFB78295525C3008AD187 /* ChannelAPIClientTest.swift in Sources */,
 				6E65244C2A4FD4270019F353 /* DeviceTagSelectorTest.swift in Sources */,
 				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,

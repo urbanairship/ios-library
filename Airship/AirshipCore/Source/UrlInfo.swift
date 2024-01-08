@@ -27,7 +27,7 @@ public class URLInfo: NSObject {
 }
 
 
-extension Layout {
+extension AirshipLayout {
 
     func urlInfos() -> [URLInfo] {
         return extractUrlInfos(model: self.view) ?? []

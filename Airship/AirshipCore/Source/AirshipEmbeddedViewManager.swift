@@ -7,7 +7,7 @@ protocol AirshipEmbeddedViewManagerProtocol {
     @MainActor
     func addPending(
         presentation: EmbeddedPresentationModel,
-        layout: Layout,
+        layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
     )
@@ -25,7 +25,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     @MainActor
     func addPending(
         presentation: EmbeddedPresentationModel,
-        layout: Layout,
+        layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
     ) {
@@ -61,6 +61,6 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 struct PendingEmbedded {
     fileprivate let id: String
     let presentation: EmbeddedPresentationModel
-    let layout: Layout
+    let layout: AirshipLayout
     let environment: ThomasEnvironment
 }

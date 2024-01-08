@@ -12,8 +12,8 @@ public class Thomas: NSObject {
     static let minLayoutVersion = 1
     static let maxLayoutVersion = 2
 
-    class func decode(_ json: Data) throws -> Layout {
-        let layout = try self.decoder.decode(Layout.self, from: json)
+    class func decode(_ json: Data) throws -> AirshipLayout {
+        let layout = try self.decoder.decode(AirshipLayout.self, from: json)
         return layout
     }
 
@@ -145,7 +145,7 @@ public class Thomas: NSObject {
     private class func bannerDisplay(
         _ presentation: BannerPresentationModel,
         scene: UIWindowScene,
-        layout: Layout,
+        layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
     ) throws -> () -> Disposable {
@@ -200,7 +200,7 @@ public class Thomas: NSObject {
     private class func modalDisplay(
         _ presentation: ModalPresentationModel,
         scene: UIWindowScene,
-        layout: Layout,
+        layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
     ) throws -> () -> Disposable {

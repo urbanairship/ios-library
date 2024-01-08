@@ -48,7 +48,7 @@ struct AdoptLayout: SwiftUI.Layout {
 
 struct EmbeddedView: View {
     let model: EmbeddedPresentationModel
-    let layout: Layout
+    let layout: AirshipLayout
     let thomasEnvironment: ThomasEnvironment
     let bounds: AirshipEmbeddedViewBounds
 

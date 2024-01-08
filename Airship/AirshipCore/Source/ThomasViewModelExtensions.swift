@@ -122,7 +122,7 @@ private enum ParentController {
     case checkbox
 }
 
-extension Layout {
+extension AirshipLayout {
     func validate() throws {
         /// We only need to validate that the layout wont produce runtime exceptions due to expected environments
         try self.view.validate(Set<ParentController>())

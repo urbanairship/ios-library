@@ -9,7 +9,7 @@ struct ModalView: View {
     @Environment(\.colorScheme) var colorScheme
 
     let presentation: ModalPresentationModel
-    let layout: Layout
+    let layout: AirshipLayout
     @ObservedObject
     var thomasEnvironment: ThomasEnvironment
     #if !os(watchOS)

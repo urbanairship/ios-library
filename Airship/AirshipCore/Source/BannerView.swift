@@ -19,7 +19,7 @@ struct BannerView: View {
 
     let viewControllerOptions: ThomasViewControllerOptions
     let presentation: BannerPresentationModel
-    let layout: Layout
+    let layout: AirshipLayout
 
 
     @ObservedObject

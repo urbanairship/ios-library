@@ -17,12 +17,12 @@ struct RootView<Content: View>: View {
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
 
-    let layout: Layout
+    let layout: AirshipLayout
     let content: (Orientation, WindowSize) -> Content
 
     init(
         thomasEnvironment: ThomasEnvironment,
-        layout: Layout,
+        layout: AirshipLayout,
         @ViewBuilder content: @escaping (Orientation, WindowSize) -> Content
     ) {
         self.thomasEnvironment = thomasEnvironment
