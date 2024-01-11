@@ -30,3 +30,21 @@ final actor TestFrequencyLimitManager: FrequencyLimitManagerProtocol {
     }
 
 }
+
+final class TestFrequencyChecker: FrequencyCheckerProtocol, @unchecked Sendable {
+    var isOverLimit: Bool = false
+    var checkAndIncrementBlock: (() -> Bool)?
+    var checkAndIncrementCalled: Bool = false
+
+    func checkAndIncrement() -> Bool {
+        checkAndIncrementCalled = true
+        return checkAndIncrementBlock!()
+    }
+
+    @MainActor
+    func setIsOverLimit(_ isOverLimit: Bool) {
+        self.isOverLimit = isOverLimit
+    }
+
+}
+

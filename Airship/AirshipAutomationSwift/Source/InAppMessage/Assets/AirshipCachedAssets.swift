@@ -2,11 +2,27 @@
 
 import Foundation
 
-/**
- * Convenience struct representing an assets directory containing asset files
- * with filenames derived from their remote URL using sha256
- */
-public struct AirshipCachedAssets: Sendable {
+ /// Convenience struct representing an assets directory containing asset files
+ /// with filenames derived from their remote URL using sha256.
+public protocol AirshipCachedAssetsProtocol: Sendable {
+    /// Return URL at which to cache a given asset
+    /// - Parameters:
+    ///     - remoteURL: URL from which the cached data is fetched
+    /// - Returns: URL at which to cache a given asset
+    func cachedURL(remoteURL: URL) -> URL?
+
+    /// Checks if a URL is cached
+    /// - Parameters:
+    ///     - remoteURL: URL from which the cached data is fetched
+    /// - Returns: true if cached, otherwise false.
+    func isCached(remoteURL: URL) -> Bool
+}
+
+struct AirshipCachedAssets: AirshipCachedAssetsProtocol, Equatable {
+    static func == (lhs: AirshipCachedAssets, rhs: AirshipCachedAssets) -> Bool {
+        lhs.directory == rhs.directory
+    }
+
     private let directory: URL
 
     private let assetFileManager: AssetFileManager
@@ -23,12 +39,6 @@ public struct AirshipCachedAssets: Sendable {
         return directory.appendingPathComponent(filename, isDirectory: false)
     }
 
-    /**
-     * Return URL at which to cache a given asset
-     *
-     * @param remoteURL URL from which the cached data is fetched
-     * @return URL for the cached asset or `nil` if the asset cannot be cached at this time
-     */
     func cachedURL(remoteURL: URL) -> URL? {
         let cached: URL = getCachedAsset(from: remoteURL)
 
@@ -40,12 +50,6 @@ public struct AirshipCachedAssets: Sendable {
         return cached
     }
 
-    /**
-     * Check if file associate with the remote URL is cached
-     *
-     * @param remoteURL URL from which the data is fetched
-     * @return `YES` if data for the URL is in the cache, `NO` if it is not.
-     */
     func isCached(remoteURL: URL) -> Bool {
         let cached: URL = getCachedAsset(from: remoteURL)
 

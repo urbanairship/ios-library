@@ -522,6 +522,7 @@ class ChannelRegistrarTest: XCTestCase {
         await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
     }
 
+    @MainActor
     func testUpdateAfter24Hours() async throws {
         self.appStateTracker.currentState = .active
         self.date.dateOverride = Date()

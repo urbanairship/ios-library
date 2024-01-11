@@ -20,18 +20,25 @@ final class ImmediateDisplayCoordinator: DisplayCoordinator {
     }
 
     var isReady: Bool {
-        return self.appStateTracker.state == .active
+        return appStateTracker.state == .active
     }
 
-    func didBeginDisplayingMessage(_ message: InAppMessage) {
+    func messageWillDisplay(_ message: InAppMessage) {
+
     }
 
-    func didFinishDisplayingMessage(_ message: InAppMessage) {
+    func messageFinishedDisplaying(_ message: InAppMessage) {
+
     }
 
     func waitForReady() async {
-        while isReady == false {
-            await self.appStateTracker.waitForActive()
+        for await update in appStateTracker.stateUpdates {
+            if Task.isCancelled {
+                break
+            }
+            if update == .active {
+                break
+            }
         }
     }
 }

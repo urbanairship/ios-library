@@ -14,9 +14,71 @@ protocol AutomationEngineProtocol: AnyObject, Sendable {
 
     func scheduleConditionsChanged()
     func cancelSchedule(identifier: String) async
-    func cancelSchedule(group: String) async
+    func cancelSchedules(group: String) async
     func schedule(_ schedules: [AutomationSchedule]) async throws
+
     var schedules: [AutomationSchedule] { get async }
+    func getSchedule(identifier: String) async -> AutomationSchedule?
+    func getSchedules(group: String) async -> [AutomationSchedule]
+}
+
+final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
+    var isPaused: Bool = false
+    var isExecutionPaused: Bool = false
+
+    private let executor: AutomationExecutor
+    private let preparer: AutomationPreparer
+    private let conditionsChangedNotifier: Notifier
+
+
+    init(
+        executor: AutomationExecutor,
+        preparer: AutomationPreparer,
+        conditionsChangedNotifier: Notifier
+    ) {
+        self.executor = executor
+        self.preparer = preparer
+        self.conditionsChangedNotifier = conditionsChangedNotifier
+    }
+
+
+    func start() {
+        Task {
+            await self.conditionsChangedNotifier.addOnNotify {
+                self.scheduleConditionsChanged()
+            }
+        }
+    }
+    
+    func scheduleConditionsChanged() {
+
+    }
+    
+    func cancelSchedule(identifier: String) async {
+
+    }
+    
+    func cancelSchedule(group: String) async {
+
+    }
+    
+    func schedule(_ schedules: [AutomationSchedule]) async throws {
+
+    }
+    
+    var schedules: [AutomationSchedule] = []
+
+    func cancelSchedules(group: String) async {
+
+    }
+
+    func getSchedule(identifier: String) async -> AutomationSchedule? {
+        return nil
+    }
+
+    func getSchedules(group: String) async -> [AutomationSchedule] {
+        return []
+    }
 }
 
 /// A prepared schedule
@@ -32,10 +94,25 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var campaigns: AirshipJSON?
     var contactID: String?
     var experimentResult: ExperimentResult?
+    var reportingContext: AirshipJSON?
+
+    init(
+        scheduleID: String,
+        campaigns: AirshipJSON? = nil,
+        contactID: String? = nil,
+        experimentResult: ExperimentResult? = nil,
+        reportingContext: AirshipJSON? = nil
+    ) {
+        self.scheduleID = scheduleID
+        self.campaigns = campaigns
+        self.contactID = contactID
+        self.experimentResult = experimentResult
+        self.reportingContext = reportingContext
+    }
 }
 
 /// Prepared schedule data
-enum PreparedScheduleData: Codable, Equatable {
+enum PreparedScheduleData {
     case inAppMessage(PreparedInAppMessageData)
     case actions(AirshipJSON)
 }

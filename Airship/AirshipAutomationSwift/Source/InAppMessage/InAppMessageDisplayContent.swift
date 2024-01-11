@@ -25,8 +25,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
     case custom(AirshipJSON)
 
     /// Airship layout messages
-    /// TODO: This should probably be `AirshipLayout` instead of `AirshipJSON` but layout is currently only decodable
-    case airshipLayout(AirshipJSON)
+    case airshipLayout(AirshipLayout)
 
 
     /// Banner display content

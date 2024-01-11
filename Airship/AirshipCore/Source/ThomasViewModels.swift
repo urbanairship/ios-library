@@ -18,6 +18,14 @@ public struct AirshipLayout: Codable, Equatable, Sendable {
         case version = "version"
         case presentation = "presentation"
     }
+
+    public var isEmbedded: Bool {
+        guard case .embedded(_) = presentation else {
+            return false
+        }
+
+        return true
+    }
 }
 
 enum PresentationModelType: String, Codable, Equatable, Sendable {

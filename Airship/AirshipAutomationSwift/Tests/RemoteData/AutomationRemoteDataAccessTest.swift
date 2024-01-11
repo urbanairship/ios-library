@@ -222,36 +222,6 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         XCTAssertEqual(self.remoteData.notifiedOutdatedInfos, [info])
     }
     
-//    func testPublisher() async {
-//        let payloads = [
-//            RemoteDataPayload(
-//                type: "in_app_messages",
-//                timestamp: Date(),
-//                data: AirshipJSON.string("some payload"),
-//                remoteDataInfo: makeRemoteDataInfo()
-//            ),
-//            RemoteDataPayload(
-//                type: "some-other-payload",
-//                timestamp: Date(),
-//                data: AirshipJSON.string("some payload"),
-//                remoteDataInfo: makeRemoteDataInfo()
-//            )
-//        ]
-//
-//        self.remoteData.payloads = payloads
-//
-//        let expectation = XCTestExpectation()
-//
-//        let subscription = self.subject.publisher
-//            .sink { payloads in
-//                expectation.fulfill()
-//                XCTAssertEqual(payloads, [payloads[0]])
-//            }
-//
-//        await self.fulfillment(of: [expectation], timeout: 10)
-//        subscription.cancel()
-//    }
-//    
     private func makeSchedule(remoteDataInfo: RemoteDataInfo?) -> AutomationSchedule {
         return AutomationSchedule(
             identifier: UUID().uuidString,

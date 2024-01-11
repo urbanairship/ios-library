@@ -26,8 +26,18 @@ protocol AssetFileManager: Sendable {
     func clearAssets(identifier: String, cacheURL: URL) throws
 }
 
+protocol AssetCacheManagerProtocol: AnyActor {
+    func cacheAssets(
+        identifier: String,
+        assets: [String]
+    ) async throws -> AirshipCachedAssetsProtocol
+
+    func clearCache(identifier: String) async
+}
+
+
 /// Downloads and caches asset files in filesystem using cancelable thread-safe tasks.
-actor AssetCacheManager {
+actor AssetCacheManager: AssetCacheManagerProtocol {
     private let assetDownloader: AssetDownloader
     private let assetFileManager: AssetFileManager
 
@@ -35,8 +45,10 @@ actor AssetCacheManager {
 
     private var taskMap: [String: Task<AirshipCachedAssets, Error>] = [:]
 
-    internal init(assetDownloader: AssetDownloader,
-                  assetFileManager: AssetFileManager) {
+    internal init(
+        assetDownloader: AssetDownloader = DefaultAssetDownloader(),
+        assetFileManager: AssetFileManager = DefaultAssetFileManager()
+    ) {
         self.assetDownloader = assetDownloader
         self.assetFileManager = assetFileManager
 
@@ -54,7 +66,7 @@ actor AssetCacheManager {
     func cacheAssets(
         identifier: String,
         assets: [String]
-    ) async throws -> AirshipCachedAssets {
+    ) async throws -> AirshipCachedAssetsProtocol {
         let task: Task<AirshipCachedAssets, Error> = Task {
             let assetURLs = assets.compactMap({ URL(string:$0) })
 
@@ -63,7 +75,7 @@ actor AssetCacheManager {
 
             let cachedAssets = AirshipCachedAssets(directory: cacheDirectory, assetFileManager: assetFileManager)
 
-            for asset in assetURLs {
+            for asset in assetURLs {                
                 /// Cancellable download task
                 let tempURL = try await self.assetDownloader.downloadAsset(remoteURL: asset)
     
@@ -89,7 +101,7 @@ actor AssetCacheManager {
 
     /// Clears the cache directory associated with the identifier
     /// - Parameter identifier: Name of the directory within the root cache directory, usually an in-app message schedule ID
-    func clearCache(identifier: String) {
+    func clearCache(identifier: String) async {
         taskMap[identifier]?.cancel()
         taskMap.removeValue(forKey: identifier)
 

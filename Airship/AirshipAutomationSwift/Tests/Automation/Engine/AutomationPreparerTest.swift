@@ -19,8 +19,20 @@ final class AutomationPreparerTest: XCTestCase {
 
     private let triggerContext = AirshipTriggerContext(type: "some type", goal: 10, event: .null)
 
+    private var preparedMessageData: PreparedInAppMessageData!
+
+    @MainActor
     override func setUp() async throws {
-        self.preparer = await AutomationPreparer(
+        self.preparedMessageData = PreparedInAppMessageData(
+            message: InAppMessage(
+                name: "some name",
+                displayContent: .custom(.string("custom"))
+            ),
+            displayAdapter: TestDisplayAdapter(),
+            displayCoordinator: TestDisplayCoordinator()
+        )
+
+        self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,
             deferredResolver: deferredResolver,
@@ -310,7 +322,7 @@ final class AutomationPreparerTest: XCTestCase {
             return checker
         }
 
-        let preparedData = PreparedInAppMessageData()
+        let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
             XCTAssertEqual(.inAppMessage(message), automationSchedule.data)
@@ -531,12 +543,13 @@ final class AutomationPreparerTest: XCTestCase {
             return .success(data)
         }
 
+        let preparedData = self.preparedMessageData!
         self.messagePreparer.prepareBlock = { inAppMessage, info in
             XCTAssertEqual(inAppMessage, message)
             XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
             XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
             XCTAssertEqual("contact ID", info.contactID)
-            return PreparedInAppMessageData()
+            return preparedData
         }
 
         let result = await self.preparer.prepare(
@@ -642,7 +655,7 @@ final class AutomationPreparerTest: XCTestCase {
             return checker
         }
 
-        let preparedData = PreparedInAppMessageData()
+        let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
             XCTAssertEqual(.inAppMessage(message), automationSchedule.data)
@@ -722,10 +735,12 @@ final class AutomationPreparerTest: XCTestCase {
             return experimentResult
         }
         
+        let preparedData = self.preparedMessageData!
+
         self.messagePreparer.prepareBlock = { message, info in
             XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
             XCTAssertEqual(experimentResult, info.experimentResult)
-            return PreparedInAppMessageData()
+            return preparedData
         }
 
         let result = await self.preparer.prepare(
@@ -792,10 +807,12 @@ final class AutomationPreparerTest: XCTestCase {
             return experimentResult
         }
 
+        let preparedData = self.preparedMessageData!
+
         self.messagePreparer.prepareBlock = { message, info in
             XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
             XCTAssertEqual(experimentResult, info.experimentResult)
-            return PreparedInAppMessageData()
+            return preparedData
         }
 
         let result = await self.preparer.prepare(
@@ -848,9 +865,11 @@ final class AutomationPreparerTest: XCTestCase {
             return nil
         }
 
+        let preparedData = self.preparedMessageData!
+
         self.messagePreparer.prepareBlock = { message, info in
             XCTAssertNil(info.experimentResult)
-            return PreparedInAppMessageData()
+            return preparedData
         }
 
         let result = await self.preparer.prepare(
@@ -922,10 +941,6 @@ final class AutomationPreparerTest: XCTestCase {
 
         XCTAssertNil(prepared.info.experimentResult)
     }
-
-    // testExperiments
-    // testByPassExperiments
-
 }
 
 

@@ -15,11 +15,18 @@ public protocol AppStateTrackerProtocol: Sendable {
      * Waits for active
      */
     func waitForActive() async
+    
+    /**
+     * State updates
+     */
+    @MainActor
+    var stateUpdates: AsyncStream<ApplicationState> { get }
 }
 
 /// NOTE: For internal use only. :nodoc:
 @objc(UAAppStateTracker)
 public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecked Sendable {
+
 
     @objc
     public static let didBecomeActiveNotification = NSNotification.Name(
@@ -62,6 +69,7 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
 
     private let notificationCenter: NotificationCenter
     private let adapter: AppStateTrackerAdapter
+    private let stateValue: AirshipMainActorValue<ApplicationState>
 
     @MainActor
     private var isForegrounded: Bool? = nil
@@ -76,7 +84,7 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
     @objc
     @MainActor
     public var state: ApplicationState {
-        return adapter.state
+        return stateValue.value
     }
 
     @MainActor
@@ -86,6 +94,7 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
     ) {
         self.adapter = adapter
         self.notificationCenter = notificationCenter
+        self.stateValue = AirshipMainActorValue(adapter.state)
         super.init()
 
         Task { @MainActor in
@@ -94,7 +103,11 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
         
         self.adapter.watchAppLifeCycleEvents { event in
             self.ensureForegroundSet()
-            
+
+            if (self.stateValue.value != adapter.state) {
+                self.stateValue.set(adapter.state)
+            }
+
             switch(event) {
             case .didBecomeActive:
                 self.postNotificaition(name: AppStateTracker.didBecomeActiveNotification)
@@ -151,6 +164,12 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
 
         subscription?.cancel()
     }
+
+    @MainActor
+    public var stateUpdates: AsyncStream<ApplicationState> {
+        self.stateValue.updates
+    }
+
 }
 
 

@@ -50,17 +50,17 @@ final class ImmediateDisplayCoordinatorTest: XCTestCase {
         let bar = InAppMessage(name: "bar", displayContent: .custom(.string("bar")))
 
 
-        self.displayCoordinator.didBeginDisplayingMessage(foo)
+        self.displayCoordinator.messageWillDisplay(foo)
         XCTAssertTrue(self.displayCoordinator.isReady)
 
 
-        self.displayCoordinator.didBeginDisplayingMessage(bar)
+        self.displayCoordinator.messageWillDisplay(bar)
         XCTAssertTrue(self.displayCoordinator.isReady)
 
-        self.displayCoordinator.didFinishDisplayingMessage(foo)
+        self.displayCoordinator.messageFinishedDisplaying(foo)
         XCTAssertTrue(self.displayCoordinator.isReady)
 
-        self.displayCoordinator.didFinishDisplayingMessage(bar)
+        self.displayCoordinator.messageFinishedDisplaying(bar)
         XCTAssertTrue(self.displayCoordinator.isReady)
     }
 }

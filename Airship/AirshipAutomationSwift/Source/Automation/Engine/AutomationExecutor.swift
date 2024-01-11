@@ -16,7 +16,7 @@ protocol AutomationExecutorProtocol: Sendable {
     func isReady(preparedSchedule: PreparedSchedule) -> ScheduleReadyResult
 
     @MainActor
-    func execute(preparedSchedule: PreparedSchedule) async
+    func execute(preparedSchedule: PreparedSchedule) async throws
 
     func interrupted(
         schedule: AutomationSchedule,
@@ -26,7 +26,7 @@ protocol AutomationExecutorProtocol: Sendable {
 
 protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
     associatedtype ExecutionData: Sendable
-
+    
     @MainActor
     func isReady(
         data: ExecutionData,
@@ -37,7 +37,7 @@ protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
     func execute(
         data: ExecutionData,
         preparedScheduleInfo: PreparedScheduleInfo
-    ) async
+    ) async throws
 
     @MainActor
     func interrupted(
@@ -91,15 +91,15 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     }
 
     @MainActor
-    func execute(preparedSchedule: PreparedSchedule) async {
+    func execute(preparedSchedule: PreparedSchedule) async throws {
         switch (preparedSchedule.data) {
         case .inAppMessage(let data):
-            await self.messageExecutor.execute(
+            try await self.messageExecutor.execute(
                 data: data,
                 preparedScheduleInfo: preparedSchedule.info
             )
         case .actions(let data):
-            await self.actionExecutor.execute(
+            try await self.actionExecutor.execute(
                 data: data,
                 preparedScheduleInfo: preparedSchedule.info
             )

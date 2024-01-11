@@ -55,6 +55,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         case isReportingEnabled = "reporting_enabled"
         case displayBehavior = "display_behavior"
         case display
+        case layout
         case displayType = "display_type"
         case renderedLocale = "rendered_locale"
         case source
@@ -131,8 +132,8 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             let html = try container.decode(InAppMessageDisplayContent.HTML.self, forKey: .display)
             displayContent = .html(html)
         case .layout:
-            let layout = try container.decode(AirshipJSON.self, forKey: .display)
-            displayContent = .airshipLayout(layout)
+            let wrapper = try container.decode(AirshipLayoutWrapper.self, forKey: .display)
+            displayContent = .airshipLayout(wrapper.layout)
         }
 
         self.init(
@@ -175,7 +176,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             try container.encode(custom, forKey: .display)
             try container.encode(DisplayType.custom, forKey: .displayType)
         case .airshipLayout(let layout):
-            try container.encode(layout, forKey: .display)
+            try container.encode(AirshipLayoutWrapper(layout: layout), forKey: .display)
             try container.encode(DisplayType.layout, forKey: .displayType)
         }
     }
@@ -188,4 +189,47 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         case html
         case layout
     }
+}
+
+extension InAppMessage {
+    var urlInfos: [URLInfo] {
+        switch (self.displayContent) {
+        case .banner(let content):
+            return urlInfosForMedia(content.media)
+        case .fullscreen(let content):
+            return urlInfosForMedia(content.media)
+        case .modal(let content):
+            return urlInfosForMedia(content.media)
+        case .html(let html):
+            return [URLInfo(urlType: .web, url: html.url)]
+        case .custom(_):
+            return []
+        case .airshipLayout(let content):
+            return content.urlInfos
+        }
+    }
+
+    private func urlInfosForMedia(_ media: InAppMessageMediaInfo?) -> [URLInfo] {
+        guard let media = media else {
+            return []
+        }
+
+        switch (media.type) {
+        case .image: return [URLInfo(urlType: .image, url: media.url)]
+        case .video: return [URLInfo(urlType: .video, url: media.url)]
+        case .youtube: return [URLInfo(urlType: .video, url: media.url)]
+        }
+    }
+
+    public var isEmbedded: Bool {
+        guard case .airshipLayout(let data) = self.displayContent else {
+            return false
+        }
+
+        return data.isEmbedded
+    }
+}
+
+fileprivate struct AirshipLayoutWrapper: Codable {
+    var layout: AirshipLayout
 }

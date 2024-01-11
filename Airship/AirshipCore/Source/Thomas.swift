@@ -42,7 +42,7 @@ public class Thomas: NSObject {
     @objc
     public class func urls(json: Any) throws -> [URLInfo] {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
-        return try decode(data).urlInfos()
+        return try decode(data).urlInfos
     }
 
     #if !os(watchOS)

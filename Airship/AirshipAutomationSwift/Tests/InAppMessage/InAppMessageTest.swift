@@ -402,25 +402,44 @@ final class InAppMessageTest: XCTestCase {
     }
 
     func testAirshipLayout() throws {
+        let airshipLayout = """
+        {
+          "version":1,
+          "presentation":{
+             "type":"embedded",
+             "embedded_id":"home_banner",
+             "default_placement":{
+                "size":{
+                   "width":"50%",
+                   "height":"50%"
+                }
+             }
+          },
+          "view":{
+             "type":"container",
+             "items":[]
+          }
+        }
+        """
+
         let json = """
           {
              "source": "remote-data",
-             "display" : {
-                "complicated": "payload"
-             },
+             "display" : { "layout": \(airshipLayout) },
              "display_type" : "layout",
              "name" : "Airship layout"
           }
         """
 
+        let expectedLayout = try! JSONDecoder().decode(AirshipLayout.self, from: airshipLayout.data(using: .utf8)!)
         let expected = InAppMessage(
             name: "Airship layout",
             displayContent: .airshipLayout(
-                AirshipJSON.object(["complicated": .string("payload")])
+                expectedLayout
             ),
             source: .remoteData
         )
-
+                
         try verify(json: json, expected: expected)
     }
 

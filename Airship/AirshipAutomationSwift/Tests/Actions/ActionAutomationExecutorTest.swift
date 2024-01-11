@@ -6,20 +6,20 @@ import XCTest
 import AirshipAutomationSwift
 import AirshipCore
 
-class ActionAutomationTest: XCTestCase {
+class ActionAutomationExecutorTest: XCTestCase {
 
     private let actionRunner: TestActionRunner = TestActionRunner()
-    private var actionAutomation: ActionAutomation!
+    private var executor: ActionAutomationExecutor!
 
     private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some id")
     private let actions = try! AirshipJSON.wrap(["some-action": "some-value"])
 
     override func setUp() {
-        self.actionAutomation = ActionAutomation(actionRunner: actionRunner)
+        self.executor = ActionAutomationExecutor(actionRunner: actionRunner)
     }
 
     func testExecute() async throws {
-        await self.actionAutomation.execute(data: actions, preparedScheduleInfo: preparedScheduleInfo)
+        await self.executor.execute(data: actions, preparedScheduleInfo: preparedScheduleInfo)
 
         XCTAssertEqual(self.actionRunner.actions, actions)
         XCTAssertEqual(self.actionRunner.situation, .automation)
@@ -27,13 +27,8 @@ class ActionAutomationTest: XCTestCase {
     }
 
     func testIsReady() async throws {
-        let result = await self.actionAutomation.isReady(data: actions, preparedScheduleInfo: preparedScheduleInfo)
+        let result = await self.executor.isReady(data: actions, preparedScheduleInfo: preparedScheduleInfo)
         XCTAssertEqual(result, .ready)
-    }
-
-    func testPrepare() async throws {
-        let result = try await self.actionAutomation.prepare(data: actions, preparedScheduleInfo: preparedScheduleInfo)
-        XCTAssertEqual(actions, result)
     }
 }
 

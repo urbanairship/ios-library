@@ -24,6 +24,7 @@ final class EventSchedulerTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testScheduleNormalPriority() async throws  {
         self.appStateTracker.currentState = .active
         await self.eventScheduler.scheduleUpload(
@@ -35,6 +36,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(15.0, self.workManager.workRequests[0].initialDelay)
     }
 
+    @MainActor
     func testScheduleHighPriority() async throws  {
         self.appStateTracker.currentState = .active
         await self.eventScheduler.scheduleUpload(
@@ -46,6 +48,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(0, self.workManager.workRequests[0].initialDelay)
     }
 
+    @MainActor
     func testScheduleNormalPriorityBackground() async throws  {
         self.appStateTracker.currentState = .background
         await self.eventScheduler.scheduleUpload(
@@ -57,6 +60,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(0, self.workManager.workRequests[0].initialDelay)
     }
 
+    @MainActor
     func testAlreadyScheduled() async throws  {
         self.appStateTracker.currentState = .active
         await self.eventScheduler.scheduleUpload(
@@ -73,6 +77,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(15.0, self.workManager.workRequests[0].initialDelay)
     }
 
+    @MainActor
     func testScheduleEarlier() async throws  {
         self.appStateTracker.currentState = .active
         await self.eventScheduler.scheduleUpload(
@@ -90,6 +95,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(0, self.workManager.workRequests[1].initialDelay)
     }
 
+    @MainActor
     func testBatchInterval() async throws {
         self.date.dateOverride = Date()
         let request = AirshipWorkRequest(workID: "neat")
@@ -105,6 +111,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(60.0, self.workManager.workRequests[0].initialDelay)
     }
 
+    @MainActor
     func testSmallerBatchInterval() async throws {
         self.date.dateOverride = Date()
         let request = AirshipWorkRequest(workID: "neat")
@@ -163,6 +170,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertTrue(called.value)
     }
 
+    @MainActor
     func testBatchDelay() async throws {
         self.appStateTracker.currentState = .inactive
         let request = AirshipWorkRequest(workID: "neat")
@@ -171,6 +179,7 @@ final class EventSchedulerTest: XCTestCase {
         XCTAssertEqual(1.0, self.lastDelay)
     }
 
+    @MainActor
     func testActiveBatchDelay() async throws {
         self.appStateTracker.currentState = .active
         let request = AirshipWorkRequest(workID: "neat")

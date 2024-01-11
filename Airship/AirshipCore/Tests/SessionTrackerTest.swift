@@ -81,6 +81,7 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testAirshipReadyEmitsAppInitActiveState() async throws {
         self.appStateTracker.currentState = .active
 
@@ -101,6 +102,7 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testAirshipReadyEmitsAppInitInActiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
@@ -108,7 +110,7 @@ final class SessionTrackerTest: XCTestCase {
             sessionID: "1"
         )
 
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
         await ensureEvents([
             SessionEvent(
                 type: .foregroundInit,
@@ -121,6 +123,7 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testAirshipReadyEmitsAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
@@ -128,7 +131,7 @@ final class SessionTrackerTest: XCTestCase {
             sessionID: "1"
         )
 
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
         await ensureEvents([
             SessionEvent(
                 type: .backgroundInit,
@@ -141,6 +144,7 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testLaunchFromPushAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
@@ -175,6 +179,7 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testLaunchFromPushAppInActiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
@@ -209,11 +214,12 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testLaunchAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
         // App init
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
 
         await ensureEvents([
             SessionEvent(
@@ -262,11 +268,12 @@ final class SessionTrackerTest: XCTestCase {
 
     }
 
+    @MainActor
     func testLaunchAppInactiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
         // App init
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
 
         await ensureEvents([
             SessionEvent(
@@ -306,11 +313,12 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "2"))
     }
 
+    @MainActor
     func testLaunchAppActiveState() async throws {
-        self.appStateTracker.currentState = .active
+        appStateTracker.currentState = .active
 
         // App init
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
 
         await ensureEvents([
             SessionEvent(
@@ -350,11 +358,12 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "2"))
     }
 
+    @MainActor
     func testLaunchContentAvailablePush() async throws {
         self.appStateTracker.currentState = .background
 
         // App init
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
 
         await ensureEvents([
             SessionEvent(
@@ -396,10 +405,11 @@ final class SessionTrackerTest: XCTestCase {
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
+    @MainActor
     func testBackgroundClearPush() async throws {
         self.appStateTracker.currentState = .background
 
-        await self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+        self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
         await ensureEvents([
             SessionEvent(

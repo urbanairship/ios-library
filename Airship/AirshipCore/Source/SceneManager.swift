@@ -2,11 +2,23 @@
 
 #if !os(watchOS)
 
+/// - Note: for internal use only.  :nodoc:
+public protocol AirshipSceneManagerProtocol: Sendable {
+    @MainActor
+    var lastActiveScene: UIWindowScene  { get throws }
+}
+
+public extension AirshipSceneManagerProtocol {
+    static var shared: AirshipSceneManagerProtocol {
+        SceneManager.shared as AirshipSceneManagerProtocol
+    }
+}
+
 /**
  *  Scene manager
  *  Monitors scene connection and disconnection notifications and associated scenes to allow retrieving the latest scene.
  */
-final class SceneManager : @unchecked Sendable {
+final class SceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
     public static let shared = SceneManager()
 
     private var scenes: [UIWindowScene] = []
@@ -21,19 +33,21 @@ final class SceneManager : @unchecked Sendable {
     /**
      * Called to get the latest connected window scene
      *
-     * @return A window scene if available, or nil.
+     * @return A window scene
      */
     @MainActor
-    public func scene() -> UIWindowScene? {
-        let lastActiveMessageScene = scenes
-            .filter { $0.activationState == .foregroundActive && $0.session.role == .windowApplication }
-            .last
+    public var lastActiveScene: UIWindowScene {
+        get throws {
+            let lastActiveMessageScene = scenes
+                .filter { $0.activationState == .foregroundActive && $0.session.role == .windowApplication }
+                .last
 
-        guard let scene = lastActiveMessageScene else {
-            return try? AirshipUtils.findWindowScene()
+            guard let scene = lastActiveMessageScene else {
+                return try AirshipUtils.findWindowScene()
+            }
+
+            return scene
         }
-
-        return scene
     }
 
     // MARK: Notifications

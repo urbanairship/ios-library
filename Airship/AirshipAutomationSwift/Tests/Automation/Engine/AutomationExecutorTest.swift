@@ -13,7 +13,19 @@ final class AutomationExecutorTest: XCTestCase {
     private let remoteDataAccess: TestRemoteDataAccess = TestRemoteDataAccess()
     private var executor: AutomationExecutor!
 
+    private var preparedMessageData: PreparedInAppMessageData!
+
+    @MainActor
     override func setUp() async throws {
+        self.preparedMessageData = PreparedInAppMessageData(
+            message: InAppMessage(
+                name: "some name",
+                displayContent: .custom(.string("custom"))
+            ),
+            displayAdapter: TestDisplayAdapter(),
+            displayCoordinator: TestDisplayCoordinator()
+        )
+
         self.executor = AutomationExecutor(
             actionExecutor: actionExecutor,
             messageExecutor: messageExecutor,
@@ -24,7 +36,7 @@ final class AutomationExecutorTest: XCTestCase {
     func testMessageIsReady() async throws {
         let messageSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
-            data: .inAppMessage(PreparedInAppMessageData()),
+            data: .inAppMessage(self.preparedMessageData),
             frequencyChecker: nil
         )
 
@@ -161,7 +173,7 @@ final class AutomationExecutorTest: XCTestCase {
             XCTAssertEqual(info, actionSchedule.info)
         }
 
-        await self.executor.execute(preparedSchedule: actionSchedule)
+        try await self.executor.execute(preparedSchedule: actionSchedule)
 
         XCTAssertTrue(actionExecutor.executeCalled)
     }
@@ -169,7 +181,7 @@ final class AutomationExecutorTest: XCTestCase {
     func testExecuteMessage() async throws {
         let messageSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
-            data: .inAppMessage(PreparedInAppMessageData()),
+            data: .inAppMessage(self.preparedMessageData),
             frequencyChecker: nil
         )
 
@@ -178,7 +190,7 @@ final class AutomationExecutorTest: XCTestCase {
             XCTAssertEqual(info, messageSchedule.info)
         }
 
-        await self.executor.execute(preparedSchedule: messageSchedule)
+        try await self.executor.execute(preparedSchedule: messageSchedule)
         XCTAssertTrue(messageExecutor.executeCalled)
     }
     
@@ -263,26 +275,30 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     }
 }
 
-final class TestFrequencyChecker: FrequencyCheckerProtocol, @unchecked Sendable {
-    var isOverLimit: Bool = false
-    var checkAndIncrementBlock: (() -> Bool)?
-    var checkAndIncrementCalled: Bool = false
-
-    func checkAndIncrement() -> Bool {
-        checkAndIncrementCalled = true
-        return checkAndIncrementBlock!()
-    }
-
-    @MainActor
-    func setIsOverLimit(_ isOverLimit: Bool) {
-        self.isOverLimit = isOverLimit
-    }
-
-}
 
 
-fileprivate extension ScheduleReadyResult {
+
+extension ScheduleReadyResult {
     static var allResults: [ScheduleReadyResult] {
         return [.ready, .notReady, .invalidate, .skip]
     }
+}
+
+extension PreparedScheduleData: Equatable {
+    public static func == (lhs: PreparedScheduleData, rhs: PreparedScheduleData) -> Bool {
+        switch lhs {
+        case  .actions(let lhsJson):
+            switch rhs {
+            case .actions(let rhsJson): return lhsJson == rhsJson
+            default: return false
+            }
+        case .inAppMessage(let lhsMessageData):
+            switch rhs {
+            case .inAppMessage(let rhsMessageData):
+                return rhsMessageData.message == lhsMessageData.message
+            default: return false
+            }
+        }
+    }
+
 }

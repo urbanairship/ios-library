@@ -40,10 +40,10 @@ final class DefaultDisplayCoordinatorTest: XCTestCase {
         self.stateTracker.currentState = .active
         XCTAssertTrue(self.displayCoordinator.isReady)
 
-        self.displayCoordinator.didBeginDisplayingMessage(fooSchedule)
+        self.displayCoordinator.messageWillDisplay(fooSchedule)
         XCTAssertFalse(self.displayCoordinator.isReady)
 
-        self.displayCoordinator.didFinishDisplayingMessage(fooSchedule)
+        self.displayCoordinator.messageFinishedDisplaying(fooSchedule)
         await self.displayCoordinator.waitForReady()
         XCTAssertTrue(self.displayCoordinator.isReady)
 

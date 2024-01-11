@@ -48,7 +48,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         messagePreparer: any AutomationPreparerDelegate<InAppMessage, PreparedInAppMessageData>,
         deferredResolver: AirshipDeferredResolverProtocol,
         frequencyLimits: FrequencyLimitManagerProtocol,
-        audienceChecker: DeviceAudienceChecker,
+        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         experiments: ExperimentDataProvider,
         remoteDataAccess: AutomationRemoteDataAccessProtocol,
         deviceInfoProviderFactory: @escaping @Sendable (String?) -> AudienceDeviceInfoProvider = { contactID in
@@ -132,7 +132,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 scheduleID: schedule.identifier,
                 campaigns: schedule.campaigns,
                 contactID: await deviceInfoProvider.stableContactID,
-                experimentResult: experimentResult
+                experimentResult: experimentResult,
+                reportingContext: schedule.reportingContext
             )
 
             return try await self.prepareData(

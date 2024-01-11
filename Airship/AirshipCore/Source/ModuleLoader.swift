@@ -29,7 +29,12 @@ public class SDKDependencyKeys: NSObject {
     public static let workManager = "work_manager"
 
     public static let deferredResolver = "deferred_resolver"
+
     public static let cache = "airship_cache"
+
+    public static let experimentsProvider = "experiments"
+    public static let sceneManager = "scene_manager"
+
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -70,7 +75,7 @@ class ModuleLoader {
         cache: AirshipCache
     ) {
 
-        let dependencies: [String: Any] = [
+        var dependencies: [String: Any] = [
             SDKDependencyKeys.config: config,
             SDKDependencyKeys.dataStore: dataStore,
             SDKDependencyKeys.channel: channel,
@@ -89,9 +94,13 @@ class ModuleLoader {
             SDKDependencyKeys.permissionsManager: permissionsManager,
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
             SDKDependencyKeys.deferredResolver: deferredResolver,
-            SDKDependencyKeys.cache: cache
-
+            SDKDependencyKeys.cache: cache,
+            SDKDependencyKeys.experimentsProvider: experimentsManager
         ]
+
+#if !os(watchOS)
+        dependencies[SDKDependencyKeys.sceneManager] = SceneManager.shared
+#endif
 
         let swiftModules = ModuleLoader.loadModules(dependencies)
         let swiftComponents = swiftModules.compactMap { $0.components }.reduce([], +)

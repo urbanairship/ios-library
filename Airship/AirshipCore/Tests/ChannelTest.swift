@@ -402,6 +402,7 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual(["some-random-value"], self.channel.tags)
     }
 
+    @MainActor
     func testCRAPayloadIsActiveFlagInForeground() async throws {
         self.privacyManager.enableFeatures(.all)
         self.appStateTracker.currentState = .active
@@ -410,6 +411,7 @@ class ChannelTest: XCTestCase {
         XCTAssertTrue(payload.channel.isActive)
     }
 
+    @MainActor
     func testCRAPayloadIsActiveFlagInBackground() async throws {
         self.privacyManager.enableFeatures(.all)
         self.appStateTracker.currentState = .background
