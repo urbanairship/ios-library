@@ -1,0 +1,12 @@
+{
+    "source": "local",
+    "name": "my HTML message",
+    "display_type": "html",
+    "display": {
+        "allow_fullscreen_display": true,
+        "background_color": "#000000",
+        "border_radius": 10,
+        "dismiss_button_color": "#00FF00",
+        "url": "https://urbanairship.com"
+    }
+}

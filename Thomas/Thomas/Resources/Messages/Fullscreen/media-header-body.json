@@ -1,0 +1,65 @@
+{
+    "source": "app-defined",
+    "name": "myMessage",
+    "display_type": "fullScreen",
+    "display": {
+        "dismiss_button_color": "#00FF00",
+        "background_color": "#FF0000",
+        "button_layout": "stacked",
+        "content_layout": "media_header_body",
+        "heading": {
+            "text": "Media header body with stacked buttons no footer long header. Media header body with stacked buttons no footer long header.",
+            "color": "#A52A2A",
+            "size": 11
+        },
+        "body": {
+            "text": "short body text.",
+            "color": "#00FF00",
+            "size": 11
+        },
+        "buttons": [
+            {
+                "id": "button-one",
+                "label": {
+                    "text": "Dismiss",
+                    "color": "#808080",
+                    "size": 11
+                },
+                "background_color": "#0000FF"
+            },
+            {
+                "id": "button-two",
+                "label": {
+                    "text": "Cancel",
+                    "color": "#808080",
+                    "size": 9
+                },
+                "background_color": "#0000FF",
+                "border_radius": 10,
+                "behavior": "cancel"
+            },
+            {
+                "id": "button-three",
+                "label": {
+                    "text": "Cancel",
+                    "color": "#00FF00",
+                    "size": 9
+                },
+                "background_color": "#0000FF",
+                "border_radius": 10,
+                "behavior": "cancel"
+            },
+            {
+                "id": "button-four",
+                "label": {
+                    "text": "Cancel",
+                    "color": "#00FF00",
+                    "size": 9
+                },
+                "background_color": "#0000FF",
+                "border_radius": 10,
+                "behavior": "cancel"
+            }
+        ]
+    }
+}

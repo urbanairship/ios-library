@@ -22,7 +22,6 @@ struct LayoutsList: View {
     @State private var showBanner = false
 
     var body: some View {
-
         List {
             ForEach(self.layouts, id: \.self) { layout in
                 Button(layout.fileName) {
@@ -47,6 +46,6 @@ struct LayoutsList: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        LayoutsList(type: .modal)
+        LayoutsList(type: .sceneModal)
     }
 }

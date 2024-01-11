@@ -88,15 +88,6 @@ extern NSString *const UAInAppMessageDisplayTypeAirshipLayoutValue;
  * Class factory method for constructing an in-app message from JSON.
  *
  * @param json JSON object that defines the message.
- * @param error An NSError pointer for storing errors, if applicable.
- * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.
- */
-+ (nullable instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error;
-
-/**
- * Class factory method for constructing an in-app message from JSON.
- *
- * @param json JSON object that defines the message.
  * @param defaultSource The in-app message source to use if one is not set in the JSON.
  * @param error An NSError pointer for storing errors, if applicable.
  * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.

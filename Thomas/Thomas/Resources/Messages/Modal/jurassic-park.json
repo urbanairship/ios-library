@@ -1,0 +1,61 @@
+{
+    "source": "app-defined",
+    "name": "Jurassic_Park",
+    "display_type": "modal",
+    "display": {
+        "allow_fullscreen_display": false,
+        "background_color": "#000000",
+        "body": "long body text here...",
+        "border_radius": 10,
+        "button_layout": "stacked",
+        "buttons": [
+            {
+                "id": "button-one",
+                "background_color": "#FF0000",
+                "border_color": null,
+                "border_radius": 8,
+                "label": {
+                    "text": "It's a Unix system, I know this.",
+                    "color": "#000000",
+                    "font_family": null,
+                    "size": null,
+                    "style": "center"
+                },
+                "actions": {
+                    "add_tag_action": "button_one"
+                }
+            },
+            {
+                "id": "button-two",
+                "background_color": "#FF0000",
+                "border_color": null,
+                "border_radius": 8,
+                "label": {
+                    "text": "Hold on to your butts!",
+                    "color": "#000000",
+                    "font_family": null,
+                    "size": null,
+                    "style": "center"
+                },
+                "actions": {
+                    "add_tag_action": "button_two"
+                }
+            }
+        ],
+        "dismiss_button_color": "#A9A9A9",
+        "heading": {
+            "text": "Jurassic Park",
+            "color": "#808080",
+            "font_family": "jurassic_park",
+            "size": 24,
+            "style": null
+        },
+        "media": {
+            "description": "Jurassic park",
+            "type": "image",
+            "url": "https://previews.123rf.com/images/victoroancea/victoroancea1201/victoroancea120100059/12055848-tv-color-test-pattern-test-card-for-pal-and-ntsc.jpg"
+        },
+        "template": "modal_template"
+    }
+}
+

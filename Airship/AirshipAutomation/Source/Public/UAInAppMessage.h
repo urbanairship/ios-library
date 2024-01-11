@@ -141,6 +141,17 @@ NS_SWIFT_NAME(InAppMessage)
  */
 - (nullable UAInAppMessage *)extend:(void(^)(UAInAppMessageBuilder *builder))builderBlock;
 
+/**
+ * Class factory method for constructing an in-app message from JSON.
+ *
+ * @note For internal use only. :nodoc:
+ *
+ * @param json JSON object that defines the message.
+ * @param error An NSError pointer for storing errors, if applicable.
+ * @return A fully configured instance of UAInAppMessage or nil if JSON parsing fails.
+ */
++ (nullable instancetype)messageWithJSON:(NSDictionary *)json error:(NSError * _Nullable *)error;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1,0 +1,62 @@
+{
+    "source": "app-defined",
+    "name": "woot",
+    "display_type": "fullScreen",
+    "display": {
+        "allow_fullscreen_display": true,
+        "background_color": "#FF0000",
+        "body": {
+            "alignment": "center",
+            "color": "#008000",
+            "font_family": ["sans-serif"],
+            "size": 11,
+            "text": "This is body text that's pretty long..."
+        },
+        "border_radius": 5,
+        "button_layout": "joined",
+        "buttons": [
+            {
+                "actions": {},
+                "background_color": "#0000FF",
+                "border_color": "#0000FF",
+                "border_radius": 0,
+                "id": "button-one",
+                "label": {
+                    "color": "#808080",
+                    "font_family": ["sans-serif"],
+                    "size": 11,
+                    "style": ["bold"],
+                    "text": "Dismiss"
+                }
+            },
+            {
+                "actions": {"behavior": "cancel"},
+                "background_color": "#0000FF",
+                "border_color": "#0000FF",
+                "border_radius": 10,
+                "id": "button-two",
+                "label": {
+                    "color": "#808080",
+                    "font_family": ["sans-serif"],
+                    "size": 9,
+                    "style": ["bold"],
+                    "text": "Cancel"
+                }
+            }
+        ],
+        "dismiss_button_color": "#008000",
+        "heading": {
+            "alignment": "center",
+            "color": "#A52A2A",
+            "font_family": ["sans-serif"],
+            "size": 11,
+            "text": "Header body media with wide image stacked buttons centered"
+        },
+        "media": {
+            "description": "Wide space",
+            "type": "image",
+            "url": "https://images.pexels.com/photos/207529/pexels-photo-207529.jpeg"
+        },
+        "template": "header_body_media"
+    }
+}

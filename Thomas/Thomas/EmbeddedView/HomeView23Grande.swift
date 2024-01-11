@@ -53,7 +53,7 @@ struct HomeView23Grande: View {
             .navigationBarHidden(true)
         }
         .onAppear {
-            Layouts.shared.layouts.filter { $0.type == .embedded }.forEach {
+            Layouts.shared.layouts.filter { $0.type == .sceneEmbedded }.forEach {
                 do {
                     try Layouts.shared.openLayout($0)
                 } catch {
