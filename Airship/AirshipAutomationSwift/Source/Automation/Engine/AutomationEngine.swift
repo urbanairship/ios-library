@@ -12,17 +12,21 @@ protocol AutomationEngineProtocol: AnyObject, Sendable {
     var isExecutionPaused: Bool { get set }
     func start()
 
-    func scheduleConditionsChanged()
-    func cancelSchedule(identifier: String) async
-    func cancelSchedules(group: String) async
-    func schedule(_ schedules: [AutomationSchedule]) async throws
+    func stopSchedules(_ schedules: [AutomationSchedule]) async throws
+    func upsertSchedules(_ schedules: [AutomationSchedule]) async throws
 
-    var schedules: [AutomationSchedule] { get async }
-    func getSchedule(identifier: String) async -> AutomationSchedule?
-    func getSchedules(group: String) async -> [AutomationSchedule]
+    func cancelSchedule(identifier: String) async throws
+    func cancelSchedules(group: String) async throws
+
+    var schedules: [AutomationSchedule] { get async throws }
+    func getSchedule(identifier: String) async throws -> AutomationSchedule
+    func getSchedules(group: String) async throws -> [AutomationSchedule]
+
+    func scheduleConditionsChanged()
 }
 
 final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
+
     var isPaused: Bool = false
     var isExecutionPaused: Bool = false
 
@@ -49,36 +53,39 @@ final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
             }
         }
     }
-    
+
+    func stopSchedules(_ schedules: [AutomationSchedule]) async throws {
+
+    }
+
+    func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
+
+    }
+
+    func cancelSchedule(identifier: String) async throws {
+
+    }
+
+    func cancelSchedules(group: String) async throws {
+
+    }
+
+    var schedules: [AutomationSchedule] {
+        return []
+    }
+
+    func getSchedule(identifier: String) async throws -> AutomationSchedule {
+        throw AirshipErrors.error("failed")
+    }
+
+    func getSchedules(group: String) async throws -> [AutomationSchedule] {
+        return []
+    }
+
     func scheduleConditionsChanged() {
 
     }
-    
-    func cancelSchedule(identifier: String) async {
 
-    }
-    
-    func cancelSchedule(group: String) async {
-
-    }
-    
-    func schedule(_ schedules: [AutomationSchedule]) async throws {
-
-    }
-    
-    var schedules: [AutomationSchedule] = []
-
-    func cancelSchedules(group: String) async {
-
-    }
-
-    func getSchedule(identifier: String) async -> AutomationSchedule? {
-        return nil
-    }
-
-    func getSchedules(group: String) async -> [AutomationSchedule] {
-        return []
-    }
 }
 
 /// A prepared schedule

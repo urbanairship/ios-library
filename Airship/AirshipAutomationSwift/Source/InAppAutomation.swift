@@ -6,7 +6,7 @@ import AirshipCore
 
 public final class InAppAutomation: Sendable {
     private let engine: AutomationEngineProtocol
-    private let remoteDataScheduler: AutomationRemoteDataSchedulerProtocol
+    private let remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
     private let notificationCenter: AirshipNotificationCenter
@@ -19,7 +19,7 @@ public final class InAppAutomation: Sendable {
     init(
         engine: AutomationEngineProtocol,
         inAppMessaging: InAppMessagingProtocol,
-        remoteDataScheduler: AutomationRemoteDataSchedulerProtocol,
+        remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
         config: RuntimeConfig,
@@ -27,7 +27,7 @@ public final class InAppAutomation: Sendable {
     ) {
         self.engine = engine
         self.inAppMessaging = inAppMessaging
-        self.remoteDataScheduler = remoteDataScheduler
+        self.remoteDataSubscriber = remoteDataSubscriber
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
@@ -56,15 +56,35 @@ public final class InAppAutomation: Sendable {
         }
     }
 
+    public func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
+        try await self.engine.upsertSchedules(schedules)
+    }
+
+    public func cancelSchedule(identifier: String) async throws {
+        try await self.engine.cancelSchedule(identifier: identifier)
+    }
+
+    public func cancelSchedules(group: String) async throws {
+        try await self.engine.cancelSchedules(group: group)
+    }
+
+    public func getSchedule(identifier: String) async throws -> AutomationSchedule? {
+        return try await self.engine.getSchedule(identifier: identifier)
+    }
+
+    public func getSchedules(group: String) async throws -> [AutomationSchedule] {
+        return try await self.engine.getSchedules(group: group)
+    }
+
     @MainActor
     private func privacyManagerUpdated() {
         if self.privacyManager.isEnabled(.inAppAutomation) {
             self.engine.isPaused = false
-            self.remoteDataScheduler.subscribe()
+            self.remoteDataSubscriber.subscribe()
             engine.scheduleConditionsChanged()
         } else {
             self.engine.isPaused = true
-            self.remoteDataScheduler.unsubscribe()
+            self.remoteDataSubscriber.unsubscribe()
         }
     }
 }

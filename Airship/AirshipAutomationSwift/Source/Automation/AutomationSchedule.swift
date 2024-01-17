@@ -59,14 +59,15 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     var campaigns: AirshipJSON?
     var reportingContext: AirshipJSON?
     var productID: String?
-    let lastUpdated: Date
-    let created: Date
+    var minSDKVersion: String?
+
+    var created: Date?
+
 
     enum CodingKeys: String, CodingKey {
         case identifier = "id"
         case triggers
         case created
-        case lastUpdated = "last_updated"
         case group
         case metadata
         case priority
@@ -87,6 +88,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case actions
         case deferred
         case message
+        case minSDKVersion = "min_sdk_version"
     }
 
     private enum ScheduleType: String, Codable {
@@ -113,7 +115,6 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.identifier = identifier
         self.triggers = triggers
         self.created = Date()
-        self.lastUpdated = Date()
         self.group = group
         self.priority = priority
         self.limit = limit
@@ -138,8 +139,8 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         identifier: String,
         data: AutomationScheduleData,
         triggers: [AutomationTrigger],
-        created: Date,
-        lastUpdated: Date,
+        created: Date? = nil,
+        lastUpdated: Date? = nil,
         group: String? = nil,
         priority: Int? = nil,
         limit: UInt? = nil,
@@ -155,7 +156,8 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         reportingContext: AirshipJSON? = nil,
         productID: String? = nil,
         frequencyConstraintIDs: [String]? = nil,
-        messageType: String? = nil
+        messageType: String? = nil,
+        minSDKVersion: String? = nil
     ) {
         self.identifier = identifier
         self.triggers = triggers
@@ -177,7 +179,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.frequencyConstraintIDs = frequencyConstraintIDs
         self.messageType = messageType
         self.created = created
-        self.lastUpdated = lastUpdated
+        self.minSDKVersion = minSDKVersion
     }
 
     public init(from decoder: Decoder) throws {
@@ -201,6 +203,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.editGracePeriodDays = try container.decodeIfPresent(UInt.self, forKey: .editGracePeriodDays)
         self.frequencyConstraintIDs = try container.decodeIfPresent([String].self, forKey: .frequencyConstraintIDs)
         self.messageType = try container.decodeIfPresent(String.self, forKey: .messageType)
+        self.minSDKVersion = try container.decodeIfPresent(String.self, forKey: .minSDKVersion)
 
         let scheduleType = try container.decode(ScheduleType.self, forKey: .scheduleType)
         switch(scheduleType) {
@@ -226,26 +229,13 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
             )
         }
         self.created = created
-
-        guard let lastUpdated = try container.decode(String.self, forKey: .lastUpdated).toDate() else {
-            throw DecodingError.typeMismatch(
-                AutomationSchedule.self,
-                DecodingError.Context(
-                    codingPath: container.codingPath,
-                    debugDescription: "Invalid last_update date string.",
-                    underlyingError: nil
-                )
-            )
-        }
-        self.lastUpdated = lastUpdated
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.identifier, forKey: .identifier)
         try container.encode(self.triggers, forKey: .triggers)
-        try container.encode(self.created.toISOString(), forKey: .created)
-        try container.encode(self.lastUpdated.toISOString(), forKey: .lastUpdated)
+        try container.encodeIfPresent(self.created?.toISOString(), forKey: .created)
         try container.encodeIfPresent(self.group, forKey: .group)
         try container.encodeIfPresent(self.metadata, forKey: .metadata)
         try container.encodeIfPresent(self.priority, forKey: .priority)
@@ -262,6 +252,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.editGracePeriodDays, forKey: .editGracePeriodDays)
         try container.encodeIfPresent(self.frequencyConstraintIDs, forKey: .frequencyConstraintIDs)
         try container.encodeIfPresent(self.messageType, forKey: .messageType)
+        try container.encodeIfPresent(self.minSDKVersion, forKey: .minSDKVersion)
 
         switch(self.data) {
         case .actions(let actions):
@@ -313,5 +304,30 @@ extension AutomationSchedule {
             case .inAppMessage: return true
             }
         }
+    }
+
+    func isNewSchedule(sinceDate: Date, lastSDKVersion: String?) -> Bool {
+        guard let created = self.created else { return false }
+
+        if created > sinceDate {
+            return true
+        }
+
+        guard let minSDKVersion = self.minSDKVersion else { return false }
+
+        // We can skip checking if the min_sdk_version is newer than the current SDK version since
+        // remote-data will filter them out. This flag is only a hint to the SDK to treat a schedule with
+        // an older created timestamp as a new schedule.
+
+        let constraint = if let lastSDKVersion = lastSDKVersion {
+            "]\(lastSDKVersion),)"
+        } else {
+            // If we do not have a last SDK version, then we are coming from an SDK older than
+            // 16.2.0. Check for a min SDK version newer or equal to 16.2.0.
+            "[16.2.0,)"
+        }
+
+        guard let matcher = VersionMatcher(versionConstraint: constraint) else { return false }
+        return matcher.evaluate(minSDKVersion)
     }
 }

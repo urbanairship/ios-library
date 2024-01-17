@@ -104,7 +104,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             if let audience = schedule.audience {
                 let match = try await self.audienceChecker.evaluate(
                     audience: audience.audienceSelector,
-                    newUserEvaluationDate: schedule.created,
+                    newUserEvaluationDate: schedule.created ?? .distantPast,
                     deviceInfoProvider: deviceInfoProvider
                 )
 

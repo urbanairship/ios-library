@@ -7,6 +7,11 @@ import Combine
 @testable import AirshipCore
 
 final class TestRemoteDataAccess: AutomationRemoteDataAccessProtocol, @unchecked Sendable {
+    func source(forSchedule schedule: AirshipAutomationSwift.AutomationSchedule) -> AirshipCore.RemoteDataSource? {
+        return .app
+    }
+
+    
     var isCurrentBlock: ((AutomationSchedule) async -> Bool)?
     var bestEffortRefreshBlock: ((AutomationSchedule) async -> Bool)?
     var requiresUpdateBlock: ((AutomationSchedule) async -> Bool)?

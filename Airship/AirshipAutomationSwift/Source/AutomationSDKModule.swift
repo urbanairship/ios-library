@@ -63,7 +63,8 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             conditionsChangedNotifier: conditionsChangedNotifier
         )
 
-        let remoteDataSchduler = AutomationRemoteDataScheduler(
+        let remoteDataSubscriber = AutomationRemoteDataSubscriber(
+            dataStore: dataStore,
             remoteDataAccess: remoteDataAccess,
             engine: engine,
             frequencyLimitManager: frequencyLimits
@@ -77,7 +78,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let _ = InAppAutomation(
             engine: engine,
             inAppMessaging: inAppMessaging,
-            remoteDataScheduler: remoteDataSchduler,
+            remoteDataSubscriber: remoteDataSubscriber,
             dataStore: dataStore,
             privacyManager: privacyManager,
             config: config

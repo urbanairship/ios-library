@@ -17,8 +17,13 @@ final actor TestFrequencyLimitManager: FrequencyLimitManagerProtocol {
         self.checkerBlock = checkerBlock
     }
 
+    private var onConstraints: (@Sendable ([FrequencyConstraint]) async throws -> Void)?
+    func setOnConstraints(_ onConstraints: @escaping @Sendable ([FrequencyConstraint]) async throws -> Void) {
+        self.onConstraints = onConstraints
+    }
     func setConstraints(_ constraints: [FrequencyConstraint]) async throws {
         self.constraints = constraints
+        try await onConstraints?(constraints)
     }
 
     func getFrequencyChecker(constraintIDs: [String]?) async throws -> FrequencyCheckerProtocol? {

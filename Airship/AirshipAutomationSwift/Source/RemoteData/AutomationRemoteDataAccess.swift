@@ -16,6 +16,7 @@ protocol AutomationRemoteDataAccessProtocol: Sendable {
     func bestEffortRefresh(schedule: AutomationSchedule) async -> Bool
     func notifyOutdated(schedule: AutomationSchedule) async
     func contactID(forSchedule schedule: AutomationSchedule) -> String?
+    func source(forSchedule schedule: AutomationSchedule) -> RemoteDataSource?
 }
 
 final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
@@ -41,11 +42,11 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
     }
 
     func isCurrent(schedule: AutomationSchedule) async -> Bool {
-        guard isRemoteSchedule(schedule: schedule) else {
+        guard isRemoteSchedule(schedule) else {
             return true
         }
         
-        guard let remoteDataInfo = remoteDataInfo(schedule: schedule) else {
+        guard let remoteDataInfo = remoteDataInfo(forSchedule: schedule) else {
             return false
         }
 
@@ -53,12 +54,12 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
     }
 
     func requiresUpdate(schedule: AutomationSchedule) async -> Bool {
-        guard isRemoteSchedule(schedule: schedule) else {
+        guard isRemoteSchedule(schedule) else {
             return false
         }
 
         guard 
-            let remoteDataInfo = remoteDataInfo(schedule: schedule),
+            let remoteDataInfo = remoteDataInfo(forSchedule: schedule),
             await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
         else {
             return true
@@ -79,23 +80,22 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
         }
     }
 
-
     func waitFullRefresh(schedule: AutomationSchedule) async {
-        guard isRemoteSchedule(schedule: schedule) else {
+        guard isRemoteSchedule(schedule) else {
             return
         }
 
-        let source = remoteDataInfo(schedule: schedule)?.source ?? .app
+        let source = remoteDataInfo(forSchedule: schedule)?.source ?? .app
         await self.remoteData.waitRefresh(source: source)
     }
 
     func bestEffortRefresh(schedule: AutomationSchedule) async -> Bool {
-        guard isRemoteSchedule(schedule: schedule) else {
+        guard isRemoteSchedule(schedule) else {
             return true
         }
 
         guard 
-            let remoteDataInfo = remoteDataInfo(schedule: schedule),
+            let remoteDataInfo = remoteDataInfo(forSchedule: schedule),
             await remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
         else {
             return false
@@ -115,17 +115,23 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
     }
 
     func notifyOutdated(schedule: AutomationSchedule) async {
-        if let remoteDataInfo = remoteDataInfo(schedule: schedule) {
+        if let remoteDataInfo = remoteDataInfo(forSchedule: schedule) {
             await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
         }
     }
 
     func contactID(forSchedule schedule: AutomationSchedule) -> String? {
-        return remoteDataInfo(schedule: schedule)?.contactID
+        return remoteDataInfo(forSchedule: schedule)?.contactID
     }
 
+    func source(forSchedule schedule: AutomationSchedule) -> RemoteDataSource? {
+        guard self.isRemoteSchedule(schedule) else {
+            return nil
+        }
+        return remoteDataInfo(forSchedule: schedule)?.source ?? .app
+    }
 
-    private func isRemoteSchedule(schedule: AutomationSchedule) -> Bool {
+    private func isRemoteSchedule(_ schedule: AutomationSchedule) -> Bool {
         if case .object(let map) = schedule.metadata {
             if map[InAppRemoteData.remoteInfoMetadataKey] != nil {
                 return true
@@ -144,7 +150,7 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
         return false
     }
 
-    private func remoteDataInfo(schedule: AutomationSchedule) -> RemoteDataInfo? {
+    private func remoteDataInfo(forSchedule schedule: AutomationSchedule) -> RemoteDataInfo? {
         guard case .object(let map) = schedule.metadata else {
             return nil
         }
@@ -163,7 +169,7 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
     }
 }
 
-struct InAppRemoteData {
+struct InAppRemoteData: Sendable {
     static let legacyRemoteInfoMetadataKey: String = "com.urbanairship.iaa.REMOTE_DATA_METADATA"
     static let remoteInfoMetadataKey: String = "com.urbanairship.iaa.REMOTE_DATA_INFO";
 
@@ -180,19 +186,16 @@ struct InAppRemoteData {
     struct Payload {
         var data: Data
         var timestamp: Date
+        var remoteDataInfo: RemoteDataInfo?
     }
 
-    var contact: Payload?
-    var app: Payload?
-
+    var payloads: [RemoteDataSource: Payload]
 
     static func parsePayload(_ payload: RemoteDataPayload?) -> Payload? {
         guard let payload = payload else { return nil }
         do {
             let metadata = try AirshipJSON.wrap(
                 [
-                    // We need to clear out the old legacy key for potential
-                    // downgrades
                     legacyRemoteInfoMetadataKey: "",
                     remoteInfoMetadataKey: payload.remoteDataInfo
                 ] as [String: AnyHashable]
@@ -208,7 +211,11 @@ struct InAppRemoteData {
                 }
             }
 
-            return Payload(data: data, timestamp:payload.timestamp)
+            return Payload(
+                data: data,
+                timestamp:payload.timestamp,
+                remoteDataInfo: payload.remoteDataInfo
+            )
         } catch {
             AirshipLogger.error("Failed to parse app remote-data response.")
         }
@@ -217,17 +224,10 @@ struct InAppRemoteData {
     }
 
     static func fromPayloads(_ payloads: [RemoteDataPayload]) -> InAppRemoteData {
-        return InAppRemoteData(
-            contact: parsePayload(
-                payloads.first { payload in
-                    payload.remoteDataInfo?.source == .contact
-                }
-            ),
-            app: parsePayload(
-                payloads.first { payload in
-                    payload.remoteDataInfo == nil || payload.remoteDataInfo?.source == .app
-                }
-            )
-        )
+        var parsed: [RemoteDataSource: Payload] = [:]
+        payloads.forEach { payload in
+            parsed[payload.remoteDataInfo?.source ?? .app] = parsePayload(payload)
+        }
+        return InAppRemoteData(payloads: parsed)
     }
 }
