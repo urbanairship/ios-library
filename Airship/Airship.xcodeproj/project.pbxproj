@@ -193,6 +193,13 @@
 		60E7DDAE2ABC4D1600072FA0 /* EmbeddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0E2A8B743C00A1D3DA /* EmbeddedView.swift */; };
 		60E7DDAF2ABC4D1D00072FA0 /* AirshipLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0D2A8B743B00A1D3DA /* AirshipLayoutView.swift */; };
 		60E7DDB02ABC4D2100072FA0 /* AirshipEmbeddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0B2A8B743B00A1D3DA /* AirshipEmbeddedView.swift */; };
+		60FCA3052B4F1110005C9232 /* LegacyInAppMessaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3042B4F1110005C9232 /* LegacyInAppMessaging.swift */; };
+		60FCA3072B4F1C73005C9232 /* LegacyInAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3062B4F1C73005C9232 /* LegacyInAppMessage.swift */; };
+		60FCA30A2B51364A005C9232 /* LegacyInAppMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */; };
+		60FCA30C2B51492A005C9232 /* LegacyInAppMessagingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */; };
+		60FCA30D2B5534DB005C9232 /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
+		60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
+		60FCA30F2B55363E005C9232 /* PushTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CE761284137D600CF4B11 /* PushTest.swift */; };
 		6E032A502B210E6000404630 /* RemoteConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */; };
 		6E062D03271656DE001A74A1 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
 		6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D04271656F8001A74A1 /* LinearLayout.swift */; };
@@ -2236,6 +2243,10 @@
 		60D3BCCD2A15471C00E07524 /* AudienceHashSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceHashSelector.swift; sourceTree = "<group>"; };
 		60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCriteria.swift; sourceTree = "<group>"; };
 		60E09FDA2B2780DB005A16EA /* JsonMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonMatcherTest.swift; sourceTree = "<group>"; };
+		60FCA3042B4F1110005C9232 /* LegacyInAppMessaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessaging.swift; sourceTree = "<group>"; };
+		60FCA3062B4F1C73005C9232 /* LegacyInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessage.swift; sourceTree = "<group>"; };
+		60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessageTest.swift; sourceTree = "<group>"; };
+		60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessagingTest.swift; sourceTree = "<group>"; };
 		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
 		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigTest.swift; sourceTree = "<group>"; };
@@ -3403,6 +3414,7 @@
 			isa = PBXGroup;
 			children = (
 				6E15283C2B4F0B6600DF1377 /* Actions */,
+				60FCA3082B513634005C9232 /* Legacy */,
 				6EC0CA742B4B8A2800333A87 /* Test Utils */,
 				6EC0CA4D2B48985B00333A87 /* RemoteData */,
 				6E0F4BEA2B326F6B00673CA4 /* Automation */,
@@ -3659,6 +3671,24 @@
 				60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */,
 			);
 			name = Experimentation;
+			sourceTree = "<group>";
+		};
+		60FCA3032B4F10D9005C9232 /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				60FCA3042B4F1110005C9232 /* LegacyInAppMessaging.swift */,
+				60FCA3062B4F1C73005C9232 /* LegacyInAppMessage.swift */,
+			);
+			path = Legacy;
+			sourceTree = "<group>";
+		};
+		60FCA3082B513634005C9232 /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */,
+				60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */,
+			);
+			path = Legacy;
 			sourceTree = "<group>";
 		};
 		6E062CFF27165642001A74A1 /* Thomas */ = {
@@ -5113,6 +5143,7 @@
 		6EDF1D912B292F8600E23BC4 /* InAppMessage */ = {
 			isa = PBXGroup;
 			children = (
+				60FCA3032B4F10D9005C9232 /* Legacy */,
 				6E986EFA2B44D48C00FBE6A0 /* InAppMessaging.swift */,
 				6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */,
 				6E15281A2B4DC3DF00DF1377 /* InAppMessageAutomationExecutor.swift */,
@@ -7167,12 +7198,14 @@
 				6E986EF92B44D41E00FBE6A0 /* InAppAutomation.swift in Sources */,
 				6E1528392B4E13D400DF1377 /* AirshipLayoutDisplayAdapter.swift in Sources */,
 				3231128C29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodeld in Sources */,
+				60FCA3052B4F1110005C9232 /* LegacyInAppMessaging.swift in Sources */,
 				6EDF1D932B292FB100E23BC4 /* InAppMessageTextInfo.swift in Sources */,
 				6E16208A2B311219009240B2 /* DisplayCoordinator.swift in Sources */,
 				6E15281D2B4DC43100DF1377 /* ActionAutomationPreparer.swift in Sources */,
 				6E986EFB2B44D48C00FBE6A0 /* InAppMessaging.swift in Sources */,
 				6E986EE62B44925100FBE6A0 /* AutomationRemoteDataSubscriber.swift in Sources */,
 				6E0F4BE52B32645600673CA4 /* AutomationTrigger.swift in Sources */,
+				60FCA3072B4F1C73005C9232 /* LegacyInAppMessage.swift in Sources */,
 				6EDF1D9C2B2A287A00E23BC4 /* InAppMessageButtonLayoutType.swift in Sources */,
 				6EE6AA202B4F5246002FEA75 /* InAppMessageSceneManager.swift in Sources */,
 				6E986F022B46146D00FBE6A0 /* PersistantStore.swift in Sources */,
@@ -7202,16 +7235,20 @@
 				325D53FA29648818003421B4 /* TestAirshipRequestSession.swift in Sources */,
 				6E6B2DBE2B33B768008BF788 /* AutomationScheduleTest.swift in Sources */,
 				325D53F629646E53003421B4 /* TestChannel.swift in Sources */,
+				60FCA30C2B51492A005C9232 /* LegacyInAppMessagingTest.swift in Sources */,
 				6EC0CA782B4B8A4700333A87 /* TestFrequencyLimitsManager.swift in Sources */,
 				6E1620952B311D8A009240B2 /* DefaultDisplayCoordinatorTest.swift in Sources */,
 				6EE6AA132B4F3009002FEA75 /* InAppMessageAutomationPreparerTest.swift in Sources */,
 				6EC0CA762B4B8A3A00333A87 /* TestRemoteDataAccess.swift in Sources */,
 				6EC0CA6D2B4B879800333A87 /* AutomationPreparerTest.swift in Sources */,
+				60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */,
 				6EC0CA792B4B8C2B00333A87 /* TestAudienceChecker.swift in Sources */,
 				6EC0CA512B4899DB00333A87 /* TestNetworkMonitor.swift in Sources */,
 				6EE6AA382B572897002FEA75 /* AutomationSourceInfoStoreTest.swift in Sources */,
 				6EC0CA732B4B897B00333A87 /* TestExperimentDataProvider.swift in Sources */,
-				6EC0CA562B48B05600333A87 /* ActionAutomationExecutorTest.swift in Sources */,
+				6EC0CA562B48B05600333A87 /* ActionAutomationTest.swift in Sources */,
+				60FCA30D2B5534DB005C9232 /* TestAirshipInstance.swift in Sources */,
+				60FCA30F2B55363E005C9232 /* PushTest.swift in Sources */,
 				605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */,
 				6E2E3CA62B327A6C00B8515B /* InAppMessageNativeBridgeExtensionTest.swift in Sources */,
 				6EE6AA1B2B4F3062002FEA75 /* DisplayCoordinatorManagerTest.swift in Sources */,
@@ -7221,6 +7258,7 @@
 				6EDF1DAD2B2A73FC00E23BC4 /* InAppMessageTest.swift in Sources */,
 				325D53F729648150003421B4 /* TestDate.swift in Sources */,
 				6EE6AA1C2B4F3066002FEA75 /* DisplayAdapterFactoryTest.swift in Sources */,
+				60FCA30A2B51364A005C9232 /* LegacyInAppMessageTest.swift in Sources */,
 				3231129129D5E6D900CF0D86 /* FrequencyLimitManagerTest.swift in Sources */,
 				6EC0CA4F2B48987700333A87 /* AutomationRemoteDataAccessTest.swift in Sources */,
 				6EC0CA582B48B46700333A87 /* PersistantStoreTest.swift in Sources */,

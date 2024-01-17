@@ -261,6 +261,6 @@ fileprivate final class TestAnalyticsFactory: InAppMessageAnalyticsFactoryProtoc
     }
 }
 
-fileprivate final class TestAnalytics: InAppMessageAnalyticsProtocol {
+extension TestAnalytics: InAppMessageAnalyticsProtocol {
 
 }

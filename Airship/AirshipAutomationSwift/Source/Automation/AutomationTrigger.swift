@@ -65,3 +65,13 @@ public struct AutomationTrigger: Sendable, Codable, Equatable {
         self.predicate = predicate
     }
 }
+
+public extension AutomationTrigger {
+    static func activeSession(count: UInt) -> AutomationTrigger {
+        return AutomationTrigger(type: .activeSession, goal: Double(count))
+    }
+    
+    static func foreground(count: UInt) -> AutomationTrigger {
+        return AutomationTrigger(type: .foreground, goal: Double(count))
+    }
+}

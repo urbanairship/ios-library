@@ -17,6 +17,7 @@ protocol AutomationEngineProtocol: AnyObject, Sendable {
 
     func cancelSchedule(identifier: String) async throws
     func cancelSchedules(group: String) async throws
+    func schedule(_ schedules: [AutomationSchedule]) async throws
 
     var schedules: [AutomationSchedule] { get async throws }
     func getSchedule(identifier: String) async throws -> AutomationSchedule
@@ -68,6 +69,10 @@ final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
 
     func cancelSchedules(group: String) async throws {
 
+    }
+    
+    func schedule(_ schedules: [AutomationSchedule]) async throws {
+        
     }
 
     var schedules: [AutomationSchedule] {

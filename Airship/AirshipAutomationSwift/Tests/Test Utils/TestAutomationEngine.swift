@@ -14,6 +14,8 @@ final class TestAutomationEngine: AutomationEngineProtocol, @unchecked Sendable 
     private var onUpsert: (@Sendable ([AutomationSchedule]) async throws -> Void)?
     private var onStop: (@Sendable ([AutomationSchedule]) async throws -> Void)?
     private var onCancel: (@Sendable ([AutomationSchedule]) async throws -> Void)?
+    
+    private(set) var lastCancelledScheduleId: String?
 
 
     func start() {
@@ -38,11 +40,16 @@ final class TestAutomationEngine: AutomationEngineProtocol, @unchecked Sendable 
     }
     
     func cancelSchedule(identifier: String) async throws {
-        throw AirshipErrors.error("Not implemented")
+        self.lastCancelledScheduleId = identifier
+        self.schedules.removeAll(where: { $0.identifier == identifier })
     }
     
     func cancelSchedules(group: String) async throws {
         throw AirshipErrors.error("Not implemented")
+    }
+    
+    func schedule(_ schedules: [AutomationSchedule]) async throws {
+        self.schedules = schedules
     }
     
     var schedules: [AutomationSchedule] = []
