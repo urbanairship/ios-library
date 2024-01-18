@@ -5,9 +5,10 @@ import Foundation
 import AirshipCore
 #endif
 
+
 @MainActor
 final class ActiveTimer: Sendable {
-    
+
     private var isStarted: Bool = false
     private var isActive: Bool
     private var elapsedTime: TimeInterval = 0

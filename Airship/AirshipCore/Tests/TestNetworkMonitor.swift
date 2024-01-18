@@ -24,11 +24,23 @@ public class TestNetworkMonitor: NetworkMonitor {
 
 
 actor TestNetworkChecker: NetworkCheckerProtocol {
+    private let _isConnected = AirshipMainActorValue(false)
+
+    @MainActor
+    var connectionUpdates: AsyncStream<Bool> {
+        return _isConnected.updates
+    }
+
     init() {}
 
+    @MainActor
     public func setConnected(_ connected: Bool) {
-        self.isConnected = connected
+        self._isConnected.set(connected)
     }
-    private(set) var isConnected: Bool = false
+
+    @MainActor
+    var isConnected: Bool {
+        return _isConnected.value
+    }
 
 }

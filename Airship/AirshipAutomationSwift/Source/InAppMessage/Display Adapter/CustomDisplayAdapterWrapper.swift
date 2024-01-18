@@ -17,12 +17,45 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
         await adapter.waitForReady()
     }
 
-    init(adapter: CustomDisplayAdapter) {
+    init(
+        adapter: CustomDisplayAdapter
+    ) {
         self.adapter = adapter
     }
 
     func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async {
-        // TODO: Wire up analytics
-        _ = await self.adapter.display(scene: scene.scene)
+        analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
+
+        let timer = ActiveTimer()
+        timer.start()
+        let result = await self.adapter.display(scene: scene.scene)
+        timer.stop()
+
+        switch(result) {
+        case .buttonTap(let buttonInfo):
+            analytics.recordEvent(
+                InAppResolutionEvent.buttonTap(
+                    identifier: buttonInfo.identifier,
+                    description: buttonInfo.label.text,
+                    displayTime: timer.time
+                ),
+                layoutContext: nil
+            )
+        case .messageTap:
+            analytics.recordEvent(
+                InAppResolutionEvent.messageTap(displayTime: timer.time),
+                layoutContext: nil
+            )
+        case .userDismissed:
+            analytics.recordEvent(
+                InAppResolutionEvent.userDismissed(displayTime: timer.time),
+                layoutContext: nil
+            )
+        case .timedOut:
+            analytics.recordEvent(
+                InAppResolutionEvent.timedOut(displayTime: timer.time),
+                layoutContext: nil
+            )
+        }
     }
 }

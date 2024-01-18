@@ -44,11 +44,13 @@ final class DisplayCoordinatorManager: DisplayCoordinatorManagerProtocol {
     }
 
     func displayCoordinator(message: InAppMessage) -> DisplayCoordinator {
+        guard !message.isEmbedded else {
+            return immediateCoordinator
+        }
         switch message.displayBehavior {
         case .immediate: return immediateCoordinator
         case .standard: return defaultCoordinator
-        case .none:
-            return message.isEmbedded ? immediateCoordinator : defaultCoordinator
+        case .none: return defaultCoordinator
         }
     }
 }

@@ -8,29 +8,55 @@ import AirshipCore
 #endif
 
 final class AirshipLayoutDisplayAdapter: DisplayAdapter {
-    func waitForReady() async {
-        
-    }
-    
-    let content: InAppMessageDisplayContent
-    let assets: AirshipCachedAssetsProtocol
 
-    init(content: InAppMessageDisplayContent, assets: AirshipCachedAssetsProtocol) throws {
-        self.content = content
+    private let message: InAppMessage
+    private let assets: AirshipCachedAssetsProtocol
+    private let networkChecker: NetworkCheckerProtocol
+
+    init(
+        message: InAppMessage,
+        assets: AirshipCachedAssetsProtocol,
+        networkChecker: NetworkCheckerProtocol = NetworkChecker()
+    ) throws {
+        self.message = message
         self.assets = assets
+        self.networkChecker = networkChecker
 
-        if case .custom(_) = content {
+        if case .custom(_) = message.displayContent {
             throw AirshipErrors.error("Invalid adapter for layout type")
         }
     }
 
     var isReady: Bool {
-        /// TODO: if it has an uncached asset needs network
-        return true
+        let urlInfos = message.urlInfos
+        let needsNetwork = urlInfos.contains { info in
+            guard
+                info.urlType == .image,
+                let url = URL(string: info.url),
+                assets.isCached(remoteURL: url)
+            else {
+                return true
+            }
+            return false
+        }
+
+        return needsNetwork ? networkChecker.isConnected : true
+    }
+
+    func waitForReady() async {
+        guard await !self.isReady else {
+            return
+        }
+
+        for await isConnected in await networkChecker.connectionUpdates {
+            if (isConnected) {
+                return
+            }
+        }
     }
 
     func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async {
-        /// TODO display
+       // TODO display
     }
-
 }
+

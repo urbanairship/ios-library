@@ -66,7 +66,7 @@ final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sen
             break
         }
 
-        return try AirshipLayoutDisplayAdapter(content: message.displayContent, assets: assets)
+        return try AirshipLayoutDisplayAdapter(message: message, assets: assets)
     }
 }
 

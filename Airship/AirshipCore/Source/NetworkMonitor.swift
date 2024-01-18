@@ -49,17 +49,69 @@ open class NetworkMonitor: NSObject {
 }
 
 /// - Note: For internal use only. :nodoc:
-public protocol NetworkCheckerProtocol: Actor, Sendable {
+public protocol NetworkCheckerProtocol: Sendable {
+    @MainActor
     var isConnected: Bool { get }
+
+    @MainActor
+    var connectionUpdates: AsyncStream<Bool> { get }
 }
 
+#if os(watchOS)
 /// - Note: For internal use only. :nodoc:
-public actor NetworkChecker: NetworkCheckerProtocol {
-    private let networkMonitor: NetworkMonitor = NetworkMonitor()
-    public init() {}
+public final class NetworkChecker: NetworkCheckerProtocol, Sendable {
+    private let _isConnected: AirshipMainActorValue<Bool>
+
+    @MainActor
+    public var connectionUpdates: AsyncStream<Bool> {
+        _isConnected.updates
+    }
+
+    @MainActor
     public var isConnected: Bool {
-        return networkMonitor.isConnected
+        return _isConnected.value
+    }
+
+    public init() {
+        self._isConnected = AirshipMainActorValue(true)
+    }
+}
+#else
+/// - Note: For internal use only. :nodoc:
+public final class NetworkChecker: NetworkCheckerProtocol, Sendable {
+    private let pathMonitor: NWPathMonitor
+    private let _isConnected: AirshipMainActorValue<Bool>
+    private let updateQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
+
+    @MainActor
+    public var connectionUpdates: AsyncStream<Bool> {
+        _isConnected.updates
+    }
+
+    @MainActor
+    public var isConnected: Bool {
+        return _isConnected.value
+    }
+
+    public init() {
+        self._isConnected = AirshipMainActorValue(
+            AirshipUtils.connectionType() != ConnectionType.none
+        )
+
+        let monitor = NWPathMonitor()
+        self.pathMonitor = monitor
+
+        monitor.pathUpdateHandler = { [updateQueue, _isConnected] path in
+            updateQueue.enqueue {
+                let connected = path.status == .satisfied
+                if await (_isConnected.value != connected) {
+                    await _isConnected.set(path.status == .satisfied)
+                }
+            }
+        }
+
+        monitor.start(queue: DispatchQueue.global(qos: .utility))
     }
 }
 
-
+#endif

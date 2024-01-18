@@ -6,14 +6,16 @@ import Combine
 @testable import AirshipAutomationSwift
 @testable import AirshipCore
 
-final class TestCachedAssets: AirshipCachedAssetsProtocol {
+final class TestCachedAssets: AirshipCachedAssetsProtocol, @unchecked Sendable {
+
+    var cached: [URL] = []
 
     func cachedURL(remoteURL: URL) -> URL? {
-        return nil
+        return isCached(remoteURL: remoteURL) ? remoteURL : nil
     }
     
     func isCached(remoteURL: URL) -> Bool {
-        return false
+        return cached.contains(remoteURL)
     }
 }
 
