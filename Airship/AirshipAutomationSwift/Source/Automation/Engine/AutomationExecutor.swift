@@ -41,6 +41,7 @@ protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
 
     @MainActor
     func interrupted(
+        schedule: AutomationSchedule,
         preparedScheduleInfo: PreparedScheduleInfo
     ) async
 }
@@ -112,10 +113,12 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     ) async {
         if schedule.isInAppMessageType {
             await self.messageExecutor.interrupted(
+                schedule: schedule,
                 preparedScheduleInfo: preparedScheduleInfo
             )
         } else {
             await self.actionExecutor.interrupted(
+                schedule: schedule,
                 preparedScheduleInfo: preparedScheduleInfo
             )
         }

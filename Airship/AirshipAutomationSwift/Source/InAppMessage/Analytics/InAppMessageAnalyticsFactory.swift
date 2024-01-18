@@ -12,19 +12,34 @@ protocol InAppMessageAnalyticsFactoryProtocol: Sendable {
         scheduleID: String,
         message: InAppMessage,
         campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?
+        reportingContext: AirshipJSON?,
+        experimentResult: ExperimentResult?
     ) -> InAppMessageAnalyticsProtocol
 }
 
 struct InAppMessageAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol {
+    let eventRecorder: InAppEventRecorder
+
+    init(analytics: AnalyticsProtocol) {
+        self.eventRecorder = InAppEventRecorder(analytics: analytics)
+    }
+
     @MainActor
     func makeAnalytics(
         scheduleID: String,
         message: InAppMessage,
         campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?
+        reportingContext: AirshipJSON?,
+        experimentResult: ExperimentResult?
     ) -> InAppMessageAnalyticsProtocol {
-        return InAppMessageAnalytics()
+        return InAppMessageAnalytics(
+            scheduleID: scheduleID,
+            message: message,
+            campaigns: campaigns,
+            reportingMetadata: reportingContext,
+            experimentResult: experimentResult,
+            eventRecorder: eventRecorder
+        )
     }
 }
 
@@ -38,7 +53,8 @@ extension InAppMessageAnalyticsFactoryProtocol {
             scheduleID: preparedScheduleInfo.scheduleID,
             message: message,
             campaigns: preparedScheduleInfo.campaigns,
-            reportingContext: preparedScheduleInfo.reportingContext
+            reportingContext: preparedScheduleInfo.reportingContext,
+            experimentResult: preparedScheduleInfo.experimentResult
         )
     }
 }

@@ -1,0 +1,97 @@
+/* Copyright Airship and Contributors */
+
+import XCTest
+
+@testable
+import AirshipAutomationSwift
+import AirshipCore
+
+final class InAppResolutionEventTest: XCTestCase {
+    
+    func testButtonResolution() throws {
+        let event = InAppResolutionEvent.buttonTap(
+            identifier: "button id",
+            description: "button description",
+            displayTime: 100.0
+        )
+
+        let expectedJSON = """
+        {
+           "display_time":"100.00",
+           "button_description":"button description",
+           "type":"button_click",
+           "button_id":"button id"
+        }
+        """
+
+        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+    }
+
+    func testMessageTap() throws {
+        let event = InAppResolutionEvent.messageTap(displayTime: 100.0)
+
+        let expectedJSON = """
+        {
+           "display_time":"100.00",
+           "type":"message_click"
+        }
+        """
+
+        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+    }
+
+    func testUserDismissed() throws {
+        let event = InAppResolutionEvent.userDismissed(displayTime: 100.0)
+
+        let expectedJSON = """
+        {
+           "display_time":"100.00",
+           "type":"user_dismissed"
+        }
+        """
+
+        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+    }
+
+    func testTimedOut() throws {
+        let event = InAppResolutionEvent.timedOut(displayTime: 100.0)
+
+        let expectedJSON = """
+        {
+           "display_time":"100.00",
+           "type":"timed_out"
+        }
+        """
+
+        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+    }
+
+    func testControl() throws {
+        let experimentResult = ExperimentResult(
+            channelId: "channel id",
+            contactId: "contact id",
+            isMatch: true,
+            reportingMetadata: ["reporting!"]
+        )
+
+        let event = InAppResolutionEvent.control(experimentResult: experimentResult)
+
+        let expectedJSON = """
+        {
+           "display_time":"0.00",
+           "type":"control",
+           "device": {
+              "channel_id": "channel id",
+              "contact_id": "contact id",
+            }
+        }
+        """
+
+        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+    }
+}

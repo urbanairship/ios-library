@@ -269,7 +269,7 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     }
 
 
-    func interrupted(preparedScheduleInfo: PreparedScheduleInfo) async {
+    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
         interruptCalled = true
         return await self.interruptedBlock!(preparedScheduleInfo)
     }

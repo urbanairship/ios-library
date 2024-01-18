@@ -77,3 +77,4 @@ public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponen
     }
 
 }
+

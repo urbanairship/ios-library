@@ -6,13 +6,13 @@ import XCTest
 
 final class LegacyInAppMessagingTest: XCTestCase {
     
-    let analytics = TestAnalytics()
-    let engine = TestAutomationEngine()
-    let datastore = PreferenceDataStore(appKey: UUID().uuidString)
-    let date = UATestDate(offset: 0, dateOverride: Date())
-    
-    var subject: LegacyInAppMessaging!
-    
+    private let analytics = TestLegacyAnalytics()
+    private let engine = TestAutomationEngine()
+    private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
+    private let date = UATestDate(offset: 0, dateOverride: Date())
+
+    private var subject: LegacyInAppMessaging!
+
     override func setUp() {
         createSubject()
     }
@@ -44,17 +44,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             XCTAssertFalse(datastore.keyExists(key))
         }
     }
-    
-    func testEnabledFlag() {
-        XCTAssert(subject.isComponentEnabled)
-        
-        subject.isComponentEnabled = false
-        XCTAssertFalse(subject.isComponentEnabled)
-        
-        subject.isComponentEnabled = true
-        XCTAssertTrue(subject.isComponentEnabled)
-    }
-    
+
     func testPendingMessageStorage() {
         XCTAssertNil(subject.pendingMessageId)
         
@@ -98,7 +88,27 @@ final class LegacyInAppMessagingTest: XCTestCase {
         XCTAssertEqual(pendingMessageId, engine.lastCancelledScheduleId)
         XCTAssertNil(subject.pendingMessageId)
     }
-    
+
+    func testNotificationResponseRecordsDirectOpen() async throws {
+        let pendingMessageId = "pending"
+        subject.pendingMessageId = pendingMessageId
+
+        let response = try UNNotificationResponse.with(userInfo: [
+            "com.urbanairship.in_app": [],
+            "_": pendingMessageId
+        ])
+
+        let expectation = XCTestExpectation(description: "processing notification")
+
+        subject.receivedNotificationResponse(response) {
+            expectation.fulfill()
+        }
+
+        await fulfillment(of: [expectation], timeout: 5)
+
+        XCTAssertEqual([pendingMessageId], self.analytics.directOpen)
+    }
+
     func testNotificationResponseDoesNothingOnIdMismatch() async throws {
         
         XCTAssertNil(subject.pendingMessageId)
@@ -166,8 +176,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         
         XCTAssertEqual("some-pending", engine.lastCancelledScheduleId)
@@ -196,7 +205,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         XCTAssertEqual("test alert", inAppMessage.name)
-        XCTAssertEqual(InAppMessage.Source.legacyPush, inAppMessage.source)
+        XCTAssertEqual(InAppMessageSource.legacyPush, inAppMessage.source)
         XCTAssertNil(inAppMessage.extras)
         
         let banner: InAppMessageDisplayContent.Banner
@@ -218,7 +227,28 @@ final class LegacyInAppMessagingTest: XCTestCase {
         XCTAssertEqual(nil, banner.actions)
         XCTAssertNil(banner.buttons)
     }
-    
+
+    func testReceiveNotificationRecordsReplacement() async throws {
+        subject.pendingMessageId = "some-pending"
+
+        let payload = [
+            "identifier": "test-id",
+            "type": "banner",
+            "alert": "test alert"
+        ]
+
+
+        let expection = XCTestExpectation(description: "schedule legacy message")
+        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
+            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+            expection.fulfill()
+        }
+
+        await fulfillment(of: [expection], timeout: 5)
+        XCTAssertEqual("some-pending", self.analytics.replaced.first!.0)
+        XCTAssertEqual("test-id", self.analytics.replaced.first!.1)
+    }
+
     func testReceiveRemoteNotificationSchedulesMessage() async throws {
         let airshipTestInstance = TestAirshipInstance()
         airshipTestInstance.components = [await makePushComponent()]
@@ -255,8 +285,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         
         XCTAssertEqual("some-pending", engine.lastCancelledScheduleId)
@@ -285,7 +314,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         XCTAssertEqual("test alert", inAppMessage.name)
-        XCTAssertEqual(InAppMessage.Source.legacyPush, inAppMessage.source)
+        XCTAssertEqual(InAppMessageSource.legacyPush, inAppMessage.source)
         XCTAssertEqual(try! AirshipJSON.wrap(["extra_value": "some text"]), inAppMessage.extras)
         
         let banner: InAppMessageDisplayContent.Banner
@@ -345,8 +374,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         
         let trigger = try XCTUnwrap(schedule.triggers.first)
@@ -380,8 +408,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         XCTAssertEqual(overridenId, schedule.identifier)
     }
@@ -408,8 +435,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         let inAppMessage: InAppMessage
         switch schedule.data {
@@ -444,8 +470,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         XCTAssertEqual(extendedScheduleId, schedule.identifier)
     }
@@ -465,8 +490,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         XCTAssertNil(engine.lastCancelledScheduleId)
         XCTAssert(engine.schedules.isEmpty)
         XCTAssertEqual("some-pending", subject.pendingMessageId)
@@ -493,8 +517,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         XCTAssertTrue(engine.schedules.contains(where: { $0.identifier == messageId }))
         XCTAssertEqual(messageId, subject.pendingMessageId)
     }
@@ -521,8 +544,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         await fulfillment(of: [expection], timeout: 5)
-        try await Task.sleep(nanoseconds: 100_000_000)
-        
+
         let schedule = try XCTUnwrap(engine.schedules.first)
         
         switch schedule.data {
@@ -586,5 +608,17 @@ private extension UNNotificationResponse {
         
         coder.finishEncoding()
         return response
+    }
+}
+
+fileprivate final class TestLegacyAnalytics: LegacyInAppAnalyticsProtocol, @unchecked Sendable {
+    var replaced: [(String, String)] = []
+    var directOpen: [String] = []
+    func recordReplacedEvent(scheduleID: String, replacementID: String) {
+        replaced.append((scheduleID, replacementID))
+    }
+
+    func recordDirectOpenEvent(scheduleID: String) {
+        directOpen.append(scheduleID)
     }
 }

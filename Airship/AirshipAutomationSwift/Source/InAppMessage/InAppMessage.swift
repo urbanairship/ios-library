@@ -6,6 +6,12 @@ import Foundation
 import AirshipCore
 #endif
 
+enum InAppMessageSource: String, Codable, Equatable, Sendable {
+    case remoteData = "remote-data"
+    case appDefined = "app-defined"
+    case legacyPush = "legacy-push"
+}
+
 /// In-App Message
 public struct InAppMessage: Codable, Equatable, Sendable {
 
@@ -18,12 +24,6 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         case standard
     }
 
-    enum Source: String, Codable, Equatable {
-        case remoteData = "remote-data"
-        case appDefined = "app-defined"
-        case legacyPush = "legacy-push"
-    }
-
     /// The name.
     public var name: String
 
@@ -31,7 +31,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     public var displayContent: InAppMessageDisplayContent
 
     /// Source
-    var source: Source?
+    var source: InAppMessageSource?
 
     /// Any message extras.
     public var extras: AirshipJSON?
@@ -82,7 +82,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     init(
         name: String,
         displayContent: InAppMessageDisplayContent,
-        source: Source?,
+        source: InAppMessageSource?,
         extras: AirshipJSON? = nil,
         actions: AirshipJSON? = nil,
         isReportingEnabled: Bool? = nil,
@@ -96,7 +96,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         self.actions = actions
         self.isReportingEnabled = isReportingEnabled
         self.displayBehavior = displayBehavior
-        self.renderedLocale = nil
+        self.renderedLocale = renderedLocale
 
     }
 
@@ -104,7 +104,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let name = try container.decode(String.self, forKey: .name)
-        let source = try container.decodeIfPresent(Source.self, forKey: .source)
+        let source = try container.decodeIfPresent(InAppMessageSource.self, forKey: .source)
         let extras = try container.decodeIfPresent(AirshipJSON.self, forKey: .extras)
         let actions = try container.decodeIfPresent(AirshipJSON.self, forKey: .actions)
         let isReportingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isReportingEnabled)

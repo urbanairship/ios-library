@@ -13,7 +13,7 @@ public enum AirshipPermission: UInt, CustomStringConvertible, Sendable {
 
     /// The string value of the permission
     /// - Returns: The string value of the permission
-    var stringValue: String {
+    public var stringValue: String {
         switch self {
         case .displayNotifications: return "display_notifications"
         case .location: return "location"

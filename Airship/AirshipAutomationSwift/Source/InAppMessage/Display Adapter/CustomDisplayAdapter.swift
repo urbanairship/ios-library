@@ -38,10 +38,20 @@ public protocol CustomDisplayAdapter: Sendable {
     /// Called to display the message
     /// - Parameters:
     ///     - scene: The window scene
-    ///
-    // TODO: Return a resolution info
+    /// - Returns a CustomDisplayResolution
     @MainActor
-    func display(scene: UIWindowScene) async
+    func display(scene: UIWindowScene) async -> CustomDisplayResolution
 }
 
+/// Resolution data
+public enum CustomDisplayResolution {
+    /// Button tap
+    case buttonTap(InAppMessageButtonInfo)
+    /// Message tap
+    case messageTap
+    /// User dismissed
+    case userDismissed
+    /// Timed out
+    case timedOut
+}
 

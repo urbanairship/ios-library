@@ -15,10 +15,14 @@ public final class InAppAutomation: Sendable {
     /// In-App Messaging
     public let inAppMessaging: InAppMessagingProtocol
 
+    /// Legacy In-App Messaging
+    public let legacyInAppMessaging: LegacyInAppMessagingProtocol
+
     @MainActor
     init(
         engine: AutomationEngineProtocol,
         inAppMessaging: InAppMessagingProtocol,
+        legacyInAppMessaging: LegacyInAppMessagingProtocol,
         remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
@@ -27,10 +31,12 @@ public final class InAppAutomation: Sendable {
     ) {
         self.engine = engine
         self.inAppMessaging = inAppMessaging
+        self.legacyInAppMessaging = legacyInAppMessaging
         self.remoteDataSubscriber = remoteDataSubscriber
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
+
         if (config.autoPauseInAppAutomationOnLaunch) {
             self.isPaused = true
         }
@@ -87,4 +93,6 @@ public final class InAppAutomation: Sendable {
             self.remoteDataSubscriber.unsubscribe()
         }
     }
+
+    /// TODO, call throught to LegacyIAA with pushable component callbacks
 }

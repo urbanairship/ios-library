@@ -20,6 +20,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let experiments = dependencies[SDKDependencyKeys.experimentsProvider] as! ExperimentDataProvider
         let sceneManager = dependencies[SDKDependencyKeys.sceneManager] as! AirshipSceneManagerProtocol
         let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
+        let analytics = dependencies[SDKDependencyKeys.analytics] as! AnalyticsProtocol
 
         /// Utils
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)
@@ -48,8 +49,10 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messageExecutor = InAppMessageAutomationExecutor(
             sceneManager: messageSceneManager,
             assetManager: assetManager,
+            analyticsFactory: InAppMessageAnalyticsFactory(analytics: analytics),
             conditionsChangedNotifier: conditionsChangedNotifier
         )
+        
         let automationExecutor = AutomationExecutor(
             actionExecutor: actionExecutor,
             messageExecutor: messageExecutor,
@@ -75,9 +78,16 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             preparer: messagePreparer
         )
 
+        let legacyInAppMessaging = LegacyInAppMessaging(
+            analytics: LegacyInAppAnalytics(recorder: InAppEventRecorder(analytics: analytics)),
+            dataStore: dataStore,
+            automationEngine: engine
+        )
+
         let _ = InAppAutomation(
             engine: engine,
             inAppMessaging: inAppMessaging,
+            legacyInAppMessaging: legacyInAppMessaging,
             remoteDataSubscriber: remoteDataSubscriber,
             dataStore: dataStore,
             privacyManager: privacyManager,

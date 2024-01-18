@@ -6,45 +6,68 @@ import Foundation
 import AirshipCore
 #endif
 
-typealias MessageConvertor = @Sendable (LegacyInAppMessage) -> AutomationSchedule?
-typealias MessageExtender = @Sendable (InAppMessage) -> InAppMessage
-typealias ScheduleExtender = @Sendable (AutomationSchedule) -> AutomationSchedule
+public typealias MessageConvertor = @Sendable (LegacyInAppMessage) -> AutomationSchedule?
+public typealias MessageExtender = @Sendable (InAppMessage) -> InAppMessage
+public typealias ScheduleExtender = @Sendable (AutomationSchedule) -> AutomationSchedule
 
-final class LegacyInAppMessaging: NSObject, @unchecked Sendable {
-    
+/// Controls
+public protocol LegacyInAppMessagingProtocol: Sendable {
+    /// Optionall message converter from a `LegacyInAppMessage` to an `AutomationSchedule`
+    @MainActor
+    var customMessageConverter: MessageConvertor? { get set }
+
+    /// Optional message extender.
+    @MainActor
+    var messageExtender: MessageExtender?  { get set }
+
+    /// Optioanl schedule extender.
+    @MainActor
+    var scheduleExtender: ScheduleExtender?  { get set }
+
+    /// Sets whether legacy messages will display immediately upon arrival, instead of waiting
+    /// until the following foreground. Defaults to `true`.
+    @MainActor
+    var displayASAPEnabled: Bool  { get set }
+}
+
+protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)
+
+    func receivedRemoteNotification(_ notification: [AnyHashable : Any],
+                                    completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+}
+
+final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Sendable {
+
     private let dataStore: PreferenceDataStore
-    private let disableHelper: ComponentDisableHelper
-    private let analytics: InAppMessageAnalyticsProtocol
+    private let analytics: LegacyInAppAnalyticsProtocol
     private let automationEngine: AutomationEngineProtocol
     
-    @MainActor var customMessageConverter: MessageConvertor?
-    @MainActor var messageExtender: MessageExtender?
-    @MainActor var scheduleExtender: ScheduleExtender?
-    
+    @MainActor 
+    public var customMessageConverter: MessageConvertor?
+
+    @MainActor
+    public var messageExtender: MessageExtender?
+
+    @MainActor
+    public var scheduleExtender: ScheduleExtender?
+
     private let date: AirshipDateProtocol
     
     init(
-        analytics: InAppMessageAnalyticsProtocol,
+        analytics: LegacyInAppAnalyticsProtocol,
         dataStore: PreferenceDataStore,
         automationEngine: AutomationEngineProtocol,
         date: AirshipDateProtocol = AirshipDate.shared
     ) {
-        self.disableHelper = ComponentDisableHelper(dataStore: dataStore, className: "UALegacyInAppMessaging")
         self.analytics = analytics
         self.automationEngine = automationEngine
         self.dataStore = dataStore
         self.date = date
-        
-        super.init()
-        
+
         cleanUpOldData()
     }
-    
-    var isComponentEnabled: Bool {
-        get { return disableHelper.enabled }
-        set { disableHelper.enabled = newValue }
-    }
-    
+
     var pendingMessageId: String? {
         get {
             return dataStore.string(forKey: Keys.CurrentStorage.pendingMessageIds.rawValue)
@@ -79,14 +102,14 @@ final class LegacyInAppMessaging: NSObject, @unchecked Sendable {
             do {
                 try await self.automationEngine.cancelSchedule(identifier: pending)
             } catch {
-                AirshipLogger.debug("LegacyInAppMessageManager: failed to cancel \(pending), \(error)")
+                AirshipLogger.debug("Failed to cancel \(pending), \(error)")
             }
-            //TODO: uncomment once analytics is ready
-//                UA_LDEBUG(@"LegacyInAppMessageManager - Pending in-app message replaced");
-//                UAInAppReporting *reporting = [UAInAppReporting legacyReplacedEventWithScheduleID:previousMessageID
-//                                                                                   replacementID:schedule.identifier];
-//
-//                [reporting record:self.analytics];
+
+            AirshipLogger.debug("Pending in-app message replaced")
+            self.analytics.recordReplacedEvent(
+                scheduleID: pending,
+                replacementID: schedule.identifier
+            )
         }
         
         self.pendingMessageId = schedule.identifier
@@ -158,8 +181,8 @@ final class LegacyInAppMessaging: NSObject, @unchecked Sendable {
     }
 }
 
-extension LegacyInAppMessaging: PushableComponent {
-    
+extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
+
     func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         
@@ -172,20 +195,21 @@ extension LegacyInAppMessaging: PushableComponent {
             return
         }
         
+        self.pendingMessageId = nil
+        
         Task {
             do {
                 try await self.automationEngine.cancelSchedule(identifier: messageId)
             } catch {
                 AirshipLogger.debug("LegacyInAppMessageManager: failed to cancel \(messageId), \(error)")
             }
-            //TODO: implement once in app reporting is migrated
-//            UAInAppReporting *reporting = [UAInAppReporting legacyDirectOpenEventWithScheduleID:pendingMessageID];
-//            [reporting record:self.analytics];
+
+            AirshipLogger.debug("Pending in-app message replaced")
+            self.analytics.recordDirectOpenEvent(scheduleID: messageId)
+            completionHandler()
         }
         
-        self.pendingMessageId = nil
-        completionHandler()
-        
+
     }
     
     func receivedRemoteNotification(_ notification: [AnyHashable : Any], 
@@ -208,10 +232,11 @@ extension LegacyInAppMessaging: PushableComponent {
         if let message = LegacyInAppMessage(payload: payload, overrideId: overrideId, overrideOnClick: messageCenterAction) {
             Task {
                 await schedule(message: message)
+                completionHandler(.noData)
             }
+        } else {
+            completionHandler(.noData)
         }
-        
-        completionHandler(.noData)
     }
     
     private enum Keys: String {

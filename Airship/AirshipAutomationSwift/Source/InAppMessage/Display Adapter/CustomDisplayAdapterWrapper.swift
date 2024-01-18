@@ -23,6 +23,6 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
 
     func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async {
         // TODO: Wire up analytics
-        await self.adapter.display(scene: scene.scene)
+        _ = await self.adapter.display(scene: scene.scene)
     }
 }

@@ -157,8 +157,8 @@ fileprivate final class TestCustomDisplayAdapter: CustomDisplayAdapter, Sendable
     }
     
     @MainActor
-    func display(scene: UIWindowScene) async {
-
+    func display(scene: UIWindowScene) async -> CustomDisplayResolution {
+        return .timedOut
     }
 
 }

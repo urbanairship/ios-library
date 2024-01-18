@@ -18,7 +18,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     init(
         sceneManager: InAppMessageSceneManagerProtocol,
         assetManager: AssetCacheManagerProtocol,
-        analyticsFactory: InAppMessageAnalyticsFactoryProtocol = InAppMessageAnalyticsFactory(),
+        analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
         conditionsChangedNotifier: Notifier
     ) {
         self.sceneManager = sceneManager
@@ -98,7 +98,15 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             preparedScheduleInfo: preparedScheduleInfo
         )
 
-        await data.displayAdapter.display(scene: scene, analytics: analytics)
+        let experimentResult = preparedScheduleInfo.experimentResult
+        if let experimentResult = experimentResult, experimentResult.isMatch {
+            analytics.recordEvent(
+                InAppResolutionEvent.control(experimentResult: experimentResult),
+                layoutContext: nil
+            )
+        } else {
+            await data.displayAdapter.display(scene: scene, analytics: analytics)
+        }
 
         // Finished
         data.displayCoordinator.messageFinishedDisplaying(data.message)
@@ -111,12 +119,19 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
     }
 
-    func interrupted(preparedScheduleInfo: PreparedScheduleInfo) async {
-        // TODO analytics
-        // Clean up assets
+    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
+        guard case .inAppMessage(let message) = schedule.data else {
+            return
+        }
+
+        let analytics = self.analyticsFactory.makeAnalytics(message: message, preparedScheduleInfo: preparedScheduleInfo)
+        analytics.recordEvent(
+            InAppResolutionEvent.interrupted(),
+            layoutContext: nil
+        )
+
         await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
     }
-
 
     /// Delegates holder so I can keep the executor sendable
     private final class Delegates: @unchecked Sendable {

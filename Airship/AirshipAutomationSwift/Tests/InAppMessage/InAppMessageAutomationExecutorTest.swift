@@ -102,9 +102,22 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     }
 
     func testInterrupted() async throws {
-        await self.executor.interrupted(preparedScheduleInfo: preparedInfo)
+        let schedule = AutomationSchedule(
+            identifier: preparedInfo.scheduleID,
+            triggers: [],
+            data: .inAppMessage(preparedData.message)
+        )
+
+        let analytics = TestInAppAnalytics()
+        await self.analyticsFactory.setOnMake { _, _, _, _ in
+            return analytics
+        }
+
+
+        await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
         let cleared = await self.assetManager.cleared
         XCTAssertEqual([self.preparedInfo.scheduleID], cleared)
+        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.interrupted().name)
     }
 
     @MainActor
@@ -116,7 +129,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
 
-        let analytics = TestAnalytics()
+        let analytics = TestInAppAnalytics()
         self.analyticsFactory.onMake = { [preparedData, preparedInfo] scheduleID, message, campaigns, reportingContext in
             XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
             XCTAssertEqual(campaigns, preparedInfo.campaigns)
@@ -127,7 +140,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
             XCTAssertTrue(scene === (incomingScene as? TestScene))
-            XCTAssertTrue(analytics === (incomingAnalytics as? TestAnalytics))
+            XCTAssertTrue(analytics === (incomingAnalytics as? TestInAppAnalytics))
         }
 
         try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
@@ -135,7 +148,33 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         XCTAssertTrue(self.displayAdapter.displayed)
     }
 
-    
+    @MainActor
+    func testExecuteInControlGroup() async throws  {
+        let scene = TestScene()
+        self.sceneManager.onScene = { [preparedData] message in
+            XCTAssertEqual(message, preparedData!.message)
+            return scene
+        }
+
+        let experimentResult = ExperimentResult(
+            channelId: "some channel",
+            contactId: "some contact",
+            isMatch: true,
+            reportingMetadata: []
+        )
+        var preparedInfo = preparedInfo
+        preparedInfo.experimentResult = experimentResult
+
+        let analytics = TestInAppAnalytics()
+        self.analyticsFactory.onMake = {  _, _, _, _ in
+            return analytics
+        }
+
+        try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+
+        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.control(experimentResult: experimentResult).name)
+        XCTAssertFalse(self.displayAdapter.displayed)
+    }
 
     @MainActor
     func testExecuteDisplayAdapter() async throws  {
@@ -157,7 +196,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         self.analyticsFactory.onMake = { _, _, _, _ in
-            return TestAnalytics()
+            return TestInAppAnalytics()
         }
 
         self.displayAdapter.onDisplay = { _, _ in
@@ -179,7 +218,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         self.analyticsFactory.onMake = { _, _, _, _ in
-            return TestAnalytics()
+            return TestInAppAnalytics()
         }
 
         self.displayAdapter.onDisplay = { _, _ in
@@ -247,20 +286,31 @@ fileprivate final class TestSceneManager: InAppMessageSceneManagerProtocol, @unc
 
 
 fileprivate final class TestAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol, @unchecked Sendable {
+  
+    
     @MainActor
     var onMake: ((String, InAppMessage, AirshipJSON?, AirshipJSON?) -> InAppMessageAnalyticsProtocol)?
 
+
+    @MainActor
+    func setOnMake(onMake: @escaping @Sendable (String, InAppMessage, AirshipJSON?, AirshipJSON?) -> InAppMessageAnalyticsProtocol) {
+        self.onMake = onMake
+    }
     @MainActor
     func makeAnalytics(
         scheduleID: String,
         message: InAppMessage,
         campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?
+        reportingContext: AirshipJSON?,
+        experimentResult: ExperimentResult?
     ) -> InAppMessageAnalyticsProtocol {
         return self.onMake!(scheduleID, message, campaigns, reportingContext)
     }
 }
 
-extension TestAnalytics: InAppMessageAnalyticsProtocol {
-
+fileprivate final class TestInAppAnalytics: InAppMessageAnalyticsProtocol, @unchecked Sendable {
+    var events: [(InAppEvent, ThomasLayoutContext?)] = []
+    func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
+        events.append((event, layoutContext))
+    }
 }

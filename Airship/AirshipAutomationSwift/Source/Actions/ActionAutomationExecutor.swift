@@ -30,7 +30,7 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
         await actionRunner.runActions(data, situation: .automation, metadata: [:])
     }
 
-    func interrupted(preparedScheduleInfo: PreparedScheduleInfo) async {
+    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
         // no-op
     }
 }
