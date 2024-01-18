@@ -233,13 +233,13 @@ struct EmbeddedPlacementSelector: Codable, Equatable, Sendable {
     }
 }
 
-enum WindowSize: String, Codable, Equatable, Sendable {
+public enum WindowSize: String, Codable, Equatable, Sendable {
     case small = "small"
     case medium = "medium"
     case large = "large"
 }
 
-enum Orientation: String, Codable, Equatable, Sendable {
+public enum Orientation: String, Codable, Equatable, Sendable {
     case portrait = "portrait"
     case landscape = "landscape"
 }

@@ -1,7 +1,7 @@
 {
     "source": "app-defined",
     "name": "woot",
-    "display_type": "fullScreen",
+    "display_type": "fullscreen",
     "display": {
         "allow_fullscreen_display": true,
         "background_color": "#FF0000",
@@ -10,23 +10,23 @@
             "color": "#008000",
             "font_family": ["sans-serif"],
             "size": 11,
-            "text": "This is body text that's pretty long..."
+            "text": "This is body text that's pretty long... Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         },
         "border_radius": 5,
         "button_layout": "joined",
         "buttons": [
             {
                 "actions": {},
-                "background_color": "#0000FF",
-                "border_color": "#0000FF",
+                "background_color": "#00FFFF",
+                "border_color": "#00FFFF",
                 "border_radius": 0,
                 "id": "button-one",
                 "label": {
                     "color": "#808080",
-                    "font_family": ["sans-serif"],
                     "size": 11,
+                    "font_family": ["sans-serif"],
                     "style": ["bold"],
-                    "text": "Dismiss"
+                    "text": "11p sans-sherif bold Dismiss"
                 }
             },
             {
@@ -37,10 +37,9 @@
                 "id": "button-two",
                 "label": {
                     "color": "#808080",
-                    "font_family": ["sans-serif"],
-                    "size": 9,
-                    "style": ["bold"],
-                    "text": "Cancel"
+                    "size": 11,
+                    "style": ["italic", "underline"],
+                    "text": "11p italic underline Cancel"
                 }
             }
         ],
@@ -49,7 +48,7 @@
             "alignment": "center",
             "color": "#A52A2A",
             "font_family": ["sans-serif"],
-            "size": 11,
+            "size": 35,
             "text": "Header body media with wide image stacked buttons centered"
         },
         "media": {

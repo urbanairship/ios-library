@@ -218,7 +218,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         XCTAssertEqual("test alert", banner.body?.text)
         XCTAssertEqual("#1C1C1C", banner.body?.color?.hexColorString)
-        XCTAssertEqual(InAppMessageButtonLayoutType.seperate, banner.buttonLayoutType)
+        XCTAssertEqual(InAppMessageButtonLayoutType.separate, banner.buttonLayoutType)
         XCTAssertEqual("#FFFFFF", banner.backgroundColor?.hexColorString)
         XCTAssertEqual("#1C1C1C", banner.dismissButtonColor?.hexColorString)
         XCTAssertEqual(2, banner.borderRadius)
@@ -327,7 +327,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         XCTAssertEqual("test alert", banner.body?.text)
         XCTAssertEqual("#FEDCBA", banner.body?.color?.hexColorString)
-        XCTAssertEqual(InAppMessageButtonLayoutType.seperate, banner.buttonLayoutType)
+        XCTAssertEqual(InAppMessageButtonLayoutType.separate, banner.buttonLayoutType)
         XCTAssertEqual("#ABCDEF", banner.backgroundColor?.hexColorString)
         XCTAssertEqual("#FEDCBA", banner.dismissButtonColor?.hexColorString)
         XCTAssertEqual(2, banner.borderRadius)

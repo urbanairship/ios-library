@@ -59,6 +59,8 @@
 		6EDB2B2428D4E34500A01377 /* LiveActivityManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */; };
 		6EDB2B2528D4E4EF00A01377 /* LiveActivityManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */; };
 		6EDB2B2E28D4F97F00A01377 /* Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2A28D4F27800A01377 /* Widgets.swift */; };
+		99E8D8072B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */; };
+		99E8D8082B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -382,6 +384,7 @@
 				6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */,
 				6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */,
 				6EAAEA0828C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Embed Frameworks */,
+				99E8D8082B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Embed Frameworks */,
 				6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */,
 				6EAAEA0228C7E4B4003CAE53 /* AirshipCore.framework in Embed Frameworks */,
 				6EAAE9FE28C7E4B4003CAE53 /* AirshipAutomation.framework in Embed Frameworks */,
@@ -437,6 +440,7 @@
 				6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */,
 				6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */,
 				6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */,
+				99E8D8072B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Frameworks */,
 				6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */,
 				6EAAEA0128C7E4B4003CAE53 /* AirshipCore.framework in Frameworks */,
 				6EAAE9FD28C7E4B4003CAE53 /* AirshipAutomation.framework in Frameworks */,

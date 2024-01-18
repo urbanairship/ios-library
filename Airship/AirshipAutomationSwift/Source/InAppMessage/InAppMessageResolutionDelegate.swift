@@ -1,0 +1,19 @@
+/* Copyright Airship and Contributors */
+
+import Foundation
+
+public protocol InAppMessageResolutionDelegate {
+    /// Called when a button dismisses the in-app message
+    /// - Parameters:
+    ///     - buttonInfo: The button info on the dismissing button.
+    func onButtonDismissed(buttonInfo: InAppMessageButtonInfo)
+
+    /// Called when a message dismisses after the set timeout period
+    func onTimedOut()
+
+    /// Called when a message dismisses with the close button or banner drawer handle
+    func onUserDismissed()
+
+    /// Called when a message is dismissed via a tap to the message body
+    func onMessageTapDismissed()
+}

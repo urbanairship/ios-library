@@ -10,6 +10,6 @@ public enum InAppMessageButtonLayoutType: String, Codable, Sendable, Equatable {
     /// Joined horizontally
     case joined
 
-    /// Seperated horizontally
-    case seperate
+    /// Separated horizontally
+    case separate
 }

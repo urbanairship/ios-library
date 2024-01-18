@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import SwiftUI
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -140,7 +141,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             name: name,
             displayContent: displayContent,
             source: source,
-            extras: extras, 
+            extras: extras,
             actions: actions,
             isReportingEnabled: isReportingEnabled,
             displayBehavior: displayBehavior,
@@ -232,4 +233,137 @@ extension InAppMessage {
 
 fileprivate struct AirshipLayoutWrapper: Codable {
     var layout: AirshipLayout
+    public enum InAppResolutionType: Codable, CustomStringConvertible {
+        /**
+         * Button tap resolution.
+         */
+        case buttonTap(InAppMessageButtonInfo)
+
+        /**
+         * Message tap resolution.
+         */
+        case messageTap
+
+        /**
+         * User dismissed resolution.
+         */
+        case userDismissed
+
+        /**
+         * Timed out resolution.
+         */
+        case timeout
+
+        public var description: String {
+            switch self {
+            case .buttonTap(let buttonInfo):
+                return "Button Tap: \(buttonInfo)"
+            case .messageTap:
+                return "Message Tap"
+            case .userDismissed:
+                return "User Dismissed"
+            case .timeout:
+                return "Timed Out"
+            }
+        }
+    }
+}
+
+/// These are just for view testing purposes
+#if !os(watchOS)
+extension InAppMessage {
+    @MainActor
+    private func showFullscreen(_ delegate: InAppMessageResolutionDelegate, _ imageLoader: AirshipImageLoader, _ window: UIWindow?, _ content: (InAppMessageDisplayContent.Fullscreen)) async {
+        /// We'll want to probably parse these on the prepare step
+        let theme = Theme.fullScreen(FullScreenTheme())
+
+        let environment = InAppMessageEnvironment(delegate: delegate, imageLoader: imageLoader, theme:theme, onDismiss: {
+            Task {
+                await withCheckedContinuation { continuation in
+                    window.animateOut {
+                        continuation.resume()
+                    }
+                }
+            }
+        })
+
+        // Handle fullscreen message
+        let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, windowSize in
+            FullScreenView(displayContent: content)
+        }
+
+        let viewController = InAppMessageHostingController(rootView: rootView)
+
+        viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+
+        window?.rootViewController = viewController
+
+        window?.alpha = 0
+        window?.makeKeyAndVisible()
+        window?.isUserInteractionEnabled = false
+
+        await withCheckedContinuation { continuation in
+            window.animateIn {
+                continuation.resume()
+            }
+        }
+    }
+
+    /// We return a window since we are implementing display
+    @MainActor
+    public func display(
+        scene: UIWindowScene,
+        imageLoader:AirshipImageLoader,
+        delegate: InAppMessageResolutionDelegate
+    ) async throws {
+        let window: UIWindow? = UIWindow(windowScene: scene)
+        window?.accessibilityViewIsModal = false
+
+        switch self.displayContent {
+        case .banner(_):
+            // Handle banner message
+            break
+        case .fullscreen(let content):
+            await showFullscreen(delegate, imageLoader, window, content)
+        case .modal(_):
+            // Handle modal message
+            break
+        case .html(_):
+            // Handle HTML message
+            break
+        case .custom(_):
+            // Handle custom message
+            break
+        case .airshipLayout(_):
+            // Handle Airship layout message
+            break
+        }
+    }
+}
+
+#endif
+
+/// These are just for view testing purposes
+extension UIWindow? {
+    func animateIn(completion: (() -> ())? = nil) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self?.alpha = 1
+            self?.makeKeyAndVisible()
+        }) { _ in
+            self?.isUserInteractionEnabled = true
+            completion?()
+        }
+    }
+
+    func animateOut(completion: (() -> ())? = nil) {
+        /// Capture a reference to the window and add dismissal when dispose is called
+        UIView.animate(withDuration: 0.3, animations: {
+            self?.alpha = 0
+        }) { _ in
+            self?.isHidden = true
+            self?.isUserInteractionEnabled = false
+            self?.removeFromSuperview()
+            completion?()
+        }
+    }
 }

@@ -142,7 +142,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
         let displayContent = InAppMessageDisplayContent.Banner(
             body: InAppMessageTextInfo(text: message.alert, color: secondaryColor),
             buttons: buttons,
-            buttonLayoutType: .seperate,
+            buttonLayoutType: .separate,
             backgroundColor: primaryColor,
             dismissButtonColor: secondaryColor,
             borderRadius: Defaults.borderRadius,

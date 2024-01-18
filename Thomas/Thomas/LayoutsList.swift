@@ -10,6 +10,7 @@ struct LayoutsList: View {
     let layouts: [LayoutFile]
 
     init(type: LayoutType) {
+        self.type = type
         self.layouts = Layouts.shared.layouts.filter { $0.type == type }
     }
 
@@ -17,20 +18,34 @@ struct LayoutsList: View {
 
     @State var errorMessage: String?
     @State var showError: Bool = false
-    
+
+    private var type: LayoutType
+
     @State private var configurationFileName = ""
     @State private var showBanner = false
 
+    @State private var isLegacyDisplaySelected = false
+
     var body: some View {
-        List {
-            ForEach(self.layouts, id: \.self) { layout in
-                Button(layout.fileName) {
-                    do {
-                        try Layouts.shared.openLayout(layout)
-                    } catch {
-                        self.showError = true
-                        self.errorMessage = "Failed to open layout \(error)"
+        VStack {
+            List {
+                if type == .messageBanner ||
+                   type == .messageModal ||
+                   type == .messageFullscreen ||
+                   type == .messageHTML {
+                    Section {
+                        Toggle("Use legacy display", isOn: $isLegacyDisplaySelected)
                     }
+                }
+                ForEach(self.layouts, id: \.self) { layout in
+                        Button(layout.fileName) {
+                            do {
+                                try Layouts.shared.openLayout(layout, useLegacyDisplay: isLegacyDisplaySelected)
+                            } catch {
+                                self.showError = true
+                                self.errorMessage = "Failed to open layout \(error)"
+                            }
+                        }
                 }
             }
         }

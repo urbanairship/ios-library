@@ -1,12 +1,17 @@
 {
     "source": "app-defined",
     "name": "myMessage",
-    "display_type": "fullScreen",
+    "display_type": "fullscreen",
     "display": {
         "dismiss_button_color": "#00FF00",
         "background_color": "#FF0000",
         "button_layout": "stacked",
-        "content_layout": "media_header_body",
+        "template": "media_header_body",
+        "media": {
+            "description": "Wide space",
+            "type": "image",
+            "url": "https://images.pexels.com/photos/207529/pexels-photo-207529.jpeg"
+        },
         "heading": {
             "text": "Media header body with stacked buttons no footer long header. Media header body with stacked buttons no footer long header.",
             "color": "#A52A2A",
@@ -21,18 +26,18 @@
             {
                 "id": "button-one",
                 "label": {
-                    "text": "Dismiss",
-                    "color": "#808080",
-                    "size": 11
+                    "text": "24p Dismiss",
+                    "color": "#0FFFFF",
+                    "size": 24
                 },
                 "background_color": "#0000FF"
             },
             {
                 "id": "button-two",
                 "label": {
-                    "text": "Cancel",
-                    "color": "#808080",
-                    "size": 9
+                    "text": "24p Cancel",
+                    "color": "#F0FFFF",
+                    "size": 24
                 },
                 "background_color": "#0000FF",
                 "border_radius": 10,
@@ -41,9 +46,9 @@
             {
                 "id": "button-three",
                 "label": {
-                    "text": "Cancel",
-                    "color": "#00FF00",
-                    "size": 9
+                    "text": "12p Cancel",
+                    "color": "#FF0FFF",
+                    "size": 12
                 },
                 "background_color": "#0000FF",
                 "border_radius": 10,
@@ -52,8 +57,8 @@
             {
                 "id": "button-four",
                 "label": {
-                    "text": "Cancel",
-                    "color": "#00FF00",
+                    "text": "9p Cancel",
+                    "color": "#FFF0FF",
                     "size": 9
                 },
                 "background_color": "#0000FF",

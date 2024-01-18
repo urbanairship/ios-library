@@ -19,7 +19,7 @@ private struct LayoutStateEnvironmentKey: EnvironmentKey {
     static let defaultValue: LayoutState = LayoutState.empty
 }
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var orientation: Orientation? {
         get { self[OrientationKey.self] }
         set { self[OrientationKey.self] = newValue }
@@ -35,7 +35,7 @@ extension EnvironmentValues {
         set { self[VisibleEnvironmentKey.self] = newValue }
     }
 
-    var layoutState: LayoutState {
+    internal var layoutState: LayoutState {
         get { self[LayoutStateEnvironmentKey.self] }
         set { self[LayoutStateEnvironmentKey.self] = newValue }
     }

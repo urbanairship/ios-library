@@ -11,6 +11,11 @@ final class Layouts {
     public static let shared: Layouts = Layouts()
     
     private let delegate = Delegate()
+    private let resolutionDelegate = ResolutionDelegate()
+
+    /// Stores the window reference
+    var windowReference:UIWindow?
+
     let layouts: [LayoutFile] = Layouts.getLayoutsList(directory: "/Scenes/Modal", type: .sceneModal) +
     Layouts.getLayoutsList(directory: "/Scenes/Banner", type: .sceneBanner) +
     Layouts.getLayoutsList(directory: "/Scenes/Embedded", type: .sceneEmbedded) +
@@ -80,6 +85,25 @@ final class Layouts {
     }
 
     @MainActor
+    private func displayMessage(_ data: Data) throws {
+        guard let inAppMessage = try? JSONDecoder().decode(InAppMessage.self, from: data) else {
+            print("In-app message decoding failed 🚨")
+            return
+        }
+
+        print("In-app message decoding succeeded ✅")
+
+        if let scene = try? SceneManager.shared.lastActiveScene {
+            Task {
+                try? await inAppMessage.display(scene: scene, imageLoader: AirshipImageLoader(), delegate: resolutionDelegate)
+                print("In-app message display started ✅")
+            }
+        } else {
+            print("In-app message display failed to start 🚨")
+        }
+    }
+
+    @MainActor
     private func displayLegacyMessage(_ data: Data) throws {
         if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any], let legacyInAppMessage = try? AirshipAutomation.InAppMessage.init(json: jsonObject) {
 
@@ -103,14 +127,18 @@ final class Layouts {
     }
 
     @MainActor
-    public func openLayout(_ layout: LayoutFile) throws {
+    public func openLayout(_ layout: LayoutFile, useLegacyDisplay:Bool? = nil) throws {
         let data = try loadData(filePath: layout.filePath)
 
         switch layout.type {
         case .sceneModal, .sceneBanner, .sceneEmbedded:
             try displayScene(data)
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
-            try displayLegacyMessage(data)
+            if useLegacyDisplay == true {
+                try displayLegacyMessage(data)
+            } else {
+                try displayMessage(data)
+            }
         }
     }
 
@@ -132,8 +160,26 @@ final class Layouts {
     }
 }
 
-class Delegate: ThomasDelegate {
+class ResolutionDelegate: InAppMessageResolutionDelegate {
+    func onButtonDismissed(buttonInfo: AirshipAutomationSwift.InAppMessageButtonInfo) {
+        print("In-app message dismissed with button info \(buttonInfo) ✅")
+    }
 
+    func onTimedOut() {
+        print("In-app message timed out ⏰")
+    }
+
+    func onUserDismissed() {
+        print("In-app message dismissed by user 👤")
+
+    }
+
+    func onMessageTapDismissed() {
+        print("In-app message tapped to dismiss 👉")
+    }
+}
+
+class Delegate: ThomasDelegate {
     func onRunActions(
         actions: [String: Any],
         layoutContext: AirshipCore.ThomasLayoutContext

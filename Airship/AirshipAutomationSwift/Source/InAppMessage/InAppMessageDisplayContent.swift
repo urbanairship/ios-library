@@ -237,7 +237,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
         public var media: InAppMessageMediaInfo?
 
         /// The footer
-        public var footer: InAppMessageMediaInfo?
+        public var footer: InAppMessageButtonInfo?
 
         /// The buttons
         public var buttons: [InAppMessageButtonInfo]?
@@ -269,7 +269,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
         public init(heading: InAppMessageTextInfo? = nil,
              body: InAppMessageTextInfo? = nil,
              media: InAppMessageMediaInfo? = nil,
-             footer: InAppMessageMediaInfo? = nil,
+             footer: InAppMessageButtonInfo? = nil,
              buttons: [InAppMessageButtonInfo],
              buttonLayoutType: InAppMessageButtonLayoutType? = nil,
              template: Template,

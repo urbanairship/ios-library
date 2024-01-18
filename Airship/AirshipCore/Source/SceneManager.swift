@@ -18,7 +18,7 @@ public extension AirshipSceneManagerProtocol {
  *  Scene manager
  *  Monitors scene connection and disconnection notifications and associated scenes to allow retrieving the latest scene.
  */
-final class SceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
+public final class SceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
     public static let shared = SceneManager()
 
     private var scenes: [UIWindowScene] = []
