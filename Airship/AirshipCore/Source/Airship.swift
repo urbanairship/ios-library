@@ -227,6 +227,9 @@ public class Airship: NSObject {
             return
         }
 
+        // register transformers
+        JSONValueTransformer.register()
+        
         commonTakeOff(config)
 
         #if !os(tvOS) && !os(watchOS)
