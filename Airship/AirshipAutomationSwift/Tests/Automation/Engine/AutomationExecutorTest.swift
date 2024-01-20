@@ -171,11 +171,13 @@ final class AutomationExecutorTest: XCTestCase {
         self.actionExecutor.executeBlock = { data, info in
             XCTAssertEqual(.actions(data), actionSchedule.data)
             XCTAssertEqual(info, actionSchedule.info)
+            return .finished
         }
 
-        try await self.executor.execute(preparedSchedule: actionSchedule)
+        let result = await self.executor.execute(preparedSchedule: actionSchedule)
 
         XCTAssertTrue(actionExecutor.executeCalled)
+        XCTAssertEqual(result, .finished)
     }
 
     func testExecuteMessage() async throws {
@@ -188,12 +190,30 @@ final class AutomationExecutorTest: XCTestCase {
         self.messageExecutor.executeBlock = { data, info in
             XCTAssertEqual(.inAppMessage(data), messageSchedule.data)
             XCTAssertEqual(info, messageSchedule.info)
+            return .finished
         }
 
-        try await self.executor.execute(preparedSchedule: messageSchedule)
+        let result = await self.executor.execute(preparedSchedule: messageSchedule)
         XCTAssertTrue(messageExecutor.executeCalled)
+        XCTAssertEqual(result, .finished)
     }
-    
+
+    func testExecuteDelegateThrows() async throws {
+        let messageSchedule = PreparedSchedule(
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            data: .inAppMessage(self.preparedMessageData),
+            frequencyChecker: nil
+        )
+
+        self.messageExecutor.executeBlock = { data, info in
+            throw AirshipErrors.error("Failed")
+        }
+
+        let result = await self.executor.execute(preparedSchedule: messageSchedule)
+        XCTAssertTrue(messageExecutor.executeCalled)
+        XCTAssertEqual(result, .retry)
+    }
+
 
     func testInterruptedAction() async throws {
         let automationSchedule = AutomationSchedule(
@@ -248,7 +268,7 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     var isReadyBlock: (@Sendable (T, PreparedScheduleInfo) -> ScheduleReadyResult)?
 
     var executeCalled: Bool = false
-    var executeBlock: (@Sendable (T, PreparedScheduleInfo) async -> Void)?
+    var executeBlock: (@Sendable (T, PreparedScheduleInfo) async throws -> ScheduleExecuteResult)?
 
     var interruptCalled: Bool = false
     var interruptedBlock: (@Sendable (PreparedScheduleInfo) async -> Void)?
@@ -263,9 +283,9 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     }
 
     @MainActor
-    func execute(data: T, preparedScheduleInfo: PreparedScheduleInfo) async {
+    func execute(data: T, preparedScheduleInfo: PreparedScheduleInfo) async throws -> ScheduleExecuteResult {
         executeCalled = true
-        return await self.executeBlock!(data, preparedScheduleInfo)
+        return try await self.executeBlock!(data, preparedScheduleInfo)
     }
 
 

@@ -78,7 +78,7 @@ public final class PromptPermissionAction: AirshipAction {
             PromptPermissionAction.resultReceiverMetadataKey
         ] as? PermissionResultReceiver
 
-        resultReceiver?(args.permission, start, end)
+        await resultReceiver?(args.permission, start, end)
 
         return nil
     }

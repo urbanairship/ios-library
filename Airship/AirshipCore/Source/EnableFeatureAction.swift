@@ -71,7 +71,7 @@ public final class EnableFeatureAction: AirshipAction {
             EnableFeatureAction.resultReceiverMetadataKey
         ] as? PermissionResultReceiver
 
-        resultReceiver?(permission, start, end)
+        await resultReceiver?(permission, start, end)
 
         return nil
     }

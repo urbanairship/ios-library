@@ -11,6 +11,7 @@ import AirshipCore
 final class CustomDisplayAdapterWrapper: DisplayAdapter {
     let adapter: CustomDisplayAdapter
 
+    @MainActor
     var isReady: Bool { return adapter.isReady }
 
     func waitForReady() async {
@@ -23,7 +24,8 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
         self.adapter = adapter
     }
 
-    func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async {
+    @MainActor
+    func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async -> DisplayResult {
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
 
         let timer = ActiveTimer()
@@ -41,6 +43,8 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
                 ),
                 layoutContext: nil
             )
+
+            return buttonInfo.behavior == .cancel ? .cancel : .finished
         case .messageTap:
             analytics.recordEvent(
                 InAppResolutionEvent.messageTap(displayTime: timer.time),
@@ -57,5 +61,6 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
                 layoutContext: nil
             )
         }
+        return .finished
     }
 }

@@ -21,28 +21,29 @@ class InAppMessageEnvironment: ObservableObject {
     @MainActor
     init(
         delegate: InAppMessageResolutionDelegate,
-        imageLoader: AirshipImageLoader,
-        theme:Theme,
+        theme: Theme,
+        imageProvider: AirshipImageProvider? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
-        self.onDismiss = onDismiss
-        self.imageLoader = imageLoader
         self.theme = theme
+        self.imageLoader = AirshipImageLoader(imageProvider: imageProvider)
+        self.onDismiss = onDismiss
     }
 
     private func tryDismiss(callback: () -> Void) {
         if !self.isDismissed {
             self.isDismissed = true
-            callback()
             onDismiss?()
             onDismiss = nil
+            callback()
         }
     }
 
     /// Called when a button dismisses the in-app message
     /// - Parameters:
     ///     - buttonInfo: The button info on the dismissing button.
+    @MainActor
     func onButtonDismissed(buttonInfo: InAppMessageButtonInfo) {
         tryDismiss {
             self.delegate.onButtonDismissed(buttonInfo: buttonInfo)
@@ -50,6 +51,7 @@ class InAppMessageEnvironment: ObservableObject {
     }
 
     /// Called when a message dismisses after the set timeout period
+    @MainActor
     func onTimedOut() {
         tryDismiss {
             self.delegate.onTimedOut()
@@ -57,6 +59,7 @@ class InAppMessageEnvironment: ObservableObject {
     }
 
     /// Called when a message dismisses with the close button or banner drawer handle
+    @MainActor
     func onUserDismissed() {
         tryDismiss {
             self.delegate.onUserDismissed()
@@ -64,6 +67,7 @@ class InAppMessageEnvironment: ObservableObject {
     }
 
     /// Called when a message is dismissed via a tap to the message body
+    @MainActor
     func onMessageTapDismissed() {
         tryDismiss {
             self.delegate.onMessageTapDismissed()

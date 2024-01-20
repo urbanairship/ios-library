@@ -16,14 +16,14 @@ final class TestDisplayAdapter: DisplayAdapter, @unchecked Sendable {
     }
 
     @MainActor
-    var onDisplay: ((WindowSceneHolder, InAppMessageAnalyticsProtocol) async -> Void)?
+    var onDisplay: ((WindowSceneHolder, InAppMessageAnalyticsProtocol) async throws -> DisplayResult)?
 
     @MainActor
     var displayed: Bool = false
 
     @MainActor
-    func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async {
-        await self.onDisplay!(scene, analytics)
+    func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async throws -> DisplayResult {
         self.displayed = true
+        return try await self.onDisplay!(scene, analytics)
     }
 }

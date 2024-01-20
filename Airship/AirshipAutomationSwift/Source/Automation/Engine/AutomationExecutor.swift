@@ -16,7 +16,7 @@ protocol AutomationExecutorProtocol: Sendable {
     func isReady(preparedSchedule: PreparedSchedule) -> ScheduleReadyResult
 
     @MainActor
-    func execute(preparedSchedule: PreparedSchedule) async throws
+    func execute(preparedSchedule: PreparedSchedule) async -> ScheduleExecuteResult
 
     func interrupted(
         schedule: AutomationSchedule,
@@ -37,7 +37,7 @@ protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
     func execute(
         data: ExecutionData,
         preparedScheduleInfo: PreparedScheduleInfo
-    ) async throws
+    ) async throws -> ScheduleExecuteResult
 
     @MainActor
     func interrupted(
@@ -92,18 +92,23 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     }
 
     @MainActor
-    func execute(preparedSchedule: PreparedSchedule) async throws {
-        switch (preparedSchedule.data) {
-        case .inAppMessage(let data):
-            try await self.messageExecutor.execute(
-                data: data,
-                preparedScheduleInfo: preparedSchedule.info
-            )
-        case .actions(let data):
-            try await self.actionExecutor.execute(
-                data: data,
-                preparedScheduleInfo: preparedSchedule.info
-            )
+    func execute(preparedSchedule: PreparedSchedule) async -> ScheduleExecuteResult {
+        do {
+            switch (preparedSchedule.data) {
+            case .inAppMessage(let data):
+                return try await self.messageExecutor.execute(
+                    data: data,
+                    preparedScheduleInfo: preparedSchedule.info
+                )
+            case .actions(let data):
+                return try await self.actionExecutor.execute(
+                    data: data,
+                    preparedScheduleInfo: preparedSchedule.info
+                )
+            }
+        } catch {
+            AirshipLogger.warn("Failed to execute automation: \(preparedSchedule.info.scheduleID) error:\(error)")
+            return .retry
         }
     }
 

@@ -6,8 +6,19 @@ import AirshipCore
 #endif
 
 
+protocol ActiveTimerProtocol: Sendable {
+    @MainActor
+    var time : TimeInterval { get }
+
+    @MainActor
+    func start()
+
+    @MainActor
+    func stop()
+}
+
 @MainActor
-final class ActiveTimer: Sendable {
+final class ActiveTimer: ActiveTimerProtocol {
 
     private var isStarted: Bool = false
     private var isActive: Bool

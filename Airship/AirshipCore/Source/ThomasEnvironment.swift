@@ -24,7 +24,7 @@ class ThomasEnvironment: ObservableObject {
     @Published
     var focusedID: String? = nil
 
-    var onDismiss: (() -> Void)?
+    private var onDismiss: (() -> Void)?
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
@@ -49,6 +49,7 @@ class ThomasEnvironment: ObservableObject {
         #endif
     }
 
+    @MainActor
     func submitForm(_ formState: FormState, layoutState: LayoutState) {
         guard !formState.isSubmitted else {
             return
@@ -86,6 +87,7 @@ class ThomasEnvironment: ObservableObject {
         contactEditor.apply()
     }
 
+    @MainActor
     func formDisplayed(_ formState: FormState, layoutState: LayoutState) {
         self.delegate.onFormDisplayed(
             formInfo: formState.toFormInfo(),
@@ -93,6 +95,7 @@ class ThomasEnvironment: ObservableObject {
         )
     }
 
+    @MainActor
     func buttonTapped(
         buttonIdentifier: String,
         reportingMetatda: Any?,
@@ -105,6 +108,7 @@ class ThomasEnvironment: ObservableObject {
         )
     }
 
+    @MainActor
     func pageViewed(_ pagerState: PagerState, layoutState: LayoutState) {
         self.delegate.onPageViewed(
             pagerInfo: pagerState.toPagerInfo(),
@@ -112,6 +116,7 @@ class ThomasEnvironment: ObservableObject {
         )
     }
 
+    @MainActor
     func dismiss(
         buttonIdentifier: String,
         buttonDescription: String,
@@ -128,6 +133,7 @@ class ThomasEnvironment: ObservableObject {
         }
     }
 
+    @MainActor
     func dismiss(layoutState: LayoutState? = nil) {
         tryDismiss {
             self.delegate.onDismissed(
@@ -136,6 +142,7 @@ class ThomasEnvironment: ObservableObject {
         }
     }
 
+    @MainActor
     func timedOut(layoutState: LayoutState? = nil) {
         tryDismiss {
             self.delegate.onTimedOut(
@@ -144,6 +151,7 @@ class ThomasEnvironment: ObservableObject {
         }
     }
     
+    @MainActor
     func pageGesture(
         identifier: String?,
         reportingMetatda: Any?,
@@ -158,6 +166,7 @@ class ThomasEnvironment: ObservableObject {
         }
     }
     
+    @MainActor
     func pageAutomated(
         identifier: String?,
         reportingMetatda: Any?,
@@ -172,6 +181,7 @@ class ThomasEnvironment: ObservableObject {
         }
     }
     
+    @MainActor
     func pageSwiped(
         _ pagerState: PagerState,
         fromIndex: Int,
@@ -185,14 +195,17 @@ class ThomasEnvironment: ObservableObject {
         )
     }
 
+    @MainActor
     private func tryDismiss(callback: () -> Void) {
         if !self.isDismissed {
             self.isDismissed = true
             callback()
             onDismiss?()
+            self.onDismiss = nil
         }
     }
 
+    @MainActor
     func runActions(_ actionsPayload: ActionsPayload?, layoutState: LayoutState)
     {
         guard let actionsPayload = actionsPayload else {
@@ -205,8 +218,8 @@ class ThomasEnvironment: ObservableObject {
             AirshipPermission,
             AirshipPermissionStatus,
             AirshipPermissionStatus
-        ) -> Void = { permission, start, end in
-            self.delegate.onPromptPermissionResult(
+        ) async -> Void = { [delegate] permission, start, end in
+            await delegate.onPromptPermissionResult(
                 permission: permission,
                 startingStatus: start,
                 endingStatus: end,

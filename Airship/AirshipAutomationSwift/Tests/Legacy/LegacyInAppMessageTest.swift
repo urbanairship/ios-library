@@ -14,26 +14,7 @@ final class LegacyInAppMessageTest: XCTestCase {
             "alert": "test alert"
         ]
         
-        let expectedPayload: [String: Any?] = [
-            "identifier": "test-id",
-            "display": [
-                "type": "banner",
-                "position": "bottom",
-                "alert": "test alert",
-                "duration": 15.0,
-                "primary_color": nil,
-                "secondary_color": nil
-            ],
-            "extra": nil,
-            "expiry": AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date.now.addingTimeInterval(60 * 60 * 24 * 30)),
-            "actions": [
-                "on_click": nil,
-                "button_group": nil,
-                "button_actions": nil
-            ],
-            "campaigns": nil,
-            "message_type": nil
-        ]
+    
         
         let message = LegacyInAppMessage(payload: payload, date: date)!
         

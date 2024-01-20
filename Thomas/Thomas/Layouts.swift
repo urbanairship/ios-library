@@ -9,12 +9,6 @@ import AirshipAutomation
 
 final class Layouts {
     public static let shared: Layouts = Layouts()
-    
-    private let delegate = Delegate()
-    private let resolutionDelegate = ResolutionDelegate()
-
-    /// Stores the window reference
-    var windowReference:UIWindow?
 
     let layouts: [LayoutFile] = Layouts.getLayoutsList(directory: "/Scenes/Modal", type: .sceneModal) +
     Layouts.getLayoutsList(directory: "/Scenes/Banner", type: .sceneBanner) +
@@ -68,38 +62,24 @@ final class Layouts {
 
     @MainActor
     private func displayScene(_ data: Data) throws {
-        let extensions = ThomasExtensions(
-            nativeBridgeExtension: ThomasNativeBridgeExtension()
-        )
+        /// TODO clean this up to be a message?
+        let layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
 
-        try Thomas.display(
-            data,
-            scene: {
-                return UIApplication.shared.connectedScenes.first(where: {
-                    $0.isKind(of: UIWindowScene.self)
-                }) as? UIWindowScene
-            },
-            extensions: extensions,
-            delegate: self.delegate
-        )
+        let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
+        let scene = try SceneManager.shared.lastActiveScene
+
+        Task { @MainActor in
+            try await message.display(scene: scene)
+        }
     }
 
     @MainActor
     private func displayMessage(_ data: Data) throws {
-        guard let inAppMessage = try? JSONDecoder().decode(InAppMessage.self, from: data) else {
-            print("In-app message decoding failed 🚨")
-            return
-        }
+        let message = try JSONDecoder().decode(InAppMessage.self, from: data)
+        let scene = try SceneManager.shared.lastActiveScene
 
-        print("In-app message decoding succeeded ✅")
-
-        if let scene = try? SceneManager.shared.lastActiveScene {
-            Task {
-                try? await inAppMessage.display(scene: scene, imageLoader: AirshipImageLoader(), delegate: resolutionDelegate)
-                print("In-app message display started ✅")
-            }
-        } else {
-            print("In-app message display failed to start 🚨")
+        Task { @MainActor in
+            try await message.display(scene: scene)
         }
     }
 
@@ -157,179 +137,6 @@ final class Layouts {
 
         // Convert YML file to json
         return try getJsonContentFromYmlContent(ymlContent: stringContent)
-    }
-}
-
-class ResolutionDelegate: InAppMessageResolutionDelegate {
-    func onButtonDismissed(buttonInfo: AirshipAutomationSwift.InAppMessageButtonInfo) {
-        print("In-app message dismissed with button info \(buttonInfo) ✅")
-    }
-
-    func onTimedOut() {
-        print("In-app message timed out ⏰")
-    }
-
-    func onUserDismissed() {
-        print("In-app message dismissed by user 👤")
-
-    }
-
-    func onMessageTapDismissed() {
-        print("In-app message tapped to dismiss 👉")
-    }
-}
-
-class Delegate: ThomasDelegate {
-    func onRunActions(
-        actions: [String: Any],
-        layoutContext: AirshipCore.ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onRunActions{actions=\(actions), context=\(layoutContext)}"
-        )
-        let permissionReceiver:
-            (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
-                permission,
-                start,
-                end in
-                print(
-                    "Thomas.permissionResult{permission=\(permission), start=\(start), end=\(end), context=\(layoutContext)}"
-                )
-            }
-
-        let metadata: [String: Sendable] = [
-            PromptPermissionAction.resultReceiverMetadataKey: permissionReceiver
-        ]
-
-
-        Task {
-            let result = await ActionRunner.run(
-                actionsPayload: try AirshipJSON.wrap(actions),
-                situation: .manualInvocation,
-                metadata: metadata
-            )
-            AirshipLogger.trace(
-                "Finishing running actions with result: \(result)"
-            )
-        }
-
-    }
-
-    func onFormSubmitted(
-        formResult: ThomasFormResult,
-        layoutContext: ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onFormSubmitted{formResult=\(formResult), context=\(layoutContext)}"
-        )
-    }
-
-    func onFormDisplayed(
-        formInfo: ThomasFormInfo,
-        layoutContext: ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onFormDisplayed{formInfo=\(formInfo), context=\(layoutContext)}"
-        )
-    }
-
-    func onDismissed(layoutContext: ThomasLayoutContext?) {
-        print(
-            "Thomas.onDismissed{context=\(String(describing: layoutContext))}"
-        )
-    }
-
-    func onDismissed(
-        buttonIdentifier: String,
-        buttonDescription: String,
-        cancel: Bool,
-        layoutContext: ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onDismissed{buttonIdentifier=\(buttonIdentifier), buttonDescription=\(buttonDescription), cancel=\(cancel), context=\(layoutContext)}"
-        )
-    }
-
-    func onTimedOut(layoutContext: ThomasLayoutContext?) {
-        print("Thomas.onTimedOut{context=\(String(describing: layoutContext))}")
-    }
-
-    func onPageViewed(
-        pagerInfo: ThomasPagerInfo,
-        layoutContext: ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onPageViewed{pagerInfo=\(pagerInfo), context=\(layoutContext)}"
-        )
-    }
-
-    func onButtonTapped(
-        buttonIdentifier: String,
-        metadata: Any?,
-        layoutContext: AirshipCore.ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onButtonTapped{buttonIdentifier=\(buttonIdentifier)\n, metadata=\(String(describing: metadata))\n, context=\(layoutContext)"
-        )
-    }
-
-    func onPageGesture(
-        identifier: String,
-        metadata: Any?,
-        layoutContext: AirshipCore.ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onPageGesture{identifier=\(identifier)\n, metadata=\(String(describing: metadata))\n, layoutContext=\(layoutContext)}"
-        )
-    }
-
-
-    func onPageAutomatedAction(
-        identifier: String,
-        metadata: Any?,
-        layoutContext: AirshipCore.ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onPageAutomatedAction{identifier=\(identifier)\n, metadata=\(String(describing: metadata))\n, layoutContext=\(layoutContext)}"
-        )
-    }
-
-    func onPageSwiped(
-        from: ThomasPagerInfo,
-        to: ThomasPagerInfo,
-        layoutContext: ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onPageSwiped{from=\(from), to=\(to), context=\(layoutContext)}"
-        )
-    }
-
-    func onPromptPermissionResult(
-        permission: AirshipCore.AirshipPermission,
-        startingStatus: AirshipCore.AirshipPermissionStatus,
-        endingStatus: AirshipCore.AirshipPermissionStatus,
-        layoutContext: AirshipCore.ThomasLayoutContext
-    ) {
-        print(
-            "Thomas.onPromptPermissionResult{permission=\(startingStatus), startingStatus=\(startingStatus), endingStatus=\(endingStatus), layoutContext=\(layoutContext)}"
-        )
-    }
-}
-
-class ThomasNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
-
-    func extendJavaScriptEnvironment(
-        _ js: AirshipCore.JavaScriptEnvironmentProtocol,
-        webView: WKWebView
-    ) async {
-        js.add("chooChoo", string: "chooooo choooooo!")
-    }
-
-    func actionsMetadata(
-        for command: AirshipCore.JavaScriptCommand,
-        webView: WKWebView
-    ) -> [String : String] {
-        return [ : ]
     }
 }
 

@@ -11,8 +11,6 @@ import AirshipCore
 @MainActor
 final class DefaultDisplayCoordinator: DisplayCoordinator {
 
-    
-
     private enum LockState {
         case unlocked
         case locked
@@ -56,6 +54,7 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
     func messageFinishedDisplaying(_ message: InAppMessage) {
         self.startUnlockTask()
     }
+
 
     @MainActor
     private func startUnlockTask() {

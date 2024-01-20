@@ -5,7 +5,7 @@ import Combine
 
 typealias PermissionResultReceiver = @Sendable (
     AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus
-) -> Void
+) async -> Void
 
 protocol PermissionPrompter {
 

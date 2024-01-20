@@ -5,12 +5,13 @@ import SwiftUI
 
 /// - Note: for internal use only.  :nodoc:
 @objc(UAThomasDelegate)
-public protocol ThomasDelegate {
+public protocol ThomasDelegate: Sendable {
 
     /// Called when a form is submitted
     /// - Parameters:
     ///     - formResult: The form result.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onFormSubmitted(
         formResult: ThomasFormResult,
         layoutContext: ThomasLayoutContext
@@ -20,6 +21,7 @@ public protocol ThomasDelegate {
     /// - Parameters:
     ///     - formInfo: The form info.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onFormDisplayed(
         formInfo: ThomasFormInfo,
         layoutContext: ThomasLayoutContext
@@ -30,6 +32,7 @@ public protocol ThomasDelegate {
     ///     - buttonIdentifier: The button id.
     ///     - metadata: the reporting metadata.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onButtonTapped(
         buttonIdentifier: String,
         metadata: Any?,
@@ -39,6 +42,7 @@ public protocol ThomasDelegate {
     /// Called when the view is dismissed.
     /// - Parameters:
     ///     - layoutContext: The layout context.
+    @MainActor
     func onDismissed(layoutContext: ThomasLayoutContext?)
 
     /// Called when the view is dismissed from a button tap.
@@ -47,6 +51,7 @@ public protocol ThomasDelegate {
     ///     - buttonDescription: The button description.
     ///     - cancel: If the view should be cancelled.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onDismissed(
         buttonIdentifier: String,
         buttonDescription: String,
@@ -57,12 +62,14 @@ public protocol ThomasDelegate {
     /// Called when a form is dismissed because it timed out.
     /// - Parameters:
     ///     - layoutContext: The layout context.
+    @MainActor
     func onTimedOut(layoutContext: ThomasLayoutContext?)
 
     /// Called when a pager page is viewed.
     /// - Parameters:
     ///     - pagerInfo: The pager info.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onPageViewed(
         pagerInfo: ThomasPagerInfo,
         layoutContext: ThomasLayoutContext
@@ -73,6 +80,7 @@ public protocol ThomasDelegate {
     ///     - identifier: The pager gesture identifier.
     ///     - metadata: the reporting metadata.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onPageGesture(
         identifier: String,
         metadata: Any?,
@@ -84,6 +92,7 @@ public protocol ThomasDelegate {
     ///     - identifier: The automated action identifier.
     ///     - metadata: the reporting metadata.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onPageAutomatedAction(
         identifier: String,
         metadata: Any?,
@@ -95,6 +104,7 @@ public protocol ThomasDelegate {
     ///     - from: The originated pager info
     ///     - to: The resulting pager info
     ///     - layoutContext: The layout context.
+    @MainActor
     func onPageSwiped(
         from: ThomasPagerInfo,
         to: ThomasPagerInfo,
@@ -108,6 +118,7 @@ public protocol ThomasDelegate {
     ///     - startingStatus: The starting status.
     ///     - endingStatus: The ending status.
     ///     - layoutContext: The layout context.
+    @MainActor
     func onPromptPermissionResult(
         permission: AirshipPermission,
         startingStatus: AirshipPermissionStatus,

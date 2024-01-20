@@ -121,6 +121,26 @@ class InAppMessageAnalyticsTest: XCTestCase {
         XCTAssertEqual(data.renderedLocale, AirshipJSON.string("rendered locale"))
         XCTAssertEqual(data.event.name, "test_event")
     }
+
+    func testReportingDisabled() async throws {
+        let analytics = InAppMessageAnalytics(
+            scheduleID: self.scheduleID,
+            message: InAppMessage(
+                name: "name",
+                displayContent: .custom(.string("custom")),
+                source: .legacyPush,
+                isReportingEnabled: false,
+                renderedLocale: AirshipJSON.string("rendered locale")
+            ),
+            campaigns: self.campaigns,
+            reportingMetadata: self.reportingMetadata,
+            experimentResult: self.experimentResult,
+            eventRecorder: eventRecorder
+        )
+
+        analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
+        XCTAssertTrue(self.eventRecorder.eventData.isEmpty)
+    }
 }
 
 final class EventRecorder: InAppEventRecorderProtocol, @unchecked Sendable {

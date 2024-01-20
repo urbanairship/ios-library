@@ -139,7 +139,7 @@ class EnableFeatureActionTest: XCTestCase {
         let resultReceived = self.expectation(description: "Result received")
 
         let resultRecevier:
-         @Sendable (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) -> Void = {
+         @Sendable (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) async -> Void = {
                 permission,
                 start,
                 end in

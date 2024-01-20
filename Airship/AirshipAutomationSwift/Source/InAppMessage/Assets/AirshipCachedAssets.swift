@@ -18,6 +18,16 @@ public protocol AirshipCachedAssetsProtocol: Sendable {
     func isCached(remoteURL: URL) -> Bool
 }
 
+struct EmptyAirshipCachedAssets: AirshipCachedAssetsProtocol {
+    func cachedURL(remoteURL: URL) -> URL? {
+        return nil
+    }
+    
+    func isCached(remoteURL: URL) -> Bool {
+        return false
+    }
+}
+
 struct AirshipCachedAssets: AirshipCachedAssetsProtocol, Equatable {
     static func == (lhs: AirshipCachedAssets, rhs: AirshipCachedAssets) -> Bool {
         lhs.directory == rhs.directory

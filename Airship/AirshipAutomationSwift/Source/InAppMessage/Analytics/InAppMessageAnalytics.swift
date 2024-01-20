@@ -10,6 +10,16 @@ protocol InAppMessageAnalyticsProtocol: Sendable {
     func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?)
 }
 
+final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
+    func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
+        if let layoutContext = layoutContext {
+            print("Event added: \(event) context: \(layoutContext)")
+        } else {
+            print("Event added: \(event)")
+        }
+    }
+}
+
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let messageID: InAppEventMessageID
     private let source: InAppEventSource
@@ -17,6 +27,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let reportingMetadata: AirshipJSON?
     private let experimentResult: ExperimentResult?
     private let eventRecorder: InAppEventRecorderProtocol
+    private let isReportingEnabled: Bool
 
     init(
         scheduleID: String,
@@ -32,9 +43,12 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         self.reportingMetadata = reportingMetadata
         self.experimentResult = experimentResult
         self.eventRecorder = eventRecorder
+        self.isReportingEnabled = message.isReportingEnabled ?? true
     }
 
     func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
+        guard self.isReportingEnabled else { return }
+
         let data = InAppEventData(
             event: event, 
             context: InAppEventContext.makeContext(

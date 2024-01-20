@@ -14,17 +14,20 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let assetManager: AssetCacheManagerProtocol
     private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
     private let conditionsChangedNotifier: Notifier
+    private let actionRunner: AutomationActionRunnerProtocol
 
     init(
         sceneManager: InAppMessageSceneManagerProtocol,
         assetManager: AssetCacheManagerProtocol,
         analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
-        conditionsChangedNotifier: Notifier
+        conditionsChangedNotifier: Notifier,
+        actionRunner: AutomationActionRunnerProtocol = AutomationActionRunner()
     ) {
         self.sceneManager = sceneManager
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.conditionsChangedNotifier = conditionsChangedNotifier
+        self.actionRunner = actionRunner
     }
 
     @MainActor
@@ -84,7 +87,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     }
 
     @MainActor
-    func execute(data: PreparedInAppMessageData, preparedScheduleInfo: PreparedScheduleInfo) async throws {
+    func execute(data: PreparedInAppMessageData, preparedScheduleInfo: PreparedScheduleInfo) async throws -> ScheduleExecuteResult {
         let scene = try self.sceneManager.scene(forMessage: data.message)
 
         // Display
@@ -98,6 +101,8 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             preparedScheduleInfo: preparedScheduleInfo
         )
 
+        var result: ScheduleExecuteResult = .finished
+        
         let experimentResult = preparedScheduleInfo.experimentResult
         if let experimentResult = experimentResult, experimentResult.isMatch {
             analytics.recordEvent(
@@ -105,7 +110,22 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                 layoutContext: nil
             )
         } else {
-            await data.displayAdapter.display(scene: scene, analytics: analytics)
+            do {
+                let displayResult = try await data.displayAdapter.display(scene: scene, analytics: analytics)
+                switch (displayResult) {
+                case .cancel:
+                    result = .cancel
+                case .finished:
+                    result = .finished
+                }
+
+                if let actions = data.message.actions  {
+                    actionRunner.runActionsAsync(actions, situation: .manualInvocation, metadata: [:])
+                }
+            } catch {
+                AirshipLogger.error("Failed to display message \(error)")
+                result = .retry
+            }
         }
 
         // Finished
@@ -116,7 +136,11 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
        )
 
         // Clean up assets
-        await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
+        if (result != .retry) {
+            await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
+        }
+
+        return result
     }
 
     func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {

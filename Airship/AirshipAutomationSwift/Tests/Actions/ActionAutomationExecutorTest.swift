@@ -19,11 +19,12 @@ class ActionAutomationExecutorTest: XCTestCase {
     }
 
     func testExecute() async throws {
-        await self.executor.execute(data: actions, preparedScheduleInfo: preparedScheduleInfo)
+        let result = await self.executor.execute(data: actions, preparedScheduleInfo: preparedScheduleInfo)
 
         XCTAssertEqual(self.actionRunner.actions, actions)
         XCTAssertEqual(self.actionRunner.situation, .automation)
         XCTAssertTrue(self.actionRunner.metadata!.isEmpty)
+        XCTAssertEqual(result, .finished)
     }
 
     func testIsReady() async throws {
@@ -32,16 +33,4 @@ class ActionAutomationExecutorTest: XCTestCase {
     }
 }
 
-fileprivate final class TestActionRunner: AutomationActionRunner, @unchecked Sendable {
-
-    var actions: AirshipJSON?
-    var situation: ActionSituation?
-    var metadata: [String: Sendable]?
-
-    func runActions(_ actions: AirshipCore.AirshipJSON, situation: ActionSituation, metadata: [String : Sendable]) async {
-        self.actions = actions
-        self.situation = situation
-        self.metadata = metadata
-    }
-}
 

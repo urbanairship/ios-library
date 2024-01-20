@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-struct PageViewSummary: Encodable, Sendable {
+struct PageViewSummary: Encodable, Sendable, Equatable {
     let identifier: String
     let index: Int
     let displayTime: TimeInterval

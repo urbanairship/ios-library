@@ -15,5 +15,14 @@ protocol DisplayAdapter: Sendable {
     func waitForReady() async
 
     @MainActor
-    func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async
+    func display(
+        scene: WindowSceneHolder,
+        analytics: InAppMessageAnalyticsProtocol
+    ) async throws -> DisplayResult
+}
+
+
+enum DisplayResult: Sendable, Equatable {
+    case cancel
+    case finished
 }

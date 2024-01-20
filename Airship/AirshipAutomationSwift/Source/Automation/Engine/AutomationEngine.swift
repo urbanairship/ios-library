@@ -147,3 +147,11 @@ enum ScheduleReadyResult: Sendable {
 }
 
 
+/// Schedule execute result
+enum ScheduleExecuteResult: Sendable {
+    case cancel
+    case finished
+    case retry
+}
+
+

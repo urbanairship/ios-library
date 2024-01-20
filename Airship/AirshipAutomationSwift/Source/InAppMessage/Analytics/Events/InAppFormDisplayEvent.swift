@@ -2,9 +2,21 @@
 
 import Foundation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 struct InAppFormDisplayEvent: InAppEvent {
     let name: String = "in_app_form_display"
     let data: (Sendable&Encodable)?
+
+    init(formInfo: ThomasFormInfo) {
+        self.init(
+            identifier: formInfo.identifier,
+            formType: formInfo.formType,
+            responseType: formInfo.formResponseType
+        )
+    }
 
     init(identifier: String, formType: String, responseType: String?) {
         self.data = FormDisplayData(

@@ -66,6 +66,37 @@ public class Thomas: NSObject {
         )
     }
 
+    @MainActor
+    public class func display(
+        layout: AirshipLayout,
+        scene: UIWindowScene,
+        extensions: ThomasExtensions? = nil,
+        delegate: ThomasDelegate
+    ) throws {
+        switch layout.presentation {
+        case .banner(let presentation):
+            _ = try bannerDisplay(
+                presentation,
+                scene: scene,
+                layout: layout,
+                extensions: extensions,
+                delegate: delegate
+            )()
+        case .modal(let presentation):
+            _ = modalDisplay(
+                presentation,
+                scene: scene,
+                layout: layout,
+                extensions: extensions,
+                delegate: delegate
+            )()
+        case .embedded(let presentation):
+            AirshipEmbeddedViewManager.shared.addPending(
+                presentation: presentation, layout: layout, extensions: extensions, delegate: delegate
+            )
+        }
+    }
+
     @objc
     @discardableResult
     @MainActor
@@ -93,7 +124,7 @@ public class Thomas: NSObject {
             guard let scene = scene() else {
                 throw AirshipErrors.error("Unable to get scene")
             }
-            return try modalDisplay(
+            return modalDisplay(
                 presentation,
                 scene: scene,
                 layout: layout,
@@ -109,8 +140,6 @@ public class Thomas: NSObject {
                 return Disposable {
                 }
             }
-
-
         }
     }
 
@@ -203,7 +232,7 @@ public class Thomas: NSObject {
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
-    ) throws -> () -> Disposable {
+    ) -> () -> Disposable {
 
         var window: UIWindow? = UIWindow(windowScene: scene)
         window?.accessibilityViewIsModal = true

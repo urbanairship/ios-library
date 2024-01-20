@@ -6,19 +6,14 @@ import Foundation
 import AirshipCore
 #endif
 
-/// Action runner
-protocol AutomationActionRunner: Sendable {
-    func runActions(_ actions: AirshipJSON, situation: ActionSituation, metadata: [String: Sendable]) async
-}
-
 struct ActionAutomationExecutor: AutomationExecutorDelegate {
     typealias PrepareDataIn = AirshipJSON
     typealias PrepareDataOut = AirshipJSON
     typealias ExecutionData = AirshipJSON
 
-    private let actionRunner: AutomationActionRunner
+    private let actionRunner: AutomationActionRunnerProtocol
 
-    init(actionRunner: AutomationActionRunner = DefaultRunner()) {
+    init(actionRunner: AutomationActionRunnerProtocol = AutomationActionRunner()) {
         self.actionRunner = actionRunner
     }
 
@@ -26,20 +21,12 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
         return .ready
     }
 
-    func execute(data: AirshipJSON, preparedScheduleInfo: PreparedScheduleInfo) async {
+    func execute(data: AirshipJSON, preparedScheduleInfo: PreparedScheduleInfo) async -> ScheduleExecuteResult {
         await actionRunner.runActions(data, situation: .automation, metadata: [:])
+        return .finished
     }
 
     func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
         // no-op
     }
 }
-
-/// Default action runner
-fileprivate struct DefaultRunner: AutomationActionRunner {
-    func runActions(_ actions: AirshipJSON, situation: ActionSituation, metadata: [String: Sendable]) async {
-        await ActionRunner.run(actionsPayload: actions, situation: .automation, metadata: metadata)
-    }
-}
-
-
