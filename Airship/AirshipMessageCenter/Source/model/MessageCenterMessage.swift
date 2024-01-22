@@ -151,4 +151,20 @@ extension MessageCenterMessage {
         }
         return false
     }
+
+    /// Default hash implementation hashes the memory address by default which is always unique and can become out-of-sync with isEquals
+    public override var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(title)
+        hasher.combine(id)
+        hasher.combine(bodyURL)
+        hasher.combine(expirationDate)
+        hasher.combine(unread)
+        hasher.combine(sentDate)
+        hasher.combine(messageURL)
+        hasher.combine(extra)
+        hasher.combine(messageReporting)
+        hasher.combine(rawMessageObject)
+        return hasher.finalize()
+    }
 }
