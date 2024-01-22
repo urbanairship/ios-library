@@ -341,6 +341,16 @@
 		6E1A9BB92B5B20A500A6489B /* InAppMessageDisplayListenerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BB82B5B20A500A6489B /* InAppMessageDisplayListenerTest.swift */; };
 		6E1A9BBB2B5B20D700A6489B /* TestInAppMessageAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BBA2B5B20D700A6489B /* TestInAppMessageAnalytics.swift */; };
 		6E1A9BBD2B5B290200A6489B /* ThomasDisplayListenerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BBC2B5B290200A6489B /* ThomasDisplayListenerTest.swift */; };
+		6E1A9BBF2B5EE19000A6489B /* PreparedSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BBE2B5EE19000A6489B /* PreparedSchedule.swift */; };
+		6E1A9BC12B5EE1CF00A6489B /* SchedulePrepareResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BC02B5EE1CF00A6489B /* SchedulePrepareResult.swift */; };
+		6E1A9BC32B5EE1DE00A6489B /* ScheduleReadyResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BC22B5EE1DE00A6489B /* ScheduleReadyResult.swift */; };
+		6E1A9BC52B5EE1EE00A6489B /* ScheduleExecuteResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BC42B5EE1EE00A6489B /* ScheduleExecuteResult.swift */; };
+		6E1A9BC72B5EE32E00A6489B /* AutomationTriggerProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BC62B5EE32E00A6489B /* AutomationTriggerProcessor.swift */; };
+		6E1A9BC92B5EE34600A6489B /* AutomationEventFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BC82B5EE34600A6489B /* AutomationEventFeed.swift */; };
+		6E1A9BCD2B5EE46A00A6489B /* AutomationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BCC2B5EE46A00A6489B /* AutomationStore.swift */; };
+		6E1A9BD12B5EE84600A6489B /* AutomationScheduleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */; };
+		6E1A9BD32B5EE8A400A6489B /* AutomationScheduleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */; };
+		6E1A9BD52B5EE97000A6489B /* TriggeringInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */; };
 		6E1BACDB2719ED7D0038399E /* ScrollLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */; };
 		6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDC2719FC0A0038399E /* ViewFactory.swift */; };
 		6E1BACE7271E1B6E0038399E /* ThomasViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */; };
@@ -2427,6 +2437,16 @@
 		6E1A9BB82B5B20A500A6489B /* InAppMessageDisplayListenerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayListenerTest.swift; sourceTree = "<group>"; };
 		6E1A9BBA2B5B20D700A6489B /* TestInAppMessageAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInAppMessageAnalytics.swift; sourceTree = "<group>"; };
 		6E1A9BBC2B5B290200A6489B /* ThomasDisplayListenerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDisplayListenerTest.swift; sourceTree = "<group>"; };
+		6E1A9BBE2B5EE19000A6489B /* PreparedSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedSchedule.swift; sourceTree = "<group>"; };
+		6E1A9BC02B5EE1CF00A6489B /* SchedulePrepareResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchedulePrepareResult.swift; sourceTree = "<group>"; };
+		6E1A9BC22B5EE1DE00A6489B /* ScheduleReadyResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleReadyResult.swift; sourceTree = "<group>"; };
+		6E1A9BC42B5EE1EE00A6489B /* ScheduleExecuteResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleExecuteResult.swift; sourceTree = "<group>"; };
+		6E1A9BC62B5EE32E00A6489B /* AutomationTriggerProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTriggerProcessor.swift; sourceTree = "<group>"; };
+		6E1A9BC82B5EE34600A6489B /* AutomationEventFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventFeed.swift; sourceTree = "<group>"; };
+		6E1A9BCC2B5EE46A00A6489B /* AutomationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationStore.swift; sourceTree = "<group>"; };
+		6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleData.swift; sourceTree = "<group>"; };
+		6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleState.swift; sourceTree = "<group>"; };
+		6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggeringInfo.swift; sourceTree = "<group>"; };
 		6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollLayout.swift; sourceTree = "<group>"; };
 		6E1BACDC2719FC0A0038399E /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewModels.swift; sourceTree = "<group>"; };
@@ -5209,6 +5229,16 @@
 				6E986EE32B448D3C00FBE6A0 /* AutomationEngine.swift */,
 				6EC0CA672B49287100333A87 /* AutomationExecutor.swift */,
 				6EC0CA5B2B48C2F500333A87 /* AutomationPreparer.swift */,
+				6E1A9BBE2B5EE19000A6489B /* PreparedSchedule.swift */,
+				6E1A9BC22B5EE1DE00A6489B /* ScheduleReadyResult.swift */,
+				6E1A9BC02B5EE1CF00A6489B /* SchedulePrepareResult.swift */,
+				6E1A9BC42B5EE1EE00A6489B /* ScheduleExecuteResult.swift */,
+				6E1A9BC62B5EE32E00A6489B /* AutomationTriggerProcessor.swift */,
+				6E1A9BC82B5EE34600A6489B /* AutomationEventFeed.swift */,
+				6E1A9BCC2B5EE46A00A6489B /* AutomationStore.swift */,
+				6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */,
+				6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */,
+				6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -7429,6 +7459,7 @@
 				6EE6AAC92B58A947002FEA75 /* InAppEventRecorder.swift in Sources */,
 				6EDF1DB82B2BB2B800E23BC4 /* RetryingQueue.swift in Sources */,
 				6EE6AACD2B58A947002FEA75 /* InAppEvent.swift in Sources */,
+				6E1A9BC12B5EE1CF00A6489B /* SchedulePrepareResult.swift in Sources */,
 				6E15281B2B4DC3DF00DF1377 /* InAppMessageAutomationExecutor.swift in Sources */,
 				6E1A9BB02B5B0C4C00A6489B /* AutomationActionRunner.swift in Sources */,
 				6E986F0E2B473EC700FBE6A0 /* AutomationRemoteDataAccess.swift in Sources */,
@@ -7445,6 +7476,7 @@
 				6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */,
 				6E0F4BE92B3264A400673CA4 /* DeferredAutomationData.swift in Sources */,
 				6E1528332B4DF2E600DF1377 /* Notifier.swift in Sources */,
+				6E1A9BC52B5EE1EE00A6489B /* ScheduleExecuteResult.swift in Sources */,
 				6E16208D2B3116AE009240B2 /* ImmediateDisplayCoordinator.swift in Sources */,
 				99E8D7BB2B50A7C20099B6F3 /* InAppMessageResolutionDelegate.swift in Sources */,
 				6EDF1DA42B2A2C6F00E23BC4 /* InAppMessageColor.swift in Sources */,
@@ -7452,6 +7484,7 @@
 				6E1528192B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift in Sources */,
 				6E1528372B4E11E800DF1377 /* CustomDisplayAdapterWrapper.swift in Sources */,
 				6EC0CA532B48A2C300333A87 /* AutomationAudience.swift in Sources */,
+				6E1A9BC92B5EE34600A6489B /* AutomationEventFeed.swift in Sources */,
 				99E8D7C12B50E5F40099B6F3 /* InAppMessageRootView.swift in Sources */,
 				99E8D7CB2B54A6340099B6F3 /* FullScreenTheme.swift in Sources */,
 				6EE6AACA2B58A947002FEA75 /* InAppPermissionResultEvent.swift in Sources */,
@@ -7468,7 +7501,10 @@
 				6E986F062B47319E00FBE6A0 /* DeferredScheduleResult.swift in Sources */,
 				6E986EF92B44D41E00FBE6A0 /* InAppAutomation.swift in Sources */,
 				6E1528392B4E13D400DF1377 /* AirshipLayoutDisplayAdapter.swift in Sources */,
+				6E1A9BD32B5EE8A400A6489B /* AutomationScheduleState.swift in Sources */,
 				6EE6AAD02B58A947002FEA75 /* InAppButtonTapEvent.swift in Sources */,
+				6E1A9BBF2B5EE19000A6489B /* PreparedSchedule.swift in Sources */,
+				6E1A9BD12B5EE84600A6489B /* AutomationScheduleData.swift in Sources */,
 				3231128C29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodeld in Sources */,
 				6EE6AAC72B58A947002FEA75 /* InAppPageSwipeEvent.swift in Sources */,
 				60FCA3052B4F1110005C9232 /* LegacyInAppMessaging.swift in Sources */,
@@ -7488,8 +7524,10 @@
 				6EE6AAC82B58A947002FEA75 /* InAppGestureEvent.swift in Sources */,
 				60FCA3072B4F1C73005C9232 /* LegacyInAppMessage.swift in Sources */,
 				6EDF1D9C2B2A287A00E23BC4 /* InAppMessageButtonLayoutType.swift in Sources */,
+				6E1A9BC72B5EE32E00A6489B /* AutomationTriggerProcessor.swift in Sources */,
 				6EE6AA202B4F5246002FEA75 /* InAppMessageSceneManager.swift in Sources */,
 				6EE6AAFD2B58AA4F002FEA75 /* InAppEventContext.swift in Sources */,
+				6E1A9BD52B5EE97000A6489B /* TriggeringInfo.swift in Sources */,
 				6E986F022B46146D00FBE6A0 /* PersistantStore.swift in Sources */,
 				6E15282C2B4DE81E00DF1377 /* AutomationSDKModule.swift in Sources */,
 				99E0BD0D2B4DD4AB00465B37 /* FullScreenView.swift in Sources */,
@@ -7503,10 +7541,12 @@
 				6EC0CA682B49287100333A87 /* AutomationExecutor.swift in Sources */,
 				6E1528222B4DC5C000DF1377 /* InAppMessageDisplayDelegate.swift in Sources */,
 				99E8D7BD2B50AA060099B6F3 /* InAppMessageEnvironment.swift in Sources */,
+				6E1A9BC32B5EE1DE00A6489B /* ScheduleReadyResult.swift in Sources */,
 				6E0F4BE22B32190400673CA4 /* AutomationSchedule.swift in Sources */,
 				6E986EE42B448D3C00FBE6A0 /* AutomationEngine.swift in Sources */,
 				6E0F4BE72B32646000673CA4 /* AutomationDelay.swift in Sources */,
 				3231126A29D5E4F600CF0D86 /* AutomationResources.swift in Sources */,
+				6E1A9BCD2B5EE46A00A6489B /* AutomationStore.swift in Sources */,
 				6EC0CA812B4C812A00333A87 /* DisplayAdapter.swift in Sources */,
 				6EE6AB182B59E80E002FEA75 /* ThomasDisplayListener.swift in Sources */,
 				6E1528312B4DED8900DF1377 /* InAppMessageAnalyticsFactory.swift in Sources */,

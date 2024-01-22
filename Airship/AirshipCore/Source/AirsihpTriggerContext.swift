@@ -3,7 +3,7 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-public struct AirshipTriggerContext: Encodable, Sendable, Equatable {
+public struct AirshipTriggerContext: Codable, Sendable, Equatable {
     let type: String
     let goal: Double
     let event: AirshipJSON

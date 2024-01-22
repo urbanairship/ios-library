@@ -148,7 +148,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     }
 
     private func prepareData(
-        data: AutomationScheduleData,
+        data: AutomationSchedule.ScheduleData,
         deviceInfoProvider: AudienceDeviceInfoProvider,
         scheduleInfo: PreparedScheduleInfo,
         frequencyChecker: FrequencyCheckerProtocol?,
@@ -209,7 +209,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         schedule: AutomationSchedule,
         frequencyChecker: FrequencyCheckerProtocol?,
         retryState: RetryingQueue<SchedulePrepareResult>.State,
-        onResult: @escaping @Sendable (AutomationScheduleData) async throws -> RetryingQueue<SchedulePrepareResult>.Result
+        onResult: @escaping @Sendable (AutomationSchedule.ScheduleData) async throws -> RetryingQueue<SchedulePrepareResult>.Result
     ) async throws -> RetryingQueue<SchedulePrepareResult>.Result {
 
         guard let channelID = deviceInfoProvider.channelID else {
@@ -224,7 +224,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
         )
 
-        if let cached: AutomationScheduleData = await retryState.value(key: Self.deferredResultKey) {
+        if let cached: AutomationSchedule.ScheduleData = await retryState.value(key: Self.deferredResultKey) {
             return try await onResult(cached)
         }
 

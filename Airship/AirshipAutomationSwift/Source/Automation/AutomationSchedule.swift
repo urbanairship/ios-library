@@ -9,6 +9,20 @@ import AirshipCore
 
 /// Automation schedule
 public struct AutomationSchedule: Sendable, Codable, Equatable {
+
+    /// Schedule data
+    public enum ScheduleData: Sendable, Equatable {
+        /// Actions
+        case actions(AirshipJSON)
+
+        /// In-App message
+        case inAppMessage(InAppMessage)
+
+        /// Deferred
+        /// NOTE: For internal use only. :nodoc:
+        case deferred(DeferredAutomationData)
+    }
+
     ///  The schedule ID.
     public let identifier: String
     
@@ -42,7 +56,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     public var interval: TimeInterval?
 
     /// Schedule data
-    public var data: AutomationScheduleData
+    public var data: ScheduleData
 
     /// If the schedule should bypass holdout groups or not
     public var bypassHoldoutGroups: Bool?
@@ -100,7 +114,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     public init(
         identifier: String,
         triggers: [AutomationTrigger],
-        data: AutomationScheduleData,
+        data: ScheduleData,
         group: String? = nil,
         priority: Int? = nil,
         limit: UInt? = nil,
@@ -137,7 +151,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
 
     init(
         identifier: String,
-        data: AutomationScheduleData,
+        data: ScheduleData,
         triggers: [AutomationTrigger],
         created: Date? = nil,
         lastUpdated: Date? = nil,
@@ -268,18 +282,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     }
 }
 
-/// Schedule data
-public enum AutomationScheduleData: Sendable, Equatable {
-    /// Actions
-    case actions(AirshipJSON)
 
-    /// In-App message
-    case inAppMessage(InAppMessage)
-
-    /// Deferred
-    /// NOTE: For internal use only. :nodoc:
-    case deferred(DeferredAutomationData)
-}
 
 fileprivate extension String {
     func toDate() -> Date? {

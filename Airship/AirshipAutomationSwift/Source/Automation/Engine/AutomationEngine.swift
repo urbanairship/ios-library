@@ -34,6 +34,7 @@ final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
     private let executor: AutomationExecutor
     private let preparer: AutomationPreparer
     private let conditionsChangedNotifier: Notifier
+    private let queue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
 
     init(
@@ -45,7 +46,6 @@ final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
         self.preparer = preparer
         self.conditionsChangedNotifier = conditionsChangedNotifier
     }
-
 
     func start() {
         Task {
@@ -88,70 +88,13 @@ final class AutomationEngine : AutomationEngineProtocol, @unchecked Sendable {
     }
 
     func scheduleConditionsChanged() {
-
-    }
-
-}
-
-/// A prepared schedule
-struct PreparedSchedule: Sendable {
-    let info: PreparedScheduleInfo
-    let data: PreparedScheduleData
-    let frequencyChecker: FrequencyCheckerProtocol?
-}
-
-/// Persisted info for a schedule that has been prepared for execution
-struct PreparedScheduleInfo: Codable, Equatable {
-    var scheduleID: String
-    var campaigns: AirshipJSON?
-    var contactID: String?
-    var experimentResult: ExperimentResult?
-    var reportingContext: AirshipJSON?
-
-    init(
-        scheduleID: String,
-        campaigns: AirshipJSON? = nil,
-        contactID: String? = nil,
-        experimentResult: ExperimentResult? = nil,
-        reportingContext: AirshipJSON? = nil
-    ) {
-        self.scheduleID = scheduleID
-        self.campaigns = campaigns
-        self.contactID = contactID
-        self.experimentResult = experimentResult
-        self.reportingContext = reportingContext
+        self.queue.enqueue {
+            
+        }
     }
 }
 
-/// Prepared schedule data
-enum PreparedScheduleData {
-    case inAppMessage(PreparedInAppMessageData)
-    case actions(AirshipJSON)
-}
-
-/// Schedule prepare result
-enum SchedulePrepareResult: Sendable {
-    case prepared(PreparedSchedule)
-    case cancel
-    case invalidate
-    case skip
-    case penalize
-}
-
-/// Schedule ready result
-enum ScheduleReadyResult: Sendable {
-    case ready
-    case invalidate
-    case notReady
-    case skip
-}
 
 
-/// Schedule execute result
-enum ScheduleExecuteResult: Sendable {
-    case cancel
-    case finished
-    case retry
-}
 
 
