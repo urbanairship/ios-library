@@ -75,7 +75,8 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
         return self.tags == other.tags &&
         self.attributes == other.attributes &&
         self.subscriptionLists == other.subscriptionLists &&
-        self.conflictingNamedUserID == other.conflictingNamedUserID
+        self.conflictingNamedUserID == other.conflictingNamedUserID &&
+        self.channels == other.channels
     }
 
     public override var hash: Int {
@@ -84,6 +85,7 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
         result = 31 * result + attributes.hashValue
         result = 31 * result + subscriptionLists.hashValue
         result = 31 * result + conflictingNamedUserID.hashValue
+        result = 31 * result + channels.hashValue
         return result
 
     }
