@@ -19,13 +19,14 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
         )
     }
 
+    @discardableResult
     public func addObserver(
         forName: NSNotification.Name,
         object: Any? = nil,
         queue: OperationQueue? = nil,
         using: @escaping (Notification) -> Void
-    ) {
-        self.notificationCenter.addObserver(
+    ) -> AnyObject {
+        return self.notificationCenter.addObserver(
             forName: forName,
             object: object,
             queue: queue,

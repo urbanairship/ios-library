@@ -106,7 +106,7 @@ actor ContactManager: ContactManagerProtocol {
         (
             self.contactUpdates,
             self.contactUpdatesContinuation
-        ) = AsyncStream<ContactUpdate>.makeStreamWithContinuation()
+        ) = AsyncStream<ContactUpdate>.airshipMakeStreamWithContinuation()
 
         self.workManager.registerWorker(
             ContactManager.updateTaskID,

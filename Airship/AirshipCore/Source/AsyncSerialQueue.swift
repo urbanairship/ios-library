@@ -11,7 +11,7 @@ public final class AirshipAsyncSerialQueue : Sendable {
         (
             self.stream,
             self.continuation
-        ) = AsyncStream<@Sendable () async -> Void>.makeStreamWithContinuation()
+        ) = AsyncStream<@Sendable () async -> Void>.airshipMakeStreamWithContinuation()
 
         Task.detached(priority: priority) {
             for await next in self.stream {

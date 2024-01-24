@@ -545,7 +545,7 @@ final class TestSessionTracker: SessionTrackerProtocol {
     }
 
     init() {
-        (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.makeStreamWithContinuation()
+        (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.airshipMakeStreamWithContinuation()
     }
 
     func airshipReady() {

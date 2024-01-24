@@ -104,7 +104,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.date = date
         self.cachedSubscriptionLists = CachedValue(date: date)
         self.audienceOverridesProvider = audienceOverridesProvider
-        (self.liveActivityUpdates, self.liveActivityUpdatesContinuation) = AsyncStream<[LiveActivityUpdate]>.makeStreamWithContinuation()
+        (self.liveActivityUpdates, self.liveActivityUpdatesContinuation) = AsyncStream<[LiveActivityUpdate]>.airshipMakeStreamWithContinuation()
 
         self.workManager.registerWorker(
             ChannelAudienceManager.updateTaskID,

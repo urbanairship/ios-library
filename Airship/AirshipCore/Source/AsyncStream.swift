@@ -2,8 +2,8 @@
 
 import Foundation
 
-extension AsyncStream {
-    static func makeStreamWithContinuation(
+public extension AsyncStream {
+    static func airshipMakeStreamWithContinuation(
         _ type: Element.Type = Element.self
     ) -> (Self, AsyncStream.Continuation) {
         var escapee: Continuation!

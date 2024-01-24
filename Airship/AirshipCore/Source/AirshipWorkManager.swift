@@ -157,7 +157,7 @@ private actor Workers {
     private var workerStream: AsyncStream<Worker>
 
     init() {
-        (self.workerStream, self.workerContinuation) = AsyncStream<Worker>.makeStreamWithContinuation()
+        (self.workerStream, self.workerContinuation) = AsyncStream<Worker>.airshipMakeStreamWithContinuation()
     }
 
     func addWorker(_ worker: Worker, workID: String) {

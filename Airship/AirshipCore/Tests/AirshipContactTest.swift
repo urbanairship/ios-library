@@ -827,7 +827,7 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
         (
             self.contactUpdates,
             self.contactUpdatesContinuation
-        ) = AsyncStream<ContactUpdate>.makeStreamWithContinuation()
+        ) = AsyncStream<ContactUpdate>.airshipMakeStreamWithContinuation()
     }
 
     func onAudienceUpdated(

@@ -47,7 +47,7 @@ final class SessionTracker: SessionTrackerProtocol {
         self.date = date
         self.taskSleeper = taskSleeper
         self.appStateTracker = appStateTracker
-        (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.makeStreamWithContinuation()
+        (self.events, self.eventsContinuation) = AsyncStream<SessionEvent>.airshipMakeStreamWithContinuation()
         self.sessionStateFactory = sessionStateFactory
         self._sessionState = Atomic(sessionStateFactory())
 

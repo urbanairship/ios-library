@@ -200,6 +200,7 @@
 		60FCA30D2B5534DB005C9232 /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
 		60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
 		60FCA30F2B55363E005C9232 /* PushTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CE761284137D600CF4B11 /* PushTest.swift */; };
+		60FCA3252B5EF3A8005C9232 /* AutomationEventFeedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */; };
 		6E032A502B210E6000404630 /* RemoteConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */; };
 		6E062D03271656DE001A74A1 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
 		6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D04271656F8001A74A1 /* LinearLayout.swift */; };
@@ -2326,6 +2327,7 @@
 		60FCA3062B4F1C73005C9232 /* LegacyInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessage.swift; sourceTree = "<group>"; };
 		60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessageTest.swift; sourceTree = "<group>"; };
 		60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessagingTest.swift; sourceTree = "<group>"; };
+		60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventFeedTest.swift; sourceTree = "<group>"; };
 		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
 		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigTest.swift; sourceTree = "<group>"; };
@@ -5248,6 +5250,7 @@
 			children = (
 				6EC0CA6A2B4B698000333A87 /* AutomationExecutorTest.swift */,
 				6EC0CA6C2B4B879800333A87 /* AutomationPreparerTest.swift */,
+				60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -7583,6 +7586,7 @@
 				6EE6AAEE2B58A9D5002FEA75 /* InAppPageActionEventTest.swift in Sources */,
 				6EC0CA512B4899DB00333A87 /* TestNetworkMonitor.swift in Sources */,
 				6EE6AA382B572897002FEA75 /* AutomationSourceInfoStoreTest.swift in Sources */,
+				60FCA3252B5EF3A8005C9232 /* AutomationEventFeedTest.swift in Sources */,
 				6EC0CA732B4B897B00333A87 /* TestExperimentDataProvider.swift in Sources */,
 				6EC0CA562B48B05600333A87 /* ActionAutomationExecutorTest.swift in Sources */,
 				6EE6AAE92B58A9D5002FEA75 /* InAppEventRecorderTest.swift in Sources */,

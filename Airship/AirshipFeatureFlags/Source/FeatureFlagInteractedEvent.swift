@@ -23,6 +23,10 @@ public class FeatureFlagInteractedEvent: NSObject, AirshipEvent {
         self.data = try FeatureFlagInteractedEvent.makeData(flag: flag)
         super.init()
     }
+    
+    public var name: String? {
+        return self.data[Key.name] as? String
+    }
 
     class func makeData(flag: FeatureFlag) throws -> [AnyHashable : Any] {
         guard let reportingInfo = flag.reportingInfo else {
@@ -30,9 +34,9 @@ public class FeatureFlagInteractedEvent: NSObject, AirshipEvent {
         }
 
         var data: [AnyHashable: Any] = [
-            "flag_name": flag.name,
-            "reporting_metadata": reportingInfo.reportingMetadata,
-            "eligible": flag.isEligible
+            Key.name: flag.name,
+            Key.metadata: reportingInfo.reportingMetadata,
+            Key.eligible: flag.isEligible
         ]
 
         var deviceInfo: [String : String] = [:]
@@ -40,10 +44,17 @@ public class FeatureFlagInteractedEvent: NSObject, AirshipEvent {
         deviceInfo["contact_id"] = reportingInfo.contactID
 
         if (!deviceInfo.isEmpty) {
-            data["device"] = deviceInfo
+            data[Key.device] = deviceInfo
         }
 
         return data
+    }
+    
+    private enum Key {
+        static let name = "flag_name"
+        static let metadata = "reporting_metadata"
+        static let eligible = "eligible"
+        static let device = "device"
     }
 }
 

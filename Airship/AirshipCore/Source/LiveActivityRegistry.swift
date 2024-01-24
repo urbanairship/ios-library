@@ -41,7 +41,7 @@ actor LiveActivityRegistry {
     ) {
         self.date = date
         self.dataStore = dataStore
-        (self.updates, self.updatesContinuation) = AsyncStream<LiveActivityUpdate>.makeStreamWithContinuation()
+        (self.updates, self.updatesContinuation) = AsyncStream<LiveActivityUpdate>.airshipMakeStreamWithContinuation()
     }
 
     /// For tests

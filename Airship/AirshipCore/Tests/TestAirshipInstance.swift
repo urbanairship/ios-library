@@ -131,3 +131,10 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     public func airshipReady() {
     }
 }
+
+class TestApplicationMetrics: ApplicationMetrics {
+    
+    var versionUpdated = false
+    
+    override var isAppVersionUpdated: Bool { return versionUpdated }
+}

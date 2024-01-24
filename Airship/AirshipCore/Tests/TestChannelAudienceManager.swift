@@ -16,7 +16,7 @@ class TestChannelAudienceManager: ChannelAudienceManagerProtocol, @unchecked Sen
         (
             self.liveActivityUpdates,
             self.liveActivityUpdatesContinuation
-        ) = AsyncStream<[LiveActivityUpdate]>.makeStreamWithContinuation()
+        ) = AsyncStream<[LiveActivityUpdate]>.airshipMakeStreamWithContinuation()
     }
 
     public let subscriptionListEditsSubject = PassthroughSubject<
