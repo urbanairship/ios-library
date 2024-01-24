@@ -189,7 +189,8 @@ class ThomasEnvironment: ObservableObject {
         if !self.isDismissed {
             self.isDismissed = true
             callback()
-            onDismiss?()
+            self.onDismiss?()
+            self.onDismiss = nil
         }
     }
 
