@@ -3,11 +3,15 @@
 import Foundation
 
 enum AutomationScheduleState: Int, Equatable, Sendable {
-    case idle = 0
-    case preparing = 6
-    case delayed = 5
-    case waitingScheduleConditions = 1
-    case executing = 2
-    case paused = 3
-    case finished = 4
+
+    case idle
+    case triggered
+    case prepared
+    case executing
+
+    // interval
+    case paused
+
+    // waiting ot be cleaned up after grace period
+    case finished
 }

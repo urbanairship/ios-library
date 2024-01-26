@@ -100,7 +100,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
         
         if let pending = self.pendingMessageId {
             do {
-                try await self.automationEngine.cancelSchedule(identifier: pending)
+                try await self.automationEngine.cancelSchedules(identifiers: [pending])
             } catch {
                 AirshipLogger.debug("Failed to cancel \(pending), \(error)")
             }
@@ -115,7 +115,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
         self.pendingMessageId = schedule.identifier
         
         do {
-            try await self.automationEngine.schedule([schedule])
+            try await self.automationEngine.upsertSchedules([schedule])
             AirshipLogger.debug("LegacyInAppMessageManager - schedule is saved \(schedule)")
         } catch {
             AirshipLogger.error("Failed to schedule \(schedule)")
@@ -199,7 +199,7 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
         
         Task {
             do {
-                try await self.automationEngine.cancelSchedule(identifier: messageId)
+                try await self.automationEngine.cancelSchedules(identifiers: [messageId])
             } catch {
                 AirshipLogger.debug("LegacyInAppMessageManager: failed to cancel \(messageId), \(error)")
             }

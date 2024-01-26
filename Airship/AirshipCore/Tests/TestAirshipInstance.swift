@@ -132,7 +132,7 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     }
 }
 
-class TestApplicationMetrics: ApplicationMetrics {
+class TestApplicationMetrics: ApplicationMetrics, @unchecked Sendable {
     
     var versionUpdated = false
     

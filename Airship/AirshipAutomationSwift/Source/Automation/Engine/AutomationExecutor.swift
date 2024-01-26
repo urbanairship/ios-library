@@ -21,7 +21,7 @@ protocol AutomationExecutorProtocol: Sendable {
     func interrupted(
         schedule: AutomationSchedule,
         preparedScheduleInfo: PreparedScheduleInfo
-    ) async
+    ) async -> InterruptedBehavior
 }
 
 protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
@@ -43,7 +43,7 @@ protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
     func interrupted(
         schedule: AutomationSchedule,
         preparedScheduleInfo: PreparedScheduleInfo
-    ) async
+    ) async -> InterruptedBehavior
 }
 
 
@@ -76,7 +76,7 @@ final class AutomationExecutor: AutomationExecutorProtocol {
         if (preparedSchedule.frequencyChecker?.checkAndIncrement() == false) {
             return .skip
         }
-
+        
         switch (preparedSchedule.data) {
         case .inAppMessage(let data):
             return self.messageExecutor.isReady(
@@ -115,8 +115,8 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     func interrupted(
         schedule: AutomationSchedule,
         preparedScheduleInfo: PreparedScheduleInfo
-    ) async {
-        if schedule.isInAppMessageType {
+    ) async -> InterruptedBehavior {
+        return if schedule.isInAppMessageType {
             await self.messageExecutor.interrupted(
                 schedule: schedule,
                 preparedScheduleInfo: preparedScheduleInfo
@@ -130,4 +130,7 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     }
 }
 
-
+enum InterruptedBehavior: Sendable {
+    case retry
+    case finish
+}

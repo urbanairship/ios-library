@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-protocol AutomationEventFeedProtocol {
+protocol AutomationEventFeedProtocol: Sendable {
     var feed: AsyncStream<AutomationEvent> { get }
 }
 
@@ -22,6 +22,8 @@ enum AutomationEvent: Sendable, Equatable {
     case featureFlagInterracted(data: AirshipJSON)
 }
 
+/// TODO make this sendable
+@MainActor
 final class AutomationEventFeed: AutomationEventFeedProtocol {
     typealias Stream = AsyncStream<AutomationEvent>
     
@@ -33,7 +35,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
     private let applicationMetrics: ApplicationMetrics
     
     let feed: Stream
-    
+
     init(
         metrics: ApplicationMetrics,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared

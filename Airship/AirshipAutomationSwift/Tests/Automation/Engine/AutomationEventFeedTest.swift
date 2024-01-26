@@ -21,13 +21,13 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         metrics.versionUpdated = true
         
         let airshipNotification = AirshipNotificationCenter(notificationCenter: notificaitonCenter)
-        subject = AutomationEventFeed(metrics: metrics, notificationCenter: airshipNotification)
-        
+        subject = await AutomationEventFeed(metrics: metrics, notificationCenter: airshipNotification)
+
         airship.applicationMetrics = metrics
         airship.components = [TestAnalytics()]
         airship.makeShared()
         
-        iterator = subject.feed.makeAsyncIterator()
+        iterator = await subject.feed.makeAsyncIterator()
     }
     
     override func tearDown() async throws {
@@ -35,29 +35,29 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     }
     
     func testFirstAttachProducesInitAndVersionUpdated() async throws {
-        subject.attach()
-        
+        await subject.attach()
+
         let events = await takeNext(count: 2)
         
         XCTAssertEqual([AutomationEvent.appInit, AutomationEvent.versionUpdated], events)
     }
     
     func testSubsequentAttachEmitsNoEvents() async throws {
-        subject.attach()
+        await subject.attach()
         var events = await takeNext(count: 2)
         
-        subject.attach()
+        await subject.attach()
         events = await takeNext()
         XCTAssert(events.isEmpty)
         
-        subject.detach().attach()
+        await subject.detach().attach()
         events = await takeNext()
         
         XCTAssert(events.isEmpty)
     }
     
     func testSupportedEvents() async throws {
-        subject.attach()
+        await subject.attach()
         await takeNext(count: 2)
         
         notificaitonCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
@@ -115,11 +115,11 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     }
     
     func testNoEventsAfterDetauch() async throws {
-        self.subject.attach()
+        await self.subject.attach()
         var events = await takeNext(count: 2)
         XCTAssert(events.count > 0)
         
-        subject.detach()
+        await subject.detach()
         notificaitonCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
         events = await takeNext()
         XCTAssert(events.isEmpty)
@@ -130,7 +130,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         let collectTask = Task {
             var result: [AutomationEvent] = []
-            var iterator = self.subject.feed.makeAsyncIterator()
+            var iterator = await self.subject.feed.makeAsyncIterator()
             while result.count < count, !Task.isCancelled {
                 if let next = await iterator.next() {
                     result.append(next)

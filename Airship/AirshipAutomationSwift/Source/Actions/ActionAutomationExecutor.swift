@@ -26,7 +26,7 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
         return .finished
     }
 
-    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
-        // no-op
+    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async -> InterruptedBehavior {
+        return .retry
     }
 }

@@ -68,7 +68,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let pendingMessageId = "pending"
         
         XCTAssertNil(subject.pendingMessageId)
-        XCTAssertNil(engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals(nil)
         
         subject.pendingMessageId = pendingMessageId
         
@@ -85,7 +85,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expectation], timeout: 5)
         
-        XCTAssertEqual(pendingMessageId, engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals(pendingMessageId)
         XCTAssertNil(subject.pendingMessageId)
     }
 
@@ -112,7 +112,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
     func testNotificationResponseDoesNothingOnIdMismatch() async throws {
         
         XCTAssertNil(subject.pendingMessageId)
-        XCTAssertNil(engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals(nil)
         
         subject.pendingMessageId = "mismatched"
         
@@ -130,13 +130,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await fulfillment(of: [expectation], timeout: 5)
         
         XCTAssertEqual("mismatched", subject.pendingMessageId)
-        XCTAssertNil(engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals(nil)
     }
     
     func testNotificationResponseDoesNothingIfNoPending() async throws {
         
         XCTAssertNil(subject.pendingMessageId)
-        XCTAssertNil(engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals(nil)
         
         let response = try UNNotificationResponse.with(userInfo: [
             "com.urbanairship.in_app": [],
@@ -152,7 +152,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await fulfillment(of: [expectation], timeout: 5)
         
         XCTAssertNil(subject.pendingMessageId)
-        XCTAssertNil(engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals(nil)
     }
     
     func testReceiveRemoteNotificationSchedulesMessageWithDefaults() async throws {
@@ -163,8 +163,8 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "alert": "test alert"
         ]
         
-        XCTAssertNil(engine.lastCancelledScheduleId)
-        XCTAssert(engine.schedules.isEmpty)
+        await assertLastCancalledScheduleIDEquals(nil)
+        await assertEmptySchedules()
         
         let expection = XCTestExpectation(description: "schedule legacy message")
         
@@ -177,9 +177,9 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         
-        XCTAssertEqual("some-pending", engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals("some-pending")
         XCTAssertEqual(messageId, subject.pendingMessageId)
         
         XCTAssertEqual(messageId, schedule.identifier)
@@ -272,8 +272,8 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "message_type": "test-message"
         ]
         
-        XCTAssertNil(engine.lastCancelledScheduleId)
-        XCTAssert(engine.schedules.isEmpty)
+        await assertLastCancalledScheduleIDEquals(nil)
+        await assertEmptySchedules()
         
         let expection = XCTestExpectation(description: "schedule legacy message")
         
@@ -286,9 +286,9 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         
-        XCTAssertEqual("some-pending", engine.lastCancelledScheduleId)
+        await assertLastCancalledScheduleIDEquals("some-pending")
         XCTAssertEqual(messageId, subject.pendingMessageId)
         
         XCTAssertEqual(messageId, schedule.identifier)
@@ -375,7 +375,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         
         let trigger = try XCTUnwrap(schedule.triggers.first)
         XCTAssertEqual(1.0, trigger.goal)
@@ -409,7 +409,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         XCTAssertEqual(overridenId, schedule.identifier)
     }
     
@@ -436,7 +436,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         let inAppMessage: InAppMessage
         switch schedule.data {
         case .inAppMessage(let message):
@@ -471,14 +471,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         XCTAssertEqual(extendedScheduleId, schedule.identifier)
     }
     
     func testReceiveRemoteIgnoresNonlegacyMessages() async throws {
         
-        XCTAssertNil(engine.lastCancelledScheduleId)
-        XCTAssert(engine.schedules.isEmpty)
+        await assertLastCancalledScheduleIDEquals(nil)
+        await assertEmptySchedules()
         
         let expection = XCTestExpectation(description: "schedule legacy message")
         
@@ -491,8 +491,8 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        XCTAssertNil(engine.lastCancelledScheduleId)
-        XCTAssert(engine.schedules.isEmpty)
+        await assertLastCancalledScheduleIDEquals(nil)
+        await assertEmptySchedules()
         XCTAssertEqual("some-pending", subject.pendingMessageId)
     }
     
@@ -504,7 +504,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "alert": "test alert"
         ]
         
-        XCTAssert(engine.schedules.isEmpty)
+        await assertEmptySchedules()
         
         let expection = XCTestExpectation(description: "schedule legacy message")
         
@@ -518,7 +518,8 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        XCTAssertTrue(engine.schedules.contains(where: { $0.identifier == messageId }))
+        let schedules = await engine.schedules
+        XCTAssertTrue(schedules.contains(where: { $0.identifier == messageId }))
         XCTAssertEqual(messageId, subject.pendingMessageId)
     }
     
@@ -529,7 +530,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "alert": "test alert"
         ]
         
-        XCTAssert(engine.schedules.isEmpty)
+        await assertEmptySchedules()
         
         let expection = XCTestExpectation(description: "schedule legacy message")
         
@@ -545,7 +546,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await fulfillment(of: [expection], timeout: 5)
 
-        let schedule = try XCTUnwrap(engine.schedules.first)
+        let schedule = try await requireFirstSchedule()
         
         switch schedule.data {
         case .inAppMessage(let message):
@@ -559,7 +560,22 @@ final class LegacyInAppMessagingTest: XCTestCase {
             fatalError("unsupported schedule data type")
         }
     }
-    
+
+    private func requireFirstSchedule(line: UInt = #line) async throws -> AutomationSchedule {
+        let schedule = await engine.schedules.first
+        return try XCTUnwrap(schedule)
+    }
+
+    private func assertEmptySchedules(line: UInt = #line) async {
+        let schedules = await engine.schedules
+        XCTAssert(schedules.isEmpty)
+    }
+
+    private func assertLastCancalledScheduleIDEquals(_ value: String?) async {
+        let lastCancelledScheduleId = await engine.cancelledSchedules.last
+        XCTAssertEqual(lastCancelledScheduleId, value)
+    }
+
     private func makePushComponent() async -> AirshipPush {
         return await AirshipPush(
             config: RuntimeConfig(

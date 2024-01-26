@@ -23,17 +23,17 @@ typedef NS_ENUM(NSUInteger, UAScheduleState) {
     /**
      * Schedule is waiting for its time delay to expire.
      */
-    UAScheduleStateTimeDelayed = 5,
+    UAScheduleStateTimeDelayed = 5, //prepared
+    /**
+     * Schedule is waiting for app state conditions to be met.
+     */
+    UAScheduleStateWaitingScheduleConditions = 1, /// prepared
 
     /**
      * Schedule is being prepared.
      */
-    UAScheduleStatePreparingSchedule = 6,
+    UAScheduleStatePreparingSchedule = 6, /// trigggered
 
-    /**
-     * Schedule is waiting for app state conditions to be met.
-     */
-    UAScheduleStateWaitingScheduleConditions = 1,
 
     /**
      * Schedule is executing.

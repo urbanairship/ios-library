@@ -7,7 +7,6 @@ import AirshipCore
 #endif
 
 struct TriggeringInfo: Equatable, Sendable, Codable {
-    var context: AirshipTriggerContext
+    var context: AirshipTriggerContext?
     var date: Date
 }
-

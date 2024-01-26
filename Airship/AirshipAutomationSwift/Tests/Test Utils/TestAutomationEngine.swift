@@ -6,8 +6,10 @@ import Combine
 @testable import AirshipAutomationSwift
 @testable import AirshipCore
 
-final class TestAutomationEngine: AutomationEngineProtocol, @unchecked Sendable {
+actor TestAutomationEngine: AutomationEngineProtocol {
+    @MainActor
     var isPaused: Bool = false
+    @MainActor
     var isExecutionPaused: Bool = false
     var isStarted: Bool = false
 
@@ -15,7 +17,17 @@ final class TestAutomationEngine: AutomationEngineProtocol, @unchecked Sendable 
     private var onStop: (@Sendable ([AutomationSchedule]) async throws -> Void)?
     private var onCancel: (@Sendable ([AutomationSchedule]) async throws -> Void)?
     
-    private(set) var lastCancelledScheduleId: String?
+    private(set) var cancelledSchedules: [String] = []
+
+    @MainActor
+    func setEnginePaused(_ paused: Bool) {
+        self.isPaused = true
+    }
+
+    @MainActor
+    func setExecutionPaused(_ paused: Bool) {
+        self.isExecutionPaused = true
+    }
 
 
     func start() {
@@ -27,7 +39,7 @@ final class TestAutomationEngine: AutomationEngineProtocol, @unchecked Sendable 
         self.onStop = onStop
     }
 
-    func stopSchedules(_ schedules: [AutomationSchedule]) async throws {
+    func stopSchedules(identifiers: [String]) async throws {
         try await self.onStop!(schedules)
     }
 
@@ -36,23 +48,42 @@ final class TestAutomationEngine: AutomationEngineProtocol, @unchecked Sendable 
     }
 
     func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
-        try await self.onUpsert!(schedules)
+        self.schedules.removeAll { schedule in
+            schedules.contains { incoming in
+                incoming.identifier == schedule.identifier
+            }
+        }
+
+        self.schedules.append(contentsOf: schedules)
+        try await self.onUpsert?(schedules)
     }
     
     func cancelSchedule(identifier: String) async throws {
-        self.lastCancelledScheduleId = identifier
-        self.schedules.removeAll(where: { $0.identifier == identifier })
+
     }
     
+    func cancelSchedules(identifiers: [String]) async throws {
+        self.cancelledSchedules.append(contentsOf: identifiers)
+
+        let set = Set(identifiers)
+        self.schedules.removeAll(where: { set.contains($0.identifier) })
+    }
+
     func cancelSchedules(group: String) async throws {
         throw AirshipErrors.error("Not implemented")
     }
-    
-    func schedule(_ schedules: [AutomationSchedule]) async throws {
+
+
+    private(set) var schedules: [AutomationSchedule] = []
+
+    func setSchedules(_ schedules: [AutomationSchedule]) {
         self.schedules = schedules
     }
-    
-    var schedules: [AutomationSchedule] = []
+
+    func getSchedule(identifier: String) async throws -> AutomationSchedule? {
+        throw AirshipErrors.error("Not implemented")
+
+    }
 
     func getSchedule(identifier: String) async throws -> AutomationSchedule {
         throw AirshipErrors.error("Not implemented")

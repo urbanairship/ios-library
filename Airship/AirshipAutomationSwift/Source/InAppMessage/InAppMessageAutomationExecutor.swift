@@ -13,20 +13,20 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let sceneManager: InAppMessageSceneManagerProtocol
     private let assetManager: AssetCacheManagerProtocol
     private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
-    private let conditionsChangedNotifier: Notifier
+    private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
     private let actionRunner: AutomationActionRunnerProtocol
 
     init(
         sceneManager: InAppMessageSceneManagerProtocol,
         assetManager: AssetCacheManagerProtocol,
         analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
-        conditionsChangedNotifier: Notifier,
+        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
         actionRunner: AutomationActionRunnerProtocol = AutomationActionRunner()
     ) {
         self.sceneManager = sceneManager
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
-        self.conditionsChangedNotifier = conditionsChangedNotifier
+        self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
         self.actionRunner = actionRunner
     }
 
@@ -57,18 +57,18 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
 
         guard data.displayAdapter.isReady else {
             AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) display adapter not ready")
-            Task { [conditionsChangedNotifier] in
+            Task { [scheduleConditionsChangedNotifier] in
                 await data.displayAdapter.waitForReady()
-                await conditionsChangedNotifier.notify()
+                scheduleConditionsChangedNotifier.notify()
             }
             return .notReady
         }
 
         guard data.displayCoordinator.isReady else {
             AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) display coordinator not ready")
-            Task { [conditionsChangedNotifier] in
+            Task { [scheduleConditionsChangedNotifier] in
                 await data.displayCoordinator.waitForReady()
-                await conditionsChangedNotifier.notify()
+                scheduleConditionsChangedNotifier.notify()
             }
             return .notReady
         }
@@ -143,9 +143,13 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         return result
     }
 
-    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
+    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async -> InterruptedBehavior {
         guard case .inAppMessage(let message) = schedule.data else {
-            return
+            return .finish
+        }
+
+        guard !message.isEmbedded else {
+            return .retry
         }
 
         let analytics = self.analyticsFactory.makeAnalytics(message: message, preparedScheduleInfo: preparedScheduleInfo)
@@ -155,6 +159,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         )
 
         await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
+        return .finish
     }
 
     /// Delegates holder so I can keep the executor sendable

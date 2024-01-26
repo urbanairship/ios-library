@@ -35,6 +35,8 @@ public class SDKDependencyKeys: NSObject {
     public static let experimentsProvider = "experiments"
     public static let meteredUsage = "metered_usage"
     public static let sceneManager = "scene_manager"
+    public static let applicationMetrics = "application_metrics"
+
 
 }
 
@@ -73,7 +75,8 @@ class ModuleLoader {
         experimentsManager: ExperimentDataProvider,
         meteredUsage: AirshipMeteredUsage,
         deferredResolver: AirshipDeferredResolverProtocol,
-        cache: AirshipCache
+        cache: AirshipCache,
+        metrics: ApplicationMetrics
     ) {
 
         var dependencies: [String: Any] = [
@@ -97,7 +100,8 @@ class ModuleLoader {
             SDKDependencyKeys.deferredResolver: deferredResolver,
             SDKDependencyKeys.cache: cache,
             SDKDependencyKeys.experimentsProvider: experimentsManager,
-            SDKDependencyKeys.meteredUsage: meteredUsage
+            SDKDependencyKeys.meteredUsage: meteredUsage,
+            SDKDependencyKeys.applicationMetrics: metrics
         ]
 
 #if !os(watchOS)

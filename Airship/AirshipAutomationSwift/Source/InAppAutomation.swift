@@ -49,14 +49,18 @@ public final class InAppAutomation: Sendable {
         }
         set {
             self.dataStore.setBool(newValue, forKey: Self.pausedStoreKey)
-            self.engine.isExecutionPaused = newValue
+            self.engine.setExecutionPaused(newValue)
         }
     }
 
     @MainActor
     func onAirshipReady() {
-        self.engine.isExecutionPaused = self.isPaused
-        self.engine.start()
+        self.engine.setExecutionPaused(self.isPaused)
+
+        Task {
+            await self.engine.start()
+        }
+
         self.notificationCenter.addObserver(forName: AirshipPrivacyManager.changeEvent) { _ in
             self.privacyManagerUpdated()
         }
@@ -67,7 +71,11 @@ public final class InAppAutomation: Sendable {
     }
 
     public func cancelSchedule(identifier: String) async throws {
-        try await self.engine.cancelSchedule(identifier: identifier)
+        try await self.engine.cancelSchedules(identifiers: [identifier])
+    }
+
+    public func cancelSchedule(identifiers: [String]) async throws {
+        try await self.engine.cancelSchedules(identifiers: identifiers)
     }
 
     public func cancelSchedules(group: String) async throws {
@@ -85,11 +93,10 @@ public final class InAppAutomation: Sendable {
     @MainActor
     private func privacyManagerUpdated() {
         if self.privacyManager.isEnabled(.inAppAutomation) {
-            self.engine.isPaused = false
+            self.engine.setEnginePaused(false)
             self.remoteDataSubscriber.subscribe()
-            engine.scheduleConditionsChanged()
         } else {
-            self.engine.isPaused = true
+            self.engine.setEnginePaused(true)
             self.remoteDataSubscriber.unsubscribe()
         }
     }

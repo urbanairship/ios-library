@@ -4,21 +4,27 @@ import Foundation
 
 /// - Note: For internal use only. :nodoc:
 public final class AirshipLock: Sendable {
-    private let lock = NSRecursiveLock()
+    private let _lock = NSRecursiveLock()
 
     public init() {}
 
     public func sync(closure: () -> Void) {
-        self.lock.lock()
-        closure()
-        self.lock.unlock()
+        self._lock.withLock {
+            closure()
+        }
     }
-
     
     public func sync<T>(closure: () -> T) -> T {
-        self.lock.lock()
-        let t = closure()
-        self.lock.unlock()
-        return t
+        return self._lock.withLock {
+            return closure()
+        }
+    }
+
+    public func lock() {
+        self._lock.lock()
+    }
+
+    public func unlock() {
+        self._lock.unlock()
     }
 }

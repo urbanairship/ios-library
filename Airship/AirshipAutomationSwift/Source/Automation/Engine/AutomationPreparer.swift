@@ -9,7 +9,7 @@ import AirshipCore
 protocol AutomationPreparerProtocol: Sendable {
     func prepare(
         schedule: AutomationSchedule,
-        triggerContext: AirshipTriggerContext
+        triggerContext: AirshipTriggerContext?
     ) async -> SchedulePrepareResult
 
     func cancelled(schedule: AutomationSchedule) async
@@ -75,7 +75,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
     func prepare(
         schedule: AutomationSchedule,
-        triggerContext: AirshipTriggerContext
+        triggerContext: AirshipTriggerContext?
     ) async -> SchedulePrepareResult {
 
         return await prepareQueue.run(name: "schedule: \(schedule.identifier)") { retryState in
@@ -138,6 +138,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
             return try await self.prepareData(
                 data: schedule.data,
+                triggerContext: triggerContext,
                 deviceInfoProvider: deviceInfoProvider,
                 scheduleInfo: scheduleInfo,
                 frequencyChecker: frequencyChecker,
@@ -149,6 +150,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
     private func prepareData(
         data: AutomationSchedule.ScheduleData,
+        triggerContext: AirshipTriggerContext?,
         deviceInfoProvider: AudienceDeviceInfoProvider,
         scheduleInfo: PreparedScheduleInfo,
         frequencyChecker: FrequencyCheckerProtocol?,
@@ -186,6 +188,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         case .deferred(let deferred):
             return try await self.prepareDeferred(
                 deferred: deferred,
+                triggerContext: triggerContext,
                 deviceInfoProvider: deviceInfoProvider,
                 schedule: schedule,
                 frequencyChecker: frequencyChecker,
@@ -193,6 +196,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             ) { data in
                 try await self.prepareData(
                     data: data,
+                    triggerContext: triggerContext,
                     deviceInfoProvider: deviceInfoProvider,
                     scheduleInfo: scheduleInfo,
                     frequencyChecker: frequencyChecker,
@@ -205,6 +209,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
     private func prepareDeferred(
         deferred: DeferredAutomationData,
+        triggerContext: AirshipTriggerContext?,
         deviceInfoProvider: AudienceDeviceInfoProvider,
         schedule: AutomationSchedule,
         frequencyChecker: FrequencyCheckerProtocol?,
@@ -220,6 +225,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         let request = DeferredRequest(
             url: deferred.url,
             channelID: channelID,
+            triggerContext: triggerContext,
             locale: deviceInfoProvider.locale,
             notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
         )

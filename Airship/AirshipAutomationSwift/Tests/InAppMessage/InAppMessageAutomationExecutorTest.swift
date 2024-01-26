@@ -9,8 +9,8 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private let sceneManager: TestSceneManager = TestSceneManager()
     private let assetManager: TestAssetManager = TestAssetManager()
     private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
-    private let conditionsChangedNotifier: Notifier = Notifier()
-   
+    private let conditionsChangedNotifier: ScheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
+
     private let displayAdapter: TestDisplayAdapter = TestDisplayAdapter()
     private let actionRunner: TestActionRunner = TestActionRunner()
 
@@ -43,7 +43,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             sceneManager: sceneManager,
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
-            conditionsChangedNotifier: conditionsChangedNotifier,
+            scheduleConditionsChangedNotifier: conditionsChangedNotifier,
             actionRunner: actionRunner
         )
     }

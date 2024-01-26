@@ -170,7 +170,8 @@ class AirshipInstance: AirshipInstanceProtocol {
             experimentsManager: experimentManager,
             meteredUsage: meteredUsage,
             deferredResolver: deferredResolver,
-            cache: CoreDataAirshipCache(appKey: self.config.appKey)
+            cache: CoreDataAirshipCache(appKey: self.config.appKey),
+            metrics: applicationMetrics
         )
 
         var components: [AirshipComponent] = [

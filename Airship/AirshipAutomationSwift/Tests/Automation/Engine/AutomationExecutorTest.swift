@@ -226,14 +226,16 @@ final class AutomationExecutorTest: XCTestCase {
 
         self.actionExecutor.interruptedBlock = { info in
             XCTAssertEqual(info, preparedScheduleInfo)
+            return .retry
         }
 
-        await self.executor.interrupted(
+        let result = await self.executor.interrupted(
             schedule: automationSchedule,
             preparedScheduleInfo: preparedScheduleInfo
         )
 
         XCTAssertTrue(self.actionExecutor.interruptCalled)
+        XCTAssertEqual(result, .retry)
     }
 
     func testInterruptedMessage() async throws {
@@ -249,19 +251,23 @@ final class AutomationExecutorTest: XCTestCase {
 
         self.messageExecutor.interruptedBlock = { info in
             XCTAssertEqual(info, preparedScheduleInfo)
+            return .finish
         }
 
-        await self.executor.interrupted(
+        let result = await self.executor.interrupted(
             schedule: automationSchedule,
             preparedScheduleInfo: preparedScheduleInfo
         )
 
         XCTAssertTrue(self.messageExecutor.interruptCalled)
+        XCTAssertEqual(result, .finish)
     }
 }
 
 
 fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDelegate, @unchecked Sendable {
+
+    
     typealias ExecutionData = T
 
     var isReadyCalled: Bool = false
@@ -271,7 +277,7 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     var executeBlock: (@Sendable (T, PreparedScheduleInfo) async throws -> ScheduleExecuteResult)?
 
     var interruptCalled: Bool = false
-    var interruptedBlock: (@Sendable (PreparedScheduleInfo) async -> Void)?
+    var interruptedBlock: (@Sendable (PreparedScheduleInfo) async -> InterruptedBehavior)?
 
     @MainActor
     func isReady(
@@ -289,7 +295,7 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     }
 
 
-    func interrupted(schedule: AutomationSchedule, preparedScheduleInfo: PreparedScheduleInfo) async {
+    func interrupted(schedule: AirshipAutomationSwift.AutomationSchedule, preparedScheduleInfo: AirshipAutomationSwift.PreparedScheduleInfo) async -> AirshipAutomationSwift.InterruptedBehavior {
         interruptCalled = true
         return await self.interruptedBlock!(preparedScheduleInfo)
     }

@@ -51,7 +51,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         let appExpectation = expectation(description: "schedules saved")
         let contactExpectation = expectation(description: "schedules saved")
 
-        self.engine.setOnUpsert { schedules in
+        await self.engine.setOnUpsert { schedules in
             if (schedules == appSchedules) {
                 appExpectation.fulfill()
             } else if (schedules == contactSchedules) {
@@ -68,7 +68,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
     func testEmptyPayloadStopsSchedules() async throws {
         let appSchedules = makeSchedules(source: .app)
 
-        self.engine.schedules = appSchedules
+        await self.engine.setSchedules(appSchedules)
 
         let emptyData = InAppRemoteData(
             payloads: [:]
@@ -77,7 +77,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         await self.subscriber.subscribe()
 
         let stopExpectation = expectation(description: "schedules stopped")
-        self.engine.setOnStop { schedules in
+        await self.engine.setOnStop { schedules in
             XCTAssertEqual(schedules, appSchedules)
             stopExpectation.fulfill()
         }
@@ -110,7 +110,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
 
         let firstUpdateExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { schedules in
+        await self.engine.setOnUpsert { schedules in
             XCTAssertEqual(schedules, firstUpdateSchedules)
             firstUpdateExpectation.fulfill()
         }
@@ -118,7 +118,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         self.remoteDataAcces.updatesSubject.send(firstUpdate)
         await self.fulfillment(of: [firstUpdateExpectation])
 
-        self.engine.schedules = firstUpdateSchedules
+        await self.engine.setSchedules(firstUpdateSchedules)
 
         let secondUpdateSchedules = firstUpdateSchedules + makeSchedules(source: .app, count: 4, created: date)
         let secondUpdate = InAppRemoteData(
@@ -139,7 +139,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
 
         let secondUpdateExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { schedules in
+        await self.engine.setOnUpsert { schedules in
             // Should still be the first update schedules since the second updates are older
             XCTAssertEqual(schedules, firstUpdateSchedules)
             secondUpdateExpectation.fulfill()
@@ -183,7 +183,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
 
         let firstUpdateExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { schedules in
+        await self.engine.setOnUpsert { schedules in
             XCTAssertEqual(schedules, firstUpdateSchedules)
             firstUpdateExpectation.fulfill()
         }
@@ -202,7 +202,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
         await self.subscriber.subscribe()
 
-        self.engine.schedules = firstUpdateSchedules
+        await self.engine.setSchedules(firstUpdateSchedules)
 
         let secondUpdateSchedules = firstUpdateSchedules + makeSchedules(
             source: .app, 
@@ -224,7 +224,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
 
         let secondUpdateExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { schedules in
+        await self.engine.setOnUpsert { schedules in
             XCTAssertEqual(schedules, secondUpdateSchedules)
             secondUpdateExpectation.fulfill()
         }
@@ -256,7 +256,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
 
         let expecation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { scheduled in
+        await self.engine.setOnUpsert { scheduled in
             XCTAssertEqual(scheduled, schedules)
             expecation.fulfill()
         }
@@ -273,7 +273,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         let schedules = makeSchedules(source: .app, count: 4)
 
         let firstExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { scheduled in
+        await self.engine.setOnUpsert { scheduled in
             XCTAssertEqual(scheduled, schedules)
             firstExpectation.fulfill()
         }
@@ -297,10 +297,10 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         await self.fulfillment(of: [firstExpectation])
 
-        self.engine.schedules = schedules
+        await self.engine.setSchedules(schedules)
 
         let secondExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { scheduled in
+        await self.engine.setOnUpsert { scheduled in
             XCTAssertEqual(scheduled, schedules)
             secondExpectation.fulfill()
         }
@@ -334,7 +334,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         let schedules = makeSchedules(source: .app, count: 4)
 
         let firstExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { scheduled in
+        await self.engine.setOnUpsert { scheduled in
             XCTAssertEqual(scheduled, schedules)
             firstExpectation.fulfill()
         }
@@ -360,10 +360,10 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         await self.fulfillment(of: [firstExpectation])
 
-        self.engine.schedules = schedules
+        await self.engine.setSchedules(schedules)
 
         let secondExpectation = expectation(description: "schedules saved")
-        self.engine.setOnUpsert { scheduled in
+        await self.engine.setOnUpsert { scheduled in
             XCTAssertEqual(scheduled, schedules)
             secondExpectation.fulfill()
         }

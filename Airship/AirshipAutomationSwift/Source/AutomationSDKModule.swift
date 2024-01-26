@@ -22,13 +22,14 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
         let analytics = dependencies[SDKDependencyKeys.analytics] as! AnalyticsProtocol
         let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! AirshipMeteredUsageProtocol
+        let metrics = dependencies[SDKDependencyKeys.applicationMetrics] as! ApplicationMetrics
 
         /// Utils
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)
         let assetManager = AssetCacheManager()
         let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: dataStore)
         let frequencyLimits = FrequencyLimitManager(config: config)
-        let conditionsChangedNotifier = Notifier()
+        let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
 
         /// Preperation
         let actionPreparer = ActionAutomationPreparer()
@@ -51,7 +52,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             sceneManager: messageSceneManager,
             assetManager: assetManager,
             analyticsFactory: InAppMessageAnalyticsFactory(analytics: analytics, meteredUsage: meteredUsage),
-            conditionsChangedNotifier: conditionsChangedNotifier
+            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
         )
         
         let automationExecutor = AutomationExecutor(
@@ -60,11 +61,18 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             remoteDataAccess: remoteDataAccess
         )
 
+        let feed = AutomationEventFeed(metrics:  metrics)
+        feed.attach()
+
         // Engine
         let engine = AutomationEngine(
+            store: AutomationStore(),
             executor: automationExecutor,
             preparer: automationPreparer,
-            conditionsChangedNotifier: conditionsChangedNotifier
+            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
+            eventFeed: feed,
+            triggersProcessor: AutomationTriggerProcessor(),
+            conditionsMonitor: AutomationConditionsMonitor()
         )
 
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(
