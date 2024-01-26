@@ -30,14 +30,18 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
     private var observers: [AnyObject] = []
     private var isFirstAttach = false
     private var isAttached = false
+    private let applicationMetrics: ApplicationMetrics
     
     let feed: Stream
     
     init(
+        metrics: ApplicationMetrics,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
         self.notificationCenter = notificationCenter
         (self.feed, self.continuation) = Stream.airshipMakeStreamWithContinuation()
+        
+        self.applicationMetrics = metrics
         
         self.listenToAppStateEvents()
         self.listenToAnalyticsEvents()
@@ -55,7 +59,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
         
         self.emit(event: .appInit)
         
-        if Airship.shared.applicationMetrics.isAppVersionUpdated {
+        if applicationMetrics.isAppVersionUpdated {
             self.emit(event: .versionUpdated)
         }
         

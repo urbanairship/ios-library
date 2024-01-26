@@ -8,6 +8,7 @@ import AirshipCore
 
 protocol InAppMessageAnalyticsProtocol: Sendable {
     func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?)
+    func recordImpression() async
 }
 
 final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
@@ -18,6 +19,10 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
             print("Event added: \(event)")
         }
     }
+    
+    func recordImpression() {
+        print("Impression recorded")
+    }
 }
 
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
@@ -27,23 +32,35 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let reportingMetadata: AirshipJSON?
     private let experimentResult: ExperimentResult?
     private let eventRecorder: InAppEventRecorderProtocol
+    private let impressionRecorder: AirshipMeteredUsageProtocol
     private let isReportingEnabled: Bool
+    private let productID: String?
+    private let contactID: String?
+    private let date: AirshipDateProtocol
 
     init(
         scheduleID: String,
+        productID: String?,
+        contactID: String?,
         message: InAppMessage,
         campaigns: AirshipJSON?,
         reportingMetadata: AirshipJSON?,
         experimentResult: ExperimentResult?,
-        eventRecorder: InAppEventRecorderProtocol
+        eventRecorder: InAppEventRecorderProtocol,
+        impressionRecorder: AirshipMeteredUsageProtocol,
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.messageID = Self.makeMessageID(message: message, scheduleID: scheduleID, campaigns: campaigns)
         self.source = Self.makeEventSource(message: message)
+        self.productID = productID
+        self.contactID = contactID
         self.renderedLocale = message.renderedLocale
         self.reportingMetadata = reportingMetadata
         self.experimentResult = experimentResult
         self.eventRecorder = eventRecorder
+        self.impressionRecorder = impressionRecorder
         self.isReportingEnabled = message.isReportingEnabled ?? true
+        self.date = date
     }
 
     func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
@@ -62,6 +79,25 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         )
 
         self.eventRecorder.recordEvent(inAppEventData: data)
+    }
+    
+    func recordImpression() async {
+        guard let productID = self.productID else { return }
+        
+        let impression = AirshipMeteredUsageEvent(
+            eventID: UUID().uuidString,
+            entityID: self.messageID.identifier,
+            usageType: .inAppExperienceImpression,
+            product: productID,
+            reportingContext: self.reportingMetadata,
+            timestamp: date.now,
+            contactId: contactID)
+        
+        do {
+            try await self.impressionRecorder.addEvent(impression)
+        } catch {
+            AirshipLogger.error("Failed to record impression: \(error)")
+        }
     }
 
     private static func makeMessageID(

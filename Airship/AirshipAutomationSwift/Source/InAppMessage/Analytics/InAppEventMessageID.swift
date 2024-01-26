@@ -30,4 +30,12 @@ enum InAppEventMessageID: Encodable, Equatable {
             try container.encode(identifier, forKey: .messageID)
         }
     }
+    
+    var identifier: String {
+        switch self {
+        case .legacy(let identifier): return identifier
+        case .airship(let identifier, _): return identifier
+        case .appDefined(let identifier): return identifier
+        }
+    }
 }

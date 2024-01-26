@@ -33,6 +33,7 @@ public class SDKDependencyKeys: NSObject {
     public static let cache = "airship_cache"
 
     public static let experimentsProvider = "experiments"
+    public static let meteredUsage = "metered_usage"
     public static let sceneManager = "scene_manager"
 
 }
@@ -95,7 +96,8 @@ class ModuleLoader {
             SDKDependencyKeys.workManager: AirshipWorkManager.shared,
             SDKDependencyKeys.deferredResolver: deferredResolver,
             SDKDependencyKeys.cache: cache,
-            SDKDependencyKeys.experimentsProvider: experimentsManager
+            SDKDependencyKeys.experimentsProvider: experimentsManager,
+            SDKDependencyKeys.meteredUsage: meteredUsage
         ]
 
 #if !os(watchOS)

@@ -52,27 +52,6 @@ final class LegacyInAppMessageTest: XCTestCase {
             "message_type": "test-message"
         ]
         
-        let expectedPayload: [String: Any] = [
-            "identifier": "test-id",
-            "display": [
-                "type": "banner",
-                "position": "top",
-                "alert": "test alert",
-                "duration": 100.0,
-                "primary_color": "#ABCDEF",
-                "secondary_color": "#FEDCBA"
-            ],
-            "extra": ["extra_value": "some text"],
-            "expiry": AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date.now),
-            "actions": [
-                "on_click": ["onclick": "action"],
-                "button_group": "button group",
-                "button_actions": ["name": ["test": "json"]]
-            ],
-            "campaigns": ["test-campaing": "json"],
-            "message_type": "test-message"
-        ]
-        
         let message = LegacyInAppMessage(payload: payload, date: date)!
         
         XCTAssertEqual(try! AirshipJSON.wrap(["test-campaing": "json"]), message.campaigns)

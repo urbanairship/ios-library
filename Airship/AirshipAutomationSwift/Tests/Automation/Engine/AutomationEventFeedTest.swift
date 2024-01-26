@@ -16,13 +16,13 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     var iterator: AsyncStream<AutomationEvent>.Iterator!
     
     override func setUp() async throws {
-        let airshipNotification = AirshipNotificationCenter(notificationCenter: notificaitonCenter)
-        subject = AutomationEventFeed(notificationCenter: airshipNotification)
-        
         let privacyManager = AirshipPrivacyManager(dataStore: self.datastore, defaultEnabledFeatures: .all)
-        
         let metrics = TestApplicationMetrics(dataStore: self.datastore, privacyManager: privacyManager)
         metrics.versionUpdated = true
+        
+        let airshipNotification = AirshipNotificationCenter(notificationCenter: notificaitonCenter)
+        subject = AutomationEventFeed(metrics: metrics, notificationCenter: airshipNotification)
+        
         airship.applicationMetrics = metrics
         airship.components = [TestAnalytics()]
         airship.makeShared()

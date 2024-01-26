@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 /// NOTE: For internal use only. :nodoc:
-protocol AirshipMeteredUsageProtocol: Sendable {
+public protocol AirshipMeteredUsageProtocol: Sendable {
     func addEvent(_ event: AirshipMeteredUsageEvent) async throws
 }
 
@@ -129,7 +129,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         return .success
     }
 
-    func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
+    public func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
         guard self.isEnabled else { return }
 
         let eventToStore = privacyManager.isEnabled(.analytics) ? event : event.withDisabledAnalytics()

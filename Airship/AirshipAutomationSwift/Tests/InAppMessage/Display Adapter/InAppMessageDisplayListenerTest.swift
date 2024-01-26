@@ -21,15 +21,15 @@ class InAppMessageDisplayListenerTests: XCTestCase {
     }
 
     @MainActor
-    func testOnDisplay() {
+    func testOnDisplay() async {
         XCTAssertFalse(timer.isStarted)
 
-        listener.onDisplay()
+        await listener.onDisplay()
 
         verifyEvents([InAppDisplayEvent()])
         XCTAssertTrue(timer.isStarted)
 
-        listener.onDisplay()
+        await listener.onDisplay()
 
         verifyEvents([InAppDisplayEvent()])
         XCTAssertNil(self.result.value)

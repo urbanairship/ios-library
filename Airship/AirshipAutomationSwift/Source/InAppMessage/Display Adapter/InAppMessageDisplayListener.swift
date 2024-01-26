@@ -23,11 +23,12 @@ final class InAppMessageDisplayListener: InAppMessageResolutionDelegate {
     }
 
     // TODO make this part of the main delegate
-    func onDisplay() {
+    func onDisplay() async {
         guard isFirstDisplay else { return }
         self.isFirstDisplay = false
-
-        // TODO impression
+        
+        await analytics.recordImpression()
+        
         timer.start()
 
         analytics.recordEvent(

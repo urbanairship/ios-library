@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomationSwift
-import AirshipCore
+@testable import AirshipAutomationSwift
+@testable import AirshipCore
 
 class InAppMessageAnalyticsTest: XCTestCase {
 
@@ -13,10 +12,13 @@ class InAppMessageAnalyticsTest: XCTestCase {
     private let scheduleID = UUID().uuidString
     private let reportingMetadata = AirshipJSON.string("reporting info")
     private let eventRecorder = EventRecorder()
+    private let impressionRecorder = ImpressionRecorder()
 
     func testSource() async throws {
         let analytics = InAppMessageAnalytics(
             scheduleID: self.scheduleID,
+            productID: nil,
+            contactID: nil,
             message: InAppMessage(
                 name: "name",
                 displayContent: .custom(.string("custom")),
@@ -25,7 +27,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
             campaigns: self.campaigns,
             reportingMetadata: self.reportingMetadata,
             experimentResult: self.experimentResult,
-            eventRecorder: eventRecorder
+            eventRecorder: eventRecorder,
+            impressionRecorder: impressionRecorder
         )
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
 
@@ -37,6 +40,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
     func testAppDefined() async throws {
         let analytics = InAppMessageAnalytics(
             scheduleID: self.scheduleID,
+            productID: nil,
+            contactID: nil,
             message: InAppMessage(
                 name: "name",
                 displayContent: .custom(.string("custom")),
@@ -45,7 +50,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
             campaigns: self.campaigns,
             reportingMetadata: self.reportingMetadata,
             experimentResult: self.experimentResult,
-            eventRecorder: eventRecorder
+            eventRecorder: eventRecorder,
+            impressionRecorder: impressionRecorder
         )
 
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
@@ -58,6 +64,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
     func testLegacyMessageID() async throws {
         let analytics = InAppMessageAnalytics(
             scheduleID: self.scheduleID,
+            productID: nil,
+            contactID: nil,
             message: InAppMessage(
                 name: "name",
                 displayContent: .custom(.string("custom")),
@@ -66,7 +74,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
             campaigns: self.campaigns,
             reportingMetadata: self.reportingMetadata,
             experimentResult: self.experimentResult,
-            eventRecorder: eventRecorder
+            eventRecorder: eventRecorder,
+            impressionRecorder: impressionRecorder
         )
 
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
@@ -99,9 +108,11 @@ class InAppMessageAnalyticsTest: XCTestCase {
             experimentsResult: self.experimentResult,
             layoutContext: thomasLayoutContext
         )
-
+        
         let analytics = InAppMessageAnalytics(
             scheduleID: self.scheduleID,
+            productID: nil,
+            contactID: nil,
             message: InAppMessage(
                 name: "name",
                 displayContent: .custom(.string("custom")),
@@ -111,7 +122,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
             campaigns: self.campaigns,
             reportingMetadata: self.reportingMetadata,
             experimentResult: self.experimentResult,
-            eventRecorder: eventRecorder
+            eventRecorder: eventRecorder,
+            impressionRecorder: impressionRecorder
         )
 
         analytics.recordEvent(TestInAppEvent(), layoutContext: thomasLayoutContext)
@@ -121,10 +133,47 @@ class InAppMessageAnalyticsTest: XCTestCase {
         XCTAssertEqual(data.renderedLocale, AirshipJSON.string("rendered locale"))
         XCTAssertEqual(data.event.name, "test_event")
     }
+    
+    func testImpression() async throws {
+        let productId = "test-product-id"
+        let contactId = "test-contact-id"
+        
+        let date = UATestDate(offset: 0, dateOverride: Date())
+        
+        let analytics = InAppMessageAnalytics(
+            scheduleID: self.scheduleID,
+            productID: productId,
+            contactID: contactId,
+            message: InAppMessage(
+                name: "name",
+                displayContent: .custom(.string("custom")),
+                source: .legacyPush,
+                renderedLocale: AirshipJSON.string("rendered locale")
+            ),
+            campaigns: self.campaigns,
+            reportingMetadata: self.reportingMetadata,
+            experimentResult: self.experimentResult,
+            eventRecorder: eventRecorder,
+            impressionRecorder: impressionRecorder,
+            date: date
+        )
+        
+        await analytics.recordImpression()
+        
+        let impression = try XCTUnwrap(impressionRecorder.lastRecordedImpression)
+        XCTAssertEqual(self.scheduleID, impression.entityID)
+        XCTAssertEqual(AirshipMeteredUsageType.inAppExperienceImpression, impression.usageType)
+        XCTAssertEqual(productId, impression.product)
+        XCTAssertEqual(self.reportingMetadata, impression.reportingContext)
+        XCTAssertEqual(date.now, impression.timestamp)
+        XCTAssertEqual(contactId, impression.contactId)
+    }
 
     func testReportingDisabled() async throws {
         let analytics = InAppMessageAnalytics(
             scheduleID: self.scheduleID,
+            productID: nil,
+            contactID: nil,
             message: InAppMessage(
                 name: "name",
                 displayContent: .custom(.string("custom")),
@@ -135,11 +184,13 @@ class InAppMessageAnalyticsTest: XCTestCase {
             campaigns: self.campaigns,
             reportingMetadata: self.reportingMetadata,
             experimentResult: self.experimentResult,
-            eventRecorder: eventRecorder
+            eventRecorder: eventRecorder,
+            impressionRecorder: impressionRecorder
         )
 
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
         XCTAssertTrue(self.eventRecorder.eventData.isEmpty)
+        XCTAssertNil(impressionRecorder.lastRecordedImpression)
     }
 }
 
@@ -148,4 +199,14 @@ final class EventRecorder: InAppEventRecorderProtocol, @unchecked Sendable {
     func recordEvent(inAppEventData: InAppEventData) {
         eventData.append(inAppEventData)
     }
+}
+
+final class ImpressionRecorder: AirshipMeteredUsageProtocol, @unchecked Sendable {
+    var lastRecordedImpression: AirshipMeteredUsageEvent?
+    
+    func addEvent(_ event: AirshipCore.AirshipMeteredUsageEvent) async throws {
+        lastRecordedImpression = event
+    }
+    
+    
 }

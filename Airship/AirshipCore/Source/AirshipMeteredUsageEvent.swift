@@ -22,6 +22,24 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
     let reportingContext: AirshipJSON?
     let timestamp: Date?
     let contactId: String?
+    
+    public init(
+        eventID: String,
+        entityID: String?,
+        usageType: AirshipMeteredUsageType,
+        product: String,
+        reportingContext: AirshipJSON?,
+        timestamp: Date?,
+        contactId: String?
+    ) {
+        self.eventID = eventID
+        self.entityID = entityID
+        self.usageType = usageType
+        self.product = product
+        self.reportingContext = reportingContext
+        self.timestamp = timestamp
+        self.contactId = contactId
+    }
 
     enum CodingKeys: String, CodingKey {
         case eventID = "event_id"
