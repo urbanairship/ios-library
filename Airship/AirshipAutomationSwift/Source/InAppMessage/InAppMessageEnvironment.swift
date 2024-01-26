@@ -10,9 +10,10 @@ import AirshipCore
 
 class InAppMessageEnvironment: ObservableObject {
     private let delegate: InAppMessageResolutionDelegate
-    let imageLoader: AirshipImageLoader
-
     var theme: Theme
+
+    let imageLoader: AirshipImageLoader?
+    let nativeBridgeExtension: NativeBridgeExtensionDelegate?
 
     @Published var isDismissed = false
 
@@ -22,12 +23,20 @@ class InAppMessageEnvironment: ObservableObject {
     init(
         delegate: InAppMessageResolutionDelegate,
         theme: Theme,
-        imageProvider: AirshipImageProvider? = nil,
+        extensions: InAppMessageExtensions? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
         self.theme = theme
-        self.imageLoader = AirshipImageLoader(imageProvider: imageProvider)
+
+        self.imageLoader = if let provider = extensions?.imageProvider {
+            AirshipImageLoader(imageProvider: provider)
+        } else {
+            nil
+        }
+
+        self.nativeBridgeExtension = extensions?.nativeBridgeExtension
+
         self.onDismiss = onDismiss
     }
 

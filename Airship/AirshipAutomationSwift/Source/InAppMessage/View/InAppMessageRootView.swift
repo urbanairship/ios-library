@@ -10,10 +10,8 @@ import AirshipCore
 
 struct InAppMessageRootView<Content: View>: View {
 
-#if !os(tvOS) && !os(watchOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-#endif
 
     @State private var currentOrientation: Orientation = InAppMessageRootView.resolveOrientation()
     @State private var isVisible: Bool = false
@@ -45,7 +43,6 @@ struct InAppMessageRootView<Content: View>: View {
             .onDisappear {
                 self.isVisible = false
             }
-#if !os(tvOS) && !os(watchOS)
             .onReceive(
                 NotificationCenter.default.publisher(
                     for: UIDevice.orientationDidChangeNotification
@@ -53,7 +50,6 @@ struct InAppMessageRootView<Content: View>: View {
             ) { _ in
                 self.currentOrientation = InAppMessageRootView.resolveOrientation()
             }
-#endif
     }
 
     /// Uses the vertical and horizontal class size to determine small, medium, large window size:
@@ -61,9 +57,6 @@ struct InAppMessageRootView<Content: View>: View {
     /// - medium: regular x compact or compact x regular
     /// - small: compact x compact
     func resolveWindowSize() -> WindowSize {
-#if os(tvOS) || os(watchOS)
-        return .large
-#else
         switch (verticalSizeClass, horizontalSizeClass) {
         case (.regular, .regular):
             return .large
@@ -72,13 +65,9 @@ struct InAppMessageRootView<Content: View>: View {
         default:
             return .medium
         }
-#endif
     }
 
     static func resolveOrientation() -> Orientation {
-#if os(tvOS) || os(watchOS)
-        return .landscape
-#else
         if let scene = UIApplication.shared.windows.first?.windowScene {
             if scene.interfaceOrientation.isLandscape {
                 return .landscape
@@ -87,6 +76,5 @@ struct InAppMessageRootView<Content: View>: View {
             }
         }
         return .portrait
-#endif
     }
 }

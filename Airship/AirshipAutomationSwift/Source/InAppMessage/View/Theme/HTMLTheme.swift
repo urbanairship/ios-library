@@ -7,6 +7,7 @@ struct HTMLTheme: Equatable {
     var hideDismissIcon: Bool
     var additionalPadding: EdgeInsets
     var dismissIconResource: String
+
     var maxWidth: Int
     var maxHeight: Int
 

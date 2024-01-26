@@ -135,12 +135,12 @@ extension HTMLTheme: ThemeDefaultable {
     static let defaultPlistName: String = "UAInAppMessageHTMLStyle.plist"
 
     static var defaultValues: HTMLTheme {
-        let defaultPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        let defaultPadding = EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)
 
         return HTMLTheme(hideDismissIcon: false,
                          additionalPadding: defaultPadding,
-                         dismissIconResource: "xMark",
-                         maxWidth: 400,
-                         maxHeight: 500)
+                         dismissIconResource: "xmark",
+                         maxWidth: Int.max,
+                         maxHeight: Int.max) /// No limit on default size
     }
 }

@@ -73,9 +73,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         case .modal(_):
             // TODO
             return .finished
-        case .html(_):
-            // TODO
-            return .finished
+        case .html(let html):
+            return await displayHTML(
+                html,
+                scene: scene.scene,
+                analytics: analytics
+            )
         case .airshipLayout(let layout):
             return try await displayThomasLayout(
                 layout,
@@ -105,13 +108,49 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.fullScreen(FullScreenTheme()),
-                imageProvider: AssetCacheImageProvider(assets: assets)
+                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
             ) {
                 window.animateOut()
             }
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, windowSize in
                 FullScreenView(displayContent: fullscreen)
+            }
+
+            let viewController = InAppMessageHostingController(rootView: rootView)
+            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+            window.rootViewController = viewController
+
+            window.animateIn()
+        }
+    }
+
+    @MainActor
+    private func displayHTML(
+        _ html: InAppMessageDisplayContent.HTML,
+        scene: UIWindowScene,
+        analytics: InAppMessageAnalyticsProtocol
+    ) async -> DisplayResult {
+        return await withCheckedContinuation { continuation in
+            let listener = InAppMessageDisplayListener(
+                analytics: analytics
+            ) { result in
+                continuation.resume(returning: result)
+            }
+
+            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let environment = InAppMessageEnvironment(
+                delegate: listener,
+                theme: Theme.html(HTMLTheme()),
+                extensions: InAppMessageExtensions(nativeBridgeExtension: InAppMessageNativeBridgeExtension(
+                    message: message
+                ), imageProvider: AssetCacheImageProvider(assets: assets))
+            ) {
+                window.animateOut()
+            }
+
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
+                HTMLView(displayContent: html)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)

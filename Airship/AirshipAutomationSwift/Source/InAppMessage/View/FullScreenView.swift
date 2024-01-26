@@ -7,8 +7,6 @@ struct FullScreenView: View, Sendable {
     @EnvironmentObject var environment: InAppMessageEnvironment
     let displayContent: InAppMessageDisplayContent.Fullscreen
 
-    private let tappableClear: Color = Color.white.opacity(0.001)
-
     private var padding: EdgeInsets {
         environment.theme.fullScreenTheme.additionalPadding
     }
@@ -76,7 +74,6 @@ struct FullScreenView: View, Sendable {
     }
 
     var body: some View {
-        ZStack(alignment: .topTrailing) { // Align the button to the top trailing corner
             ScrollView {
                 VStack(spacing:24) {
                     switch displayContent.template {
@@ -96,12 +93,10 @@ struct FullScreenView: View, Sendable {
                     buttonsView
                     footerButton
                 }.padding(padding)
-                .background(tappableClear)
-            }
-            CloseButton(dismissIconColor:displayContent.dismissButtonColor?.color ?? Color.white, dismissIconResource: dismissIconResource) {
+                    .background(Color.tappableClear)
+            }.addCloseButton(dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white, dismissIconResource: dismissIconResource, onUserDismissed: {
                 environment.onUserDismissed()
-            }
-        }.background((displayContent.backgroundColor?.color ?? Color.black).ignoresSafeArea(.all))
+            }).addBackground(color: displayContent.backgroundColor?.color ?? Color.black)
     }
 }
 

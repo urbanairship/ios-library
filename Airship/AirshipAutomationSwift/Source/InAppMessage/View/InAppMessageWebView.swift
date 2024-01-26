@@ -1,53 +1,48 @@
 /* Copyright Airship and Contributors */
 
-#if !os(tvOS) && !os(watchOS)
-
 import Foundation
 import SwiftUI
 import WebKit
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
-/// Airship Webview
-struct AirshipWebView: View {
-
-    let model: WebViewModel
-
-    let constraints: ViewConstraints
+struct InAppMessageWebView: View {
+    let displayContent: InAppMessageDisplayContent.HTML
 
     @State var isWebViewLoading: Bool = false
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.layoutState) var layoutState
+    let accessibilityLabel: String?
+
+    @EnvironmentObject var environment: InAppMessageEnvironment
 
     var body: some View {
 
         ZStack {
-            WebViewView(
-                url: self.model.url,
-                nativeBridgeExtension: self.thomasEnvironment.extensions?
-                    .nativeBridgeExtension,
-                isWebViewLoading: self.$isWebViewLoading
+            WKWebViewRepresentable(
+                url: self.displayContent.url,
+                nativeBridgeExtension: self.environment.nativeBridgeExtension,
+                isWebViewLoading: self.$isWebViewLoading,
+                accessibilityLabel: accessibilityLabel
             ) {
-                thomasEnvironment.dismiss(layoutState: layoutState)
-            }
-            .opacity(self.isWebViewLoading ? 0.0 : 1.0)
+                environment.onDismiss?()
+            }.zIndex(0)
 
             if self.isWebViewLoading {
-                AirshipProgressView()
+                BeveledLoadingView()
+                    .zIndex(1) /// Necessary to set z index for animation to work
+                    .transition(.opacity)
             }
         }
-        .constraints(constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
-        .common(self.model)
     }
 }
 
-/// Webview
-struct WebViewView: UIViewRepresentable {
+struct WKWebViewRepresentable: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
     let url: String
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     @Binding var isWebViewLoading: Bool
+    let accessibilityLabel: String?
 
     let onDismiss: () -> Void
 
@@ -55,6 +50,8 @@ struct WebViewView: UIViewRepresentable {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator.nativeBridge
 
+        webView.isAccessibilityElement = true
+        webView.accessibilityLabel = accessibilityLabel
         if let url = URL(string: self.url) {
             updateLoading(true)
             webView.load(URLRequest(url: url))
@@ -71,24 +68,26 @@ struct WebViewView: UIViewRepresentable {
 
     func updateLoading(_ isWebViewLoading: Bool) {
         DispatchQueue.main.async {
-            self.isWebViewLoading = isWebViewLoading
+            withAnimation {
+                self.isWebViewLoading = isWebViewLoading
+            }
         }
     }
 
     class Coordinator: NSObject, UANavigationDelegate,
-        JavaScriptCommandDelegate, NativeBridgeDelegate
+                       JavaScriptCommandDelegate, NativeBridgeDelegate
     {
 
 
-        private let parent: WebViewView
+        private let parent: WKWebViewRepresentable
         let nativeBridge: NativeBridge
 
-        init(_ parent: WebViewView) {
+        init(_ parent: WKWebViewRepresentable) {
             self.parent = parent
             self.nativeBridge = NativeBridge()
             super.init()
             self.nativeBridge.nativeBridgeExtensionDelegate =
-                self.parent.nativeBridgeExtension
+            self.parent.nativeBridgeExtension
             self.nativeBridge.forwardNavigationDelegate = self
             self.nativeBridge.javaScriptCommandDelegate = self
             self.nativeBridge.nativeBridgeDelegate = self
@@ -131,5 +130,3 @@ struct WebViewView: UIViewRepresentable {
         }
     }
 }
-
-#endif

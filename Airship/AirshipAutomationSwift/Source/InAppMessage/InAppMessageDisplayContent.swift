@@ -294,7 +294,6 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
         /// The URL
         public var url: String
 
-        
         /// The height of the manually sized HTML view
         public var height: Double?
 
@@ -316,7 +315,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
         /// The border radius
         public var borderRadius: Double?
 
-        /// If the modal can be displayed as fullscreen on small devices
+        /// If the html can be displayed as fullscreen on small devices
         public var allowFullscreen: Bool?
 
         enum CodingKeys: String, CodingKey {

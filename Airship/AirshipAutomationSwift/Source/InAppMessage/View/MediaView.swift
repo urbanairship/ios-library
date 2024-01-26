@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import SwiftUI
 import WebKit
 
@@ -5,12 +7,10 @@ import WebKit
 import AirshipCore
 #endif
 
-
-
 struct MediaView: View {
     var mediaInfo: InAppMessageMediaInfo
     var mediaTheme: MediaTheme
-    var imageLoader: AirshipImageLoader
+    var imageLoader: AirshipImageLoader? /// Ideally this would be an associated value on the media info enum
 
     var body: some View {
         switch mediaInfo.type {
@@ -21,28 +21,31 @@ struct MediaView: View {
         }
     }
 
+    @ViewBuilder
     private var mediaImageView: some View {
-        AirshipAsyncImage(
-            url: mediaInfo.url,
-            imageLoader: imageLoader,
-            image: { image, _ in
-                image
-                    .resizable()
-                    .scaledToFit()
-            },
-            placeholder: {
-                ProgressView()
-            }
-        ).padding(mediaTheme.additionalPadding)
+        if let imageLoader = imageLoader {
+            AirshipAsyncImage(
+                url: mediaInfo.url,
+                imageLoader: imageLoader,
+                image: { image, _ in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                },
+                placeholder: {
+                    ProgressView()
+                }
+            ).padding(mediaTheme.additionalPadding)
+        }
     }
 
     private var webView: some View {
-        InAppMessageWebView(mediaInfo: mediaInfo)
+        InAppMessageMediaWebView(mediaInfo: mediaInfo)
             .padding(mediaTheme.additionalPadding)
     }
 }
 
-struct InAppMessageWebView: UIViewRepresentable {
+struct InAppMessageMediaWebView: UIViewRepresentable {
     let mediaInfo: InAppMessageMediaInfo
 
     func makeUIView(context: Context) -> WKWebView {
