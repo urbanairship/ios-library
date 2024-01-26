@@ -1493,6 +1493,7 @@
 		99E8D7DC2B55C4C20099B6F3 /* MediaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DB2B55C4C20099B6F3 /* MediaTheme.swift */; };
 		99E8D7DE2B55C73B0099B6F3 /* ThemeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */; };
 		99F662B02B5DDC2900696098 /* BeveledLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */; };
+		99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662B12B60425E00696098 /* InAppMessageModalView.swift */; };
 		A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
 		A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
 		A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
@@ -3168,6 +3169,7 @@
 		99EC01901FE095B600B9C408 /* UAInAppMessageFullScreenDisplayContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenDisplayContent.h; sourceTree = "<group>"; };
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
 		99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeveledLoadingView.swift; sourceTree = "<group>"; };
+		99F662B12B60425E00696098 /* InAppMessageModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageModalView.swift; sourceTree = "<group>"; };
 		A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubscriptionListEditor.swift; path = AirshipCore/Source/SubscriptionListEditor.swift; sourceTree = SOURCE_ROOT; };
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
@@ -4184,6 +4186,7 @@
 			children = (
 				99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */,
 				999DC85D2B5B721D0048C6AF /* HTMLView.swift */,
+				99F662B12B60425E00696098 /* InAppMessageModalView.swift */,
 				99E8D7962B4F17260099B6F3 /* CloseButton.swift */,
 				990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */,
 				99E8D7BE2B50C2C10099B6F3 /* ButtonGroup.swift */,
@@ -7499,6 +7502,7 @@
 				6E16208F2B3116BA009240B2 /* DefaultDisplayCoordinator.swift in Sources */,
 				99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */,
 				6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */,
+				99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */,
 				6E0F4BE92B3264A400673CA4 /* DeferredAutomationData.swift in Sources */,
 				6E1528332B4DF2E600DF1377 /* ScheduleConditionsChangedNotifier.swift in Sources */,
 				6E1A9BC52B5EE1EE00A6489B /* ScheduleExecuteResult.swift in Sources */,

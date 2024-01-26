@@ -214,5 +214,9 @@
 	<string>Weather app needs to use your location to route you to your nearest NETs station</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Thomas app needs to use Face ID to log you in</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>JurassicPark.otf</string>
+	</array>
 </dict>
 </plist>

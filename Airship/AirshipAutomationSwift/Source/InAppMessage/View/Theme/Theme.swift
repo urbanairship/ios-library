@@ -77,10 +77,10 @@ extension ModalTheme: ThemeDefaultable {
     static let defaultPlistName: String = "UAInAppMessageModalStyle.plist"
 
     static var defaultValues: ModalTheme {
-        let defaultPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        let defaultPadding = EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)
         let defaultHeaderPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         let defaultBodyPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        let defaultMediaPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        let defaultMediaPadding = EdgeInsets(top: 0, leading: -24, bottom: 0, trailing: -24)
         let defaultButtonPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
 
         return ModalTheme(
@@ -97,8 +97,8 @@ extension ModalTheme: ThemeDefaultable {
                                      separatedButtonSpacing: Theme.defaultSeparatedButtonSpacing,
                                      additionalPadding: defaultButtonPadding),
             dismissIconResource: "xmark",
-            maxWidth: 0,
-            maxHeight: 0
+            maxWidth: 480,
+            maxHeight: 900
         )
     }
 }

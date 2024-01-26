@@ -41,6 +41,7 @@
 		9970D2312B0667B2003F4A8B /* BiometricLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */; };
 		998E80892B48C2F700D453D7 /* Scenes in Resources */ = {isa = PBXBuildFile; fileRef = 998E80872B48C2F700D453D7 /* Scenes */; };
 		998E808A2B48C2F700D453D7 /* Messages in Resources */ = {isa = PBXBuildFile; fileRef = 998E80882B48C2F700D453D7 /* Messages */; };
+		99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */ = {isa = PBXBuildFile; fileRef = 99F662CC2B61DB4600696098 /* JurassicPark.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -221,6 +222,7 @@
 		9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricLoginView.swift; sourceTree = "<group>"; };
 		998E80872B48C2F700D453D7 /* Scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scenes; sourceTree = "<group>"; };
 		998E80882B48C2F700D453D7 /* Messages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Messages; sourceTree = "<group>"; };
+		99F662CC2B61DB4600696098 /* JurassicPark.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = JurassicPark.otf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +245,7 @@
 		324449222721667D00D108B5 = {
 			isa = PBXGroup;
 			children = (
+				99F662CC2B61DB4600696098 /* JurassicPark.otf */,
 				9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */,
 				6E938DCD2AC3DA0600F691D9 /* AirshipConfig.plist */,
 				3244492D2721667D00D108B5 /* Thomas */,
@@ -579,6 +582,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */,
 				998E808A2B48C2F700D453D7 /* Messages in Resources */,
 				998E80892B48C2F700D453D7 /* Scenes in Resources */,
 				6E938DCE2AC3DA0600F691D9 /* AirshipConfig.plist in Resources */,

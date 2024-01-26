@@ -11,7 +11,8 @@ struct InAppMessageWebView: View {
     let displayContent: InAppMessageDisplayContent.HTML
 
     @State var isWebViewLoading: Bool = false
-    let accessibilityLabel: String?
+
+  let accessibilityLabel: String?
 
     @EnvironmentObject var environment: InAppMessageEnvironment
 
@@ -42,16 +43,22 @@ struct WKWebViewRepresentable: UIViewRepresentable {
     let url: String
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     @Binding var isWebViewLoading: Bool
+
     let accessibilityLabel: String?
 
     let onDismiss: () -> Void
 
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+        webView.scrollView.backgroundColor = .clear
+
         webView.navigationDelegate = context.coordinator.nativeBridge
 
         webView.isAccessibilityElement = true
         webView.accessibilityLabel = accessibilityLabel
+
         if let url = URL(string: self.url) {
             updateLoading(true)
             webView.load(URLRequest(url: url))

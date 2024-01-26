@@ -69,10 +69,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 scene: scene.scene,
                 analytics: analytics
             )
-
-        case .modal(_):
-            // TODO
-            return .finished
+        case .modal(let modal):
+            return await displayModal(
+                modal,
+                scene: scene.scene,
+                analytics: analytics
+            )
         case .html(let html):
             return await displayHTML(
                 html,
@@ -115,6 +117,40 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, windowSize in
                 FullScreenView(displayContent: fullscreen)
+            }
+
+            let viewController = InAppMessageHostingController(rootView: rootView)
+            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+            window.rootViewController = viewController
+
+            window.animateIn()
+        }
+    }
+
+    @MainActor
+    private func displayModal(
+        _ modal: InAppMessageDisplayContent.Modal,
+        scene: UIWindowScene,
+        analytics: InAppMessageAnalyticsProtocol
+    ) async -> DisplayResult {
+        return await withCheckedContinuation { continuation in
+            let listener = InAppMessageDisplayListener(
+                analytics: analytics
+            ) { result in
+                continuation.resume(returning: result)
+            }
+
+            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let environment = InAppMessageEnvironment(
+                delegate: listener,
+                theme: Theme.modal(ModalTheme()),
+                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+            ) {
+                window.animateOut()
+            }
+
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
+                InAppMessageModalView(displayContent: modal)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)

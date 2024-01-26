@@ -23,8 +23,8 @@ extension View {
     }
 
     @ViewBuilder
-    func parentClampingResize(width:Double? = nil, height:Double? = nil) -> some View {
-        self.modifier(ParentClampingResize(width:width, height:height))
+    func parentClampingResize(maxWidth: CGFloat, maxHeight: CGFloat) -> some View {
+        self.modifier(ParentClampingResize(maxWidth: maxWidth, maxHeight: maxHeight))
     }
 
     @ViewBuilder
@@ -72,22 +72,16 @@ struct AspectResize: ViewModifier {
 
 /// Attempt to resize to specified size and clamp any size axis that exceeds parent size axis to said axis.
 struct ParentClampingResize: ViewModifier {
-    var width:Double?
-    var height:Double?
+    var maxWidth: CGFloat
+    var maxHeight: CGFloat
 
     func body(content: Content) -> some View {
         CenteredGeometryReader { parentSize in
             let parentWidth = parentSize.width
             let parentHeight = parentSize.height
 
-            let displayContentWidth = CGFloat(width ?? parentWidth)
-            let displayContentHeight = CGFloat(height ?? parentHeight)
-
-            let finalWidth = min(displayContentWidth, parentWidth)
-            let finalHeight = min(displayContentHeight, parentHeight)
-
             content
-                .frame(width: finalWidth, height: finalHeight)
+                .frame(maxWidth: min(parentWidth, maxWidth), maxHeight: min(parentHeight, maxHeight))
         }
     }
 }

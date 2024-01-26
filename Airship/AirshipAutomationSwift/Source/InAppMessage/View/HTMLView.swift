@@ -50,7 +50,7 @@ struct HTMLView: View {
             }.applyIf(!isModal) {
                 $0.padding(additionalPadding)
                     .padding(-24) /// Undo default padding when in fullscreen
-                    .addBackground(color: displayContent.backgroundColor?.color ?? Color.black)
+                    .addBackground(color: displayContent.backgroundColor?.color ?? Color.clear)
             }
     }
 }

@@ -26,9 +26,9 @@
             {
                 "id": "button-one",
                 "label": {
-                    "text": "24p Dismiss",
+                    "text": "48p Dismiss",
                     "color": "#0FFFFF",
-                    "size": 24
+                    "size": 48
                 },
                 "background_color": "#0000FF"
             },

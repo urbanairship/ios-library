@@ -1,0 +1,78 @@
+{
+    "source": "app-defined",
+    "name": "Jurassic Park",
+    "display_type": "modal",
+    "display": {
+        "allow_fullscreen_display": false,
+        "background_color": "#000000",
+        "body": {
+            "text": "Jurassic Park is a 1993 American science-fiction adventure film directed by Steven Spielberg and produced by Kathleen Kennedy and Gerald R. Molen. The first installment in the Jurassic Park franchise, it is based on the 1990 novel of the same name by Michael Crichton and a screenplay written by Crichton and David Koepp. The film is set on the fictional islet of Isla Nublar, located off Central America's Pacific Coast near Costa Rica, where a billionaire philanthropist and a small team of genetic scientists have created a wildlife park of cloned dinosaurs.",
+            "color": "#FFFFFF",
+            "alignment": "center",
+            "font_family": [
+                "sans-serif"
+            ],
+            "size": 16
+        },
+        "border_radius": 10,
+        "button_layout": "joined",
+        "buttons": [
+            {
+                "id": "button-one",
+                "background_color": "#FF0000",
+                "border_color": "#FF0000",
+                "border_radius": 8,
+                "label": {
+                    "text": "It's a Unix system, I know this.",
+                    "color": "#000000",
+                    "font_family": [
+                        "sans-serif"
+                    ],
+                    "size": 10,
+                    "style": [
+                        "bold"
+                    ]
+                },
+                "actions": {
+                    "add_tag_action": "button_one"
+                }
+            },
+            {
+                "id": "button-two",
+                "background_color": "#FF0000",
+                "border_color": "#FF0000",
+                "border_radius": 8,
+                "label": {
+                    "text": "Hold on to your butts!",
+                    "color": "#000000",
+                    "font_family": [
+                        "sans-serif"
+                    ],
+                    "size": 10,
+                    "style": [
+                        "bold"
+                    ]
+                },
+                "actions": {
+                    "add_tag_action": "button_two"
+                }
+            }
+        ],
+        "dismiss_button_color": "#A9A9A9",
+        "heading": {
+            "text": "Jurassic Park",
+            "color": "#808080",
+            "font_family": [
+                "Jurassic Park"
+            ],
+            "size": 24,
+            "alignment": "center"
+        },
+        "media": {
+            "description": "Jurassic park",
+            "type": "image",
+            "url": "https://logonoid.com/images/jurassic-park-logo.png"
+        },
+        "template": "header_body_media"
+    }
+}
