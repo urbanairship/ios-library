@@ -15,8 +15,11 @@
 #else
 @import AirshipCore;
 #endif
+
 @interface UAFrequencyLimitManager ()
-@property(nonatomic, strong) NSMutableDictionary<UAFrequencyConstraint *, NSMutableArray<UAOccurrence *> *> *occurrencesMap;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, UAFrequencyConstraint *> *constraintMap;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, NSMutableArray<UAOccurrence *> *> *occurrencesMap;
+
 @property(nonatomic, strong) NSMutableArray<UAOccurrence *> *pendingOccurrences;
 @property(nonatomic, strong) UAFrequencyLimitStore *frequencyLimitStore;
 @property(nonatomic, strong) UAirshipDate *date;
@@ -34,6 +37,7 @@
         self.date = date;
         self.pendingOccurrences = [NSMutableArray array];
         self.occurrencesMap = [NSMutableDictionary dictionary];
+        self.constraintMap = [NSMutableDictionary dictionary];
         self.dispatcher = dispatcher;
         self.lock = [[NSObject alloc] init];
     }
@@ -51,15 +55,59 @@
                                 dispatcher:UADispatcher.serial];
 }
 
-- (void)getFrequencyChecker:(NSArray<NSString *> *)constraintIDs completionHandler:(void (^)(UAFrequencyChecker *))completionHandler {
+- (void)getFrequencyChecker:(NSArray<NSString *> *)constraintIDs 
+          completionHandler:(void (^)(UAFrequencyChecker *))completionHandler {
+
+    if (!constraintIDs.count) {
+        UAFrequencyChecker *checker = [UAFrequencyChecker frequencyCheckerWithIsOverLimit:^{
+            return NO;
+        } checkAndIncrement:^{
+            return YES;
+        }];
+        completionHandler(checker);
+        return;
+    }
+
     UA_WEAKIFY(self)
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
-        completionHandler([self createFrequencyChecker:[self fetchConstraints:constraintIDs]]);
+
+        for (NSString *constraintID in constraintIDs) {
+            @synchronized (self.lock) {
+                if (self.constraintMap[constraintID]) {
+                    // Already loaded
+                    continue;
+                }
+            }
+
+            UAFrequencyConstraint *constraint = [[self.frequencyLimitStore getConstraints:@[constraintID]] firstObject];
+            NSMutableArray<UAOccurrence *> *occurrences = [[self.frequencyLimitStore getOccurrences:constraintID] mutableCopy];
+
+            if (!constraint) {
+                UA_LERR(@"Failed to get constraint %@", constraint);
+                completionHandler(nil);
+                return;
+            }
+
+            @synchronized (self.lock) {
+                self.constraintMap[constraintID] = constraint;
+                self.occurrencesMap[constraintID] = occurrences;
+            }
+        }
+
+        UAFrequencyChecker *checker = [UAFrequencyChecker frequencyCheckerWithIsOverLimit:^{
+            return [self isOverLimit:constraintIDs];
+        } checkAndIncrement:^{
+            return [self checkAndIncrement:constraintIDs];
+        }];
+
+        completionHandler(checker);
     }];
 }
 
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints 
+        completionHandler:(void (^)(BOOL))completionHandler {
+
     UA_WEAKIFY(self)
     [self.dispatcher dispatchAsync:^{
         UA_STRONGIFY(self)
@@ -74,35 +122,53 @@
             UAFrequencyConstraint *existing = constraintIDMap[constraint.identifier];
             if (existing) {
                 constraintIDMap[constraint.identifier] = nil;
+
                 if (existing.range != constraint.range) {
-                    if ([self deleteConstraint:existing]) {
-                        [self saveConstraint:constraint];
+                    if (![self.frequencyLimitStore deleteConstraint:existing]) {
+                        completionHandler(NO);
+                        return;
+                    }
+
+                    if (![self.frequencyLimitStore saveConstraint:constraint]) {
+                        completionHandler(NO);
+                        return;
+                    }
+
+                    @synchronized (self.lock) {
+                        if (self.constraintMap[constraint.identifier]) {
+                            self.constraintMap[constraint.identifier] = constraint;
+                            self.occurrencesMap[constraint.identifier] = [NSMutableArray array];
+                        }
                     }
                 } else {
-                    [self saveConstraint:constraint];
+                    if (![self.frequencyLimitStore saveConstraint:constraint]) {
+                        completionHandler(NO);
+                        return;
+                    }
+
+                    @synchronized (self.lock) {
+                        if (self.constraintMap[constraint.identifier]) {
+                            self.constraintMap[constraint.identifier] = constraint;
+                        }
+                    }
                 }
             } else {
-                [self saveConstraint:constraint];
+                if (![self.frequencyLimitStore saveConstraint:constraint]) {
+                    completionHandler(NO);
+                    return;
+                }
             }
         }
 
-        [self.frequencyLimitStore deleteConstraints:constraintIDMap.allKeys];
+        @synchronized (self.lock) {
+            for (NSString *constraintID in constraintIDMap.allKeys) {
+                [self.constraintMap removeObjectForKey:constraintID];
+                [self.occurrencesMap removeObjectForKey:constraintID];
+            }
+        }
+
+        completionHandler([self.frequencyLimitStore deleteConstraints:constraintIDMap.allKeys]);
     }];
-}
-
-- (void)saveConstraint:(UAFrequencyConstraint *)constraint {
-    if (![self.frequencyLimitStore saveConstraint:constraint]) {
-        UA_LERR(@"Unable to save constraint: %@", constraint);
-    }
-}
-
-- (BOOL)deleteConstraint:(UAFrequencyConstraint *)constraint {
-    if (![self.frequencyLimitStore deleteConstraint:constraint]) {
-        UA_LERR(@"Unable to delete constraint: %@", constraint);
-        return NO;
-    }
-
-    return YES;
 }
 
 - (NSArray<UAFrequencyConstraint *> *)fetchConstraints:(NSArray<NSString *> *)constraintIDs {
@@ -123,21 +189,28 @@
     return constraints;
 }
 
-- (UAFrequencyChecker *)createFrequencyChecker:(NSArray<UAFrequencyConstraint *> *)constraints {
-    UA_WEAKIFY(self)
-    return [UAFrequencyChecker frequencyCheckerWithIsOverLimit:^{
-        UA_STRONGIFY(self)
-        return [self isOverLimit:constraints];
-    } checkAndIncrement:^{
-        UA_STRONGIFY(self)
-        return [self checkAndIncrement:constraints];
-    }];
-}
-
-- (BOOL)isOverLimit:(NSArray<UAFrequencyConstraint *> *)constraints {
+- (BOOL)isOverLimit:(NSArray<NSString *> *)constraintIDs {
     @synchronized(self.lock) {
-        for (UAFrequencyConstraint *constraint in constraints) {
-            if ([self isConstraintOverLimit:constraint]) {
+        for (NSString *constraintID in constraintIDs) {
+            NSArray<UAOccurrence *> *occurrences = self.occurrencesMap[constraintID];
+            UAFrequencyConstraint *constraint = self.constraintMap[constraintID];
+
+            if (!occurrences || !constraint) {
+                // Can happen if constraint is removed mid check
+                continue;
+            }
+
+            if (occurrences.count < constraint.count) {
+                continue;
+            }
+
+            NSArray *sorted = [occurrences sortedArrayUsingComparator:^NSComparisonResult(UAOccurrence *obj1, UAOccurrence *obj2) {
+                return [obj1.timestamp compare:obj2.timestamp];
+            }];
+
+            NSDate *timeStamp = ((UAOccurrence *)sorted[occurrences.count - constraint.count]).timestamp;
+            NSTimeInterval timeSinceOccurrece = [self.date.now timeIntervalSinceDate:timeStamp];
+            if (timeSinceOccurrece <= constraint.range) {
                 return YES;
             }
         }
@@ -146,52 +219,35 @@
     }
 }
 
-- (BOOL)checkAndIncrement:(NSArray<UAFrequencyConstraint *> *)constraints {
+- (BOOL)checkAndIncrement:(NSArray<NSString *> *)constraintIDs {
+    if (!constraintIDs.count) {
+        return YES;
+    }
+
+    NSDate *date = self.date.now;
+
     @synchronized(self.lock) {
-        if ([self isOverLimit:constraints]) {
+        if ([self isOverLimit:constraintIDs]) {
             return NO;
         }
 
-        [self recordOccurrence:[constraints valueForKey:@"identifier"]];
+        for (NSString *constraintID in constraintIDs) {
+            if (!self.constraintMap[constraintID]) {
+                // Can happen if constraint is removed mid check
+                continue;
+            }
+
+            UAOccurrence *occurrence = [UAOccurrence occurrenceWithParentConstraintID:constraintID timestamp:date];
+            [self.pendingOccurrences addObject:occurrence];
+            [self.occurrencesMap[constraintID] addObject:occurrence];
+        }
+
+        [self writePendingOccurrences];
 
         return YES;
     }
 
     return NO;
-}
-
-- (BOOL)isConstraintOverLimit:(UAFrequencyConstraint *)constraint {
-    NSArray<UAOccurrence *> *occurrences = self.occurrencesMap[constraint];
-    if (!occurrences || occurrences.count < constraint.count) {
-        return NO;
-    }
-
-    NSDate *timeStamp = ((UAOccurrence *)occurrences[occurrences.count - constraint.count]).timestamp;
-    NSTimeInterval timeSinceOccurrece = [self.date.now timeIntervalSinceDate:timeStamp];
-    return timeSinceOccurrece <= constraint.range;
-}
-
-- (void)recordOccurrence:(NSArray<NSString *>*)constraintIDs {
-    if (!constraintIDs.count) {
-        return;
-    }
-
-    NSDate *date = self.date.now;
-    for (NSString *identifier in constraintIDs) {
-        UAOccurrence *occurrence = [UAOccurrence occurrenceWithParentConstraintID:identifier timestamp:date];
-
-        [self.pendingOccurrences addObject:occurrence];
-
-        // Update any currently active constraints
-        for (UAFrequencyConstraint *constraint in self.occurrencesMap) {
-            if ([identifier isEqualToString:constraint.identifier]) {
-                NSMutableArray<UAOccurrence *> *occurrences = self.occurrencesMap[constraint];
-                [occurrences addObject:occurrence];
-            }
-        }
-    }
-
-    [self writePendingOccurrences];
 }
 
 - (void)writePendingOccurrences {
@@ -204,6 +260,7 @@
 
         if (![self.frequencyLimitStore saveOccurrences:occurrences]) {
             UA_LERR(@"Unable to save occurrences: %@", occurrences);
+            [self.pendingOccurrences addObjectsFromArray:occurrences];
         }
     }];
 }

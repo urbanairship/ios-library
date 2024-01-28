@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Called with updated constraints.
  * @param constraints The updated constraints.
  */
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints;
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints completionHandler:(void (^)(BOOL))completionHandler;
 
 @end
 

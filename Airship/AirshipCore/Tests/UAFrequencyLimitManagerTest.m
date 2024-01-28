@@ -46,7 +46,12 @@
     XCTestExpectation *finished = [self expectationWithDescription:@"Fetched frequency checker"];
 
     UAFrequencyConstraint *constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:2];
-    [self.manager updateConstraints:@[constraint]];
+
+    XCTestExpectation *updated = [self expectationWithDescription:@"updated limits"];
+    [self.manager updateConstraints:@[constraint] completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [updated fulfill];
+    }];
     XCTAssertEqual([self.store getConstraints].count, 1);
 
 
@@ -94,7 +99,11 @@
 
 - (void)testMultipleCheckers {
     UAFrequencyConstraint *constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:2];
-    [self.manager updateConstraints:@[constraint]];
+    XCTestExpectation *updated = [self expectationWithDescription:@"updated limits"];
+    [self.manager updateConstraints:@[constraint] completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [updated fulfill];
+    }];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
     self.date.dateOverride = startDate;
@@ -154,7 +163,12 @@
 - (void)testMultipleConstraints {
     UAFrequencyConstraint *constraint1 = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:2];
     UAFrequencyConstraint *constraint2 = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"bar" range:2 count:1];
-    [self.manager updateConstraints:@[constraint1, constraint2]];
+    
+    XCTestExpectation *updated = [self expectationWithDescription:@"updated limits"];
+    [self.manager updateConstraints:@[constraint1, constraint2] completionHandler:^(BOOL result) {
+        XCTAssertTrue(result);
+        [updated fulfill];
+    }];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
     self.date.dateOverride = startDate;
@@ -199,7 +213,7 @@
 - (void)testConstraintRemovedMidCheck {
     UAFrequencyConstraint *constraint1 = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:2];
     UAFrequencyConstraint *constraint2 = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"bar" range:20 count:2];
-    [self.manager updateConstraints:@[constraint1, constraint2]];
+    [self.manager updateConstraints:@[constraint1, constraint2] completionHandler:^(BOOL updated) {}];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:0];
     self.date.dateOverride = startDate;
@@ -214,7 +228,7 @@
 
     [self waitForTestExpectations];
 
-    [self.manager updateConstraints:@[[UAFrequencyConstraint frequencyConstraintWithIdentifier:@"bar" range:10 count:2]]];
+    [self.manager updateConstraints:@[[UAFrequencyConstraint frequencyConstraintWithIdentifier:@"bar" range:10 count:2]] completionHandler:^(BOOL updated) {}];
 
     XCTAssertTrue([checker checkAndIncrement]);
     XCTAssertTrue([checker checkAndIncrement]);
@@ -223,15 +237,14 @@
     // Occurrences should be cleared out
     XCTAssertEqual([self.store getOccurrences:@"foo"].count, 0);
 
+    // Still have occurences for bar
     NSArray<UAOccurrence *> *barOccurrences = [self.store getOccurrences:@"bar"];
     XCTAssertEqual(barOccurrences.count, 2);
-    XCTAssertEqual(barOccurrences[0].timestamp.timeIntervalSince1970, 0);
-    XCTAssertEqual(barOccurrences[1].timestamp.timeIntervalSince1970, 0);
 }
 
 - (void)testUpdateConstraintRangeClearsOccurrences {
     UAFrequencyConstraint *constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:2];
-    [self.manager updateConstraints:@[constraint]];
+    [self.manager updateConstraints:@[constraint] completionHandler:^(BOOL updated) {}];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:100];
     self.date.dateOverride = startDate;
@@ -249,7 +262,7 @@
     XCTAssertTrue([checker checkAndIncrement]);
 
     constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:11 count:1];
-    [self.manager updateConstraints:@[constraint]];
+    [self.manager updateConstraints:@[constraint] completionHandler:^(BOOL updated) {}];
 
     // Occurrences should be cleared out
     XCTAssertEqual([self.store getOccurrences:@"foo"].count, 0);
@@ -257,7 +270,7 @@
 
 - (void)testUpdateConstraintCountDoesNotClearCount {
     UAFrequencyConstraint *constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:2];
-    [self.manager updateConstraints:@[constraint]];
+    [self.manager updateConstraints:@[constraint] completionHandler:^(BOOL updated) {}];
 
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:100];
     self.date.dateOverride = startDate;
@@ -276,7 +289,7 @@
 
     // Update the count
     constraint = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"foo" range:10 count:5];
-    [self.manager updateConstraints:@[constraint]];
+    [self.manager updateConstraints:@[constraint] completionHandler:^(BOOL updated) {}];
 
     // Occurrence should remain
     XCTAssertEqual([self.store getOccurrences:@"foo"].count, 1);

@@ -313,6 +313,14 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     __block UAFrequencyChecker *checker;
     UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
         [self.frequencyLimitManager getFrequencyChecker:schedule.frequencyConstraintIDs completionHandler:^(UAFrequencyChecker *c) {
+            if (!c) {
+                [self.remoteDataClient notifyOutdatedSchedule:schedule completionHandler:^{
+                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                }];
+                retriableHandler(UARetriableResultCancel, 0);
+                return;
+            }
+            
             checker = c;
             if (checker.isOverLimit) {
                 // If we're over the limit, skip the rest of the prepare steps and cancel the pipeline
@@ -709,8 +717,8 @@ static NSString *const UADefaultScheduleMessageType = @"transactional";
     [self updateEnginePauseState];
 }
 
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
-     [self.frequencyLimitManager updateConstraints:constraints];
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints completionHandler:(nonnull void (^)(BOOL))completionHandler {
+     [self.frequencyLimitManager updateConstraints:constraints completionHandler:completionHandler];
 }
 
 - (void)setPaused:(BOOL)paused {

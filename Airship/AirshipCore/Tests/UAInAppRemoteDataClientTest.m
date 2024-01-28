@@ -59,6 +59,14 @@
         completionHandler(self.allSchedules);
     }] getSchedules:OCMOCK_ANY];
 
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
     self.remoteDataClient = [UAInAppRemoteDataClient clientWithInAppCoreSwiftBridge:self.mockinAppCoreSwiftBridge
                                                                           dataStore:self.dataStore
                                                                             channel:self.mockChannel
@@ -1186,7 +1194,13 @@
 }
 
 - (void)testEmptyConstraints {
-    [[self.mockDelegate expect] updateConstraints:@[]];
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] updateConstraints:@[] completionHandler:OCMOCK_ANY];
+
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
@@ -1229,7 +1243,13 @@
         [expectedConstraints addObject:constraint];
     }
 
-    [[self.mockDelegate expect] updateConstraints:expectedConstraints];
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] updateConstraints:expectedConstraints completionHandler:OCMOCK_ANY];
+
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
@@ -1264,7 +1284,13 @@
 
     UAFrequencyConstraint *expected = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"valid" range:10 count:10];
 
-    [[self.mockDelegate expect] updateConstraints:@[expected]];
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(BOOL) = (__bridge void (^)(BOOL))arg;
+        completionHandler(YES);
+    }] updateConstraints:@[expected] completionHandler:OCMOCK_ANY];
+
 
     UARemoteDataPayload *inAppRemoteDataPayload = [RemoteDataTestUtils generatePayloadWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]

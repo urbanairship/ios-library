@@ -35,14 +35,15 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param completionHandler A completion handler called with the result.
  */
-- (void)getFrequencyChecker:(NSArray<NSString *> *)constraintIDs completionHandler:(void (^)(UAFrequencyChecker *))completionHandler;
+- (void)getFrequencyChecker:(NSArray<NSString *> *)constraintIDs completionHandler:(void (^)(UAFrequencyChecker * _Nullable))completionHandler;
 
 /**
  * Updates the frequency constraints.
  *
  * @param constraints The constraints.
+ * @param completionHandler A completion handler called with the result.
  */
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints;
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints completionHandler:(void (^)(BOOL))completionHandler;
 
 @end
 

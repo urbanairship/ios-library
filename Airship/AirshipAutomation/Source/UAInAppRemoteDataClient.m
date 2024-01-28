@@ -298,7 +298,22 @@ static NSString *const UAScheduleInfoProducId = @"product_id";
             [constraints addObject:constraint];
         }
     }
-    [self.delegate updateConstraints:constraints];
+
+    if (source == UARemoteDataSourceApp) {
+        dispatch_group_t dispatchGroup = dispatch_group_create();
+        dispatch_group_enter(dispatchGroup);
+        __block BOOL result = NO;
+        [self.delegate updateConstraints:constraints completionHandler:^(BOOL success) {
+            result = success;
+            dispatch_group_leave(dispatchGroup);
+        }];
+        dispatch_group_wait(dispatchGroup,  DISPATCH_TIME_FOREVER);
+
+        if (!result) {
+            UA_LERR(@"Failed to update limits");
+            return NO;
+        }
+    }
 
     // Dispatch group
     dispatch_group_t dispatchGroup = dispatch_group_create();

@@ -96,12 +96,18 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
         success = [UACoreData safeSave:context];
     }];
 
+    if (!success) {
+        UA_LERR(@"Unable to delete constraint: %@", constraint);
+    }
     return success;
 }
 
 - (BOOL)deleteConstraints:(NSArray<NSString *> *)constraintIDs {
+    if (!constraintIDs.count) {
+        return YES;
+    }
+    
     __block BOOL success;
-
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
         if (!isSafe) {
             success = NO;
@@ -116,6 +122,10 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
         }
     }];
 
+    if (!success) {
+        UA_LERR(@"Unable to delete constraints: %@", constraintIDs);
+    }
+
     return success;
 }
 
@@ -127,6 +137,10 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
     __block NSArray<UAOccurrence *> *occurrences;
 
     [self.coreData safePerformBlockAndWait:^(BOOL isSafe, NSManagedObjectContext *context) {
+        if (!isSafe) {
+            occurrences = @[];
+            return;
+        }
         occurrences = [self occurrencesFromData:[self getOccurrencesData:constraintID context:context]];
     }];
 
@@ -144,7 +158,9 @@ static NSString *const OccurrenceEntityName = @"UAOccurrenceData";
 
         for (UAOccurrence *occurrence in occurrences) {
             UAFrequencyConstraintData *constraintData = [self getConstraintsDataForIDs:@[occurrence.parentConstraintID] context:context].firstObject;
-            [self addDataForOccurrence:occurrence constraintData:constraintData context:context];
+            if (constraintData) {
+                [self addDataForOccurrence:occurrence constraintData:constraintData context:context];
+            }
         }
 
         success = [UACoreData safeSave:context];
