@@ -61,7 +61,7 @@ class AnalyticsTest: XCTestCase {
         // Foreground
         notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
-        self.analytics.trackScreen("test_screen")
+        await self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
             notificationCenter.post(
@@ -80,9 +80,9 @@ class AnalyticsTest: XCTestCase {
         notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
         // Track the screen
-        self.analytics.trackScreen("test_screen")
+        await self.analytics.trackScreen("test_screen")
 
-        self.analytics.trackScreen("test_screen")
+        await self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
             notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
@@ -178,6 +178,100 @@ class AnalyticsTest: XCTestCase {
         wait(for: [expectation], timeout: 5.0)
     }
 
+    @MainActor
+    func testCurrentScreen() throws {
+        self.analytics.trackScreen("foo")
+        XCTAssertEqual("foo", self.analytics.currentScreen)
+
+        self.analytics.trackScreen("bar")
+        XCTAssertEqual("bar", self.analytics.currentScreen)
+
+        self.analytics.trackScreen(nil)
+        XCTAssertEqual(nil, self.analytics.currentScreen)
+    }
+
+    @MainActor
+    func testScreenUpdates() async throws {
+        let expectation = expectation(description: "updates received")
+
+        let screenUpdates = analytics.screenUpdates
+        Task {
+            var updates: [String?] = []
+            for await update in screenUpdates {
+                updates.append(update)
+                if (updates.count == 4) {
+                    break
+                }
+            }
+
+            XCTAssertEqual([nil, "foo", "bar", nil], updates)
+            expectation.fulfill()
+        }
+
+        self.analytics.trackScreen("foo")
+        XCTAssertEqual("foo", self.analytics.currentScreen)
+
+
+        self.analytics.trackScreen("bar")
+        XCTAssertEqual("bar", self.analytics.currentScreen)
+
+        self.analytics.trackScreen("bar")
+        self.analytics.trackScreen("bar")
+
+
+        self.analytics.trackScreen(nil)
+        XCTAssertEqual(nil, self.analytics.currentScreen)
+
+        await self.fulfillment(of: [expectation])
+    }
+
+    @MainActor
+    func testRegions() async throws {
+        var updates = self.analytics.regionUpdates.makeAsyncIterator()
+        var update = await updates.next()
+        XCTAssertEqual(Set(), update)
+
+        self.analytics.addEvent(
+            RegionEvent(regionID: "foo", source: "source", boundaryEvent: .enter)!
+        )
+        
+        update = await updates.next()
+        XCTAssertEqual(Set(["foo"]), update)
+        XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
+
+        self.analytics.addEvent(
+            RegionEvent(regionID: "bar", source: "source", boundaryEvent: .enter)!
+        )
+
+        update = await updates.next()
+        XCTAssertEqual(Set(["foo", "bar"]), update)
+        XCTAssertEqual(Set(["foo", "bar"]), self.analytics.currentRegions)
+
+        self.analytics.addEvent(
+            RegionEvent(regionID: "bar", source: "source", boundaryEvent: .exit)!
+        )
+
+        update = await updates.next()
+        XCTAssertEqual(Set(["foo"]), update)
+        XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
+
+        self.analytics.addEvent(
+            RegionEvent(regionID: "baz", source: "source", boundaryEvent: .exit)!
+        )
+
+        update = await updates.next()
+        XCTAssertEqual(Set(["foo"]), update)
+        XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
+
+        self.analytics.addEvent(
+            RegionEvent(regionID: "foo", source: "source", boundaryEvent: .exit)!
+        )
+
+        update = await updates.next()
+        XCTAssertEqual(Set(), update)
+        XCTAssertEqual(Set(), self.analytics.currentRegions)
+    }
+
     func testAddEvent() throws {
         let expectation = XCTestExpectation()
         self.eventManager.addEventCallabck = { event in
@@ -251,7 +345,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertNil(self.analytics.conversionSendID)
     }
 
-    func testForwardScreenTracking() throws {
+    func testForwardScreenTracking() async throws {
         let eventAdded = self.expectation(description: "Event added")
         self.notificationCenter.addObserver(
             forName: AirshipAnalytics.screenTracked
@@ -264,9 +358,9 @@ class AnalyticsTest: XCTestCase {
             eventAdded.fulfill()
         }
 
-        self.analytics.trackScreen("some screen")
+        await self.analytics.trackScreen("some screen")
 
-        self.wait(for: [eventAdded], timeout: 1)
+        await self.fulfillment(of: [eventAdded])
     }
 
     func testForwardRegionEvents() throws {

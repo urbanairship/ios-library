@@ -352,7 +352,7 @@
 		6E1A9BD12B5EE84600A6489B /* AutomationScheduleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */; };
 		6E1A9BD32B5EE8A400A6489B /* AutomationScheduleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */; };
 		6E1A9BD52B5EE97000A6489B /* TriggeringInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */; };
-		6E1A9BF72B606CF200A6489B /* AutomationConditionsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BF62B606CF200A6489B /* AutomationConditionsMonitor.swift */; };
+		6E1A9BF72B606CF200A6489B /* AutomationDelayProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */; };
 		6E1BACDB2719ED7D0038399E /* ScrollLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */; };
 		6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDC2719FC0A0038399E /* ViewFactory.swift */; };
 		6E1BACE7271E1B6E0038399E /* ThomasViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */; };
@@ -672,6 +672,7 @@
 		6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		6E698E60267BF63B00654DB2 /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		6E698E62267C03C700654DB2 /* TestAppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */; };
+		6E6A848D2B6854FC006FFB35 /* AutomationDelayProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6A848C2B6854FC006FFB35 /* AutomationDelayProcessorTest.swift */; };
 		6E6B2DBE2B33B768008BF788 /* AutomationScheduleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6B2DBD2B33B768008BF788 /* AutomationScheduleTest.swift */; };
 		6E6BD2422AE995DA00B9DFC9 /* DeferredResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2412AE995DA00B9DFC9 /* DeferredResolver.swift */; };
 		6E6BD2432AE995DA00B9DFC9 /* DeferredResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2412AE995DA00B9DFC9 /* DeferredResolver.swift */; };
@@ -2456,7 +2457,7 @@
 		6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleData.swift; sourceTree = "<group>"; };
 		6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleState.swift; sourceTree = "<group>"; };
 		6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggeringInfo.swift; sourceTree = "<group>"; };
-		6E1A9BF62B606CF200A6489B /* AutomationConditionsMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationConditionsMonitor.swift; sourceTree = "<group>"; };
+		6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationDelayProcessor.swift; sourceTree = "<group>"; };
 		6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollLayout.swift; sourceTree = "<group>"; };
 		6E1BACDC2719FC0A0038399E /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewModels.swift; sourceTree = "<group>"; };
@@ -2681,6 +2682,7 @@
 		6E698E53267BF63A00654DB2 /* AppStateTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStateTracker.swift; sourceTree = "<group>"; };
 		6E698E56267BF63B00654DB2 /* ApplicationState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationState.swift; sourceTree = "<group>"; };
 		6E698E61267C03C700654DB2 /* TestAppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestAppStateTracker.swift; path = Support/TestAppStateTracker.swift; sourceTree = "<group>"; };
+		6E6A848C2B6854FC006FFB35 /* AutomationDelayProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationDelayProcessorTest.swift; sourceTree = "<group>"; };
 		6E6B2DBD2B33B768008BF788 /* AutomationScheduleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleTest.swift; sourceTree = "<group>"; };
 		6E6BD2412AE995DA00B9DFC9 /* DeferredResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredResolver.swift; sourceTree = "<group>"; };
 		6E6BD2452AEAFE7E00B9DFC9 /* DeferredAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredAPIClient.swift; sourceTree = "<group>"; };
@@ -5261,7 +5263,7 @@
 				6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */,
 				6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */,
 				6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */,
-				6E1A9BF62B606CF200A6489B /* AutomationConditionsMonitor.swift */,
+				6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -5272,6 +5274,7 @@
 				6EC0CA6A2B4B698000333A87 /* AutomationExecutorTest.swift */,
 				6EC0CA6C2B4B879800333A87 /* AutomationPreparerTest.swift */,
 				60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */,
+				6E6A848C2B6854FC006FFB35 /* AutomationDelayProcessorTest.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -7498,7 +7501,7 @@
 				99CF46182B3217C300B6FD9B /* AirshipCachedAssets.swift in Sources */,
 				999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */,
 				99CF461A2B3217DE00B6FD9B /* AssetCacheManager.swift in Sources */,
-				6E1A9BF72B606CF200A6489B /* AutomationConditionsMonitor.swift in Sources */,
+				6E1A9BF72B606CF200A6489B /* AutomationDelayProcessor.swift in Sources */,
 				6E16208F2B3116BA009240B2 /* DefaultDisplayCoordinator.swift in Sources */,
 				99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */,
 				6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */,
@@ -7628,6 +7631,7 @@
 				6EE6AAF12B58A9D5002FEA75 /* InAppEventContextTest.swift in Sources */,
 				6EE6AA1B2B4F3062002FEA75 /* DisplayCoordinatorManagerTest.swift in Sources */,
 				6EE6AA2A2B50C976002FEA75 /* TestAutomationEngine.swift in Sources */,
+				6E6A848D2B6854FC006FFB35 /* AutomationDelayProcessorTest.swift in Sources */,
 				605073832B2CD38200209B51 /* ActiveTimerTest.swift in Sources */,
 				6EE6AA162B4F302D002FEA75 /* InAppMessageAutomationExecutorTest.swift in Sources */,
 				6EDF1DAD2B2A73FC00E23BC4 /* InAppMessageTest.swift in Sources */,

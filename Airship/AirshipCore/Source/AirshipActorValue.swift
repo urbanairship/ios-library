@@ -36,14 +36,13 @@ public actor AirshipActorValue<T: Sendable> {
         self.value = value
     }
 
-    public func getAndUpdate(block: @Sendable (T) -> T) -> T {
-        let value = value
-        self.value = block(self.value)
-        return value
+    public func getAndUpdate(block: @Sendable (inout T) -> Void) -> T {
+        block(&self.value)
+        return self.value
     }
 
-    public func update(block: @Sendable (T) -> T) {
-        self.value = block(self.value)
+    public func update(block: @Sendable (inout T) -> Void) {
+        block(&self.value)
     }
 }
 
@@ -84,14 +83,13 @@ public final class AirshipMainActorValue<T: Sendable>: @unchecked Sendable {
     }
 
     @MainActor
-    public func getAndUpdate(block: @Sendable (T) -> T) -> T {
-        let value = value
-        self.value = block(self.value)
+    public func getAndUpdate(block: @Sendable (inout T) -> Void) -> T {
+        block(&self.value)
         return value
     }
 
     @MainActor
-    public func update(block: @Sendable (T) -> T) {
-        self.value = block(self.value)
+    public func update(block: @Sendable (inout T) -> Void) {
+        block(&self.value)
     }
 }

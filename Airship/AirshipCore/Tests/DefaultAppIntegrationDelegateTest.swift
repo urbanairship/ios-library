@@ -9,7 +9,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 
     private var delegate: DefaultAppIntegrationDelegate!
     private let push = TestPush()
-    private let analytics = InternalTestAnalytics()
+    private let analytics = TestAnalytics()
     private let pushableComponent = TestPushableComponent()
     private let airshipInstance = TestAirshipInstance()
 
@@ -205,52 +205,4 @@ class TestPushableComponent: PushableComponent {
     ) {
         assertionFailure("Unable to create UNNotificationResponse in tests.")
     }
-}
-
-final class InternalTestAnalytics: InternalAnalyticsProtocol, @unchecked Sendable {
-    func addHeaderProvider(_ headerProvider: @escaping () async -> [String : String]) {
-
-    }
-
-    var conversionSendID: String?
-
-    var conversionPushMetadata: String?
-
-    var sessionID: String?
-
-    func addEvent(_ event: AirshipEvent) {
-
-    }
-
-    func associateDeviceIdentifiers(_ associatedIdentifiers: AirshipCore.AssociatedIdentifiers) {
-
-    }
-
-    func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
-        return AssociatedIdentifiers()
-    }
-
-    func trackScreen(_ screen: String?) {
-
-    }
-
-    func registerSDKExtension(_ ext: AirshipCore.AirshipSDKExtension, version: String) {
-
-    }
-
-    func launched(fromNotification notification: [AnyHashable : Any]) {}
-
-    var onDeviceRegistrationCalled = false
-
-    func onDeviceRegistration(token: String) {
-        onDeviceRegistrationCalled = true
-    }
-
-    func onNotificationResponse(
-        response: UNNotificationResponse,
-        action: UNNotificationAction?
-    ) {
-        assertionFailure("Unable to create UNNotificationResponse in tests.")
-    }
-
 }

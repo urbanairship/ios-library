@@ -43,8 +43,8 @@ public protocol AnalyticsProtocol: Sendable {
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
     /// - Parameter screen: The screen's identifier.
     @objc
+    @MainActor
     func trackScreen(_ screen: String?)
-
 
     /// Registers an SDK extension with the analytics module.
     /// For internal use only. :nodoc:
@@ -57,7 +57,22 @@ public protocol AnalyticsProtocol: Sendable {
 
 }
 
-protocol InternalAnalyticsProtocol: AnalyticsProtocol {
+/// Internal Analytics protocol
+/// For internal use only. :nodoc:
+public protocol InternalAnalyticsProtocol: AnalyticsProtocol {
+    @MainActor
+    var screenUpdates: AsyncStream<String?> { get }
+
+    @MainActor
+    var currentScreen: String? { get }
+
+    @MainActor
+    var regionUpdates: AsyncStream<Set<String>> { get }
+
+    @MainActor
+    var currentRegions: Set<String> { get }
+
+
     func onDeviceRegistration(token: String)
 
     #if !os(tvOS)

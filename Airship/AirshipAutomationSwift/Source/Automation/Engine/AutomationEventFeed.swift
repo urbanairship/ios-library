@@ -22,7 +22,6 @@ enum AutomationEvent: Sendable, Equatable {
     case featureFlagInterracted(data: AirshipJSON)
 }
 
-/// TODO make this sendable
 @MainActor
 final class AutomationEventFeed: AutomationEventFeedProtocol {
     typealias Stream = AsyncStream<AutomationEvent>

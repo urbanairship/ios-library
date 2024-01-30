@@ -20,7 +20,7 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
     private let eventFeed: AutomationEventFeedProtocol
     private let triggersProcessor: AutomationTriggerProcessorProtocol
-    private let conditionsMonitor: AutomationConditionsMonitorProtocol
+    private let delayProcessor: AutomationDelayProcessorProtocol
     private let date: AirshipDateProtocol
     private let taskSleeper: AirshipTaskSleeper
 
@@ -31,7 +31,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
         eventFeed: AutomationEventFeedProtocol,
         triggersProcessor: AutomationTriggerProcessorProtocol,
-        conditionsMonitor: AutomationConditionsMonitorProtocol,
+        delayProcessor: AutomationDelayProcessorProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: AirshipTaskSleeper = .shared
     ) {
@@ -41,7 +41,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
         self.eventFeed = eventFeed
         self.triggersProcessor = triggersProcessor
-        self.conditionsMonitor = conditionsMonitor
+        self.delayProcessor = delayProcessor
         self.date = date
         self.taskSleeper = taskSleeper
     }
@@ -292,7 +292,8 @@ fileprivate extension AutomationEngine {
         /// Using a while loop to retry prepared schedule if fails
         while true {
             guard
-                let data = try await self.store.getSchedule(identifier: scheduleID), data.isInState([.triggered])
+                let data = try await self.store.getSchedule(identifier: scheduleID),
+                data.isInState([.triggered])
             else {
                 return
             }
@@ -357,17 +358,20 @@ fileprivate extension AutomationEngine {
         while true {
             let readyResult = try await self.checkReady(data: data, preparedSchedule: preparedSchedule)
             switch (readyResult) {
-            case .ready: 
+
+            case .ready:
                 break
 
             case .invalidate:
-                try await self.updateDataAndTriggers(identifier: scheduleID) { [date] data in
+                let updated = try await self.updateDataAndTriggers(identifier: scheduleID) { [date] data in
                     data.executionInvalidated(date: date.now)
                 }
 
-                await self.startTaskToProcessTriggeredSchedule(
-                    scheduleID: data.schedule.identifier
-                )
+                if updated?.scheduleState == .triggered {
+                    await self.startTaskToProcessTriggeredSchedule(
+                        scheduleID: data.schedule.identifier
+                    )
+                }
                 return
 
             case .notReady:
@@ -422,13 +426,17 @@ fileprivate extension AutomationEngine {
 
     @MainActor
     private func checkReady(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> ScheduleReadyResult {
+        let triggerDate = data.triggerInfo?.date ?? data.scheduleStateChangeDate
+
         // Wait for conditions
-        await self.conditionsMonitor.wait(
+        await self.delayProcessor.process(
             delay: data.schedule.delay,
-            startDate: data.triggerInfo?.date ?? data.scheduleStateChangeDate
+            triggerDate: triggerDate
         )
 
-        // Make sure we are still up to date
+        // Make sure we are still up to date. Data might change due to a change
+        // in the data, schedule was cancelled, or if a delay cancellation trigger
+        // was fired.
         guard await self.isUpToDate(data: data) else { return .invalidate }
 
         // Precheck
@@ -441,7 +449,9 @@ fileprivate extension AutomationEngine {
         }
 
         // Verify conditions still met
-        guard self.conditionsMonitor.isReady(data.schedule.delay) else {
+        guard 
+            self.delayProcessor.areConditionsMet(delay: data.schedule.delay)
+        else {
             return .notReady
         }
 

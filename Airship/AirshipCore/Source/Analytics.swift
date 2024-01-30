@@ -63,9 +63,11 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     private let sdkExtensions: Atomic<[String]> = Atomic([])
 
     // Screen tracking state
-    private var currentScreen: String?
-    private var previousScreen: String?
-    private var screenStartDate: Date?
+    private let screenState: AirshipMainActorValue<ScreenState> = AirshipMainActorValue(ScreenState())
+    private let restoreScreenOnForeground: AirshipMainActorValue<String?> = AirshipMainActorValue(nil)
+
+    private let regions: AirshipMainActorValue<Set<String>> = AirshipMainActorValue(Set())
+
 
     private var isAirshipReady = false
 
@@ -222,20 +224,26 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     }
 
     @objc
+    @MainActor
     private func applicationWillEnterForeground() {
         // Start tracking previous screen before backgrounding began
-        if let previousScreen = self.previousScreen {
+        if let previousScreen = self.restoreScreenOnForeground.value,
+           self.screenState.value.current == nil
+        {
             trackScreen(previousScreen)
         }
+        self.restoreScreenOnForeground.set(nil)
     }
 
     @objc
     @MainActor
     private func applicationDidEnterBackground() {
+        self.restoreScreenOnForeground.set(self.screenState.value.current)
         self.trackScreen(nil)
     }
 
     @objc
+    @MainActor
     private func applicationWillTerminate() {
         self.trackScreen(nil)
     }
@@ -351,6 +359,19 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         }
 
         if let regionEvent = event as? RegionEvent {
+            let shouldInsert: Bool = regionEvent.boundaryEvent == .enter
+            let regionID = regionEvent.regionID
+
+            Task { @MainActor in
+                self.regions.update { regions in
+                    if (shouldInsert) {
+                        regions.insert(regionID)
+                    } else {
+                        regions.remove(regionID)
+                    }
+                }
+            }
+
             self.notificationCenter.post(
                 name: AirshipAnalytics.regionEventAdded,
                 object: self,
@@ -434,47 +455,50 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
     /// - Parameter screen: The screen's identifier.
     @objc
+    @MainActor
     public func trackScreen(_ screen: String?) {
         let date = self.date.now
-        Task { @MainActor in
-            // Prevent duplicate calls to track same screen
-            guard screen != self.currentScreen else {
+        // Prevent duplicate calls to track same screen
+        guard screen != self.screenState.value.current else {
+            return
+        }
+
+        self.notificationCenter.post(
+            name: AirshipAnalytics.screenTracked,
+            object: self,
+            userInfo: screen == nil ? [:] : [AirshipAnalytics.screenKey: screen!]
+        )
+
+
+        let currentScreen = self.screenState.value.current
+        let screenStartDate = self.screenState.value.startDate
+        let previousScreen = self.screenState.value.previous
+
+        self.screenState.update { state in
+            state.current = screen
+            state.startDate = date
+            state.previous = currentScreen
+        }
+
+        // If there's a screen currently being tracked set it's stop time and add it to analytics
+        if let currentScreen = currentScreen, let screenStartDate = screenStartDate {
+
+            guard
+                let ste = ScreenTrackingEvent(
+                    screen: currentScreen,
+                    previousScreen: previousScreen,
+                    startDate: screenStartDate,
+                    duration: date.timeIntervalSince(screenStartDate)
+                )
+            else {
+                AirshipLogger.error(
+                    "Unable to create screen tracking event"
+                )
                 return
             }
 
-            self.notificationCenter.post(
-                name: AirshipAnalytics.screenTracked,
-                object: self,
-                userInfo: screen == nil ? [:] : [AirshipAnalytics.screenKey: screen!]
-            )
-
-            // If there's a screen currently being tracked set it's stop time and add it to analytics
-            if let currentScreen = self.currentScreen,
-               let screenStartDate = self.screenStartDate {
-
-                guard
-                    let ste = ScreenTrackingEvent(
-                        screen: currentScreen,
-                        previousScreen: self.previousScreen,
-                        startDate: screenStartDate,
-                        duration: date.timeIntervalSince(screenStartDate)
-                    )
-                else {
-                    AirshipLogger.error(
-                        "Unable to create screen tracking event"
-                    )
-                    return
-                }
-
-                // Set previous screen to last tracked screen
-                self.previousScreen = self.currentScreen
-
-                // Add screen tracking event to next analytics batch
-                self.addEvent(ste)
-            }
-
-            self.currentScreen = screen
-            self.screenStartDate = date
+            // Add screen tracking event to next analytics batch
+            self.addEvent(ste)
         }
     }
 
@@ -534,11 +558,42 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
 }
 
 extension AirshipAnalytics: InternalAnalyticsProtocol {
+    @MainActor
+    public var currentScreen: String? {
+        return self.screenState.value.current
+    }
+    
+    @MainActor
+    public var regionUpdates: AsyncStream<Set<String>> {
+        return self.regions.updates
+    }
+    
+    @MainActor
+    public var currentRegions: Set<String> {
+        return self.regions.value
+    }
+
+    @MainActor
+    public var screenUpdates: AsyncStream<String?> {
+        return AsyncStream { [screenState] continutation in
+            let updates = screenState.updates
+            let task = Task {
+                for await value in updates {
+                    continutation.yield(value.current)
+                }
+            }
+
+            continutation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
+
     /// Called to notify analytics the app was launched from a push notification.
     /// For internal use only. :nodoc:
     /// - Parameter notification: The push notification.
     @MainActor
-    func launched(fromNotification notification: [AnyHashable: Any]) {
+    public func launched(fromNotification notification: [AnyHashable: Any]) {
         if AirshipUtils.isAlertingPush(notification) {
             let sendID = notification["_"] as? String
             let metadata = notification[AirshipAnalytics.pushMetadata] as? String
@@ -550,7 +605,7 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
         }
     }
 
-    func onDeviceRegistration(token: String) {
+    public func onDeviceRegistration(token: String) {
         guard privacyManager.isEnabled(.push) else {
             return
         }
@@ -565,7 +620,7 @@ extension AirshipAnalytics: InternalAnalyticsProtocol {
 
     @available(tvOS, unavailable)
     @MainActor
-    func onNotificationResponse(
+    public func onNotificationResponse(
         response: UNNotificationResponse,
         action: UNNotificationAction?
     ) {
@@ -615,4 +670,10 @@ struct SessionEventFactory: SessionEventFactoryProtocol {
             return AppForegroundEvent(sessionState: event.sessionState)
         }
     }
+}
+
+fileprivate struct ScreenState {
+    var current: String?
+    var previous: String?
+    var startDate: Date?
 }

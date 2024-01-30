@@ -4,8 +4,43 @@ import Foundation
 
 @objc(UATestAnalytics)
 public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
-    public func onDeviceRegistration(token: String) {
 
+    private let screen = AirshipMainActorValue<String?>(nil)
+    private let regions = AirshipMainActorValue<Set<String>>(Set())
+
+
+    @MainActor
+    public func setScreen(_ screen: String?) {
+        self.screen.set(screen)
+    }
+
+    @MainActor
+    public func setRegions(_ regions: Set<String>) {
+        self.regions.set(regions)
+    }
+
+
+    public var screenUpdates: AsyncStream<String?> {
+        return self.screen.updates
+    }
+
+    @MainActor
+    public var currentScreen: String? {
+        return self.screen.value
+    }
+
+    public var regionUpdates: AsyncStream<Set<String>> {
+        return self.regions.updates
+    }
+
+    public var currentRegions: Set<String> {
+        return self.regions.value
+    }
+
+    var onDeviceRegistrationCalled = false
+
+    public func onDeviceRegistration(token: String) {
+        onDeviceRegistrationCalled = true
     }
 
     public func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?) {
@@ -60,6 +95,7 @@ public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponen
         return AssociatedIdentifiers()
     }
 
+    @MainActor
     public func trackScreen(_ screen: String?) {
 
     }
