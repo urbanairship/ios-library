@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum AutomationScheduleState: Int, Equatable, Sendable {
+enum AutomationScheduleState: String, Equatable, Sendable {
 
     case idle
     case triggered

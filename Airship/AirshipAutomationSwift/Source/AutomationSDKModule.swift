@@ -66,7 +66,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
 
         // Engine
         let engine = AutomationEngine(
-            store: AutomationStore(),
+            store: AutomationStore(config: config),
             executor: automationExecutor,
             preparer: automationPreparer,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,

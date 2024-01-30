@@ -481,20 +481,24 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         return false
     }
 
+    public class func save(_ context: NSManagedObjectContext) throws {
+        guard context.persistentStoreCoordinator?.persistentStores.isEmpty == false else {
+            throw AirshipErrors.error("Unable to save context. Missing persistent store.")
+        }
+
+        try context.save()
+    }
+
     @objc
     @discardableResult
     public class func safeSave(_ context: NSManagedObjectContext?) -> Bool {
-        if (context?.persistentStoreCoordinator?.persistentStores.count ?? 0)
-            == 0
-        {
-            AirshipLogger.error(
-                "Unable to save context. Missing persistent store."
-            )
+        guard let context = context else {
+            AirshipLogger.error("Unable to save, context nil.")
             return false
         }
 
         do {
-            try context?.save()
+            try save(context)
         } catch {
             AirshipLogger.error("Error saving context \(error)")
             return false

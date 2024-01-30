@@ -66,6 +66,27 @@ public final class ExperimentResult: NSObject, Codable, Sendable {
     public override var description: String {
         return "ExperimentResult: channelId: \(channelID), contactId: \(contactID), isMatch: \(isMatch), metadata: \(evaluatedExperimentsReportingData)"
     }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? ExperimentResult else {
+            return false
+        }
+
+        return self.channelID == other.channelID &&
+        self.contactID == other.contactID &&
+        self.isMatch == other.isMatch &&
+        self.evaluatedExperimentsReportingData == other.evaluatedExperimentsReportingData
+    }
+
+    public override var hash: Int {
+        var result = 1
+        result = 31 * result + channelID.hashValue
+        result = 31 * result + contactID.hashValue
+        result = 31 * result + isMatch.hashValue
+        result = 31 * result + evaluatedExperimentsReportingData.hashValue
+        return result
+
+    }
 }
 
 // Needed for IAA since it can't deal with codables until its rewritten in swift
