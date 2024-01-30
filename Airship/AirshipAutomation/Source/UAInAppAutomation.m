@@ -290,6 +290,14 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
 
     UARetriable *checkFrequencyLimits = [UARetriable retriableWithRunBlock:^(UARetriableCompletionHandler retriableHandler) {
         [self.frequencyLimitManager getFrequencyChecker:schedule.frequencyConstraintIDs completionHandler:^(UAFrequencyChecker *c) {
+            if (!c) {
+                [self.remoteDataClient notifyOnUpdate:^{
+                    completionHandler(UAAutomationSchedulePrepareResultInvalidate);
+                }];
+                retriableHandler(UARetriableResultCancel, 0);
+                return;
+            }
+            
             checker = c;
             if (checker.isOverLimit) {
                 // If we're over the limit, skip the rest of the prepare steps and invalidate the pipeline
@@ -637,8 +645,8 @@ static NSString * const UAAutomationEnginePrepareScheduleEvent = @"com.urbanairs
     [self updateEnginePauseState];
 }
 
-- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints {
-     [self.frequencyLimitManager updateConstraints:constraints];
+- (void)updateConstraints:(NSArray<UAFrequencyConstraint *> *)constraints completionHandler:(nonnull void (^)(BOOL))completionHandler {
+     [self.frequencyLimitManager updateConstraints:constraints completionHandler:completionHandler];
 }
 
 - (void)setPaused:(BOOL)paused {

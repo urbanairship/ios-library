@@ -131,6 +131,13 @@
         completionHandler(YES);
     }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self.queue waitUntilAllOperationsAreFinished];
@@ -151,6 +158,16 @@
         return [edits.metadata isEqualToDictionary:expectedSceduleMetadataB];
     }] completionHandler:OCMOCK_ANY];
 
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+
     // setup to same message with metadata B
     inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                              timestamp:[NSDate date]
@@ -170,6 +187,14 @@
 - (void)testMissingInAppMessageRemoteData {
     [[self.mockDelegate reject] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
     self.publishBlock(@[]);
     [self.queue waitUntilAllOperationsAreFinished];
 }
@@ -179,6 +204,15 @@
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":@[]}
                                                                                    metadata:@{@"cool" : @"story"}];
+
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     [[self.mockDelegate reject] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
@@ -233,6 +267,15 @@
         [self.allSchedules addObjectsFromArray:schedules];
         completionHandler(self.allSchedules);
     }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -291,6 +334,15 @@
         [self.allSchedules addObjectsFromArray:schedules];
         completionHandler(self.allSchedules);
     }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -357,6 +409,13 @@
         completionHandler(self.allSchedules);
     }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -468,6 +527,13 @@
         void (^completionHandler)(UASchedule *) = (__bridge void (^)(UASchedule *))arg;
         completionHandler([self getScheduleForScheduleId:scheduleID]);
     }] editScheduleWithID:OCMOCK_ANY edits:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -595,6 +661,13 @@
         completionHandler(nil); // REVISIT - return schedule
     }] editScheduleWithID:OCMOCK_ANY edits:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self.queue waitUntilAllOperationsAreFinished];
@@ -680,6 +753,13 @@
         completionHandler(YES);
     }] scheduleMultiple:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self.queue waitUntilAllOperationsAreFinished];
@@ -729,6 +809,13 @@
         [edits.start isEqual:[NSDate distantPast]] &&
         [edits.end isEqual:[NSDate distantFuture]];
     }] completionHandler:OCMOCK_ANY];
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
@@ -816,6 +903,13 @@
         completionHandler(nil);
     }] editScheduleWithID:OCMOCK_ANY edits:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     // test
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self.queue waitUntilAllOperationsAreFinished];
@@ -831,6 +925,16 @@
                                                                                             data:@{}
                                                                                         metadata:@{}];
 
+    
+    
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
     // test
     self.publishBlock(@[emptyInAppRemoteDataPayload]);
     [self.queue waitUntilAllOperationsAreFinished];
@@ -841,6 +945,13 @@
 }
 
 - (void)testValidSchedule {
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(void) = (__bridge void (^)(void))arg;
+        completionHandler();
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     id remoteDataMetadata = @{@"neat": @"rad"};
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
         builder.metadata = @{
@@ -853,6 +964,13 @@
 }
 
 - (void)testInvalidSchedule {
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(void) = (__bridge void (^)(void))arg;
+        completionHandler();
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     id remoteDataMetadata = @{@"neat": @"rad"};
 
     UASchedule *schedule = [UAActionSchedule scheduleWithActions:@{} builderBlock:^(UAScheduleBuilder * _Nonnull builder) {
@@ -959,6 +1077,14 @@
         builder.priority = -30;
     }];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
                                                                                        data:@{@"in_app_messages":@[payload]}
@@ -1050,6 +1176,13 @@
         [scheduled fulfill];
     }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self waitForTestExpectations];
     [self.mockDelegate verify];
@@ -1107,6 +1240,14 @@
         [scheduled fulfill];
     }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
 
+
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self waitForTestExpectations];
     [self.mockDelegate verify];
@@ -1120,6 +1261,15 @@
                                                                                        data:@{@"in_app_messages":@[@{}]}
                                                                                    metadata:@{@"metadata" : @"so meta"}];
     
+
+    [[[self.mockDelegate stub] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
+
     self.publishBlock(@[inAppRemoteDataPayload]);
     XCTestExpectation *finished = [self expectationWithDescription:@"finished"];
     [self.queue addOperationWithBlock:^{
@@ -1255,13 +1405,27 @@
         [scheduled fulfill];
     }] scheduleMultiple:@[expected] completionHandler:OCMOCK_ANY];
 
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
     self.publishBlock(@[inAppRemoteDataPayload]);
     [self waitForTestExpectations];
     [self.mockDelegate verify];
 }
 
 - (void)testEmptyConstraints {
-    [[self.mockDelegate expect] updateConstraints:@[]];
+    
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:OCMOCK_ANY completionHandler:OCMOCK_ANY];
+
 
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
@@ -1305,7 +1469,12 @@
         [expectedConstraints addObject:constraint];
     }
 
-    [[self.mockDelegate expect] updateConstraints:expectedConstraints];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:expectedConstraints completionHandler:OCMOCK_ANY];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]
@@ -1341,7 +1510,12 @@
 
     UAFrequencyConstraint *expected = [UAFrequencyConstraint frequencyConstraintWithIdentifier:@"valid" range:10 count:10];
 
-    [[self.mockDelegate expect] updateConstraints:@[expected]];
+    [[[self.mockDelegate expect] andDo:^(NSInvocation *invocation) {
+        void *arg;
+        [invocation getArgument:&arg atIndex:3];
+        void (^completionHandler)(bool) = (__bridge void (^)(bool))arg;
+        completionHandler(YES);
+    }] updateConstraints:@[expected] completionHandler:OCMOCK_ANY];
 
     UARemoteDataPayload *inAppRemoteDataPayload = [[UARemoteDataPayload alloc] initWithType:@"in_app_messages"
                                                                                   timestamp:[NSDate date]

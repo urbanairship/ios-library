@@ -169,7 +169,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:@[@"barConstraint", @"fooConstraint"] completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -301,7 +305,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     XCTestExpectation *prepareFinished = [self expectationWithDescription:@"prepare finished"];
@@ -422,7 +430,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockInAppMessageManager expect] andDo:^(NSInvocation *invocation) {
@@ -927,7 +939,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
@@ -978,7 +994,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     [[[self.mockDeferredClient expect] andDo:^(NSInvocation *invocation) {
@@ -1036,7 +1056,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
@@ -1075,7 +1099,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
@@ -1113,7 +1141,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience
@@ -1151,7 +1183,11 @@
         void *arg;
         [invocation getArgument:&arg atIndex:3];
         void(^callback)(UAFrequencyChecker *) =  (__bridge void (^)(UAFrequencyChecker *))arg;
-        callback(nil);
+        callback([UAFrequencyChecker frequencyCheckerWithIsOverLimit:^BOOL{
+            return NO;
+        } checkAndIncrement:^BOOL{
+            return YES;
+        }]);
     }] getFrequencyChecker:OCMOCK_ANY completionHandler:OCMOCK_ANY];
 
     // Mock the checks to reject the audience

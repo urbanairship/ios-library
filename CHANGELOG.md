@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.12.6, Jan 29, 2024
+Patch release that fixes an issue with message limits not being respected in certain cases. Apps on SDK v16 that make use of limits should update to this version or the latest 17.x release.
+
+### Changes
+- Fixed message limits not being respected in certain cases.
+
 ## Version 16.12.5, October 18, 2023
 Patch release that extends background time for Live Activity token generation from 10 seconds to 30 seconds and forces a Live Activity registration update on background if it previously failed.
 

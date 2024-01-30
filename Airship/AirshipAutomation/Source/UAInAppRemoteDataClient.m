@@ -211,7 +211,21 @@ static NSString *const UAScheduleInfoFrequencyConstraintIDsKey = @"frequency_con
             [constraints addObject:constraint];
         }
     }
-    [self.delegate updateConstraints:constraints];
+
+    dispatch_group_t constraintGroup = dispatch_group_create();
+    dispatch_group_enter(constraintGroup);
+    __block BOOL constraintsUpdated = NO;
+    [self.delegate updateConstraints:constraints completionHandler:^(BOOL success) {
+        constraintsUpdated = success;
+        dispatch_group_leave(constraintGroup);
+    }];
+    dispatch_group_wait(constraintGroup,  DISPATCH_TIME_FOREVER);
+
+    if (!constraintsUpdated) {
+        UA_LERR(@"Failed to update limits");
+        return;
+    }
+
 
     // Dispatch group
     dispatch_group_t dispatchGroup = dispatch_group_create();

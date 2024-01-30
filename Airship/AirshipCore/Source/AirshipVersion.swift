@@ -5,7 +5,7 @@ import Foundation;
 
 @objc(UAirshipVersion)
 public class AirshipVersion : NSObject {
-    public static let version = "16.12.5"
+    public static let version = "16.12.6"
 
     @objc
     public class func get() -> String {
