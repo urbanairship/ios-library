@@ -20,9 +20,12 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         )
     }
     
+    @MainActor
     func testGetCheckerNoLimits() async throws {
         let frequencyChecker = try await self.manager.getFrequencyChecker(constraintIDs: [])
-        XCTAssertNil(frequencyChecker)
+        XCTAssertNotNil(frequencyChecker)
+        XCTAssertTrue(frequencyChecker.checkAndIncrement())
+        XCTAssertFalse(frequencyChecker.isOverLimit)
     }
     
     @MainActor
@@ -33,7 +36,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
             count: 2
         )
 
-        try await self.manager.upsertConstraint(constraint)
+        try await self.manager.setConstraints([constraint])
 
         var constraints = try await self.store.fetchConstraints()
         XCTAssertEqual(constraints.count, 1);
@@ -41,7 +44,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         let startDate = Date(timeIntervalSince1970: 0)
         self.date.dateOverride = startDate
             
-        let frequencyChecker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])!
+        let frequencyChecker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
 
         constraints = try await self.store.fetchConstraints()
         XCTAssertEqual(constraints.count, 1)
@@ -87,8 +90,8 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
 
         try await self.manager.setConstraints([constraint])
 
-        let checker1 = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])!
-        let checker2 = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])!
+        let checker1 = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
+        let checker2 = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
 
         let constraints = try await self.store.fetchConstraints()
         XCTAssertEqual(constraints.count, 1)
@@ -144,7 +147,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
 
         try await self.manager.setConstraints([constraint1, constraint2])
 
-        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo", "bar"])!
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo", "bar"])
 
         XCTAssertFalse(checker.isOverLimit)
         var result = checker.checkAndIncrement()
@@ -194,7 +197,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
 
         try await self.manager.setConstraints([constraint1, constraint2])
 
-        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo", "bar"])!
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo", "bar"])
 
         try await self.manager.setConstraints(
             [
@@ -210,7 +213,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         self.date.offset = 1
         XCTAssertTrue(checker.checkAndIncrement())
         self.date.offset = 1
-        XCTAssertFalse(checker.checkAndIncrement())
+        XCTAssertTrue(checker.checkAndIncrement())
 
         await self.manager.writePending()
 
@@ -220,7 +223,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
 
         // Bar should have the two occurences
         let barInfo = try await self.store.fetchConstraints(["bar"])
-        XCTAssertEqual(barInfo.first?.occurrences.count, 2);
+        XCTAssertEqual(barInfo.first?.occurrences.count, 3);
     }
 
     @MainActor
@@ -235,7 +238,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
             ]
         )
 
-        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])!
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
         _ = checker.checkAndIncrement()
         await self.manager.writePending()
 
@@ -266,7 +269,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
             ]
         )
 
-        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])!
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
         let result = await checker.checkAndIncrement()
         XCTAssertTrue(result)
 

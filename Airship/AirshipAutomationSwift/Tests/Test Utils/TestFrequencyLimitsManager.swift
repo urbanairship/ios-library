@@ -26,9 +26,9 @@ final actor TestFrequencyLimitManager: FrequencyLimitManagerProtocol {
         try await onConstraints?(constraints)
     }
 
-    func getFrequencyChecker(constraintIDs: [String]?) async throws -> FrequencyCheckerProtocol? {
+    func getFrequencyChecker(constraintIDs: [String]?) async throws -> FrequencyCheckerProtocol {
         guard let constraintIDs = constraintIDs, !constraintIDs.isEmpty else {
-            return nil
+            return FrequencyChecker(isOverLimitBlock: { false }, checkAndIncrementBlock: { true })
         }
 
         return try await self.checkerBlock!(constraintIDs)

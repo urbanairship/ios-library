@@ -12,7 +12,7 @@ public protocol _FrequencyLimitManagerProtocol: Sendable {
     @MainActor
     func getFrequencyChecker(
         constraintIDs: [String]?
-    ) async throws -> FrequencyCheckerProtocol?
+    ) async throws -> FrequencyCheckerProtocol
 
     // Temp method until we have the updated in swift
     func setConstraints(data: Data) async throws
@@ -22,7 +22,7 @@ protocol FrequencyLimitManagerProtocol: Sendable {
     @MainActor
     func getFrequencyChecker(
         constraintIDs: [String]?
-    ) async throws -> FrequencyCheckerProtocol?
+    ) async throws -> FrequencyCheckerProtocol
 
 
     func setConstraints(_ constraints: [FrequencyConstraint]) async throws
@@ -34,8 +34,17 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
     private let frequencyLimitStore: FrequencyLimitStore
     private let date: AirshipDateProtocol
     private let storeQueue: AirshipSerialQueue
-    private var checkers: [() -> FrequencyChecker?] = []
-    private var pendingOccurrences: Set<Occurrence> = Set()
+
+    private let emptyChecker = FrequencyChecker(
+        isOverLimitBlock: { false },
+        checkAndIncrementBlock: { true }
+    )
+
+    @MainActor
+    private var fetchedConstraints: [String: ConstraintInfo] = [:]
+
+    @MainActor
+    private var pendingOccurrences: [Occurrence] = []
 
     init(
         dataStore: FrequencyLimitStore,
@@ -56,41 +65,39 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
     @objc
     public func getFrequencyChecker(
         constraintIDs: [String]?
-    ) async throws -> FrequencyCheckerProtocol? {
-        self.checkers.removeAll { checkerBlock in
-            checkerBlock() == nil
+    ) async throws -> FrequencyCheckerProtocol {
+        guard let constraintIDs = constraintIDs, !constraintIDs.isEmpty else {
+            return emptyChecker
         }
 
-        guard 
-            let constraintIDs = constraintIDs,
-            !constraintIDs.isEmpty
-        else {
-            return nil
-        }
+        return try await storeQueue.run {
+            await self.writePending()
 
-        let checker: FrequencyChecker? = try await storeQueue.run {
-            let constraintInfos = try await self.frequencyLimitStore.fetchConstraints(constraintIDs)
-            if (constraintInfos.isEmpty) {
-                return nil
+            let fetched = await self.fetchedConstraints.keys
+            let need = Set(constraintIDs).subtracting(fetched)
+
+            if !need.isEmpty {
+                let constraintInfos = try await self.frequencyLimitStore.fetchConstraints(
+                    Array(need)
+                )
+
+                if (constraintInfos.count != need.count) {
+                    let missing = need.subtracting(constraintInfos.map { $0.constraint.identifier } )
+                    throw AirshipErrors.error("Requested constraints \(constraintIDs) missing: \(missing)")
+                }
+
+                await self.updateFetchedConstraintInfos(constraintInfos)
             }
 
             return FrequencyChecker(
-                constraintInfos: constraintInfos,
-                date: self.date
-            ) { date in
-                self.recordOccurrence(date: date, constraintIDs: constraintIDs)
-            }
-        }
-
-        if let checker = checker {
-            checker.newOccurrences(pendingOccurrences)
-
-            self.checkers.append(
-                { [weak checker] in checker }
+                isOverLimitBlock: { [weak self] in
+                    return self?.isOverLimit(constraintIDs: constraintIDs) ?? true
+                },
+                checkAndIncrementBlock: { [weak self] in
+                    return self?.checkAndIncrement(constraintIDs: constraintIDs) ?? false
+                }
             )
         }
-
-        return checker
     }
 
     @objc
@@ -103,9 +110,9 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
     }
 
     func setConstraints(_ constraints: [FrequencyConstraint]) async throws {
-
         try await self.storeQueue.run {
-            await self.actuallyWritePending()
+            await self.writePending()
+
             let existing = Set(
                 try await self.frequencyLimitStore.fetchConstraints()
                     .map { $0.constraint }
@@ -131,78 +138,100 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
                 .map { $0.identifier }
 
             try await self.frequencyLimitStore.deleteConstraints(delete)
+            await self.removeFetchedConstraints(delete)
 
             for upsert in upsert {
                 try await self.frequencyLimitStore.upsertConstraint(upsert)
+                await self.updateFetchedConstraint(upsert)
             }
-
         }
     }
 
-    func upsertConstraint(_ constraint: FrequencyConstraint) async throws {
-        try await self.storeQueue.run {
-            await self.actuallyWritePending()
-            try await self.frequencyLimitStore.upsertConstraint(constraint)
-        }
-    }
-
-    func removeConstraint(_ constraint: FrequencyConstraint) async throws {
-        try await self.storeQueue.run {
-            await self.actuallyWritePending()
-            try await self.frequencyLimitStore.deleteConstraints([constraint.identifier])
-        }
-    }
-
-    func removeConstraint(constraintID: String) async throws {
-        try await self.storeQueue.run {
-            await self.actuallyWritePending()
-            try await self.frequencyLimitStore.deleteConstraints([constraintID])
-        }
-    }
-    
     @MainActor
-    private func recordOccurrence(date: Date, constraintIDs: [String]) {
-        let occurrences = constraintIDs.map { constraintID in
-            Occurrence(
-                constraintID: constraintID,
-                timestamp: date
-            )
+    private func isOverLimit(constraintIDs: [String]) -> Bool {
+        return constraintIDs.contains(
+            where: { constraintID in
+                guard let constraintInfo = self.fetchedConstraints[constraintID] else {
+                    return false
+                }
+
+                let constraint = constraintInfo.constraint
+                let occurrences = constraintInfo.occurrences.sorted { l, r in
+                    l.timestamp <= r.timestamp
+                }
+
+                guard occurrences.count >= constraint.count else { return false }
+
+                let timeStamp = occurrences[occurrences.count - Int(constraint.count)].timestamp
+                let timeSinceOccurrence = self.date.now.timeIntervalSince(timeStamp)
+                return timeSinceOccurrence <= constraint.range
+            }
+        )
+    }
+
+    @MainActor
+    private func checkAndIncrement(constraintIDs: [String]) -> Bool {
+        guard !isOverLimit(constraintIDs: constraintIDs) else { return false }
+
+        let now = self.date.now
+
+        constraintIDs.forEach { constraintID in
+            let occurrence = Occurrence(constraintID: constraintID, timestamp: now)
+            self.fetchedConstraints[constraintID]?.occurrences.append(occurrence)
+            self.pendingOccurrences.append(occurrence)
         }
 
-        self.checkers.forEach { checkerBlock in
-            checkerBlock()?.newOccurrences(Set(occurrences))
+        // Queue up a task to write pending
+        Task {
+            await self.storeQueue.runSafe {
+                await self.writePending()
+            }
         }
 
-        self.pendingOccurrences.formUnion(occurrences)
+        return true
+    }
 
-        Task { @MainActor in
-            await writePending()
+    @MainActor
+    private func updateFetchedConstraint(_ constraint: FrequencyConstraint) {
+        self.fetchedConstraints[constraint.identifier]?.constraint = constraint
+    }
+
+    @MainActor
+    private func removeFetchedConstraints(_ constraintIDs: [String]) {
+        constraintIDs.forEach { constraintID in
+            self.fetchedConstraints[constraintID] = nil
+        }
+    }
+
+    @MainActor
+    private func updateFetchedConstraintInfos(_ constraintInfos: [ConstraintInfo]) {
+        constraintInfos.forEach { info in
+            self.fetchedConstraints[info.constraint.identifier] = info
         }
     }
 
     func writePending() async {
-        await self.storeQueue.runSafe {
-            await self.actuallyWritePending()
-        }
-    }
-
-    private func actuallyWritePending() async {
-        let pending = await self.popPendingOccurrences()
-        guard !pending.isEmpty else {
-            return
-        }
+        let pending = await popPendingOccurrences()
         do {
             try await self.frequencyLimitStore.saveOccurrences(pending)
         } catch {
-            AirshipLogger.error("Unable to save occurrences: \(pending)")
+            AirshipLogger.error("Failed to write pending: \(pending) \(error)")
+            await appendPendingOccurences(pending)
         }
     }
+
     @MainActor
-    private func popPendingOccurrences() -> Set<Occurrence> {
+    private func appendPendingOccurences(_ pending: [Occurrence]) {
+        self.pendingOccurrences.append(contentsOf: pending)
+    }
+
+    @MainActor
+    private func popPendingOccurrences() -> [Occurrence] {
         let pending = self.pendingOccurrences
-        self.pendingOccurrences.removeAll()
+        self.pendingOccurrences = []
         return pending
     }
+    
 }
 
 

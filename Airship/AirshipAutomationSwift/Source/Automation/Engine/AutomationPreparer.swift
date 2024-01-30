@@ -89,11 +89,18 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .invalidate)
             }
 
-            let frequencyChecker = try await self.frequencyLimits.getFrequencyChecker(
-                constraintIDs: schedule.frequencyConstraintIDs
-            )
+            var frequencyChecker: FrequencyCheckerProtocol!
+            do {
+                frequencyChecker = try await self.frequencyLimits.getFrequencyChecker(
+                    constraintIDs: schedule.frequencyConstraintIDs
+                )
+            } catch {
+                AirshipLogger.error("Failed to fetch frequency checker for schedule \(schedule.identifier) error: \(error)")
+                await self.remoteDataAccess.notifyOutdated(schedule: schedule)
+                return .success(result: .invalidate)
+            }
 
-            if (await frequencyChecker?.isOverLimit == true) {
+            guard await !frequencyChecker.isOverLimit else {
                 return .success(result: .skip, ignoreReturnOrder: true)
             }
 

@@ -98,7 +98,7 @@ actor FrequencyLimitStore {
 
 
     func saveOccurrences(
-        _ occurrences: Set<Occurrence>
+        _ occurrences: [Occurrence]
     ) async throws {
         
         guard let coreData = self.coreData else {
