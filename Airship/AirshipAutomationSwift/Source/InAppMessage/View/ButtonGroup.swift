@@ -113,7 +113,7 @@ struct ButtonGroup: View {
 
 struct ButtonView: View {
     @EnvironmentObject var environment: InAppMessageEnvironment
-    
+
     let buttonInfo: InAppMessageButtonInfo
     let roundedEdge: RoundedEdge
 
@@ -154,20 +154,20 @@ struct ButtonView: View {
                  textTheme: TextTheme(letterSpacing: 0,
                                       lineSpacing: 0,
                                       additionalPadding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)))
-            .opacity(isPressed ? pressedOpacity : 1.0)
+        .opacity(isPressed ? pressedOpacity : 1.0)
 
     }
 
     var body: some View {
         Button(action:onTap) {
-                buttonLabel
-                    .padding(scaledPadding)
-                    .frame(maxWidth: .infinity, minHeight: max(relativeMinHeight, buttonHeight))
-            .background(buttonInfo.backgroundColor?.color)
-            .roundEdge(radius: buttonInfo.borderRadius ?? 0,
-                       edge: roundedEdge,
-                       borderColor: buttonInfo.borderColor?.color ?? .clear,
-                       borderWidth: 2)
+            buttonLabel
+                .padding(scaledPadding)
+                .frame(maxWidth: .infinity, minHeight: max(relativeMinHeight, buttonHeight))
+                .background(buttonInfo.backgroundColor?.color)
+                .roundEdge(radius: buttonInfo.borderRadius ?? 0,
+                           edge: roundedEdge,
+                           borderColor: buttonInfo.borderColor?.color ?? .clear,
+                           borderWidth: 2)
         }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .pressable(isPressed: $isPressed)
     }

@@ -38,20 +38,17 @@
         ],
         "dismiss_button_color" : "#000000",
         "heading" : {
-            "alignment" : "center",
+            "alignment" : "right",
             "color" : "#63aff2",
-            "font_family" : [
-                "sans-serif"
-            ],
             "size" : 22,
-            "text" : "Boom"
+            "text" : "22 Right"
         },
         "media" : {
             "description" : "Image",
             "type" : "image",
             "url" : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png"
         },
-        "template" : "media_left",
+        "template" : "media_right",
         "placement" : "top",
         "duration" : 100.0
     }

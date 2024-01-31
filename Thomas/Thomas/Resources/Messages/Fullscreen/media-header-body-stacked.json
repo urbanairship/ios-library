@@ -5,7 +5,7 @@
     "display": {
         "dismiss_button_color": "#00FF00",
         "background_color": "#FF0000",
-        "button_layout": "stacked",
+        "button_layout": "joined",
         "template": "media_header_body",
         "media": {
             "description": "Wide space",
@@ -38,28 +38,6 @@
                     "text": "24p Cancel",
                     "color": "#F0FFFF",
                     "size": 24
-                },
-                "background_color": "#0000FF",
-                "border_radius": 10,
-                "behavior": "cancel"
-            },
-            {
-                "id": "button-three",
-                "label": {
-                    "text": "12p Cancel",
-                    "color": "#FF0FFF",
-                    "size": 12
-                },
-                "background_color": "#0000FF",
-                "border_radius": 10,
-                "behavior": "cancel"
-            },
-            {
-                "id": "button-four",
-                "label": {
-                    "text": "9p Cancel",
-                    "color": "#FFF0FF",
-                    "size": 9
                 },
                 "background_color": "#0000FF",
                 "border_radius": 10,

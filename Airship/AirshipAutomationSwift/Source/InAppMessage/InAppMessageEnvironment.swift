@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import UIKit
+import SwiftUI
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -40,12 +41,27 @@ class InAppMessageEnvironment: ObservableObject {
         self.onDismiss = onDismiss
     }
 
-    private func tryDismiss(callback: () -> Void) {
+    private func tryDismiss(callback:@escaping () -> Void) {
         if !self.isDismissed {
-            self.isDismissed = true
-            onDismiss?()
-            onDismiss = nil
-            callback()
+            if #available(iOS 17.0, *) {
+                withAnimation {
+                    self.isDismissed = true
+                } completion: {
+                    self.onDismiss?()
+                    self.onDismiss = nil
+                    callback()
+                }
+            } else {
+                withAnimation {
+                    self.isDismissed = true
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { [weak self] in
+                    self?.onDismiss?()
+                    self?.onDismiss = nil
+                    callback()
+                })
+            }
         }
     }
 
@@ -71,7 +87,7 @@ class InAppMessageEnvironment: ObservableObject {
     @MainActor
     func onUserDismissed() {
         tryDismiss {
-            self.delegate.onUserDismissed()
+           self.delegate.onUserDismissed()
         }
     }
 

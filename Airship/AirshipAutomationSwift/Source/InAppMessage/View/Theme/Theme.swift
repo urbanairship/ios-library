@@ -49,7 +49,7 @@ extension BannerTheme: ThemeDefaultable {
     static let defaultPlistName: String = "UAInAppMessageBannerStyle.plist"
 
     static var defaultValues: BannerTheme {
-        let defaultPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        let defaultPadding = EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
         let defaultHeaderPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         let defaultBodyPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         let defaultMediaPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)

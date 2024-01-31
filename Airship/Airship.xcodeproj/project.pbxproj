@@ -1497,6 +1497,7 @@
 		99E8D7DE2B55C73B0099B6F3 /* ThemeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */; };
 		99F662B02B5DDC2900696098 /* BeveledLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */; };
 		99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662B12B60425E00696098 /* InAppMessageModalView.swift */; };
+		99F662D22B63047300696098 /* InAppMessageBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662D12B63047300696098 /* InAppMessageBannerView.swift */; };
 		A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
 		A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
 		A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
@@ -3176,6 +3177,7 @@
 		99EC01971FE1FED100B9C408 /* UAInAppMessageFullScreenAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageFullScreenAdapter.h; sourceTree = "<group>"; };
 		99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeveledLoadingView.swift; sourceTree = "<group>"; };
 		99F662B12B60425E00696098 /* InAppMessageModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageModalView.swift; sourceTree = "<group>"; };
+		99F662D12B63047300696098 /* InAppMessageBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageBannerView.swift; sourceTree = "<group>"; };
 		A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubscriptionListEditor.swift; path = AirshipCore/Source/SubscriptionListEditor.swift; sourceTree = SOURCE_ROOT; };
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
@@ -4194,6 +4196,7 @@
 				99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */,
 				999DC85D2B5B721D0048C6AF /* HTMLView.swift */,
 				99F662B12B60425E00696098 /* InAppMessageModalView.swift */,
+				99F662D12B63047300696098 /* InAppMessageBannerView.swift */,
 				99E8D7962B4F17260099B6F3 /* CloseButton.swift */,
 				990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */,
 				99E8D7BE2B50C2C10099B6F3 /* ButtonGroup.swift */,
@@ -7577,6 +7580,7 @@
 				6EE6AAD12B58A947002FEA75 /* InAppDisplayEvent.swift in Sources */,
 				3231128229D5E67200CF0D86 /* FrequencyLimitStore.swift in Sources */,
 				6E1528172B4DC3C000DF1377 /* ActionAutomationExecutor.swift in Sources */,
+				99F662D22B63047300696098 /* InAppMessageBannerView.swift in Sources */,
 				6E15282F2B4DED7A00DF1377 /* InAppMessageAnalytics.swift in Sources */,
 				6EC0CA682B49287100333A87 /* AutomationExecutor.swift in Sources */,
 				6E1528222B4DC5C000DF1377 /* InAppMessageDisplayDelegate.swift in Sources */,

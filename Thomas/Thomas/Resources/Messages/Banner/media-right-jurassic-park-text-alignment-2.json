@@ -6,25 +6,25 @@
         "allow_fullscreen_display" : true,
         "background_color" : "#ffffff",
         "body" : {
-            "alignment" : "center",
+            "alignment" : "right",
             "color" : "#000000",
             "font_family" : [
                 "sans-serif"
             ],
             "size" : 16,
-            "text" : "Big body"
+            "text" : "RIGHT Jurassic Park is a 1993 American science-fiction adventure film directed by Steven Spielberg and produced by Kathleen Kennedy and Gerald R. Molen."
         },
         "border_radius" : 5,
         "button_layout" : "stacked",
         "buttons" : [
             {
                 "actions" : {},
-                "background_color" : "#63aff2",
-                "border_color" : "#63aff2",
-                "border_radius" : 2,
+                "background_color" : "#ff0000",
+                "border_color" : "#000000",
+                "border_radius" : 4,
                 "id" : "d17a055c-ed67-4101-b65f-cd28b5904c84",
                 "label" : {
-                    "color" : "#ffffff",
+                    "color" : "#000000",
                     "font_family" : [
                         "sans-serif"
                     ],
@@ -38,20 +38,20 @@
         ],
         "dismiss_button_color" : "#000000",
         "heading" : {
-            "alignment" : "center",
+            "alignment" : "right",
             "color" : "#63aff2",
             "font_family" : [
-                "sans-serif"
+                "Jurassic Park"
             ],
-            "size" : 22,
-            "text" : "Boom"
+            "size" : 42,
+            "text" : "Right Title"
         },
         "media" : {
             "description" : "Image",
             "type" : "image",
-            "url" : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png"
+            "url" : "https://logonoid.com/images/jurassic-park-logo.png"
         },
-        "template" : "media_left",
+        "template" : "media_right",
         "placement" : "top",
         "duration" : 100.0
     }

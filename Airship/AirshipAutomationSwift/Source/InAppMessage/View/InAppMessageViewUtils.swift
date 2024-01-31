@@ -10,11 +10,114 @@ extension Color {
 
 extension View {
     @ViewBuilder
+    func showing(isShowing: Bool) -> some View {
+        if isShowing {
+            self
+        } else {
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    func addNub(placement: InAppMessageDisplayContent.Banner.Placement?, nub: AnyView, itemSpacing: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            if placement == .top {
+                self
+                nub.padding(.vertical, itemSpacing / 2)
+            } else {
+                nub.padding(.vertical, itemSpacing / 2)
+                self
+            }
+        }
+    }
+
+    @ViewBuilder
     func addBackground(color: Color) -> some View {
         ZStack {
             color.ignoresSafeArea(.all).zIndex(0)
             self.zIndex(1)
         }
+    }
+
+    @ViewBuilder
+    func addSwipeDismiss(placement: InAppMessageDisplayContent.Banner.Placement,
+                         swipeOffset: Binding<CGFloat>,
+                         onDismiss: @escaping () -> Void) -> some View {
+        self.offset(x: 0, y: swipeOffset.wrappedValue)
+            .gesture(
+                DragGesture()
+                    .onChanged { gesture in
+                        withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
+                            let swipeOffest = gesture.translation.height
+
+                            let upwardSwipeTopPlacement = (placement == .top && swipeOffest < 0)
+                            let downwardSwipeBottomPlacement = (placement == .bottom && swipeOffest > 0)
+
+                            if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
+                                swipeOffset.wrappedValue = gesture.translation.height
+                            }
+                        }
+                    }
+                    .onEnded { gesture in
+                        withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
+                            let swipeOffest = gesture.translation.height
+                            swipeOffset.wrappedValue = swipeOffest
+
+                            let upwardSwipeTopPlacement = (placement == .top && swipeOffest < 0)
+                            let downwardSwipeBottomPlacement = (placement == .bottom && swipeOffest > 0)
+
+                            if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
+                                onDismiss()
+                            } else {
+                                swipeOffset.wrappedValue = 0
+                            }
+                        }
+                    })
+    }
+
+    @ViewBuilder
+    func applyAlignment(placement:InAppMessageTextInfo.Alignment) -> some View {
+        switch placement {
+        case .center:
+            HStack {
+                Spacer()
+                self
+                Spacer()
+            }
+        case .left:
+            HStack {
+                self
+                Spacer()
+            }
+        case .right:
+            HStack {
+                Spacer()
+                self
+            }
+        }
+    }
+
+    @ViewBuilder
+    func applyTransitioningPlacement(placement:InAppMessageDisplayContent.Banner.Placement) -> some View {
+        switch placement {
+        case .top:
+            VStack {
+                self.applyTransition(placement: .top)
+                Spacer()
+            }
+        case .bottom:
+            VStack {
+                Spacer()
+                self.applyTransition(placement: .bottom)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func applyTransition(placement:InAppMessageDisplayContent.Banner.Placement) -> some View {
+        self.transition(placement == .top ?
+            .asymmetric(insertion: .move(edge: .top), removal: .move(edge: .top).combined(with: .opacity)) :
+                .asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom).combined(with: .opacity)))
     }
 
     @ViewBuilder

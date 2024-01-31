@@ -35,7 +35,7 @@ struct CloseButton: View {
     @ViewBuilder
     private var dismissButtonImage: some View {
         imageExistsInBundle(name: dismissIconResource) ?
-       AnyView(Image(dismissIconResource)
+        AnyView(Image(dismissIconResource)
             .resizable()
             .frame(width: width/2, height: height/2)) :
         AnyView(Image(systemName: dismissIconResource)

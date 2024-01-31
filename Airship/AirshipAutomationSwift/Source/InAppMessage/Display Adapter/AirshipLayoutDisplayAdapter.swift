@@ -60,18 +60,21 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         switch (message.displayContent) {
-        case .banner(_):
-            // TODO
-            return .finished
-        case .fullscreen(let fullscreen):
-            return await displayFullscreen(
-                fullscreen,
+        case .banner(let banner):
+            return await displayBanner(
+                banner,
                 scene: scene.scene,
                 analytics: analytics
             )
         case .modal(let modal):
             return await displayModal(
                 modal,
+                scene: scene.scene,
+                analytics: analytics
+            )
+        case .fullscreen(let fullscreen):
+            return await displayFullscreen(
+                fullscreen,
                 scene: scene.scene,
                 analytics: analytics
             )
@@ -94,8 +97,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     }
 
     @MainActor
-    private func displayFullscreen(
-        _ fullscreen: InAppMessageDisplayContent.Fullscreen,
+    private func displayBanner(
+        _ banner: InAppMessageDisplayContent.Banner,
         scene: UIWindowScene,
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
@@ -109,21 +112,24 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let window = UIWindow.makeModalReadyWindow(scene: scene)
             let environment = InAppMessageEnvironment(
                 delegate: listener,
-                theme: Theme.fullScreen(FullScreenTheme()),
+                theme: Theme.banner(BannerTheme()),
                 extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
             ) {
                 window.animateOut()
             }
-
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, windowSize in
-                FullScreenView(displayContent: fullscreen)
+            
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
+                InAppMessageBannerView(displayContent: banner)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
-
-            window.animateIn()
+            
+            /// Add window without animation since only the banner content needs to animate
+            window.alpha = 1
+            window.makeKeyAndVisible()
+            window.isUserInteractionEnabled = true
         }
     }
 
@@ -151,6 +157,40 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
                 InAppMessageModalView(displayContent: modal)
+            }
+
+            let viewController = InAppMessageHostingController(rootView: rootView)
+            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+            window.rootViewController = viewController
+
+            window.animateIn()
+        }
+    }
+
+    @MainActor
+    private func displayFullscreen(
+        _ fullscreen: InAppMessageDisplayContent.Fullscreen,
+        scene: UIWindowScene,
+        analytics: InAppMessageAnalyticsProtocol
+    ) async -> DisplayResult {
+        return await withCheckedContinuation { continuation in
+            let listener = InAppMessageDisplayListener(
+                analytics: analytics
+            ) { result in
+                continuation.resume(returning: result)
+            }
+
+            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let environment = InAppMessageEnvironment(
+                delegate: listener,
+                theme: Theme.fullScreen(FullScreenTheme()),
+                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+            ) {
+                window.animateOut()
+            }
+
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, windowSize in
+                FullScreenView(displayContent: fullscreen)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)
