@@ -8,6 +8,4 @@
 #import "UAGlobal.h"
 #import "UALegacyLoggingBridge.h"
 #import "UAPush.h"
-#import "UALegacySDKModule.h"
 #import "UAURLAllowListScope.h"
-#import "UALegacyAction.h"

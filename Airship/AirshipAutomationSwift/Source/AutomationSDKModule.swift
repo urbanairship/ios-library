@@ -5,10 +5,14 @@ import AirshipCore
 #endif
 
 
+@objc(UAAutomationSDKModule)
 public class AutomationSDKModule: NSObject, AirshipSDKModule {
     public let actionsManifest: ActionsManifest? = nil
-    public let components: [AirshipComponent] = []
+    public let components: [AirshipComponent]
 
+    init(components: [AirshipComponent]) {
+        self.components = components
+    }
     public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
 
         // Dependencies
@@ -93,7 +97,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             automationEngine: engine
         )
 
-        let _ = InAppAutomation(
+        let inAppAutomation = InAppAutomation(
             engine: engine,
             inAppMessaging: inAppMessaging,
             legacyInAppMessaging: legacyInAppMessaging,
@@ -103,6 +107,6 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             config: config
         )
 
-        return nil
+        return AutomationSDKModule(components: [inAppAutomation])
     }
 }

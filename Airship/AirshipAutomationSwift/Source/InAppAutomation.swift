@@ -4,7 +4,10 @@ import Foundation
 import AirshipCore
 #endif
 
-public final class InAppAutomation: Sendable {
+public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Sendable {
+    // TODO
+    public var isComponentEnabled: Bool = true
+
     private let engine: AutomationEngineProtocol
     private let remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol
     private let dataStore: PreferenceDataStore
@@ -17,6 +20,12 @@ public final class InAppAutomation: Sendable {
 
     /// Legacy In-App Messaging
     public let legacyInAppMessaging: LegacyInAppMessagingProtocol
+
+    /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
+    @objc
+    public static var shared: InAppAutomation {
+        return Airship.requireComponent(ofType: InAppAutomation.self)
+    }
 
     @MainActor
     init(
@@ -37,6 +46,8 @@ public final class InAppAutomation: Sendable {
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
 
+        super.init()
+        
         if (config.autoPauseInAppAutomationOnLaunch) {
             self.isPaused = true
         }
@@ -54,7 +65,7 @@ public final class InAppAutomation: Sendable {
     }
 
     @MainActor
-    func onAirshipReady() {
+    public func airshipReady() {
         self.engine.setExecutionPaused(self.isPaused)
 
         Task {

@@ -24,23 +24,14 @@ struct LayoutsList: View {
     @State private var configurationFileName = ""
     @State private var showBanner = false
 
-    @State private var isLegacyDisplaySelected = false
 
     var body: some View {
         VStack {
             List {
-                if type == .messageBanner ||
-                   type == .messageModal ||
-                   type == .messageFullscreen ||
-                   type == .messageHTML {
-                    Section {
-                        Toggle("Use legacy display", isOn: $isLegacyDisplaySelected)
-                    }
-                }
                 ForEach(self.layouts, id: \.self) { layout in
                         Button(layout.fileName) {
                             do {
-                                try Layouts.shared.openLayout(layout, useLegacyDisplay: isLegacyDisplaySelected)
+                                try Layouts.shared.openLayout(layout)
                             } catch {
                                 self.showError = true
                                 self.errorMessage = "Failed to open layout \(error)"

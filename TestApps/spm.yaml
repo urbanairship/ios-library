@@ -14,8 +14,6 @@ targets:
       - package: Airship
         product: AirshipPreferenceCenter
       - package: Airship
-        product: AirshipAutomation
-      - package: Airship
         product: AirshipDebug
       - target: TestContentExtension
       - target: TestServiceExtension

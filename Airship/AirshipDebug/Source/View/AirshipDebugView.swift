@@ -6,7 +6,7 @@ import SwiftUI
 
 #if canImport(AirshipCore)
 import AirshipCore
-import AirshipAutomation
+import AirshipAutomationSwift
 #elseif canImport(AirshipKit)
 import AirshipKit
 #endif
@@ -313,10 +313,11 @@ private class AirshipDebugViewModel: ObservableObject {
     private(set) var isPushNotificationsOptedIn: Bool
 
     @Published
+    @MainActor
     var displayInterval: TimeInterval {
         didSet {
             guard Airship.isFlying else { return }
-            InAppAutomation.shared.inAppMessageManager.displayInterval =
+            InAppAutomation.shared.inAppMessaging.displayInterval =
                 displayInterval
         }
     }
@@ -366,7 +367,7 @@ private class AirshipDebugViewModel: ObservableObject {
             self.backgroundPushEnabled =
                 Airship.push.backgroundPushNotificationsEnabled
             self.displayInterval =
-                InAppAutomation.shared.inAppMessageManager.displayInterval
+                InAppAutomation.shared.inAppMessaging.displayInterval
             subscribeUpdates()
         } else {
             self.channelID = "TakeOff not called"

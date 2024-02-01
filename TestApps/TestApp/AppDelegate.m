@@ -3,7 +3,6 @@
 #import "AppDelegate.h"
 
 @import AirshipCore;
-@import AirshipAutomation;
 @import AirshipMessageCenter;
 @import AirshipPreferenceCenter;
 @import AirshipDebug;
@@ -20,7 +19,6 @@
     [UAirship takeOff:cfg launchOptions:launchOptions];
     
     [[UAMessageCenter shared] display];
-    [UAInAppAutomation shared].inAppMessageManager.displayInterval = 12345;
 
     return YES;
 }

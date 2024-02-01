@@ -61,8 +61,8 @@ class ProjectValidationTest: XCTestCase {
 
     func testAirshipAutomation() {
         validateTarget(
-            target: "AirshipAutomation",
-            sourcePaths: ["AirshipAutomation/Source"]
+            target: "AirshipAutomationSwift",
+            sourcePaths: ["AirshipAutomationSwift/Source"]
         )
     }
 

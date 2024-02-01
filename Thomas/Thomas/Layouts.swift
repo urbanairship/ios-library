@@ -5,7 +5,6 @@ import Foundation
 import Yams
 import WebKit
 import AirshipAutomationSwift
-import AirshipAutomation
 
 final class Layouts {
     public static let shared: Layouts = Layouts()
@@ -84,41 +83,14 @@ final class Layouts {
     }
 
     @MainActor
-    private func displayLegacyMessage(_ data: Data) throws {
-        if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any], let legacyInAppMessage = try? AirshipAutomation.InAppMessage.init(json: jsonObject) {
-
-            let schedule = InAppMessageSchedule(message: legacyInAppMessage) { builder in
-                builder.triggers = [ScheduleTrigger.activeSessionTrigger(withCount: 1)]
-                builder.identifier = "legacy-in-app-message"
-                builder.delay = ScheduleDelay(builderBlock: { builder in
-                    builder.seconds = 0
-                })
-                builder.limit = 1
-            }
-
-            InAppAutomation.shared.cancelSchedule(withID: schedule.identifier)
-
-            InAppAutomation.shared.schedule(schedule) { success in
-                print("Schedule attempt \(success ? "succeeded ✅" : "failed 🚨")")
-            }
-        } else {
-            print("Schedule attempt failed 🚨")
-        }
-    }
-
-    @MainActor
-    public func openLayout(_ layout: LayoutFile, useLegacyDisplay:Bool? = nil) throws {
+    public func openLayout(_ layout: LayoutFile) throws {
         let data = try loadData(filePath: layout.filePath)
 
         switch layout.type {
         case .sceneModal, .sceneBanner, .sceneEmbedded:
             try displayScene(data)
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
-            if useLegacyDisplay == true {
-                try displayLegacyMessage(data)
-            } else {
-                try displayMessage(data)
-            }
+            try displayMessage(data)
         }
     }
 

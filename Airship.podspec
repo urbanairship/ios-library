@@ -42,22 +42,12 @@ Pod::Spec.new do |s|
       core.dependency                 "Airship/Basement"
    end
 
-   s.subspec "AutomationSwift" do |automation|
+   s.subspec "Automation" do |automation|
       automation.ios.source_files          = "Airship/AirshipAutomationSwift/Source/**/*.{h,m,swift}"
       automation.ios.exclude_files         = "Airship/AirshipAutomationSwift/Source/AirshipAutomationSwift.h"
       automation.ios.resource_bundle       = { 'AirshipAutomationSwiftResources' => "Airship/AirshipAutomationSwift/Resources/**/*" }
       automation.dependency                "Airship/Core"
    end
-
-   s.subspec "Automation" do |automation|
-      automation.ios.public_header_files       = "Airship/AirshipAutomation/Source/Public/*.h"
-      automation.ios.source_files              = "Airship/AirshipAutomation/Source/**/*.{h,m}", "Airship/AirshipAutomation/Source/Public/**/*.{h,m}"
-      automation.ios.resource_bundle           = { 'AirshipAutomationResources' => "Airship/AirshipAutomation/Resources/*" }
-      automation.ios.exclude_files             = "Airship/AirshipAutomation/Resources/Info.plist", "Airship/AirshipAutomation/Source/AirshipAutomation.h"
-      automation.ios.frameworks                = "UIKit"
-      automation.dependency                    "Airship/AutomationSwift"
-   end
-
 
    s.subspec "MessageCenter" do |messageCenter|
       messageCenter.ios.source_files          = "Airship/AirshipMessageCenter/Source/**/*.{h,m,swift}"

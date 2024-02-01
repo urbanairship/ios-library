@@ -14,8 +14,8 @@ let package = Package(
             targets: ["AirshipCore"]
         ),
         .library(
-            name: "AirshipAutomation",
-            targets: ["AirshipAutomation", "AirshipAutomationSwift"]
+            name: "AirshipAutomationSwift",
+            targets: ["AirshipAutomationSwift"]
         ),
         .library(
             name: "AirshipMessageCenter",
@@ -100,27 +100,6 @@ let package = Package(
                 .linkedFramework("StoreKit", .when(platforms: [.iOS])),
                 //Libraries
                 .linkedLibrary("sqlite3"),
-            ]
-        ),
-        .target(
-            name: "AirshipAutomation",
-            dependencies: [.target(name: "AirshipCore"), .target(name: "AirshipAutomationSwift")],
-            path: "Airship/AirshipAutomation",
-            exclude: [
-                "Source/AirshipAutomation.h",
-                "generate_header_imports.sh",
-                "Info.plist",
-            ],
-            sources: ["Source"],
-            resources: [
-                .process("Resources")
-            ],
-            publicHeadersPath: "Source/Public",
-            cSettings: [
-                .headerSearchPath("Source")
-            ],
-            linkerSettings: [
-                .linkedFramework("UIKit")
             ]
         ),
         .target(
@@ -214,7 +193,7 @@ let package = Package(
                 .target(name: "AirshipCore"),
                 .target(name: "AirshipPreferenceCenter"),
                 .target(name: "AirshipMessageCenter"),
-                .target(name: "AirshipAutomation"),
+                .target(name: "AirshipAutomationSwift"),
                 .target(name: "AirshipFeatureFlags")
             ],
             path: "Airship/AirshipDebug",

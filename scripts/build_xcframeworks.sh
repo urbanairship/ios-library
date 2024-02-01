@@ -122,15 +122,6 @@ xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
   -output "$OUTPUT/AirshipCore.xcframework"
 
-# Package AirshipAutomation
-xcodebuild -create-xcframework \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
-  -output "$OUTPUT/AirshipAutomation.xcframework"
 
   # Package AirshipAutomationSwift
 xcodebuild -create-xcframework \
@@ -197,7 +188,6 @@ xcodebuild -create-xcframework \
 
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipBasement.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipCore.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipMessageCenter.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipPreferenceCenter.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"

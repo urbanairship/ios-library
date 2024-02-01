@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// In-App messaging
-public protocol InAppMessagingProtocol: Sendable {
+public protocol InAppMessagingProtocol: AnyObject, Sendable {
     /// Display interval
     @MainActor
     var displayInterval: TimeInterval { get set }
