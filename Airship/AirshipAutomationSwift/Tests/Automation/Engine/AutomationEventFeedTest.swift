@@ -17,7 +17,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     
     override func setUp() async throws {
         let privacyManager = AirshipPrivacyManager(dataStore: self.datastore, defaultEnabledFeatures: .all)
-        let metrics = TestApplicationMetrics(dataStore: self.datastore, privacyManager: privacyManager)
+        let metrics = TestApplicationMetrics(dataStore: self.datastore, privacyManager: privacyManager, appVersion: "test")
         metrics.versionUpdated = true
         
         let airshipNotification = AirshipNotificationCenter(notificationCenter: notificaitonCenter)
@@ -39,7 +39,9 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
 
         let events = await takeNext(count: 2)
         
-        XCTAssertEqual([AutomationEvent.appInit, AutomationEvent.versionUpdated], events)
+        let state = TriggerableState(versionUpdated: "test")
+        
+        XCTAssertEqual([AutomationEvent.appInit, AutomationEvent.stateChanged(state: state)], events)
     }
     
     func testSubsequentAttachEmitsNoEvents() async throws {
@@ -61,16 +63,17 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         await takeNext(count: 2)
         
         notificaitonCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
-        var event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.foreground, event)
+        var events = await takeNext(count: 2)
+        XCTAssertEqual(AutomationEvent.foreground, events.first)
         
         notificaitonCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
-        event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.background, event)
+        events = await takeNext(count: 2)
+        XCTAssertEqual(AutomationEvent.background, events.first)
+        XCTAssertEqual(AutomationEvent.stateChanged(state: TriggerableState(versionUpdated: "test")), events.last)
         
         let trackScreenName = "test-screen"
         notificaitonCenter.post(name: AirshipAnalytics.screenTracked, object: nil, userInfo: [AirshipAnalytics.screenKey: trackScreenName])
-        event = await takeNext().first
+        var event = await takeNext().first
         XCTAssertEqual(AutomationEvent.screenView(name: trackScreenName), event)
         
         let regionIdEnter = "reg-id"

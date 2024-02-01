@@ -10,16 +10,44 @@ protocol AutomationEventFeedProtocol: Sendable {
     var feed: AsyncStream<AutomationEvent> { get }
 }
 
+struct TriggerableState: Equatable {
+    var appSessionID: String? // set on foreground event, resets on background
+    var versionUpdated: String? // versionUpdate event
+}
+
 enum AutomationEvent: Sendable, Equatable {
     case foreground
     case background
     case screenView(name: String?)
-    case versionUpdated
     case appInit
+    case stateChanged(state: TriggerableState)
     case regionEnter(regionId: String)
     case regionExit(regionId: String)
     case customEvent(data: AirshipJSON, value: Double?)
     case featureFlagInterracted(data: AirshipJSON)
+    
+    func reportPayload() -> AirshipJSON? {
+        switch self {
+        case .foreground, .background, .appInit, .stateChanged:
+            return nil
+        case .screenView(let name):
+            return try? AirshipJSON.wrap(name)
+        case .regionEnter(let regionId): 
+            return try? AirshipJSON.wrap([
+                "region_id": regionId,
+                "type": "enter"
+            ])
+        case .regionExit(let regionId):
+            return try? AirshipJSON.wrap([
+                "region_id": regionId,
+                "type": "exit"
+            ])
+        case .customEvent(let data, _):
+            return data
+        case .featureFlagInterracted(let data):
+            return data
+        }
+    }
 }
 
 @MainActor
@@ -32,6 +60,8 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
     private var isFirstAttach = false
     private var isAttached = false
     private let applicationMetrics: ApplicationMetrics
+    
+    private var appSessionState = TriggerableState()
     
     let feed: Stream
 
@@ -60,8 +90,12 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
         
         self.emit(event: .appInit)
         
-        if applicationMetrics.isAppVersionUpdated {
-            self.emit(event: .versionUpdated)
+        if 
+            applicationMetrics.isAppVersionUpdated,
+            let version = applicationMetrics.currentAppVersion
+        {
+            self.appSessionState.versionUpdated = version
+            self.emit(event: .stateChanged(state: self.appSessionState))
         }
         
         return self
@@ -143,8 +177,21 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
         self.observers.append(token)
     }
     
+    private func setAppSessionID(_ id: String?) {
+        self.appSessionState.appSessionID = id
+        emit(event: .stateChanged(state: self.appSessionState))
+    }
+    
     private func emit(event: AutomationEvent) {
         guard isAttached else { return }
         self.continuation.yield(event)
+        
+        switch event {
+        case .foreground:
+            self.setAppSessionID(UUID().uuidString)
+        case .background:
+            self.setAppSessionID(nil)
+        default: break
+        }
     }
 }

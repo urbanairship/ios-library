@@ -10,7 +10,7 @@ import AirshipCore
 actor AutomationStore {
 
     private let coreData: UACoreData?
-    private let inMemory: Bool
+    let inMemory: Bool
 
     init(appKey: String, inMemory: Bool = false) {
         let bundle = AutomationResources.bundle
@@ -176,7 +176,7 @@ actor AutomationStore {
     }
 
 
-    private func requireCoreData() throws -> UACoreData {
+    func requireCoreData() throws -> UACoreData {
         guard let coreData = coreData else {
             throw AirshipErrors.error("Failed to create core data.")
         }

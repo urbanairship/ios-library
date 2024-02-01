@@ -154,6 +154,10 @@
 		60C1DB102A8B743C00A1D3DA /* AirshipEmbeddedViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0C2A8B743B00A1D3DA /* AirshipEmbeddedViewManager.swift */; };
 		60C1DB112A8B743C00A1D3DA /* AirshipLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0D2A8B743B00A1D3DA /* AirshipLayoutView.swift */; };
 		60C1DB122A8B743C00A1D3DA /* EmbeddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0E2A8B743C00A1D3DA /* EmbeddedView.swift */; };
+		60D1D9B52B67B10200EBE0A4 /* AutomationTriggerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9B42B67B10200EBE0A4 /* AutomationTriggerStore.swift */; };
+		60D1D9B82B68FB6400EBE0A4 /* PreparedTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */; };
+		60D1D9BB2B6A53F000EBE0A4 /* PreparedTriggerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */; };
+		60D1D9BD2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */; };
 		60D3BCC42A1529D800E07524 /* ExperimentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */; };
 		60D3BCC62A152A0D00E07524 /* ExperimentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */; };
 		60D3BCC72A152A1700E07524 /* ExperimentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */; };
@@ -1962,6 +1966,10 @@
 		60C1DB0C2A8B743B00A1D3DA /* AirshipEmbeddedViewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedViewManager.swift; sourceTree = "<group>"; };
 		60C1DB0D2A8B743B00A1D3DA /* AirshipLayoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLayoutView.swift; sourceTree = "<group>"; };
 		60C1DB0E2A8B743C00A1D3DA /* EmbeddedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmbeddedView.swift; sourceTree = "<group>"; };
+		60D1D9B42B67B10200EBE0A4 /* AutomationTriggerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTriggerStore.swift; sourceTree = "<group>"; };
+		60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedTrigger.swift; sourceTree = "<group>"; };
+		60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedTriggerTest.swift; sourceTree = "<group>"; };
+		60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTriggerProcessorTest.swift; sourceTree = "<group>"; };
 		60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentDataProvider.swift; sourceTree = "<group>"; };
 		60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentManager.swift; sourceTree = "<group>"; };
 		60D3BCCB2A153C0700E07524 /* Experiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
@@ -3189,6 +3197,16 @@
 			name = Embedded;
 			sourceTree = "<group>";
 		};
+		60D1D9B62B68FB4E00EBE0A4 /* TriggerProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				60D1D9B42B67B10200EBE0A4 /* AutomationTriggerStore.swift */,
+				6E1A9BC62B5EE32E00A6489B /* AutomationTriggerProcessor.swift */,
+				60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */,
+			);
+			path = TriggerProcessor;
+			sourceTree = "<group>";
+		};
 		60D3BCC22A1528F100E07524 /* Experimentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -4244,6 +4262,7 @@
 		6EC0CA5F2B491CC800333A87 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				60D1D9B62B68FB4E00EBE0A4 /* TriggerProcessor */,
 				6E986EE32B448D3C00FBE6A0 /* AutomationEngine.swift */,
 				6EC0CA672B49287100333A87 /* AutomationExecutor.swift */,
 				6EC0CA5B2B48C2F500333A87 /* AutomationPreparer.swift */,
@@ -4251,7 +4270,6 @@
 				6E1A9BC22B5EE1DE00A6489B /* ScheduleReadyResult.swift */,
 				6E1A9BC02B5EE1CF00A6489B /* SchedulePrepareResult.swift */,
 				6E1A9BC42B5EE1EE00A6489B /* ScheduleExecuteResult.swift */,
-				6E1A9BC62B5EE32E00A6489B /* AutomationTriggerProcessor.swift */,
 				6E1A9BC82B5EE34600A6489B /* AutomationEventFeed.swift */,
 				6E1A9BCC2B5EE46A00A6489B /* AutomationStore.swift */,
 				6E1A9BD02B5EE84600A6489B /* AutomationScheduleData.swift */,
@@ -4270,6 +4288,8 @@
 				60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */,
 				6E6A848C2B6854FC006FFB35 /* AutomationDelayProcessorTest.swift */,
 				6E6A84912B68A571006FFB35 /* AutomationStoreTest.swift */,
+				60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */,
+				60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -6191,6 +6211,7 @@
 				6E1A9BF72B606CF200A6489B /* AutomationDelayProcessor.swift in Sources */,
 				6E16208F2B3116BA009240B2 /* DefaultDisplayCoordinator.swift in Sources */,
 				99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */,
+				60D1D9B82B68FB6400EBE0A4 /* PreparedTrigger.swift in Sources */,
 				6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */,
 				99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */,
 				6E0F4BE92B3264A400673CA4 /* DeferredAutomationData.swift in Sources */,
@@ -6237,6 +6258,7 @@
 				6EE6AAC52B58A947002FEA75 /* InAppEventMessageID.swift in Sources */,
 				6E986EFB2B44D48C00FBE6A0 /* InAppMessaging.swift in Sources */,
 				99E8D7DC2B55C4C20099B6F3 /* MediaTheme.swift in Sources */,
+				60D1D9B52B67B10200EBE0A4 /* AutomationTriggerStore.swift in Sources */,
 				99E8D7C52B5192D40099B6F3 /* MediaView.swift in Sources */,
 				99E8D7D82B55B0440099B6F3 /* ButtonTheme.swift in Sources */,
 				6E6A84902B687B96006FFB35 /* AirshipAutomation.xcdatamodeld in Sources */,
@@ -6299,6 +6321,7 @@
 				6EE6AA132B4F3009002FEA75 /* InAppMessageAutomationPreparerTest.swift in Sources */,
 				6EE6AAF22B58A9D5002FEA75 /* InAppFormResultEventTest.swift in Sources */,
 				6EC0CA762B4B8A3A00333A87 /* TestRemoteDataAccess.swift in Sources */,
+				60D1D9BD2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift in Sources */,
 				6EC0CA6D2B4B879800333A87 /* AutomationPreparerTest.swift in Sources */,
 				6E4AEE2C2B6B302D008AEAC1 /* ActionAutomationPreparerTest.swift in Sources */,
 				60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */,
@@ -6341,6 +6364,7 @@
 				6E1A9BB92B5B20A500A6489B /* InAppMessageDisplayListenerTest.swift in Sources */,
 				6EE6AAEB2B58A9D5002FEA75 /* InAppPermissionResultEventTest.swift in Sources */,
 				6EE6AB022B58B6E9002FEA75 /* LegacyInAppAnalyticsTest.swift in Sources */,
+				60D1D9BB2B6A53F000EBE0A4 /* PreparedTriggerTest.swift in Sources */,
 				6EC0CA582B48B46700333A87 /* PersistantStoreTest.swift in Sources */,
 				6EC0CA6B2B4B698000333A87 /* AutomationExecutorTest.swift in Sources */,
 				6EE6AAF82B58A9D5002FEA75 /* InAppPageSwipeEventAction.swift in Sources */,

@@ -69,13 +69,14 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         feed.attach()
 
         // Engine
+        let automationStore = AutomationStore(config: config)
         let engine = AutomationEngine(
-            store: AutomationStore(config: config),
+            store: automationStore,
             executor: automationExecutor,
             preparer: automationPreparer,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
             eventFeed: feed,
-            triggersProcessor: AutomationTriggerProcessor(),
+            triggersProcessor: AutomationTriggerProcessor(store: automationStore),
             delayProcessor: AutomationDelayProcessor(analytics: analytics)
         )
 
