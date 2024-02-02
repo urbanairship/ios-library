@@ -16,7 +16,7 @@ final class AutomationStoreTest: XCTestCase {
     func testUpsertNewSchedules() async throws {
         let data = ["foo": makeSchedule(identifer: "foo"), "bar": makeSchedule(identifer: "bar")]
 
-        let result = try await self.store.batchUpsert(identifiers: ["foo", "bar"]) { identifier, existing in
+        let result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar"]) { identifier, existing in
             XCTAssertNil(existing)
             return data[identifier]!
         }
@@ -27,7 +27,7 @@ final class AutomationStoreTest: XCTestCase {
     func testUpsertMixedSchedules() async throws {
         let original = ["foo": makeSchedule(identifer: "foo"), "bar": makeSchedule(identifer: "bar")]
 
-        var result = try await self.store.batchUpsert(identifiers: ["foo", "bar"]) { identifier, existing in
+        var result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar"]) { identifier, existing in
             XCTAssertNil(existing)
             return original[identifier]!
         }
@@ -38,7 +38,7 @@ final class AutomationStoreTest: XCTestCase {
         updated["baz"] = makeSchedule(identifer: "baz")
         updated["foo"]?.scheduleState = .finished
 
-        result = try await self.store.batchUpsert(identifiers: ["foo", "bar", "baz"]) { [updated] identifier, existing in
+        result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar", "baz"]) { [updated] identifier, existing in
             XCTAssertEqual(existing, original[identifier])
             return updated[identifier]!
         }
@@ -49,11 +49,11 @@ final class AutomationStoreTest: XCTestCase {
     func testUpdate() async throws {
         let originalFoo = makeSchedule(identifer: "foo")
 
-        _ = try await self.store.batchUpsert(identifiers: ["foo"]) { identifier, existing in
+        _ = try await self.store.upsertSchedules(scheduleIDs: ["foo"]) { identifier, existing in
             return originalFoo
         }
 
-        let result = try await self.store.update(identifier: "foo") { data in
+        let result = try await self.store.updateSchedule(scheduleID: "foo") { data in
             data.group = "bar"
         }
 
@@ -82,18 +82,18 @@ final class AutomationStoreTest: XCTestCase {
             )
         )
 
-        let batchUpsertResult = try await self.store.batchUpsert(identifiers: ["full"]) { [schedule] identifier, existing in
+        let batchUpsertResult = try await self.store.upsertSchedules(scheduleIDs: ["full"]) { [schedule] identifier, existing in
             return schedule
         }
 
         XCTAssertEqual([schedule], batchUpsertResult)
 
-        let fetchResult = try await self.store.getSchedule(identifier: "full")
+        let fetchResult = try await self.store.getSchedule(scheduleID: "full")
         XCTAssertEqual(schedule, fetchResult)
     }
 
     func testUpdateDoesNotExist() async throws {
-        let result = try await self.store.update(identifier: "baz") { data in
+        let result = try await self.store.updateSchedule(scheduleID: "baz") { data in
             XCTFail()
         }
 
@@ -102,17 +102,17 @@ final class AutomationStoreTest: XCTestCase {
 
     func testGetSchedules() async throws {
         let original = ["foo": makeSchedule(identifer: "foo"), "bar": makeSchedule(identifer: "bar")]
-        let _ = try await self.store.batchUpsert(identifiers: ["foo", "bar"]) { identifier, existing in
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar"]) { identifier, existing in
             return original[identifier]!
         }
 
-        let foo = try await self.store.getSchedule(identifier: "foo")
+        let foo = try await self.store.getSchedule(scheduleID: "foo")
         XCTAssertEqual(foo, original["foo"])
 
-        let bar = try await self.store.getSchedule(identifier: "bar")
+        let bar = try await self.store.getSchedule(scheduleID: "bar")
         XCTAssertEqual(bar, original["bar"])
 
-        let doesNotExist = try await self.store.getSchedule(identifier: "doesNotExist")
+        let doesNotExist = try await self.store.getSchedule(scheduleID: "doesNotExist")
         XCTAssertNil(doesNotExist)
     }
 
@@ -123,7 +123,7 @@ final class AutomationStoreTest: XCTestCase {
             "baz": makeSchedule(identifer: "baz", group: "groupA")
         ]
 
-        let _ = try await self.store.batchUpsert(identifiers: ["foo", "bar", "baz"]) { identifier, existing in
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar", "baz"]) { identifier, existing in
             return original[identifier]!
         }
 
@@ -141,13 +141,13 @@ final class AutomationStoreTest: XCTestCase {
             "baz": makeSchedule(identifer: "baz", group: "groupA")
         ]
 
-        let _ = try await self.store.batchUpsert(identifiers: ["foo", "bar", "baz"]) { identifier, existing in
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar", "baz"]) { identifier, existing in
             return original[identifier]!
         }
 
-        try await self.store.delete(identifiers: ["foo", "doesNotExist"])
+        try await self.store.deleteSchedules(scheduleIDs: ["foo", "doesNotExist"])
 
-        let remaining = try await self.store.schedules.sorted { l, r in
+        let remaining = try await self.store.getSchedules().sorted { l, r in
             return l.identifier > r.identifier
         }
 
@@ -161,13 +161,13 @@ final class AutomationStoreTest: XCTestCase {
             "baz": makeSchedule(identifer: "baz", group: "groupA")
         ]
 
-        let _ = try await self.store.batchUpsert(identifiers: ["foo", "bar", "baz"]) { identifier, existing in
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar", "baz"]) { identifier, existing in
             return original[identifier]!
         }
 
-        try await self.store.delete(group: "groupA")
+        try await self.store.deleteSchedules(group: "groupA")
 
-        let remaining = try await self.store.schedules.sorted { l, r in
+        let remaining = try await self.store.getSchedules().sorted { l, r in
             return l.identifier > r.identifier
         }
 
@@ -191,8 +191,6 @@ final class AutomationStoreTest: XCTestCase {
         return AutomationScheduleData(
             identifier: identifer,
             group: group,
-            startDate: Date.distantPast,
-            endDate: Date.distantFuture,
             schedule: schedule,
             scheduleState: .idle,
             scheduleStateChangeDate: Date.distantPast

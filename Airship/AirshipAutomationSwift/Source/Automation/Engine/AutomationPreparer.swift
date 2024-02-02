@@ -297,7 +297,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
 fileprivate extension AutomationSchedule {
     var missedAudiencePrepareResult: SchedulePrepareResult {
-        switch (self.audience?.missBehavior ?? .cancel) {
+        switch (self.audience?.missBehavior ?? .penalize) {
         case .cancel: return .cancel
         case .penalize: return .penalize
         case .skip: return .skip

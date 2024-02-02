@@ -10,30 +10,43 @@ final class PreparedTriggerTest: XCTestCase {
     let date = UATestDate(offset: 0, dateOverride: Date())
     
     func testScheduleDatesUpdate() {
-        let instance = makeTrigger()
+        var trigger = AutomationTrigger(type: .appInit, goal: 1)
+
+        let instance = makeTrigger(trigger: trigger)
         XCTAssertNil(instance.startDate)
         XCTAssertNil(instance.endDate)
-        
-        instance.udpateSchedule(startDate: date.now, endDate: date.now)
+        XCTAssertEqual(0, instance.priority)
+
+        trigger.goal = 3
+
+        instance.update(trigger: trigger, startDate: date.now, endDate: date.now, priority: 3)
         XCTAssertEqual(date.now, instance.startDate)
         XCTAssertEqual(date.now, instance.endDate)
+        XCTAssertEqual(3, instance.priority)
+        XCTAssertEqual(trigger, instance.trigger)
+
     }
     
     func testActivateTrigger() {
-        let initialState = TriggerState(count: 1, goal: 2, scheduleID: "test", triggerID: "trigger-id", children: [])
-        
+        let initialState = TriggerData(
+            scheduleID: "test",
+            triggerID: "trigger-id",
+            goal: 2,
+            count: 1
+        )
+
         let execution = makeTrigger(type: .execution, state: initialState)
         XCTAssertFalse(execution.isActive)
         execution.activate()
         XCTAssert(execution.isActive)
-        XCTAssertEqual(initialState, execution.state)
-        
+        XCTAssertEqual(initialState, execution.triggerData)
+
         let cancellation = makeTrigger(type: .delayCancellation, state: initialState)
         XCTAssertFalse(cancellation.isActive)
         cancellation.activate()
         XCTAssert(cancellation.isActive)
-        XCTAssertNotEqual(initialState, cancellation.state)
-        XCTAssertEqual(0, cancellation.state.count)
+        XCTAssertNotEqual(initialState, cancellation.triggerData)
+        XCTAssertEqual(0, cancellation.triggerData.count)
     }
     
     func testDiable() {
@@ -49,18 +62,18 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: AutomationTrigger(type: .appInit, goal: 2), type: .execution)
         instance.activate()
         
-        XCTAssertEqual(0, instance.state.count)
-        
+        XCTAssertEqual(0, instance.triggerData.count)
+
         var result = instance.process(event: .appInit)
-        XCTAssertEqual(1, result?.newState.count)
-        XCTAssertNil(result?.result)
-        XCTAssert(result?.newState.isGoalReached == false)
-        
+        XCTAssertEqual(1, result?.triggerData.count)
+        XCTAssertNil(result?.triggerResult)
+        XCTAssert(result?.triggerData.isGoalReached == false)
+
         result = instance.process(event: .appInit)
-        XCTAssertEqual(0, result?.newState.count)
-        XCTAssert(result?.newState.isGoalReached == false)
-        
-        let report = try XCTUnwrap(result?.result)
+        XCTAssertEqual(0, result?.triggerData.count)
+        XCTAssert(result?.triggerData.isGoalReached == false)
+
+        let report = try XCTUnwrap(result?.triggerResult)
         XCTAssertEqual("test-schedule", report.scheduleID)
         XCTAssertEqual(TriggerExecutionType.execution, report.triggerExecutionType)
         XCTAssertEqual(AirshipTriggerContext(type: "app_init", goal: 2, event: .null), report.triggerInfo.context)
@@ -68,15 +81,29 @@ final class PreparedTriggerTest: XCTestCase {
     }
     
     func testProcessEventDoesNothing() {
-        let instance = makeTrigger()
-        
+        let trigger = AutomationTrigger(type: .appInit, goal: 1)
+
+        let instance = makeTrigger(trigger: trigger)
+
         XCTAssertNil(instance.process(event: .appInit))
         
         instance.activate()
-        instance.udpateSchedule(startDate: self.date.now.addingTimeInterval(1))
+        instance.update(
+            trigger: trigger,
+            startDate: self.date.now.addingTimeInterval(1),
+            endDate: nil,
+            priority: 0
+        )
+
         XCTAssertNil(instance.process(event: .appInit))
+
+        instance.update(
+            trigger: trigger,
+            startDate: nil,
+            endDate: nil,
+            priority: 0
+        )
         
-        instance.udpateSchedule()
         XCTAssertNotNil(instance.process(event: .appInit))
     }
     
@@ -89,12 +116,12 @@ final class PreparedTriggerTest: XCTestCase {
     }
     
     func testEventProcessingTypes() {
-        let check: (AutomationTriggerType, AutomationEvent) -> TriggerState? = { type, event in
+        let check: (AutomationTriggerType, AutomationEvent) -> TriggerData? = { type, event in
             let trigger = AutomationTrigger(type: type, goal: 3)
             let instance = self.makeTrigger(trigger: trigger)
             instance.activate()
             let result = instance.process(event: event)
-            return result?.newState
+            return result?.triggerData
         }
         
         XCTAssertEqual(1, check(.foreground, .foreground)?.count)
@@ -124,17 +151,18 @@ final class PreparedTriggerTest: XCTestCase {
     }
     
     
-    private func makeTrigger(trigger: AutomationTrigger? = nil, type: TriggerExecutionType = .execution, startDate: Date? = nil, endDate: Date? = nil, state: TriggerState? = nil) -> PreparedTrigger {
+    private func makeTrigger(trigger: AutomationTrigger? = nil, type: TriggerExecutionType = .execution, startDate: Date? = nil, endDate: Date? = nil, state: TriggerData? = nil) -> PreparedTrigger {
         let trigger = trigger ?? AutomationTrigger(type: .appInit, goal: 1)
         
         return PreparedTrigger(
             scheduleID: "test-schedule",
-            group: "some-group",
             trigger: trigger,
             type: type, 
             startDate: startDate,
             endDate: endDate,
-            date: date,
-            state: state)
+            triggerData: state,
+            priority: 0,
+            date: date
+        )
     }
 }

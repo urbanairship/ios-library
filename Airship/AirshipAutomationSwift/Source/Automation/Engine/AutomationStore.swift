@@ -1,58 +1,94 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import CoreData
 
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
 
+protocol TriggerStoreProtocol: Sendable {
+    func getTrigger(triggerID: String) async throws -> TriggerData?
+    func upsertTriggers(_ triggers: [TriggerData]) async throws
+    func deleteTriggers(excludingScheduleIDs: Set<String>) async throws
+    func deleteTriggers(scheduleIDs: [String]) async throws
+    func deleteTriggers(triggerIDs: Set<String>) async throws
+}
 
-actor AutomationStore {
+protocol ScheduleStoreProtocol: Sendable {
+    func getSchedules() async throws -> [AutomationScheduleData]
 
+    @discardableResult
+    func updateSchedule(
+        scheduleID: String,
+        block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
+    ) async throws -> AutomationScheduleData?
+
+    @discardableResult
+    func upsertSchedules(
+        scheduleIDs: [String],
+        updateBlock: @Sendable @escaping (String, AutomationScheduleData?) throws -> AutomationScheduleData
+    ) async throws -> [AutomationScheduleData]
+
+    func deleteSchedules(scheduleIDs: [String]) async throws
+    func deleteSchedules(group: String) async throws
+
+    func getSchedule(scheduleID: String) async throws -> AutomationScheduleData?
+    func getSchedules(group: String) async throws -> [AutomationScheduleData]
+    func getSchedules(scheduleIDs: [String]) async throws -> [AutomationScheduleData]
+}
+
+actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     private let coreData: UACoreData?
-    let inMemory: Bool
+    private let inMemory: Bool
+    private let legacyStore: LegacyAutomationStore
+    private var migrationTask: Task<Void, Error>?
 
     init(appKey: String, inMemory: Bool = false) {
-        let bundle = AutomationResources.bundle
-        self.inMemory = inMemory
-        if let modelURL = bundle.url(forResource: "AirshipAutomation", withExtension:"momd") {
-            self.coreData = UACoreData(
+        let modelURL = AutomationResources.bundle.url(
+            forResource: "AirshipAutomation",
+            withExtension:"momd"
+        )
+
+        self.coreData = if let modelURL = modelURL {
+           UACoreData(
                 modelURL: modelURL,
                 inMemory: inMemory,
                 stores: ["AirshipAutomation-\(appKey).sqlite"]
             )
         } else {
-            self.coreData = nil
+            nil
         }
+
+        self.inMemory = inMemory
+        self.legacyStore = LegacyAutomationStore(appKey: appKey, inMemory: inMemory)
     }
 
     init(config: RuntimeConfig) {
         self.init(appKey: config.appKey)
     }
 
-    var schedules: [AutomationScheduleData] {
-        get async throws {
-            return try await requireCoreData().performWithResult { context in
-                return try self.fetchSchedules(context: context)
-            }
+    func getSchedules() async throws -> [AutomationScheduleData] {
+        return try await prepareCoreData().performWithResult { context in
+            return try self.fetchSchedules(context: context)
         }
     }
 
     @discardableResult
-    func update(
-        identifier: String,
+    func updateSchedule(
+        scheduleID: String,
         block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
     ) async throws -> AutomationScheduleData? {
-        return try await requireCoreData().performWithResult { context in
+        return try await prepareCoreData().performWithResult { context in
             let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
             request.includesPropertyValues = true
-            request.predicate = NSPredicate(format: "identifier == %@", identifier)
+            request.predicate = NSPredicate(format: "identifier == %@", scheduleID)
 
             guard let entity = try context.fetch(request).first else {
                 return nil
             }
 
-            var data = try AutomationScheduleData.fromEntity(entity)
+            var data = try entity.toScheduleData()
             try block(&data)
             try entity.update(data: data)
             try UACoreData.save(context)
@@ -60,14 +96,15 @@ actor AutomationStore {
         }
     }
 
-    func batchUpsert(
-        identifiers: [String],
+    @discardableResult
+    func upsertSchedules(
+        scheduleIDs: [String],
         updateBlock: @Sendable @escaping (String, AutomationScheduleData?) throws -> AutomationScheduleData
     ) async throws -> [AutomationScheduleData] {
-        return try await requireCoreData().performWithResult { context in
+        return try await prepareCoreData().performWithResult { context in
             let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
             request.includesPropertyValues = true
-            request.predicate = NSPredicate(format: "identifier in %@", identifiers)
+            request.predicate = NSPredicate(format: "identifier in %@", scheduleIDs)
 
             let entityMap = try context.fetch(request).reduce(into: [String: ScheduleEntity]()) {
                 $0[$1.identifier] = $1
@@ -75,14 +112,14 @@ actor AutomationStore {
 
             var result: [AutomationScheduleData] = []
 
-            for identifier in identifiers {
+            for identifier in scheduleIDs {
                 let existing: AutomationScheduleData? = if let entity = entityMap[identifier] {
-                    try AutomationScheduleData.fromEntity(entity)
+                    try entity.toScheduleData()
                 } else {
                     nil
                 }
                 let data = try updateBlock(identifier, existing)
-                let entity = try (entityMap[identifier] ?? self.makeScheduleEntity(context: context))
+                let entity = try (entityMap[identifier] ?? ScheduleEntity.make(context: context))
                 try entity.update(data: data)
                 result.append(data)
             }
@@ -91,39 +128,106 @@ actor AutomationStore {
         }
     }
 
-    func delete(identifiers: [String]) async throws {
-        return try await requireCoreData().performWithResult { context in
-            let predicate = NSPredicate(format: "identifier in %@", identifiers)
+    func deleteSchedules(scheduleIDs: [String]) async throws {
+        return try await prepareCoreData().performWithResult { context in
+            let predicate = NSPredicate(format: "identifier in %@", scheduleIDs)
             return try self.deleteSchedules(predicate: predicate, context: context)
         }
     }
 
-    func delete(group: String) async throws {
-        return try await requireCoreData().performWithResult { context in
+    func deleteSchedules(group: String) async throws {
+        return try await prepareCoreData().performWithResult { context in
             let predicate = NSPredicate(format: "group == %@", group)
             return try self.deleteSchedules(predicate: predicate, context: context)
         }
     }
 
-    func getSchedule(identifier: String) async throws -> AutomationScheduleData? {
-        return try await requireCoreData().performWithResult { context in
-            let predicate = NSPredicate(format: "identifier == %@", identifier)
+    func getSchedule(scheduleID: String) async throws -> AutomationScheduleData? {
+        return try await prepareCoreData().performWithResult { context in
+            let predicate = NSPredicate(format: "identifier == %@", scheduleID)
             return try self.fetchSchedules(predicate: predicate, context: context).first
         }
     }
 
     func getSchedules(group: String) async throws -> [AutomationScheduleData] {
-        return try await requireCoreData().performWithResult { context in
+        return try await prepareCoreData().performWithResult { context in
             let predicate = NSPredicate(format: "group == %@", group)
             return try self.fetchSchedules(predicate: predicate, context: context)
         }
     }
 
-    func getSchedules(identifiers: [String]) async throws -> [AutomationScheduleData] {
-        return try await requireCoreData().performWithResult { context in
-            let predicate = NSPredicate(format: "identifier in %@", identifiers)
+    func getSchedules(scheduleIDs: [String]) async throws -> [AutomationScheduleData] {
+        return try await prepareCoreData().performWithResult { context in
+            let predicate = NSPredicate(format: "identifier in %@", scheduleIDs)
             return try self.fetchSchedules(predicate: predicate, context: context)
         }
+    }
+
+    func getTrigger(triggerID: String) async throws -> TriggerData? {
+        return try await prepareCoreData().performWithResult { context in
+            let request: NSFetchRequest<TriggerEntity> = TriggerEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "triggerID == %@", triggerID)
+            return try context.fetch(request).first?.toTriggerData()
+        }
+    }
+
+    func upsertTriggers(_ triggers: [TriggerData]) async throws {
+        guard !triggers.isEmpty else { return }
+        try await prepareCoreData().perform { context in
+            let request: NSFetchRequest<TriggerEntity> = TriggerEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "triggerID in %@", triggers.map { $0.triggerID })
+
+            let entityMap = try context.fetch(request).reduce(into: [String: TriggerEntity]()) {
+                $0[$1.triggerID] = $1
+            }
+
+            for trigger in triggers {
+                let entity = try (entityMap[trigger.triggerID] ?? TriggerEntity.make(context: context))
+                try entity.update(data: trigger)
+            }
+
+            try UACoreData.save(context)
+        }
+    }
+
+    func deleteTriggers(triggerIDs: Set<String>) async throws {
+        return try await prepareCoreData().perform { context in
+            let predicate = NSPredicate(format: "triggerID in %@", triggerIDs)
+            try self.deleteTriggers(predicate: predicate, context: context)
+        }
+    }
+
+    func deleteTriggers(excludingScheduleIDs: Set<String>) async throws {
+        return try await prepareCoreData().perform { context in
+            let predicate = NSPredicate(format: "not (scheduleID in %@)", excludingScheduleIDs)
+            try self.deleteTriggers(predicate: predicate, context: context)
+        }
+    }
+
+    func deleteTriggers(scheduleIDs: [String]) async throws {
+        try await prepareCoreData().perform { context in
+            let predicate = NSPredicate(format: "scheduleID in %@", scheduleIDs)
+            try self.deleteTriggers(predicate: predicate, context: context)
+        }
+    }
+
+    private nonisolated func deleteTriggers(
+        predicate: NSPredicate? = nil,
+        context: NSManagedObjectContext
+    ) throws  {
+        let request: NSFetchRequest<NSFetchRequestResult> = TriggerEntity.fetchRequest()
+        request.predicate = predicate
+
+        if self.inMemory {
+            request.includesPropertyValues = false
+            let results = try context.fetch(request) as? [NSManagedObject]
+            results?.forEach(context.delete)
+        } else {
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+            try context.execute(deleteRequest)
+        }
+
+        try UACoreData.save(context)
     }
 
     private nonisolated func fetchSchedules(
@@ -135,21 +239,8 @@ actor AutomationStore {
         request.predicate = predicate
 
         return try context.fetch(request).map { entity in
-            try AutomationScheduleData.fromEntity(entity)
+            try entity.toScheduleData()
         }
-    }
-
-    private nonisolated func makeScheduleEntity(
-        context: NSManagedObjectContext
-    ) throws -> ScheduleEntity {
-        guard let data = NSEntityDescription.insertNewObject(
-            forEntityName: ScheduleEntity.entityName,
-            into:context) as? ScheduleEntity
-        else {
-            throw AirshipErrors.error("Failed to make schedule entity")
-        }
-
-        return data
     }
 
     private nonisolated func deleteSchedules(
@@ -175,17 +266,72 @@ actor AutomationStore {
         try UACoreData.save(context)
     }
 
+    private func migrateData() async throws {
+        guard let coredata = self.coreData else {
+            throw AirshipErrors.error("Failed to create core data.")
+        }
+        do {
+            if let migrationTask = migrationTask {
+                try await migrationTask.value
+                return
+            }
+        } catch {}
 
-    func requireCoreData() throws -> UACoreData {
+        self.migrationTask = Task {
+            let legacyData = try await self.legacyStore.legacyScheduleData
+            guard !legacyData.isEmpty else { return }
+
+            let identifiers = legacyData.map { $0.scheduleData.identifier }
+
+            try await coredata.perform { context in
+                let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
+                request.includesPropertyValues = true
+                request.predicate = NSPredicate(format: "identifier in %@", identifiers)
+
+                guard try context.fetch(request).isEmpty else {
+                    // Migration already happened, probably failed to delete before
+                    return
+                }
+
+                do {
+                    for legacy in legacyData {
+                        let scheduleEntity = try ScheduleEntity.make(context: context)
+                        try scheduleEntity.update(data: legacy.scheduleData)
+
+                        for triggerData in legacy.triggerDatas {
+                            let triggerEntity = try TriggerEntity.make(context: context)
+                            try triggerEntity.update(data: triggerData)
+                        }
+                    }
+                } catch {
+                    context.rollback()
+                    throw error
+                }
+
+                try UACoreData.save(context)
+            }
+
+            do {
+                try await self.legacyStore.deleteAll()
+            } catch {
+                AirshipLogger.error("Failed to delete legacy store \(error)")
+            }
+        }
+
+        try await self.migrationTask?.value
+    }
+
+    func prepareCoreData() async throws -> UACoreData {
         guard let coreData = coreData else {
             throw AirshipErrors.error("Failed to create core data.")
         }
+
+        try await migrateData()
         return coreData
     }
     
 }
 
-import CoreData
 
 @objc(UAScheduleEntity)
 fileprivate class ScheduleEntity: NSManagedObject {
@@ -198,24 +344,31 @@ fileprivate class ScheduleEntity: NSManagedObject {
 
     @NSManaged var identifier: String
     @NSManaged var group: String?
-    @NSManaged var startDate: Date
-    @NSManaged var endDate: Date
     @NSManaged var schedule: Data
-
     @NSManaged var scheduleState: String
     @NSManaged var scheduleStateChangeDate: Date
-    @NSManaged var executionCount: UInt
+    @NSManaged var executionCount: Int
     @NSManaged var triggerInfo: Data?
     @NSManaged var preparedScheduleInfo: Data?
+
+    class func make(context: NSManagedObjectContext) throws -> Self {
+        guard let data = NSEntityDescription.insertNewObject(
+            forEntityName: ScheduleEntity.entityName,
+            into:context) as? Self
+        else {
+            throw AirshipErrors.error("Failed to make schedule entity")
+        }
+
+        return data
+    }
+
 
     func update(data: AutomationScheduleData) throws {
         self.identifier = data.identifier
         self.group = data.group
-        self.startDate = data.startDate
-        self.endDate = data.endDate
         self.scheduleState = data.scheduleState.rawValue
         self.scheduleStateChangeDate = data.scheduleStateChangeDate
-        self.executionCount = data.executionCount
+        self.executionCount = Int(data.executionCount)
 
         self.schedule = try AirshipJSON.defaultEncoder.encode(data.schedule)
 
@@ -231,38 +384,68 @@ fileprivate class ScheduleEntity: NSManagedObject {
             nil
         }
     }
-}
 
-
-fileprivate extension AutomationScheduleData {
-    static func fromEntity(_ entity: ScheduleEntity) throws -> AutomationScheduleData {
-        let schedule = try AirshipJSON.defaultDecoder.decode(AutomationSchedule.self, from: entity.schedule)
-        let triggerInfo: TriggeringInfo? = if let data = entity.triggerInfo {
+    func toScheduleData() throws -> AutomationScheduleData {
+        let schedule = try AirshipJSON.defaultDecoder.decode(AutomationSchedule.self, from: self.schedule)
+        let triggerInfo: TriggeringInfo? = if let data = self.triggerInfo {
             try AirshipJSON.defaultDecoder.decode(TriggeringInfo.self, from: data)
         } else {
             nil
         }
 
-        let preparedScheduleInfo: PreparedScheduleInfo? = if let data = entity.preparedScheduleInfo {
+        let preparedScheduleInfo: PreparedScheduleInfo? = if let data = self.preparedScheduleInfo {
             try AirshipJSON.defaultDecoder.decode(PreparedScheduleInfo.self, from: data)
         } else {
             nil
         }
 
-        guard let scheduleState = AutomationScheduleState(rawValue: entity.scheduleState) else {
-            throw AirshipErrors.error("Invalid schedule state \(entity.scheduleState)")
+        guard let scheduleState = AutomationScheduleState(rawValue: self.scheduleState) else {
+            throw AirshipErrors.error("Invalid schedule state \(self.scheduleState)")
         }
 
         return AutomationScheduleData(
-            identifier: entity.identifier,
-            group: entity.group,
-            startDate: entity.startDate,
-            endDate: entity.endDate,
+            identifier: self.identifier,
+            group: self.group,
             schedule: schedule,
             scheduleState: scheduleState,
-            scheduleStateChangeDate: entity.scheduleStateChangeDate,
+            scheduleStateChangeDate: self.scheduleStateChangeDate,
             triggerInfo: triggerInfo,
             preparedScheduleInfo: preparedScheduleInfo
         )
+    }
+}
+
+
+@objc(UATriggerEntity)
+fileprivate class TriggerEntity: NSManagedObject {
+    static let entityName = "UATriggerEntity"
+
+    @nonobjc class func fetchRequest() -> NSFetchRequest<TriggerEntity> {
+        return NSFetchRequest<TriggerEntity>(entityName: Self.entityName)
+    }
+
+    @NSManaged var state: Data
+    @NSManaged var scheduleID: String
+    @NSManaged var triggerID: String
+
+    class func make(context: NSManagedObjectContext) throws -> Self {
+        guard let result = NSEntityDescription.insertNewObject(
+            forEntityName: Self.entityName,
+            into:context) as? Self
+        else {
+            throw AirshipErrors.error("Failed to make schedule entity")
+        }
+
+        return result
+    }
+
+    func update(data: TriggerData) throws {
+        self.triggerID = data.triggerID
+        self.scheduleID = data.scheduleID
+        self.state = try AirshipJSON.defaultEncoder.encode(data)
+    }
+
+    func toTriggerData() throws -> TriggerData {
+        try AirshipJSON.defaultDecoder.decode(TriggerData.self, from: self.state)
     }
 }

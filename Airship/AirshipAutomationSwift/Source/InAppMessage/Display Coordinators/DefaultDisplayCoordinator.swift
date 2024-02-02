@@ -58,7 +58,9 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
 
     @MainActor
     private func startUnlockTask() {
-        guard self.lockState.value == .locked else {
+        guard 
+            self.lockState.value != .unlocked
+        else {
             return
         }
         

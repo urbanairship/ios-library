@@ -209,6 +209,18 @@ struct InAppRemoteData: Sendable {
                     message.source = .remoteData
                     data.schedules[i].data = .inAppMessage(message)
                 }
+
+                data.schedules[i].triggers.indices.forEach { j in
+                    data.schedules[i].triggers[j].backfillIdentifier(executionType: .execution)
+                }
+
+                if var delay = data.schedules[i].delay, var triggers = delay.cancellationTriggers {
+                    triggers.indices.forEach { j in
+                        triggers[j].backfillIdentifier(executionType: .delayCancellation)
+                    }
+                    delay.cancellationTriggers = triggers
+                    data.schedules[i].delay = delay
+                }
             }
 
             return Payload(

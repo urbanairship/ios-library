@@ -138,6 +138,7 @@ public final class UACoreData: NSObject, @unchecked Sendable {
     }
 
     public func performWithNullableResult<T: Sendable>(
+        skipIfStoreNotCreated: Bool = false,
         _ block: @Sendable @escaping (NSManagedObjectContext) throws -> T?
     ) async throws -> T? {
         return try await withCheckedThrowingContinuation { continuation in
@@ -149,6 +150,13 @@ public final class UACoreData: NSObject, @unchecked Sendable {
                 guard !strongSelf.isFinished else {
                     continuation.resume(throwing: AirshipErrors.error("Finished"))
                     return
+                }
+
+                if (skipIfStoreNotCreated) {
+                    guard strongSelf.inMemory || strongSelf.storesExistOnDisk() else {
+                        continuation.resume(returning: nil)
+                        return
+                    }
                 }
 
                 strongSelf.shouldCreateStore = true
@@ -411,6 +419,18 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         }
 
         return false
+    }
+
+    public func deleteStoresOnDisk() throws {
+        for name in self.storeNames {
+            guard let storeURL = self.storeURL(name) else {
+                continue
+            }
+
+            if FileManager.default.fileExists(atPath: storeURL.path) {
+                try FileManager.default.removeItem(atPath: storeURL.path)
+            }
+        }
     }
 
     func createSqlStore(storeName: String) -> Bool {

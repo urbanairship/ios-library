@@ -7,23 +7,32 @@ import AirshipCore
 #endif
 
 final class PreparedTrigger: @unchecked Sendable {
-    typealias EventProcessResult = (newState: TriggerState, result: TriggerResult?)
+    struct EventProcessResult {
+        var triggerData: TriggerData
+        var triggerResult: TriggerResult?
+        var priority: Int
+    }
+
     private typealias MatchTuple = (isMatched: Bool, incrementAmount: Double)
     
     private let lock = AirshipLock()
     
     let date: AirshipDateProtocol
     let scheduleID: String
-    let group: String?
     let executionType: TriggerExecutionType
-    let trigger: AutomationTrigger
-    
-    private var _state: TriggerState
-    private(set) var state: TriggerState {
-        get { return lock.sync { _state } }
-        set { lock.sync { _state = newValue } }
+
+    private var _triggerData: TriggerData
+    private(set) var triggerData: TriggerData {
+        get { return lock.sync { _triggerData } }
+        set { lock.sync { _triggerData = newValue } }
     }
-    
+
+    private var _trigger: AutomationTrigger
+    private(set) var trigger: AutomationTrigger {
+        get { return lock.sync { _trigger } }
+        set { lock.sync { _trigger = newValue } }
+    }
+
     private var _appState: TriggerableState?
     private(set) var appState: TriggerableState? {
         get { return lock.sync { _appState } }
@@ -47,69 +56,87 @@ final class PreparedTrigger: @unchecked Sendable {
         get { return lock.sync { _endDate } }
         set { return lock.sync { _endDate = newValue } }
     }
-    
+
+    private var _priority: Int
+    private(set) var priority: Int {
+        get { return lock.sync { _priority } }
+        set { return lock.sync { _priority = newValue } }
+    }
+
     init(
         scheduleID: String,
-        group: String?,
         trigger: AutomationTrigger,
         type: TriggerExecutionType,
         startDate: Date?,
         endDate: Date?,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        state: TriggerState?
+        triggerData: TriggerData?,
+        priority: Int,
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.scheduleID = scheduleID
-        self.group = group
-        self.trigger = trigger
         self.executionType = type
         self.date = date
-        
+
+        _trigger = trigger
         _startDate = startDate
         _endDate = endDate
-        
-        _state = state ?? TriggerState(
-            count: 0,
-            goal: trigger.goal,
+
+        _triggerData = triggerData ?? TriggerData(
             scheduleID: scheduleID,
-            group: group,
             triggerID: trigger.id,
-            children: [] // for compound triggers
+            goal: trigger.goal,
+            count: 0,
+            children: [:] // for compound triggers
         )
+
+        _priority = priority
     }
     
     func process(event: AutomationEvent) -> EventProcessResult? {
-        guard  self.isActive, self.isWithingDateRange() else { return nil }
+        guard self.isActive, self.isWithingDateRange() else { return nil }
         
         let (isAffected, amount) = self.isMatchig(event: event)
         if !isAffected {
             return nil
         }
         
-        self.state = self.state.incremented(with: amount)
-        
-        //report state changes but the goal is not reached
-        if !state.isGoalReached {
-            return (state, nil)
+        self.triggerData.incrementCount(amount)
+
+        var triggerResult: TriggerResult?
+
+        if triggerData.isGoalReached {
+            self.triggerData.reset()
+            triggerResult = generateTriggerResult(for: event)
         }
-        
-        self.state.reset()
-        
-        return (state, generateTriggerResult(for: event))
+
+        return EventProcessResult(
+            triggerData: triggerData,
+            triggerResult: triggerResult,
+            priority: self.priority
+        )
     }
     
-    func udpateSchedule(startDate: Date? = nil, endDate: Date? = nil) {
-        self.startDate = startDate
-        self.endDate = endDate
+    func update(
+        trigger: AutomationTrigger,
+        startDate: Date?,
+        endDate: Date?,
+        priority: Int
+    ) {
+        lock.sync {
+            self.trigger = trigger
+            self.startDate = startDate
+            self.endDate = endDate
+            self.priority = priority
+        }
     }
     
     func activate() {
         guard !self.isActive else { return }
         
-        self.appState = nil
         self.isActive = true
-        
+
         if self.executionType == .delayCancellation {
-            self.state.reset()
+            self.triggerData.reset()
         }
     }
     
@@ -214,4 +241,5 @@ final class PreparedTrigger: @unchecked Sendable {
     private func matchResult(isMatched: Bool, increment: Double = 1) -> MatchTuple {
         return (isMatched, increment)
     }
+    
 }

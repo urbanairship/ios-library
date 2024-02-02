@@ -121,7 +121,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
 
-        await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
+        _ = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
         let cleared = await self.assetManager.cleared
         XCTAssertEqual([self.preparedInfo.scheduleID], cleared)
         XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.interrupted().name)

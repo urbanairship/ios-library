@@ -9,10 +9,7 @@ import Foundation
 struct AutomationScheduleData: Sendable, Equatable {
     var identifier: String
     var group: String?
-    var startDate: Date
-    var endDate: Date
     var schedule: AutomationSchedule
-
     var scheduleState: AutomationScheduleState
     var scheduleStateChangeDate: Date
     var executionCount: UInt = 0
@@ -26,14 +23,19 @@ extension AutomationScheduleData {
     }
 
     func isActive(date: Date) -> Bool {
-        return !self.isExpired(date: date) && self.startDate >= date
+        guard !self.isExpired(date: date) else { return false }
+        guard let start = self.schedule.start else { return true }
+        return date >= start
     }
 
     func isExpired(date: Date) -> Bool {
-        return self.endDate <= date
+        guard let end = self.schedule.end else { return false }
+        return end <= date
     }
 
     var isOverLimit: Bool {
+        // 0 means no limit
+        guard self.schedule.limit != 0 else { return false }
         return (self.schedule.limit ?? 1) <= self.executionCount
     }
 

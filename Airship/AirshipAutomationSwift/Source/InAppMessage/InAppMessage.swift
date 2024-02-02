@@ -22,7 +22,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         case immediate
 
         /// Displays one at a time with display interval between displays
-        case standard
+        case standard = "default"
     }
 
     /// The name.

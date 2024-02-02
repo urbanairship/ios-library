@@ -75,6 +75,7 @@ public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Senda
         self.notificationCenter.addObserver(forName: AirshipPrivacyManager.changeEvent) { _ in
             self.privacyManagerUpdated()
         }
+        self.privacyManagerUpdated()
     }
 
     public func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
