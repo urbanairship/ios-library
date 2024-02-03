@@ -171,8 +171,8 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         let experimentResult = ExperimentResult(
-            channelId: "some channel",
-            contactId: "some contact",
+            channelID: "some channel",
+            contactID: "some contact",
             isMatch: true,
             reportingMetadata: []
         )

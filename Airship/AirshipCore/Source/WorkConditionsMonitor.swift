@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Combine
 
 struct WorkConditionsMonitor: @unchecked Sendable {

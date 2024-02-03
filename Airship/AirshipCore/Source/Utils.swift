@@ -565,23 +565,6 @@ public class AirshipUtils: NSObject {
         return nil
     }
 
-    /// Needed to get stringValue in InAppAutomation. Delete after its converted to swift.
-    /// - Note: For internal use only. :nodoc:
-    @objc
-    public class func permissionString(_ permission: AirshipPermission) -> String {
-        return permission.stringValue
-    }
-
-    /// Needed to get stringValue in InAppAutomation. Delete after its converted to swift.
-    /// - Note: For internal use only. :nodoc:
-    @objc
-    public class func permissionStatusString(_ status: AirshipPermissionStatus)
-        -> String
-    {
-        return status.stringValue
-    }
-
-
     class func generateSignedToken(secret: String, tokenParams: [String]) throws -> String {
         let secret = NSData(data: Data(secret.utf8))
         let message = NSData(data: Data(tokenParams.joined(separator: ":").utf8))

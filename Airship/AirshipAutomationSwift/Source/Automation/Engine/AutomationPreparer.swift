@@ -127,7 +127,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 try await self.experiments.evaluateExperiments(
                     info: MessageInfo(
                         messageType: schedule.messageType ?? Self.defaultMessageType,
-                        campaignsJSON: schedule.campaigns
+                        campaigns: schedule.campaigns
                     ),
                     deviceInfoProvider: deviceInfoProvider
                 )

@@ -3,8 +3,7 @@
 import Foundation
 
 /// The ApplicationMetrics class keeps track of application-related metrics.
-@objc(UAApplicationMetrics)
-public class ApplicationMetrics: NSObject {
+public class ApplicationMetrics {
     private static let lastOpenDataKey = "UAApplicationMetricLastOpenDate"
     private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
 
@@ -17,7 +16,6 @@ public class ApplicationMetrics: NSObject {
      * Determines whether the application's short version string has been updated.
      * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
      */
-    @objc
     public var isAppVersionUpdated: Bool {
         return _isAppVersionUpdated
     }
@@ -26,7 +24,6 @@ public class ApplicationMetrics: NSObject {
      * The date of the last time the application was active.
      * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
      */
-    @objc
     public var lastApplicationOpenDate: Date? {
         return dataStore.object(forKey: ApplicationMetrics.lastOpenDataKey)
             as? Date
@@ -35,7 +32,6 @@ public class ApplicationMetrics: NSObject {
     /**
      * The application's current short version string.
      */
-    @objc
     public let currentAppVersion: String?
 
     init(
@@ -49,8 +45,6 @@ public class ApplicationMetrics: NSObject {
         self.privacyManager = privacyManager
         self.date = date
         self.currentAppVersion = appVersion
-
-        super.init()
 
         updateData()
 

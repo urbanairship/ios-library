@@ -35,11 +35,7 @@ class TestWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
         )
         self.workHandler = workHandler
     }
-    
-    func registerWorker(_ workID: String, type: AirshipCore.AirshipWorkerType, workHandler: @escaping (AirshipCore.AirshipWorkRequest, AirshipCore.AirshipWorkContinuation) -> Void) {
         
-    }
-    
     func setRateLimit(_ limitID: String, rate: Int, timeInterval: TimeInterval) {
         rateLimits[limitID] = RateLimit(rate: rate, timeInterval: timeInterval)
     }

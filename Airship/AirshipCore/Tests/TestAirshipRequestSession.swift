@@ -36,7 +36,7 @@ public final class TestAirshipRequestSession: AirshipRequestSession, @unchecked 
 
     public func performHTTPRequest<T>(
         _ request: AirshipRequest,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T> {
         return try await self.performHTTPRequest(
             request,
@@ -49,7 +49,7 @@ public final class TestAirshipRequestSession: AirshipRequestSession, @unchecked 
     public func performHTTPRequest<T>(
         _ request: AirshipRequest,
         autoCancel: Bool,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T> {
         self.previousRequest = self.lastRequest
         self.lastRequest = request

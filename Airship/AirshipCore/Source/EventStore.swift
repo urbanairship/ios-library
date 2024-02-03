@@ -4,7 +4,6 @@ import CoreData
 import Foundation
 
 actor EventStore {
-    private static let fileFormat = "Events-%@.sqlite"
     private static let eventDataEntityName = "UAEventData"
     private static let fetchEventLimit = 500
 
@@ -12,14 +11,8 @@ actor EventStore {
     private var storeName: String?
     private nonisolated let inMemory: Bool
 
-    init(appKey: String,
-         inMemory: Bool = false
-    ) {
+    init(appKey: String, inMemory: Bool = false) {
         self.inMemory = inMemory
-        let storeName = String(
-            format: EventStore.fileFormat,
-            appKey
-        )
         let modelURL = AirshipCoreResources.bundle.url(
             forResource: "UAEvents",
             withExtension: "momd"
@@ -27,7 +20,7 @@ actor EventStore {
         self.coreData = UACoreData(
             modelURL: modelURL!,
             inMemory: inMemory,
-            stores: [storeName]
+            stores: ["Events-\(appKey).sqlite"]
         )
     }
 

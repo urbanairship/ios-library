@@ -1,6 +1,9 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
-public enum AirshipWorkResult: Int, Sendable {
+/// NOTE: For internal use only. :nodoc:
+public enum AirshipWorkResult: Sendable {
     case success
     case failure
 }

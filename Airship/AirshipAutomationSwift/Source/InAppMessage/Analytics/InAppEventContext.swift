@@ -72,7 +72,7 @@ extension InAppEventContext {
         let button = makeButtonContext(layoutContext: layoutContext)
         let form = makeFormContext(layoutContext: layoutContext)
         let reportingContext = reportingContext
-        let experimentsReportingData = experimentsResult?.evaluatedExperimentsReportingData
+        let experimentsReportingData = experimentsResult?.reportingMetadata
 
         guard
             pager == nil,

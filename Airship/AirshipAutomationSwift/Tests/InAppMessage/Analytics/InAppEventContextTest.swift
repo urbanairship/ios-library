@@ -75,10 +75,10 @@ class InAppEventContextTest: XCTestCase {
 
     func testMake() throws {
         let experimentResult = ExperimentResult(
-            channelId: "some channel",
-            contactId: "some contact",
+            channelID: "some channel",
+            contactID: "some contact",
             isMatch: true,
-            reportingMetadata: ["some reporting"]
+            reportingMetadata: [AirshipJSON.string("some reporting")]
         )
 
         let reportingMetadata = AirshipJSON.string("reporting info")
@@ -125,7 +125,7 @@ class InAppEventContextTest: XCTestCase {
 
             ),
             reportingContext: reportingMetadata,
-            experimentsReportingData: experimentResult.evaluatedExperimentsReportingData
+            experimentsReportingData: experimentResult.reportingMetadata
         )
 
         XCTAssertEqual(context, expected)

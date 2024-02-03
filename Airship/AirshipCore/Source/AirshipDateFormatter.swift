@@ -3,10 +3,8 @@
 import Foundation
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UADateFormatter)
 public class AirshipDateFormatter: NSObject {
 
-    @objc(UADateFormatterFormat)
     public enum Format: Int {
         /// ISO 8601
         case iso
@@ -73,7 +71,6 @@ public class AirshipDateFormatter: NSObject {
     /// - Parameter from: The ISO 8601 timestamp.
     ///
     /// - Returns: A parsed Date object, or nil if the timestamp is not a valid format.
-    @objc
     public class func date(fromISOString from: String) -> Date? {
         if let date = dateFormatterISO.date(from: from) {
             return date
@@ -112,7 +109,6 @@ public class AirshipDateFormatter: NSObject {
         return nil
     }
 
-    @objc
     public static func string(fromDate date: Date, format: Format) -> String {
         switch format {
         case .iso:

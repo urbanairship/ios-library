@@ -47,7 +47,7 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
         }
 
         var headers: [String: String] = [
-            "X-UA-Lib-Version": AirshipVersion.get(),
+            "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-Device-Family": "ios",
             "Content-Type": "application/json",
             "Accept":  "application/vnd.urbanairship+json; version=3;"

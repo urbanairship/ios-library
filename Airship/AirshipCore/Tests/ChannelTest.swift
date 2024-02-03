@@ -154,7 +154,7 @@ class ChannelTest: XCTestCase {
             TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.tags = ["foo", "bar"]
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
-        expectedPayload.channel.sdkVersion = AirshipVersion.get()
+        expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.carrier = AirshipUtils.carrierName()
@@ -176,7 +176,7 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.timeZone =
             TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
-        expectedPayload.channel.sdkVersion = AirshipVersion.get()
+        expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.carrier = AirshipUtils.carrierName()

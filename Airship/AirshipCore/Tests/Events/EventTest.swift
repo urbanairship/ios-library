@@ -39,7 +39,7 @@ class EventTest: XCTestCase {
             data["os_version"] as! String,
             UIDevice.current.systemVersion
         )
-        XCTAssertEqual(data["lib_version"] as! String, AirshipVersion.get())
+        XCTAssertEqual(data["lib_version"] as! String, AirshipVersion.version)
         XCTAssertEqual(data["foreground"] as! String, "true")
     }
 
@@ -79,7 +79,7 @@ class EventTest: XCTestCase {
             data["os_version"] as! String,
             UIDevice.current.systemVersion
         )
-        XCTAssertEqual(data["lib_version"] as! String, AirshipVersion.get())
+        XCTAssertEqual(data["lib_version"] as! String, AirshipVersion.version)
     }
 
     func testAppExitEvent() throws {

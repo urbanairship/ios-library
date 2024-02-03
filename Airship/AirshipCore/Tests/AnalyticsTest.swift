@@ -432,7 +432,7 @@ class AnalyticsTest: XCTestCase {
             "X-UA-Device-Family": UIDevice.current.systemName,
             "X-UA-OS-Version": UIDevice.current.systemVersion,
             "X-UA-Device-Model": AirshipUtils.deviceModelName(),
-            "X-UA-Lib-Version": AirshipVersion.get(),
+            "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-App-Key": self.config.appKey,
             "X-UA-Package-Name":
                 Bundle.main.infoDictionary?[kCFBundleIdentifierKey as String]

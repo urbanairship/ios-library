@@ -6,7 +6,3 @@ import Foundation
 public protocol AirshipCancellable: Sendable {
     func cancel()
 }
-
-
-
-

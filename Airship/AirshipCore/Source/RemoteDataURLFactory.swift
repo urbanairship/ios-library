@@ -32,7 +32,7 @@ struct RemoteDataURLFactory: Sendable {
 
         let versionItem = URLQueryItem(
             name: "sdk_version",
-            value: AirshipVersion.get()
+            value: AirshipVersion.version
         )
 
         if versionItem.value?.isEmpty == false {

@@ -3,13 +3,9 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-@objc
-public enum AirshipWorkRequestConflictPolicy: Int, Sendable {
-    @objc(UAirshipWorkRequestConflictPolicyAppend)
+public enum AirshipWorkRequestConflictPolicy: Sendable {
     case append
-    @objc(UAirshipWorkRequestConflictPolicyReplace)
     case replace
-    @objc(UAirshipWorkRequestConflictPolicyKeepIfNotStarted)
     case keepIfNotStarted
 }
 

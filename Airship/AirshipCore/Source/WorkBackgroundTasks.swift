@@ -1,7 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+
+#if canImport(UIKit)
 import UIKit
+#endif
 
 protocol WorkBackgroundTasksProtocol: Sendable {
     @MainActor

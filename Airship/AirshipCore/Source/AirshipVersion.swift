@@ -2,12 +2,9 @@
 
 import Foundation
 
-@objc(UAirshipVersion)
-public class AirshipVersion: NSObject {
+public struct AirshipVersion {
     public static let version = "17.7.1"
-
-    @objc
-    public class func get() -> String {
+    public static func get() -> String {
         return version
     }
 }

@@ -79,7 +79,7 @@ class RemoteConfigManagerTest: XCTestCase {
                 ],
                 [
                     "modules": ["message_center"],
-                    "sdk_versions": [AirshipVersion.get()],
+                    "sdk_versions": [AirshipVersion.version],
                 ] as [String : Any],
                 [
                     "modules": ["contact"],

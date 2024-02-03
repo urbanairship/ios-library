@@ -164,9 +164,14 @@ public struct FormInputData {
         return result
     }
 
-    func toPayload() -> [String: Any]? {
-        guard let data = self.getData() else { return nil }
-        return [self.identifier: data]
+    func toPayload() -> AirshipJSON {
+        guard let data = self.getData() else { return AirshipJSON.object([:]) }
+        do {
+            return try AirshipJSON.wrap([self.identifier: data])
+        } catch {
+            AirshipLogger.error("Failed to wrap form data \(error)")
+        }
+        return AirshipJSON.object([:])
     }
 
     private func getData() -> [String: Any]? {
@@ -242,7 +247,6 @@ public enum FormValue {
     case form(String?, FormType, [FormInputData])
     case text(String?)
     case score(Int?)
-
 }
 
 public enum FormType {

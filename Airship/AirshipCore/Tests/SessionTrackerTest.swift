@@ -89,7 +89,7 @@ final class SessionTrackerTest: XCTestCase {
             sessionID: "1"
         )
 
-        await self.tracker.airshipReady()
+        self.tracker.airshipReady()
         await ensureEvents([
             SessionEvent(
                 type: .foregroundInit,

@@ -21,7 +21,7 @@ actor LegacyAutomationStore {
                 modelURL: modelURL,
                 inMemory: inMemory,
                 stores: ["Automation-\(appKey).sqlite", "In-app-automation-\(appKey).sqlite"],
-                mergePolicy: NSMergeByPropertyObjectTrumpMergePolicy
+                mergePolicy: .mergeByPropertyObjectTrump
             )
         } else {
             nil

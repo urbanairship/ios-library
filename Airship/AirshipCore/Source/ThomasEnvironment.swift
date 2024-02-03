@@ -320,7 +320,7 @@ extension FormState {
     fileprivate func toFormResult() -> ThomasFormResult {
         return ThomasFormResult(
             identifier: self.identifier,
-            formData: self.data.toPayload() ?? [:]
+            formData: self.data.toPayload() 
         )
 
     }

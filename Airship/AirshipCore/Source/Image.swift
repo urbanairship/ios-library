@@ -67,8 +67,7 @@ extension CGImageSource {
 }
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAirshipImageData)
-public class AirshipImageData: NSObject {
+public final class AirshipImageData {
     // Image frame
     struct Frame {
         let image: UIImage
@@ -95,7 +94,6 @@ public class AirshipImageData: NSObject {
         self.imageActor = AirshipImageDataFrameActor(source: source)
     }
 
-    @objc
     public convenience init(data: Data) throws {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil)
         else {

@@ -3,9 +3,7 @@
 import CoreData
 
 /// - Note: For internal use only. :nodoc:
-@objc(UACoreDataDelegate)
 public protocol CoreDataDelegate: AnyObject {
-    @objc
     func persistentStoreCreated(
         _ store: NSPersistentStore,
         name: String,
@@ -13,31 +11,54 @@ public protocol CoreDataDelegate: AnyObject {
     )
 }
 
+
 /// - Note: For internal use only. :nodoc:
-@objc(UACoreData)
-public final class UACoreData: NSObject, @unchecked Sendable {
+public final class UACoreData: @unchecked Sendable {
+
+    public enum MergePolicy: Sendable {
+        case mergeByPropertyObjectTrump
+    }
+
     private let UAManagedContextStoreDirectory = "com.urbanairship.no-backup"
 
     private let context: NSManagedObjectContext
     private let storeNames: [String]
 
-    @objc
     public let inMemory: Bool
 
     private var shouldCreateStore = false
     private var pendingStores: [String]
     private var isFinished = false
 
-    @objc
     public weak var delegate: CoreDataDelegate?
 
-    init(context: NSManagedObjectContext, inMemory: Bool, stores: [String]) {
-        self.context = context
+
+    public init(
+        modelURL: URL,
+        inMemory: Bool = false,
+        stores: [String],
+        mergePolicy: MergePolicy? = nil
+    ) {
+        let moc = NSManagedObjectContext(
+            concurrencyType: .privateQueueConcurrencyType
+        )
+        let mom = NSManagedObjectModel(contentsOf: modelURL)
+        if let mom = mom {
+            let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
+            moc.persistentStoreCoordinator = psc
+        }
+
+        if let mergePolicy = mergePolicy {
+            switch(mergePolicy) {
+            case .mergeByPropertyObjectTrump:
+                moc.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            }
+        }
+
+        self.context = moc
         self.pendingStores = stores
         self.storeNames = stores
         self.inMemory = inMemory
-
-        super.init()
 
         #if !os(watchOS)
         Task { @MainActor in
@@ -54,39 +75,6 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         }
 
         #endif
-    }
-
-    @objc
-    public convenience init(modelURL: URL, inMemory: Bool, stores: [String]) {
-        self.init(
-            modelURL: modelURL,
-            inMemory: inMemory,
-            stores: stores,
-            mergePolicy: NSErrorMergePolicy
-        )
-    }
-
-    @objc
-    public convenience init(
-        modelURL: URL,
-        inMemory: Bool,
-        stores: [String],
-        mergePolicy: Any?
-    ) {
-        let moc = NSManagedObjectContext(
-            concurrencyType: .privateQueueConcurrencyType
-        )
-        let mom = NSManagedObjectModel(contentsOf: modelURL)
-        if let mom = mom {
-            let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
-            moc.persistentStoreCoordinator = psc
-        }
-
-        if let mergePolicy = mergePolicy {
-            moc.mergePolicy = mergePolicy
-        }
-
-        self.init(context: moc, inMemory: inMemory, stores: stores)
     }
 
     public func perform(
@@ -220,7 +208,6 @@ public final class UACoreData: NSObject, @unchecked Sendable {
     }
 
     
-    @objc(safePerformBlock:)
     public func safePerform(
         _ block: @escaping (Bool, NSManagedObjectContext) -> Void
     ) {
@@ -247,7 +234,6 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         })
     }
 
-    @objc(safePerformBlockAndWait:)
     public func safePerformAndWait(
         _ block: @escaping (Bool, NSManagedObjectContext) -> Void
     ) {
@@ -274,7 +260,6 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         })
     }
 
-    @objc
     public func performBlockIfStoresExist(
         _ block: @escaping (Bool, NSManagedObjectContext) -> Void
     ) {
@@ -305,12 +290,6 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         })
     }
 
-    @objc
-    public func shutDown() {
-        isFinished = true
-    }
-
-    @objc
     public func waitForIdle() {
         context.performAndWait({})
     }
@@ -509,7 +488,6 @@ public final class UACoreData: NSObject, @unchecked Sendable {
         try context.save()
     }
 
-    @objc
     @discardableResult
     public class func safeSave(_ context: NSManagedObjectContext?) -> Bool {
         guard let context = context else {

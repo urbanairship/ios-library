@@ -132,7 +132,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     }
 
     public var sdkVersion: String {
-        AirshipVersion.get()
+        AirshipVersion.version
     }
 
     public var stableContactID: String {

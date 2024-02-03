@@ -41,7 +41,7 @@ actor CoreDataAirshipCache: AirshipCache {
     init(
         coreData: UACoreData?,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? "0.0.0",
-        sdkVersion: String = AirshipVersion.get(),
+        sdkVersion: String = AirshipVersion.version,
         date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.coreData = coreData

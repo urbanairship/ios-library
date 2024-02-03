@@ -144,8 +144,9 @@ public class PreferenceCenter: NSObject, AirshipComponent {
     @objc
     public func jsonConfig(preferenceCenterID: String) async throws -> Data {
         let payloads = await self.remoteData.payloads(types: ["preference_forms"])
+
         for payload in payloads {
-            let config = payload.data["preference_forms"] as? [[AnyHashable: Any]]
+            let config = payload.data(key: "preference_forms") as? [[AnyHashable: Any]]
 
             let form = config?
                 .compactMap { $0["form"] as? [AnyHashable: Any] }

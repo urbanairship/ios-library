@@ -296,7 +296,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         headers["X-UA-App-Key"] = self.config.appKey
 
         // SDK Version
-        headers["X-UA-Lib-Version"] = AirshipVersion.get()
+        headers["X-UA-Lib-Version"] = AirshipVersion.version
 
         // SDK Extensions
         let extensions = self.sdkExtensions.value

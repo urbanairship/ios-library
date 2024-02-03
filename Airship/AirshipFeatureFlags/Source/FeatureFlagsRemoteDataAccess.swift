@@ -47,13 +47,13 @@ final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
     }
 
     func remoteDataFlagInfo(name: String) async -> RemoteDataFeatureFlagInfo {
-        let appPayloads = await remoteData.payloads(types: ["feature_flags"])
+        let appPayloads: [RemoteDataPayload] = await remoteData.payloads(types: ["feature_flags"])
             .filter { $0.remoteDataInfo?.source == .app }
 
-        let flagInfos = appPayloads
-            .compactMap { payload in
-                let config = payload.data["feature_flags"] as? [[AnyHashable: Any]]
 
+        let flagInfos: [FeatureFlagInfo] = appPayloads
+            .compactMap { payload in
+                let config = payload.data(key: "feature_flags") as? [[AnyHashable: Any]]
                 return config?
                     .compactMap {
                         do {

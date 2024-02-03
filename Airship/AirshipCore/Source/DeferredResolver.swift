@@ -30,7 +30,7 @@ public struct DeferredRequest: Sendable, Equatable {
         locale: Locale,
         notificationOptIn: Bool,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? "",
-        sdkVersion: String = AirshipVersion.get()
+        sdkVersion: String = AirshipVersion.version
     ) {
         self.url = url
         self.channelID = channelID

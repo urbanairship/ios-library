@@ -716,8 +716,8 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         let experimentResult = ExperimentResult(
-            channelId: "some channel",
-            contactId: "contact ID",
+            channelID: "some channel",
+            contactID: "contact ID",
             isMatch: true,
             reportingMetadata: [AirshipJSON.string("reporting")]
         )
@@ -788,8 +788,8 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         let experimentResult = ExperimentResult(
-            channelId: "some channel",
-            contactId: "contact ID",
+            channelID: "some channel",
+            contactID: "contact ID",
             isMatch: true,
             reportingMetadata: [AirshipJSON.string("reporting")]
         )

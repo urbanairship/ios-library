@@ -4,9 +4,7 @@ import Foundation
 @testable
 import AirshipCore
 
-@objc
 public class RemoteDataTestUtils: NSObject {
-    @objc(generatePayloadWithType:timestamp:data:source:)
     public class func generatePayload(
         type: String,
         timestamp: Date,
@@ -35,7 +33,6 @@ public class RemoteDataTestUtils: NSObject {
         )
     }
 
-    @objc(generatePayloadWithType:timestamp:data:source:lastModified:)
     public class func generatePayload(
         type: String,
         timestamp: Date,

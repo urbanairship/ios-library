@@ -53,7 +53,7 @@ class ThomasDisplayListenerTest: XCTestCase {
     func testFormSubmitted() {
         self.timer.start()
 
-        let form = ThomasFormResult(identifier: "form id", formData: ["form": "result"])
+        let form = ThomasFormResult(identifier: "form id", formData: try! AirshipJSON.wrap(["form": "result"]))
         listener.onFormSubmitted(formResult: form, layoutContext: self.layoutContext)
 
         verifyEvents(

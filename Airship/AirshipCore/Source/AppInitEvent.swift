@@ -63,7 +63,7 @@ final class AppInitEvent: NSObject, AirshipEvent {
         #else
         data["os_version"] = WKInterfaceDevice.current().systemVersion
         #endif
-        data["lib_version"] = AirshipVersion.get()
+        data["lib_version"] = AirshipVersion.version
 
         let packageVersion = AirshipUtils.bundleShortVersionString() ?? ""
         data["package_version"] = packageVersion

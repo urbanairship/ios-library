@@ -29,7 +29,7 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
         self.remoteData.publisher(types: ["preference_forms"])
             .map { payloads -> [String] in
                 return payloads.compactMap { payload in
-                    if let data = payload.data["preference_forms"] as? [[String: Any]] {
+                    if let data = payload.data(key: "preference_forms") as? [[String: Any]] {
                         return data.compactMap { $0["form"] as? [String: Any] }
                             .compactMap { $0["id"] as? String }
                     } else {
@@ -46,7 +46,7 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
         self.remoteData.publisher(types: ["in_app_messages"])
             .map { payloads -> [[String: AnyHashable]] in
                 return payloads.compactMap { payload in
-                    payload.data["in_app_messages"] as? [[String: AnyHashable]]
+                    payload.data(key: "in_app_messages") as? [[String: AnyHashable]]
                 }.reduce([], +)
             }
             .removeDuplicates()
@@ -58,7 +58,7 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
         self.remoteData.publisher(types: ["experiments"])
             .map { payloads -> [[String: AnyHashable]] in
                 return payloads.compactMap { payload in
-                    payload.data["experiments"] as? [[String: AnyHashable]]
+                    payload.data(key: "experiments") as? [[String: AnyHashable]]
                 }.reduce([], +)
             }
             .removeDuplicates()
@@ -70,7 +70,7 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
         self.remoteData.publisher(types: ["feature_flags"])
             .map { payloads -> [[String: AnyHashable]] in
                 return payloads.compactMap { payload in
-                    payload.data["feature_flags"] as? [[String: AnyHashable]]
+                    payload.data(key: "feature_flags") as? [[String: AnyHashable]]
                 }.reduce([], +)
             }
             .removeDuplicates()

@@ -8,7 +8,7 @@ import XCTest
 class InAppMessageAnalyticsTest: XCTestCase {
 
     private let campaigns = try! AirshipJSON.wrap(["campaign1": "data1", "campaign2": "data2"])
-    private let experimentResult = ExperimentResult(channelId: "some channel", contactId: "some contact", isMatch: true, reportingMetadata: ["some reporting"])
+    private let experimentResult = ExperimentResult(channelID: "some channel", contactID: "some contact", isMatch: true, reportingMetadata: [AirshipJSON.string("some reporting")])
     private let scheduleID = UUID().uuidString
     private let reportingMetadata = AirshipJSON.string("reporting info")
     private let eventRecorder = EventRecorder()

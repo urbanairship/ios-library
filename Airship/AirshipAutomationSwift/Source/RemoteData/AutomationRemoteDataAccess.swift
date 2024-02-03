@@ -201,7 +201,7 @@ struct InAppRemoteData: Sendable {
                 ] as [String: AnyHashable]
             )
 
-            var data: Data = try payload._data.decode()
+            var data: Data = try payload.data.decode()
             data.schedules.indices.forEach { i in
                 data.schedules[i].metadata = metadata
 

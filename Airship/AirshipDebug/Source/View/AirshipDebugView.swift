@@ -281,7 +281,7 @@ private class AirshipDebugViewModel: ObservableObject {
         ?? ""
     let appVersionCode =
         (Bundle.main.infoDictionary?["CFBundleVersion"] as? String) ?? ""
-    let airshipSDKVersion: String = AirshipVersion.get()
+    let airshipSDKVersion: String = AirshipVersion.version
     var timeZone: String {
         return TimeZone.autoupdatingCurrent.identifier
     }

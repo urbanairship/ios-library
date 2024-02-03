@@ -502,7 +502,7 @@ extension RemoteData: PushableComponent {
 #endif
 
 
-extension Sequence where Iterator.Element : RemoteDataPayload {
+extension Sequence where Iterator.Element == RemoteDataPayload {
     func sortedByType(_ types: [String]) -> [Iterator.Element] {
         return self.sorted { first, second in
             let firstIndex = types.firstIndex(of: first.type) ?? 0

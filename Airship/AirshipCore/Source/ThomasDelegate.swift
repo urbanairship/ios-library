@@ -4,7 +4,6 @@ import Foundation
 import SwiftUI
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasDelegate)
 public protocol ThomasDelegate: Sendable {
 
     /// Called when a form is submitted
@@ -128,24 +127,13 @@ public protocol ThomasDelegate: Sendable {
 }
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasPagerInfo)
-public final class ThomasPagerInfo: NSObject, Sendable {
+public struct ThomasPagerInfo: Sendable, Hashable, Equatable {
+    public var identifier: String
+    public var pageIndex: Int
+    public var pageIdentifier: String
+    public var pageCount: Int
+    public var completed: Bool
 
-    @objc
-    public let identifier: String
-    @objc
-    public let pageIndex: Int
-
-    @objc
-    public let pageIdentifier: String
-
-    @objc
-    public let pageCount: Int
-
-    @objc
-    public let completed: Bool
-
-    @objc
     public init(
         identifier: String,
         pageIndex: Int,
@@ -159,94 +147,54 @@ public final class ThomasPagerInfo: NSObject, Sendable {
         self.pageCount = pageCount
         self.completed = completed
     }
-
-    public override var description: String {
-        "ThomasPagerInfo{identifier=\(identifier), pageIndex=\(pageIndex)}, pageIdentifier=\(pageIdentifier), pageCount=\(pageCount), completed=\(completed)}"
-    }
 }
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasFormResult)
-public class ThomasFormResult: NSObject {
-    @objc
-    public let identifier: String
+public struct ThomasFormResult: Sendable, Hashable, Equatable {
+    public var identifier: String
+    public var formData: AirshipJSON
 
-    @objc
-    public let formData: [String: Any]
-
-    @objc
-    public init(identifier: String, formData: [String: Any]) {
+    public init(identifier: String, formData: AirshipJSON) {
         self.identifier = identifier
         self.formData = formData
     }
-
-    public override var description: String {
-        "ThomasFormResult{identifier=\(identifier), formData=\(formData)}"
-    }
 }
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasButtonInfo)
-public final class ThomasButtonInfo: NSObject, Sendable {
-    @objc
-    public let identifier: String
+public struct ThomasButtonInfo: Sendable, Hashable, Equatable {
+    public var identifier: String
 
-    @objc
     public init(identifier: String) {
         self.identifier = identifier
     }
-
-    public override var description: String {
-        "ThomasButtonInfo{identifier=\(identifier)}"
-    }
 }
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasFormInfo)
-public final class ThomasFormInfo: NSObject, Sendable {
-    @objc
-    public let identifier: String
+public struct ThomasFormInfo: Sendable, Hashable, Equatable {
+    public var identifier: String
+    public var submitted: Bool
+    public var formType: String
+    public var formResponseType: String?
 
-    @objc
-    public let submitted: Bool
-
-    @objc
-    public let formType: String
-
-    @objc
-    public let formResponseType: String?
-
-    @objc
     public init(
         identifier: String,
         submitted: Bool,
         formType: String,
-        formResponseType: String?
+        formResponseType: String? = nil
     ) {
         self.identifier = identifier
         self.submitted = submitted
         self.formType = formType
         self.formResponseType = formResponseType
     }
-
-    public override var description: String {
-        "ThomasFormInfo{identifier=\(identifier), submitted=\(submitted), formType=\(formType), formResponseType=\(formResponseType ?? "")}"
-    }
 }
 
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasLayoutContext)
-public final class ThomasLayoutContext: NSObject, Sendable {
-    @objc
-    public let formInfo: ThomasFormInfo?
+public struct ThomasLayoutContext: Sendable, Hashable, Equatable {
+    public var formInfo: ThomasFormInfo?
+    public var pagerInfo: ThomasPagerInfo?
+    public var buttonInfo: ThomasButtonInfo?
 
-    @objc
-    public let pagerInfo: ThomasPagerInfo?
-
-    @objc
-    public let buttonInfo: ThomasButtonInfo?
-
-    @objc
     public init(
         formInfo: ThomasFormInfo?,
         pagerInfo: ThomasPagerInfo?,
@@ -255,9 +203,5 @@ public final class ThomasLayoutContext: NSObject, Sendable {
         self.formInfo = formInfo
         self.pagerInfo = pagerInfo
         self.buttonInfo = buttonInfo
-    }
-
-    public override var description: String {
-        "ThomasLayoutContext{formInfo=\(String(describing: formInfo)), pagerInfo=\(String(describing: pagerInfo)), buttonInfo=\(String(describing: buttonInfo))}"
     }
 }

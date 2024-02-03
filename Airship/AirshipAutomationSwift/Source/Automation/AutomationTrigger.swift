@@ -9,7 +9,6 @@ import AirshipCore
 
 /// Automation trigger types
 public enum AutomationTriggerType: String, Sendable, Codable {
-    case chain
     /// Foreground
     case foreground
     

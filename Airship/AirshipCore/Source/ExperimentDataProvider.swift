@@ -11,93 +11,27 @@ public protocol ExperimentDataProvider: Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UAExperimentMessageInfo)
-public final class MessageInfo: NSObject {
+public struct MessageInfo: Equatable, Hashable {
     let messageType: String
     let campaigns: AirshipJSON?
-
-    @objc
-    public init(messageType: String, campaignsJSON: Any? = nil) {
-        self.messageType = messageType
-        self.campaigns = try? AirshipJSON.wrap(campaignsJSON)
-    }
 
     public init(messageType: String, campaigns: AirshipJSON? = nil) {
         self.messageType = messageType
         self.campaigns = try? AirshipJSON.wrap(campaigns)
     }
-    
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? MessageInfo else {
-            return false
-        }
-        
-        return other.messageType == messageType
-    }
 }
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UAExperimentResult)
-public final class ExperimentResult: NSObject, Codable, Sendable {
-    @objc public let channelID: String
-    @objc public let contactID: String
+public struct ExperimentResult: Codable, Sendable, Hashable {
+    public let channelID: String
+    public let contactID: String
+    public let isMatch: Bool
+    public let reportingMetadata: [AirshipJSON]
 
-    @objc public let isMatch: Bool
-    public let evaluatedExperimentsReportingData: [AirshipJSON]
-
-    @objc(evaluatedExperimentsReportingData)
-    public var _evaluatedExperimentsReportingData: [Any] {
-        return evaluatedExperimentsReportingData.compactMap { $0.unWrap() }
-    }
-
-    init(channelID: String, contactID: String, isMatch: Bool, evaluatedExperimentsReportingData: [AirshipJSON]) {
+    public init(channelID: String, contactID: String, isMatch: Bool, reportingMetadata: [AirshipJSON]) {
         self.channelID = channelID
         self.contactID = contactID
         self.isMatch = isMatch
-        self.evaluatedExperimentsReportingData = evaluatedExperimentsReportingData
-    }
-    
-    @objc
-    public convenience init(channelId: String, contactId: String, isMatch: Bool, reportingMetadata: [Any]) {
-        let metadata = reportingMetadata.compactMap({ try? AirshipJSON.wrap($0) })
-        self.init(channelID: channelId, contactID: contactId, isMatch: isMatch, evaluatedExperimentsReportingData: metadata)
-    }
-    
-    public override var description: String {
-        return "ExperimentResult: channelId: \(channelID), contactId: \(contactID), isMatch: \(isMatch), metadata: \(evaluatedExperimentsReportingData)"
-    }
-
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ExperimentResult else {
-            return false
-        }
-
-        return self.channelID == other.channelID &&
-        self.contactID == other.contactID &&
-        self.isMatch == other.isMatch &&
-        self.evaluatedExperimentsReportingData == other.evaluatedExperimentsReportingData
-    }
-
-    public override var hash: Int {
-        var result = 1
-        result = 31 * result + channelID.hashValue
-        result = 31 * result + contactID.hashValue
-        result = 31 * result + isMatch.hashValue
-        result = 31 * result + evaluatedExperimentsReportingData.hashValue
-        return result
-
-    }
-}
-
-// Needed for IAA since it can't deal with codables until its rewritten in swift
-extension PreferenceDataStore {
-    @objc
-    public func storeExperimentResult(_ experiment: ExperimentResult?, forKey key: String)  {
-        self.setSafeCodable(experiment, forKey: key)
-    }
-
-    @objc
-    public func experimentResult(forKey key: String) -> ExperimentResult? {
-        return self.safeCodable(forKey: key)
+        self.reportingMetadata = reportingMetadata
     }
 }

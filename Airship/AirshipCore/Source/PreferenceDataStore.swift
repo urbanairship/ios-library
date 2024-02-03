@@ -43,7 +43,7 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
     public convenience init(appKey: String) {
         self.init(
             appKey: appKey,
-            dispatcher: UADispatcher.serial(),
+            dispatcher: DefaultDispatcher.serial(),
             deviceID: AirshipDeviceID(appKey: appKey)
         )
     }
@@ -75,12 +75,10 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         return defaults
     }
 
-    @objc
     public override func value(forKey key: String) -> Any? {
         return read(key)
     }
 
-    @objc
     public override func setValue(_ value: Any?, forKey key: String) {
         write(key, value: value)
     }
@@ -94,7 +92,6 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         write(key, value: nil)
     }
 
-    @objc
     public func keyExists(_ key: String) -> Bool {
         return object(forKey: key) != nil
     }
@@ -104,32 +101,26 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         return read(key)
     }
 
-    @objc
     public func string(forKey key: String) -> String? {
         return read(key)
     }
 
-    @objc
     public func array(forKey key: String) -> [AnyHashable]? {
         return read(key)
     }
 
-    @objc
     public func dictionary(forKey key: String) -> [AnyHashable: Any]? {
         return read(key)
     }
 
-    @objc
     public func data(forKey key: String) -> Data? {
         return read(key)
     }
 
-    @objc
     public func stringArray(forKey key: String) -> [AnyHashable]? {
         return read(key)
     }
 
-    @objc
     public func integer(forKey key: String) -> Int {
         return read(key) ?? 0
     }
@@ -137,19 +128,15 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
     public func unsignedInteger(forKey key: String) -> UInt? {
         return read(key)
     }
-    
 
-    @objc
     public func float(forKey key: String) -> Float {
         return read(key) ?? 0.0
     }
 
-    @objc
     public func double(forKey key: String) -> Double {
         return read(key) ?? 0.0
     }
 
-    @objc
     public func double(forKey key: String, defaultValue: Double) -> Double {
         return read(key, defaultValue: defaultValue)
     }
@@ -159,12 +146,10 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         return read(key) ?? false
     }
 
-    @objc
     public func bool(forKey key: String, defaultValue: Bool) -> Bool {
         return read(key, defaultValue: defaultValue)
     }
 
-    @objc
     public func setInteger(_ int: Int, forKey key: String) {
         write(key, value: int)
     }
@@ -173,17 +158,14 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         write(key, value: value)
     }
 
-    @objc
     public func setFloat(_ float: Float, forKey key: String) {
         write(key, value: float)
     }
 
-    @objc
     public func setDouble(_ double: Double, forKey key: String) {
         write(key, value: double)
     }
 
-    @objc
     public func setBool(_ bool: Bool, forKey key: String) {
         write(key, value: bool)
     }
@@ -209,7 +191,6 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
             return nil
         }
     }
-
 
     public func setSafeCodable<T: Codable>(
         _ codable: T?,

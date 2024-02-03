@@ -94,7 +94,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
         self.nonceFactory = nonceFactory
         self.defaultHeaders = [
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
-            "User-Agent": "(UALib \(AirshipVersion.get()); \(appKey))",
+            "User-Agent": "(UALib \(AirshipVersion.version); \(appKey))",
             "X-UA-App-Key": appKey,
         ]
     }

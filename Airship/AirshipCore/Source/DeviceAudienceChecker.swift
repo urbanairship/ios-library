@@ -2,7 +2,6 @@
 
 import Foundation
 
-
 /// NOTE: For internal use only. :nodoc:
 public protocol DeviceAudienceChecker: Sendable {
     func evaluate(

@@ -39,7 +39,7 @@ final class ExperimentManagerTest: XCTestCase {
             [
                 experiment.reportingMetadata
             ],
-            result.evaluatedExperimentsReportingData
+            result.reportingMetadata
         )
     }
 
@@ -63,7 +63,7 @@ final class ExperimentManagerTest: XCTestCase {
                 experiment1.reportingMetadata,
                 experiment2.reportingMetadata
             ],
-            result.evaluatedExperimentsReportingData
+            result.reportingMetadata
         )
     }
 
@@ -116,7 +116,7 @@ final class ExperimentManagerTest: XCTestCase {
             [
                 experiment.reportingMetadata
             ],
-            result.evaluatedExperimentsReportingData
+            result.reportingMetadata
         )
     }
 
@@ -160,7 +160,7 @@ final class ExperimentManagerTest: XCTestCase {
                 experiment1.reportingMetadata,
                 experiment2.reportingMetadata
             ],
-            result.evaluatedExperimentsReportingData
+            result.reportingMetadata
         )
     }
 
@@ -211,7 +211,7 @@ final class ExperimentManagerTest: XCTestCase {
             [
                 experiment2.reportingMetadata
             ],
-            result.evaluatedExperimentsReportingData
+            result.reportingMetadata
         )
     }
 
@@ -258,7 +258,7 @@ final class ExperimentManagerTest: XCTestCase {
         )!
 
         XCTAssertTrue(result.isMatch)
-        XCTAssertEqual([experiment.reportingMetadata], result.evaluatedExperimentsReportingData)
+        XCTAssertEqual([experiment.reportingMetadata], result.reportingMetadata)
 
         var emptyResult = try await subject.evaluateExperiments(
             info: MessageInfo(messageType: "transactional"),

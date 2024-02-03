@@ -68,7 +68,6 @@ public class Airship: NSObject {
     }
 
     /// Stores common application metrics such as last open.
-    @objc
     public var applicationMetrics: ApplicationMetrics {
         return airshipInstance.applicationMetrics
     }
@@ -351,7 +350,7 @@ public class Airship: NSObject {
         }
 
         AirshipLogger.info(
-            "Airship TakeOff! SDK Version \(AirshipVersion.get()), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)"
+            "Airship TakeOff! SDK Version \(AirshipVersion.version), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)"
         )
 
         _shared = Airship(instance: AirshipInstance(config: resolvedConfig))

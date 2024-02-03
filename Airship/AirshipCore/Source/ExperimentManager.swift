@@ -57,14 +57,14 @@ final class ExperimentManager: ExperimentDataProvider {
             channelID: channelID,
             contactID: contactID,
             isMatch: isMatch,
-            evaluatedExperimentsReportingData: evaluatedMetadata
+            reportingMetadata: evaluatedMetadata
         )
     }
 
     func getExperiments(info: MessageInfo) async -> [Experiment] {
         return await remoteData
             .payloads(types: [Self.payloadType])
-            .map { $0.data }
+            .compactMap { $0.data.unWrap() as? [String: AnyHashable] }
             .compactMap { $0[Self.payloadType] as? [[String: Any]] }
             .flatMap { $0 }
             .compactMap(Experiment.from)

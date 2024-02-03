@@ -41,7 +41,7 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         remoteDataAccess: AutomationRemoteDataAccessProtocol,
         engine: AutomationEngineProtocol,
         frequencyLimitManager: FrequencyLimitManagerProtocol,
-        airshipSDKVersion: String = AirshipVersion.get()
+        airshipSDKVersion: String = AirshipVersion.version
     ) {
         self.sourceInfoStore = AutomationSourceInfoStore(dataStore: dataStore)
         self.remoteDataAccess = remoteDataAccess

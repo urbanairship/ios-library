@@ -670,7 +670,7 @@ extension AirshipChannel: PushableComponent {
             payload.channel.language = currentLocale.languageCode
             payload.channel.country = currentLocale.regionCode
             payload.channel.timeZone = TimeZone.current.identifier
-            payload.channel.sdkVersion = AirshipVersion.get()
+            payload.channel.sdkVersion = AirshipVersion.version
         }
 
         return payload

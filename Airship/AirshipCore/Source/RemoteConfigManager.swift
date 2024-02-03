@@ -49,7 +49,7 @@ final class RemoteConfigManager: @unchecked Sendable {
         // Combine the data, overriding the common config (first) with
         // the platform config (second).
         payloads?.forEach { payload in
-            combinedData.merge(payload.data) { (_, new) in new }
+            combinedData.merge((payload.data.unWrap() as? [String: AnyHashable] ?? [:])) { (_, new) in new }
         }
 
         // Disable features
@@ -72,7 +72,7 @@ final class RemoteConfigManager: @unchecked Sendable {
 
                 if !info.sdkVersionConstraints.isEmpty {
                     let matches = info.sdkVersionConstraints.contains(where: {
-                        return $0.evaluate(AirshipVersion.get())
+                        return $0.evaluate(AirshipVersion.version)
                     })
                     if !matches {
                         return false

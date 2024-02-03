@@ -77,37 +77,6 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     public func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
-        workHandler: @escaping (AirshipWorkRequest, AirshipWorkContinuation) ->
-            Void
-    ) {
-        registerWorker(
-            workID,
-            type: type
-        ) { workRequest in
-            let cancellable: CancellableValueHolder<AirshipWorkContinuation> = CancellableValueHolder { continuation in
-                continuation.cancel()
-            }
-            
-            return await withTaskCancellationHandler(
-                operation: {
-                    return await withCheckedContinuation { taskContinuation in
-                        let continuation = AirshipWorkContinuation { result in
-                            taskContinuation.resume(returning: result)
-                        }
-                        cancellable.value = continuation
-                        workHandler(workRequest, continuation)
-                    }
-                },
-                onCancel: {
-                    cancellable.cancel()
-                }
-            )
-        }
-    }
-
-    public func registerWorker(
-        _ workID: String,
-        type: AirshipWorkerType,
         workHandler: @escaping (AirshipWorkRequest) async throws ->
             AirshipWorkResult
     ) {

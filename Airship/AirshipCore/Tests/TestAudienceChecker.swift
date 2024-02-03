@@ -18,7 +18,7 @@ final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
 }
 
 final class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
-    var sdkVersion: String = AirshipVersion.get()
+    var sdkVersion: String = AirshipVersion.version
     
     var isAirshipReady: Bool = true
 

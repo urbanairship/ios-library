@@ -3,18 +3,9 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-@objc(UAirshipDate)
-public final class AirshipDate: NSObject, AirshipDateProtocol {
-
-    @objc
+public final class AirshipDate: AirshipDateProtocol {
     public static let shared = AirshipDate()
-
-    @objc
-    public override init() {
-        super.init()
-    }
-
-    @objc
+    public init() {}
     public var now: Date {
         return Date()
     }

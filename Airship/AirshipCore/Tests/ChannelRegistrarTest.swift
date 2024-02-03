@@ -10,7 +10,6 @@ class ChannelRegistrarTest: XCTestCase {
     private let client = TestChannelRegistrationClient()
     private let date = UATestDate()
     private let workManager = TestWorkManager()
-    private let dispatcher = TestDispatcher()
     private let appStateTracker = TestAppStateTracker()
     private var subscriptions: Set<AnyCancellable> = Set()
 

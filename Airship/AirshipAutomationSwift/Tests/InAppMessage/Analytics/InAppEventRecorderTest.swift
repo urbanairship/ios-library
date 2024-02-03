@@ -15,10 +15,10 @@ class InAppEventRecorderTest: XCTestCase {
         ["campaign1": "data1", "campaign2": "data2"]
     )
     private let experimentResult = ExperimentResult(
-        channelId: "some channel",
-        contactId: "some contact",
+        channelID: "some channel",
+        contactID: "some contact",
         isMatch: true,
-        reportingMetadata: ["some reporting"]
+        reportingMetadata: [AirshipJSON.string("some reporting")]
     )
     private let scheduleID = "5362C754-17A9-48B8-B101-60D9DC5688A2"
     private let reportingMetadata = AirshipJSON.string("reporting info")
@@ -38,7 +38,7 @@ class InAppEventRecorderTest: XCTestCase {
             event: inAppEvent,
             context: InAppEventContext(
                 reportingContext: self.reportingMetadata,
-                experimentsReportingData: self.experimentResult.evaluatedExperimentsReportingData
+                experimentsReportingData: self.experimentResult.reportingMetadata
             ),
             source: .airship,
             messageID: .airship(identifier: self.scheduleID, campaigns: self.campaigns),
@@ -91,7 +91,7 @@ class InAppEventRecorderTest: XCTestCase {
             event: inAppEvent,
             context: InAppEventContext(
                 reportingContext: self.reportingMetadata,
-                experimentsReportingData: self.experimentResult.evaluatedExperimentsReportingData
+                experimentsReportingData: self.experimentResult.reportingMetadata
             ),
             source: .airship,
             messageID: .airship(identifier: self.scheduleID, campaigns: self.campaigns),
@@ -144,7 +144,7 @@ class InAppEventRecorderTest: XCTestCase {
             event: inAppEvent,
             context: InAppEventContext(
                 reportingContext: self.reportingMetadata,
-                experimentsReportingData: self.experimentResult.evaluatedExperimentsReportingData
+                experimentsReportingData: self.experimentResult.reportingMetadata
             ),
             source: .airship,
             messageID: .airship(identifier: self.scheduleID, campaigns: self.campaigns),

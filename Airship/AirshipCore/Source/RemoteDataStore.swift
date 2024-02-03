@@ -38,8 +38,6 @@ final class RemoteDataStore: Sendable {
     public func fetchRemoteDataFromCache(
         types: [String]? = nil
     ) async throws -> [RemoteDataPayload] {
-
-
         AirshipLogger.trace(
             "Fetching remote data from cache with types: \(String(describing: types))"
         )
@@ -146,7 +144,7 @@ final class RemoteDataStore: Sendable {
         // set the properties
         remoteDataStorePayload.type = payload.type
         remoteDataStorePayload.timestamp = payload.timestamp
-        remoteDataStorePayload.data = payload.data
+        remoteDataStorePayload.data = (payload.data.unWrap() as? [AnyHashable : Any]) ?? [:]
         do {
             remoteDataStorePayload.remoteDataInfo = try payload.remoteDataInfo?.toEncodedJSONData()
         } catch {

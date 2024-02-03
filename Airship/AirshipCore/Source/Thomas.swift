@@ -5,7 +5,6 @@ import SwiftUI
 
 /// Airship rendering engine.
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomas)
 public class Thomas: NSObject {
 
     private static let decoder = JSONDecoder()
@@ -17,7 +16,6 @@ public class Thomas: NSObject {
         return layout
     }
 
-    @objc
     public class func validate(data: Data) throws {
         let layout = try decode(data)
 
@@ -33,20 +31,17 @@ public class Thomas: NSObject {
         try layout.validate()
     }
 
-    @objc
     public class func validate(json: Any) throws {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
         try validate(data: data)
     }
 
-    @objc
     public class func urls(json: Any) throws -> [URLInfo] {
         let data = try JSONSerialization.data(withJSONObject: json, options: [])
         return try decode(data).urlInfos
     }
 
     #if !os(watchOS)
-    @objc
     @MainActor
     public class func deferredDisplay(
         json: Any,
@@ -97,7 +92,6 @@ public class Thomas: NSObject {
         }
     }
 
-    @objc
     @discardableResult
     @MainActor
     public class func deferredDisplay(
@@ -141,17 +135,6 @@ public class Thomas: NSObject {
                 }
             }
         }
-    }
-
-    @MainActor
-    @ViewBuilder
-    public class func makeView(
-        from data: Data,
-        extensions: ThomasExtensions? = nil,
-        delegate: ThomasDelegate
-    ) throws -> some View {
-
-
     }
 
     @MainActor
@@ -275,7 +258,6 @@ public class Thomas: NSObject {
 
 /// Airship rendering engine extensions.
 /// - Note: for internal use only.  :nodoc:
-@objc(UAThomasExtensions)
 public class ThomasExtensions: NSObject {
 
     #if !os(tvOS) && !os(watchOS)
@@ -285,12 +267,11 @@ public class ThomasExtensions: NSObject {
     let imageProvider: AirshipImageProvider?
 
     #if os(tvOS) || os(watchOS)
-    @objc
     public init(imageProvider: AirshipImageProvider? = nil) {
         self.imageProvider = imageProvider
     }
     #else
-    @objc
+
     public init(
         nativeBridgeExtension: NativeBridgeExtensionDelegate? = nil,
         imageProvider: AirshipImageProvider? = nil
@@ -301,7 +282,6 @@ public class ThomasExtensions: NSObject {
     #endif
 }
 
-@objc
 public enum UrlTypes: Int {
     case image
     case video

@@ -31,7 +31,7 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let headers = testURLSession.requests.last?.allHTTPHeaderFields
         let expected = [
             "Accept-Encoding": "gzip;q=1.0, compress;q=0.5",
-            "User-Agent": "(UALib \(AirshipVersion.get()); testAppKey)",
+            "User-Agent": "(UALib \(AirshipVersion.version); testAppKey)",
             "X-UA-App-Key": "testAppKey",
         ]
 

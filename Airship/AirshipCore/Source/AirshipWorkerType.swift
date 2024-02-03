@@ -1,7 +1,9 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
-@objc(UAirshipWorkerType)
-public enum AirshipWorkerType: Int {
+/// NOTE: For internal use only. :nodoc:
+public enum AirshipWorkerType {
     case serial
     case concurrent
 }

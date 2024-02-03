@@ -1,3 +1,7 @@
+/* Copyright Airship and Contributors */
+
+import Foundation
+
 actor WorkRateLimiter {
     private struct RateLimitRule {
         let rate: Int

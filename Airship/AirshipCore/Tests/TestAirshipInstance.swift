@@ -33,7 +33,6 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     }
 
     private var _applicationMetrics: ApplicationMetrics?
-    @objc
     public var applicationMetrics: ApplicationMetrics {
         get {
             return _applicationMetrics!

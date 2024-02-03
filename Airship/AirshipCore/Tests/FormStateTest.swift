@@ -120,8 +120,8 @@ class FormStateTest: XCTestCase {
         ]
 
         XCTAssertEqual(
-            expected as NSDictionary,
-            formState.data.toPayload()! as NSDictionary
+            try AirshipJSON.wrap(expected),
+            formState.data.toPayload()
         )
     }
 

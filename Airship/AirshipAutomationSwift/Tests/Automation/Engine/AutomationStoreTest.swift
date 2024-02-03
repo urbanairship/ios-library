@@ -75,10 +75,10 @@ final class AutomationStoreTest: XCTestCase {
             campaigns: .string("campaigns"),
             contactID: "some contact",
             experimentResult: ExperimentResult(
-                channelId: "some channel",
-                contactId: "some contact",
+                channelID: "some channel",
+                contactID: "some contact",
                 isMatch: true,
-                reportingMetadata: ["reporing"] as [Any]
+                reportingMetadata: [AirshipJSON.string("reporing")]
             )
         )
 

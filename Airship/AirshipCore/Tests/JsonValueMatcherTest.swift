@@ -379,7 +379,7 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereStringEquals("does_not_matter")
         
         // valueOne == valueOne
-        var valueOne = 1
+        let valueOne = 1
         XCTAssertTrue(matcher.value(valueOne, isEqualToValue: valueOne, ignoreCase: false))
         XCTAssertTrue(matcher.value(valueOne, isEqualToValue: valueOne, ignoreCase: true))
 

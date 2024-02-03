@@ -7,12 +7,10 @@ import WatchConnectivity
 #endif
 
 /// - Note: For internal use only. :nodoc:
-@objc(UANetworkMonitor)
 open class NetworkMonitor: NSObject {
 
     private var pathMonitor: Any?
 
-    @objc
     public var connectionUpdates: ((Bool) -> Void)?
 
     private var _isConnected = false {
@@ -21,7 +19,6 @@ open class NetworkMonitor: NSObject {
         }
     }
 
-    @objc
     open var isConnected: Bool {
         #if !os(watchOS)
         guard #available(iOS 12.0, tvOS 12.0, *) else {
@@ -33,7 +30,6 @@ open class NetworkMonitor: NSObject {
         #endif
     }
 
-    @objc
     public override init() {
         super.init()
         if #available(iOS 12.0, tvOS 12.0, *) {

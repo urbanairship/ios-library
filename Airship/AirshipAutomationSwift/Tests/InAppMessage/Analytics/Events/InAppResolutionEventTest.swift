@@ -72,10 +72,10 @@ final class InAppResolutionEventTest: XCTestCase {
 
     func testControl() throws {
         let experimentResult = ExperimentResult(
-            channelId: "channel id",
-            contactId: "contact id",
+            channelID: "channel id",
+            contactID: "contact id",
             isMatch: true,
-            reportingMetadata: ["reporting!"]
+            reportingMetadata: [AirshipJSON.string("reporting")]
         )
 
         let event = InAppResolutionEvent.control(experimentResult: experimentResult)

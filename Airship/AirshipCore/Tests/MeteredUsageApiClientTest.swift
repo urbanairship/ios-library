@@ -83,7 +83,6 @@ final class MeteredUsageApiClientTest: XCTestCase {
             headerFields: nil)
 
         await self.config.updateRemoteConfig(RemoteConfig())
-        var errorOnNoConfig = false
         do {
             let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
             XCTFail("Should throw")
@@ -146,7 +145,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
         XCTAssertEqual("test://meteredUsage/api/metered-usage", request?.url?.absoluteString)
         XCTAssertEqual([
             "Content-Type": "application/json",
-            "X-UA-Lib-Version": AirshipVersion.get(),
+            "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-Device-Family": "ios",
             "X-UA-Channel-ID": "test.channel.id",
             "Accept": "application/vnd.urbanairship+json; version=3;"
@@ -255,7 +254,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
         XCTAssertEqual("test://meteredUsage/api/metered-usage", request?.url?.absoluteString)
         XCTAssertEqual([
             "Content-Type": "application/json",
-            "X-UA-Lib-Version": AirshipVersion.get(),
+            "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-Device-Family": "ios",
             "X-UA-Channel-ID": "test.channel.id",
             "Accept": "application/vnd.urbanairship+json; version=3;"

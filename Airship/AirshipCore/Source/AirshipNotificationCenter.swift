@@ -36,7 +36,7 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
 
 
     public func postOnMain(name: NSNotification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil){
-        UADispatcher.main.dispatchAsyncIfNecessary {
+        DefaultDispatcher.main.dispatchAsyncIfNecessary {
             self.post(
                 name: name,
                 object: object,
