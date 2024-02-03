@@ -79,7 +79,7 @@ test-preference-center: setup
 
 .PHONY: test-automation
 test-automation: setup
-	bash ./scripts/run_tests.sh AirshipAutomationSwift "${derived_data_path}"
+	bash ./scripts/run_tests.sh AirshipAutomation "${derived_data_path}"
 
 .PHONY: test-feature-flags
 test-feature-flags: setup

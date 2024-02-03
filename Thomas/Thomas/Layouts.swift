@@ -4,7 +4,7 @@ import AirshipCore
 import Foundation
 import Yams
 import WebKit
-import AirshipAutomationSwift
+import AirshipAutomation
 
 final class Layouts {
     public static let shared: Layouts = Layouts()

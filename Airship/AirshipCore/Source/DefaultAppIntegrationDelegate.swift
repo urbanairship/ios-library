@@ -153,11 +153,9 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
         // Pushable components
         self.pushableComponents.forEach {
-            if $0.receivedNotificationResponse != nil {
-                dispatchGroup.enter()
-                $0.receivedNotificationResponse?(response) {
-                    dispatchGroup.leave()
-                }
+            dispatchGroup.enter()
+            $0.receivedNotificationResponse(response) {
+                dispatchGroup.leave()
             }
         }
 
@@ -197,14 +195,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         self.push.presentationOptionsForNotification(notification) { presentationOptions in
-            var options = presentationOptions
-            self.pushableComponents.forEach {
-                if let componentOptions = $0.presentationOptions?(for: notification, defaultPresentationOptions: presentationOptions) {
-                    options = componentOptions
-                }
-            }
-            
-            completionHandler(options)
+            completionHandler(presentationOptions)
         }
     }
 
@@ -226,14 +217,12 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
         // Pushable components
         self.pushableComponents.forEach {
-            if $0.receivedRemoteNotification != nil {
-                dispatchGroup.enter()
-                $0.receivedRemoteNotification?(userInfo) { fetchResult in
-                    lock.sync {
-                        fetchResults.append(fetchResult.rawValue)
-                    }
-                    dispatchGroup.leave()
+            dispatchGroup.enter()
+            $0.receivedRemoteNotification(userInfo) { fetchResult in
+                lock.sync {
+                    fetchResults.append(fetchResult.rawValue)
                 }
+                dispatchGroup.leave()
             }
         }
 

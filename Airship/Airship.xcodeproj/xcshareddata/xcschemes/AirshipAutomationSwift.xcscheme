@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6E0B8729294A9C120064B7BD"
-               BuildableName = "AirshipAutomationSwift.framework"
-               BlueprintName = "AirshipAutomationSwift"
+               BuildableName = "AirshipAutomation.framework"
+               BlueprintName = "AirshipAutomation"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -34,8 +34,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6E0B8730294A9C130064B7BD"
-               BuildableName = "AirshipAutomationSwiftTests.xctest"
-               BlueprintName = "AirshipAutomationSwiftTests"
+               BuildableName = "AirshipAutomationTests.xctest"
+               BlueprintName = "AirshipAutomationTests"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6E0B8729294A9C120064B7BD"
-            BuildableName = "AirshipAutomationSwift.framework"
-            BlueprintName = "AirshipAutomationSwift"
+            BuildableName = "AirshipAutomation.framework"
+            BlueprintName = "AirshipAutomation"
             ReferencedContainer = "container:Airship.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

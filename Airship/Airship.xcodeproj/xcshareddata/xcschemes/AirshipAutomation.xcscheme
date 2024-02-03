@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6E8450FD237E0271007D3B1E"
+               BlueprintIdentifier = "6E0B8729294A9C120064B7BD"
                BuildableName = "AirshipAutomation.framework"
                BlueprintName = "AirshipAutomation"
                ReferencedContainer = "container:Airship.xcodeproj">
@@ -28,6 +28,16 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E0B8730294A9C130064B7BD"
+               BuildableName = "AirshipAutomationTests.xctest"
+               BlueprintName = "AirshipAutomationTests"
+               ReferencedContainer = "container:Airship.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -50,7 +60,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "6E8450FD237E0271007D3B1E"
+            BlueprintIdentifier = "6E0B8729294A9C120064B7BD"
             BuildableName = "AirshipAutomation.framework"
             BlueprintName = "AirshipAutomation"
             ReferencedContainer = "container:Airship.xcodeproj">

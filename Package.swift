@@ -14,8 +14,8 @@ let package = Package(
             targets: ["AirshipCore"]
         ),
         .library(
-            name: "AirshipAutomationSwift",
-            targets: ["AirshipAutomationSwift"]
+            name: "AirshipAutomation",
+            targets: ["AirshipAutomation"]
         ),
         .library(
             name: "AirshipMessageCenter",
@@ -48,7 +48,6 @@ let package = Package(
             path: "Airship/AirshipBasement",
             exclude: [
                 "Source/Public/AirshipBasement.h",
-                "generate_header_imports.sh",
                 "Info.plist",
             ],
             sources: ["Source"],
@@ -103,13 +102,13 @@ let package = Package(
             ]
         ),
         .target(
-            name: "AirshipAutomationSwift",
+            name: "AirshipAutomation",
             dependencies: [.target(name: "AirshipCore")],
-            path: "Airship/AirshipAutomationSwift",
+            path: "Airship/AirshipAutomation",
             exclude: [
-                "Source/AirshipAutomationSwift.h",
-                "generate_header_imports.sh",
+                "Source/AirshipAutomation.h",
                 "Info.plist",
+                "Tests"
             ],
             sources: ["Source"],
             resources: [
@@ -122,8 +121,8 @@ let package = Package(
             path: "Airship/AirshipMessageCenter",
             exclude: [
                 "Source/AirshipMessageCenter.h",
-                "generate_header_imports.sh",
                 "Info.plist",
+                "Tests"
             ],
             sources: ["Source"],
             resources: [
@@ -193,7 +192,7 @@ let package = Package(
                 .target(name: "AirshipCore"),
                 .target(name: "AirshipPreferenceCenter"),
                 .target(name: "AirshipMessageCenter"),
-                .target(name: "AirshipAutomationSwift"),
+                .target(name: "AirshipAutomation"),
                 .target(name: "AirshipFeatureFlags")
             ],
             path: "Airship/AirshipDebug",

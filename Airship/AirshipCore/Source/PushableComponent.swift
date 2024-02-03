@@ -6,7 +6,6 @@ import UserNotifications
 
 /// Internal protocol to fan out push handling to UAComponents.
 ///  - Note: For internal use only. :nodoc:
-@objc(UAPushableComponent)
 public protocol PushableComponent: AnyObject {
     #if !os(watchOS)
     /**
@@ -15,8 +14,7 @@ public protocol PushableComponent: AnyObject {
      *    - notification: The notification.
      *    - completionHandler: The completion handler that must be called with the fetch result.
      */
-    @objc
-    optional func receivedRemoteNotification(
+    func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     )
@@ -27,8 +25,7 @@ public protocol PushableComponent: AnyObject {
      *    - notification: The notification.
      *    - completionHandler: The completion handler that must be called with the fetch result.
      */
-    @objc
-    optional func receivedRemoteNotification(
+    func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
     )
@@ -41,23 +38,38 @@ public protocol PushableComponent: AnyObject {
      *   - response: The notification response.
      *   - completionHandler: The completion handler that must be called after processing the response.
      */
-    @objc
-    optional func receivedNotificationResponse(
+    func receivedNotificationResponse(
         _ response: UNNotificationResponse,
         completionHandler: @escaping () -> Void
     )
     #endif
+}
 
-    /**
-     * Called when a notification is about to be presented.
-     * - Returns: The presentation options.
-     * - Parameters:
-     *   - notification: The notification to be presented.
-     *   - options: Default presentation options.
-     */
-    @objc(presentationOptionsForNotification:defaultPresentationOptions:)
-    optional func presentationOptions(
-        for notification: UNNotification,
-        defaultPresentationOptions options: UNNotificationPresentationOptions
-    ) -> UNNotificationPresentationOptions
+extension PushableComponent {
+#if !os(watchOS)
+    public func receivedRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        completionHandler(.noData)
+    }
+#else
+
+    public func receivedRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+    ) {
+        completionHandler(.noData)
+    }
+#endif
+
+#if !os(tvOS)
+
+    public func receivedNotificationResponse(
+        _ response: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    ) {
+        completionHandler()
+    }
+#endif
 }

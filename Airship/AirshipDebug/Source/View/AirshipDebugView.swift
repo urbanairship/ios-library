@@ -6,7 +6,7 @@ import SwiftUI
 
 #if canImport(AirshipCore)
 import AirshipCore
-import AirshipAutomationSwift
+import AirshipAutomation
 #elseif canImport(AirshipKit)
 import AirshipKit
 #endif

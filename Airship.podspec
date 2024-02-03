@@ -43,9 +43,9 @@ Pod::Spec.new do |s|
    end
 
    s.subspec "Automation" do |automation|
-      automation.ios.source_files          = "Airship/AirshipAutomationSwift/Source/**/*.{h,m,swift}"
-      automation.ios.exclude_files         = "Airship/AirshipAutomationSwift/Source/AirshipAutomationSwift.h"
-      automation.ios.resource_bundle       = { 'AirshipAutomationSwiftResources' => "Airship/AirshipAutomationSwift/Resources/**/*" }
+      automation.ios.source_files          = "Airship/AirshipAutomation/Source/**/*.{h,m,swift}"
+      automation.ios.exclude_files         = "Airship/AirshipAutomation/Source/AirshipAutomation.h"
+      automation.ios.resource_bundle       = { 'AirshipAutomationResources' => "Airship/AirshipAutomation/Resources/**/*" }
       automation.dependency                "Airship/Core"
    end
 

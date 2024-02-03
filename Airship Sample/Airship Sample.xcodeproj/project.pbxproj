@@ -83,6 +83,20 @@
 			remoteGlobalIDString = 6E4A466E28EF44F600A25617;
 			remoteInfo = AirshipMessageCenterTests;
 		};
+		6E1B7AD92B6DBE3A00695561 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
+			remoteInfo = AirshipAutomation;
+		};
+		6E1B7AEA2B6DBE4A00695561 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
+			remoteInfo = AirshipAutomation;
+		};
 		6E2F5A982A67330900CABD3D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
@@ -412,11 +426,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99E8D8072B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Frameworks */,
 				6EAAE9FF28C7E4B4003CAE53 /* AirshipBasement.framework in Frameworks */,
 				6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */,
 				6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */,
 				6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */,
-				99E8D8072B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Frameworks */,
 				6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */,
 				6EAAEA0128C7E4B4003CAE53 /* AirshipCore.framework in Frameworks */,
 			);
@@ -465,7 +479,7 @@
 				6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */,
 				32F68D0628F07C7300F7F52A /* AirshipMessageCenterTests.xctest */,
 				84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */,
-				84A565732A3D01A100F3A345 /* AirshipAutomationSwiftTests.xctest */,
+				84A565732A3D01A100F3A345 /* AirshipAutomationTests.xctest */,
 				6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */,
 				6E2F5AAA2A67330900CABD3D /* AirshipFeatureFlagsTests.xctest */,
 			);
@@ -596,6 +610,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E1B7ADA2B6DBE3A00695561 /* PBXTargetDependency */,
 				6E2F5A992A67330900CABD3D /* PBXTargetDependency */,
 				6EAAEA0D28C7E4DB003CAE53 /* PBXTargetDependency */,
 				6EAAEA0F28C7E4DB003CAE53 /* PBXTargetDependency */,
@@ -622,6 +637,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6E1B7AEB2B6DBE4A00695561 /* PBXTargetDependency */,
 				6E2F5AAF2A67331500CABD3D /* PBXTargetDependency */,
 				6EAAEA1B28C7E4ED003CAE53 /* PBXTargetDependency */,
 				6EAAEA1D28C7E4ED003CAE53 /* PBXTargetDependency */,
@@ -875,10 +891,10 @@
 			remoteRef = 84A565702A3D01A100F3A345 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84A565732A3D01A100F3A345 /* AirshipAutomationSwiftTests.xctest */ = {
+		84A565732A3D01A100F3A345 /* AirshipAutomationTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = AirshipAutomationSwiftTests.xctest;
+			path = AirshipAutomationTests.xctest;
 			remoteRef = 84A565722A3D01A100F3A345 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -978,6 +994,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E1B7ADA2B6DBE3A00695561 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAutomation;
+			targetProxy = 6E1B7AD92B6DBE3A00695561 /* PBXContainerItemProxy */;
+		};
+		6E1B7AEB2B6DBE4A00695561 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipAutomation;
+			targetProxy = 6E1B7AEA2B6DBE4A00695561 /* PBXContainerItemProxy */;
+		};
 		6E2F5A992A67330900CABD3D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipFeatureFlags;
