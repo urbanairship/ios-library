@@ -202,7 +202,7 @@ extension InAppMessage {
         case .modal(let content):
             return urlInfosForMedia(content.media)
         case .html(let html):
-            return [URLInfo(urlType: .web, url: html.url)]
+            return [.web(url: html.url, requireNetwork: html.requiresConnectivity != false)]
         case .custom(_):
             return []
         case .airshipLayout(let content):
@@ -216,9 +216,9 @@ extension InAppMessage {
         }
 
         switch (media.type) {
-        case .image: return [URLInfo(urlType: .image, url: media.url)]
-        case .video: return [URLInfo(urlType: .video, url: media.url)]
-        case .youtube: return [URLInfo(urlType: .video, url: media.url)]
+        case .image: return [.image(url: media.url, prefetch: true)]
+        case .video: return [.video(url: media.url)]
+        case .youtube: return [.video(url: media.url)]
         }
     }
 

@@ -327,6 +327,8 @@
 		6E1A9BD32B5EE8A400A6489B /* AutomationScheduleState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */; };
 		6E1A9BD52B5EE97000A6489B /* TriggeringInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */; };
 		6E1A9BF72B606CF200A6489B /* AutomationDelayProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */; };
+		6E1B7B132B714FFC00695561 /* LandingPageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1B7B122B714FFC00695561 /* LandingPageAction.swift */; };
+		6E1B7B162B715FFE00695561 /* LandingPageActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1B7B152B715FFE00695561 /* LandingPageActionTest.swift */; };
 		6E1BACDB2719ED7D0038399E /* ScrollLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */; };
 		6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDC2719FC0A0038399E /* ViewFactory.swift */; };
 		6E1BACE7271E1B6E0038399E /* ThomasViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */; };
@@ -2086,6 +2088,8 @@
 		6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleState.swift; sourceTree = "<group>"; };
 		6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggeringInfo.swift; sourceTree = "<group>"; };
 		6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationDelayProcessor.swift; sourceTree = "<group>"; };
+		6E1B7B122B714FFC00695561 /* LandingPageAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingPageAction.swift; sourceTree = "<group>"; };
+		6E1B7B152B715FFE00695561 /* LandingPageActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingPageActionTest.swift; sourceTree = "<group>"; };
 		6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollLayout.swift; sourceTree = "<group>"; };
 		6E1BACDC2719FC0A0038399E /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewModels.swift; sourceTree = "<group>"; };
@@ -2959,8 +2963,9 @@
 		3231128D29D5E6C600CF0D86 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6E1B7B142B715FE400695561 /* Actions */,
 				459D405B2092476100C40E2D /* InAppMessaging */,
-				6E15283C2B4F0B6600DF1377 /* Actions */,
+				6E15283C2B4F0B6600DF1377 /* Action Automation */,
 				60FCA3082B513634005C9232 /* Legacy */,
 				6EC0CA742B4B8A2800333A87 /* Test Utils */,
 				6EC0CA4D2B48985B00333A87 /* RemoteData */,
@@ -3269,11 +3274,12 @@
 		6E0B8740294A9C500064B7BD /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6E1B7B112B714FED00695561 /* Actions */,
 				6E986EF82B44D41E00FBE6A0 /* InAppAutomation.swift */,
 				6E986F002B44E86900FBE6A0 /* RemoteData */,
 				6E0F4BE32B32644200673CA4 /* Automation */,
 				6EDF1D912B292F8600E23BC4 /* InAppMessage */,
-				6E15281E2B4DC55800DF1377 /* Actions */,
+				6E15281E2B4DC55800DF1377 /* ActionAutomation */,
 				3231127A29D5E67200CF0D86 /* Limits */,
 				6E1D90002B2D1A9B004BA130 /* Utils */,
 				6E0B872C294A9C130064B7BD /* AirshipAutomation.h */,
@@ -3342,13 +3348,13 @@
 			path = Push;
 			sourceTree = "<group>";
 		};
-		6E15281E2B4DC55800DF1377 /* Actions */ = {
+		6E15281E2B4DC55800DF1377 /* ActionAutomation */ = {
 			isa = PBXGroup;
 			children = (
 				6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */,
 				6E15281C2B4DC43100DF1377 /* ActionAutomationPreparer.swift */,
 			);
-			path = Actions;
+			path = ActionAutomation;
 			sourceTree = "<group>";
 		};
 		6E15282D2B4DED4F00DF1377 /* Analytics */ = {
@@ -3365,13 +3371,13 @@
 			path = Analytics;
 			sourceTree = "<group>";
 		};
-		6E15283C2B4F0B6600DF1377 /* Actions */ = {
+		6E15283C2B4F0B6600DF1377 /* Action Automation */ = {
 			isa = PBXGroup;
 			children = (
 				6EC0CA542B48B05000333A87 /* ActionAutomationExecutorTest.swift */,
 				6E15283D2B4F0B8200DF1377 /* ActionAutomationPreparerTest.swift */,
 			);
-			path = Actions;
+			path = "Action Automation";
 			sourceTree = "<group>";
 		};
 		6E15894E2AFEF18900954A04 /* Session */ = {
@@ -3425,6 +3431,22 @@
 				6E1892D0268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift */,
 			);
 			path = Mocks;
+			sourceTree = "<group>";
+		};
+		6E1B7B112B714FED00695561 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				6E1B7B122B714FFC00695561 /* LandingPageAction.swift */,
+			);
+			path = Actions;
+			sourceTree = "<group>";
+		};
+		6E1B7B142B715FE400695561 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				6E1B7B152B715FFE00695561 /* LandingPageActionTest.swift */,
+			);
+			path = Actions;
 			sourceTree = "<group>";
 		};
 		6E1C9C38271E90D1009EF9EF /* Thomas */ = {
@@ -6177,6 +6199,7 @@
 			files = (
 				99E8D7BF2B50C2C10099B6F3 /* ButtonGroup.swift in Sources */,
 				998572BF2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift in Sources */,
+				6E1B7B132B714FFC00695561 /* LandingPageAction.swift in Sources */,
 				6068E03B2B2CBCF200349E82 /* ActiveTimer.swift in Sources */,
 				99E8D7CE2B54A66E0099B6F3 /* BannerTheme.swift in Sources */,
 				3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */,
@@ -6325,6 +6348,7 @@
 				60D1D9BD2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift in Sources */,
 				6EC0CA6D2B4B879800333A87 /* AutomationPreparerTest.swift in Sources */,
 				6E4AEE2C2B6B302D008AEAC1 /* ActionAutomationPreparerTest.swift in Sources */,
+				6E1B7B162B715FFE00695561 /* LandingPageActionTest.swift in Sources */,
 				60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */,
 				6EE6AAD52B58A977002FEA75 /* TestInAppEvent.swift in Sources */,
 				6EC0CA792B4B8C2B00333A87 /* TestAudienceChecker.swift in Sources */,

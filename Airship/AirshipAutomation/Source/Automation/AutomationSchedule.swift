@@ -153,7 +153,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         identifier: String,
         data: ScheduleData,
         triggers: [AutomationTrigger],
-        created: Date? = nil,
+        created: Date? = Date(),
         lastUpdated: Date? = nil,
         group: String? = nil,
         priority: Int? = nil,
@@ -232,17 +232,21 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
             self.data = .deferred(deferred)
         }
 
-        guard let created = try container.decode(String.self, forKey: .created).toDate() else {
-            throw DecodingError.typeMismatch(
-                AutomationSchedule.self,
-                DecodingError.Context(
-                    codingPath: container.codingPath,
-                    debugDescription: "Invalid created date string.",
-                    underlyingError: nil
+        let created = try container.decodeIfPresent(String.self, forKey: .created)
+
+        if let created = created {
+            guard let date = created.toDate() else {
+                throw DecodingError.typeMismatch(
+                    AutomationSchedule.self,
+                    DecodingError.Context(
+                        codingPath: container.codingPath,
+                        debugDescription: "Invalid created date string.",
+                        underlyingError: nil
+                    )
                 )
-            )
+            }
+            self.created = date
         }
-        self.created = created
     }
 
     public func encode(to encoder: Encoder) throws {

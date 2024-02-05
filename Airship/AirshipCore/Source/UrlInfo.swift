@@ -4,28 +4,11 @@ import Foundation
 
 /// Url Info
 /// - Note: for internal use only.  :nodoc:
-@objc(UAURLInfo)
-public class URLInfo: NSObject {
-    @objc(UAURLInfoURLType)
-    public enum URLType: Int {
-        case web
-        case video
-        case image
-    }
-
-    @objc
-    public let urlType: URLType
-
-    @objc
-    public let url: String
-
-    @objc
-    public init(urlType: URLType, url: String) {
-        self.urlType = urlType
-        self.url = url
-    }
+public enum URLInfo: Sendable, Equatable {
+    case web(url: String, requireNetwork: Bool = true)
+    case video(url: String, requireNetwork: Bool = true)
+    case image(url: String, prefetch: Bool = true)
 }
-
 
 extension AirshipLayout {
 
@@ -62,20 +45,20 @@ extension AirshipLayout {
         case .media(let model):
             switch model.mediaType {
             case .image:
-                return [URLInfo(urlType: .image, url: model.url)]
+                return [.image(url: model.url)]
             case .youtube:
-                return [URLInfo(urlType: .video, url: model.url)]
+                return [.video(url: model.url)]
             case .video:
-                return [URLInfo(urlType: .video, url: model.url)]
+                return [.video(url: model.url)]
             }
         #if !os(tvOS) && !os(watchOS)
         case .webView(let model):
-            return [URLInfo(urlType: .web, url: model.url)]
+            return [.web(url: model.url)]
         #endif
         case .imageButton(let model):
             switch model.image {
             case .url(let imageModel):
-                return [URLInfo(urlType: .image, url: imageModel.url)]
+                return [.image(url: imageModel.url)]
             case .icon(_):
                 return nil
             }

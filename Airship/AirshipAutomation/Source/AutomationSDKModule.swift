@@ -7,14 +7,14 @@ import AirshipCore
 
 @objc(UAAutomationSDKModule)
 public class AutomationSDKModule: NSObject, AirshipSDKModule {
-    public let actionsManifest: ActionsManifest? = nil
     public let components: [AirshipComponent]
+    public let actionsManifest: ActionsManifest? = AutomationActionManifest()
 
     init(components: [AirshipComponent]) {
         self.components = components
     }
-    public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
 
+    public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
         // Dependencies
         let dataStore = dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
         let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
@@ -110,4 +110,15 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
 
         return AutomationSDKModule(components: [inAppAutomation])
     }
+}
+
+
+fileprivate struct AutomationActionManifest : ActionsManifest {
+    var manifest: [[String] : () -> ActionEntry] = [
+        LandingPageAction.defaultNames: {
+            return ActionEntry(
+                action: LandingPageAction()
+            )
+        }
+    ]
 }

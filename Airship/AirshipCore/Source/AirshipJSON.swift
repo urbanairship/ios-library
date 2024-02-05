@@ -187,15 +187,17 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         let data = try toData(encoder: encoder)
         return try decoder.decode(T.self, from: data)
     }
+}
 
-    public var isNull: Bool {
+public extension AirshipJSON {
+    var isNull: Bool {
         if case .null = self {
             return true
         }
         return false
     }
 
-    public var isObject: Bool {
+    var isObject: Bool {
         if case .object(_) = self {
             return true
         }
@@ -203,31 +205,57 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
     }
 
 
-    public var isArray: Bool {
+    var isArray: Bool {
         if case .array(_) = self {
             return true
         }
         return false
     }
 
-    public var isNumber: Bool {
+    var isNumber: Bool {
         if case .number(_) = self {
             return true
         }
         return false
     }
 
-    public var isString: Bool {
+    var isString: Bool {
         if case .string(_) = self {
             return true
         }
         return false
     }
 
-    public var isBool: Bool {
+    var isBool: Bool {
         if case .bool(_) = self {
             return true
         }
         return false
     }
+
+    var string: String? {
+        guard case .string(let value) = self else { return nil }
+        return value
+    }
+
+    var object: [String: AirshipJSON]? {
+        guard case .object(let value) = self else { return nil }
+        return value
+    }
+
+    var array: [AirshipJSON]? {
+        guard case .array(let value) = self else { return nil }
+        return value
+    }
+
+    var double: Double? {
+        guard case .number(let value) = self else { return nil }
+        return value
+    }
+
+    var bool: Bool? {
+        guard case .bool(let value) = self else { return nil }
+        return value
+    }
+
 }

@@ -30,13 +30,25 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     var isReady: Bool {
         let urlInfos = message.urlInfos
         let needsNetwork = urlInfos.contains { info in
-            guard
-                info.urlType == .image,
-                let url = URL(string: info.url),
-                assets.isCached(remoteURL: url)
-            else {
+            switch(info) {
+            case .web(url: _, requireNetwork: let requireNetwork):
+                if (requireNetwork) {
+                    return true
+                }
+            case .video(url: _, requireNetwork: let requireNetwork):
+                if (requireNetwork) {
+                    return true
+                }
+            case .image(url: let url, prefetch: let prefetch):
+                if let url = URL(string: url), prefetch, !assets.isCached(remoteURL: url) {
+                    return true
+                }
+#if canImport(AirshipCore)
+            @unknown default:
                 return true
+#endif
             }
+
             return false
         }
 

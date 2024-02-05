@@ -69,9 +69,13 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
 
     private func prepareAssets(message: InAppMessage, scheduleID: String) async throws -> AirshipCachedAssetsProtocol {
         // - prepare assets
-        let imageURLs = message.urlInfos
-            .filter { info in info.urlType == .image }
-            .map { info in info.url }
+        let imageURLs: [String] = message.urlInfos
+            .compactMap { info in
+                guard case .image(let url, let prefetch) = info, prefetch else {
+                    return nil
+                }
+                return url
+            }
 
         return try await self.assetManager.cacheAssets(
             identifier: scheduleID,
