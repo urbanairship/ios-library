@@ -786,10 +786,6 @@
 		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
 		6E887CD6272C5FEF00E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
 		6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
-		6E88EF042703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
-		6E88EF052703D9B100469E2A /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
-		6E88EF092703D9C700469E2A /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E88EF0A2703D9C700469E2A /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B4BEF2888606400AA336E /* ChannelTest.swift */; };
 		6E8BDA172B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDA162B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift */; };
 		6E8BDEFE2A67938200F816D9 /* FeatureFlagInfoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */; };
@@ -1477,11 +1473,9 @@
 		A6722AC6281A9FCD0033F54D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A67229B928199D430033F54D /* libz.tbd */; };
 		A6722AC7281A9FD30033F54D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A67229BB28199D590033F54D /* libsqlite3.tbd */; };
 		A6722AC8281A9FD90033F54D /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A67229BD28199D6A0033F54D /* Network.framework */; };
-		A6722AC9281A9FEE0033F54D /* UADisposable.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E88EF022703D9B100469E2A /* UADisposable.m */; };
 		A6722ACA281A9FEE0033F54D /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216E26EA84BE009228AB /* UAAutoIntegration.m */; };
 		A6722ACB281A9FEE0033F54D /* UACompression.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43217026EA84BE009228AB /* UACompression.m */; };
 		A6722ACF281A9FEE0033F54D /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
-		A6722AD4281AA05A0033F54D /* UADisposable.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E88EF082703D9C700469E2A /* UADisposable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AD5281AA05A0033F54D /* AirshipBasement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213F26EA84A5009228AB /* AirshipBasement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722AD6281AA05A0033F54D /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A6722ADC281AA05B0033F54D /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2378,8 +2372,6 @@
 		6E887CD0272C5E8400E83363 /* CheckboxState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxState.swift; sourceTree = "<group>"; };
 		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
-		6E88EF022703D9B100469E2A /* UADisposable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UADisposable.m; path = Internal/UADisposable.m; sourceTree = "<group>"; };
-		6E88EF082703D9C700469E2A /* UADisposable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UADisposable.h; path = Public/UADisposable.h; sourceTree = "<group>"; };
 		6E8B4BEF2888606400AA336E /* ChannelTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelTest.swift; sourceTree = "<group>"; };
 		6E8BDA162B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationRemoteDataSubscriber.swift; sourceTree = "<group>"; };
 		6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagInfoTest.swift; sourceTree = "<group>"; };
@@ -3931,8 +3923,6 @@
 		6E43212926EA847D009228AB /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6E88EF082703D9C700469E2A /* UADisposable.h */,
-				6E88EF022703D9B100469E2A /* UADisposable.m */,
 				6E43213F26EA84A5009228AB /* AirshipBasement.h */,
 				6E43213326EA84A4009228AB /* AirshipBasementLib.h */,
 				6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */,
@@ -5039,7 +5029,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E43214026EA84A5009228AB /* UAFeature.h in Headers */,
-				6E88EF092703D9C700469E2A /* UADisposable.h in Headers */,
 				6E43216826EA84A5009228AB /* UAGlobal.h in Headers */,
 				6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */,
 				6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
@@ -5060,7 +5049,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E43214126EA84A5009228AB /* UAFeature.h in Headers */,
-				6E88EF0A2703D9C700469E2A /* UADisposable.h in Headers */,
 				6E43216926EA84A5009228AB /* UAGlobal.h in Headers */,
 				6E43216B26EA84A5009228AB /* AirshipBasement.h in Headers */,
 				6E43214D26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
@@ -5104,7 +5092,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A6722AD4281AA05A0033F54D /* UADisposable.h in Headers */,
 				A6722AD6281AA05A0033F54D /* AirshipBasementLib.h in Headers */,
 				A6722ADE281AA05B0033F54D /* UAComponent.h in Headers */,
 				A6722ADF281AA05B0033F54D /* UACompression.h in Headers */,
@@ -6413,7 +6400,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E88EF042703D9B100469E2A /* UADisposable.m in Sources */,
 				6E43217E26EA84BE009228AB /* UACompression.m in Sources */,
 				6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
 				6E43217826EA84BE009228AB /* UASwizzler.m in Sources */,
@@ -6425,7 +6411,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E88EF052703D9B100469E2A /* UADisposable.m in Sources */,
 				6E43217F26EA84BE009228AB /* UACompression.m in Sources */,
 				6E43217B26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
 				6E43217926EA84BE009228AB /* UASwizzler.m in Sources */,
@@ -6855,7 +6840,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A684358D285B67C800FB6394 /* UALegacyLoggingBridge.m in Sources */,
-				A6722AC9281A9FEE0033F54D /* UADisposable.m in Sources */,
 				A6722ACA281A9FEE0033F54D /* UAAutoIntegration.m in Sources */,
 				A6722ACB281A9FEE0033F54D /* UACompression.m in Sources */,
 				A6722ACF281A9FEE0033F54D /* UASwizzler.m in Sources */,

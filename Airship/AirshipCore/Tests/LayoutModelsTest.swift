@@ -44,7 +44,7 @@ class LayoutModelsTest: XCTestCase {
             }
             """
 
-        let layout = try! Thomas.decode(json.data(using: .utf8)!)
+        let layout = try! self.decode(json.data(using: .utf8)!)
         guard case .container(let container) = layout.view else {
             XCTFail()
             return
@@ -135,8 +135,13 @@ class LayoutModelsTest: XCTestCase {
             }
             """
 
-        let layout = try Thomas.decode(json.data(using: .utf8)!)
+        let layout = try self.decode(json.data(using: .utf8)!)
         XCTAssertNotNil(layout)
     }
 
+    private func decode(_ data: Data) throws -> AirshipLayout {
+        try JSONDecoder().decode(AirshipLayout.self, from: data)
+    }
+
 }
+

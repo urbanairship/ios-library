@@ -19,7 +19,7 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
         )
     }
 
-    private var currentDisplay: Disposable?
+    private var currentDisplay: AirshipMainActorCancellable?
     private let pushDataManager: PushDataManager
     private let eventDataManager: EventDataManager
     private let remoteData: RemoteDataProtocol
@@ -143,10 +143,10 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
             return
         }
 
-        currentDisplay?.dispose()
+        currentDisplay?.cancel()
 
         var window: UIWindow? = UIWindow(windowScene: scene)
-        let disposable = Disposable {
+        let disposable = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal
             window?.isHidden = true
             window = nil
@@ -277,7 +277,7 @@ extension UITextField {
 }
 
 private struct DebugRootView: View {
-    let disposable: Disposable
+    let disposable: AirshipMainActorCancellable
 
     @ViewBuilder
     var body: some View {
@@ -286,7 +286,7 @@ private struct DebugRootView: View {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
-                            self.disposable.dispose()
+                            self.disposable.cancel()
                         }
                     }
                 }

@@ -7,23 +7,24 @@ import XCTest
 class ThomasValidationTests: XCTestCase {
 
     func testValidVersions() throws {
-        try (Thomas.minLayoutVersion...Thomas.maxLayoutVersion)
+        try (AirshipLayout.minLayoutVersion...AirshipLayout.maxLayoutVersion)
             .map { self.layout(version: $0).data(using: .utf8)! }
             .forEach {
+                let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
+
                 XCTAssertNoThrow(
-                    try Thomas.validate(data: $0),
-                    String(data: $0, encoding: .utf8)!
+                    try layout.validate()
                 )
             }
     }
 
     func testInvalidVersions() throws {
-        try ([Thomas.minLayoutVersion - 1, Thomas.maxLayoutVersion + 1])
+        try ([AirshipLayout.minLayoutVersion - 1, AirshipLayout.maxLayoutVersion + 1])
             .map { self.layout(version: $0).data(using: .utf8)! }
             .forEach {
+                let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
                 XCTAssertThrowsError(
-                    try Thomas.validate(data: $0),
-                    String(data: $0, encoding: .utf8)!
+                    try layout.validate()
                 )
             }
     }
@@ -41,9 +42,9 @@ class ThomasValidationTests: XCTestCase {
         try invalidPayloads
             .map { $0.data(using: .utf8)! }
             .forEach {
+                let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
                 XCTAssertThrowsError(
-                    try Thomas.validate(data: $0),
-                    String(data: $0, encoding: .utf8)!
+                    try layout.validate()
                 )
             }
     }
@@ -307,7 +308,10 @@ class ThomasValidationTests: XCTestCase {
                 "identifier": "favorite_colors",
                 "max_selection": 2,
                 "min_selection": 1,
-                "required": true
+                "required": true,
+                "view": {
+                    "type": "empty_view"
+                }
             }
         }
         """

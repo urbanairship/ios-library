@@ -45,7 +45,7 @@ public class PreferenceCenter: NSObject, AirshipComponent {
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
     private let remoteData: RemoteDataProtocol
-    private var currentDisplay: Disposable?
+    private var currentDisplay: AirshipMainActorCancellable?
 
     /**
      * Preference center theme
@@ -114,7 +114,7 @@ public class PreferenceCenter: NSObject, AirshipComponent {
             return
         }
 
-        currentDisplay?.dispose()
+        currentDisplay?.cancel()
 
         AirshipLogger.debug("Opening default preference center UI")
 
@@ -185,11 +185,11 @@ extension PreferenceCenter {
         _ preferenceCenterID: String,
         scene: UIWindowScene,
         theme: PreferenceCenterTheme?
-    ) -> Disposable {
+    ) -> AirshipMainActorCancellable {
 
         var window: UIWindow? = UIWindow(windowScene: scene)
 
-        let disposable = Disposable {
+        let cancellable = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal
             window?.isHidden = true
             window = nil
@@ -203,13 +203,13 @@ extension PreferenceCenter {
             ),
             preferenceCenterTheme: theme,
             dismissAction: {
-                disposable.dispose()
+                cancellable.cancel()
             })
 
         window?.windowLevel = .alert
         window?.makeKeyAndVisible()
         window?.rootViewController = viewController
 
-        return disposable
+        return cancellable
     }
 }

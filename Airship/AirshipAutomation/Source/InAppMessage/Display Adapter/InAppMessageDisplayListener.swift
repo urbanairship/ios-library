@@ -90,5 +90,6 @@ final class InAppMessageDisplayListener: InAppMessageResolutionDelegate {
         self.timer.stop()
         let result = dismissBlock(self.timer.time)
         onDismiss(result)
+        self.onDismiss = nil
     }
 }

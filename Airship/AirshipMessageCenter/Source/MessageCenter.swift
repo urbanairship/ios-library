@@ -42,7 +42,7 @@ public class MessageCenter: NSObject, ObservableObject {
     @objc
     public var inbox: MessageCenterInbox
 
-    private var currentDisplay: Disposable?
+    private var currentDisplay: AirshipMainActorCancellable?
 
     /// The message center controller.
     @Published
@@ -286,7 +286,7 @@ extension MessageCenter {
 
         var window: UIWindow? = UIWindow(windowScene: scene)
 
-        self.currentDisplay = Disposable {
+        self.currentDisplay = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal
             window?.isHidden = true
             window = nil
@@ -296,7 +296,7 @@ extension MessageCenter {
             theme: theme,
             controller: self.controller
         ) {
-            self.currentDisplay?.dispose()
+            self.currentDisplay?.cancel()
             self.currentDisplay = nil
         }
 
@@ -308,7 +308,7 @@ extension MessageCenter {
 
     @MainActor
     fileprivate func dismissDefaultMessageCenter() {
-        self.currentDisplay?.dispose()
+        self.currentDisplay?.cancel()
         self.currentDisplay = nil
     }
 }

@@ -5,109 +5,20 @@ import SwiftUI
 
 /// Airship rendering engine.
 /// - Note: for internal use only.  :nodoc:
-public class Thomas: NSObject {
-
-    private static let decoder = JSONDecoder()
-    static let minLayoutVersion = 1
-    static let maxLayoutVersion = 2
-
-    class func decode(_ json: Data) throws -> AirshipLayout {
-        let layout = try self.decoder.decode(AirshipLayout.self, from: json)
-        return layout
-    }
-
-    public class func validate(data: Data) throws {
-        let layout = try decode(data)
-
-        guard
-            layout.version >= minLayoutVersion
-                && layout.version <= maxLayoutVersion
-        else {
-            throw AirshipErrors.error(
-                "Unable to process layout with version \(layout.version)"
-            )
-        }
-
-        try layout.validate()
-    }
-
-    public class func validate(json: Any) throws {
-        let data = try JSONSerialization.data(withJSONObject: json, options: [])
-        try validate(data: data)
-    }
-
-    public class func urls(json: Any) throws -> [URLInfo] {
-        let data = try JSONSerialization.data(withJSONObject: json, options: [])
-        return try decode(data).urlInfos
-    }
+public final class Thomas {
 
     #if !os(watchOS)
     @MainActor
-    public class func deferredDisplay(
-        json: Any,
-        scene: () -> UIWindowScene?,
-        extensions: ThomasExtensions? = nil,
-        delegate: ThomasDelegate
-    ) throws -> () -> Disposable {
-        let data = try JSONSerialization.data(
-            withJSONObject: json,
-            options: []
-        )
-        return try deferredDisplay(
-            data: data,
-            scene: scene,
-            extensions: extensions,
-            delegate: delegate
-        )
-    }
-
-    @MainActor
+    @discardableResult
     public class func display(
         layout: AirshipLayout,
         scene: UIWindowScene,
         extensions: ThomasExtensions? = nil,
         delegate: ThomasDelegate
-    ) throws {
+    ) throws -> AirshipMainActorCancellable {
         switch layout.presentation {
         case .banner(let presentation):
-            _ = try bannerDisplay(
-                presentation,
-                scene: scene,
-                layout: layout,
-                extensions: extensions,
-                delegate: delegate
-            )()
-        case .modal(let presentation):
-            _ = modalDisplay(
-                presentation,
-                scene: scene,
-                layout: layout,
-                extensions: extensions,
-                delegate: delegate
-            )()
-        case .embedded(let presentation):
-            AirshipEmbeddedViewManager.shared.addPending(
-                presentation: presentation, layout: layout, extensions: extensions, delegate: delegate
-            )
-        }
-    }
-
-    @discardableResult
-    @MainActor
-    public class func deferredDisplay(
-        data: Data,
-        scene: () -> UIWindowScene?,
-        extensions: ThomasExtensions? = nil,
-        delegate: ThomasDelegate
-    ) throws -> () -> Disposable {
-        let layout = try decode(data)
-
-        switch layout.presentation {
-        case .banner(let presentation):
-            guard let scene = scene() else {
-                throw AirshipErrors.error("Unable to get scene")
-            }
-            return try bannerDisplay(
+            return try displayBanner(
                 presentation,
                 scene: scene,
                 layout: layout,
@@ -115,10 +26,7 @@ public class Thomas: NSObject {
                 delegate: delegate
             )
         case .modal(let presentation):
-            guard let scene = scene() else {
-                throw AirshipErrors.error("Unable to get scene")
-            }
-            return modalDisplay(
+            return displayModal(
                 presentation,
                 scene: scene,
                 layout: layout,
@@ -126,41 +34,23 @@ public class Thomas: NSObject {
                 delegate: delegate
             )
         case .embedded(let presentation):
-            return {
-                AirshipEmbeddedViewManager.shared.addPending(
-                    presentation: presentation, layout: layout, extensions: extensions, delegate: delegate
-                )
-                return Disposable {
-                }
-            }
+            return AirshipEmbeddedViewManager.shared.addPending(
+                presentation: presentation,
+                layout: layout,
+                extensions: extensions,
+                delegate: delegate
+            )
         }
     }
 
     @MainActor
-    @discardableResult
-    public class func display(
-        _ data: Data,
-        scene: () -> UIWindowScene?,
-        extensions: ThomasExtensions? = nil,
-        delegate: ThomasDelegate
-    ) throws -> Disposable {
-        return try deferredDisplay(
-            data: data,
-            scene: scene,
-            extensions: extensions,
-            delegate: delegate
-        )()
-    }
-
-    @MainActor
-    private class func bannerDisplay(
+    private class func displayBanner(
         _ presentation: BannerPresentationModel,
         scene: UIWindowScene,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
-    ) throws -> () -> Disposable {
-
+    ) throws -> AirshipMainActorCancellable {
         guard let window = AirshipUtils.mainWindow(scene: scene),
             window.rootViewController != nil
         else {
@@ -199,29 +89,26 @@ public class Thomas: NSObject {
             constraints: bannerConstraints
         )
 
-        return {
-            if let viewController = viewController,
-                let rootController = window.rootViewController
-            {
-                rootController.addChild(viewController)
-                viewController.didMove(toParent: rootController)
-                rootController.view.addSubview(viewController.view)
-            }
-
-            return Disposable {
-                environment.dismiss()
-            }
+        if let viewController = viewController,
+            let rootController = window.rootViewController
+        {
+            rootController.addChild(viewController)
+            viewController.didMove(toParent: rootController)
+            rootController.view.addSubview(viewController.view)
+        }
+        return AirshipMainActorCancellableBlock { [weak environment] in
+            environment?.dismiss()
         }
     }
 
     @MainActor
-    private class func modalDisplay(
+    private class func displayModal(
         _ presentation: ModalPresentationModel,
         scene: UIWindowScene,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
-    ) -> () -> Disposable {
+    ) -> AirshipMainActorCancellable {
 
         let window: UIWindow = UIWindow(windowScene: scene)
         window.accessibilityViewIsModal = true
@@ -249,13 +136,10 @@ public class Thomas: NSObject {
         )
         viewController?.modalPresentationStyle = .currentContext
         window.rootViewController = viewController
+        window.makeKeyAndVisible()
 
-        return { [weak window] in
-            window?.makeKeyAndVisible()
-
-            return Disposable {
-                environment.dismiss()
-            }
+        return AirshipMainActorCancellableBlock { [weak environment] in
+            environment?.dismiss()
         }
     }
 
@@ -280,7 +164,7 @@ public class Thomas: NSObject {
 
 /// Airship rendering engine extensions.
 /// - Note: for internal use only.  :nodoc:
-public class ThomasExtensions: NSObject {
+public struct ThomasExtensions {
 
     #if !os(tvOS) && !os(watchOS)
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
@@ -304,10 +188,5 @@ public class ThomasExtensions: NSObject {
     #endif
 }
 
-public enum UrlTypes: Int {
-    case image
-    case video
-    case web
-}
 
 

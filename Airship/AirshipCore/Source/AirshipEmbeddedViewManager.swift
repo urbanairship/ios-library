@@ -10,7 +10,7 @@ protocol AirshipEmbeddedViewManagerProtocol {
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
-    )
+    ) -> AirshipMainActorCancellable
 
     func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never>
 }
@@ -28,7 +28,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
-    ) {
+    ) -> AirshipMainActorCancellable {
         let id = UUID().uuidString
 
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
@@ -46,6 +46,10 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
         )
 
         self.viewSubject.send(self.pending)
+
+        return AirshipMainActorCancellableBlock { [weak environment] in
+            environment?.dismiss()
+        }
     }
 
     func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never> {

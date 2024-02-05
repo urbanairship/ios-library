@@ -3,7 +3,7 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-public class SDKDependencyKeys: NSObject {
+public struct SDKDependencyKeys {
     public static let channel = "channel"
     public static let contact = "contact"
     public static let push = "push"

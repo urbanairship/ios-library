@@ -1,70 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
 import ImageIO
-
-/// @note For internal use only. :nodoc:
-extension UIImage {
-    /**
-     * Image factory method that supports animated data.
-     * - Parameters:
-     *   - data The data.
-     *   - fillIn: If the images should be expanded to fill in the frames for smoother animations in UIKit.
-     * - Returns: The animated image if it is a gif, otherwise the still frame will be loaded.
-     */
-    @objc(fancyImageWithData:fillIn:)
-    public class func fancyImage(with data: Data?, fillIn: Bool) -> UIImage? {
-        guard let data = data,
-            let imageData = try? AirshipImageData(data: data)
-        else {
-            return nil
-        }
-
-        guard imageData.isAnimated else {
-            return imageData.loadFrames()[0].image
-        }
-        var totalDuration: TimeInterval = 0.0
-        var images: [UIImage] = []
-
-        imageData.loadFrames().forEach { frame in
-            if frame.duration > 0.0 {
-                totalDuration += frame.duration
-            }
-
-            if fillIn {
-                let centiseconds = Int(frame.duration * 100)
-                for _ in 0..<centiseconds {
-                    images.append(frame.image)
-                }
-            } else {
-                images.append(frame.image)
-            }
-        }
-        return UIImage.animatedImage(with: images, duration: totalDuration)
-    }
-
-    /**
-     * Image factory method that supports animated data.
-     * - Parameters:
-     *   - data The data.
-     * - Returns: The animated image if it is a gif, otherwise the still frame will be loaded.
-     */
-    @objc(fancyImageWithData:)
-    public class func fancyImage(with data: Data?) -> UIImage? {
-        return fancyImage(with: data, fillIn: true)
-    }
-}
-
-extension CGImageSource {
-    func gifLoopCount() -> Int? {
-        guard let properties = CGImageSourceCopyProperties(self, nil) as NSDictionary?,
-              let gifDictionary = properties[kCGImagePropertyGIFDictionary] as? NSDictionary else {
-            return nil
-        }
-
-        let loopCount = gifDictionary[kCGImagePropertyGIFLoopCount] as? Int
-        return loopCount
-    }
-}
 
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipImageData {
@@ -211,5 +148,18 @@ actor AirshipImageDataFrameActor {
         ] as? [AnyHashable: Any]
 
         return gif ?? webp
+    }
+}
+
+
+extension CGImageSource {
+    func gifLoopCount() -> Int? {
+        guard let properties = CGImageSourceCopyProperties(self, nil) as NSDictionary?,
+              let gifDictionary = properties[kCGImagePropertyGIFDictionary] as? NSDictionary else {
+            return nil
+        }
+
+        let loopCount = gifDictionary[kCGImagePropertyGIFLoopCount] as? Int
+        return loopCount
     }
 }
