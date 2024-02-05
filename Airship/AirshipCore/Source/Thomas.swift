@@ -130,7 +130,6 @@ public class Thomas: NSObject {
                 AirshipEmbeddedViewManager.shared.addPending(
                     presentation: presentation, layout: layout, extensions: extensions, delegate: delegate
                 )
-
                 return Disposable {
                 }
             }
@@ -181,16 +180,23 @@ public class Thomas: NSObject {
             extensions: extensions
         )
 
+        let bannerConstraints = ThomasBannerConstraints(
+            size: windowSize(window)
+        )
+
         let rootView = BannerView(
             viewControllerOptions: options,
             presentation: presentation,
             layout: layout,
             thomasEnvironment: environment,
+            bannerConstraints: bannerConstraints,
             onDismiss: dismissController
         )
+
         viewController = ThomasBannerViewController(
             rootView: rootView,
-            options: options
+            options: options,
+            constraints: bannerConstraints
         )
 
         return {
@@ -217,8 +223,8 @@ public class Thomas: NSObject {
         delegate: ThomasDelegate
     ) -> () -> Disposable {
 
-        var window: UIWindow? = UIWindow(windowScene: scene)
-        window?.accessibilityViewIsModal = true
+        let window: UIWindow = UIWindow(windowScene: scene)
+        window.accessibilityViewIsModal = true
         var viewController: ThomasModalViewController?
 
         let options = ThomasViewControllerOptions()
@@ -227,9 +233,8 @@ public class Thomas: NSObject {
         let environment = ThomasEnvironment(
             delegate: delegate,
             extensions: extensions
-        ) {
+        ) { [weak window] in
             window?.isHidden = true
-            window = nil
         }
 
         let rootView = ModalView(
@@ -243,15 +248,32 @@ public class Thomas: NSObject {
             options: options
         )
         viewController?.modalPresentationStyle = .currentContext
-        window?.rootViewController = viewController
+        window.rootViewController = viewController
 
-        return {
+        return { [weak window] in
             window?.makeKeyAndVisible()
 
             return Disposable {
                 environment.dismiss()
             }
         }
+    }
+
+    private class func windowSize(_ window: UIWindow) -> CGSize {
+        #if os(iOS) || os(tvOS)
+        return window.screen.bounds.size
+        #elseif os(visionOS)
+        // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
+        return CGSize(
+            width: 1280,
+            height: 720
+        )
+        #elseif os(watchOS)
+        return CGSize(
+            width: WKInterfaceDevice.current().screenBounds.width,
+            height: WKInterfaceDevice.current().screenBounds.height
+        )
+        #endif
     }
     #endif
 }
@@ -287,3 +309,5 @@ public enum UrlTypes: Int {
     case video
     case web
 }
+
+

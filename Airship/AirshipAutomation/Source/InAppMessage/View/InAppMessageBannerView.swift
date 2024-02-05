@@ -77,10 +77,12 @@ struct InAppMessageBannerView: View {
         }
     }
 
+    #if os(iOS)
     private var orientationChangePublisher = NotificationCenter.default
         .publisher(for: UIDevice.orientationDidChangeNotification)
         .makeConnectable()
         .autoconnect()
+    #endif
 
     init(displayContent: InAppMessageDisplayContent.Banner) {
         self.displayContent = displayContent

@@ -31,9 +31,11 @@ struct ScrollLayout: View {
             ScrollView(axis) {
                 makeContent()
             }
+            #if os(iOS)
             .scrollDismissesKeyboard(
                 self.thomasEnvironment.focusedID != nil ? .immediately : .never
             )
+            #endif
         } else {
             ScrollView(axis) {
                 makeContent()

@@ -47,7 +47,7 @@ struct RootView<Content: View>: View {
         .onDisappear {
             self.isVisible = false
         }
-        #if !os(tvOS) && !os(watchOS)
+        #if os(iOS)
         .onReceive(
             NotificationCenter.default.publisher(
                 for: UIDevice.orientationDidChangeNotification

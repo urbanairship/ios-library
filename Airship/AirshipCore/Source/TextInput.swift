@@ -206,7 +206,7 @@ internal struct AirshipTextView: UIViewRepresentable {
         textView.backgroundColor = .clear
         textView.delegate = context.coordinator
 
-        #if !os(tvOS)
+        #if os(iOS)
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
         let done = UIBarButtonItem(

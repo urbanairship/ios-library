@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,8 +14,8 @@
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
-		6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; };
-		6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; platformFilters = (ios, xros, ); };
+		6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */; };
 		6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE98128C7E18C003CAE53 /* Preview Assets.xcassets */; };
 		6EAAE98728C7E1A1003CAE53 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */; };
@@ -23,7 +23,7 @@
 		6EAAE98A28C7E1A1003CAE53 /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */; };
 		6EAAE98B28C7E1A1003CAE53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */; };
 		6EAAE98C28C7E1A1003CAE53 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8C028C7C9A3003CAE53 /* AppView.swift */; };
-		6EAAE9AB28C7E309003CAE53 /* Airship Sample App Clip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 6EAAE99C28C7E308003CAE53 /* Airship Sample App Clip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6EAAE9AB28C7E309003CAE53 /* Airship Sample App Clip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = 6EAAE99C28C7E308003CAE53 /* Airship Sample App Clip.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6EAAE9B028C7E31E003CAE53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */; };
 		6EAAE9B128C7E31E003CAE53 /* MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BC28C7C9A3003CAE53 /* MainApp.swift */; };
 		6EAAE9B228C7E31E003CAE53 /* NamedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */; };
@@ -35,16 +35,16 @@
 		6EAAE9F628C7E417003CAE53 /* Airship Sample Service Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6EAAE9EF28C7E417003CAE53 /* Airship Sample Service Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6EAAE9FA28C7E438003CAE53 /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; };
 		6EAAE9FB28C7E438003CAE53 /* AirshipNotificationServiceExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5912396E9A300AF2D1A /* AirshipNotificationServiceExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EAAE9FF28C7E4B4003CAE53 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; };
-		6EAAEA0028C7E4B4003CAE53 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EAAEA0128C7E4B4003CAE53 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
-		6EAAEA0228C7E4B4003CAE53 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
-		6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
-		6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; };
-		6EAAEA0828C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EAAE9FF28C7E4B4003CAE53 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; platformFilters = (ios, xros, ); };
+		6EAAEA0028C7E4B4003CAE53 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EAAEA0128C7E4B4003CAE53 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; platformFilters = (ios, xros, ); };
+		6EAAEA0228C7E4B4003CAE53 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; platformFilters = (ios, xros, ); };
+		6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; platformFilters = (ios, xros, ); };
+		6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; platformFilters = (ios, xros, ); };
+		6EAAEA0828C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */; };
 		6EC7556A2A4B842600851ABB /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */; };
 		6EDB2B0628D4E24F00A01377 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */; };
@@ -53,12 +53,12 @@
 		6EDB2B0E28D4E25100A01377 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EDB2B0D28D4E25100A01377 /* Assets.xcassets */; };
 		6EDB2B1028D4E25100A01377 /* LiveActivity.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B0C28D4E24F00A01377 /* LiveActivity.intentdefinition */; };
 		6EDB2B1128D4E25100A01377 /* LiveActivity.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B0C28D4E24F00A01377 /* LiveActivity.intentdefinition */; };
-		6EDB2B1428D4E25100A01377 /* LiveActivityExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6EDB2B0428D4E24F00A01377 /* LiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6EDB2B1428D4E25100A01377 /* LiveActivityExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6EDB2B0428D4E24F00A01377 /* LiveActivityExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6EDB2B2428D4E34500A01377 /* LiveActivityManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */; };
 		6EDB2B2528D4E4EF00A01377 /* LiveActivityManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */; };
 		6EDB2B2E28D4F97F00A01377 /* Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2A28D4F27800A01377 /* Widgets.swift */; };
-		99E8D8072B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */; };
-		99E8D8082B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		99E8D8072B57A5BA0099B6F3 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84A565712A3D01A100F3A345 /* AirshipAutomation.framework */; platformFilters = (ios, xros, ); };
+		99E8D8082B57A5BA0099B6F3 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 84A565712A3D01A100F3A345 /* AirshipAutomation.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -375,7 +375,7 @@
 				6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */,
 				6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */,
 				6EAAEA0828C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Embed Frameworks */,
-				99E8D8082B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Embed Frameworks */,
+				99E8D8082B57A5BA0099B6F3 /* AirshipAutomation.framework in Embed Frameworks */,
 				6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */,
 				6EAAEA0228C7E4B4003CAE53 /* AirshipCore.framework in Embed Frameworks */,
 			);
@@ -426,7 +426,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99E8D8072B57A5BA0099B6F3 /* AirshipAutomationSwift.framework in Frameworks */,
+				99E8D8072B57A5BA0099B6F3 /* AirshipAutomation.framework in Frameworks */,
 				6EAAE9FF28C7E4B4003CAE53 /* AirshipBasement.framework in Frameworks */,
 				6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */,
 				6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */,
@@ -478,7 +478,7 @@
 				6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */,
 				6EAD7CE126B2003700B88EA7 /* AirshipPreferenceCenterTests.xctest */,
 				32F68D0628F07C7300F7F52A /* AirshipMessageCenterTests.xctest */,
-				84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */,
+				84A565712A3D01A100F3A345 /* AirshipAutomation.framework */,
 				84A565732A3D01A100F3A345 /* AirshipAutomationTests.xctest */,
 				6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */,
 				6E2F5AAA2A67330900CABD3D /* AirshipFeatureFlagsTests.xctest */,
@@ -884,10 +884,10 @@
 			remoteRef = 6ED5B74C288613460093CEEC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		84A565712A3D01A100F3A345 /* AirshipAutomationSwift.framework */ = {
+		84A565712A3D01A100F3A345 /* AirshipAutomation.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = AirshipAutomationSwift.framework;
+			path = AirshipAutomation.framework;
 			remoteRef = 84A565702A3D01A100F3A345 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -997,6 +997,10 @@
 		6E1B7ADA2B6DBE3A00695561 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipAutomation;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6E1B7AD92B6DBE3A00695561 /* PBXContainerItemProxy */;
 		};
 		6E1B7AEB2B6DBE4A00695561 /* PBXTargetDependency */ = {
@@ -1007,6 +1011,10 @@
 		6E2F5A992A67330900CABD3D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipFeatureFlags;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6E2F5A982A67330900CABD3D /* PBXContainerItemProxy */;
 		};
 		6E2F5AAF2A67331500CABD3D /* PBXTargetDependency */ = {
@@ -1016,6 +1024,7 @@
 		};
 		6EAAE9AA28C7E309003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 6EAAE99B28C7E308003CAE53 /* Airship Sample App Clip */;
 			targetProxy = 6EAAE9A928C7E309003CAE53 /* PBXContainerItemProxy */;
 		};
@@ -1027,31 +1036,52 @@
 		6EAAEA0D28C7E4DB003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipBasement;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6EAAEA0C28C7E4DB003CAE53 /* PBXContainerItemProxy */;
 		};
 		6EAAEA0F28C7E4DB003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipCore;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6EAAEA0E28C7E4DB003CAE53 /* PBXContainerItemProxy */;
 		};
 		6EAAEA1128C7E4DB003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipDebug;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6EAAEA1028C7E4DB003CAE53 /* PBXContainerItemProxy */;
 		};
 		6EAAEA1328C7E4DB003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipMessageCenter;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6EAAEA1228C7E4DB003CAE53 /* PBXContainerItemProxy */;
 		};
 		6EAAEA1528C7E4DB003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipPreferenceCenter;
+			platformFilters = (
+				ios,
+				xros,
+			);
 			targetProxy = 6EAAEA1428C7E4DB003CAE53 /* PBXContainerItemProxy */;
 		};
 		6EAAEA1728C7E4E3003CAE53 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipNotificationServiceExtension;
+			platformFilter = ios;
 			targetProxy = 6EAAEA1628C7E4E3003CAE53 /* PBXContainerItemProxy */;
 		};
 		6EAAEA1B28C7E4ED003CAE53 /* PBXTargetDependency */ = {
@@ -1081,6 +1111,7 @@
 		};
 		6EDB2B1328D4E25100A01377 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = 6EDB2B0328D4E24F00A01377 /* LiveActivityExtension */;
 			targetProxy = 6EDB2B1228D4E25100A01377 /* PBXContainerItemProxy */;
 		};
@@ -1117,17 +1148,23 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
 		};
@@ -1161,15 +1198,21 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;
 		};
@@ -1202,12 +1245,18 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1244,11 +1293,17 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1276,17 +1331,24 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.ServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
 		};
@@ -1311,15 +1373,22 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.ServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;
 		};
@@ -1346,13 +1415,20 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.LiveActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -1383,12 +1459,19 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.LiveActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1500,7 +1583,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VALID_ARCHS = "$(inherited)";

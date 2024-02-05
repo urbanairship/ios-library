@@ -127,173 +127,105 @@ public protocol ActionsManifest {
 }
 
 struct DefaultActionsManifest: ActionsManifest {
-#if !os(tvOS) && !os(watchOS)
-    let manifest:  [[String]: () -> ActionEntry] = [
+    let manifest:  [[String]: () -> ActionEntry] = {
+        var entries: [[String]: () -> ActionEntry] = [
+            OpenExternalURLAction.defaultNames: {
+                return ActionEntry(
+                    action: OpenExternalURLAction(),
+                    predicate: OpenExternalURLAction.defaultPredicate
+                )
+            },
 
+            AddTagsAction.defaultNames: {
+                return ActionEntry(
+                    action: AddTagsAction(),
+                    predicate: AddTagsAction.defaultPredicate
+                )
+            },
 
-        RateAppAction.defaultNames: {
+            RemoveTagsAction.defaultNames: {
+                return ActionEntry(
+                    action: RemoveTagsAction(),
+                    predicate: RemoveTagsAction.defaultPredicate
+                )
+            },
+
+            DeepLinkAction.defaultNames: {
+                return ActionEntry(
+                    action: DeepLinkAction(),
+                    predicate: DeepLinkAction.defaultPredicate
+                )
+            },
+
+            AddCustomEventAction.defaultNames: {
+                return ActionEntry(
+                    action: AddCustomEventAction(),
+                    predicate: AddCustomEventAction.defaultPredicate
+                )
+            },
+
+            FetchDeviceInfoAction.defaultNames: {
+                return ActionEntry(
+                    action: FetchDeviceInfoAction(),
+                    predicate: FetchDeviceInfoAction.defaultPredicate
+                )
+            },
+
+            EnableFeatureAction.defaultNames: {
+                return ActionEntry(
+                    action: EnableFeatureAction(),
+                    predicate: EnableFeatureAction.defaultPredicate
+                )
+            },
+
+            ModifyAttributesAction.defaultNames: {
+                return ActionEntry(
+                    action: ModifyAttributesAction(),
+                    predicate: ModifyAttributesAction.defaultPredicate
+                )
+            },
+
+            SubscriptionListAction.defaultNames: {
+                return ActionEntry(
+                    action: SubscriptionListAction(),
+                    predicate: SubscriptionListAction.defaultPredicate
+                )
+            },
+
+            PromptPermissionAction.defaultNames: {
+                return ActionEntry(
+                    action: PromptPermissionAction(),
+                    predicate: PromptPermissionAction.defaultPredicate
+                )
+            }
+        ]
+
+        #if os(iOS) || os(visionOS)
+        entries[RateAppAction.defaultNames] = {
             return ActionEntry(
                 action: RateAppAction(),
                 predicate: RateAppAction.defaultPredicate
             )
-        },
+        }
 
-        PasteboardAction.defaultNames: {
+        entries[PasteboardAction.defaultNames] = {
             return ActionEntry(
                 action: PasteboardAction()
             )
-        },
+        }
+        #endif
 
-        ShareAction.defaultNames: {
+
+        #if os(iOS)
+        entries[ShareAction.defaultNames] = {
             return ActionEntry(
                 action: ShareAction(),
                 predicate: ShareAction.defaultPredicate
             )
-        },
-
-        OpenExternalURLAction.defaultNames: {
-            return ActionEntry(
-                action: OpenExternalURLAction(),
-                predicate: OpenExternalURLAction.defaultPredicate
-            )
-        },
-
-        AddTagsAction.defaultNames: {
-            return ActionEntry(
-                action: AddTagsAction(),
-                predicate: AddTagsAction.defaultPredicate
-            )
-        },
-
-        RemoveTagsAction.defaultNames: {
-            return ActionEntry(
-                action: RemoveTagsAction(),
-                predicate: RemoveTagsAction.defaultPredicate
-            )
-        },
-
-        DeepLinkAction.defaultNames: {
-            return ActionEntry(
-                action: DeepLinkAction(),
-                predicate: DeepLinkAction.defaultPredicate
-            )
-        },
-
-        AddCustomEventAction.defaultNames: {
-            return ActionEntry(
-                action: AddCustomEventAction(),
-                predicate: AddCustomEventAction.defaultPredicate
-            )
-        },
-
-        FetchDeviceInfoAction.defaultNames: {
-            return ActionEntry(
-                action: FetchDeviceInfoAction(),
-                predicate: FetchDeviceInfoAction.defaultPredicate
-            )
-        },
-        
-        EnableFeatureAction.defaultNames: {
-            return ActionEntry(
-                action: EnableFeatureAction(),
-                predicate: EnableFeatureAction.defaultPredicate
-            )
-        },
-
-
-        ModifyAttributesAction.defaultNames: {
-            return ActionEntry(
-                action: ModifyAttributesAction(),
-                predicate: ModifyAttributesAction.defaultPredicate
-            )
-        },
-        
-        SubscriptionListAction.defaultNames: {
-            return ActionEntry(
-                action: SubscriptionListAction(),
-                predicate: SubscriptionListAction.defaultPredicate
-            )
-        },
-        
-        PromptPermissionAction.defaultNames: {
-            return ActionEntry(
-                action: PromptPermissionAction(),
-                predicate: PromptPermissionAction.defaultPredicate
-            )
         }
-    ]
-#else
-    let manifest:  [[String]: () -> ActionEntry] = [
-        OpenExternalURLAction.defaultNames: {
-            return ActionEntry(
-                action: OpenExternalURLAction(),
-                predicate: OpenExternalURLAction.defaultPredicate
-            )
-        },
+        #endif
 
-        AddTagsAction.defaultNames: {
-            return ActionEntry(
-                action: AddTagsAction(),
-                predicate: AddTagsAction.defaultPredicate
-            )
-        },
+        return entries
+    }()
 
-        RemoveTagsAction.defaultNames: {
-            return ActionEntry(
-                action: RemoveTagsAction(),
-                predicate: RemoveTagsAction.defaultPredicate
-            )
-        },
-
-        DeepLinkAction.defaultNames: {
-            return ActionEntry(
-                action: DeepLinkAction(),
-                predicate: DeepLinkAction.defaultPredicate
-            )
-        },
-
-        AddCustomEventAction.defaultNames: {
-            return ActionEntry(
-                action: AddCustomEventAction(),
-                predicate: AddCustomEventAction.defaultPredicate
-            )
-        },
-
-        FetchDeviceInfoAction.defaultNames: {
-            return ActionEntry(
-                action: FetchDeviceInfoAction(),
-                predicate: FetchDeviceInfoAction.defaultPredicate
-            )
-        },
-
-        EnableFeatureAction.defaultNames: {
-            return ActionEntry(
-                action: EnableFeatureAction(),
-                predicate: EnableFeatureAction.defaultPredicate
-            )
-        },
-
-
-        ModifyAttributesAction.defaultNames: {
-            return ActionEntry(
-                action: ModifyAttributesAction(),
-                predicate: ModifyAttributesAction.defaultPredicate
-            )
-        },
-
-        SubscriptionListAction.defaultNames: {
-            return ActionEntry(
-                action: SubscriptionListAction(),
-                predicate: SubscriptionListAction.defaultPredicate
-            )
-        },
-
-        PromptPermissionAction.defaultNames: {
-            return ActionEntry(
-                action: PromptPermissionAction(),
-                predicate: PromptPermissionAction.defaultPredicate
-            )
-        }
-    ]
-#endif
 }

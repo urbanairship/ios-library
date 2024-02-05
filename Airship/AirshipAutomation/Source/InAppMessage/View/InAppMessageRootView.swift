@@ -43,6 +43,7 @@ struct InAppMessageRootView<Content: View>: View {
             .onDisappear {
                 self.isVisible = false
             }
+        #if os(iOS)
             .onReceive(
                 NotificationCenter.default.publisher(
                     for: UIDevice.orientationDidChangeNotification
@@ -50,6 +51,7 @@ struct InAppMessageRootView<Content: View>: View {
             ) { _ in
                 self.currentOrientation = InAppMessageRootView.resolveOrientation()
             }
+        #endif
     }
 
     /// Uses the vertical and horizontal class size to determine small, medium, large window size:

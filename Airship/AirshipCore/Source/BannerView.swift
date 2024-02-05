@@ -21,9 +21,11 @@ struct BannerView: View {
     let presentation: BannerPresentationModel
     let layout: AirshipLayout
 
-
     @ObservedObject
     var thomasEnvironment: ThomasEnvironment
+
+    @ObservedObject
+    var bannerConstraints: ThomasBannerConstraints
 
     /// The dimiss action callback
     let onDismiss: () -> Void
@@ -47,7 +49,6 @@ struct BannerView: View {
                     windowSize: windowSize
                 )
                 
-                #if !os(watchOS)
                 createBanner(placement: placement, metrics: metrics)
                     .onChange(of: thomasEnvironment.isDismissed) { _ in
                         withAnimation(.linear(duration: BannerView.animationOutDuration)) {
@@ -64,13 +65,10 @@ struct BannerView: View {
                             self.positionState = .visible
                         }
                     }
-
-                #endif
             }
         }
     }
 
-    #if !os(watchOS)
     private func createBanner(
         placement: BannerPlacement,
         metrics: GeometryProxy
@@ -85,7 +83,7 @@ struct BannerView: View {
         let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
         
         let constraints = ViewConstraints(
-            size: UIScreen.main.bounds.size,
+            size: self.bannerConstraints.size,
             safeAreaInsets: safeAreaInsets
         )
         
@@ -129,7 +127,6 @@ struct BannerView: View {
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
     }
-    #endif
 
     private func resolvePlacement(
         orientation: Orientation,

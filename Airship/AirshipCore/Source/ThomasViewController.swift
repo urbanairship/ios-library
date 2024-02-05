@@ -78,8 +78,11 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var bottomConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
     private var widthConstraint: NSLayoutConstraint?
-    
-    override init(rootView: BannerView, options: ThomasViewControllerOptions) {
+
+    private let thomasBannerConstraints: ThomasBannerConstraints
+
+    init(rootView: BannerView, options: ThomasViewControllerOptions, constraints: ThomasBannerConstraints) {
+        self.thomasBannerConstraints = constraints
         super.init(rootView: rootView, options: options)
     }
     
@@ -97,6 +100,9 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         handleBannerConstraints()
+        if let size = self.parent?.view.bounds.size, size != self.thomasBannerConstraints.size {
+            self.thomasBannerConstraints.size = size
+        }
     }
     
     func createBannerConstraints () {
@@ -158,3 +164,12 @@ class ThomasViewControllerOptions {
     var bannerSize: CGSize?
 }
 
+
+class ThomasBannerConstraints: ObservableObject {
+    @Published
+    var size: CGSize
+
+    init(size: CGSize) {
+        self.size = size
+    }
+}
