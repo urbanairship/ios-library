@@ -144,7 +144,7 @@ actor RetryingQueue<T: Sendable> {
             do {
                 result = try await task.value
             } catch {
-                AirshipLogger.error("Retrying \(name) due to uncaught error: \(error)")
+                AirshipLogger.trace("Retrying \(name) due to uncaught error: \(error)")
                 result = .retry
             }
 

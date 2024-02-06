@@ -50,6 +50,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             scheduleID: preparedScheduleInfo.scheduleID
         )
 
+        AirshipLogger.trace("Making display coordinator \(preparedScheduleInfo.scheduleID)")
         let displayCoordinator = self.displayCoordinatorManager.displayCoordinator(message: data)
         let displayAdapter = try await self.displayAdapterFactory.makeAdapter(
             message: data,
@@ -64,6 +65,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     }
 
     func cancelled(scheduleID: String) async {
+        AirshipLogger.trace("Execution cancelled \(scheduleID)")
         await self.assetManager.clearCache(identifier: scheduleID)
     }
 
@@ -76,6 +78,8 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
                 }
                 return url
             }
+
+        AirshipLogger.trace("Preparing assets \(scheduleID): \(imageURLs)")
 
         return try await self.assetManager.cacheAssets(
             identifier: scheduleID,

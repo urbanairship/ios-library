@@ -77,15 +77,18 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         schedule: AutomationSchedule,
         triggerContext: AirshipTriggerContext?
     ) async -> SchedulePrepareResult {
+        AirshipLogger.trace("Preparing \(schedule.identifier)")
 
         return await prepareQueue.run(name: "schedule: \(schedule.identifier)") { retryState in
 
             guard await !self.remoteDataAccess.requiresUpdate(schedule: schedule) else {
+                AirshipLogger.trace("Schedule out of date \(schedule.identifier)")
                 await self.remoteDataAccess.waitFullRefresh(schedule: schedule)
                 return .success(result: .invalidate)
             }
 
             guard await self.remoteDataAccess.bestEffortRefresh(schedule: schedule) else {
+                AirshipLogger.trace("Schedule out of date \(schedule.identifier)")
                 return .success(result: .invalidate)
             }
 
@@ -101,6 +104,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             }
 
             guard await !frequencyChecker.isOverLimit else {
+                AirshipLogger.trace("Frequency limits exceeded \(schedule.identifier)")
                 return .success(result: .skip, ignoreReturnOrder: true)
             }
 
@@ -142,6 +146,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 experimentResult: experimentResult,
                 reportingContext: schedule.reportingContext
             )
+
+            AirshipLogger.trace("Preparing data \(schedule.identifier)")
 
             return try await self.prepareData(
                 data: schedule.data,
@@ -224,6 +230,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         onResult: @escaping @Sendable (AutomationSchedule.ScheduleData) async throws -> RetryingQueue<SchedulePrepareResult>.Result
     ) async throws -> RetryingQueue<SchedulePrepareResult>.Result {
 
+        AirshipLogger.trace("Resolving deferred \(schedule.identifier)")
+
         guard let channelID = deviceInfoProvider.channelID else {
             AirshipLogger.info("Unable to resolve deferred until channel is created")
             return .retry
@@ -238,12 +246,16 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         )
 
         if let cached: AutomationSchedule.ScheduleData = await retryState.value(key: Self.deferredResultKey) {
+            AirshipLogger.trace("Deferred resolved from cache \(schedule.identifier)")
+
             return try await onResult(cached)
         }
 
         let result: AirshipDeferredResult<DeferredScheduleResult> = await deferredResolver.resolve(request: request) { data in
             return try AirshipJSON.defaultDecoder.decode(DeferredScheduleResult.self, from: data)
         }
+
+        AirshipLogger.trace("Deferred result \(schedule.identifier) \(result)")
 
         switch (result) {
         case .success(let result):
