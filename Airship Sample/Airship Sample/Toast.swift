@@ -64,14 +64,19 @@ struct Toast: View {
             let _ = await waitTask.result
             await MainActor.run {
                 if !waitTask.isCancelled {
-                    self.toastVisible = false
-                    self.message = nil
+                    withAnimation {
+                        self.toastVisible = false
+                        self.message = nil
+                    }
                 }
             }
         }
 
         self.toastTask = waitTask
-        self.toastVisible = true
+
+        withAnimation {
+            self.toastVisible = true
+        }
     }
 }
 

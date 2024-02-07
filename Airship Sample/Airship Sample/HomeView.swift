@@ -89,11 +89,13 @@ struct HomeView: View {
 
     @ViewBuilder
     private func makeHeroImage() -> some View {
-        Image("HomeHeroImage")
-            .resizable()
-            .scaledToFit()
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+        AirshipEmbeddedView(id: "shake") {
+            Image("HomeHeroImage")
+                .resizable()
+                .scaledToFit()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+        }
     }
 
     @ViewBuilder

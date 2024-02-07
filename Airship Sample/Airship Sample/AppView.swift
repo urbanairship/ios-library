@@ -3,11 +3,14 @@
 import AirshipCore
 import AirshipMessageCenter
 import AirshipPreferenceCenter
+import AirshipDebug
 import SwiftUI
 
 struct AppView: View {
 
     @EnvironmentObject var appState: AppState
+
+    @State var shakeCount: Int = 0
 
     var body: some View {
         TabView(selection: $appState.selectedTab) {
@@ -53,6 +56,17 @@ struct AppView: View {
                 Airship.analytics.trackScreen("preference_center")
             }
             .tag(SampleTabs.preferenceCenter)
+        }
+        .onShake {
+            shakeCount += 1
+
+            let event = CustomEvent(name: "shake_event", value: NSNumber(value: shakeCount))
+            event.track()
+
+            AppState.shared.toastMessage = Toast.Message(
+                text: "Tracked custom event: shake_event",
+                duration: 2.0
+            )
         }
         .overlay(makeToastView())
     }

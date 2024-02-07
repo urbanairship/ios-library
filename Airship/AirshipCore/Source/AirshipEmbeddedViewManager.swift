@@ -61,7 +61,6 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     }
 }
 
-
 struct PendingEmbedded {
     fileprivate let id: String
     let presentation: EmbeddedPresentationModel
