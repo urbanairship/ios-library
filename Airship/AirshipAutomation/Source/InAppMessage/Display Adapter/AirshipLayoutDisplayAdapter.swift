@@ -108,6 +108,23 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         }
     }
 
+    private class func windowSize(_ window: UIWindow) -> CGSize {
+#if os(iOS) || os(tvOS)
+        return window.screen.bounds.size
+#elseif os(visionOS)
+        // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
+        return CGSize(
+            width: 1280,
+            height: 720
+        )
+#elseif os(watchOS)
+        return CGSize(
+            width: WKInterfaceDevice.current().screenBounds.width,
+            height: WKInterfaceDevice.current().screenBounds.height
+        )
+#endif
+    }
+
     @MainActor
     private func displayBanner(
         _ banner: InAppMessageDisplayContent.Banner,
@@ -121,23 +138,46 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 continuation.resume(returning: result)
             }
 
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            guard let window = AirshipUtils.mainWindow(scene: scene),
+                  window.rootViewController != nil
+            else {
+                AirshipLogger.error("Failed to find window to display in-app banner")
+                return
+            }
+
+            var viewController:InAppMessageBannerViewController?
+
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.banner(BannerTheme()),
                 extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
             ) {
-                window.animateOut()
-            }
-            
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
-                InAppMessageBannerView(displayContent: banner)
+                viewController?.animateOut()
             }
 
-            let viewController = InAppMessageHostingController(rootView: rootView)
-            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-            window.rootViewController = viewController
+            let bannerConstraints = InAppMessageBannerConstraints(
+                size: Self.windowSize(window)
+            )
+
+            let rootView = InAppMessageBannerView(environment: environment, 
+                                                  displayContent: banner,
+                                                  bannerConstraints: bannerConstraints)
+
+            viewController = InAppMessageBannerViewController(rootView: rootView, 
+                                                              placement: banner.placement,
+                                                              bannerConstraints: bannerConstraints)
+
+            viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
+            viewController?.view.isUserInteractionEnabled = true
             
+            if let viewController = viewController,
+               let rootController = window.rootViewController
+            {
+                rootController.addChild(viewController)
+                viewController.didMove(toParent: rootController)
+                rootController.view.addSubview(viewController.view)
+            }
+
             /// Add window without animation since only the banner content needs to animate
             window.alpha = 1
             window.makeKeyAndVisible()
@@ -167,7 +207,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 window.animateOut()
             }
 
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
                 InAppMessageModalView(displayContent: modal)
             }
 
@@ -201,7 +241,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 window.animateOut()
             }
 
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, windowSize in
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
                 FullScreenView(displayContent: fullscreen)
             }
 
@@ -237,7 +277,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 window.animateOut()
             }
 
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation, _ in
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
                 HTMLView(displayContent: html)
             }
 
@@ -314,6 +354,7 @@ private extension UIWindow {
         window.alpha = 0
         window.makeKeyAndVisible()
         window.isUserInteractionEnabled = false
+        
         return window
     }
 
@@ -340,6 +381,23 @@ private extension UIWindow {
                 self?.isHidden = true
                 self?.isUserInteractionEnabled = false
                 self?.removeFromSuperview()
+            }
+        )
+    }
+}
+
+extension UIViewController {
+    func animateOut() {
+        UIView.animate(
+            withDuration: 0.3,
+            animations: { [weak self] in
+                self?.view.alpha = 0
+            },
+            completion: { [weak self] _ in
+                self?.view.isHidden = true
+                self?.view.isUserInteractionEnabled = false
+                self?.view.removeFromSuperview()
+                self?.removeFromParent()
             }
         )
     }

@@ -13,7 +13,7 @@ class InAppMessageEnvironment: ObservableObject {
     private let delegate: InAppMessageResolutionDelegate
     var theme: Theme
 
-    let imageLoader: AirshipImageLoader?
+    @Published var imageLoader: AirshipImageLoader?
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
 
     @Published var isDismissed = false

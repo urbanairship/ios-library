@@ -9,7 +9,6 @@ import AirshipCore
 /// Airship rendering engine extensions.
 /// - Note: for internal use only.  :nodoc:
 public struct InAppMessageExtensions {
-
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
 
     let imageProvider: AirshipImageProvider?

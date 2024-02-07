@@ -5,15 +5,6 @@
     "display" : {
         "allow_fullscreen_display" : true,
         "background_color" : "#ffffff",
-        "body" : {
-            "alignment" : "center",
-            "color" : "#000000",
-            "font_family" : [
-                "sans-serif"
-            ],
-            "size" : 16,
-            "text" : "Big body"
-        },
         "border_radius" : 5,
         "button_layout" : "stacked",
         "buttons" : [
@@ -42,11 +33,6 @@
             "color" : "#63aff2",
             "size" : 22,
             "text" : "22 Right"
-        },
-        "media" : {
-            "description" : "Image",
-            "type" : "image",
-            "url" : "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1200px-Picture_icon_BLACK.svg.png"
         },
         "template" : "media_right",
         "placement" : "top",

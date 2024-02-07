@@ -26,8 +26,8 @@
 		991BE0D22B05684A006109EE /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0D12B05684A006109EE /* CameraView.swift */; };
 		991BE0F32B05C37C006109EE /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F22B05C37C006109EE /* WeatherViewModel.swift */; };
 		991BE0F52B05C387006109EE /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F42B05C387006109EE /* WeatherView.swift */; };
-		993FB2CE2B4B423800790877 /* AirshipAutomationSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomationSwift.framework */; };
-		993FB2CF2B4B423800790877 /* AirshipAutomationSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomationSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		993FB2CE2B4B423800790877 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; };
+		993FB2CF2B4B423800790877 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9948E61A2B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6182B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift */; };
 		9948E61B2B464F1B00C1F21E /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6162B464F1B00C1F21E /* KeyView.swift */; };
 		9948E61C2B464F1B00C1F21E /* EmbeddedPlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6152B464F1B00C1F21E /* EmbeddedPlaygroundView.swift */; };
@@ -180,7 +180,7 @@
 			files = (
 				32FC34ED2729AF10002D3F2C /* AirshipBasement.framework in Embed Frameworks */,
 				3244495F2721A63400D108B5 /* AirshipCore.framework in Embed Frameworks */,
-				993FB2CF2B4B423800790877 /* AirshipAutomationSwift.framework in Embed Frameworks */,
+				993FB2CF2B4B423800790877 /* AirshipAutomation.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,7 +230,7 @@
 				995902F82B031690001614AF /* GoogleMobileAds in Frameworks */,
 				32FC34EC2729AF10002D3F2C /* AirshipBasement.framework in Frameworks */,
 				3244495E2721A63400D108B5 /* AirshipCore.framework in Frameworks */,
-				993FB2CE2B4B423800790877 /* AirshipAutomationSwift.framework in Frameworks */,
+				993FB2CE2B4B423800790877 /* AirshipAutomation.framework in Frameworks */,
 				3244494C2721784900D108B5 /* Yams in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,7 +329,7 @@
 				9908E5BD2AFDA95000DB3E2E /* AirshipPreferenceCenter.framework */,
 				9908E5BF2AFDA95000DB3E2E /* AirshipPreferenceCenterTests.xctest */,
 				9908E5C12AFDA95000DB3E2E /* AirshipMessageCenterTests.xctest */,
-				9908E5C32AFDA95000DB3E2E /* AirshipAutomationSwift.framework */,
+				9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */,
 				9908E5C52AFDA95000DB3E2E /* AirshipAutomationSwiftTests.xctest */,
 				9908E5C72AFDA95000DB3E2E /* AirshipFeatureFlags.framework */,
 				9908E5C92AFDA95000DB3E2E /* AirshipFeatureFlagsTests.xctest */,
@@ -536,17 +536,17 @@
 			remoteRef = 9908E5C02AFDA95000DB3E2E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		9908E5C32AFDA95000DB3E2E /* AirshipAutomationSwift.framework */ = {
+		9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = AirshipAutomationSwift.framework;
+			path = AirshipAutomation.framework;
 			remoteRef = 9908E5C22AFDA95000DB3E2E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		9908E5C52AFDA95000DB3E2E /* AirshipAutomationSwiftTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = AirshipAutomationSwiftTests.xctest;
+			path = AirshipAutomationTests.xctest;
 			remoteRef = 9908E5C42AFDA95000DB3E2E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};

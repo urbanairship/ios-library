@@ -7,10 +7,18 @@ import AirshipCore
 #endif
 
 struct InAppMessageBannerView: View {
-    @EnvironmentObject var environment: InAppMessageEnvironment
+    @ObservedObject
+    var environment: InAppMessageEnvironment
+
+    /// Used to transmit self sizing info to UIKit host
+    @ObservedObject
+    var bannerConstraints: InAppMessageBannerConstraints
+    /// A state variable to prevent endless size refreshing
+    @State private var lastSize: CGSize?
+
+    private static let animationInOutDuration = 0.2
 
     @State var isShowing: Bool = false
-    @State var messageSize: CGSize = CGSizeZero
     @State var messageBodyOpacity: CGFloat = 1
     @State var swipeOffset: CGFloat = 0
 
@@ -22,9 +30,12 @@ struct InAppMessageBannerView: View {
 
     private var messageMaxWidth: CGFloat = 480
 
-    private let animationInOutDuration = 0.2
-    
     private var mediaMaxWidth: CGFloat = 120
+
+    private var mediaMinHeight: CGFloat = 88
+    private var mediaMaxHeight: CGFloat = 480
+
+    private let animationInOutDuration = 0.2
 
     private var headerTheme: TextTheme {
         environment.theme.bannerTheme.headerTheme
@@ -46,6 +57,7 @@ struct InAppMessageBannerView: View {
             TextView(textInfo: heading, textTheme: headerTheme)
                 .padding(theme.headerTheme.additionalPadding)
                 .padding(headerTheme.additionalPadding)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -55,6 +67,7 @@ struct InAppMessageBannerView: View {
             TextView(textInfo: body, textTheme:bodyTheme)
                 .applyTextTheme(headerTheme)
                 .padding(bodyTheme.additionalPadding)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -64,7 +77,9 @@ struct InAppMessageBannerView: View {
             MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
                 .padding(.horizontal, -mediaTheme.additionalPadding.leading)
                 .padding(mediaTheme.additionalPadding)
-                .frame(maxWidth: mediaMaxWidth)
+                .frame(maxWidth: mediaMaxWidth,
+                       minHeight: mediaMinHeight,
+                       maxHeight: mediaMaxHeight)
         }
     }
 
@@ -84,8 +99,13 @@ struct InAppMessageBannerView: View {
         .autoconnect()
     #endif
 
-    init(displayContent: InAppMessageDisplayContent.Banner) {
+    init(environment:InAppMessageEnvironment,
+         displayContent: InAppMessageDisplayContent.Banner,
+         bannerConstraints: InAppMessageBannerConstraints
+    ) {
         self.displayContent = displayContent
+        self.environment = environment
+        self.bannerConstraints = bannerConstraints
     }
 
     @ViewBuilder
@@ -132,7 +152,6 @@ struct InAppMessageBannerView: View {
             .addNub(placement: displayContent.placement,
                     nub: AnyView(nub),
                     itemSpacing: itemSpacing)
-            .fixedSize(horizontal: false, vertical: true)
     }
 
     private func setShowing(state:Bool) {
@@ -141,7 +160,7 @@ struct InAppMessageBannerView: View {
         }
     }
 
-    var body: some View {
+    private var banner: some View {
         messageBody
             .opacity(messageBodyOpacity)
             .showing(isShowing: isShowing)
@@ -156,7 +175,10 @@ struct InAppMessageBannerView: View {
                 GeometryReader(content: { contentMetrics -> Color in
                     let size = contentMetrics.size
                     DispatchQueue.main.async {
-                        self.messageSize = size
+                        if self.bannerConstraints.size != lastSize {
+                            self.bannerConstraints.size = size
+                            self.lastSize = size
+                        }
                     }
                     return .tappableClear
                 })
@@ -175,5 +197,11 @@ struct InAppMessageBannerView: View {
             .onAppear {
                 setShowing(state: true)
             }
+    }
+
+    var body: some View {
+        InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
+            banner.frame(width: min(UIScreen.main.bounds.size.width, messageMaxWidth))
+        }
     }
 }

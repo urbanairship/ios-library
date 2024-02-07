@@ -5,15 +5,7 @@
     "display" : {
         "allow_fullscreen_display" : true,
         "background_color" : "#ffffff",
-        "body" : {
-            "alignment" : "right",
-            "color" : "#000000",
-            "font_family" : [
-                "sans-serif"
-            ],
-            "size" : 16,
-            "text" : "RIGHT Jurassic Park is a 1993 American science-fiction adventure film directed by Steven Spielberg and produced by Kathleen Kennedy and Gerald R. Molen."
-        },
+
         "border_radius" : 5,
         "button_layout" : "stacked",
         "buttons" : [
