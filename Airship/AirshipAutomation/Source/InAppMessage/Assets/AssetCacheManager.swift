@@ -67,6 +67,11 @@ actor AssetCacheManager: AssetCacheManagerProtocol {
         identifier: String,
         assets: [String]
     ) async throws -> AirshipCachedAssetsProtocol {
+        
+        if let running = taskMap[identifier] {
+            return try await running.result.get()
+        }
+        
         let task: Task<AirshipCachedAssets, Error> = Task {
             let assetURLs = assets.compactMap({ URL(string:$0) })
 
@@ -78,6 +83,10 @@ actor AssetCacheManager: AssetCacheManagerProtocol {
             for asset in assetURLs {                
                 /// Cancellable download task
                 let tempURL = try await self.assetDownloader.downloadAsset(remoteURL: asset)
+                
+                if cachedAssets.isCached(remoteURL: asset) {
+                    continue
+                }
     
                 if Task.isCancelled {
                     return cachedAssets

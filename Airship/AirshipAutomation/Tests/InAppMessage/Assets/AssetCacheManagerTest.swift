@@ -92,6 +92,8 @@ final class AssetCacheManagerTest: XCTestCase {
         let expectedFile2URL = expectedCacheDirectory.appendingPathComponent(assetRemoteURL2.assetFilename, isDirectory:false)
 
         let fileManager = TestAssetFileManager()
+        
+        var shouldExist = false
 
         fileManager.onEnsureCacheRootDirectory = { rootPathComponent in
             /// Check root path component is used for the root directory
@@ -112,16 +114,19 @@ final class AssetCacheManagerTest: XCTestCase {
             }
 
             /// If we're checking the status of file 1
-            if expectedFile1URL == url {
+            if expectedFile1URL == url, shouldExist {
                 return true
             }
 
             /// If we're checking the status of file 2
-            if expectedFile2URL == url {
+            if expectedFile2URL == url, shouldExist {
                 return true
             }
-
-            XCTFail()
+            
+            if shouldExist {
+                XCTFail()
+            }
+            
             return false
         }
 
@@ -139,9 +144,12 @@ final class AssetCacheManagerTest: XCTestCase {
         }
 
         let manager = AssetCacheManager(assetDownloader: downloader, assetFileManager: fileManager)
+        await manager.clearCache(identifier: testScheduleIdentifier)
 
         do {
             let cachedAssets = try await manager.cacheAssets(identifier: testScheduleIdentifier, assets: [assetRemoteURL1.path, assetRemoteURL2.path])
+            
+            shouldExist = true
 
             XCTAssertTrue(cachedAssets.isCached(remoteURL: assetRemoteURL1))
             XCTAssertTrue(cachedAssets.isCached(remoteURL: assetRemoteURL2))
