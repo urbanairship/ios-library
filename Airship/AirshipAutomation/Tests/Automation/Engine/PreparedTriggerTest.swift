@@ -181,16 +181,16 @@ final class PreparedTriggerTest: XCTestCase {
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         
+        /// Children reset once they are all triggered
         foreground = try XCTUnwrap(state?.triggerData.children["foreground"])
-        XCTAssertEqual(1, foreground.count) //1 because reset on increment is false
-
+        XCTAssertEqual(0, foreground.count)
         appinit = try XCTUnwrap(state?.triggerData.children["init"])
-        XCTAssertEqual(1, appinit.count)
+        XCTAssertEqual(0, appinit.count)
 
-        //this is a little weird. we have an `and` trigger with `resetOnIncrement` = flase
-        // which means if goal is 2, we don't need a second app init event to fire
         state = instance.process(event: .foreground)
-        
+        XCTAssertNil(state?.triggerResult)
+
+        state = instance.process(event: .appInit)
         XCTAssertNotNil(state?.triggerResult)
     }
     
@@ -338,7 +338,7 @@ final class PreparedTriggerTest: XCTestCase {
             type: .chain,
             goal: 2,
             children: [
-                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2))),
+                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2)), isSticky: true),
                 .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2))),
             ]))
         
@@ -375,13 +375,19 @@ final class PreparedTriggerTest: XCTestCase {
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
-        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 2)
-        
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+
         state = instance.process(event: .appInit)
         XCTAssertNotNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
-        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 3)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
     }
     
     func testCompoundComplexChainTrigger() {
@@ -390,8 +396,8 @@ final class PreparedTriggerTest: XCTestCase {
             type: .chain,
             goal: 2,
             children: [
-                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2)), resetOnIncrement: true),
-                .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2)), resetOnIncrement: true),
+                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2))),
+                .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2))),
             ]))
         
         let instance = makeTrigger(trigger: trigger)

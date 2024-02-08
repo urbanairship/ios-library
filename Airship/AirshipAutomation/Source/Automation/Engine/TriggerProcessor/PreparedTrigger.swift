@@ -227,35 +227,63 @@ extension EventAutomationTrigger {
 
 extension CompoundAutomationTrigger {
     fileprivate func matchEvent(_ event: AutomationEvent, data: inout TriggerData) -> MatchResult? {
+
+        let childResults = self.matchChildren(event: event, data: &data)
+
         switch self.type {
-        case .and:
-            return matchChildren(event: event, data: &data) { childResults in
-                childResults.allSatisfy({ $0.isTriggered })
+        case .and, .chain:
+            let shouldIncrement = childResults.allSatisfy { result in
+                result.isTriggered
+            }
+
+            if (shouldIncrement) {
+                self.children.forEach { child in
+                    // Only reset the child if its not sticky
+                    if child.isSticky != true {
+                        var childData = data.childData(triggerID: child.trigger.id)
+                        childData.resetCount()
+                        data.children[child.trigger.id] = childData
+                    }
+                }
+                data.incrementCount(1.0)
             }
 
         case .or:
-            return matchChildren(event: event, data: &data) { childResults in
-                childResults.contains(where: { $0.isTriggered })
-            }
+            let shouldIncrement = childResults.contains(
+                where: { result in result.isTriggered }
+            )
 
-        case .chain:
-            return matchChildren(event: event, data: &data) { childResults in
-                childResults.allSatisfy({ $0.isTriggered })
+            if (shouldIncrement) {
+                self.children.forEach { child in
+                    var childData = data.childData(triggerID: child.trigger.id)
+
+                    // Reset the child if it reached the goal or if we are resetting it
+                    // on increment
+                    if (childData.count >= child.trigger.goal || child.resetOnIncrement == true) {
+                        childData.resetCount()
+                    }
+
+                    data.children[child.trigger.id] = childData
+                }
+                data.incrementCount(1.0)
             }
         }
+
+        return MatchResult(triggerID: self.id, isTriggered: data.count >= self.goal)
     }
 
     private func matchChildren(
         event: AutomationEvent,
-        data: inout TriggerData,
-        checkTriggered: ([MatchResult]) -> Bool
-    ) -> MatchResult {
+        data: inout TriggerData
+    ) -> [MatchResult] {
         var evaluateRemaining = true
-        let childrenResults = children.map { child in
+        return children.map { child in
             var childData = data.childData(triggerID: child.trigger.id)
 
             var matchResult: MatchResult?
             if evaluateRemaining {
+                // Match the child without resetting it on trigger. We will process resets
+                // after we get all the child results
                 matchResult = child.trigger.matchEvent(event, data: &childData, resetOnTrigger: false)
             }
 
@@ -271,29 +299,7 @@ extension CompoundAutomationTrigger {
             data.children[child.trigger.id] = childData
             return result
         }
-
-        let shouldIncrement = checkTriggered(childrenResults)
-        if (shouldIncrement) {
-            self.children.forEach { child in
-                let isSticky = (child.isSticky ?? false) && self.type != .or
-                let resetOnIncrement = (child.resetOnIncrement ?? false) || self.type == .or
-
-                var childData = data.childData(triggerID: child.trigger.id)
-                if (resetOnIncrement) {
-                    if !isSticky || !child.trigger.isTriggered(data: childData) {
-                        childData.resetCount()
-                    }
-                }
-
-                data.children[child.trigger.id] = childData
-            }
-
-            data.incrementCount(1.0)
-        }
-
-        return MatchResult(triggerID: self.id, isTriggered: data.count >= self.goal)
     }
-
 
     func removeStaleChildData(data: inout TriggerData) {
         guard data.children.isEmpty else { return }
