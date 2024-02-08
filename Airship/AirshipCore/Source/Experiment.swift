@@ -91,25 +91,13 @@ struct Experiment: Codable, Sendable, Equatable {
         try definition.encodeIfPresent(self.timeCriteria, forKey: .timeCriteria)
     }
     
-    static func from(json: [AnyHashable: Any]) -> Experiment? {
-        guard !json.isEmpty else { return nil }
-        
-        do {
-            let data = try JSONSerialization.data(withJSONObject: json)
-            return try Self.decoder.decode(Self.self, from: data)
-        } catch {
-            AirshipLogger.error("Failed to parse experiment from \(json): \(error)")
-            return nil
-        }
-    }
-    
     private static let dateFormatter: DateFormatter = {
         let result = DateFormatter()
         result.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         return result
     }()
     
-    private static let decoder: JSONDecoder = {
+    static let decoder: JSONDecoder = {
         var decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(Self.dateFormatter)
         return decoder

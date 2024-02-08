@@ -355,17 +355,17 @@ extension PreferenceCenterThemeLoader.Config.ViewController {
 
 extension PreferenceCenterThemeLoader.Config {
     fileprivate var isEmpty: Bool {
-        return self.viewController == nil
-            && self.preferenceCenter == nil
-            && self.commonSection == nil
-            && self.labeledSectionBreak == nil
-            && self.alert == nil
-            && self.channelSubscription == nil
-            && self.contactSubscription == nil
-            && self.contactSubscription == nil
-            && self.contactSubscriptionGroup == nil
-
+        guard self.viewController == nil else { return false }
+        guard self.preferenceCenter == nil else { return false }
+        guard self.commonSection == nil else { return false }
+        guard self.labeledSectionBreak == nil else { return false }
+        guard self.alert == nil else { return false }
+        guard self.channelSubscription == nil else { return false }
+        guard self.contactSubscription == nil else { return false }
+        guard self.contactSubscriptionGroup == nil else { return false }
+        return true
     }
+    
     fileprivate func toPreferenceCenterTheme() throws -> PreferenceCenterTheme {
         return PreferenceCenterTheme(
             viewController: try self.viewController?.toViewController(),

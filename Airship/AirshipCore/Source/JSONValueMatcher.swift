@@ -594,6 +594,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     func hash() -> Int {
         var result = 1
         var equalsHashValue = 0
+
         if let equals = equals as? NSObject {
             equalsHashValue = equals.hash
         } else if let equals = equals as? NSNumber {
@@ -601,6 +602,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         } else if let equals = equals as? String {
             equalsHashValue = equals.hash
         }
+        
         result = 31 * result + equalsHashValue
         result = 31 * result + (atLeast?.hash ?? 0)
         result = 31 * result + (atMost?.hash ?? 0)

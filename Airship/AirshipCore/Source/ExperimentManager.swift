@@ -64,10 +64,19 @@ final class ExperimentManager: ExperimentDataProvider {
     func getExperiments(info: MessageInfo) async -> [Experiment] {
         return await remoteData
             .payloads(types: [Self.payloadType])
-            .compactMap { $0.data.unWrap() as? [String: AnyHashable] }
-            .compactMap { $0[Self.payloadType] as? [[String: Any]] }
+            .compactMap { payload in
+                payload.data.object?[Self.payloadType]?.array
+            }
             .flatMap { $0 }
-            .compactMap(Experiment.from)
+            .compactMap { json in
+                do {
+                    let experiment: Experiment = try json.decode(decoder: Experiment.decoder)
+                    return experiment
+                } catch {
+                    AirshipLogger.error("Failed to parse experiment \(error)")
+                    return nil
+                }
+            }
             .filter { $0.isActive(date: self.date.now) }
             .filter { !$0.isExcluded(info: info) }
     }
@@ -87,4 +96,5 @@ private extension Experiment {
         return self.timeCriteria?.isActive(date: date) ?? true
     }
 }
+
 

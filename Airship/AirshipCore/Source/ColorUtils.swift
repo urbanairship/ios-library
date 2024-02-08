@@ -3,9 +3,7 @@
 /// - Note: For internal use only. :nodoc:
 @objc(UAColorUtils)
 public class ColorUtils: NSObject {
-
-    @objc(colorWithHexString:)
-    public class func color(_ hexString: String) -> UIColor? {
+    private class func normalizeColorString(_ hexString: String) -> String {
         var string = hexString.trimmingCharacters(
             in: CharacterSet.whitespacesAndNewlines
         )
@@ -13,12 +11,22 @@ public class ColorUtils: NSObject {
         if string.hasPrefix("#") {
             let start = string.index(string.startIndex, offsetBy: 1)
             let range = start..<string.endIndex
-
             string = String(string[range])
         }
+        return string
+    }
+
+    private class func parseComponent(_ component: UInt64) -> CGFloat {
+        return CGFloat(component) / 255.0
+    }
+
+    @objc(colorWithHexString:)
+    public class func color(_ hexString: String) -> UIColor? {
+        let string = normalizeColorString(hexString)
 
         let width = 8 * (string.count / 2)
-        if width != 32 && width != 24 {
+
+        guard width == 32 || width == 24 else {
             AirshipLogger.error(
                 "Invalid hex color string: \(string) (must be 24 or 32 bits wide)"
             )
@@ -26,18 +34,21 @@ public class ColorUtils: NSObject {
         }
 
         var component: UInt64 = 0
-        let scanner = Scanner.init(string: string)
-        if !scanner.scanHexInt64(&component) {
+        let scanner = Scanner(string: string)
+        guard scanner.scanHexInt64(&component) else {
             AirshipLogger.error("Unable to scan hexString: \(string)")
             return nil
         }
 
-        let red: CGFloat = CGFloat(((component & 0xFF0000) >> 16)) / 255.0
-        let green: CGFloat = CGFloat(((component & 0xFF00) >> 8)) / 255.0
-        let blue: CGFloat = CGFloat((component & 0xFF)) / 255.0
-        let alpha: CGFloat =
-            (width == 24)
-            ? 1.0 : CGFloat(((component & 0xFF00_0000) >> 24)) / 255.0
+        let red: CGFloat = parseComponent((component & 0xFF0000) >> 16)
+        let green: CGFloat = parseComponent((component & 0xFF00) >> 8)
+        let blue: CGFloat = parseComponent((component & 0xFF))
+
+        let alpha: CGFloat = if width == 24 {
+            1.0
+        } else {
+            parseComponent((component & 0xFF00_0000) >> 24)
+        }
 
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }

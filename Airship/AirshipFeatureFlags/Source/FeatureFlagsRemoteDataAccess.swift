@@ -16,11 +16,8 @@ protocol FeatureFlagRemoteDataAccessProtocol: Sendable {
 
 final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
 
-    private let decoder: JSONDecoder = JSONDecoder()
     private let remoteData: RemoteDataProtocol
     private let date: AirshipDateProtocol
-
-
 
     init(
         remoteData: RemoteDataProtocol,
@@ -47,33 +44,28 @@ final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
     }
 
     func remoteDataFlagInfo(name: String) async -> RemoteDataFeatureFlagInfo {
-        let appPayloads: [RemoteDataPayload] = await remoteData.payloads(types: ["feature_flags"])
-            .filter { $0.remoteDataInfo?.source == .app }
+        let appPayload: RemoteDataPayload? = await remoteData.payloads(types: ["feature_flags"])
+            .first { $0.remoteDataInfo?.source == .app }
 
 
-        let flagInfos: [FeatureFlagInfo] = appPayloads
-            .compactMap { payload in
-                let config = payload.data(key: "feature_flags") as? [[AnyHashable: Any]]
-                return config?
-                    .compactMap {
-                        do {
-                            let data = try JSONSerialization.data(withJSONObject: $0)
-                            return try self.decoder.decode(FeatureFlagInfo.self, from: data)
-                        } catch {
-                            AirshipLogger.error("Unable to parse feature flag \($0), error: \(error)")
-                            return nil
-                        }
-                    }
+        let parsedFlagInfo: [FeatureFlagInfo] = appPayload?.data.object?["feature_flags"]?.array?.compactMap { json in
+            do {
+                let flag: FeatureFlagInfo = try json.decode()
+                return flag
+            } catch {
+                AirshipLogger.error("Unable to parse feature flag \(json), error: \(error)")
+                return nil
             }
-            .flatMap { $0 }
+        } ?? []
+
+        let flagInfos: [FeatureFlagInfo] = parsedFlagInfo
             .filter { $0.name == name }
             .filter { $0.timeCriteria?.isActive(date: self.date.now) ?? true }
-
 
         return RemoteDataFeatureFlagInfo(
             name: name,
             flagInfos: flagInfos,
-            remoteDataInfo: appPayloads.first?.remoteDataInfo
+            remoteDataInfo: appPayload?.remoteDataInfo
         )
     }
 }
