@@ -16,11 +16,11 @@ struct InAppMessageBannerView: View {
     /// A state variable to prevent endless size refreshing
     @State private var lastSize: CGSize?
 
-    private static let animationInOutDuration = 0.2
-
     @State var isShowing: Bool = false
     @State var messageBodyOpacity: CGFloat = 1
     @State var swipeOffset: CGFloat = 0
+
+    var onDismiss: () -> Void
 
     private var padding: EdgeInsets {
         environment.theme.bannerTheme.additionalPadding
@@ -101,11 +101,13 @@ struct InAppMessageBannerView: View {
 
     init(environment:InAppMessageEnvironment,
          displayContent: InAppMessageDisplayContent.Banner,
-         bannerConstraints: InAppMessageBannerConstraints
+         bannerConstraints: InAppMessageBannerConstraints,
+         onDismiss: @escaping () -> Void
     ) {
         self.displayContent = displayContent
         self.environment = environment
         self.bannerConstraints = bannerConstraints
+        self.onDismiss = onDismiss
     }
 
     @ViewBuilder
@@ -154,10 +156,14 @@ struct InAppMessageBannerView: View {
                     itemSpacing: itemSpacing)
     }
 
-    private func setShowing(state:Bool) {
+    private func setShowing(state:Bool, completion: (() -> Void)? = nil) {
         withAnimation(Animation.easeInOut(duration: animationInOutDuration)) {
             self.isShowing = state
         }
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + animationInOutDuration, execute: {
+            completion?()
+        })
     }
 
     private var banner: some View {
@@ -196,12 +202,20 @@ struct InAppMessageBannerView: View {
             }
             .onAppear {
                 setShowing(state: true)
+            }.onChange(of: environment.isDismissed) { _ in
+                setShowing(state:false, completion: {
+                    onDismiss()
+                })
             }
     }
 
     var body: some View {
         InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
+            #if os(visionOS)
+            banner.frame(width: min(1280, messageMaxWidth))
+            #else
             banner.frame(width: min(UIScreen.main.bounds.size.width, messageMaxWidth))
+            #endif
         }
     }
 }

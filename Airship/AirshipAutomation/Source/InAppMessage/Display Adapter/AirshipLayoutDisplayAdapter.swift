@@ -132,12 +132,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
-            let listener = InAppMessageDisplayListener(
-                analytics: analytics
-            ) { result in
-                continuation.resume(returning: result)
-            }
-
+    
             guard let window = AirshipUtils.mainWindow(scene: scene),
                   window.rootViewController != nil
             else {
@@ -146,8 +141,19 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 )
                 return
             }
-
-            var viewController:InAppMessageBannerViewController?
+            
+            var viewController: InAppMessageBannerViewController?
+            let dismissViewController = {
+                viewController?.view.removeFromSuperview()
+                viewController = nil
+            }
+            
+            let listener = InAppMessageDisplayListener(
+                analytics: analytics
+            ) { result in
+                // Dismiss the In app message banner view controller
+                continuation.resume(returning: result)
+            }
 
             let environment = InAppMessageEnvironment(
                 delegate: listener,
@@ -161,27 +167,16 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
             let rootView = InAppMessageBannerView(environment: environment, 
                                                   displayContent: banner,
-                                                  bannerConstraints: bannerConstraints)
+                                                  bannerConstraints: bannerConstraints,
+                                                  onDismiss: dismissViewController)
 
-            viewController = InAppMessageBannerViewController(rootView: rootView, 
-                                                              placement: banner.placement,
-                                                              bannerConstraints: bannerConstraints)
+            viewController = InAppMessageBannerViewController(
+                rootView: rootView,
+                placement: banner.placement,
+                bannerConstraints: bannerConstraints
+            )
 
-            viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
-            viewController?.view.isUserInteractionEnabled = true
-            
-            if let viewController = viewController,
-               let rootController = window.rootViewController
-            {
-                rootController.addChild(viewController)
-                viewController.didMove(toParent: rootController)
-                rootController.view.addSubview(viewController.view)
-            }
-
-            /// Add window without animation since only the banner content needs to animate
-            window.alpha = 1
-            window.makeKeyAndVisible()
-            window.isUserInteractionEnabled = true
+            window.addRootController(viewController)
         }
     }
 
@@ -343,7 +338,6 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
     }
 }
 
-
 private extension UIWindow {
 
     static func makeModalReadyWindow(
@@ -357,7 +351,24 @@ private extension UIWindow {
         
         return window
     }
-
+    
+    func addRootController<T: UIViewController>(
+        _ viewController: T?
+    ) {
+        viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
+        viewController?.view.isUserInteractionEnabled = true
+        
+        if let viewController = viewController,
+           let rootController = self.rootViewController
+        {
+            rootController.addChild(viewController)
+            viewController.didMove(toParent: rootController)
+            rootController.view.addSubview(viewController.view)
+        }
+        
+        self.isUserInteractionEnabled = true
+    }
+    
     func animateIn() {
         self.makeKeyAndVisible()
         self.isUserInteractionEnabled = true
