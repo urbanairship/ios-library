@@ -120,8 +120,8 @@ public final class Thomas {
         let environment = ThomasEnvironment(
             delegate: delegate,
             extensions: extensions
-        ) { [weak window] in
-            window?.isHidden = true
+        ) {
+            window.isHidden = true
         }
 
         let rootView = ModalView(
@@ -138,8 +138,8 @@ public final class Thomas {
         window.rootViewController = viewController
         window.makeKeyAndVisible()
 
-        return AirshipMainActorCancellableBlock { [weak environment] in
-            environment?.dismiss()
+        return AirshipMainActorCancellableBlock { [environment] in
+            environment.dismiss()
         }
     }
 

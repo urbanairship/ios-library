@@ -78,6 +78,7 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
             if Task.isCancelled {
                 return
             }
+
             for await state in self.lockState.updates {
                 if (state == .unlocked) {
                     break

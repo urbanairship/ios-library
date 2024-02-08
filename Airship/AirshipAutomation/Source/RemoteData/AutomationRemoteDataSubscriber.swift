@@ -108,12 +108,14 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         currentSchedules: [AutomationSchedule]
     ) async throws {
 
+        let currentScheduleIDs = currentSchedules.map { $0.identifier }
+
         guard
             let payload = payload
         else {
             if !currentSchedules.isEmpty {
                 try await engine.stopSchedules(
-                    identifiers: currentSchedules.map { $0.identifier }
+                    identifiers: currentScheduleIDs
                 )
             }
             return
@@ -146,7 +148,7 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
 
         let schedulesToUpsert = payload.data.schedules.filter { schedule in
             // If we have an ID for this schedule then its either unchanged or updated
-            if (currentSchedules.contains(schedule)) {
+            if (currentScheduleIDs.contains(schedule.identifier)) {
                 return true
             }
 

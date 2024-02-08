@@ -25,7 +25,7 @@ struct InAppMessageWebView: View {
                 isWebViewLoading: self.$isWebViewLoading,
                 accessibilityLabel: accessibilityLabel
             ) {
-                environment.onDismiss?()
+                environment.onUserDismissed()
             }.zIndex(0)
 
             if self.isWebViewLoading {

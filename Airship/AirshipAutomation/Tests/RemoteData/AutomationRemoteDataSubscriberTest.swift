@@ -269,14 +269,26 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
     func testRemoteDataInfoChangeUpdatesSchedules() async throws {
         await self.subscriber.subscribe()
 
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some-url")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
         let date = Date()
-        let schedules = makeSchedules(source: .app, count: 4)
+        let schedules = try makeSchedules(source: .app, count: 4).map { schedule in
+            var mutable = schedule
+            mutable.metadata = try AirshipJSON.wrap(remoteDataInfo)
+            return mutable
+        }
 
         let firstExpectation = expectation(description: "schedules saved")
         await self.engine.setOnUpsert { scheduled in
             XCTAssertEqual(scheduled, schedules)
             firstExpectation.fulfill()
         }
+
+
 
         self.remoteDataAcces.updatesSubject.send(InAppRemoteData(
             payloads: [
@@ -286,11 +298,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
                         constraints: []
                     ),
                     timestamp: date,
-                    remoteDataInfo: RemoteDataInfo(
-                        url: URL(string: "some-url")!,
-                        lastModifiedTime: nil,
-                        source: .app
-                    )
+                    remoteDataInfo: remoteDataInfo
                 )
             ]
         ))
@@ -299,33 +307,41 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         await self.engine.setSchedules(schedules)
 
-        let secondExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { scheduled in
-            XCTAssertEqual(scheduled, schedules)
-            secondExpectation.fulfill()
+        let updatedRemoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some-other-url")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
+        let updatedSchedules = try schedules.map { schedule in
+            var mutable = schedule
+            mutable.metadata = try AirshipJSON.wrap(updatedRemoteDataInfo)
+            return mutable
         }
 
+        let secondExpectation = expectation(description: "schedules saved")
+        await self.engine.setOnUpsert { scheduled in
+            XCTAssertEqual(scheduled, updatedSchedules)
+            secondExpectation.fulfill()
+        }
 
         // udpate again with different remote-data info
         self.remoteDataAcces.updatesSubject.send(InAppRemoteData(
             payloads: [
                 .app: .init(
                     data: .init(
-                        schedules: schedules,
+                        schedules: updatedSchedules,
                         constraints: []
                     ),
                     timestamp: date,
-                    remoteDataInfo: RemoteDataInfo(
-                        url: URL(string: "some-other-url")!,
-                        lastModifiedTime: nil,
-                        source: .app
-                    )
+                    remoteDataInfo: updatedRemoteDataInfo
                 )
             ]
         ))
 
         await self.fulfillment(of: [secondExpectation])
     }
+    
 
     func testPayloadDateChangeAutomations() async throws {
         await self.subscriber.subscribe()

@@ -73,7 +73,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     ) async throws -> DisplayResult {
         switch (message.displayContent) {
         case .banner(let banner):
-            return await displayBanner(
+            return try await displayBanner(
                 banner,
                 scene: scene.scene,
                 analytics: analytics
@@ -130,8 +130,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         _ banner: InAppMessageDisplayContent.Banner,
         scene: UIWindowScene,
         analytics: InAppMessageAnalyticsProtocol
-    ) async -> DisplayResult {
-        return await withCheckedContinuation { continuation in
+    ) async throws -> DisplayResult {
+        return try await withCheckedThrowingContinuation { continuation in
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
@@ -141,7 +141,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             guard let window = AirshipUtils.mainWindow(scene: scene),
                   window.rootViewController != nil
             else {
-                AirshipLogger.error("Failed to find window to display in-app banner")
+                continuation.resume(
+                    throwing: AirshipErrors.error("Failed to find window to display in-app banner")
+                )
                 return
             }
 
@@ -151,7 +153,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 delegate: listener,
                 theme: Theme.banner(BannerTheme()),
                 extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
-            ) {}
+            )
 
             let bannerConstraints = InAppMessageBannerConstraints(
                 size: Self.windowSize(window)
@@ -190,20 +192,20 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
+            let window = UIWindow.makeModalReadyWindow(scene: scene)
+
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
+                window.animateOut()
                 continuation.resume(returning: result)
             }
 
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.modal(ModalTheme()),
                 extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
-            ) {
-                window.animateOut()
-            }
+            )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
                 InAppMessageModalView(displayContent: modal)
@@ -224,20 +226,20 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
+            let window = UIWindow.makeModalReadyWindow(scene: scene)
+
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
+                window.animateOut()
                 continuation.resume(returning: result)
             }
 
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.fullScreen(FullScreenTheme()),
                 extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
-            ) {
-                window.animateOut()
-            }
+            )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
                 FullScreenView(displayContent: fullscreen)
@@ -258,22 +260,22 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
+            let window = UIWindow.makeModalReadyWindow(scene: scene)
+
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
+                window.animateOut()
                 continuation.resume(returning: result)
             }
 
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.html(HTMLTheme()),
                 extensions: InAppMessageExtensions(nativeBridgeExtension: InAppMessageNativeBridgeExtension(
                     message: message
                 ), imageProvider: AssetCacheImageProvider(assets: assets))
-            ) {
-                window.animateOut()
-            }
+            )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
                 HTMLView(displayContent: html)

@@ -18,14 +18,11 @@ class InAppMessageEnvironment: ObservableObject {
 
     @Published var isDismissed = false
 
-    var onDismiss: (() -> Void)?
-
     @MainActor
     init(
         delegate: InAppMessageResolutionDelegate,
         theme: Theme,
-        extensions: InAppMessageExtensions? = nil,
-        onDismiss: (() -> Void)? = nil
+        extensions: InAppMessageExtensions? = nil
     ) {
         self.delegate = delegate
         self.theme = theme
@@ -37,18 +34,13 @@ class InAppMessageEnvironment: ObservableObject {
         }
 
         self.nativeBridgeExtension = extensions?.nativeBridgeExtension
-
-        self.onDismiss = onDismiss
     }
 
-    private func tryDismiss(callback:@escaping () -> Void) {
+    private func tryDismiss(callback: @escaping () -> Void) {
         if !self.isDismissed {
             withAnimation {
                 self.isDismissed = true
             }
-
-            self.onDismiss?()
-            self.onDismiss = nil
             callback()
         }
     }

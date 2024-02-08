@@ -111,6 +111,8 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             )
         } else {
             do {
+                AirshipLogger.info("Displaying message \(preparedScheduleInfo.scheduleID)")
+
                 let displayResult = try await data.displayAdapter.display(scene: scene, analytics: analytics)
                 switch (displayResult) {
                 case .cancel:
@@ -123,6 +125,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                     actionRunner.runActionsAsync(actions, situation: .manualInvocation, metadata: [:])
                 }
             } catch {
+                data.displayCoordinator.messageFinishedDisplaying(data.message)
                 AirshipLogger.error("Failed to display message \(error)")
                 result = .retry
             }
