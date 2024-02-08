@@ -160,15 +160,7 @@ final class PreparedTriggerTest: XCTestCase {
             )
         )
         
-        let instance = PreparedTrigger(
-            scheduleID: "schedule-id",
-            trigger: trigger,
-            type: .execution,
-            startDate: nil,
-            endDate: nil,
-            triggerData: nil,
-            priority: 1,
-            date: date)
+        let instance = makeTrigger(trigger: trigger)
         
         instance.activate()
         
@@ -202,6 +194,318 @@ final class PreparedTriggerTest: XCTestCase {
         XCTAssertNotNil(state?.triggerResult)
     }
     
+    func testCompoundAndComplexTrigger() throws {
+        let trigger = AutomationTrigger.compound(
+            .init(
+                id: "compound",
+                type: .and,
+                goal: 2,
+                children: [
+                    .init(trigger: .event(.init(id: "foreground", type: .foreground, goal: 1)), resetOnIncrement: true),
+                    .init(trigger: .event(.init(id: "init", type: .appInit, goal: 1)), resetOnIncrement: true)
+                ]
+            )
+        )
+        
+        let instance = makeTrigger(trigger: trigger)
+        
+        instance.activate()
+        
+        var state = instance.process(event: .background)
+        XCTAssertNil(state?.triggerResult)
+
+        state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        
+        var foreground = try XCTUnwrap(state?.triggerData.children["foreground"])
+        XCTAssertEqual(1, foreground.count)
+
+        var appinit = try XCTUnwrap(state?.triggerData.children["init"])
+        XCTAssertEqual(0, appinit.count)
+
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        
+        foreground = try XCTUnwrap(state?.triggerData.children["foreground"])
+        XCTAssertEqual(0, foreground.count) //1 because reset on increment is false
+
+        appinit = try XCTUnwrap(state?.triggerData.children["init"])
+        XCTAssertEqual(0, appinit.count)
+
+        _ = instance.process(event: .appInit)
+        state = instance.process(event: .foreground)
+        
+        XCTAssertNotNil(state?.triggerResult)
+    }
+    
+    func testCompoundOrTrigger() throws {
+        let trigger = AutomationTrigger.compound(
+            CompoundAutomationTrigger(
+                id: "simple-or",
+                type: .or,
+                goal: 2,
+                children: [
+                    .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2))),
+                    .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2))),
+                ]))
+        
+        let instance = makeTrigger(trigger: trigger)
+        instance.activate()
+        
+        var state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertEqual(0, state?.triggerData.count)
+        XCTAssertNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertEqual(1, state?.triggerData.count)
+        XCTAssertNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertEqual(1, state?.triggerData.count)
+        XCTAssertNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertEqual(0, state?.triggerData.count)
+        XCTAssertNotNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+    }
+    
+    func testCompoundComplexOrTrigger() throws {
+        let trigger = AutomationTrigger.compound(
+            CompoundAutomationTrigger(
+                id: "complex-or",
+                type: .or,
+                goal: 2,
+                children: [
+                    .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2, resetOnFire: true)), isSticky: true),
+                    .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2, resetOnFire: true)), isSticky: true),
+                ]))
+        
+        let instance = makeTrigger(trigger: trigger)
+        instance.activate()
+        
+        var state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertEqual(0, state?.triggerData.count)
+        XCTAssertNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertEqual(1, state?.triggerData.count)
+        XCTAssertNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertEqual(1, state?.triggerData.count)
+        XCTAssertNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertEqual(0, state?.triggerData.count)
+        XCTAssertNotNil(state?.triggerResult)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+    }
+    
+    func testCompoundChainTrigger() {
+        let trigger = AutomationTrigger.compound(CompoundAutomationTrigger(
+            id: "simple-chain",
+            type: .chain,
+            goal: 2,
+            children: [
+                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2))),
+                .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2))),
+            ]))
+        
+        let instance = makeTrigger(trigger: trigger)
+        instance.activate()
+        
+        var state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertNil(state?.triggerData)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertNil(state?.triggerData.count)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 2)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNotNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 3)
+    }
+    
+    func testCompoundComplexChainTrigger() {
+        let trigger = AutomationTrigger.compound(CompoundAutomationTrigger(
+            id: "complex-chain",
+            type: .chain,
+            goal: 2,
+            children: [
+                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2)), resetOnIncrement: true),
+                .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2)), resetOnIncrement: true),
+            ]))
+        
+        let instance = makeTrigger(trigger: trigger)
+        instance.activate()
+        
+        var state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertNil(state?.triggerData)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertNil(state?.triggerData)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNotNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+    }
+    
+    func testComplexTrigger() {
+        let trigger = AutomationTrigger.compound(
+            CompoundAutomationTrigger(
+                id: "complex-trigger",
+                type: .and,
+                goal: 1,
+                children: [
+                    .init(trigger: AutomationTrigger.compound(
+                        CompoundAutomationTrigger(
+                            id: "foreground-or-init",
+                            type: .or,
+                            goal: 1,
+                            children: [
+                                .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 1))),
+                                .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 1)))
+                            ])
+                    )),
+                    .init(trigger: AutomationTrigger.compound(
+                        CompoundAutomationTrigger(
+                            id: "chain-screen-background",
+                            type: .chain,
+                            goal: 1,
+                            children: [
+                                .init(trigger: .event(EventAutomationTrigger(id: "screen", type: .screen, goal: 1))),
+                                .init(trigger: .event(EventAutomationTrigger(id: "background", type: .background, goal: 1)))
+                            ])
+                    ))
+                ]))
+        
+        let instance = makeTrigger(trigger: trigger)
+        instance.activate()
+        
+        var state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        
+        state = instance.process(event: .screenView(name: nil))
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        
+        state = instance.process(event: .appInit)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        
+        state = instance.process(event: .background)
+        XCTAssertNotNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+    }
+    
+    private func assertChildDataCount(parent: TriggerData?, triggerID: String, count: Double) {
+        XCTAssertEqual(count, parent?.children[triggerID]?.count)
+    }
     
     private func makeTrigger(trigger: AutomationTrigger? = nil, type: TriggerExecutionType = .execution, startDate: Date? = nil, endDate: Date? = nil, state: TriggerData? = nil) -> PreparedTrigger {
         let trigger = trigger ?? AutomationTrigger.event(.init(type: .appInit, goal: 1))
