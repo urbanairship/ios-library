@@ -14,6 +14,8 @@
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
+		6E824E4E2B745E2300181EAB /* ShakeDetectionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E824E4D2B745E2300181EAB /* ShakeDetectionUtil.swift */; };
+		6E824E4F2B745E6600181EAB /* ShakeDetectionUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E824E4D2B745E2300181EAB /* ShakeDetectionUtil.swift */; };
 		6E938DAC2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; platformFilters = (ios, xros, ); };
 		6E938DAD2AC35F2600F691D9 /* AirshipFeatureFlags.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */; };
@@ -393,6 +395,7 @@
 		6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
 		6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAttributes.swift; sourceTree = "<group>"; };
+		6E824E4D2B745E2300181EAB /* ShakeDetectionUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectionUtil.swift; sourceTree = "<group>"; };
 		6EAAE8B628C7C9A3003CAE53 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NamedUserView.swift; sourceTree = "<group>"; };
@@ -512,6 +515,7 @@
 				6EAAE8BB28C7C9A3003CAE53 /* NamedUserView.swift */,
 				6EAAE97E28C7E18C003CAE53 /* Assets.xcassets */,
 				6EAAE98028C7E18C003CAE53 /* Preview Content */,
+				6E824E4D2B745E2300181EAB /* ShakeDetectionUtil.swift */,
 			);
 			path = "Airship Sample";
 			sourceTree = "<group>";
@@ -952,6 +956,7 @@
 				6EAAE98828C7E1A1003CAE53 /* NamedUserView.swift in Sources */,
 				32B5BE4E28F94FD200F2254B /* Toast.swift in Sources */,
 				6EAAE98728C7E1A1003CAE53 /* HomeView.swift in Sources */,
+				6E824E4E2B745E2300181EAB /* ShakeDetectionUtil.swift in Sources */,
 				6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -960,6 +965,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E824E4F2B745E6600181EAB /* ShakeDetectionUtil.swift in Sources */,
 				6EDB2B2528D4E4EF00A01377 /* LiveActivityManagementView.swift in Sources */,
 				6EAAE9B128C7E31E003CAE53 /* MainApp.swift in Sources */,
 				6EAAE9BD28C7E31E003CAE53 /* HomeView.swift in Sources */,
