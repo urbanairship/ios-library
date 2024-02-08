@@ -151,9 +151,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 delegate: listener,
                 theme: Theme.banner(BannerTheme()),
                 extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
-            ) {
-                viewController?.animateOut()
-            }
+            ) {}
 
             let bannerConstraints = InAppMessageBannerConstraints(
                 size: Self.windowSize(window)
@@ -359,14 +357,15 @@ private extension UIWindow {
     }
 
     func animateIn() {
+        self.makeKeyAndVisible()
+        self.isUserInteractionEnabled = true
+
         UIView.animate(
             withDuration: 0.3,
-            animations: { [weak self] in
-                self?.alpha = 1
-                self?.makeKeyAndVisible()
+            animations: {
+                self.alpha = 1
             },
-            completion: { [weak self] _ in
-                self?.isUserInteractionEnabled = true
+            completion: { _ in
             }
         )
     }
@@ -374,30 +373,13 @@ private extension UIWindow {
     func animateOut() {
         UIView.animate(
             withDuration: 0.3,
-            animations: { [weak self] in
-                self?.alpha = 0
+            animations: {
+                self.alpha = 0
             },
-            completion: { [weak self] _ in
-                self?.isHidden = true
-                self?.isUserInteractionEnabled = false
-                self?.removeFromSuperview()
-            }
-        )
-    }
-}
-
-extension UIViewController {
-    func animateOut() {
-        UIView.animate(
-            withDuration: 0.3,
-            animations: { [weak self] in
-                self?.view.alpha = 0
-            },
-            completion: { [weak self] _ in
-                self?.view.isHidden = true
-                self?.view.isUserInteractionEnabled = false
-                self?.view.removeFromSuperview()
-                self?.removeFromParent()
+            completion: { _ in
+                self.isHidden = true
+                self.isUserInteractionEnabled = false
+                self.removeFromSuperview()
             }
         )
     }

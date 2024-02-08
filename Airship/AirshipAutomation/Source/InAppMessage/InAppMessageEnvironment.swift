@@ -43,25 +43,13 @@ class InAppMessageEnvironment: ObservableObject {
 
     private func tryDismiss(callback:@escaping () -> Void) {
         if !self.isDismissed {
-            if #available(iOS 17.0, *) {
-                withAnimation {
-                    self.isDismissed = true
-                } completion: {
-                    self.onDismiss?()
-                    self.onDismiss = nil
-                    callback()
-                }
-            } else {
-                withAnimation {
-                    self.isDismissed = true
-                }
-
-                DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { [weak self] in
-                    self?.onDismiss?()
-                    self?.onDismiss = nil
-                    callback()
-                })
+            withAnimation {
+                self.isDismissed = true
             }
+
+            self.onDismiss?()
+            self.onDismiss = nil
+            callback()
         }
     }
 
