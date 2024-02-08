@@ -206,7 +206,7 @@ fileprivate extension UAScheduleTriggerData {
             throw AirshipErrors.error("Invalid type \(self.type)")
         }
 
-        let type: AutomationTriggerType = switch(legacyType) {
+        let type: EventAutomationTriggerType = switch(legacyType) {
         case .appForeground: .foreground
         case .appBackground: .background
         case .regionEnter: .regionEnter
@@ -220,22 +220,21 @@ fileprivate extension UAScheduleTriggerData {
         case .featureFlagInterracted: .featureFlagInteraction
         }
 
-        var trigger = AutomationTrigger(
+        var trigger = EventAutomationTrigger(
             type: type,
             goal: self.goal.doubleValue,
             predicate: predicate
         )
         trigger.backfillIdentifier(executionType: executionType)
+        
 
         let triggerData = TriggerData(
             scheduleID: scheduleID,
             triggerID: trigger.id,
-            goal: self.goal.doubleValue,
-            count: self.goalProgress?.doubleValue ?? 0,
-            children: [:]
+            count: self.goalProgress?.doubleValue ?? 0
         )
 
-        return (trigger, triggerData)
+        return (.event(trigger), triggerData)
     }
 }
 
@@ -343,9 +342,7 @@ fileprivate extension UAScheduleData {
         }
 
         let automationScheduleData = AutomationScheduleData(
-            identifier: self.identifier,
-            group: self.group,
-            schedule: schedule, 
+            schedule: schedule,
             scheduleState: scheduleState,
             scheduleStateChangeDate: self.executionStateChangeDate ?? Date.distantPast,
             executionCount: self.triggeredCount?.uintValue ?? 0,

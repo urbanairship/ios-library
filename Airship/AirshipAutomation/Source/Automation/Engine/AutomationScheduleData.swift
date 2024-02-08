@@ -6,15 +6,17 @@ import AirshipCore
 
 import Foundation
 
-struct AutomationScheduleData: Sendable, Equatable {
-    var identifier: String
-    var group: String?
+struct AutomationScheduleData: Sendable, Equatable, CustomDebugStringConvertible {
     var schedule: AutomationSchedule
     var scheduleState: AutomationScheduleState
     var scheduleStateChangeDate: Date
     var executionCount: UInt = 0
     var triggerInfo: TriggeringInfo?
     var preparedScheduleInfo: PreparedScheduleInfo?
+    
+    var debugDescription: String {
+        return "\(schedule.identifier), \(scheduleState)"
+    }
 }
 
 extension AutomationScheduleData {

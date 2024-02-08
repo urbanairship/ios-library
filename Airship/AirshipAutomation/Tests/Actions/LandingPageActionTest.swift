@@ -67,7 +67,7 @@ final class LandingPageActionTest: XCTestCase {
             scheduler: { schedule in
                 XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
                 XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, .activeSession)
+                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")
@@ -115,7 +115,7 @@ final class LandingPageActionTest: XCTestCase {
             scheduler: { schedule in
                 XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
                 XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, .activeSession)
+                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")
@@ -169,7 +169,7 @@ final class LandingPageActionTest: XCTestCase {
             scheduler: { schedule in
                 XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
                 XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, .activeSession)
+                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")
@@ -221,7 +221,7 @@ final class LandingPageActionTest: XCTestCase {
             scheduler: { schedule in
                 XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
                 XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, .activeSession)
+                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")
@@ -289,7 +289,7 @@ final class LandingPageActionTest: XCTestCase {
             scheduler: { schedule in
                 XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
                 XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, .activeSession)
+                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")

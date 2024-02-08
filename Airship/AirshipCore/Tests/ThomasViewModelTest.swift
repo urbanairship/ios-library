@@ -2132,6 +2132,13 @@ final class ThomasViewModelTest: XCTestCase {
         try decodeEncodeCompare(source: json, type: StateControllerModel.self)
     }
     
+    func testActionPayload() throws {
+        let payload = ActionsPayload(value: try AirshipJSON.wrap(["foo": "bar"]))
+        let encoded = try AirshipJSON.defaultEncoder.encode(payload)
+        let decoded = try AirshipJSON.defaultDecoder.decode(ActionsPayload.self, from: encoded)
+        XCTAssertEqual(payload, decoded)
+    }
+    
     private func decodeEncodeCompare<T: Codable & Equatable>(source: String, type: T.Type) throws {
         let decoder = JSONDecoder()
         let encoder = JSONEncoder()

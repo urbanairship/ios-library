@@ -211,12 +211,18 @@ struct InAppRemoteData: Sendable {
                 }
 
                 data.schedules[i].triggers.indices.forEach { j in
-                    data.schedules[i].triggers[j].backfillIdentifier(executionType: .execution)
+                    let trigger = data.schedules[i].triggers[j]
+                    if (trigger.shouldBackFillIdentifer) {
+                        data.schedules[i].triggers[j] = trigger.backfilledIdentifier(executionType: .execution)
+                    }
                 }
 
                 if var delay = data.schedules[i].delay, var triggers = delay.cancellationTriggers {
                     triggers.indices.forEach { j in
-                        triggers[j].backfillIdentifier(executionType: .delayCancellation)
+                        let trigger = triggers[j]
+                        if (trigger.shouldBackFillIdentifer) {
+                            triggers[j] = trigger.backfilledIdentifier(executionType: .delayCancellation)
+                        }
                     }
                     delay.cancellationTriggers = triggers
                     data.schedules[i].delay = delay

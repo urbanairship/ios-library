@@ -18,20 +18,20 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     func testRestoreSchedule() async throws {
         self.store.stored = [
             TriggerData(
-                scheduleID: "excluded-schedule-id",
+                scheduleID: "unused-schedule-id",
                 triggerID: "unused-trigger-id",
-                goal: 2,
                 count: 0,
                 children: [:]
             )
         ]
 
-        await self.processor.processEvent(.stateChanged(state: TriggerableState(appSessionID: "foreground")))
-        let trigger = AutomationTrigger(id: "trigger-id", type: .activeSession, goal: 1)
+        let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .activeSession, goal: 1))
 
         XCTAssertEqual(1, self.store.stored.count)
         try await restoreSchedules(trigger: trigger)
         XCTAssertEqual(0, self.store.stored.count)
+        
+        await self.processor.processEvent(.stateChanged(state: TriggerableState(appSessionID: "foreground")))
 
         let result = await takeNext().first
         XCTAssertEqual("schedule-id", result?.scheduleID)
@@ -45,7 +45,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     }
     
     func testUpdateTriggersResendsStatus() async throws {
-        let trigger = AutomationTrigger(id: "trigger-id", type: .activeSession, goal: 1)
+        let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .activeSession, goal: 1))
 
         await self.processor.processEvent(.stateChanged(state: TriggerableState()))
         
@@ -77,7 +77,6 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
             TriggerData(
                 scheduleID: "schedule-id",
                 triggerID: "default-trigger",
-                goal: 2,
                 count: 1,
                 children: [:]
             ),
@@ -94,7 +93,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     }
     
     func testCancelWithGroup() async throws {
-        let trigger = AutomationTrigger(id: "trigger-id-2", type: .appInit, goal: 2)
+        let trigger = AutomationTrigger.event(.init(id: "trigger-id-2", type: .appInit, goal: 2))
         let schedule = defaultSchedule(trigger: trigger, group: "test-group")
         
         try await self.processor.restoreSchedules([schedule])
@@ -104,7 +103,6 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
             TriggerData(
                 scheduleID: "schedule-id",
                 triggerID: "trigger-id-2",
-                goal: 2,
                 count: 1,
                 children: [:]
             ),
@@ -121,7 +119,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     }
     
     func testProcessEventEmitsResults() async throws {
-        let trigger = AutomationTrigger(id: "trigger-id", type: .appInit, goal: 1)
+        let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .appInit, goal: 1))
 
         try await restoreSchedules(trigger: trigger)
         
@@ -131,7 +129,6 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
             TriggerData(
                 scheduleID: "schedule-id",
                 triggerID: "trigger-id",
-                goal: 1,
                 count: 0,
                 children: [:]
             ),
@@ -144,7 +141,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     
     @MainActor
     func testProcessEventEmitsNothingOnPause() async throws {
-        let trigger = AutomationTrigger( id: "trigger-id", type: .appInit, goal: 1)
+        let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .appInit, goal: 1))
 
         try await restoreSchedules(trigger: trigger)
         
@@ -167,8 +164,8 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     }
     
     private func restoreSchedules(trigger: AutomationTrigger? = nil) async throws {
-        let trigger = trigger ?? AutomationTrigger(id: "default-trigger", type: .appInit, goal: 2)
-        
+        let trigger = trigger ?? AutomationTrigger.event(.init(id: "default-trigger", type: .appInit, goal: 2))
+
         let schedule = defaultSchedule(trigger: trigger)
         
         try await self.processor.restoreSchedules([schedule])
@@ -176,8 +173,6 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     
     private func defaultSchedule(trigger: AutomationTrigger, group: String? = nil) -> AutomationScheduleData {
         return AutomationScheduleData(
-            identifier: "schedule-data-id",
-            group: group,
             schedule: AutomationSchedule(
                 identifier: "schedule-id",
                 data: .actions(.null),
@@ -222,10 +217,11 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
 }
 
 final class TestTriggerStore: TriggerStoreProtocol, @unchecked Sendable {
+    
     var stored: [TriggerData] = []
 
-    func getTrigger(triggerID: String) async throws -> TriggerData? {
-        return stored.first(where: { $0.triggerID == triggerID })
+    func getTrigger(scheduleID: String, triggerID: String) async throws -> AirshipAutomation.TriggerData? {
+        return stored.first(where: { $0.triggerID == triggerID && $0.scheduleID == scheduleID })
     }
     
     func upsertTriggers(_ triggers: [TriggerData]) async throws {
@@ -242,7 +238,7 @@ final class TestTriggerStore: TriggerStoreProtocol, @unchecked Sendable {
         stored.removeAll(where: { scheduleIDs.contains($0.scheduleID) })
     }
     
-    func deleteTriggers(triggerIDs: Set<String>) async throws {
-        stored.removeAll { triggerIDs.contains($0.triggerID) }
+    func deleteTriggers(scheduleID: String, triggerIDs: Set<String>) async throws {
+        stored.removeAll { $0.scheduleID == scheduleID && triggerIDs.contains($0.triggerID) }
     }
 }

@@ -41,10 +41,11 @@ class AutomationScheduleTests: XCTestCase {
            }
            """
 
+
         let expectedSchedule = AutomationSchedule(
             identifier: "test_schedule",
             data: .actions(try AirshipJSON.wrap(["foo": "bar"])),
-            triggers: [AutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0)],
+            triggers: [.event(EventAutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0))],
             created: Date(timeIntervalSince1970: 1703073600),
             lastUpdated: Date(timeIntervalSince1970: 1703075400),
             group: "test_group",
@@ -107,7 +108,7 @@ class AutomationScheduleTests: XCTestCase {
         let expectedSchedule = AutomationSchedule(
             identifier: "test_schedule",
             data: .deferred(DeferredAutomationData(url: URL(string:"some:url")!, retryOnTimeOut: true, type: .inAppMessage)),
-            triggers: [AutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0)],
+            triggers: [.event(EventAutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0))],
             created: Date(timeIntervalSince1970: 1703073600),
             lastUpdated: Date(timeIntervalSince1970: 1703075400),
             group: "test_group",
@@ -178,7 +179,7 @@ class AutomationScheduleTests: XCTestCase {
         let expectedSchedule = AutomationSchedule(
             identifier: "test_schedule",
             data: .inAppMessage(message),
-            triggers: [AutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0)],
+            triggers: [.event(EventAutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0))],
             created: Date(timeIntervalSince1970: 1703073600),
             lastUpdated: Date(timeIntervalSince1970: 1703075400),
             group: "test_group",

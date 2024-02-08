@@ -1057,6 +1057,10 @@ struct IconModel: Codable, Equatable, Sendable {
 struct ActionsPayload: Codable, Equatable, Sendable {
     let value: AirshipJSON
 
+    init(value: AirshipJSON) {
+        self.value = value
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let json = try container.decode(AirshipJSON.self)
@@ -1066,6 +1070,12 @@ struct ActionsPayload: Codable, Equatable, Sendable {
         }
         self.value = json
     }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.value)
+    }
+
 }
 
 struct ImageButtonModel: BaseModel, Accessible, Codable {

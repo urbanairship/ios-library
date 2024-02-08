@@ -54,11 +54,11 @@ final class AutomationStoreTest: XCTestCase {
         }
 
         let result = try await self.store.updateSchedule(scheduleID: "foo") { data in
-            data.group = "bar"
+            data.schedule.group = "bar"
         }
 
         var expected = originalFoo
-        expected.group = "bar"
+        expected.schedule.group = "bar"
         XCTAssertEqual(result, expected)
     }
 
@@ -128,7 +128,7 @@ final class AutomationStoreTest: XCTestCase {
         }
 
         let groupA = try await self.store.getSchedules(group: "groupA").sorted { l, r in
-            return l.identifier > r.identifier
+            return l.schedule.identifier > r.schedule.identifier
         }
 
         XCTAssertEqual([original["foo"], original["baz"]], groupA)
@@ -148,7 +148,7 @@ final class AutomationStoreTest: XCTestCase {
         try await self.store.deleteSchedules(scheduleIDs: ["foo", "doesNotExist"])
 
         let remaining = try await self.store.getSchedules().sorted { l, r in
-            return l.identifier > r.identifier
+            return l.schedule.identifier > r.schedule.identifier
         }
 
         XCTAssertEqual([original["baz"], original["bar"]], remaining)
@@ -168,7 +168,7 @@ final class AutomationStoreTest: XCTestCase {
         try await self.store.deleteSchedules(group: "groupA")
 
         let remaining = try await self.store.getSchedules().sorted { l, r in
-            return l.identifier > r.identifier
+            return l.schedule.identifier > r.schedule.identifier
         }
 
         XCTAssertEqual([original["bar"]], remaining)
@@ -189,8 +189,6 @@ final class AutomationStoreTest: XCTestCase {
         )
 
         return AutomationScheduleData(
-            identifier: identifer,
-            group: group,
             schedule: schedule,
             scheduleState: .idle,
             scheduleStateChangeDate: Date.distantPast

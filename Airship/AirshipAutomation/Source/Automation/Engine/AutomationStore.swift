@@ -8,11 +8,11 @@ import AirshipCore
 #endif
 
 protocol TriggerStoreProtocol: Sendable {
-    func getTrigger(triggerID: String) async throws -> TriggerData?
+    func getTrigger(scheduleID: String, triggerID: String) async throws -> TriggerData?
     func upsertTriggers(_ triggers: [TriggerData]) async throws
     func deleteTriggers(excludingScheduleIDs: Set<String>) async throws
     func deleteTriggers(scheduleIDs: [String]) async throws
-    func deleteTriggers(triggerIDs: Set<String>) async throws
+    func deleteTriggers(scheduleID: String, triggerIDs: Set<String>) async throws
 }
 
 protocol ScheduleStoreProtocol: Sendable {
@@ -163,36 +163,46 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         }
     }
 
-    func getTrigger(triggerID: String) async throws -> TriggerData? {
+    func getTrigger(scheduleID: String, triggerID: String) async throws -> TriggerData? {
         return try await prepareCoreData().performWithResult { context in
             let request: NSFetchRequest<TriggerEntity> = TriggerEntity.fetchRequest()
-            request.predicate = NSPredicate(format: "triggerID == %@", triggerID)
+            request.predicate = NSPredicate(format: "scheduleID == %@ AND triggerID == %@", scheduleID, triggerID)
             return try context.fetch(request).first?.toTriggerData()
         }
     }
 
     func upsertTriggers(_ triggers: [TriggerData]) async throws {
         guard !triggers.isEmpty else { return }
+        
+        let groupedTriggers = triggers.reduce(into: [String: [TriggerData]]()) { result, trigger in
+            var array = result[trigger.scheduleID] ?? []
+            array.append(trigger)
+            result[trigger.scheduleID] = array
+        }
+        
         try await prepareCoreData().perform { context in
             let request: NSFetchRequest<TriggerEntity> = TriggerEntity.fetchRequest()
-            request.predicate = NSPredicate(format: "triggerID in %@", triggers.map { $0.triggerID })
+            
+            try groupedTriggers.forEach { scheduleID, triggers in
+                request.predicate = NSPredicate(format: "scheduleID == %@ AND triggerID in %@", scheduleID, triggers.map { $0.triggerID })
 
-            let entityMap = try context.fetch(request).reduce(into: [String: TriggerEntity]()) {
-                $0[$1.triggerID] = $1
-            }
+                let entityMap = try context.fetch(request).reduce(into: [String: TriggerEntity]()) {
+                    $0[$1.triggerID] = $1
+                }
 
-            for trigger in triggers {
-                let entity = try (entityMap[trigger.triggerID] ?? TriggerEntity.make(context: context))
-                try entity.update(data: trigger)
+                for trigger in triggers {
+                    let entity = try (entityMap[trigger.triggerID] ?? TriggerEntity.make(context: context))
+                    try entity.update(data: trigger)
+                }
             }
 
             try UACoreData.save(context)
         }
     }
 
-    func deleteTriggers(triggerIDs: Set<String>) async throws {
+    func deleteTriggers(scheduleID: String, triggerIDs: Set<String>) async throws {
         return try await prepareCoreData().perform { context in
-            let predicate = NSPredicate(format: "triggerID in %@", triggerIDs)
+            let predicate = NSPredicate(format: "(scheduleID == %@) AND (triggerID in %@)", scheduleID, triggerIDs)
             try self.deleteTriggers(predicate: predicate, context: context)
         }
     }
@@ -281,7 +291,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             let legacyData = try await self.legacyStore.legacyScheduleData
             guard !legacyData.isEmpty else { return }
 
-            let identifiers = legacyData.map { $0.scheduleData.identifier }
+            let identifiers = legacyData.map { $0.scheduleData.schedule.identifier }
 
             try await coredata.perform { context in
                 let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
@@ -364,8 +374,8 @@ fileprivate class ScheduleEntity: NSManagedObject {
 
 
     func update(data: AutomationScheduleData) throws {
-        self.identifier = data.identifier
-        self.group = data.group
+        self.identifier = data.schedule.identifier
+        self.group = data.schedule.group
         self.scheduleState = data.scheduleState.rawValue
         self.scheduleStateChangeDate = data.scheduleStateChangeDate
         self.executionCount = Int(data.executionCount)
@@ -404,8 +414,6 @@ fileprivate class ScheduleEntity: NSManagedObject {
         }
 
         return AutomationScheduleData(
-            identifier: self.identifier,
-            group: self.group,
             schedule: schedule,
             scheduleState: scheduleState,
             scheduleStateChangeDate: self.scheduleStateChangeDate,

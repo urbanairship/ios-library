@@ -185,11 +185,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
         XCTAssertEqual(messageId, schedule.identifier)
         XCTAssertEqual(1, schedule.triggers.count)
         
-        let trigger = try XCTUnwrap(schedule.triggers.first)
+        guard case .event(let trigger) = schedule.triggers.first else {
+            XCTFail()
+            return
+        }
         XCTAssertEqual(1.0, trigger.goal)
         XCTAssertNil(trigger.predicate)
-        XCTAssertEqual(AutomationTriggerType.activeSession, trigger.type)
-        
+        XCTAssertEqual(EventAutomationTriggerType.activeSession, trigger.type)
+
         XCTAssertEqual(date.now, schedule.created)
         let month: TimeInterval = 60 * 60 * 24 * 30.0
         XCTAssertEqual(schedule.end, date.now + month)
@@ -294,11 +297,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
         XCTAssertEqual(messageId, schedule.identifier)
         XCTAssertEqual(1, schedule.triggers.count)
         
-        let trigger = try XCTUnwrap(schedule.triggers.first)
+        guard case .event(let trigger) = schedule.triggers.first else {
+            XCTFail()
+            return
+        }
         XCTAssertEqual(1.0, trigger.goal)
         XCTAssertNil(trigger.predicate)
-        XCTAssertEqual(AutomationTriggerType.activeSession, trigger.type)
-        
+        XCTAssertEqual(EventAutomationTriggerType.activeSession, trigger.type)
+
         XCTAssertEqual(date.now, schedule.created)
         let timeDiff = schedule.end?.timeIntervalSince(date.now) ?? 0
         XCTAssert(fabs(timeDiff) < 1)
@@ -377,10 +383,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
 
         let schedule = try await requireFirstSchedule()
         
-        let trigger = try XCTUnwrap(schedule.triggers.first)
+        guard case .event(let trigger) = schedule.triggers.first else {
+            XCTFail()
+            return
+        }
+
         XCTAssertEqual(1.0, trigger.goal)
         XCTAssertNil(trigger.predicate)
-        XCTAssertEqual(AutomationTriggerType.foreground, trigger.type)
+        XCTAssertEqual(EventAutomationTriggerType.foreground, trigger.type)
     }
     
     func testCustomMessageConverter() async throws {

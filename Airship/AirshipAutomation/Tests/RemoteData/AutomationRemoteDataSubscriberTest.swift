@@ -450,7 +450,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         return AutomationSchedule(
             identifier: UUID().uuidString,
             data: .actions(.string("actions")),
-            triggers: [AutomationTrigger(type: .activeSession, goal: 1.0)],
+            triggers: [AutomationTrigger.activeSession(count: 1)],
             created: created,
             metadata: try! AirshipJSON.wrap([
                 InAppRemoteData.remoteInfoMetadataKey: remoteDataInfo

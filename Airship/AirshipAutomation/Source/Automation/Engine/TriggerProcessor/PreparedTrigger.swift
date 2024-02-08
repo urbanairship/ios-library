@@ -6,62 +6,24 @@ import Foundation
 import AirshipCore
 #endif
 
-final class PreparedTrigger: @unchecked Sendable {
+// This is only called from an actor `AutomationTriggerProcessor`
+final class PreparedTrigger {
     struct EventProcessResult {
         var triggerData: TriggerData
         var triggerResult: TriggerResult?
         var priority: Int
     }
 
-    private typealias MatchTuple = (isMatched: Bool, incrementAmount: Double)
-    
-    private let lock = AirshipLock()
-    
     let date: AirshipDateProtocol
     let scheduleID: String
     let executionType: TriggerExecutionType
 
-    private var _triggerData: TriggerData
-    private(set) var triggerData: TriggerData {
-        get { return lock.sync { _triggerData } }
-        set { lock.sync { _triggerData = newValue } }
-    }
-
-    private var _trigger: AutomationTrigger
-    private(set) var trigger: AutomationTrigger {
-        get { return lock.sync { _trigger } }
-        set { lock.sync { _trigger = newValue } }
-    }
-
-    private var _appState: TriggerableState?
-    private(set) var appState: TriggerableState? {
-        get { return lock.sync { _appState } }
-        set { return lock.sync { _appState = newValue } }
-    }
-    
-    private var _isActive: Bool = false
-    private(set) var isActive: Bool {
-        get { lock.sync { _isActive } }
-        set { lock.sync { _isActive = newValue } }
-    }
-    
-    private var _startDate: Date?
-    private(set) var startDate: Date? {
-        get { return lock.sync { _startDate } }
-        set { return lock.sync { _startDate = newValue } }
-    }
-    
-    private var _endDate: Date?
-    private(set) var endDate: Date? {
-        get { return lock.sync { _endDate } }
-        set { return lock.sync { _endDate = newValue } }
-    }
-
-    private var _priority: Int
-    private(set) var priority: Int {
-        get { return lock.sync { _priority } }
-        set { return lock.sync { _priority = newValue } }
-    }
+    private(set) var triggerData: TriggerData
+    private(set) var trigger: AutomationTrigger
+    private(set) var isActive: Bool = false
+    private(set) var startDate: Date?
+    private(set) var endDate: Date?
+    private(set) var priority: Int
 
     init(
         scheduleID: String,
@@ -76,42 +38,36 @@ final class PreparedTrigger: @unchecked Sendable {
         self.scheduleID = scheduleID
         self.executionType = type
         self.date = date
+        self.trigger = trigger
+        self.startDate = startDate
+        self.endDate = endDate
 
-        _trigger = trigger
-        _startDate = startDate
-        _endDate = endDate
-
-        _triggerData = triggerData ?? TriggerData(
+        self.triggerData = triggerData ?? TriggerData(
             scheduleID: scheduleID,
-            triggerID: trigger.id,
-            goal: trigger.goal,
-            count: 0,
-            children: [:] // for compound triggers
+            triggerID: trigger.id
         )
 
-        _priority = priority
+        self.priority = priority
+        self.trigger.removeStaleChildData(data: &self.triggerData)
     }
     
     func process(event: AutomationEvent) -> EventProcessResult? {
-        guard self.isActive, self.isWithingDateRange() else { return nil }
-        
-        let (isAffected, amount) = self.isMatchig(event: event)
-        if !isAffected {
+        guard self.isActive, self.isWithingDateRange() else {
             return nil
         }
-        
-        self.triggerData.incrementCount(amount)
 
-        var triggerResult: TriggerResult?
+        var currentData = self.triggerData
+        let match = self.trigger.matchEvent(event, data: &currentData, resetOnTrigger: true)
 
-        if triggerData.isGoalReached {
-            self.triggerData.reset()
-            triggerResult = generateTriggerResult(for: event)
+        guard currentData != self.triggerData || match?.isTriggered == true else {
+            return nil
         }
+
+        self.triggerData = currentData
 
         return EventProcessResult(
             triggerData: triggerData,
-            triggerResult: triggerResult,
+            triggerResult: match?.isTriggered == true ? generateTriggerResult(for: event) : nil,
             priority: self.priority
         )
     }
@@ -122,12 +78,11 @@ final class PreparedTrigger: @unchecked Sendable {
         endDate: Date?,
         priority: Int
     ) {
-        lock.sync {
-            self.trigger = trigger
-            self.startDate = startDate
-            self.endDate = endDate
-            self.priority = priority
-        }
+        self.trigger = trigger
+        self.startDate = startDate
+        self.endDate = endDate
+        self.priority = priority
+        self.trigger.removeStaleChildData(data: &triggerData)
     }
     
     func activate() {
@@ -136,7 +91,7 @@ final class PreparedTrigger: @unchecked Sendable {
         self.isActive = true
 
         if self.executionType == .delayCancellation {
-            self.triggerData.reset()
+            self.triggerData.resetCount()
         }
     }
     
@@ -150,96 +105,248 @@ final class PreparedTrigger: @unchecked Sendable {
             triggerExecutionType: self.executionType,
             triggerInfo: TriggeringInfo(
                 context: AirshipTriggerContext(
-                    type: trigger.type.rawValue,
+                    type: trigger.type,
                     goal: trigger.goal,
                     event: event.reportPayload() ?? AirshipJSON.null),
                 date: self.date.now
             )
         )
     }
-    
+
     private func isWithingDateRange() -> Bool {
         let now = self.date.now
         if let start = self.startDate, start > now {
             return false
         }
-        
+
         if let end = self.endDate, end < now {
             return false
         }
-        
+
         return true
     }
-    
-    private func isMatchig(event: AutomationEvent) -> MatchTuple {
+}
+
+extension TriggerData {
+    func childData(triggerID: String) -> TriggerData {
+        guard let data = self.children[triggerID] else {
+            return TriggerData(scheduleID: self.scheduleID, triggerID: triggerID, count: 0)
+        }
+        return data
+    }
+}
+
+extension EventAutomationTrigger {
+    fileprivate func matchEvent(_ event: AutomationEvent, data: inout TriggerData) -> MatchResult? {
         switch event {
         case .stateChanged(let state):
-            if state == self.appState {
-                return matchResult(isMatched: false)
-            }
-            
-            return onNewAppState(newState: state)
+            return stateTriggerMatch(state: state, data: &data)
         case .foreground:
-            return matchResult(isMatched: self.trigger.type == .foreground)
+            guard self.type == .foreground else { return nil }
+            return evaluateResults(data: &data, increment: 1)
         case .background:
-            return matchResult(isMatched: self.trigger.type == .background)
+            guard self.type == .background else { return nil }
+            return evaluateResults(data: &data, increment: 1)
         case .appInit:
-            return matchResult(isMatched: self.trigger.type == .appInit)
+            guard self.type == .appInit else { return nil }
+            return evaluateResults(data: &data, increment: 1)
         case .screenView(let name):
-            if self.trigger.type != .screen { return matchResult(isMatched: false) }
-            return isPredicateMatching(value: name)
+            guard self.type == .screen, isPredicateMatching(value: name) else { return nil }
+            return evaluateResults(data: &data, increment: 1)
         case .regionEnter(let regionId):
-            if self.trigger.type != .regionEnter { return matchResult(isMatched: false) }
-            return isPredicateMatching(value: regionId)
+            guard self.type == .regionEnter, isPredicateMatching(value: regionId) else { return nil }
+            return evaluateResults(data: &data, increment: 1)
         case .regionExit(let regionId):
-            if self.trigger.type != .regionExit { return matchResult(isMatched: false) }
-            return isPredicateMatching(value: regionId)
-        case .customEvent(let data, let value):
-            return customEventMatch(data: data, value: value)
-        case .featureFlagInterracted(let data):
-            if self.trigger.type != .featureFlagInteraction { return matchResult(isMatched: false) }
-            return isPredicateMatching(value: data)
+            guard self.type == .regionExit, isPredicateMatching(value: regionId) else { return nil }
+            return evaluateResults(data: &data, increment: 1)
+        case .customEvent(let eventData, let value):
+            return customEvenTriggerMatch(eventData: eventData, value: value, data: &data)
+        case .featureFlagInterracted(let eventData):
+            guard self.type == .featureFlagInteraction, isPredicateMatching(value: eventData) else { return nil }
+            return evaluateResults(data: &data, increment: 1)
         }
     }
-    
-    private func onNewAppState(newState: TriggerableState) -> MatchTuple {
-        let result: MatchTuple
-        
-        switch trigger.type {
+
+    private func stateTriggerMatch(state: TriggerableState, data: inout TriggerData) -> MatchResult? {
+        switch self.type {
         case .version:
-            if newState.versionUpdated == nil || newState.versionUpdated == self.appState?.versionUpdated {
-                result = matchResult(isMatched: false)
-            } else {
-                result = isPredicateMatching(value: newState.versionUpdated)
+            guard
+                let versionUpdated = state.versionUpdated,
+                versionUpdated != data.lastTriggerableState?.versionUpdated,
+                isPredicateMatching(value: versionUpdated)
+            else {
+                return nil
             }
+
+            data.lastTriggerableState = state
+            return evaluateResults(data: &data, increment: 1)
         case .activeSession:
-            result = matchResult(isMatched: newState.appSessionID != nil && newState.appSessionID != self.appState?.appSessionID)
+            guard
+                let appSessionID = state.appSessionID,
+                    appSessionID != data.lastTriggerableState?.appSessionID
+            else {
+                return nil
+            }
+
+            data.lastTriggerableState = state
+            return evaluateResults(data: &data, increment: 1)
         default:
-            result = matchResult(isMatched: false)
+           return nil
         }
-        
-        self.appState = newState
+    }
+
+    private func customEvenTriggerMatch(eventData: AirshipJSON, value: Double?, data: inout TriggerData) -> MatchResult? {
+        switch self.type {
+        case .customEventCount:
+            guard isPredicateMatching(value: eventData) else { return nil }
+            return evaluateResults(data: &data, increment: 1)
+        case .customEventValue:
+            guard isPredicateMatching(value: eventData) else { return nil }
+            return evaluateResults(data: &data, increment: value ?? 1.0)
+        default:
+            return nil
+        }
+    }
+
+    private func isPredicateMatching(value: Any?) -> Bool {
+        guard let predicate = self.predicate else { return true }
+        return predicate.evaluate(value)
+    }
+
+    private func evaluateResults(
+        data: inout TriggerData,
+        increment: Double
+    ) -> MatchResult {
+        data.incrementCount(increment)
+        return MatchResult(
+            triggerID: self.id,
+            isTriggered: data.count >= self.goal
+        )
+    }
+}
+
+extension CompoundAutomationTrigger {
+    fileprivate func matchEvent(_ event: AutomationEvent, data: inout TriggerData) -> MatchResult? {
+        switch self.type {
+        case .and:
+            return matchChildren(event: event, data: &data) { childResults in
+                childResults.allSatisfy({ $0.isTriggered })
+            }
+
+        case .or:
+            return matchChildren(event: event, data: &data) { childResults in
+                childResults.contains(where: { $0.isTriggered })
+            }
+
+        case .chain:
+            return matchChildren(event: event, data: &data) { childResults in
+                childResults.allSatisfy({ $0.isTriggered })
+            }
+        }
+    }
+
+    private func matchChildren(
+        event: AutomationEvent,
+        data: inout TriggerData,
+        checkTriggered: ([MatchResult]) -> Bool
+    ) -> MatchResult {
+        var evaluateRemaining = true
+        let childrenResults = children.map { child in
+            var childData = data.childData(triggerID: child.trigger.id)
+
+            var matchResult: MatchResult?
+            if evaluateRemaining {
+                matchResult = child.trigger.matchEvent(event, data: &childData, resetOnTrigger: false)
+            }
+
+            let result = matchResult ?? MatchResult(
+                triggerID: child.trigger.id,
+                isTriggered: child.trigger.isTriggered(data: childData)
+            )
+
+            if self.type == .chain, evaluateRemaining, !result.isTriggered {
+                evaluateRemaining = false
+            }
+
+            data.children[child.trigger.id] = childData
+            return result
+        }
+
+        let shouldIncrement = checkTriggered(childrenResults)
+        if (shouldIncrement) {
+            self.children.forEach { child in
+                let isSticky = (child.isSticky ?? false) && self.type != .or
+                let resetOnIncrement = (child.resetOnIncrement ?? false) || self.type == .or
+
+                var childData = data.childData(triggerID: child.trigger.id)
+                if (resetOnIncrement) {
+                    if !isSticky || !child.trigger.isTriggered(data: childData) {
+                        childData.resetCount()
+                    }
+                }
+
+                data.children[child.trigger.id] = childData
+            }
+
+            data.incrementCount(1.0)
+        }
+
+        return MatchResult(triggerID: self.id, isTriggered: data.count >= self.goal)
+    }
+
+
+    func removeStaleChildData(data: inout TriggerData) {
+        guard data.children.isEmpty else { return }
+
+        var updatedData: [String: TriggerData] = [:]
+
+        self.children.forEach { child in
+            var childData = data.childData(triggerID: child.trigger.id)
+            child.trigger.removeStaleChildData(data: &childData)
+            updatedData[child.trigger.id] = childData
+        }
+
+        data.children = updatedData
+    }
+}
+
+extension AutomationTrigger {
+
+    fileprivate func matchEvent(
+        _ event: AutomationEvent,
+        data: inout TriggerData,
+        resetOnTrigger: Bool
+    ) -> MatchResult? {
+
+        let result: MatchResult? = switch self {
+        case .compound(let compoundTrigger):
+            compoundTrigger.matchEvent(event, data: &data)
+        case .event(let eventTrigger):
+            eventTrigger.matchEvent(event, data: &data)
+        }
+
+        if resetOnTrigger, result?.isTriggered == true {
+            data.resetCount()
+        }
+
         return result
     }
-    
-    private func customEventMatch(data: AirshipJSON, value: Double?) -> MatchTuple {
-        if self.trigger.type == .customEventCount {
-            return isPredicateMatching(value: data)
-        } else if self.trigger.type == .customEventValue, let value = value {
-            return isPredicateMatching(value: data, increment: value)
-        } else {
-            return matchResult(isMatched: false)
+
+    func isTriggered(data: TriggerData) -> Bool {
+        return data.count >= self.goal
+    }
+
+
+    func removeStaleChildData(data: inout TriggerData) {
+        guard case .compound(let compoundTrigger) = self else {
+            return
         }
+
+        compoundTrigger.removeStaleChildData(data: &data)
     }
-    
-    private func isPredicateMatching(value: Any?, increment: Double = 1) -> MatchTuple {
-        guard let predicate = self.trigger.predicate else { return matchResult(isMatched: true, increment: increment) }
-        
-        return matchResult(isMatched: predicate.evaluate(value), increment: increment)
-    }
-    
-    private func matchResult(isMatched: Bool, increment: Double = 1) -> MatchTuple {
-        return (isMatched, increment)
-    }
-    
+}
+
+fileprivate struct MatchResult {
+   var triggerID: String
+   var isTriggered: Bool
 }

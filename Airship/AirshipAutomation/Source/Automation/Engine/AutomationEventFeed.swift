@@ -10,7 +10,7 @@ protocol AutomationEventFeedProtocol: Sendable {
     var feed: AsyncStream<AutomationEvent> { get }
 }
 
-struct TriggerableState: Equatable {
+struct TriggerableState: Equatable, Codable {
     var appSessionID: String? // set on foreground event, resets on background
     var versionUpdated: String? // versionUpdate event
 }

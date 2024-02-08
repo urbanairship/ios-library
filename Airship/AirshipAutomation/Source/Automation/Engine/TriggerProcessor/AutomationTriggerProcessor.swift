@@ -106,7 +106,7 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     /// Called once to update all schedules from the DB.
     func restoreSchedules(_ datas: [AutomationScheduleData]) async throws {
         await updateSchedules(datas)
-        let activeSchedules = Set(datas.map({ $0.identifier }))
+        let activeSchedules = Set(datas.map({ $0.schedule.identifier }))
         try await self.store.deleteTriggers(excludingScheduleIDs: activeSchedules)
     }
 
@@ -179,7 +179,11 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
             let oldIDs = Set(old.map { $0.trigger.id })
 
             do {
-                try await self.store.deleteTriggers(triggerIDs: oldIDs.subtracting(newIDs))
+                let stale = oldIDs.subtracting(newIDs)
+                if !stale.isEmpty {
+                    try await self.store.deleteTriggers(scheduleID: schedule.identifier, triggerIDs: stale)
+                }
+                
             } catch {
                 AirshipLogger.error("Failed to delete trigger states error \(error)")
             }
@@ -274,7 +278,7 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     ) async -> PreparedTrigger {
         var triggerData: TriggerData?
         do {
-            triggerData = try await self.store.getTrigger(triggerID: trigger.id)
+            triggerData = try await self.store.getTrigger(scheduleID: schedule.identifier, triggerID: trigger.id)
         } catch {
             AirshipLogger.error("Failed to load trigger state for \(trigger) error \(error)")
         }

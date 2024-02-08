@@ -201,11 +201,11 @@ actor AutomationEngine : AutomationEngineProtocol {
             if data.scheduleState == .executing, let preparedInfo = data.preparedScheduleInfo {
                 let behavior = await self.executor.interrupted(schedule: data.schedule, preparedScheduleInfo: preparedInfo)
 
-                updated = try await self.updateState(identifier: data.identifier) {  data in
+                updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
                     data.executionInterrupted(date: now, retry: behavior == .retry)
                 }
             } else {
-                updated = try await self.updateState(identifier: data.identifier) {  data in
+                updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
                     data.prepareInterrupted(date: now)
                 }
             }
@@ -226,7 +226,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         /// Delete finished schedules
         let shouldDelete = schedules
             .filter { $0.shouldDelete(date: now) }
-            .map { $0.identifier }
+            .map { $0.schedule.identifier }
 
         if !shouldDelete.isEmpty {
             try await self.store.deleteSchedules(scheduleIDs: shouldDelete)
@@ -324,20 +324,20 @@ fileprivate extension AutomationEngine {
     }
 
     private func prepareSchedule(data: AutomationScheduleData) async throws -> PreparedSchedule? {
-        AirshipLogger.trace("Preparing schedule \(data.identifier)")
+        AirshipLogger.trace("Preparing schedule \(data)")
 
         let prepareResult = await self.preparer.prepare(
             schedule: data.schedule,
             triggerContext: data.triggerInfo?.context
         )
 
-        AirshipLogger.trace("Preparing schedule \(data.identifier) result: \(prepareResult)")
+        AirshipLogger.trace("Preparing schedule \(data) result: \(prepareResult)")
         if case .cancel = prepareResult {
-            try await self.store.deleteSchedules(scheduleIDs: [data.identifier])
+            try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
             return nil
         }
 
-        try await self.updateState(identifier: data.identifier) { [date] data in
+        try await self.updateState(identifier: data.schedule.identifier) { [date] data in
             guard data.isInState([.triggered]) else { return }
 
             switch (prepareResult) {
@@ -367,7 +367,7 @@ fileprivate extension AutomationEngine {
 
     @MainActor
     private func startExecuting(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws {
-        AirshipLogger.trace("Starting to execute schedule \(data.identifier)")
+        AirshipLogger.trace("Starting to execute schedule \(data)")
 
         let scheduleID = data.schedule.identifier
 
@@ -448,18 +448,18 @@ fileprivate extension AutomationEngine {
 
     @MainActor
     private func checkReady(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> ScheduleReadyResult {
-        AirshipLogger.trace("Checking if schedule is ready \(data.identifier)")
+        AirshipLogger.trace("Checking if schedule is ready \(data)")
 
         let triggerDate = data.triggerInfo?.date ?? data.scheduleStateChangeDate
 
         // Wait for conditions
-        AirshipLogger.trace("Waiting for delay conditions \(data.identifier)")
+        AirshipLogger.trace("Waiting for delay conditions \(data)")
         await self.delayProcessor.process(
             delay: data.schedule.delay,
             triggerDate: triggerDate
         )
 
-        AirshipLogger.trace("Delay conditions met \(data.identifier)")
+        AirshipLogger.trace("Delay conditions met \(data)")
 
 
         // Make sure we are still up to date. Data might change due to a change
@@ -470,7 +470,7 @@ fileprivate extension AutomationEngine {
             fromStore.scheduleState == .prepared,
             fromStore.schedule == data.schedule
         else {
-            AirshipLogger.trace("Schedule no longer valid, invalidating \(data.identifier)")
+            AirshipLogger.trace("Schedule no longer valid, invalidating \(data)")
             return .invalidate
         }
 
@@ -480,7 +480,7 @@ fileprivate extension AutomationEngine {
         )
 
         guard precheckResult == .ready else {
-            AirshipLogger.trace("Precheck not ready \(data.identifier)")
+            AirshipLogger.trace("Precheck not ready \(data)")
             return precheckResult
         }
 
@@ -488,23 +488,23 @@ fileprivate extension AutomationEngine {
         guard
             self.delayProcessor.areConditionsMet(delay: data.schedule.delay)
         else {
-            AirshipLogger.trace("Delay conditions not met, not ready \(data.identifier)")
+            AirshipLogger.trace("Delay conditions not met, not ready \(data)")
             return .notReady
         }
 
         guard !self.isExecutionPaused.value, !self.isEnginePaused.value else {
-            AirshipLogger.trace("Executor paused, not ready \(data.identifier)")
+            AirshipLogger.trace("Executor paused, not ready \(data)")
             return .notReady
         }
 
         guard data.isActive(date: self.date.now) else {
-            AirshipLogger.trace("Schedule no longer active, Invalidating \(data.identifier)")
+            AirshipLogger.trace("Schedule no longer active, Invalidating \(data)")
             return .invalidate
         }
 
         let result = self.executor.isReady(preparedSchedule: preparedSchedule)
         if result != .ready {
-            AirshipLogger.trace("Schedule not ready \(data.identifier)")
+            AirshipLogger.trace("Schedule not ready \(data)")
         }
         return result
     }
@@ -529,15 +529,12 @@ fileprivate extension AutomationSchedule {
     func updateOrCreate(data: AutomationScheduleData?, date: Date) throws -> AutomationScheduleData {
         guard var existing = data else {
             return AutomationScheduleData(
-                identifier: self.identifier,
-                group: self.group,
                 schedule: self,
                 scheduleState: .idle,
                 scheduleStateChangeDate: date
             )
         }
 
-        existing.group = self.group
         existing.schedule = self
         return existing
     }
