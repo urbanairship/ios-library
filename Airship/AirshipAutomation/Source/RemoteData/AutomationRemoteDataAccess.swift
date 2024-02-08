@@ -162,7 +162,7 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
         do {
             return try remoteInfoJson.decode()
         } catch {
-            AirshipLogger.error("Failed to parse remote info from schedule \(schedule) \(error)")
+            AirshipLogger.trace("Failed to parse remote info from schedule \(schedule) \(error)")
         }
 
         return nil
