@@ -3,6 +3,16 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.0.0-beta, February 2024
+
+First beta release of SDK 18.0.0. This release contains a new automation module that has been rewritten in Swift and preliminary visionOS support.
+
+### Changes
+- New Swift Automation module. Objective-c support has been removed for this module and custom display adapters have new APIs.
+- VisionOS support
+- Xcode 15.2+ is required
+
+
 ## Version 17.7.3, Jan 29, 2024
 Patch release that fixes an issue with message limits not being respected in certain cases.
 
