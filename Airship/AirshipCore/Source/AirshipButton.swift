@@ -13,7 +13,7 @@ struct AirshipButton<Label> : View  where Label : View {
     @Environment(\.layoutState) private var layoutState
 
     let identifier: String
-    let reportingMetadata: Any?
+    let reportingMetadata: AirshipJSON?
     let description: String
     let clickBehaviors:[ButtonClickBehavior]?
     let actions: ActionsPayload?

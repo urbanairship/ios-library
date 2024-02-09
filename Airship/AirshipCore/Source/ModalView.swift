@@ -151,6 +151,9 @@ struct ModalView: View {
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         .opacity(self.contentSize == nil ? 0 : 1)
         .animation(nil, value: self.contentSize?.1 ?? CGSize.zero)
+        .onAppear {
+            self.thomasEnvironment.onAppear()
+        }
     }
 
     @ViewBuilder

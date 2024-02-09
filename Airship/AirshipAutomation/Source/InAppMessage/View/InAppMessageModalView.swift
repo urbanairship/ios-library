@@ -137,5 +137,8 @@ struct InAppMessageModalView: View {
         .parentClampingResize(maxWidth: maxWidth, maxHeight: maxHeight)
         .padding(padding)
         .addBackground(color: .shadowColor)
+        .onAppear {
+            self.environment.onAppear()
+        }
     }
 }

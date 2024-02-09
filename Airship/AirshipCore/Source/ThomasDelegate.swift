@@ -6,6 +6,10 @@ import SwiftUI
 /// - Note: for internal use only.  :nodoc:
 public protocol ThomasDelegate: Sendable {
 
+    /// Called whenever the view appears
+    @MainActor
+    func onAppear()
+
     /// Called when a form is submitted
     /// - Parameters:
     ///     - formResult: The form result.
@@ -34,7 +38,7 @@ public protocol ThomasDelegate: Sendable {
     @MainActor
     func onButtonTapped(
         buttonIdentifier: String,
-        metadata: Any?,
+        metadata: AirshipJSON?,
         layoutContext: ThomasLayoutContext
     )
 
@@ -82,7 +86,7 @@ public protocol ThomasDelegate: Sendable {
     @MainActor
     func onPageGesture(
         identifier: String,
-        metadata: Any?,
+        metadata: AirshipJSON?,
         layoutContext: ThomasLayoutContext
     )
 
@@ -94,7 +98,7 @@ public protocol ThomasDelegate: Sendable {
     @MainActor
     func onPageAutomatedAction(
         identifier: String,
-        metadata: Any?,
+        metadata: AirshipJSON?,
         layoutContext: ThomasLayoutContext
     )
     

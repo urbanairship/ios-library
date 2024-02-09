@@ -28,6 +28,10 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
     func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async -> DisplayResult {
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
 
+        Task {
+            await analytics.recordImpression()
+        }
+
         let timer = ActiveTimer()
         timer.start()
         let result = await self.adapter.display(scene: scene.scene)

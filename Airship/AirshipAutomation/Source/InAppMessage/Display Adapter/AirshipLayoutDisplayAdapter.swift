@@ -309,9 +309,6 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                     extensions: extensions,
                     delegate: listener
                 )
-
-                // TODO move to thomas
-                listener.onDisplay()
             } catch {
                 continuation.resume(throwing: error)
             }

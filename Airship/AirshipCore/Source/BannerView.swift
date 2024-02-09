@@ -126,6 +126,9 @@ struct BannerView: View {
         )
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
         .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
+        .onAppear {
+            self.thomasEnvironment.onAppear()
+        }
     }
 
     private func resolvePlacement(

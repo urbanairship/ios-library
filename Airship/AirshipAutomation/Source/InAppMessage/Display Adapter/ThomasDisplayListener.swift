@@ -25,15 +25,17 @@ final class ThomasDisplayListener: ThomasDelegate {
         self.timer = timer ?? ActiveTimer()
     }
 
-    // TODO make this part of the main delegate
-    func onDisplay() {
+    func onAppear() {
         guard self.isFirstDisplay else {
             return
         }
 
         self.isFirstDisplay = false
 
-        // TODO impression
+        Task {
+            await analytics.recordImpression()
+        }
+
         timer.start()
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
     }
@@ -42,16 +44,10 @@ final class ThomasDisplayListener: ThomasDelegate {
         formResult: ThomasFormResult,
         layoutContext: ThomasLayoutContext
     ) {
-        // TODO pass through AirshipJSON instead of Any
-        do {
-            let result = try AirshipJSON.wrap(formResult.formData)
-            analytics.recordEvent(
-                InAppFormResultEvent(forms: result),
-                layoutContext: layoutContext
-            )
-        } catch {
-            AirshipLogger.error("Failed to wrap form result \(error)")
-        }
+        analytics.recordEvent(
+            InAppFormResultEvent(forms: formResult.formData),
+            layoutContext: layoutContext
+        )
     }
     
     func onFormDisplayed(
@@ -66,14 +62,13 @@ final class ThomasDisplayListener: ThomasDelegate {
     
     func onButtonTapped(
         buttonIdentifier: String,
-        metadata: Any?,
+        metadata: AirshipJSON?,
         layoutContext: ThomasLayoutContext
     ) {
-        // TODO pass through AirshipJSON instead of Any
         analytics.recordEvent(
             InAppButtonTapEvent(
                 identifier: buttonIdentifier,
-                reportingMetadata: try? AirshipJSON.wrap(metadata)
+                reportingMetadata: metadata
             ),
             layoutContext: layoutContext
         )
@@ -140,14 +135,13 @@ final class ThomasDisplayListener: ThomasDelegate {
     
     func onPageGesture(
         identifier: String,
-        metadata: Any?,
+        metadata: AirshipJSON?,
         layoutContext: ThomasLayoutContext
     ) {
-        // TODO pass through AirshipJSON instead of Any
         analytics.recordEvent(
             InAppGestureEvent(
                 identifier: identifier,
-                reportingMetadata: try? AirshipJSON.wrap(metadata)
+                reportingMetadata: metadata
             ),
             layoutContext: layoutContext
         )
@@ -155,14 +149,13 @@ final class ThomasDisplayListener: ThomasDelegate {
     
     func onPageAutomatedAction(
         identifier: String,
-        metadata: Any?,
+        metadata: AirshipJSON?,
         layoutContext: ThomasLayoutContext
     ) {
-        // TODO pass through AirshipJSON instead of Any
         analytics.recordEvent(
             InAppPageActionEvent(
                 identifier: identifier,
-                reportingMetadata: try? AirshipJSON.wrap(metadata)
+                reportingMetadata: metadata
             ),
             layoutContext: layoutContext
         )

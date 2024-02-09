@@ -137,6 +137,9 @@ struct EmbeddedView: View {
                     return Color.clear
                 })
             )
+            .onAppear {
+                self.thomasEnvironment.onAppear()
+            }
     }
 
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> EmbeddedPlacement {

@@ -18,7 +18,7 @@ struct LabelButton : View {
     var body: some View {
         AirshipButton(
             identifier: self.model.identifier,
-            reportingMetadata: self.model.reportingMetadata?.unWrap(),
+            reportingMetadata: self.model.reportingMetadata,
             description: self.model.contentDescription ?? self.model.label.text,
             clickBehaviors: self.model.clickBehaviors,
             actions: self.model.actions

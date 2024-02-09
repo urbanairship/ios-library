@@ -50,6 +50,11 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
+    func onAppear() {
+        self.delegate.onAppear()
+    }
+
+    @MainActor
     func submitForm(_ formState: FormState, layoutState: LayoutState) {
         guard !formState.isSubmitted else {
             return
@@ -98,7 +103,7 @@ class ThomasEnvironment: ObservableObject {
     @MainActor
     func buttonTapped(
         buttonIdentifier: String,
-        reportingMetatda: Any?,
+        reportingMetatda: AirshipJSON?,
         layoutState: LayoutState
     ) {
         self.delegate.onButtonTapped(
@@ -154,7 +159,7 @@ class ThomasEnvironment: ObservableObject {
     @MainActor
     func pageGesture(
         identifier: String?,
-        reportingMetatda: Any?,
+        reportingMetatda: AirshipJSON?,
         layoutState: LayoutState
     ) {
         if let identifier {
@@ -169,7 +174,7 @@ class ThomasEnvironment: ObservableObject {
     @MainActor
     func pageAutomated(
         identifier: String?,
-        reportingMetatda: Any?,
+        reportingMetatda: AirshipJSON?,
         layoutState: LayoutState
     ) {
         if let identifier {

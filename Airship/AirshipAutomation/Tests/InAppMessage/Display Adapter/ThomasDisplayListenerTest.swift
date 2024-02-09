@@ -35,15 +35,15 @@ class ThomasDisplayListenerTest: XCTestCase {
     }
 
     @MainActor
-    func testDisplay() {
+    func testOnAppear() {
         XCTAssertFalse(timer.isStarted)
 
-        listener.onDisplay()
+        listener.onAppear()
 
         verifyEvents([(InAppDisplayEvent(), nil)])
         XCTAssertTrue(timer.isStarted)
 
-        listener.onDisplay()
+        listener.onAppear()
 
         verifyEvents([(InAppDisplayEvent(), nil)])
         XCTAssertNil(self.result.value)
@@ -100,7 +100,7 @@ class ThomasDisplayListenerTest: XCTestCase {
 
         listener.onButtonTapped(
             buttonIdentifier: "button id",
-            metadata: "some metadata",
+            metadata: .string("some metadata"),
             layoutContext: self.layoutContext
         )
 
@@ -284,7 +284,7 @@ class ThomasDisplayListenerTest: XCTestCase {
 
         listener.onPageGesture(
             identifier: "gesture id",
-            metadata: "some metadata",
+            metadata: .string("some metadata"),
             layoutContext: self.layoutContext
         )
 
@@ -310,7 +310,7 @@ class ThomasDisplayListenerTest: XCTestCase {
 
         listener.onPageAutomatedAction(
             identifier: "action id",
-            metadata: "some metadata",
+            metadata: .string("some metadata"),
             layoutContext: self.layoutContext
         )
 

@@ -5,7 +5,7 @@ import AirshipCore
 #endif
 
 @MainActor
-final class InAppMessageDisplayListener: InAppMessageResolutionDelegate {
+final class InAppMessageDisplayListener: InAppMessageViewDelegate {
 
     private let analytics: InAppMessageAnalyticsProtocol
     private let timer: ActiveTimerProtocol
@@ -22,12 +22,13 @@ final class InAppMessageDisplayListener: InAppMessageResolutionDelegate {
         self.timer = timer ?? ActiveTimer()
     }
 
-    // TODO make this part of the main delegate
-    func onDisplay() async {
+    func onAppear() {
         guard isFirstDisplay else { return }
         self.isFirstDisplay = false
         
-        await analytics.recordImpression()
+        Task {
+            await analytics.recordImpression()
+        }
         
         timer.start()
 

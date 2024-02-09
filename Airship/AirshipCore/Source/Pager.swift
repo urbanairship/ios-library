@@ -17,8 +17,8 @@ struct Pager: View {
     ]
 
     private enum PageTransition {
-        case gesture(identifier: String, reportingMetadata: Any?)
-        case automated(identifier: String, reportingMetadata: Any?)
+        case gesture(identifier: String, reportingMetadata: AirshipJSON?)
+        case automated(identifier: String, reportingMetadata: AirshipJSON?)
         case defaultSwipe
     }
 
@@ -312,7 +312,7 @@ struct Pager: View {
                         gesture.behavior,
                         transition: .gesture(
                             identifier: gesture.identifier,
-                            reportingMetadata: gesture.reportingMetadata?.unWrap()
+                            reportingMetadata: gesture.reportingMetadata
                         ),
                         index: index
                     )
@@ -331,7 +331,7 @@ struct Pager: View {
                     gesture.behavior,
                     transition: .gesture(
                         identifier: gesture.identifier,
-                        reportingMetadata: gesture.reportingMetadata?.unWrap()
+                        reportingMetadata: gesture.reportingMetadata
                     ),
                     index: index
                 )
@@ -345,7 +345,7 @@ struct Pager: View {
                 behavior,
                 transition: .gesture(
                     identifier: gesture.identifier,
-                    reportingMetadata: gesture.reportingMetadata?.unWrap()
+                    reportingMetadata: gesture.reportingMetadata
                 ),
                 index: index
             )
@@ -393,7 +393,7 @@ struct Pager: View {
                     automatedAction.behaviors,
                     transition: .automated(
                         identifier: automatedAction.identifier,
-                        reportingMetadata: automatedAction.reportingMetadata?.unWrap()
+                        reportingMetadata: automatedAction.reportingMetadata
                     ),
                     index: index
                 )

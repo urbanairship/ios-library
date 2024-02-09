@@ -94,9 +94,20 @@ struct FullScreenView: View, Sendable {
                     footerButton
                 }.padding(padding)
                     .background(Color.tappableClear)
-            }.addCloseButton(dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white, dismissIconResource: dismissIconResource, onUserDismissed: {
-                environment.onUserDismissed()
-            }).addBackground(color: displayContent.backgroundColor?.color ?? Color.black)
+            }
+            .addCloseButton(
+                dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
+                dismissIconResource: dismissIconResource,
+                onUserDismissed: {
+                    environment.onUserDismissed()
+                }
+            )
+            .addBackground(
+                color: displayContent.backgroundColor?.color ?? Color.black
+            )
+            .onAppear {
+                self.environment.onAppear()
+            }
     }
 }
 

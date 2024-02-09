@@ -10,7 +10,7 @@ import AirshipCore
 #endif
 
 class InAppMessageEnvironment: ObservableObject {
-    private let delegate: InAppMessageResolutionDelegate
+    private let delegate: InAppMessageViewDelegate
     var theme: Theme
 
     @Published var imageLoader: AirshipImageLoader?
@@ -20,7 +20,7 @@ class InAppMessageEnvironment: ObservableObject {
 
     @MainActor
     init(
-        delegate: InAppMessageResolutionDelegate,
+        delegate: InAppMessageViewDelegate,
         theme: Theme,
         extensions: InAppMessageExtensions? = nil
     ) {
@@ -43,6 +43,11 @@ class InAppMessageEnvironment: ObservableObject {
             }
             callback()
         }
+    }
+
+    @MainActor
+    func onAppear() {
+        self.delegate.onAppear()
     }
 
     /// Called when a button dismisses the in-app message

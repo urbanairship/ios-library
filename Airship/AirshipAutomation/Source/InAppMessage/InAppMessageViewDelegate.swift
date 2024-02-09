@@ -2,7 +2,11 @@
 
 import Foundation
 
-public protocol InAppMessageResolutionDelegate {
+public protocol InAppMessageViewDelegate {
+    /// Called whenever the view appears
+    @MainActor
+    func onAppear()
+
     /// Called when a button dismisses the in-app message
     /// - Parameters:
     ///     - buttonInfo: The button info on the dismissing button.

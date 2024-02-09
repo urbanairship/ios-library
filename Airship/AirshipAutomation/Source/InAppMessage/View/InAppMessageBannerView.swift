@@ -205,6 +205,9 @@ struct InAppMessageBannerView: View {
                     onDismiss()
                 })
             }
+            .onAppear {
+                self.environment.onAppear()
+            }
     }
 
     var body: some View {

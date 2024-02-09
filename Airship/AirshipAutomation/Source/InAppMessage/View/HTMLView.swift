@@ -40,10 +40,14 @@ struct HTMLView: View {
 
         InAppMessageWebView(displayContent: displayContent, accessibilityLabel: "In-app web view")
             .applyIf(!hideDismissIcon){
-                $0.addCloseButton(dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
-                                  dismissIconResource: dismissIconResource,
-                                  circleColor: .tappableClear, /// Probably should just do this everywhere and remove circleColor entirely
-                                  onUserDismissed: { environment.onUserDismissed() })
+                $0.addCloseButton(
+                    dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
+                    dismissIconResource: dismissIconResource,
+                    circleColor: .tappableClear, /// Probably should just do this everywhere and remove circleColor entirely
+                    onUserDismissed: {
+                        environment.onUserDismissed()
+                    }
+                )
             }.applyIf(isModal) {
                 $0.cornerRadius(displayContent.borderRadius ?? 0)
                     .aspectResize(width:displayContent.width, height:displayContent.height)
@@ -53,6 +57,9 @@ struct HTMLView: View {
                 $0.padding(additionalPadding)
                     .padding(-24) /// Undo default padding when in fullscreen
                     .addBackground(color: displayContent.backgroundColor?.color ?? Color.clear)
+            }
+            .onAppear {
+                self.environment.onAppear()
             }
     }
 }
