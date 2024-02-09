@@ -1,8 +1,9 @@
 
-XCODE ?= 15.1
+XCODE ?= 15.2
 
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=17.2,name=iPhone 15 Pro Max
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=17.2,name=Apple TV
+export TEST_DESTINATION_VISIONOS ?= platform=visionOS Simulator,OS=1.0,name=Apple Vision Pro
 
 export DEVELOPER_DIR = $(shell bash ./scripts/get_xcode_path.sh ${XCODE} $(XCODE_PATH))
 export AIRSHIP_VERSION = $(shell bash "./scripts/airship_version.sh")
@@ -117,6 +118,10 @@ pod-lint-watchos: setup
 .PHONY: pod-lint-ios
 pod-lint-ios: setup
 	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios  --fail-fast --skip-tests --no-subspecs
+
+.PHONY: pod-lint-visionos
+pod-lint-visionos: setup
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=visionOS  --fail-fast --skip-tests --no-subspecs
 
 .PHONY: pod-lint-extensions
 pod-lint-extensions: setup

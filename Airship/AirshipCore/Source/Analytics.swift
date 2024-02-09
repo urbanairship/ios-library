@@ -287,9 +287,9 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         // Time zone
         let currentLocale = self.localeManager.currentLocale
         headers["X-UA-Timezone"] = NSTimeZone.default.identifier
-        headers["X-UA-Locale-Language"] = currentLocale.languageCode
-        headers["X-UA-Locale-Country"] = currentLocale.regionCode
-        headers["X-UA-Locale-Variant"] = currentLocale.variantCode
+        headers["X-UA-Locale-Language"] = currentLocale.getLanguageCode()
+        headers["X-UA-Locale-Country"] = currentLocale.getRegionCode()
+        headers["X-UA-Locale-Variant"] = currentLocale.getVariantCode()
 
         // Airship identifiers
         headers["X-UA-Channel-ID"] = self.channel.identifier

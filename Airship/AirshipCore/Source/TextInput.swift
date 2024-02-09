@@ -58,7 +58,7 @@ struct TextInput: View {
                 isEditing: $isEditing
             )
             .constraints(constraints, alignment: .topLeading)
-            .onChange(of: self.isEditing) { newValue in
+            .onChangeOf( self.isEditing) { newValue in
                 let focusedID = newValue ? self.model.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
             }
@@ -75,7 +75,7 @@ struct TextInput: View {
                     .padding(5)
                     .constraints(constraints, alignment: .topLeading)
                     .opacity(input.isEmpty && !isEditing ? 1 : 0)
-                    .animation(.linear(duration: 0.1))
+                    .animation(.linear(duration: 0.1), value: self.model.placeHolder)
             }
             createTextEditor()
                 .id(self.model.identifier)
@@ -147,7 +147,7 @@ struct AirshipTexField: View {
         let axis: Axis = self.model.inputType == .textMultiline ? .vertical : .horizontal
         TextField("", text: $binding, axis: axis)
             .padding(5)
-            .onChange(of: binding) { [binding] newValue in
+            .onChangeOf( binding) { [binding] newValue in
                 if (axis == .vertical) {
                     let oldCount = binding.filter { $0 == "\n" }.count
                     let newCount = newValue.filter { $0 == "\n" }.count
@@ -169,7 +169,7 @@ struct AirshipTexField: View {
             .applyIf(isUnderlined, transform: { content in
                 content.underline()
             })
-            .onChange(of: focused) { newValue in
+            .onChangeOf( focused) { newValue in
                 if (newValue) {
                     self.thomasEnvironment.focusedID = self.model.identifier
                 } else if (self.thomasEnvironment.focusedID == self.model.identifier) {

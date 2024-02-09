@@ -148,7 +148,7 @@ class ChannelTest: XCTestCase {
         self.channel.tags = ["foo", "bar"]
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
-            Locale.autoupdatingCurrent.languageCode
+            Locale.autoupdatingCurrent.getLanguageCode()
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
         expectedPayload.channel.timeZone =
             TimeZone.autoupdatingCurrent.identifier
@@ -171,7 +171,7 @@ class ChannelTest: XCTestCase {
 
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
-            Locale.autoupdatingCurrent.languageCode
+            Locale.autoupdatingCurrent.getLanguageCode()
         expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
         expectedPayload.channel.timeZone =
             TimeZone.autoupdatingCurrent.identifier

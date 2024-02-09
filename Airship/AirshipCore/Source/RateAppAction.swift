@@ -114,7 +114,7 @@ private struct DefaultAppRater: AppRaterProtocol {
 
     @MainActor
     private func findScene() -> UIWindowScene? {
-        if let mainWindowScene = AirshipUtils.mainWindow()?.windowScene {
+        if let mainWindowScene = try? AirshipUtils.mainWindow()?.windowScene {
             return mainWindowScene
         }
 

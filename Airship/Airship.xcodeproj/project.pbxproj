@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		32F678A22B750B2E003A2999 /* AirshipRelease visionOS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 32F678B12B750B2E003A2999 /* Build configuration list for PBXAggregateTarget "AirshipRelease visionOS" */;
+			buildPhases = (
+			);
+			dependencies = (
+				32F678A32B750B2E003A2999 /* PBXTargetDependency */,
+				32F678A52B750B2E003A2999 /* PBXTargetDependency */,
+				32F678A72B750B2E003A2999 /* PBXTargetDependency */,
+				32F678A92B750B2E003A2999 /* PBXTargetDependency */,
+				32F678AB2B750B2E003A2999 /* PBXTargetDependency */,
+				32F678AD2B750B2E003A2999 /* PBXTargetDependency */,
+				32F678AF2B750B2E003A2999 /* PBXTargetDependency */,
+			);
+			name = "AirshipRelease visionOS";
+			productName = AirshipRelease;
+		};
 		6EAAE85D28C2AD3A003CAE53 /* AirshipRelease */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 6EAAE85E28C2AD3A003CAE53 /* Build configuration list for PBXAggregateTarget "AirshipRelease" */;
@@ -1594,6 +1611,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		32F678A42B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
+			remoteInfo = AirshipAutomationSwift;
+		};
+		32F678A62B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A62058682A5841330041FBF9;
+			remoteInfo = AirshipFeatureFlags;
+		};
+		32F678A82B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
+			remoteInfo = AirshipBasement;
+		};
+		32F678AA2B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		32F678AC2B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E298237CCE2600EE76CF;
+			remoteInfo = AirshipDebug;
+		};
+		32F678AE2B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
+		32F678B02B750B2E003A2999 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 847BFFF3267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
+		};
 		3C38AE082384C1E700EDE9B7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -5581,6 +5647,7 @@
 				6E0B8730294A9C130064B7BD /* AirshipAutomationTests */,
 				A62058682A5841330041FBF9 /* AirshipFeatureFlags */,
 				A620586F2A5841330041FBF9 /* AirshipFeatureFlagsTests */,
+				32F678A22B750B2E003A2999 /* AirshipRelease visionOS */,
 			);
 		};
 /* End PBXProject section */
@@ -7336,6 +7403,41 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		32F678A32B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E0B8729294A9C120064B7BD /* AirshipAutomation */;
+			targetProxy = 32F678A42B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
+		32F678A52B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A62058682A5841330041FBF9 /* AirshipFeatureFlags */;
+			targetProxy = 32F678A62B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
+		32F678A72B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E431F6B26EA814F009228AB /* AirshipBasement */;
+			targetProxy = 32F678A82B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
+		32F678A92B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 32F678AA2B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
+		32F678AB2B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3CA0E298237CCE2600EE76CF /* AirshipDebug */;
+			targetProxy = 32F678AC2B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
+		32F678AD2B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
+			targetProxy = 32F678AE2B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
+		32F678AF2B750B2E003A2999 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */;
+			targetProxy = 32F678B02B750B2E003A2999 /* PBXContainerItemProxy */;
+		};
 		3C38AE092384C1E700EDE9B7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
@@ -7552,6 +7654,24 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		32F678B22B750B2E003A2999 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+			};
+			name = Debug;
+		};
+		32F678B32B750B2E003A2999 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+			};
+			name = Release;
+		};
 		3CA0E2AA237CCE2600EE76CF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */;
@@ -8856,6 +8976,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		32F678B12B750B2E003A2999 /* Build configuration list for PBXAggregateTarget "AirshipRelease visionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32F678B22B750B2E003A2999 /* Debug */,
+				32F678B32B750B2E003A2999 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		3CA0E2A9237CCE2600EE76CF /* Build configuration list for PBXNativeTarget "AirshipDebug" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

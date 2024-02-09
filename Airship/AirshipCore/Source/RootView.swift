@@ -81,7 +81,9 @@ struct RootView<Content: View>: View {
         #if os(tvOS) || os(watchOS)
         return .landscape
         #else
-        if let scene = UIApplication.shared.windows.first?.windowScene {
+        let scene = try? SceneManager.shared.lastActiveScene
+
+        if let scene = scene {
             if scene.interfaceOrientation.isLandscape {
                 return .landscape
             } else if scene.interfaceOrientation.isPortrait {

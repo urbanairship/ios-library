@@ -85,7 +85,7 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
                 height: AirshipSwitchButtonStyle.thumbDiameter
             )
             .overlay(createOverlay(isPressed: configuration.isPressed))
-            .animation(Animation.easeInOut(duration: 0.05))
+            .animation(Animation.easeInOut(duration: 0.05), value: self.isOn)
         }
     }
 }

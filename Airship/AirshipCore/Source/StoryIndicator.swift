@@ -68,7 +68,7 @@ struct StoryIndicator: View {
                             Rectangle()
                                 .frame(width: metrics.size.width * progressDelay.wrappedValue)
                                 .foregroundColor(model.style.progressColor.toColor(colorScheme))
-                                .animation(.linear)
+                                .animation(.linear, value: self.model)
                         }
                     }
                 }
@@ -88,7 +88,7 @@ struct StoryIndicator: View {
         createStoryIndicatorView(
             progressDelay: progress,
             childConstraints: childConstraints)
-        .animation(nil)
+        .animation(nil, value: self.model)
         .constraints(constraints)
         .background(self.model.backgroundColor)
         .border(self.model.border)

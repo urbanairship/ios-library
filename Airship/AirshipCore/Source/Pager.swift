@@ -112,7 +112,7 @@ struct Pager: View {
             }
             .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
             .offset(x: calcDragOffset(index: index.wrappedValue))
-            .animation(.interactiveSpring())
+            .animation(.interactiveSpring(), value: index.wrappedValue)
         }
         .frame(
             width: metrics.size.width,
@@ -195,7 +195,7 @@ struct Pager: View {
                 }
                 .applyIf(self.model.hasGestureType(type: .hold)) { view in
                     view.simultaneousGesture(makeLongPressGesture())
-                        .onChange(of: isPressingDown) { value in
+                        .onChangeOf( isPressingDown) { value in
                             handleLongPress(isPressed: value, index: index)
                         }
                 }

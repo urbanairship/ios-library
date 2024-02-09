@@ -31,7 +31,6 @@ struct ModalView: View {
                 createModal(placement: placement, metrics: metrics)
             }
         }
-        .animation(.easeOut(duration: 0.16))
         .ignoreKeyboardSafeArea()
     }
 
@@ -219,9 +218,9 @@ struct ModalView: View {
         #else
 
         var statusBarStyle = UIStatusBarStyle.default
-        if let sceneStyle = UIApplication.shared.windows.first?.windowScene?
-            .statusBarManager?
-            .statusBarStyle
+
+        if let scene = try? SceneManager.shared.lastActiveScene,
+           let sceneStyle = scene.statusBarManager?.statusBarStyle
         {
             statusBarStyle = sceneStyle
         }

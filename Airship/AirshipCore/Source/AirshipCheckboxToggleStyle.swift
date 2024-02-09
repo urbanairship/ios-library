@@ -50,7 +50,7 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                 }
             }
             .constraints(constraints, fixedSize: true)
-            .animation(Animation.easeInOut(duration: 0.05))
+            .animation(Animation.easeInOut(duration: 0.05), value: isOn)
         }
     }
 }

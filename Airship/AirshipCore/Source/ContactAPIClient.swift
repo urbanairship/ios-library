@@ -507,11 +507,12 @@ fileprivate struct OpenChannelRegistrationBody: Encodable {
         locale: Locale,
         timezone: String
     ) {
+        
         self.channel = ChannelPayload(
             address: address,
             timezone: timezone,
-            localeCountry: locale.regionCode,
-            localeLanguage: locale.languageCode,
+            localeCountry: locale.getRegionCode(),
+            localeLanguage: locale.getLanguageCode(),
             openInfo: OpenPayload(
                 platformName: options.platformName,
                 identifiers: options.identifiers
@@ -564,8 +565,8 @@ fileprivate struct EmailChannelRegistrationBody: Encodable {
         self.channel = ChannelPayload(
             address: address,
             timezone: timezone,
-            localeCountry: locale.regionCode,
-            localeLanguage: locale.languageCode,
+            localeCountry: locale.getRegionCode(),
+            localeLanguage: locale.getLanguageCode(),
             commercialOptedIn: options.commercialOptedIn,
             transactionalOptedIn: options.transactionalOptedIn
         )
@@ -632,8 +633,8 @@ fileprivate struct SMSRegistrationBody: Encodable {
         self.msisdn = msisdn
         self.sender = options.senderID
         self.timezone = timezone
-        self.localeCountry = locale.regionCode
-        self.localeLanguage = locale.languageCode
+        self.localeCountry = locale.getRegionCode()
+        self.localeLanguage = locale.getLanguageCode()
     }
 
     enum CodingKeys: String, CodingKey {

@@ -178,7 +178,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
             .aspectRatio(1, contentMode: .fit)
             .frame(height: self.viewConstraints.height)
         }
-        .animation(Animation.easeInOut(duration: 0.05))
+        .animation(Animation.easeInOut(duration: 0.05), value: configuration.isOn)
     }
 
 }

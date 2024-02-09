@@ -22,7 +22,7 @@ public class ActivityViewController: UIActivityViewController,
      */
     @objc
     public func sourceRect() -> CGRect {
-        let windowBounds = AirshipUtils.mainWindow()?.bounds
+        let windowBounds = try? AirshipUtils.mainWindow()?.bounds
 
         // Return a smaller rectangle by 25% on each axis, producing a 50% smaller rectangle inset.
         return windowBounds?

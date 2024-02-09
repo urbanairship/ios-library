@@ -44,7 +44,7 @@ struct InAppMessageRootView<Content: View>: View {
     }
 
     static func resolveOrientation() -> Orientation {
-        if let scene = UIApplication.shared.windows.first?.windowScene {
+        if let scene = try? SceneManager.shared.lastActiveScene {
             if scene.interfaceOrientation.isLandscape {
                 return .landscape
             } else if scene.interfaceOrientation.isPortrait {

@@ -14,7 +14,7 @@ struct RemoteDataURLFactory: Sendable {
 
         let languageItem = URLQueryItem(
             name: "language",
-            value: locale.languageCode
+            value: locale.getLanguageCode()
         )
 
         if languageItem.value?.isEmpty == false {
@@ -23,7 +23,7 @@ struct RemoteDataURLFactory: Sendable {
 
         let countryItem = URLQueryItem(
             name: "country",
-            value: locale.regionCode
+            value: locale.getRegionCode()
         )
 
         if countryItem.value?.isEmpty == false {

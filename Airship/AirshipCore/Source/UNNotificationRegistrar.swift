@@ -121,9 +121,13 @@ extension UNNotificationSettings {
             }
         }
 
+        #if !os(visionOS)
+        /// Announcement authorization is always included in visionOS
         if self.announcementSetting == .enabled {
             authorizedSettings.insert(.announcement)
         }
+        #endif
+
         #endif
 
         if #available(iOS 15.0, watchOS 8.0, *) {
@@ -179,7 +183,7 @@ extension UANotificationOptions {
             }
         }
 
-        #if !os(tvOS) && !os(watchOS)
+        #if !os(tvOS) && !os(watchOS) && !os(visionOS)
         // Avoids deprecation warning
         let annoucement = UANotificationOptions(rawValue: (1 << 7))
         if self.contains(annoucement) {

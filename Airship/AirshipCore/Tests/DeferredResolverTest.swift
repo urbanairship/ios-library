@@ -69,8 +69,8 @@ final class DeferredResolverTest: XCTestCase {
                 appVersion: request.appVersion,
                 sdkVersion: request.sdkVersion,
                 notificationOptIn: request.notificationOptIn,
-                localeLangauge: request.locale.languageCode,
-                localeCountry: request.locale.regionCode
+                localeLangauge: request.locale.getLanguageCode(),
+                localeCountry: request.locale.getRegionCode()
             )
 
             let expectedAudienceOverrides = ChannelAudienceOverrides(

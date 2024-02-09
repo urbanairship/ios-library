@@ -106,7 +106,7 @@ fileprivate struct ObjectEntry: View {
             .padding(8)
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: collapsed ? 0 : .none)
             .clipped()
-            .animation(.easeOut)
+            .animation(.easeOut, value: self.collapsed)
             .transition(.slide)
         }
     }

@@ -197,12 +197,10 @@ struct InAppMessageBannerView: View {
             .gesture(TapGesture().onEnded { value in
                 environment.onUserDismissed()
             })
-            .onChange(of: environment.isDismissed) { _ in
-                setShowing(state:!environment.isDismissed)
-            }
             .onAppear {
                 setShowing(state: true)
-            }.onChange(of: environment.isDismissed) { _ in
+            }
+            .onChangeOf(environment.isDismissed) { _ in
                 setShowing(state:false, completion: {
                     onDismiss()
                 })

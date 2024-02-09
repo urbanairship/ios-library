@@ -57,7 +57,7 @@ struct PagerIndicator: View {
                 }
             }
         }
-        .animation(nil)
+        .animation(nil, value: self.model)
         .constraints(constraints)
         .background(self.model.backgroundColor)
         .border(self.model.border)

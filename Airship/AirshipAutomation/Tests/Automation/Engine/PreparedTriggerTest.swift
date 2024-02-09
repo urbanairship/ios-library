@@ -247,8 +247,8 @@ final class PreparedTriggerTest: XCTestCase {
                 type: .or,
                 goal: 2,
                 children: [
-                    .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2))),
-                    .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2))),
+                    .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2)), resetOnIncrement: true),
+                    .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2)), resetOnIncrement: true),
                 ]))
         
         let instance = makeTrigger(trigger: trigger)
@@ -293,8 +293,8 @@ final class PreparedTriggerTest: XCTestCase {
                 type: .or,
                 goal: 2,
                 children: [
-                    .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2, resetOnFire: true)), isSticky: true),
-                    .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2, resetOnFire: true)), isSticky: true),
+                    .init(trigger: .event(EventAutomationTrigger(id: "foreground", type: .foreground, goal: 2)), resetOnIncrement: true),
+                    .init(trigger: .event(EventAutomationTrigger(id: "init", type: .appInit, goal: 2))),
                 ]))
         
         let instance = makeTrigger(trigger: trigger)
@@ -303,7 +303,6 @@ final class PreparedTriggerTest: XCTestCase {
         var state = instance.process(event: .foreground)
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
-        
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
@@ -318,18 +317,24 @@ final class PreparedTriggerTest: XCTestCase {
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
-        
-        state = instance.process(event: .foreground)
+
+        state = instance.process(event: .appInit)
         XCTAssertEqual(1, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
-        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
-        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
-        
-        state = instance.process(event: .foreground)
-        XCTAssertEqual(0, state?.triggerData.count)
-        XCTAssertNotNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
-        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+
+        state = instance.process(event: .foreground)
+        XCTAssertNil(state?.triggerResult)
+        XCTAssertEqual(1, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
+
+        state = instance.process(event: .foreground)
+        XCTAssertNotNil(state?.triggerResult)
+        XCTAssertEqual(0, state?.triggerData.count)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
+        assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
     }
     
     func testCompoundChainTrigger() {
@@ -509,8 +514,8 @@ final class PreparedTriggerTest: XCTestCase {
         XCTAssertEqual(0, state?.triggerData.count)
     }
     
-    private func assertChildDataCount(parent: TriggerData?, triggerID: String, count: Double) {
-        XCTAssertEqual(count, parent?.children[triggerID]?.count)
+    private func assertChildDataCount(parent: TriggerData?, triggerID: String, count: Double, line: UInt = #line) {
+        XCTAssertEqual(count, parent?.children[triggerID]?.count, line: line)
     }
     
     private func makeTrigger(trigger: AutomationTrigger? = nil, type: TriggerExecutionType = .execution, startDate: Date? = nil, endDate: Date? = nil, state: TriggerData? = nil) -> PreparedTrigger {

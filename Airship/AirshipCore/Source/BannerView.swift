@@ -50,7 +50,7 @@ struct BannerView: View {
                 )
                 
                 createBanner(placement: placement, metrics: metrics)
-                    .onChange(of: thomasEnvironment.isDismissed) { _ in
+                    .onChangeOf(thomasEnvironment.isDismissed, { _ in
                         withAnimation(.linear(duration: BannerView.animationOutDuration)) {
                             self.positionState = .hidden
                         }
@@ -59,7 +59,7 @@ struct BannerView: View {
                         ) {
                             onDismiss()
                         }
-                    }
+                    })
                     .onAppear {
                         withAnimation(.linear(duration: BannerView.animationInDuration)) {
                             self.positionState = .visible

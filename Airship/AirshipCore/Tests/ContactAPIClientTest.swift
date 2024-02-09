@@ -329,8 +329,8 @@ class ContactAPIClientTest: XCTestCase {
             "msisdn": "15035556789",
             "sender": "28855",
             "timezone": TimeZone.current.identifier,
-            "locale_country": currentLocale.regionCode ?? "",
-            "locale_language": currentLocale.languageCode ?? "",
+            "locale_country": currentLocale.getRegionCode(),
+            "locale_language": currentLocale.getLanguageCode(),
         ]
         XCTAssertEqual(
             previousBody as! NSDictionary,
@@ -399,8 +399,8 @@ class ContactAPIClientTest: XCTestCase {
                 "type": "open",
                 "address": "open_address",
                 "timezone": TimeZone.current.identifier,
-                "locale_country": currentLocale.regionCode ?? "",
-                "locale_language": currentLocale.languageCode ?? "",
+                "locale_country": currentLocale.getRegionCode(),
+                "locale_language": currentLocale.getLanguageCode(),
                 "opt_in": true,
                 "open": [
                     "open_platform_name": "my_platform",

@@ -153,7 +153,6 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
         type: EventAutomationTriggerType,
         goal: Double,
         predicate: JSONPredicate? = nil,
-        resetOnFire: Bool? = nil,
         children: [AutomationTrigger] = []
     ) {
         self.type = type

@@ -119,3 +119,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint-extensions
+
+  pod-lib-lint-visonos:
+    runs-on: macos-13-xlarge
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pod lint
+        run: make pod-lint-visionos

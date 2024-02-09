@@ -214,11 +214,11 @@ public extension DeviceAudienceSelector {
         return languageIDs.contains { languageID in
             let locale = Locale(identifier: languageID)
 
-            if currentLocale.languageCode != locale.languageCode {
+            if currentLocale.getLanguageCode() != locale.getLanguageCode() {
                 return false
             }
 
-            if (locale.regionCode != nil && locale.regionCode != currentLocale.regionCode) {
+            if (!locale.getRegionCode().isEmpty && locale.getRegionCode() != currentLocale.getRegionCode()) {
                 return false
             }
 

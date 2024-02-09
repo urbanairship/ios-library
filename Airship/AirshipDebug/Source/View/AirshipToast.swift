@@ -2,6 +2,11 @@
 
 import SwiftUI
 
+#if canImport(AirshipCore)
+/// Import AirshipCore for utilities
+import AirshipCore
+#endif
+
 struct AirshipToast: View {
     struct Message: Equatable {
         let id: String
@@ -38,7 +43,7 @@ struct AirshipToast: View {
     @ViewBuilder
     var body: some View {
         makeView()
-            .onChange(of: self.message) { incoming in
+            .onChangeOf( self.message) { incoming in
                 if incoming != nil {
                     showToast()
                 }

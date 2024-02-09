@@ -667,8 +667,8 @@ extension AirshipChannel: PushableComponent {
 
         if self.privacyManager.isAnyFeatureEnabled() {
             let currentLocale = self.localeManager.currentLocale
-            payload.channel.language = currentLocale.languageCode
-            payload.channel.country = currentLocale.regionCode
+            payload.channel.language = currentLocale.getLanguageCode()
+            payload.channel.country = currentLocale.getRegionCode()
             payload.channel.timeZone = TimeZone.current.identifier
             payload.channel.sdkVersion = AirshipVersion.version
         }

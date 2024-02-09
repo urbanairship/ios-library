@@ -2,6 +2,7 @@
 
 import CommonCrypto
 import Foundation
+import SwiftUI
 
 #if !os(watchOS)
 import SystemConfiguration
@@ -266,11 +267,12 @@ public class AirshipUtils: NSObject {
     /// by classes such a `UIAlertView` or `UIActionSheet`.
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
-    @objc
     @MainActor
-    public class func mainWindow() -> UIWindow? {
+    public class func mainWindow() throws -> UIWindow? {
+        let scene = try SceneManager.shared.lastActiveScene
+
         let sharedApp: UIApplication = UIApplication.shared
-        for window in sharedApp.windows {
+        for window in scene.windows {
             if window.isKeyWindow {
                 return window
             }
@@ -296,7 +298,7 @@ public class AirshipUtils: NSObject {
             }
         }
 
-        return self.mainWindow()
+        return try? self.mainWindow()
     }
 
     /// Returns the window containing the provided view.
@@ -594,5 +596,61 @@ extension Date {
 public extension URL {
     var assetFilename: String {
         return AirshipUtils.sha256Hash(input: self.path)
+    }
+}
+
+public extension View {
+    /// Wrapper to prevent linter warnings for deprecated onChange method
+    /// - Parameters:
+    ///   - value: The value to observe for changes.
+    ///   - initial: A Boolean value that determines whether the action should be fired initially.
+    ///   - action: The action to perform when the value changes.
+    @ViewBuilder
+    func onChangeOf<Value: Equatable>(_ value: Value, initial: Bool = false, _ action: @escaping (Value) -> Void) -> some View {
+        if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *) {
+            self.onChange(of: value, initial: initial, {
+                action(value)
+            })
+        } else {
+            self.onChange(of: value, perform: action)
+        }
+    }
+}
+
+extension Locale {
+    func getLanguageCode() -> String {
+        let localeLanguage: String
+
+        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
+            localeLanguage = self.language.languageCode?.identifier ?? ""
+        } else {
+            localeLanguage = self.languageCode ?? ""
+        }
+
+        return localeLanguage
+    }
+
+    func getRegionCode() -> String {
+        let localeRegion: String
+
+        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
+            localeRegion = self.region?.identifier ?? ""
+        } else {
+            localeRegion = self.regionCode ?? ""
+        }
+
+        return localeRegion
+    }
+
+    func getVariantCode() -> String {
+        let variantCode: String
+
+        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
+            variantCode = self.variant?.identifier ?? ""
+        } else {
+            variantCode = self.variantCode ?? ""
+        }
+
+        return variantCode
     }
 }
