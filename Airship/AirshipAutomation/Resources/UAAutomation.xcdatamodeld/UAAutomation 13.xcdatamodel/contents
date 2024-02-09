@@ -3,7 +3,7 @@
     <entity name="UAScheduleData" representedClassName="UAScheduleData" elementID="UAActionScheduleData" syncable="YES">
         <attribute name="audience" optional="YES" attributeType="String"/>
         <attribute name="bypassHoldoutGroups" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="campaigns" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
+        <attribute name="campaigns" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="data" optional="YES" attributeType="String" elementID="actions"/>
         <attribute name="dataVersion" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="delayedExecutionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -11,7 +11,7 @@
         <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="executionState" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" elementID="isPendingExecution"/>
         <attribute name="executionStateChangeDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="frequencyConstraintIDs" optional="YES" attributeType="Transformable" valueTransformerName="UANSArrayValueTransformer"/>
+        <attribute name="frequencyConstraintIDs" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="group" optional="YES" attributeType="String"/>
         <attribute name="identifier" optional="YES" attributeType="String"/>
         <attribute name="interval" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
@@ -21,7 +21,7 @@
         <attribute name="metadata" optional="YES" attributeType="String"/>
         <attribute name="priority" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="productId" optional="YES" attributeType="String"/>
-        <attribute name="reportingContext" optional="YES" attributeType="Transformable" valueTransformerName="UANSDictionaryValueTransformer"/>
+        <attribute name="reportingContext" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="start" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="triggeredCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="triggeredTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

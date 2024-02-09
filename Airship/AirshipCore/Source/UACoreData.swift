@@ -461,6 +461,7 @@ public final class UACoreData: @unchecked Sendable {
                 )
 
             if let result = result {
+                correctFilePermissions(url: storeURL)
                 AirshipLogger.debug(
                     "Created store: \(storeName) url: \(storeURL)"
                 )
@@ -478,6 +479,15 @@ public final class UACoreData: @unchecked Sendable {
             AirshipLogger.error("Failed to create store \(storeName): \(error)")
         }
         return false
+    }
+    
+    private func correctFilePermissions(url: URL) {
+        do {
+            let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
+            try FileManager.default.setAttributes(attributes, ofItemAtPath: url.path)
+        } catch(let exception) {
+            AirshipLogger.error("Failed to set file attribute \(exception)")
+        }
     }
 
     public class func save(_ context: NSManagedObjectContext) throws {

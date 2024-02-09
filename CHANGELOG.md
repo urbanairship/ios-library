@@ -3,6 +3,20 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.7.3, Jan 29, 2024
+Patch release that fixes an issue with message limits not being respected in certain cases.
+
+### Changes
+- Fixed message limits not being respected in certain cases.
+
+## Version 17.7.2 January 24, 2023
+Patch release improving SDK stability and a fix for core-data warnings with Xcode 15.
+
+### Changes
+- Override hashing for MessageCenterMessage
+- Fixed core-data warnings
+- Fixed potential crash due to de-duping conflicts events in AirshipContact
+
 ## Version 17.7.1 December 18, 2023
 Patch release that fixes an issue with app background events being attributed to the wrong session ID. This issue was introduced in 17.5.0 and impacts
 session duration times in Performance Analytics. Applications that rely on that report should update.
