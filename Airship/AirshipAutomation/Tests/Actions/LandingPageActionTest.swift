@@ -71,6 +71,7 @@ final class LandingPageActionTest: XCTestCase {
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")
+                XCTAssertEqual(schedule.queue, "landing_page")
                 XCTAssertEqual(schedule.priority, Int.min)
                 scheduled.fulfill()
             }
@@ -119,6 +120,7 @@ final class LandingPageActionTest: XCTestCase {
                 XCTAssertEqual(schedule.triggers[0].goal, 1.0)
                 XCTAssertTrue(schedule.bypassHoldoutGroups!)
                 XCTAssertEqual(schedule.productID, "landing_page")
+                XCTAssertEqual(schedule.queue, "landing_page")
                 XCTAssertEqual(schedule.priority, Int.min)
                 scheduled.fulfill()
             }

@@ -9,6 +9,9 @@ import AirshipCore
 /// Landing page action
 public final class LandingPageAction: AirshipAction {
 
+    private static let productID: String = "landing_page"
+    private static let queue: String = "landing_page"
+    
     /// Landing page action names.
     public static let defaultNames: [String] = ["landing_page_action", "^p"]
 
@@ -64,7 +67,7 @@ public final class LandingPageAction: AirshipAction {
 #endif
         }
     }
-    
+
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         let pushMetadata = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON
         let messageID = pushMetadata?.object?["_"]?.string
@@ -96,7 +99,8 @@ public final class LandingPageAction: AirshipAction {
             triggers: [AutomationTrigger.activeSession(count: 1)],
             priority: Int.min,
             bypassHoldoutGroups: true,
-            productID: "landing_page"
+            productID: Self.productID,
+            queue: Self.queue
         )
 
         self.scheduleExtender?(arguments, &schedule)

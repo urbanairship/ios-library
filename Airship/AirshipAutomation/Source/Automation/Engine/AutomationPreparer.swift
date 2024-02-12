@@ -36,8 +36,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private let audienceChecker: DeviceAudienceChecker
     private let experiments: ExperimentDataProvider
     private let remoteDataAccess: AutomationRemoteDataAccessProtocol
-    private let prepareQueue: RetryingQueue<SchedulePrepareResult> = RetryingQueue()
-    
+    private let queues: Queues = Queues()
+
     private static let deferredResultKey: String = "AirshipAutomation#deferredResult"
     private static let defaultMessageType: String = "transactional"
     private let deviceInfoProviderFactory: @Sendable (String?) -> AudienceDeviceInfoProvider
@@ -79,7 +79,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     ) async -> SchedulePrepareResult {
         AirshipLogger.trace("Preparing \(schedule.identifier)")
 
-        return await prepareQueue.run(name: "schedule: \(schedule.identifier)") { retryState in
+        let queue = await self.queues.queue(name: schedule.queue)
+        return await queue.run(name: "schedule: \(schedule.identifier)") { retryState in
 
             guard await !self.remoteDataAccess.requiresUpdate(schedule: schedule) else {
                 AirshipLogger.trace("Schedule out of date \(schedule.identifier)")
@@ -318,6 +319,25 @@ fileprivate extension AutomationSchedule {
 
     var evaluateExperiments: Bool {
         return self.isInAppMessageType && self.bypassHoldoutGroups != true
+    }
+}
+
+fileprivate actor Queues {
+    var queues: [String: RetryingQueue<SchedulePrepareResult>] = [:]
+    let defaultQueue: RetryingQueue<SchedulePrepareResult> = RetryingQueue()
+
+    func queue(name: String?) -> RetryingQueue<SchedulePrepareResult> {
+        guard let name = name, !name.isEmpty else {
+            return defaultQueue
+        }
+
+        if let queue = queues[name] {
+            return queue
+        }
+
+        let queue: RetryingQueue<SchedulePrepareResult> = RetryingQueue()
+        queues[name] = queue
+        return queue
     }
 }
 

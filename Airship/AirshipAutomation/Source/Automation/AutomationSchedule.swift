@@ -74,8 +74,8 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     var reportingContext: AirshipJSON?
     var productID: String?
     var minSDKVersion: String?
-
     var created: Date?
+    var queue: String?
 
 
     enum CodingKeys: String, CodingKey {
@@ -103,6 +103,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case deferred
         case message
         case minSDKVersion = "min_sdk_version"
+        case queue
     }
 
     private enum ScheduleType: String, Codable {
@@ -147,6 +148,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.campaigns = nil
         self.reportingContext = nil
         self.productID = nil
+        self.queue = nil
     }
 
     init(
@@ -171,7 +173,8 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         productID: String? = nil,
         frequencyConstraintIDs: [String]? = nil,
         messageType: String? = nil,
-        minSDKVersion: String? = nil
+        minSDKVersion: String? = nil,
+        queue: String? = nil
     ) {
         self.identifier = identifier
         self.triggers = triggers
@@ -194,6 +197,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.messageType = messageType
         self.created = created
         self.minSDKVersion = minSDKVersion
+        self.queue = queue
     }
 
     public init(from decoder: Decoder) throws {
@@ -218,6 +222,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.frequencyConstraintIDs = try container.decodeIfPresent([String].self, forKey: .frequencyConstraintIDs)
         self.messageType = try container.decodeIfPresent(String.self, forKey: .messageType)
         self.minSDKVersion = try container.decodeIfPresent(String.self, forKey: .minSDKVersion)
+        self.queue = try container.decodeIfPresent(String.self, forKey: .queue)
 
         let scheduleType = try container.decode(ScheduleType.self, forKey: .scheduleType)
         switch(scheduleType) {
@@ -271,6 +276,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.frequencyConstraintIDs, forKey: .frequencyConstraintIDs)
         try container.encodeIfPresent(self.messageType, forKey: .messageType)
         try container.encodeIfPresent(self.minSDKVersion, forKey: .minSDKVersion)
+        try container.encodeIfPresent(self.queue, forKey: .queue)
 
         switch(self.data) {
         case .actions(let actions):
@@ -285,8 +291,6 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         }
     }
 }
-
-
 
 fileprivate extension String {
     func toDate() -> Date? {
