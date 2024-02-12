@@ -7,17 +7,28 @@ struct RemoteConfig: Codable, Equatable, Sendable {
     let meteredUsageConfig: MeteredUsageConfig?
     let fetchContactRemoteData: Bool?
     let contactConfig: ContactConfig?
+    let disabledFeatures: AirshipFeature?
+
+    var remoteDataRefreshInterval: TimeInterval? {
+        return remoteDataRefreshIntervalMilliseconds?.timeInterval
+    }
+
+    let remoteDataRefreshIntervalMilliseconds: Int64?
 
     init(
         airshipConfig: AirshipConfig? = nil,
         meteredUsageConfig: MeteredUsageConfig? = nil,
         fetchContactRemoteData: Bool? = nil,
-        contactConfig: ContactConfig? = nil
+        contactConfig: ContactConfig? = nil,
+        disabledFeatures: AirshipFeature? = nil,
+        remoteDataRefreshIntervalMilliseconds: Int64? = nil
     ) {
         self.airshipConfig = airshipConfig
         self.meteredUsageConfig = meteredUsageConfig
         self.fetchContactRemoteData = fetchContactRemoteData
         self.contactConfig = contactConfig
+        self.disabledFeatures = disabledFeatures
+        self.remoteDataRefreshIntervalMilliseconds = remoteDataRefreshIntervalMilliseconds
     }
 
     enum CodingKeys: String, CodingKey {
@@ -25,6 +36,8 @@ struct RemoteConfig: Codable, Equatable, Sendable {
         case meteredUsageConfig = "metered_usage"
         case fetchContactRemoteData = "fetch_contact_remote_data"
         case contactConfig = "contact_config"
+        case disabledFeatures = "disabled_features"
+        case remoteDataRefreshIntervalMilliseconds = "remote_data_refresh_interval"
     }
 
     struct ContactConfig: Codable, Equatable, Sendable {

@@ -22,8 +22,9 @@ class AirshipContactTest: XCTestCase {
 
     override func setUp() async throws {
         self.config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
-        self.privacyManager = AirshipPrivacyManager(
+        self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
+            config: self.config,
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
@@ -416,10 +417,12 @@ class AirshipContactTest: XCTestCase {
         await self.verifyOperations([.reset])
     }
 
+    @MainActor
     func testIdentifySkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
+        await self.verifyOperations([.reset])
         self.contact.identify("cat")
-        await self.verifyOperations([])
+        await self.verifyOperations([.reset])
     }
 
     @MainActor

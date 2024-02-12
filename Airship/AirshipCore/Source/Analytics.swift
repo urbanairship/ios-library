@@ -56,7 +56,6 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
     private let eventManager: EventManagerProtocol
     private let localeManager: AirshipLocaleManagerProtocol
     private let permissionsManager: AirshipPermissionsManager
-    private let disableHelper: ComponentDisableHelper
     private let sessionTracker: SessionTrackerProtocol
     private let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
@@ -96,20 +95,10 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         eventSubject.eraseToAnyPublisher()
     }
 
-    /// NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get {
-            return disableHelper.enabled
-        }
-        set {
-            disableHelper.enabled = newValue
-        }
-    }
 
     private var isAnalyticsEnabled: Bool {
         return self.privacyManager.isEnabled(.analytics) &&
-        self.config.isAnalyticsEnabled &&
-        self.isComponentEnabled
+        self.config.isAnalyticsEnabled
     }
 
     @MainActor
@@ -161,16 +150,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
         self.eventManager = eventManager
         self.sessionTracker = sessionTracker
 
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "UAAnalytics"
-        )
-
         super.init()
-
-        self.disableHelper.onChange = { [weak self] in
-            self?.updateEnablement()
-        }
 
         self.eventManager.addHeaderProvider {
             await self.makeHeaders()

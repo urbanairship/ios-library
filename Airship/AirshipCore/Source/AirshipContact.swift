@@ -106,18 +106,6 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         }
     }
 
-    private let disableHelper: ComponentDisableHelper
-
-    /// NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get {
-            return disableHelper.enabled
-        }
-        set {
-            disableHelper.enabled = newValue
-        }
-    }
-
     /// The shared Contact instance.
     @objc
     public static var shared: AirshipContact {
@@ -161,11 +149,6 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
         self.contactManager = contactManager
         self.serialQueue = serialQueue
 
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "Contact"
-        )
-
         self.cachedSubscriptionLists = CachedValue(date: date)
 
         super.init()
@@ -189,8 +172,6 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
                     subscriptionLists: update.subscriptionLists
                 )
             }
-
-            await contactManager.setEnabled(enabled: self.isComponentEnabled)
         }
         
         self.serialQueue.enqueue {
@@ -220,10 +201,6 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
                 )
             }.store(in: &self.subscriptions)
 
-
-        self.disableHelper.onChange = { [weak self] in
-            self?.onComponentEnableChange()
-        }
 
         channel.addRegistrationExtender { [weak self] payload in
             await self?.setupTask?.value
@@ -625,17 +602,6 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
                 expiresIn: Self.maxSubscriptionListCacheAge
             )
             return lists
-        }
-    }
-
-    /**
-     * :nodoc:
-     */
-    private func onComponentEnableChange() {
-        self.serialQueue.enqueue {
-            await self.contactManager.setEnabled(
-                enabled: self.isComponentEnabled
-            )
         }
     }
 

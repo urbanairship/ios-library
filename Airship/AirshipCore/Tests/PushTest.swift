@@ -25,11 +25,16 @@ class PushTest: XCTestCase {
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
-        self.privacyManager = AirshipPrivacyManager(
-            dataStore: dataStore,
-            defaultEnabledFeatures: AirshipFeature.all,
-            notificationCenter: notificationCenter
+        self.privacyManager = await AirshipPrivacyManager(
+            dataStore: self.dataStore,
+            config:  RuntimeConfig(
+                config: AirshipConfig(),
+                dataStore: self.dataStore
+            ),
+            defaultEnabledFeatures: .all,
+            notificationCenter: self.notificationCenter
         )
+        
         self.push = await createPush()
         await self.serialQueue.waitForCurrentOperations()
         self.channel.updateRegistrationCalled = false
@@ -668,25 +673,6 @@ class PushTest: XCTestCase {
             [.alert, .badge, .sound, .provisional],
             self.push.notificationOptions
         )
-    }
-
-    func testComponentEnabledUpdatesRegistration() async  {
-        self.push.isComponentEnabled = false
-        self.push.userPushNotificationsEnabled = true
-        await self.serialQueue.waitForCurrentOperations()
-
-        // Make sure updates are called through permissions manager
-        let permissionsManagerCalled = self.expectation(
-            description: "Permissions manager called"
-        )
-        self.permissionsManager.addRequestExtender(
-            permission: .displayNotifications
-        ) { _ in
-            permissionsManagerCalled.fulfill()
-        }
-
-        self.push.isComponentEnabled = true
-        await self.fulfillmentCompat(of: [permissionsManagerCalled], timeout: 10.0)
     }
 
     @MainActor

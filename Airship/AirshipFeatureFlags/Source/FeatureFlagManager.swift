@@ -23,16 +23,6 @@ enum FeatureFlagEvaluationError: Error {
 /// Airship feature flag manager
 public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
-    /// NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get {
-            return disableHelper.enabled
-        }
-        set {
-            disableHelper.enabled = newValue
-        }
-    }
-
     /// The shared FeatureFlagManager instance. `Airship.takeOff` must be called before accessing this instance.
     public static var shared: FeatureFlagManager {
         return Airship.requireComponent(ofType: FeatureFlagManager.self)
@@ -40,7 +30,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 
     private let remoteDataAccess: FeatureFlagRemoteDataAccessProtocol
     private let audienceChecker: DeviceAudienceChecker
-    private let disableHelper: ComponentDisableHelper
     private let eventTracker: EventTracker
     private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
     private let notificationCenter: AirshipNotificationCenter
@@ -59,10 +48,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
         self.audienceChecker = audienceChecker
         self.eventTracker = eventTracker
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "FeatureFlags"
-        )
         self.notificationCenter = notificationCenter
         self.deferredResolver = deferredResolver
     }
@@ -94,10 +79,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
     }
 
     private func flag(name: String, allowRefresh: Bool) async throws -> FeatureFlag {
-        guard self.isComponentEnabled else {
-            throw FeatureFlagError.failedToFetchData
-        }
-
         let remoteDataFeatureFlagInfo = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
         let status = await self.remoteDataAccess.status
 

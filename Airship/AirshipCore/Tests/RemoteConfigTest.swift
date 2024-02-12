@@ -36,7 +36,8 @@ final class RemoteConfigTest: XCTestCase {
                   "max_cra_resolve_age_ms":300,
                   "foreground_resolve_interval_ms":400
                },
-               "fetch_contact_remote_data":true
+               "fetch_contact_remote_data":true,
+               "disabled_features": ["push", "analytics"]
             }
         """
 
@@ -56,7 +57,8 @@ final class RemoteConfigTest: XCTestCase {
             contactConfig: .init(
                 foregroundIntervalMilliseconds: 400,
                 channelRegistrationMaxResolveAgeMilliseconds: 300
-            )
+            ),
+            disabledFeatures: [.push, .analytics]
         )
 
         let config = try self.decoder.decode(RemoteConfig.self, from: json.data(using: .utf8)!)

@@ -28,6 +28,4 @@ public protocol RemoteDataProtocol: AnyObject, Sendable {
 
     @discardableResult
     func refresh(source: RemoteDataSource) async -> Bool
-
-    var remoteDataRefreshInterval: TimeInterval { get set }
 }

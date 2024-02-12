@@ -330,7 +330,7 @@
 				9908E5BF2AFDA95000DB3E2E /* AirshipPreferenceCenterTests.xctest */,
 				9908E5C12AFDA95000DB3E2E /* AirshipMessageCenterTests.xctest */,
 				9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */,
-				9908E5C52AFDA95000DB3E2E /* AirshipAutomationSwiftTests.xctest */,
+				9908E5C52AFDA95000DB3E2E /* AirshipAutomationTests.xctest */,
 				9908E5C72AFDA95000DB3E2E /* AirshipFeatureFlags.framework */,
 				9908E5C92AFDA95000DB3E2E /* AirshipFeatureFlagsTests.xctest */,
 			);
@@ -543,7 +543,7 @@
 			remoteRef = 9908E5C22AFDA95000DB3E2E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		9908E5C52AFDA95000DB3E2E /* AirshipAutomationSwiftTests.xctest */ = {
+		9908E5C52AFDA95000DB3E2E /* AirshipAutomationTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = AirshipAutomationTests.xctest;

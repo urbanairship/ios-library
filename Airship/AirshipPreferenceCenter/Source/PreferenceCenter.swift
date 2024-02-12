@@ -57,18 +57,6 @@ public class PreferenceCenter: NSObject, AirshipComponent {
         self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
     }
 
-    private let disableHelper: ComponentDisableHelper
-
-    /// NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get {
-            return disableHelper.enabled
-        }
-        set {
-            disableHelper.enabled = newValue
-        }
-    }
-
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
@@ -78,10 +66,6 @@ public class PreferenceCenter: NSObject, AirshipComponent {
         self.privacyManager = privacyManager
         self.remoteData = remoteData
         self.theme = PreferenceCenterThemeLoader.defaultPlist()
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "PreferenceCenter"
-        )
         super.init()
         AirshipLogger.info("PreferenceCenter initialized")
     }

@@ -5,8 +5,6 @@ import AirshipCore
 #endif
 
 public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Sendable {
-    // TODO
-    public var isComponentEnabled: Bool = true
 
     private let engine: AutomationEngineProtocol
     private let remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol

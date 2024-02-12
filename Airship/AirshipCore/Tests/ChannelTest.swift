@@ -18,8 +18,12 @@ class ChannelTest: XCTestCase {
 
     override func setUp() async throws {
 
-        self.privacyManager = AirshipPrivacyManager(
+        self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
+            config:  RuntimeConfig(
+                config: self.config,
+                dataStore: self.dataStore
+            ),
             defaultEnabledFeatures: [],
             notificationCenter: self.notificationCenter
         )

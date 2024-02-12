@@ -10,12 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(AirshipComponent)
 @protocol UAComponent <NSObject>
 
-/**
- * Flag indicating whether the component is enabled. Clear to disable. Set to enable.
- * @note For internal use only. :nodoc:
- */
-@property (assign, getter=isComponentEnabled) BOOL componentEnabled;
-
 @optional
 
 /**

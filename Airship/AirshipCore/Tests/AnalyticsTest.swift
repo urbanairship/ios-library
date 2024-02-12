@@ -25,11 +25,16 @@ class AnalyticsTest: XCTestCase {
 
 
     override func setUp() async throws {
-        self.privacyManager = AirshipPrivacyManager(
-            dataStore: dataStore,
+        self.privacyManager = await AirshipPrivacyManager(
+            dataStore: self.dataStore,
+            config:  RuntimeConfig(
+                config: self.config,
+                dataStore: self.dataStore
+            ),
             defaultEnabledFeatures: .all,
-            notificationCenter: notificationCenter
+            notificationCenter: self.notificationCenter
         )
+        
 
         self.analytics = await makeAnalytics()
     }
@@ -137,24 +142,6 @@ class AnalyticsTest: XCTestCase {
         wait(for: [expectation], timeout: 5.0)
         XCTAssertFalse(self.eventManager.uploadsEnabled)
 
-    }
-
-    @MainActor
-    func testDisablingAnalyticsComponent() throws {
-        self.channel.identifier = "test channel"
-        self.analytics.airshipReady()
-
-        XCTAssertTrue(self.eventManager.uploadsEnabled)
-
-        let expectation = XCTestExpectation()
-        self.eventManager.deleteEventsCallback = {
-            expectation.fulfill()
-        }
-
-        self.analytics.isComponentEnabled = false
-
-        wait(for: [expectation], timeout: 5.0)
-        XCTAssertFalse(self.eventManager.uploadsEnabled)
     }
 
 

@@ -36,7 +36,6 @@ public class MessageCenter: NSObject, ObservableObject {
     public var displayDelegate: MessageCenterDisplayDelegate?
 
     private let privacyManager: AirshipPrivacyManager
-    private let disableHelper: ComponentDisableHelper
 
     /// Message center inbox.
     @objc
@@ -61,8 +60,7 @@ public class MessageCenter: NSObject, ObservableObject {
     }
 
     private var enabled: Bool {
-        return self.isComponentEnabled
-            && self.privacyManager.isEnabled(.messageCenter)
+        return self.privacyManager.isEnabled(.messageCenter)
     }
 
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
@@ -81,10 +79,6 @@ public class MessageCenter: NSObject, ObservableObject {
         self.inbox = inbox
         self.privacyManager = privacyManager
         self.theme = MessageCenterThemeLoader.defaultPlist()
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "MessageCenter"
-        )
         self.controller = controller
         
         super.init()
@@ -97,9 +91,6 @@ public class MessageCenter: NSObject, ObservableObject {
             self?.updateEnableState()
         }
 
-        self.disableHelper.onChange = {
-            self.updateEnableState()
-        }
 
         self.updateEnableState()
     }
@@ -196,15 +187,6 @@ extension MessageCenter: AirshipComponent, PushableComponent {
 
     // MARK: Component
 
-    public var isComponentEnabled: Bool {
-        get {
-            return self.disableHelper.enabled
-        }
-
-        set {
-            self.disableHelper.enabled = newValue
-        }
-    }
 
     @MainActor
     func deepLink(deepLink: URL) -> Bool {

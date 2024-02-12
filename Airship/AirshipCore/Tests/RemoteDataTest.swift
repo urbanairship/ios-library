@@ -20,16 +20,21 @@ final class RemoteDataTest: AirshipBaseTest {
     private let testLocaleManager: TestLocaleManager = TestLocaleManager()
     private let testWorkManager: TestWorkManager = TestWorkManager()
     private var remoteData: RemoteData!
-    lazy var privacyManager: AirshipPrivacyManager = {
-        AirshipPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
-    }()
+    private var privacyManager: AirshipPrivacyManager!
 
     override func setUp() async throws {
+
         self.config = RuntimeConfig(
             config: AirshipConfig.config(),
             dataStore: dataStore
         )
-        
+
+        self.privacyManager = await AirshipPrivacyManager(
+            dataStore: self.dataStore,
+            config: self.config,
+            defaultEnabledFeatures: .all
+        )
+
         self.testDate.dateOverride = Date()
         self.testLocaleManager.currentLocale =  Locale(identifier: "en-US")
         self.remoteData = await RemoteData(
@@ -90,7 +95,7 @@ final class RemoteDataTest: AirshipBaseTest {
         )
         XCTAssertEqual(1, testWorkManager.workRequests.count)
 
-        self.testDate.offset += self.remoteData.remoteDataRefreshInterval
+        self.testDate.offset += self.remoteData.refreshInterval
         notificationCenter.post(
             name: AppStateTracker.didTransitionToForeground
         )
@@ -229,10 +234,11 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
 
+    @MainActor
     func testSettingRefreshInterval() {
-        XCTAssertEqual(self.remoteData.remoteDataRefreshInterval, 10)
-        self.remoteData.remoteDataRefreshInterval = 9999
-        XCTAssertEqual(self.remoteData.remoteDataRefreshInterval, 9999)
+        XCTAssertEqual(self.remoteData.refreshInterval, 10)
+        self.config.updateRemoteConfig(RemoteConfig(remoteDataRefreshIntervalMilliseconds: 9999 * 1000))
+        XCTAssertEqual(self.remoteData.refreshInterval, 9999)
     }
 
     func testPayloads() async {
@@ -481,7 +487,7 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertEqual(last, changeToken.value)
 
         // Foreground after refresh interval
-        self.testDate.offset += self.remoteData.remoteDataRefreshInterval
+        self.testDate.offset += self.remoteData.refreshInterval
         notificationCenter.post(
             name: AppStateTracker.didTransitionToForeground
         )

@@ -8,9 +8,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
     
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let channel: AirshipChannelProtocol = TestChannel()
-    private let privacyManager = AirshipPrivacyManager(
-        dataStore: PreferenceDataStore(appKey: UUID().uuidString),
-        defaultEnabledFeatures: [])
+    private var privacyManager: AirshipPrivacyManager!
     private let apiClient: MeteredUsageAPIClientProtocol = MeteredTestApiClient()
     private let storage = MeteredUsageStore(appKey: "test.app.key", inMemory: true)
     private let workManager = TestWorkManager()
@@ -24,6 +22,12 @@ final class AirshipMeteredUsageTest: XCTestCase {
             dataStore: dataStore
         )
 
+        self.privacyManager = AirshipPrivacyManager(
+            dataStore: self.dataStore, 
+            config: self.config,
+            defaultEnabledFeatures: []
+        )
+        
         self.target = AirshipMeteredUsage(
             config: config,
             dataStore: dataStore,

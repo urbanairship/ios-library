@@ -18,9 +18,14 @@ class ChannelAudienceManagerTest: XCTestCase {
     private var privacyManager: AirshipPrivacyManager!
     private var audienceManager: ChannelAudienceManager!
 
-    override func setUpWithError() throws {
-        self.privacyManager = AirshipPrivacyManager(
+    override func setUp() async throws {
+
+        self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
+            config:  RuntimeConfig(
+                config: AirshipConfig(),
+                dataStore: self.dataStore
+            ),
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )

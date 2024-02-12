@@ -141,7 +141,6 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
     private let notificationRegistrar: NotificationRegistrar
     private let apnsRegistrar: APNSRegistrar
     private let badger: Badger
-    private let disableHelper: ComponentDisableHelper
 
     @MainActor
     private var waitForDeviceToken = false
@@ -165,15 +164,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
         return self.apnsRegistrar.isBackgroundRefreshStatusAvailable
         #endif
     }
-    /// NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get {
-            return self.disableHelper.enabled
-        }
-        set {
-            self.disableHelper.enabled = newValue
-        }
-    }
+
 
     private var subscriptions: Set<AnyCancellable> = Set()
     
@@ -204,10 +195,6 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
         self.badger = badger
         self.serialQueue = serialQueue
 
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "UAPush"
-        )
         super.init()
 
         self.notificationStatusSubject
@@ -228,10 +215,6 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
                 )
             }
             .store(in: &self.subscriptions)
-        
-        self.disableHelper.onChange = { [weak self] in
-            self?.onComponentEnableChange()
-        }
 
         if config.requestAuthorizationToUseNotifications {
             let permissionDelegate = NotificationPermissionDelegate(
@@ -779,7 +762,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
 
     @MainActor
     private func updatePushEnablement() {
-        if self.isComponentEnabled && self.privacyManager.isEnabled(.push) {
+        if self.privacyManager.isEnabled(.push) {
             if (!self.pushEnabled) {
                 self.pushEnabled = true
                 self.apnsRegistrar.registerForRemoteNotifications()
@@ -1005,7 +988,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
     @MainActor
     private func updateCategories() {
         #if !os(tvOS)
-        guard self.isComponentEnabled,
+        guard 
             self.privacyManager.isEnabled(.push),
             self.config.requestAuthorizationToUseNotifications
         else {
@@ -1024,9 +1007,7 @@ public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unche
 
     @MainActor
     private func updateNotifications() async {
-        guard self.isComponentEnabled,
-              self.privacyManager.isEnabled(.push)
-        else {
+        guard self.privacyManager.isEnabled(.push) else {
             return
         }
 

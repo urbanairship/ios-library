@@ -60,10 +60,13 @@ class AirshipInstance: AirshipInstanceProtocol {
         self.preferenceDataStore = dataStore
         self.permissionsManager = AirshipPermissionsManager()
         self.config = RuntimeConfig(config: config, dataStore: dataStore, requestSession: requestSession)
+        
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
+            config: self.config,
             defaultEnabledFeatures: config.enabledFeatures
         )
+
         self.actionRegistry = ActionRegistry()
         self.urlAllowList = URLAllowList.allowListWithConfig(self.config)
         self.applicationMetrics = ApplicationMetrics(

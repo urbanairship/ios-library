@@ -108,18 +108,6 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
     /// Set this to `false` to prevent the device from sending any tag information to the server when using server-side tagging. Defaults to `true`.
     public var isChannelTagRegistrationEnabled = true
 
-    private let disableHelper: ComponentDisableHelper
-
-    /// NOTE: For internal use only. :nodoc:
-    public var isComponentEnabled: Bool {
-        get {
-            return disableHelper.enabled
-        }
-        set {
-            disableHelper.enabled = newValue
-        }
-    }
-
     /// The shared Channel instance.
     /// - Returns The shared Channel instance.
     @objc
@@ -165,18 +153,10 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
             self.isChannelCreationEnabled = false
         }
 
-        self.disableHelper = ComponentDisableHelper(
-            dataStore: dataStore,
-            className: "UAChannel"
-        )
-
         super.init()
 
         self.migrateTags()
 
-        self.disableHelper.onChange = { [weak self] in
-            self?.onComponentEnableChange()
-        }
 
         self.channelRegistrar.updatesPublisher
             .receive(on: RunLoop.main)
@@ -190,8 +170,6 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         )
 
         self.audienceManager.channelID = self.channelRegistrar.channelID
-
-        self.audienceManager.enabled = self.isComponentEnabled
 
         if let identifier = self.identifier {
             AirshipLogger.importantInfo("Channel ID \(identifier)")
@@ -307,14 +285,6 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
         }
 
         self.updateRegistration(forcefully: true)
-    }
-
-    /// NOTE: For internal use only. :nodoc:
-    private func onComponentEnableChange() {
-        if self.isComponentEnabled {
-            self.updateRegistration()
-        }
-        self.audienceManager.enabled = self.isComponentEnabled
     }
 
     @objc
@@ -559,10 +529,6 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
     }
 
     private var isRegistrationAllowed: Bool {
-        guard self.isComponentEnabled else {
-            return false
-        }
-
         guard self.isChannelCreationEnabled else {
             AirshipLogger.debug(
                 "Channel creation is currently disabled, unable to update"

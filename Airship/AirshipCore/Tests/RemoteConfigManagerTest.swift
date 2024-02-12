@@ -6,22 +6,21 @@ class RemoteConfigManagerTest: XCTestCase {
 
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let testRemoteData = TestRemoteData()
-    private let testModuleAdapter = TestRemoteConfigModuleAdapter()
     private let notificationCenter = AirshipNotificationCenter.shared
 
     private var privacyManager: AirshipPrivacyManager!
     private var remoteConfigManager: RemoteConfigManager!
     private var config: RuntimeConfig!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         self.config = RuntimeConfig(
             config: AirshipConfig.config(),
             dataStore: dataStore
         )
 
-
-        self.privacyManager = AirshipPrivacyManager(
+        self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
+            config: self.config,
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
@@ -30,137 +29,10 @@ class RemoteConfigManagerTest: XCTestCase {
             config: config,
             remoteData: self.testRemoteData,
             privacyManager: self.privacyManager,
-            moduleAdapter: self.testModuleAdapter,
             notificationCenter: self.notificationCenter,
             appVersion: "0.0.0"
         )
         self.remoteConfigManager.airshipReady()
-    }
-
-    func testDisableModules() throws {
-        let data = [
-            "disable_features": [
-                [
-                    "modules": ["message_center", "channel"]
-                ]
-            ]
-        ]
-
-        let payload = RemoteDataPayload(
-            type: "app_config",
-            timestamp: Date(),
-            data: try AirshipJSON.wrap(data),
-            remoteDataInfo: nil
-        )
-        self.testRemoteData.payloads = [payload]
-
-        let expectedDisabled: Set<RemoteConfigModule> = Set([
-            RemoteConfigModule.messageCenter, RemoteConfigModule.channel,
-        ])
-        let expectedEnabled: Set<RemoteConfigModule> = Set(
-            RemoteConfigModule.allCases
-        )
-        .subtracting(expectedDisabled)
-        XCTAssertEqual(expectedDisabled, self.testModuleAdapter.disabledModules)
-        XCTAssertEqual(expectedEnabled, self.testModuleAdapter.enabledModules)
-    }
-
-    func testFilterDisableInfos() throws {
-        let data = [
-            "disable_features": [
-                [
-                    "modules": ["in_app_v2"],
-                    "sdk_versions": ["+"],
-                    "remote_data_refresh_interval": 100.0,
-                ],
-                [
-                    "modules": ["push"],
-                    "sdk_versions": ["4.0.0"],
-                ],
-                [
-                    "modules": ["message_center"],
-                    "sdk_versions": [AirshipVersion.version],
-                ] as [String : Any],
-                [
-                    "modules": ["contact"],
-                    "app_versions": [
-                        "value": ["version_matches": "[1.0, 8.0]"],
-                        "scope": ["ios", "version"],
-                    ] as [String : Any],
-                    "remote_data_refresh_interval": 200.0,
-                ],
-                [
-                    "modules": ["analytics"],
-                    "sdk_versions": ["1.0.0", "[1.0,99.0["],
-                ],
-            ]
-        ]
-
-        let payload = RemoteDataPayload(
-            type: "app_config",
-            timestamp: Date(),
-            data: try! AirshipJSON.wrap(data),
-            remoteDataInfo: nil
-        )
-
-        self.testRemoteData.payloads = [payload]
-
-        var expectedDisable: [RemoteConfigModule] = [
-            .analytics, .messageCenter, .inAppAutomation,
-        ]
-        XCTAssertEqual(
-            Set(expectedDisable),
-            self.testModuleAdapter.disabledModules
-        )
-        XCTAssertEqual(
-            100.0,
-            self.testRemoteData.remoteDataRefreshInterval
-        )
-
-        self.remoteConfigManager = RemoteConfigManager(
-            config: self.config,
-            remoteData: self.testRemoteData,
-            privacyManager: self.privacyManager,
-            moduleAdapter: self.testModuleAdapter,
-            notificationCenter: self.notificationCenter,
-            appVersion: "2.0.0"
-        )
-        self.remoteConfigManager.airshipReady()
-
-        self.testRemoteData.payloads = [payload]
-        expectedDisable = [
-            .analytics, .contact, .messageCenter, .inAppAutomation,
-        ]
-        XCTAssertEqual(
-            Set(expectedDisable),
-            self.testModuleAdapter.disabledModules
-        )
-        XCTAssertEqual(
-            200.0,
-            self.testRemoteData.remoteDataRefreshInterval
-        )
-    }
-
-    func testRefreshInterval() throws {
-        let data = [
-            "disable_features": [
-                [
-                    "remote_data_refresh_interval": 100.0
-                ]
-            ]
-        ]
-
-        let payload = RemoteDataPayload(
-            type: "app_config",
-            timestamp: Date(),
-            data: try! AirshipJSON.wrap(data),
-            remoteDataInfo: nil
-        )
-        self.testRemoteData.payloads = [payload]
-        XCTAssertEqual(
-            100.0,
-            self.testRemoteData.remoteDataRefreshInterval
-        )
     }
 
     @MainActor
@@ -190,17 +62,6 @@ class RemoteConfigManagerTest: XCTestCase {
         }
 
         self.testRemoteData.payloads = [payload]
-
-        XCTAssertEqual(
-            Set(RemoteConfigModule.allCases),
-            self.testModuleAdapter.enabledModules
-        )
-
-        XCTAssertEqual(
-            10,
-            self.testRemoteData.remoteDataRefreshInterval
-        )
-
         wait(for: [expectation], timeout: 10.0)
     }
 

@@ -10,13 +10,25 @@ final class LegacyInAppMessagingTest: XCTestCase {
     private let engine = TestAutomationEngine()
     private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
     private let date = UATestDate(offset: 0, dateOverride: Date())
+    private let airshipTestInstance = TestAirshipInstance()
 
     private var subject: LegacyInAppMessaging!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
+        let push = TestPush()
+        push.combinedCategories = NotificationCategories.defaultCategories()
+
+        airshipTestInstance.components = [push]
+        airshipTestInstance.makeShared()
+
         createSubject()
     }
-    
+
+    override func tearDown() {
+        TestAirshipInstance.clearShared()
+    }
+
     private func createSubject() {
         subject = LegacyInAppMessaging(
             analytics: analytics,
@@ -253,10 +265,6 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
 
     func testReceiveRemoteNotificationSchedulesMessage() async throws {
-        let airshipTestInstance = TestAirshipInstance()
-        airshipTestInstance.components = [await makePushComponent()]
-        airshipTestInstance.makeShared()
-        
         let messageId = "test-id"
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -586,20 +594,6 @@ final class LegacyInAppMessagingTest: XCTestCase {
         XCTAssertEqual(lastCancelledScheduleId, value)
     }
 
-    private func makePushComponent() async -> AirshipPush {
-        return await AirshipPush(
-            config: RuntimeConfig(
-                config: AirshipConfig(),
-                dataStore: datastore),
-            dataStore: datastore,
-            channel: TestChannel(),
-            analytics: TestAnalytics(), 
-            privacyManager: AirshipPrivacyManager(dataStore: datastore, defaultEnabledFeatures: .all),
-            permissionsManager: AirshipPermissionsManager(),
-            notificationRegistrar: TestNotificationRegistrar(),
-            apnsRegistrar: TestAPNSRegistrar(),
-            badger: TestBadger())
-    }
 }
 
 private final class KeyedArchiver: NSKeyedArchiver {
