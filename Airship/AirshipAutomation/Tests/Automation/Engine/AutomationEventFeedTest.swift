@@ -95,7 +95,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(AutomationEvent.customEvent(
             data: try AirshipJSON.wrap([
                 "event_name": "test-name",
-                "event_value": 1230000.0,
+                "event_value": 1.23,
                 "properties": [:]
             ]),
             value: 1.23), event)

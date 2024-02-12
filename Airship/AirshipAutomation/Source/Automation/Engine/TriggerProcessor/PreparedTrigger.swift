@@ -198,10 +198,10 @@ extension EventAutomationTrigger {
     private func customEvenTriggerMatch(eventData: AirshipJSON, value: Double?, data: inout TriggerData) -> MatchResult? {
         switch self.type {
         case .customEventCount:
-            guard isPredicateMatching(value: eventData) else { return nil }
+            guard isPredicateMatching(value: eventData.unWrap()) else { return nil }
             return evaluateResults(data: &data, increment: 1)
         case .customEventValue:
-            guard isPredicateMatching(value: eventData) else { return nil }
+            guard isPredicateMatching(value: eventData.unWrap()) else { return nil }
             return evaluateResults(data: &data, increment: value ?? 1.0)
         default:
             return nil

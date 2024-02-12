@@ -142,7 +142,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
         subscribeToNotification(name: AirshipAnalytics.customEventAdded) { notification in
             guard
                 let event = notification.userInfo?[AirshipAnalytics.eventKey] as? CustomEvent,
-                let data = try? AirshipJSON.wrap(event.data)
+                let data = try? AirshipJSON.wrap(event.payload)
             else {
                 return nil
             }
