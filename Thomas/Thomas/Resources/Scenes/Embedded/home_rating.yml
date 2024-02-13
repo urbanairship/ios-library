@@ -1,0 +1,148 @@
+---
+presentation:
+  type: embedded
+  embedded_id: "home_rating"
+  default_placement:
+    size:
+      height: 400
+      width: 100%
+version: 1
+view:
+  type: linear_layout
+  direction: vertical
+  background_color:
+    default:
+      alpha: 1
+      hex: "#FFFFFF"
+      type: hex
+  items:
+    - size:
+        width: auto
+        height: auto
+      margin:
+        top: 16
+        bottom: 0
+        start: 16
+        end: 16
+      view:
+        type: label
+        text: "How was your experience with your last order?"
+        text_appearance:
+          font_size: 16
+          styles: [ ]
+          color:
+            default:
+              hex: "#000000"
+          alignment: center
+    - size:
+        width: auto
+        height: auto
+      margin:
+        top: 0
+        bottom: 16
+        start: 16
+        end: 16
+      view:
+        type: linear_layout
+        direction: horizontal
+        items:
+          - size:
+              width: 36
+              height: 36
+            margin:
+              end: 2
+            view:
+              type: label_button
+              identifier: rating_1
+              button_click: [ "cancel" ]
+              label:
+                type: label
+                text: "★"
+                text_appearance:
+                  font_size: 32
+                  styles: [  ]
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 0.33
+                  alignment: center
+          - size:
+              width: 36
+              height: 36
+            margin:
+              end: 2
+            view:
+              type: label_button
+              identifier: rating_2
+              button_click: [ "cancel" ]
+              label:
+                type: label
+                text: "★"
+                text_appearance:
+                  font_size: 32
+                  styles: [ ]
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 0.33
+                  alignment: center
+          - size:
+              width: 36
+              height: 36
+            margin:
+              end: 2
+            view:
+              type: label_button
+              identifier: rating_3
+              button_click: [ "cancel" ]
+              label:
+                type: label
+                text: "★"
+                text_appearance:
+                  font_size: 32
+                  styles: [ ]
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 0.33
+                  alignment: center
+          - size:
+              width: 36
+              height: 36
+            margin:
+              end: 2
+            view:
+              type: label_button
+              identifier: rating_4
+              button_click: [ "cancel" ]
+              label:
+                type: label
+                text: "★"
+                text_appearance:
+                  font_size: 32
+                  styles: [ ]
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 0.33
+                  alignment: center
+          - size:
+              width: 36
+              height: 36
+            margin:
+              end: 0
+            view:
+              type: label_button
+              identifier: rating_5
+              button_click: [ "cancel" ]
+              label:
+                type: label
+                text: "★"
+                text_appearance:
+                  font_size: 32
+                  styles: [ ]
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 0.33
+                  alignment: center

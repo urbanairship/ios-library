@@ -1,0 +1,60 @@
+---
+version: 1
+presentation:
+  type: embedded
+  embedded_id: "home_special_offer"
+  default_placement:
+    size:
+      height: auto
+      width: 100%
+view:
+  type: linear_layout
+  direction: vertical
+  background_color:
+    default:
+      alpha: 1
+      hex: "#FFFFFF"
+      type: hex
+  items:
+    - size:
+        height: auto
+        width: 100%
+      margin:
+        top: 16
+        bottom: 8
+        start: 16
+        end: 16
+      view:
+        type: label
+        text: "Your birthday is coming up!"
+        text_appearance:
+          font_size: 24
+          styles: [bold]
+          color:
+            default:
+              hex: "#000000"
+          alignment: center
+    - size:
+        width: auto
+        height: auto
+      margin:
+        top: 8
+        bottom: 16
+        start: 16
+        end: 16
+      view:
+        type: label_button
+        identifier: button1
+        actions:
+            add_custom_event_action:
+                event_name: 'birthday_offer_tapped'
+            add_tags_action: "birthday_offer"
+        label:
+            text: "Enjoy 15% off on our men's shirts,\nbecause we know you like them."
+            text_appearance:
+              font_size: 16
+              styles: [ ]
+              color:
+                default:
+                  hex: "#000000"
+              alignment: center

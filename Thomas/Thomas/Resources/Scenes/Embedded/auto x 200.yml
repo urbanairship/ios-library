@@ -2,11 +2,11 @@
 version: 1
 presentation:
   type: embedded
-  embedded_id: "home_banner"
+  embedded_id: "auto x 200"
   default_placement:
     size:
-      width: 100%
-      height: 100%
+      width: auto
+      height: 200
     margin:
         top: 16
         bottom: 16
@@ -42,24 +42,25 @@ view:
     size:
       width: 100%
       height: auto
-view:
-  type: custom_view
-  name: ad_custom_view
-  height: 88
-  keys:
-    ad_type: "fashion"
-  background_color:
-    selectors:
-    - platform: ios
-      dark_mode: false
-      color:
-        hex: "#FFFFFF"
-        alpha: 1
-    - platform: ios
-      dark_mode: true
-      color:
-        hex: "#000000"
-        alpha: 1
-    default:
-      hex: "#FF00FF"
-      alpha: 1
+    view:
+      type: label
+      text: "auto x 200"
+      text_appearance:
+        font_size: 14
+        color:
+          selectors:
+          - platform: ios
+            dark_mode: true
+            color:
+              hex: "#FFFFFF"
+              alpha: 1
+          - platform: ios
+            dark_mode: false
+            color:
+              hex: "#000000"
+              alpha: 1
+          default:
+            hex: "#FF00FF"
+            alpha: 1
+
+

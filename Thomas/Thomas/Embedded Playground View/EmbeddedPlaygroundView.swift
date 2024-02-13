@@ -8,8 +8,8 @@ extension EmbeddedViewMaker {
     func makeEmbeddedView<Content: View>(id: String, bounds:AirshipEmbeddedViewBounds?, isShowingPlaceholder: Bool,  @ViewBuilder placeholder: @escaping () -> Content) -> some View {
         AirshipEmbeddedView(id: isShowingPlaceholder ? "nonexistent view id" : id ,
                             bounds: bounds ?? .all,
-                            placeholder:placeholder).border(Color.red, width: 3).onAppear{
-        }
+                            placeholder:placeholder)
+        .border(Color.red, width: 3)
     }
 }
 

@@ -2,11 +2,11 @@
 version: 1
 presentation:
   type: embedded
-  embedded_id: "home_banner"
+  embedded_id: "50pct x 50pct"
   default_placement:
     size:
-      width: auto
-      height: 200
+      width: 50%
+      height: 50%
     margin:
         top: 16
         bottom: 16
@@ -44,7 +44,7 @@ view:
       height: auto
     view:
       type: label
-      text: "auto x 200"
+      text: "50% x 50%."
       text_appearance:
         font_size: 14
         color:
@@ -62,5 +62,3 @@ view:
           default:
             hex: "#FF00FF"
             alpha: 1
-
-
