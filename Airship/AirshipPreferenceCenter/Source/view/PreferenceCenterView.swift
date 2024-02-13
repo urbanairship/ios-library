@@ -143,23 +143,35 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         color: .white
     )
 
+    private func navigationBarTitle(
+        configuration: Configuration,
+        state: PreferenceCenterState? = nil
+    ) -> String {
+        
+        var title: String?
+        if let state = state {
+            title = state.config.display?.title?.nullIfEmpty()
+        }
+
+        let theme = configuration.preferenceCenterTheme
+        if let overrideConfigTitle = theme.viewController?.navigationBar?.overrideConfigTitle, overrideConfigTitle {
+            title = configuration.preferenceCenterTheme.viewController?
+                .navigationBar?
+                .title
+        }
+        return title ?? "ua_preference_center_title".preferenceCenterlocalizedString
+    }
+    
     @ViewBuilder
     private func makeProgressView(configuration: Configuration) -> some View {
-        let title = configuration.preferenceCenterTheme.viewController?
-            .navigationBar?
-            .title
         ProgressView()
             .frame(alignment: .center)
-            .navigationTitle(title ?? "ua_preference_center_title".preferenceCenterlocalizedString)
+            .navigationTitle(navigationBarTitle(configuration: configuration))
     }
 
     @ViewBuilder
     public func makeErrorView(configuration: Configuration) -> some View {
         let theme = configuration.preferenceCenterTheme.preferenceCenter
-        let title = configuration.preferenceCenterTheme.viewController?
-            .navigationBar?
-            .title
-
         let retry = theme?.retryButtonLabel ?? "ua_retry_button".preferenceCenterlocalizedString
         let errorMessage =
             theme?.retryMessage ?? "ua_preference_center_empty".preferenceCenterlocalizedString
@@ -194,7 +206,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                 }
             )
         }
-        .navigationTitle(title ?? "ua_preference_center_title".preferenceCenterlocalizedString)
+        .navigationTitle(navigationBarTitle(configuration: configuration))
     }
 
     public func makePreferenceCenterView(
@@ -202,10 +214,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         state: PreferenceCenterState
     ) -> some View {
         let theme = configuration.preferenceCenterTheme
-        let title = state.config.display?.title ?? configuration.preferenceCenterTheme.viewController?
-            .navigationBar?
-            .title
-
         return ScrollView {
             LazyVStack(alignment: .leading) {
                 if let subtitle = state.config.display?.subtitle {
@@ -225,7 +233,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             .padding(16)
             Spacer()
         }
-        .navigationTitle(title ?? "ua_preference_center_title".preferenceCenterlocalizedString)
+        .navigationTitle(navigationBarTitle(configuration: configuration, state: state))
     }
 
     @ViewBuilder
@@ -458,5 +466,11 @@ extension View {
         } else {
             self
         }
+    }
+}
+
+extension String {
+    fileprivate func nullIfEmpty() -> String? {
+        return self.isEmpty ? nil : self
     }
 }
