@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 #endif
 
-public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Sendable {
+public final class InAppAutomation: Sendable {
 
     private let engine: AutomationEngineProtocol
     private let remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol
@@ -23,7 +23,6 @@ public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Senda
     }
 
     /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
-    @objc
     public static var shared: InAppAutomation {
         return Airship.requireComponent(ofType: InAppAutomation.self)
     }
@@ -47,8 +46,6 @@ public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Senda
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
 
-        super.init()
-        
         if (config.autoPauseInAppAutomationOnLaunch) {
             self.isPaused = true
         }
@@ -63,20 +60,6 @@ public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Senda
             self.dataStore.setBool(newValue, forKey: Self.pausedStoreKey)
             self.engine.setExecutionPaused(newValue)
         }
-    }
-
-    @MainActor
-    public func airshipReady() {
-        self.engine.setExecutionPaused(self.isPaused)
-
-        Task {
-            await self.engine.start()
-        }
-
-        self.notificationCenter.addObserver(forName: AirshipPrivacyManager.changeEvent) { _ in
-            self.privacyManagerUpdated()
-        }
-        self.privacyManagerUpdated()
     }
 
     public func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
@@ -115,7 +98,21 @@ public final class InAppAutomation: NSObject, AirshipComponent, @unchecked Senda
     }
 }
 
-extension InAppAutomation: PushableComponent {
+extension InAppAutomation: AirshipComponent, AirshipPushableComponent {
+    @MainActor
+    public func airshipReady() {
+        self.engine.setExecutionPaused(self.isPaused)
+
+        Task {
+            await self.engine.start()
+        }
+
+        self.notificationCenter.addObserver(forName: AirshipPrivacyManager.changeEvent) { [weak self] _ in
+            self?.privacyManagerUpdated()
+        }
+        self.privacyManagerUpdated()
+    }
+
     public func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
@@ -127,3 +124,5 @@ extension InAppAutomation: PushableComponent {
         self._legacyInAppMessaging.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
 }
+
+

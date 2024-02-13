@@ -12,7 +12,7 @@ import UIKit
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc(UAPush)
-public final class AirshipPush: NSObject, AirshipComponent, PushProtocol, @unchecked Sendable {
+public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
 
     private let pushTokenSubject = PassthroughSubject<String?, Never>()
     private var pushTokenPublisher: AnyPublisher<String?, Never> {
@@ -1391,3 +1391,5 @@ extension UNNotification {
 }
 #endif
 
+
+extension AirshipPush: AirshipComponent {}

@@ -83,7 +83,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 }
 
 
-class TestPushableComponent: PushableComponent {
+class TestPushableComponent: AirshipPushableComponent {
     var didReceiveRemoteNotificationCallback:
         (
             ([AnyHashable: Any], @escaping (UIBackgroundFetchResult) -> Void) ->

@@ -92,21 +92,10 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
     @objc
     public var deepLinkDelegate: DeepLinkDelegate?
 
-    @objc
     public var components: [AirshipComponent] = []
 
     private var componentMap: [String: AirshipComponent] = [:]
 
-    public func component(forClassName className: String) -> AirshipComponent? {
-        let key = "Class:\(className)"
-        if componentMap[key] == nil {
-            self.componentMap[key] = self.components.first {
-                NSStringFromClass(type(of: $0)) == className
-            }
-        }
-
-        return componentMap[key]
-    }
 
     public func component<E>(ofType componentType: E.Type) -> E? {
         let key = "Type:\(componentType)"

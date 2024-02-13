@@ -1,6 +1,5 @@
 #import "UAAppIntegrationDelegate.h"
 #import "UAAutoIntegration.h"
-#import "UAComponent.h"
 #import "UACompression.h"
 #import "UAEvent.h"
 #import "UAFeature.h"

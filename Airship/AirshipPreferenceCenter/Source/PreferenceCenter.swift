@@ -23,7 +23,7 @@ public protocol PreferenceCenterOpenDelegate {
 
 /// Airship PreferenceCenter module.
 @objc(UAPreferenceCenter)
-public class PreferenceCenter: NSObject, AirshipComponent {
+public class PreferenceCenter: NSObject {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
@@ -146,20 +146,6 @@ public class PreferenceCenter: NSObject, AirshipComponent {
 
         throw AirshipErrors.error("Preference center not found \(preferenceCenterID)")
     }
-
-    /// NOTE: For internal use only. :nodoc:
-    public func deepLink(_ deepLink: URL) -> Bool {
-        guard deepLink.scheme == Airship.deepLinkScheme,
-            deepLink.host == "preferences",
-            deepLink.pathComponents.count == 2
-        else {
-            return false
-        }
-
-        let preferenceCenterID = deepLink.pathComponents[1]
-        self.open(preferenceCenterID)
-        return true
-    }
 }
 
 extension PreferenceCenter {
@@ -197,3 +183,21 @@ extension PreferenceCenter {
         return cancellable
     }
 }
+
+
+extension PreferenceCenter : AirshipComponent {
+    @MainActor
+    public func deepLink(_ deepLink: URL) -> Bool {
+        guard deepLink.scheme == Airship.deepLinkScheme,
+            deepLink.host == "preferences",
+            deepLink.pathComponents.count == 2
+        else {
+            return false
+        }
+
+        let preferenceCenterID = deepLink.pathComponents[1]
+        self.open(preferenceCenterID)
+        return true
+    }
+}
+

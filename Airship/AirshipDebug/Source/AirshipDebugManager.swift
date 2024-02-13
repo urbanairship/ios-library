@@ -10,9 +10,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-public class AirshipDebugManager: NSObject, AirshipComponent {
-    public var isComponentEnabled: Bool = true
-
+public class AirshipDebugManager {
     public static var shared: AirshipDebugManager {
         return Airship.requireComponent(
             ofType: AirshipDebugManager.self
@@ -98,8 +96,6 @@ public class AirshipDebugManager: NSObject, AirshipComponent {
         self.remoteData = remoteData
         self.pushDataManager = PushDataManager(appKey: config.appKey)
         self.eventDataManager = EventDataManager(appKey: config.appKey)
-
-        super.init()
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -294,3 +290,6 @@ private struct DebugRootView: View {
         .navigationViewStyle(.stack)
     }
 }
+
+
+extension AirshipDebugManager: AirshipComponent {}

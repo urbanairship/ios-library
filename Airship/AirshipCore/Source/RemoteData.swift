@@ -4,7 +4,7 @@
 import Combine
 
 /// NOTE: For internal use only. :nodoc:
-final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
+final class RemoteData: AirshipComponent, RemoteDataProtocol {
     fileprivate enum RefreshStatus: Sendable {
         case none
         case success
@@ -115,8 +115,6 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
         ) {
             $0[$1.source] = CurrentValueSubject(.none)
         }
-
-        super.init()
 
         self.contactSubscription.value = contact.contactIDUpdates
             .map { $0.contactID }
@@ -456,7 +454,7 @@ final class RemoteData: NSObject, AirshipComponent, RemoteDataProtocol {
 }
 
 #if !os(watchOS)
-extension RemoteData: PushableComponent {
+extension RemoteData: AirshipPushableComponent {
     public func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void

@@ -21,7 +21,7 @@ enum FeatureFlagEvaluationError: Error {
 }
 
 /// Airship feature flag manager
-public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
+public final class FeatureFlagManager: Sendable {
 
     /// The shared FeatureFlagManager instance. `Airship.takeOff` must be called before accessing this instance.
     public static var shared: FeatureFlagManager {
@@ -267,3 +267,6 @@ public final class FeatureFlagManager: NSObject, AirshipComponent, Sendable {
 protocol EventTracker: Sendable {
     func addEvent(_ event: AirshipEvent)
 }
+
+
+extension FeatureFlagManager: AirshipComponent {}

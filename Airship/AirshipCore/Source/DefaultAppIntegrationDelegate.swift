@@ -7,12 +7,12 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
     let push: InternalPushProtocol
     let analytics: InternalAnalyticsProtocol
-    let pushableComponents: [PushableComponent]
+    let pushableComponents: [AirshipPushableComponent]
 
     init(
         push: InternalPushProtocol,
         analytics: InternalAnalyticsProtocol,
-        pushableComponents: [PushableComponent]
+        pushableComponents: [AirshipPushableComponent]
     ) {
         self.push = push
         self.analytics = analytics
@@ -25,7 +25,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             push: Airship.push,
             analytics: Airship.analytics,
             pushableComponents: Airship.shared.components.compactMap {
-                return $0 as? PushableComponent
+                return $0 as? AirshipPushableComponent
             }
         )
     }

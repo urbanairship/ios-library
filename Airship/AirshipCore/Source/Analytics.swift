@@ -5,7 +5,7 @@ import Foundation
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc(UAAnalytics)
-public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtocol, @unchecked Sendable {
+public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sendable {
 
     /// The shared Analytics instance.
     @objc
@@ -526,8 +526,10 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
             }
         }
     }
+}
 
 
+extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
     @MainActor
     public func airshipReady() {
         self.isAirshipReady = true
@@ -535,9 +537,7 @@ public final class AirshipAnalytics: NSObject, AirshipComponent, AnalyticsProtoc
 
         self.sessionTracker.airshipReady()
     }
-}
 
-extension AirshipAnalytics: InternalAnalyticsProtocol {
     @MainActor
     public var currentScreen: String? {
         return self.screenState.value.current

@@ -132,7 +132,6 @@ public class Airship: NSObject {
     }
 
     /// - NOTE: For internal use only. :nodoc:
-    @objc
     public var components: [AirshipComponent] { return airshipInstance.components }
 
     static var _shared: Airship?
@@ -313,7 +312,7 @@ public class Airship: NSObject {
 
         commonTakeOff(config)
 
-        self.shared.components.forEach { $0.airshipReady?() }
+        self.shared.components.forEach { $0.airshipReady() }
 
         if self.shared.config.isExtendedBroadcastsEnabled {
             var userInfo: [String: Any] = [:]
@@ -398,12 +397,6 @@ public class Airship: NSObject {
     }
 
     /// - NOTE: For internal use only. :nodoc:
-    @objc
-    public class func component(forClassName className: String) -> AirshipComponent? {
-        return shared.airshipInstance.component(forClassName: className)
-    }
-
-    /// - NOTE: For internal use only. :nodoc:
     public class func component<E>(ofType componentType: E.Type) -> E? {
         return shared.airshipInstance.component(ofType: componentType)
     }
@@ -440,11 +433,11 @@ public class Airship: NSObject {
     ) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {
             guard handleAirshipDeeplink(deepLink) else {
-                let handled = self.airshipInstance.components.first(where: {
-                    return $0.deepLink?(deepLink) == true
-                }) != nil
+                let component = self.airshipInstance.components.first(
+                    where: { $0.deepLink(deepLink) }
+                )
 
-                if handled {
+                if component != nil {
                     return true
                 }
 

@@ -20,7 +20,6 @@ protocol AirshipInstanceProtocol {
     var privacyManager: AirshipPrivacyManager { get }
     var components: [AirshipComponent] { get }
 
-    func component(forClassName className: String) -> AirshipComponent?
     func component<E>(ofType componentType: E.Type) -> E?
 
     func airshipReady()
@@ -178,7 +177,7 @@ class AirshipInstance: AirshipInstanceProtocol {
         )
 
         var components: [AirshipComponent] = [
-            contact, channel, analytics, remoteData, push,
+            contact, channel, analytics, remoteData, push
         ]
         components.append(contentsOf: moduleLoader.components)
 
@@ -193,21 +192,6 @@ class AirshipInstance: AirshipInstanceProtocol {
         self.actionRegistry.registerActions(
             actionsManifests: moduleLoader.actionManifests + [DefaultActionsManifest()]
         )
-    }
-
-    public func component(forClassName className: String) -> AirshipComponent? {
-        var component: AirshipComponent?
-        lock.sync {
-            let key = "Class:\(className)"
-            if componentMap[key] == nil {
-                self.componentMap[key] = self.components.first {
-                    NSStringFromClass(type(of: $0)) == className
-                }
-            }
-
-            component = componentMap[key]
-        }
-        return component
     }
 
     public func component<E>(ofType componentType: E.Type) -> E? {
@@ -225,8 +209,9 @@ class AirshipInstance: AirshipInstanceProtocol {
         return component
     }
 
+    @MainActor
     func airshipReady() {
-        self.components.forEach { $0.airshipReady?() }
+        self.components.forEach { $0.airshipReady() }
         self.remoteConfigManager.airshipReady()
     }
 }

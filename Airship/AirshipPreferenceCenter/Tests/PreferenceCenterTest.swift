@@ -111,6 +111,7 @@ class PreferenceCenterTest: XCTestCase {
         XCTAssertEqual("some-form", delegate.lastOpenId)
     }
 
+    @MainActor
     func testDeepLink() {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate
@@ -126,6 +127,7 @@ class PreferenceCenterTest: XCTestCase {
         XCTAssertEqual("some-other-id", delegate.lastOpenId)
     }
 
+    @MainActor
     func testDeepLinkInvalid() {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate

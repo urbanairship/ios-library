@@ -181,15 +181,11 @@ public class MessageCenter: NSObject, ObservableObject {
     }
 }
 
-extension MessageCenter: AirshipComponent, PushableComponent {
-
+extension MessageCenter: AirshipComponent, AirshipPushableComponent {
     private static let kUARichPushMessageIDKey = "_uamid"
 
-    // MARK: Component
-
-
     @MainActor
-    func deepLink(deepLink: URL) -> Bool {
+    public func deepLink(_ deepLink: URL) -> Bool {
         if !(deepLink.scheme == Airship.deepLinkScheme) {
             return false
         }
@@ -214,8 +210,6 @@ extension MessageCenter: AirshipComponent, PushableComponent {
 
         return true
     }
-
-    // MARK: PushableComponent
 
     @MainActor
     public func receivedRemoteNotification(

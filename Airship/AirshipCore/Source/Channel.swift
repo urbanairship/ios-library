@@ -5,7 +5,7 @@ import Foundation
 
 /// This singleton provides an interface to the channel functionality.
 @objc(UAChannel)
-public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelProtocol, @unchecked Sendable {
+public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendable {
 
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
 
@@ -559,7 +559,7 @@ public final class AirshipChannel: NSObject, AirshipComponent, AirshipChannelPro
 }
 
 /// - Note: for internal use only.  :nodoc:
-extension AirshipChannel: PushableComponent {
+extension AirshipChannel: AirshipPushableComponent {
 
     #if !os(watchOS)
     public func receivedRemoteNotification(
@@ -727,3 +727,5 @@ extension AirshipChannel {
 }
 
 #endif
+
+extension AirshipChannel: AirshipComponent {}
