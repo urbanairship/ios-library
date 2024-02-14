@@ -159,8 +159,15 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
             return nil
         }
 
+
         do {
-            return try remoteInfoJson.decode()
+            if let json = remoteInfoJson.string {
+                // 17.x and older
+                let object = try AirshipJSON.from(json: json)
+                return try object.decode()
+            } else {
+                return try remoteInfoJson.decode()
+            }
         } catch {
             AirshipLogger.trace("Failed to parse remote info from schedule \(schedule) \(error)")
         }

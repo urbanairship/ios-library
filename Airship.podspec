@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="18.0.0-beta"
+AIRSHIP_VERSION="18.0.0-beta.2"
 
 Pod::Spec.new do |s|
    s.version                    = AIRSHIP_VERSION
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
       basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
       basement.libraries                  = "z", "sqlite3"
       basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "UIKit", "CoreData"
-      basement.visionos.frameworks         = "WebKit", "SystemConfiguration"
+      basement.visionos.frameworks        = "WebKit", "SystemConfiguration"
       basement.ios.frameworks             = "WebKit", "CoreTelephony", "SystemConfiguration"
       basement.tvos.frameworks            = "SystemConfiguration"
       basement.watchos.frameworks         = "WatchKit"
