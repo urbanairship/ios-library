@@ -152,6 +152,12 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// Defaults to FeaturesAll.
     public let enabledFeatures: AirshipFeature
 
+    /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
+    ///
+    /// Defaults to `false`.
+    @objc
+    public var useUserPreferredLocale = false
+    
     private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache
     private let notificationCenter: NotificationCenter
@@ -304,7 +310,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         } else {
             self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
         }
-
+        self.useUserPreferredLocale = config.useUserPreferredLocale
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
         super.init()
