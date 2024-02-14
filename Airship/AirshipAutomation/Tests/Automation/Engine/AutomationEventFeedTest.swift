@@ -7,12 +7,13 @@ import AirshipAutomation
 import AirshipCore
 
 final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
-    let date = UATestDate(offset: 0, dateOverride: Date())
-    let datastore = PreferenceDataStore(appKey: UUID().uuidString)
-    let notificaitonCenter = NotificationCenter()
-    var subject: AutomationEventFeed!
-    let airship = TestAirshipInstance()
-    
+    private let date = UATestDate(offset: 0, dateOverride: Date())
+    private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
+    private var subject: AutomationEventFeed!
+    private let airship = TestAirshipInstance()
+    private let analyticsFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
+    private let stateTracker: TestAppStateTracker = TestAppStateTracker()
+
     var iterator: AsyncStream<AutomationEvent>.Iterator!
     
     override func setUp() async throws {
@@ -23,11 +24,11 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
             config: config,
             defaultEnabledFeatures: .all
         )
+
         let metrics = TestApplicationMetrics(dataStore: self.datastore, privacyManager: privacyManager, appVersion: "test")
         metrics.versionUpdated = true
         
-        let airshipNotification = AirshipNotificationCenter(notificationCenter: notificaitonCenter)
-        subject = await AutomationEventFeed(metrics: metrics, notificationCenter: airshipNotification)
+        subject = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: stateTracker, analyticsFeed: analyticsFeed)
 
         airship.applicationMetrics = metrics
         airship.components = [TestAnalytics()]
@@ -52,8 +53,8 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     
     func testSubsequentAttachEmitsNoEvents() async throws {
         await subject.attach()
-        var events = await takeNext(count: 2)
-        
+        var events = await takeNext(count: 3)
+
         await subject.attach()
         events = await takeNext()
         XCTAssert(events.isEmpty)
@@ -64,76 +65,78 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         XCTAssert(events.isEmpty)
     }
     
+    @MainActor
     func testSupportedEvents() async throws {
-        await subject.attach()
-        await takeNext(count: 2)
-        
-        notificaitonCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
+        subject.attach()
+        await takeNext(count: 3)
+
+        stateTracker.currentState = .active
         var events = await takeNext(count: 2)
         XCTAssertEqual(AutomationEvent.foreground, events.first)
-        
-        notificaitonCenter.post(name: AppStateTracker.didEnterBackgroundNotification, object: nil)
+        verifyStateChange(event: events.last!, foreground: true, versionUpdated: "test")
+
+        stateTracker.currentState = .background
         events = await takeNext(count: 2)
         XCTAssertEqual(AutomationEvent.background, events.first)
-        XCTAssertEqual(AutomationEvent.stateChanged(state: TriggerableState(versionUpdated: "test")), events.last)
-        
+        verifyStateChange(event: events.last!, foreground: false, versionUpdated: "test")
+
         let trackScreenName = "test-screen"
-        notificaitonCenter.post(name: AirshipAnalytics.screenTracked, object: nil, userInfo: [AirshipAnalytics.screenKey: trackScreenName])
+        analyticsFeed.notifyEvent(.screenChange(screen: trackScreenName))
         var event = await takeNext().first
         XCTAssertEqual(AutomationEvent.screenView(name: trackScreenName), event)
         
-        let regionIdEnter = "reg-id"
-        let regionEventEnter = RegionEvent(regionID: regionIdEnter, source: "unit-test", boundaryEvent: .enter)!
-        notificaitonCenter.post(name: AirshipAnalytics.regionEventAdded, object: nil, userInfo: [AirshipAnalytics.eventKey: regionEventEnter])
+        analyticsFeed.notifyEvent(.regionEnter(body: .string("some region data")))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.regionEnter(regionId: regionIdEnter), event)
-        
-        let regionIdExit = "reg-id-exit"
-        let regionEventExit = RegionEvent(regionID: regionIdExit, source: "unit-test", boundaryEvent: .exit)!
-        notificaitonCenter.post(name: AirshipAnalytics.regionEventAdded, object: nil, userInfo: [AirshipAnalytics.eventKey: regionEventExit])
+        XCTAssertEqual(AutomationEvent.regionEnter(data: .string("some region data")), event)
+
+        analyticsFeed.notifyEvent(.regionExit(body: .string("some region data")))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.regionExit(regionId: regionIdExit), event)
-        
-        let customEvent = CustomEvent(name: "feed-test", value: 1.23)
-        customEvent.eventName = "test-name"
-        notificaitonCenter.post(name: AirshipAnalytics.customEventAdded, object: nil, userInfo: [AirshipAnalytics.eventKey: customEvent])
+        XCTAssertEqual(AutomationEvent.regionExit(data: .string("some region data")), event)
+
+        analyticsFeed.notifyEvent(.customEvent(body: .string("some data"), value: 100.0))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.customEvent(
-            data: try AirshipJSON.wrap([
-                "event_name": "test-name",
-                "event_value": 1.23,
-                "properties": [:]
-            ]),
-            value: 1.23), event)
-        
-        let ffInterractionEvent = CustomEvent(name: "ff-interracted")
-        notificaitonCenter.post(name: AirshipAnalytics.featureFlagInterracted, object: nil, userInfo: [AirshipAnalytics.eventKey: ffInterractionEvent])
+        XCTAssertEqual(AutomationEvent.customEvent(data: .string("some data"), value: 100.0), event)
+
+        analyticsFeed.notifyEvent(.featureFlagInteraction(body: .string("some data")))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.featureFlagInterracted(
-            data: try AirshipJSON.wrap(["event_name": "ff-interracted", "properties": [:]])
-        ), event)
+        XCTAssertEqual(AutomationEvent.featureFlagInterracted(data: .string("some data")), event)
     }
     
     func testNoEventsIfNotAttached() async throws {
         var events = await takeNext()
         XCTAssert(events.isEmpty)
         
-        notificaitonCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
+        self.analyticsFeed.notifyEvent(.screenChange(screen: "foo"))
         events = await takeNext()
         XCTAssert(events.isEmpty)
     }
     
-    func testNoEventsAfterDetauch() async throws {
+    func testNoEventsAfterDetach() async throws {
         await self.subject.attach()
-        var events = await takeNext(count: 2)
+        var events = await takeNext(count: 3)
         XCTAssert(events.count > 0)
         
         await subject.detach()
-        notificaitonCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
+
+        self.analyticsFeed.notifyEvent(.screenChange(screen: "foo"))
         events = await takeNext()
         XCTAssert(events.isEmpty)
     }
-    
+
+    func verifyStateChange(event: AutomationEvent, foreground: Bool, versionUpdated: String?, line: UInt = #line) {
+        guard case .stateChanged(let state) = event else {
+            XCTFail("invalid event", line: line)
+            return
+        }
+
+        if (foreground) {
+            XCTAssertNotNil(state.appSessionID)
+        } else {
+            XCTAssertNil(state.appSessionID)
+        }
+        XCTAssertEqual(versionUpdated, state.versionUpdated)
+    }
+
     @discardableResult
     private func takeNext(count: UInt = 1, timeout: Int = 1) async -> [AutomationEvent] {
         

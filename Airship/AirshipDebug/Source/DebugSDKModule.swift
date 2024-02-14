@@ -16,7 +16,7 @@ public class DebugSDKModule: NSObject, AirshipSDKModule {
     public let components: [AirshipComponent]
 
     public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
-        let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalytics
+        let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalyticsProtocol
         let remoteData = dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
         let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
 

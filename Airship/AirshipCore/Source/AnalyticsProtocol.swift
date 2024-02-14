@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 /// Analytics protocol
-/// For internal use only. :nodoc:
 @objc(UAAnalyticsProtocol)
-public protocol AnalyticsProtocol: Sendable {
+public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
+
     /// The conversion send ID. :nodoc:
     @objc
     var conversionSendID: String? { get }
@@ -16,18 +17,25 @@ public protocol AnalyticsProtocol: Sendable {
 
     /// The current session ID.
     @objc
-    var sessionID: String? { get }
+    var sessionID: String { get }
 
-    /// Triggers an analytics event.
-    /// - Parameter event: The event to be triggered
+    /// Adds a custom event.
+    /// - Parameter event: The event.
     @objc
-    func addEvent(_ event: AirshipEvent)
+    func recordCustomEvent(_ event: CustomEvent)
+
+    /// Tracks a custom event.
+    /// - Parameter event: The event.
+    @objc
+    func recordRegionEvent(_ event: RegionEvent)
+
+    @objc
+    func trackInstallAttribution(appPurchaseDate: Date?, iAdImpressionDate: Date?)
 
     /// Associates identifiers with the device. This call will add a special event
     /// that will be batched and sent up with our other analytics events. Previous
     /// associated identifiers will be replaced.
     ///
-    /// For internal use only. :nodoc:
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
     @objc
@@ -54,12 +62,20 @@ public protocol AnalyticsProtocol: Sendable {
     ///   - version: The version.
     @objc
     func registerSDKExtension(_ ext: AirshipSDKExtension, version: String)
+}
 
+
+/// Airship Analytics
+public protocol AirshipAnalyticsProtocol: AirshipBaseAnalyticsProtocol {
+    /// A publisher of event data that is tracked through Airship.
+    var eventPublisher: AnyPublisher<AirshipEventData, Never> { get }
 }
 
 /// Internal Analytics protocol
 /// For internal use only. :nodoc:
-public protocol InternalAnalyticsProtocol: AnalyticsProtocol {
+public protocol InternalAnalyticsProtocol: AirshipAnalyticsProtocol {
+    var eventFeed: AirshipAnalyticsFeed { get }
+
     @MainActor
     var screenUpdates: AsyncStream<String?> { get }
 
@@ -72,6 +88,7 @@ public protocol InternalAnalyticsProtocol: AnalyticsProtocol {
     @MainActor
     var currentRegions: Set<String> { get }
 
+    func recordEvent(_ event: AirshipEvent)
 
     func onDeviceRegistration(token: String)
 

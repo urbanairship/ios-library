@@ -147,7 +147,9 @@ public class Airship: NSObject {
 
     /// Shared Push instance.
     @objc
-    public static var push: AirshipPush { return requireComponent(ofType: AirshipPush.self) }
+    public static var push: AirshipPush {
+        return requireComponent(ofType: AirshipPush.self)
+    }
 
     /// Shared Contact instance.
     @objc
@@ -156,10 +158,16 @@ public class Airship: NSObject {
     }
 
     /// Shared Analytics instance.
-    @objc
-    public static var analytics: AirshipAnalytics {
-        return requireComponent(ofType: AirshipAnalytics.self)
+    @objc(analytics)
+    static var _analytics: AirshipBaseAnalyticsProtocol {
+        return requireComponent(ofType: AirshipBaseAnalyticsProtocol.self)
     }
+
+    /// Shared Analytics instance.
+    public static var analytics: AirshipAnalyticsProtocol {
+        return requireComponent(ofType: AirshipAnalyticsProtocol.self)
+    }
+
 
     /// Shared Channel instance.
     @objc
@@ -238,7 +246,9 @@ public class Airship: NSObject {
             as? [AnyHashable: Any]
         {
             if AppStateTracker.shared.state != .background {
-                analytics.launched(fromNotification: remoteNotification)
+                self.requireComponent(ofType: InternalAnalyticsProtocol.self).launched(
+                    fromNotification: remoteNotification
+                )
             }
         }
         #endif
@@ -357,7 +367,14 @@ public class Airship: NSObject {
 
         _shared = Airship(instance: AirshipInstance(config: resolvedConfig))
 
-        let integrationDelegate = DefaultAppIntegrationDelegate()
+        let integrationDelegate = DefaultAppIntegrationDelegate(
+            push: requireComponent(ofType: InternalPushProtocol.self),
+            analytics: requireComponent(ofType: InternalAnalyticsProtocol.self),
+            pushableComponents: _shared?.components.compactMap {
+                return $0 as? AirshipPushableComponent
+            } ?? []
+        )
+
         if resolvedConfig.isAutomaticSetupEnabled {
             AirshipLogger.info("Automatic setup enabled.")
             UAAutoIntegration.integrate(with: integrationDelegate)

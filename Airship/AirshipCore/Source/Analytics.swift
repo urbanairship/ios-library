@@ -4,48 +4,13 @@ import Combine
 import Foundation
 
 /// The Analytics object provides an interface to the Airship Analytics API.
-@objc(UAAnalytics)
-public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sendable {
-
-    /// The shared Analytics instance.
-    @objc
-    public static var shared: AirshipAnalytics {
-        return Airship.analytics
-    }
-
+final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     private static let associatedIdentifiers = "UAAssociatedIdentifiers"
-    private static let missingSendID = "MISSING_SEND_ID"
-    private static let pushMetadata = "com.urbanairship.metadata"
 
-    /// Screen key for ScreenTracked notification. :nodoc:
-    @objc
-    public static let screenKey = "screen"
+    static let missingSendID = "MISSING_SEND_ID"
+    static let pushMetadata = "com.urbanairship.metadata"
+    static let pushSendID = "_"
 
-    /// Event key for customEventAdded and regionEventAdded notifications.. :nodoc:
-    @objc
-    public static let eventKey = "event"
-
-    /// Custom event added notification. :nodoc:
-    @objc
-    public static let customEventAdded = NSNotification.Name(
-        "UACustomEventAdded"
-    )
-
-    /// Region event added notification. :nodoc:
-    @objc
-    public static let regionEventAdded = NSNotification.Name(
-        "UARegionEventAdded"
-    )
-    
-    /// FeatureFlag interracted notification. :nodoc:
-    @objc
-    public static let featureFlagInterracted = NSNotification.Name(
-        "UAFeatureFlagInterracted"
-    )
-
-    /// Screen tracked notification,. :nodoc:
-    @objc
-    public static let screenTracked = NSNotification.Name("UAScreenTracked")
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
@@ -84,7 +49,7 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
 
     /// The current session ID.
     @objc
-    public var sessionID: String? {
+    public var sessionID: String {
         return self.sessionTracker.sessionState.sessionID
     }
 
@@ -95,6 +60,7 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
         eventSubject.eraseToAnyPublisher()
     }
 
+    public let eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
 
     private var isAnalyticsEnabled: Bool {
         return self.privacyManager.isEnabled(.analytics) &&
@@ -150,8 +116,6 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
         self.eventManager = eventManager
         self.sessionTracker = sessionTracker
 
-        super.init()
-
         self.eventManager.addHeaderProvider {
             await self.makeHeaders()
         }
@@ -191,10 +155,9 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
             object: nil
         )
 
-
         Task { @MainActor in
             for await event in self.sessionTracker.events {
-                self.addEvent(
+                self.recordEvent(
                     sessionEventFactory.make(event: event),
                     date: event.date,
                     sessionID: event.sessionState.sessionID
@@ -295,74 +258,126 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
         return headers
     }
 
-    /// Triggers an analytics event.
-    /// - Parameter event: The event to be triggered
-    @objc
-    public func addEvent(_ event: AirshipEvent) {
-        self.addEvent(
-            event,
-            date: self.date.now,
-            sessionID: self.sessionTracker.sessionState.sessionID
+    public func recordCustomEvent(_ event: CustomEvent) {
+        guard self.isAnalyticsEnabled else {
+            AirshipLogger.info(
+                "Analytics disabled, ignoring custom event \(event)"
+            )
+            return
+        }
+
+        guard event.isValid() else {
+            AirshipLogger.info(
+                "Custom event is invalid, ignoring custom event \(event)"
+            )
+            return
+        }
+
+        /// Upload
+        let eventBody = event.eventBody(
+            sendID: self.conversionSendID,
+            metadata: self.conversionPushMetadata,
+            formatValue: true
+        )
+
+        recordEvent(
+            AirshipEvent(eventType: CustomEvent.eventType, eventData: eventBody)
+        )
+
+        /// Feed
+        let feedBody = event.eventBody(
+            sendID: self.conversionSendID,
+            metadata: self.conversionPushMetadata,
+            formatValue: false
+        )
+
+        self.eventFeed.notifyEvent(
+            .customEvent(
+                body: feedBody,
+                value: event.eventValue?.doubleValue ?? 1.0
+            )
         )
     }
 
-    private func addEvent(_ event: AirshipEvent, date: Date, sessionID: String) {
-        guard self.isAnalyticsEnabled else {
-            AirshipLogger.trace(
-                "Analytics disabled, ignoring event: \(event.eventType)"
-            )
-            return
-        }
+    public func recordRegionEvent(_ event: RegionEvent) {
+        let shouldInsert: Bool = event.boundaryEvent == .enter
+        let regionID = event.regionID
 
-        guard
-            event.isValid?() != false,
-            let body = try? AirshipJSON.wrap(event.data as? [String: Any])
-        else {
-            AirshipLogger.error("Dropping invalid event: \(event)")
-            return
-        }
-        
-        let eventData = AirshipEventData(
-            body: body,
-            id: NSUUID().uuidString,
-            date: date,
-            sessionID: sessionID,
-            type: event.eventType
-        )
-
-        if let customEvent = event as? CustomEvent {
-            self.notificationCenter.post(
-                name: AirshipAnalytics.customEventAdded,
-                object: self,
-                userInfo: [AirshipAnalytics.eventKey: customEvent]
-            )
-        }
-
-        if let regionEvent = event as? RegionEvent {
-            let shouldInsert: Bool = regionEvent.boundaryEvent == .enter
-            let regionID = regionEvent.regionID
-
-            Task { @MainActor in
-                self.regions.update { regions in
-                    if (shouldInsert) {
-                        regions.insert(regionID)
-                    } else {
-                        regions.remove(regionID)
-                    }
+        Task { @MainActor in
+            self.regions.update { regions in
+                if (shouldInsert) {
+                    regions.insert(regionID)
+                } else {
+                    regions.remove(regionID)
                 }
             }
-
-            self.notificationCenter.post(
-                name: AirshipAnalytics.regionEventAdded,
-                object: self,
-                userInfo: [AirshipAnalytics.eventKey: regionEvent]
-            )
         }
 
+        guard self.isAnalyticsEnabled else {
+            AirshipLogger.info(
+                "Analytics disabled, ignoring region event \(event)"
+            )
+            return
+        }
+
+        /// Upload
+        do {
+            recordEvent(
+                AirshipEvent(
+                    eventType: RegionEvent.eventType,
+                    eventData: try event.eventBody(stringifyFields: true)
+                )
+            )
+        } catch {
+            AirshipLogger.error("Failed to generate event body \(error)")
+        }
+
+        /// Feed
+        do {
+            let body = try event.eventBody(stringifyFields: false)
+
+            if (event.boundaryEvent == .enter) {
+                eventFeed.notifyEvent(.regionEnter(body: body))
+            } else {
+                eventFeed.notifyEvent(.regionExit(body: body))
+            }
+        } catch {
+            AirshipLogger.error("Failed to generate event body \(error)")
+        }
+    }
+
+    public func trackInstallAttribution(
+        appPurchaseDate: Date?,
+        iAdImpressionDate: Date?
+    ) {
+        recordEvent(
+            AirshipEvents.installAttirbutionEvent(
+                appPurchaseDate: appPurchaseDate,
+                iAdImpressionDate: iAdImpressionDate
+            )
+        )
+    }
+
+    public func recordEvent(_ event: AirshipEvent) {
+        self.recordEvent(event, date: self.date.now, sessionID: self.sessionTracker.sessionState.sessionID)
+    }
+
+    private func recordEvent(_ event: AirshipEvent, date: Date, sessionID: String) {
         self.serialQueue.enqueue {
             guard self.isAnalyticsEnabled else {
+                AirshipLogger.trace(
+                    "Analytics disabled, ignoring event: \(event.eventType)"
+                )
                 return
             }
+
+            let eventData = AirshipEventData(
+                body: event.eventData,
+                id: NSUUID().uuidString,
+                date: date,
+                sessionID: sessionID,
+                type: event.eventType
+            )
 
             do {
                 AirshipLogger.debug("Adding event with type \(eventData.type)")
@@ -408,15 +423,17 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
             }
         }
 
-        self.dataStore.setObject(
-            associatedIdentifiers.allIDs,
-            forKey: AirshipAnalytics.associatedIdentifiers
-        )
-
-        if let event = AssociateIdentifiersEvent(
-            identifiers: associatedIdentifiers
-        ) {
-            self.addEvent(event)
+        do {
+            let event = try AirshipEvents.associatedIdentifiersEvent(
+                identifiers: associatedIdentifiers
+            )
+            self.recordEvent(event)
+            self.dataStore.setObject(
+                associatedIdentifiers.allIDs,
+                forKey: AirshipAnalytics.associatedIdentifiers
+            )
+        } catch {
+            AirshipLogger.error("Failed to add associated idenfiers event \(error)")
         }
     }
 
@@ -443,12 +460,7 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
             return
         }
 
-        self.notificationCenter.post(
-            name: AirshipAnalytics.screenTracked,
-            object: self,
-            userInfo: screen == nil ? [:] : [AirshipAnalytics.screenKey: screen!]
-        )
-
+        self.eventFeed.notifyEvent(.screenChange(screen: screen))
 
         let currentScreen = self.screenState.value.current
         let screenStartDate = self.screenState.value.startDate
@@ -462,23 +474,21 @@ public final class AirshipAnalytics: NSObject, AnalyticsProtocol, @unchecked Sen
 
         // If there's a screen currently being tracked set it's stop time and add it to analytics
         if let currentScreen = currentScreen, let screenStartDate = screenStartDate {
-
-            guard
-                let ste = ScreenTrackingEvent(
+            do {
+                let ste = try AirshipEvents.screenTrackingEvent(
                     screen: currentScreen,
                     previousScreen: previousScreen,
                     startDate: screenStartDate,
                     duration: date.timeIntervalSince(screenStartDate)
                 )
-            else {
-                AirshipLogger.error(
-                    "Unable to create screen tracking event"
-                )
-                return
-            }
 
-            // Add screen tracking event to next analytics batch
-            self.addEvent(ste)
+                // Add screen tracking event to next analytics batch
+                self.recordEvent(ste)
+            } catch {
+                AirshipLogger.error(
+                    "Unable to create screen tracking event \(error)"
+                )
+            }
         }
     }
 
@@ -575,7 +585,7 @@ extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
     @MainActor
     public func launched(fromNotification notification: [AnyHashable: Any]) {
         if AirshipUtils.isAlertingPush(notification) {
-            let sendID = notification["_"] as? String
+            let sendID = notification[AirshipAnalytics.pushSendID] as? String
             let metadata = notification[AirshipAnalytics.pushMetadata] as? String
 
             self.sessionTracker.launchedFromPush(
@@ -586,12 +596,8 @@ extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
     }
 
     public func onDeviceRegistration(token: String) {
-        guard privacyManager.isEnabled(.push) else {
-            return
-        }
-
-        addEvent(
-            DeviceRegistrationEvent(
+        recordEvent(
+            AirshipEvents.deviceRegistrationEvent(
                 channelID: self.channel.identifier,
                 deviceToken: token
             )
@@ -618,39 +624,20 @@ extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
                 self.launched(fromNotification: userInfo)
             }
 
-            addEvent(
-                InteractiveNotificationEvent(
+            #if !os(tvOS)
+            recordEvent(
+                AirshipEvents.interactiveNotificationEvent(
                     action: action,
                     category: categoryID,
                     notification: userInfo,
                     responseText: responseText
                 )
             )
+            #endif
         }
     }
 }
 
-
-protocol SessionEventFactoryProtocol: Sendable {
-    @MainActor
-    func make(event: SessionEvent) -> AirshipEvent
-}
-
-struct SessionEventFactory: SessionEventFactoryProtocol {
-    @MainActor
-    func make(event: SessionEvent) -> AirshipEvent {
-        switch (event.type) {
-        case .foregroundInit:
-            return AppInitEvent(isForeground: true, sessionState: event.sessionState)
-        case .backgroundInit:
-            return AppInitEvent(isForeground: false, sessionState: event.sessionState)
-        case .background:
-            return AppBackgroundEvent(sessionState: event.sessionState)
-        case .foreground:
-            return AppForegroundEvent(sessionState: event.sessionState)
-        }
-    }
-}
 
 fileprivate struct ScreenState {
     var current: String?

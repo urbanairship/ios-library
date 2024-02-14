@@ -8,7 +8,7 @@ import AirshipCore
 
 class InAppEventRecorderTest: XCTestCase {
 
-    private let analytics: TestAnalytics = TestAnalytics()
+    private let airshipAnalytics: TestAnalytics = TestAnalytics()
     private var eventRecorder: InAppEventRecorder!
 
     private let campaigns =  try! AirshipJSON.wrap(
@@ -25,7 +25,7 @@ class InAppEventRecorderTest: XCTestCase {
     private let renderedLocale = try! AirshipJSON.wrap(["en-US"])
 
     override func setUp() async throws {
-        self.eventRecorder = InAppEventRecorder(analytics: analytics)
+        self.eventRecorder = InAppEventRecorder(airshipAnalytics:  airshipAnalytics)
     }
 
     func testEventData() async throws {
@@ -72,10 +72,10 @@ class InAppEventRecorderTest: XCTestCase {
         }
         """
 
-        let event = self.analytics.events.first!
+        let event = self.airshipAnalytics.events.first!
 
         XCTAssertEqual(event.eventType, inAppEvent.name)
-        XCTAssertEqual(try AirshipJSON.wrap(event.data), try AirshipJSON.from(json: expectedJSON))
+        XCTAssertEqual(event.eventData, try AirshipJSON.from(json: expectedJSON))
     }
 
     func testConversionIDs() async throws {
@@ -84,8 +84,8 @@ class InAppEventRecorderTest: XCTestCase {
             data: TestData(field: "something", anotherField: "something something")
         )
 
-        self.analytics.conversionSendID = UUID().uuidString
-        self.analytics.conversionPushMetadata = UUID().uuidString
+        self.airshipAnalytics.conversionSendID = UUID().uuidString
+        self.airshipAnalytics.conversionPushMetadata = UUID().uuidString
 
         let data = InAppEventData(
             event: inAppEvent,
@@ -123,15 +123,15 @@ class InAppEventRecorderTest: XCTestCase {
            },
            "field":"something",
            "anotherField":"something something",
-           "conversion_send_id": "\(self.analytics.conversionSendID!)",
-           "conversion_metadata": "\(self.analytics.conversionPushMetadata!)"
+           "conversion_send_id": "\(self.airshipAnalytics.conversionSendID!)",
+           "conversion_metadata": "\(self.airshipAnalytics.conversionPushMetadata!)"
         }
         """
 
-        let event = self.analytics.events.first!
+        let event = self.airshipAnalytics.events.first!
 
         XCTAssertEqual(event.eventType, inAppEvent.name)
-        XCTAssertEqual(try AirshipJSON.wrap(event.data), try AirshipJSON.from(json: expectedJSON))
+        XCTAssertEqual(event.eventData, try AirshipJSON.from(json: expectedJSON))
     }
 
     func testEventDataError() async throws {
@@ -153,7 +153,7 @@ class InAppEventRecorderTest: XCTestCase {
 
         self.eventRecorder.recordEvent(inAppEventData: data)
 
-        XCTAssertTrue(self.analytics.events.isEmpty)
+        XCTAssertTrue(self.airshipAnalytics.events.isEmpty)
     }
 }
 

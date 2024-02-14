@@ -204,7 +204,6 @@ public extension AirshipJSON {
         return false
     }
 
-
     var isArray: Bool {
         if case .array(_) = self {
             return true
@@ -258,4 +257,66 @@ public extension AirshipJSON {
         return value
     }
 
+    static func makeObject(builderBlock: (inout AirshipJSONObjectBuilder) -> Void) -> AirshipJSON {
+        var builder = AirshipJSONObjectBuilder()
+        builderBlock(&builder)
+        return builder.build()
+    }
+}
+
+
+public struct AirshipJSONObjectBuilder {
+    var data: [String: AirshipJSON] = [:]
+
+    public mutating func set(string: String?, key: String) {
+        guard let string = string else {
+            data[key] = nil
+            return
+        }
+        data[key] = .string(string)
+    }
+
+    public mutating func set(array: [AirshipJSON]?, key: String) {
+        guard let array = array else {
+            data[key] = nil
+            return
+        }
+        data[key] = .array(array)
+    }
+
+    public mutating func set(object: [String: AirshipJSON]?, key: String) {
+        guard let object = object else {
+            data[key] = nil
+            return
+        }
+        data[key] = .object(object)
+    }
+
+    public mutating func set(json: AirshipJSON?, key: String) {
+        guard let json = json else {
+            data[key] = nil
+            return
+        }
+        data[key] = json
+    }
+
+    public mutating func set(double: Double?, key: String) {
+        guard let double = double else {
+            data[key] = nil
+            return
+        }
+        data[key] = .number(double)
+    }
+
+    public mutating func set(bool: Bool?, key: String) {
+        guard let bool = bool else {
+            data[key] = nil
+            return
+        }
+        data[key] = .bool(bool)
+    }
+
+    func build() -> AirshipJSON {
+        return .object(data)
+    }
 }

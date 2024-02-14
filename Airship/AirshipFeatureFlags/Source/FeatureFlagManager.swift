@@ -30,44 +30,29 @@ public final class FeatureFlagManager: Sendable {
 
     private let remoteDataAccess: FeatureFlagRemoteDataAccessProtocol
     private let audienceChecker: DeviceAudienceChecker
-    private let eventTracker: EventTracker
+    private let analytics: FeatureFlagAnalyticsProtocol
     private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
-    private let notificationCenter: AirshipNotificationCenter
     private let deferredResolver: FeatureFlagDeferredResolverProtocol
 
     init(
         dataStore: PreferenceDataStore,
         remoteDataAccess: FeatureFlagRemoteDataAccessProtocol,
-        eventTracker: EventTracker,
+        analytics: FeatureFlagAnalyticsProtocol,
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
-        notificationCenter: AirshipNotificationCenter = .shared,
         deferredResolver: FeatureFlagDeferredResolverProtocol
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
-        self.eventTracker = eventTracker
+        self.analytics = analytics
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
-        self.notificationCenter = notificationCenter
         self.deferredResolver = deferredResolver
     }
 
     /// Tracks a feature flag interaction event.
     /// - Parameter flag: The flag.
     public func trackInteraction(flag: FeatureFlag) {
-        guard flag.exists else { return }
-
-        do {
-            let event = try FeatureFlagInteractedEvent(flag: flag)
-            eventTracker.addEvent(event)
-            self.notificationCenter.post(
-                name: AirshipAnalytics.featureFlagInterracted,
-                object: self,
-                userInfo: [AirshipAnalytics.eventKey: event]
-            )
-        } catch {
-            AirshipLogger.error("Failed to generate FeatureFlagInteractedEvent \(error)")
-        }
+        analytics.trackInteraction(flag: flag)
     }
 
     /// Gets and evaluates  a feature flag
@@ -262,10 +247,6 @@ public final class FeatureFlagManager: Sendable {
         let data: AirshipJSON?
         let reportingMetadata: AirshipJSON?
     }
-}
-
-protocol EventTracker: Sendable {
-    func addEvent(_ event: AirshipEvent)
 }
 
 

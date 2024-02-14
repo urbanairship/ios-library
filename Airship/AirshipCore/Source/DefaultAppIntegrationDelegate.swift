@@ -19,17 +19,6 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         self.pushableComponents = pushableComponents
     }
 
-    @objc
-    public override convenience init() {
-        self.init(
-            push: Airship.push,
-            analytics: Airship.analytics,
-            pushableComponents: Airship.shared.components.compactMap {
-                return $0 as? AirshipPushableComponent
-            }
-        )
-    }
-
     public func onBackgroundAppRefresh() {
         AirshipLogger.info("Application received background app refresh")
         self.push.dispatchUpdateAuthorizedNotificationTypes()

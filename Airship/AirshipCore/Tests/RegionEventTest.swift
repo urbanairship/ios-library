@@ -41,7 +41,7 @@ final class RegionEventTest: XCTestCase {
             ]
         ]
         
-        XCTAssertEqual(expected.toNsDictionary(), event?.data.toNsDictionary())
+        XCTAssertEqual(try! AirshipJSON.wrap(expected), try! event?.eventBody(stringifyFields: true))
     }
     
     /**
@@ -83,16 +83,14 @@ final class RegionEventTest: XCTestCase {
     func testRegionEvent() {
         let event = RegionEvent(regionID: self.validRegionId, source: self.validSource, boundaryEvent: .enter)
         
-        XCTAssertEqual(validRegionId, event?.data["region_id"] as! String, "Unexpected region id.")
-        XCTAssertEqual(validSource, event?.data["source"] as! String, "Unexpected region source.")
-        XCTAssertEqual("enter", event?.data["action"] as! String, "Unexpected boundary event.")
+        let expected: [String: Any] = [
+            "action": "enter",
+            "region_id": "\(self.validRegionId)",
+            "source": "\(self.validSource)",
+        ]
+
+        XCTAssertEqual(try! AirshipJSON.wrap(expected), try! event?.eventBody(stringifyFields: true))
+
     }
-    
-    /**
-     * Test the event is high priority
-     */
-    func testHighPriority() {
-        let event = RegionEvent(regionID: "id", source: "source", boundaryEvent: .enter)
-        XCTAssertEqual(event?.priority, .high)
-    }
+
 }

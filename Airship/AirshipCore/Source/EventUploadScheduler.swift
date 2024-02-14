@@ -2,7 +2,7 @@ import Foundation
 
 protocol EventUploadSchedulerProtocol: Sendable {
     func scheduleUpload(
-        eventPriority: EventPriority,
+        eventPriority: AirshipEventPriority,
         minBatchInterval: TimeInterval
     ) async
 
@@ -72,7 +72,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     }
 
     func scheduleUpload(
-        eventPriority: EventPriority,
+        eventPriority: AirshipEventPriority,
         minBatchInterval: TimeInterval
     ) async {
         let delay = await self.calculateNextUploadDelay(
@@ -101,7 +101,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     }
 
     private func calculateNextUploadDelay(
-        eventPriority: EventPriority,
+        eventPriority: AirshipEventPriority,
         minBatchInterval: TimeInterval
     ) async -> TimeInterval {
 

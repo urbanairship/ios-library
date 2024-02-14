@@ -26,8 +26,8 @@ class EventUtils {
 
     class func notificationTypes(
         authorizedSettings: UAAuthorizedNotificationSettings
-    ) -> [AnyHashable]? {
-        var notificationTypes: [AnyHashable] = []
+    ) -> [String]? {
+        var notificationTypes: [String] = []
 
         if (UAAuthorizedNotificationSettings.badge.rawValue
             & authorizedSettings.rawValue) > 0

@@ -264,8 +264,8 @@ final class CustomEventTest: XCTestCase {
         let event = CustomEvent(name: "event name")
         event.track()
         
-        XCTAssertEqual(1, self.analytics.events.count)
-        XCTAssertEqual(event, self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count)
+        XCTAssertEqual(event, self.analytics.customEvents.first)
     }
     
     /**

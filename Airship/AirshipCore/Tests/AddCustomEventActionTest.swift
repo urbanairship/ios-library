@@ -33,7 +33,7 @@ final class AddCustomEventActionTest: AirshipBaseTest {
         await verifyAcceptsArguments(withValue: AirshipJSON.object([:]), shouldAccept: false)
         await verifyAcceptsArguments(withValue: AirshipJSON.array([]), shouldAccept: false)
     }
-    
+
     
     // Test performing the action actually creates and adds the event from a NSNumber event value.
     func testPerformNSNumber() async throws {
@@ -52,8 +52,8 @@ final class AddCustomEventActionTest: AirshipBaseTest {
         
         try await verifyPerformWithArgs(args: args, expectedResult: nil)
         
-        XCTAssertEqual(1, self.analytics.events.count);
-        let event  = try XCTUnwrap(self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count);
+        let event  = try XCTUnwrap(self.analytics.customEvents.first)
         XCTAssertEqual("event name", event.eventName);
         XCTAssertEqual("transaction ID", event.transactionID);
         XCTAssertEqual("interaction type", event.interactionType);
@@ -80,8 +80,8 @@ final class AddCustomEventActionTest: AirshipBaseTest {
         
         try await verifyPerformWithArgs(args: args, expectedResult: nil)
     
-        XCTAssertEqual(1, self.analytics.events.count);
-        let event  = try XCTUnwrap(self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count);
+        let event  = try XCTUnwrap(self.analytics.customEvents.first)
         XCTAssertEqual("event name", event.eventName);
         XCTAssertEqual("transaction ID", event.transactionID);
         XCTAssertEqual("interaction type", event.interactionType);
@@ -133,8 +133,8 @@ final class AddCustomEventActionTest: AirshipBaseTest {
 
         try await verifyPerformWithArgs(args: args, expectedResult: nil)
     
-        XCTAssertEqual(1, self.analytics.events.count);
-        let event  = try XCTUnwrap(self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count);
+        let event  = try XCTUnwrap(self.analytics.customEvents.first)
         XCTAssertEqual("event name", event.eventName);
         XCTAssertEqual("transaction ID", event.transactionID);
         XCTAssertEqual("ua_mcrap", event.interactionType);
@@ -161,8 +161,8 @@ final class AddCustomEventActionTest: AirshipBaseTest {
         
         try await verifyPerformWithArgs(args: args, expectedResult: nil)
     
-        XCTAssertEqual(1, self.analytics.events.count);
-        let event  = try XCTUnwrap(self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count);
+        let event  = try XCTUnwrap(self.analytics.customEvents.first)
         XCTAssertEqual("event name", event.eventName);
         XCTAssertEqual("transaction ID", event.transactionID);
         XCTAssertEqual("interaction type", event.interactionType);
@@ -199,8 +199,8 @@ final class AddCustomEventActionTest: AirshipBaseTest {
     
         try await verifyPerformWithArgs(args: args, expectedResult: nil)
     
-        XCTAssertEqual(1, self.analytics.events.count);
-        let event  = try XCTUnwrap(self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count);
+        let event  = try XCTUnwrap(self.analytics.customEvents.first)
         XCTAssertEqual("event name", event.eventName);
         XCTAssertEqual("transaction ID", event.transactionID);
         XCTAssertEqual("interaction type", event.interactionType);
@@ -232,8 +232,8 @@ final class AddCustomEventActionTest: AirshipBaseTest {
 
         try await verifyPerformWithArgs(args: args, expectedResult: nil)
     
-        XCTAssertEqual(1, self.analytics.events.count);
-        let event  = try XCTUnwrap(self.analytics.events.first as? CustomEvent)
+        XCTAssertEqual(1, self.analytics.customEvents.count);
+        let event  = try XCTUnwrap(self.analytics.customEvents.first)
         XCTAssertEqual("event name", event.eventName);
         XCTAssertEqual(try! AirshipJSON.wrap(dict["properties"]), try! AirshipJSON.wrap(event.properties));
     }

@@ -153,11 +153,11 @@ extension EventAutomationTrigger {
         case .screenView(let name):
             guard self.type == .screen, isPredicateMatching(value: name) else { return nil }
             return evaluateResults(data: &data, increment: 1)
-        case .regionEnter(let regionId):
-            guard self.type == .regionEnter, isPredicateMatching(value: regionId) else { return nil }
+        case .regionEnter(let eventData):
+            guard self.type == .regionEnter, isPredicateMatching(value: eventData) else { return nil }
             return evaluateResults(data: &data, increment: 1)
-        case .regionExit(let regionId):
-            guard self.type == .regionExit, isPredicateMatching(value: regionId) else { return nil }
+        case .regionExit(let eventData):
+            guard self.type == .regionExit, isPredicateMatching(value: eventData) else { return nil }
             return evaluateResults(data: &data, increment: 1)
         case .customEvent(let eventData, let value):
             return customEvenTriggerMatch(eventData: eventData, value: value, data: &data)

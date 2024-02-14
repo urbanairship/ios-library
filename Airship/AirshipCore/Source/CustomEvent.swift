@@ -3,7 +3,10 @@
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.
 @objc(UACustomEvent)
-public class CustomEvent: NSObject, AirshipEvent {
+public class CustomEvent: NSObject {
+
+    /// The event type
+    public static let eventType: String  = "enhanced_custom_event"
 
     private static let interactionMCRAP = "ua_mcrap"
 
@@ -82,7 +85,7 @@ public class CustomEvent: NSObject, AirshipEvent {
     }
 
     private lazy var analytics = Airship.requireComponent(
-        ofType: AnalyticsProtocol.self
+        ofType: AirshipAnalyticsProtocol.self
     )
 
     /**
@@ -120,13 +123,12 @@ public class CustomEvent: NSObject, AirshipEvent {
     public var properties: [String: Any] = [:]
 
     @objc
-    public var eventType: String {
-        return "enhanced_custom_event"
-    }
-
-    @objc
-    public var priority: EventPriority {
-        return .normal
+    public var data: [AnyHashable: Any] {
+        return self.eventBody(
+            sendID: self.analytics.conversionSendID,
+            metadata: self.analytics.conversionPushMetadata,
+            formatValue: true
+        ).unWrap() as? [AnyHashable : Any] ?? [:]
     }
 
     /**
@@ -303,62 +305,51 @@ public class CustomEvent: NSObject, AirshipEvent {
         self.interactionType = CustomEvent.interactionMCRAP
     }
 
-    @objc
-    public var data: [AnyHashable: Any] {
-        let sendID = conversionSendID ?? self.analytics.conversionSendID
-        let sendMetadata =
-            conversionPushMetadata ?? self.analytics.conversionPushMetadata
-
-        var dictionary: [AnyHashable: Any] = [:]
-        dictionary[CustomEvent.eventNameKey] = eventName
-        dictionary[CustomEvent.eventConversionSendIDKey] = sendID
-        dictionary[CustomEvent.eventConversionMetadataKey] = sendMetadata
-        dictionary[CustomEvent.eventInteractionIDKey] = interactionID
-        dictionary[CustomEvent.eventInteractionTypeKey] = interactionType
-        dictionary[CustomEvent.eventTransactionIDKey] = transactionID
-        dictionary[CustomEvent.eventTemplateTypeKey] = templateType
-        dictionary[CustomEvent.eventPropertiesKey] = properties
-
-        if let eventValue = self._eventValue {
-            let number = eventValue.multiplying(byPowerOf10: 6)
-            dictionary[CustomEvent.eventValueKey] = number.int64Value
-        }
-
-        return dictionary
-    }
-
     /**
      * - Note: For internal use only. :nodoc:
      */
-    @objc
-    public var payload: [AnyHashable: Any] {
-        /*
-             * We are unable to use the event.data for automation because we modify some
-             * values to be stringified versions before we store the event to be sent to
-             * warp9. Instead we are going to recreate the event data with the unmodified
-             * values.
-             */
-        var eventData: [AnyHashable: Any] = [:]
-        eventData[CustomEvent.eventNameKey] = eventName
-        eventData[CustomEvent.eventInteractionIDKey] = interactionID
-        eventData[CustomEvent.eventInteractionTypeKey] = interactionType
-        eventData[CustomEvent.eventTransactionIDKey] = transactionID
-        eventData[CustomEvent.eventValueKey] = eventValue
-        eventData[CustomEvent.eventPropertiesKey] = properties
-        return eventData
+    func eventBody(sendID: String?, metadata: String?, formatValue: Bool) -> AirshipJSON {
+        var wrappedProperities: AirshipJSON? = nil
+
+        do {
+            wrappedProperities = try AirshipJSON.wrap(properties)
+        } catch {
+            AirshipLogger.error("Failed to wrap properites \(properties): \(error)")
+        }
+
+        return AirshipJSON.makeObject { object in
+            object.set(string: eventName, key: CustomEvent.eventNameKey)
+            object.set(string: conversionSendID ?? sendID, key: CustomEvent.eventConversionSendIDKey)
+            object.set(string: conversionPushMetadata ?? metadata, key: CustomEvent.eventConversionMetadataKey)
+            object.set(string: interactionID, key: CustomEvent.eventInteractionIDKey)
+            object.set(string: interactionType, key: CustomEvent.eventInteractionTypeKey)
+            object.set(string: transactionID, key: CustomEvent.eventTransactionIDKey)
+            object.set(string: templateType, key: CustomEvent.eventTemplateTypeKey)
+            object.set(json: wrappedProperities, key: CustomEvent.eventPropertiesKey)
+
+            if formatValue {
+                let number = (self._eventValue ?? 1.0).multiplying(byPowerOf10: 6)
+                object.set(double: Double(number.int64Value), key: CustomEvent.eventValueKey)
+            } else {
+                object.set(double: eventValue?.doubleValue ?? 1.0, key: CustomEvent.eventValueKey)
+            }
+        }
     }
+
 
     /**
      * Adds the event to analytics.
      */
     @objc
     public func track() {
-        self.analytics.addEvent(self)
+        self.analytics.recordCustomEvent(self)
     }
 
-    private func isValid(string: String?, name: String, required: Bool = false)
-        -> Bool
-    {
+    private func isValid(
+        string: String?,
+        name: String,
+        required: Bool = false
+    ) -> Bool {
         guard let string = string else {
             guard required else {
                 return true

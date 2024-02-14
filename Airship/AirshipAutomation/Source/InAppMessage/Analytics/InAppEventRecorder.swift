@@ -19,10 +19,10 @@ protocol InAppEventRecorderProtocol: Sendable {
 }
 
 struct InAppEventRecorder: InAppEventRecorderProtocol {
-    private let analytics: AnalyticsProtocol
+    private let airshipAnalytics: InternalAnalyticsProtocol
 
-    init(analytics: AnalyticsProtocol) {
-        self.analytics = analytics
+    init(airshipAnalytics: InternalAnalyticsProtocol) {
+        self.airshipAnalytics = airshipAnalytics
     }
 
     func recordEvent(inAppEventData: InAppEventData) {
@@ -30,24 +30,22 @@ struct InAppEventRecorder: InAppEventRecorderProtocol {
             identifier: inAppEventData.messageID,
             source: inAppEventData.source,
             context: inAppEventData.context,
-            conversionSendID: analytics.conversionSendID,
-            conversionPushMetadata: analytics.conversionPushMetadata,
+            conversionSendID: airshipAnalytics.conversionSendID,
+            conversionPushMetadata: airshipAnalytics.conversionPushMetadata,
             renderedLocale: inAppEventData.renderedLocale,
             baseData: inAppEventData.event.data
         )
 
         do {
-            guard let data = try AirshipJSON.wrap(eventBody).unWrap() as? [AnyHashable: Any] else {
-                throw AirshipErrors.error("failed to wrap data")
-            }
-
-            analytics.addEvent(
-                Event(data: data, eventType: inAppEventData.event.name)
+            airshipAnalytics.recordEvent(
+                AirshipEvent(
+                    eventType: inAppEventData.event.name,
+                    eventData: try AirshipJSON.wrap(eventBody)
+                )
             )
         } catch {
             AirshipLogger.error("Failed to add event \(inAppEventData) error \(error)")
         }
-
     }
 }
 
@@ -79,15 +77,5 @@ fileprivate struct EventBody: Encodable, Sendable {
         try container.encodeIfPresent(self.conversionPushMetadata, forKey: Self.CodingKeys.conversionPushMetadata)
         try container.encodeIfPresent(self.renderedLocale, forKey: Self.CodingKeys.renderedLocale)
         try self.baseData?.encode(to: encoder)
-    }
-}
-
-fileprivate final class Event: NSObject, AirshipEvent {
-    let data: [AnyHashable : Any]
-    let eventType: String
-    let priority: EventPriority = .normal
-    init(data: [AnyHashable : Any], eventType: String) {
-        self.data = data
-        self.eventType = eventType
     }
 }

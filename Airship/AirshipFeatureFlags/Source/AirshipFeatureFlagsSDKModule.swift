@@ -21,14 +21,14 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         let remoteData =
             dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
 
-        let analytics = dependencies[SDKDependencyKeys.analytics] as! AirshipAnalytics
+        let airshipAnalytcs = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
         let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! AirshipDeferredResolverProtocol
         let cache = dependencies[SDKDependencyKeys.cache] as! AirshipCache
 
         let manager = FeatureFlagManager(
             dataStore: dataStore,
             remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: remoteData),
-            eventTracker: analytics,
+            analytics: FeatureFlagAnalytics(airshipAnalytics: airshipAnalytcs),
             deferredResolver: FeatureFlagDeferredResolver(
                 cache: cache,
                 deferredResolver: deferredResolver
@@ -41,6 +41,3 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         self.components = components
     }
 }
-
-
-extension AirshipAnalytics : EventTracker {}

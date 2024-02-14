@@ -23,8 +23,8 @@ struct InAppMessageAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol {
     let eventRecorder: InAppEventRecorder
     let impressionRecorder: AirshipMeteredUsageProtocol
 
-    init(analytics: AnalyticsProtocol, meteredUsage: AirshipMeteredUsageProtocol) {
-        self.eventRecorder = InAppEventRecorder(analytics: analytics)
+    init(eventRecorder: InAppEventRecorder, meteredUsage: AirshipMeteredUsageProtocol) {
+        self.eventRecorder = eventRecorder
         self.impressionRecorder = meteredUsage
     }
 

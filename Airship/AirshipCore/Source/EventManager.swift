@@ -4,7 +4,7 @@ protocol EventManagerProtocol: AnyObject, Sendable {
     var uploadsEnabled: Bool { get set }
     func addEvent(_ event: AirshipEventData) async throws
     func deleteEvents() async throws
-    func scheduleUpload(eventPriority: EventPriority) async
+    func scheduleUpload(eventPriority: AirshipEventPriority) async
 
     @MainActor
     func addHeaderProvider(
@@ -80,7 +80,7 @@ final class EventManager: EventManagerProtocol {
         self.headerBlocks.value.append(headerProvider)
     }
 
-    func scheduleUpload(eventPriority: EventPriority) async {
+    func scheduleUpload(eventPriority: AirshipEventPriority) async {
         guard self.uploadsEnabled else { return }
 
         await self.eventScheduler.scheduleUpload(

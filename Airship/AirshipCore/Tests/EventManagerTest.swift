@@ -50,7 +50,7 @@ final class EventManagerTest: XCTestCase {
         )
 
         XCTAssertEqual(
-            EventPriority.high,
+            AirshipEventPriority.high,
             self.eventScheduler.lastScheduleUploadPriority
         )
     }
@@ -271,11 +271,11 @@ final class TestEventAPIClient: EventAPIClientProtocol, @unchecked Sendable {
 final class TestEventUploadScheduler: EventUploadSchedulerProtocol, @unchecked Sendable {
     var workBlock: (() async throws -> AirshipWorkResult)?
 
-    var lastScheduleUploadPriority: EventPriority?
+    var lastScheduleUploadPriority: AirshipEventPriority?
     var lastMinBatchInterval: TimeInterval?
 
     func scheduleUpload(
-        eventPriority: EventPriority,
+        eventPriority: AirshipEventPriority,
         minBatchInterval: TimeInterval
     ) async {
         self.lastMinBatchInterval  = minBatchInterval

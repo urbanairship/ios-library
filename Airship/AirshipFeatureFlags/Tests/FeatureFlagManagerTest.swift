@@ -14,9 +14,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let networkChecker: TestNetworkChecker = TestNetworkChecker()
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
-    private let eventTracker: TestEventTracker = TestEventTracker()
+    private let analytics: TestFeatureFlagAnalytics = TestFeatureFlagAnalytics()
     private let deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
-    private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let deferredResolver: TestFeatureFlagResolver = TestFeatureFlagResolver()
 
     private var featureFlagManager: FeatureFlagManager!
@@ -25,10 +24,9 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         self.featureFlagManager = FeatureFlagManager(
             dataStore: self.dataStore,
             remoteDataAccess: self.remoteDataAccess,
-            eventTracker: self.eventTracker,
+            analytics: self.analytics,
             audienceChecker: self.audienceChecker,
             deviceInfoProviderFactory: { self.deviceInfoProvider },
-            notificationCenter: notificationCenter,
             deferredResolver: self.deferredResolver
         )
     }
@@ -634,55 +632,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        
-        let expectation = self.expectation(description: "tracked notification sent")
-        notificationCenter.addObserver(forName: AirshipAnalytics.featureFlagInterracted) { notification in
-            let event = self.eventTracker.events.last as? FeatureFlagInteractedEvent
-            let receivedEvent = notification.userInfo?[AirshipAnalytics.eventKey] as? FeatureFlagInteractedEvent
-            XCTAssertNotNil(event)
-            XCTAssertEqual(event, receivedEvent)
-            expectation.fulfill()
-        }
 
         self.featureFlagManager.trackInteraction(flag: flag)
-
-        XCTAssertEqual(1, self.eventTracker.events.count)
-        XCTAssertNotNil(self.eventTracker.events[0] as? FeatureFlagInteractedEvent)
-        
-        waitForExpectations(timeout: 10)
+        XCTAssertEqual(self.analytics.trackedInteractions, [flag])
     }
-
-    func testTrackInteractionDoesNotExist() {
-        let flag = FeatureFlag(
-            name: "foo",
-            isEligible: false,
-            exists: false,
-            variables: nil,
-            reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting two"),
-                contactID: self.deviceInfoProvider.stableContactID,
-                channelID: self.deviceInfoProvider.channelID
-            )
-        )
-
-        self.featureFlagManager.trackInteraction(flag: flag)
-
-        XCTAssertEqual(0, self.eventTracker.events.count)
-    }
-
-    func testTrackInteractionNoReportingInfo() {
-        let flag = FeatureFlag(
-            name: "foo",
-            isEligible: false,
-            exists: true,
-            variables: nil,
-            reportingInfo: nil
-        )
-
-        self.featureFlagManager.trackInteraction(flag: flag)
-        XCTAssertEqual(0, self.eventTracker.events.count)
-    }
-
 
     func testDeferred() async throws {
         let flagInfo = FeatureFlagInfo(
@@ -920,11 +873,12 @@ final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol
 }
 
 
-final class TestEventTracker: EventTracker, @unchecked Sendable {
-    var events: [AirshipEvent] = []
-    func addEvent(_ event: AirshipEvent) {
-        events.append(event)
+final class TestFeatureFlagAnalytics: FeatureFlagAnalyticsProtocol, @unchecked Sendable {
+    func trackInteraction(flag: FeatureFlag) {
+        trackedInteractions.append(flag)
     }
+
+    var trackedInteractions: [FeatureFlag] = []
 }
 
 

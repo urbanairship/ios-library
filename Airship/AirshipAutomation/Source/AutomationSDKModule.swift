@@ -24,7 +24,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let experiments = dependencies[SDKDependencyKeys.experimentsProvider] as! ExperimentDataProvider
         let sceneManager = dependencies[SDKDependencyKeys.sceneManager] as! AirshipSceneManagerProtocol
         let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
-        let analytics = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
+        let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
         let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! AirshipMeteredUsageProtocol
         let metrics = dependencies[SDKDependencyKeys.applicationMetrics] as! ApplicationMetrics
 
@@ -34,6 +34,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: dataStore)
         let frequencyLimits = FrequencyLimitManager(config: config)
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
+        let eventRecorder = InAppEventRecorder(airshipAnalytics: airshipAnalytics)
 
         /// Preperation
         let actionPreparer = ActionAutomationPreparer()
@@ -55,7 +56,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messageExecutor = InAppMessageAutomationExecutor(
             sceneManager: messageSceneManager,
             assetManager: assetManager,
-            analyticsFactory: InAppMessageAnalyticsFactory(analytics: analytics, meteredUsage: meteredUsage),
+            analyticsFactory: InAppMessageAnalyticsFactory(eventRecorder: eventRecorder, meteredUsage: meteredUsage),
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
         )
         
@@ -65,7 +66,11 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             remoteDataAccess: remoteDataAccess
         )
 
-        let feed = AutomationEventFeed(metrics:  metrics)
+        let feed = AutomationEventFeed(
+            applicationMetrics: metrics,
+            applicationStateTracker: AppStateTracker.shared,
+            analyticsFeed: airshipAnalytics.eventFeed
+        )
         feed.attach()
 
         // Engine
@@ -77,7 +82,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
             eventFeed: feed,
             triggersProcessor: AutomationTriggerProcessor(store: automationStore),
-            delayProcessor: AutomationDelayProcessor(analytics: analytics)
+            delayProcessor: AutomationDelayProcessor(analytics: airshipAnalytics)
         )
 
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(
@@ -93,7 +98,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         )
 
         let legacyInAppMessaging = LegacyInAppMessaging(
-            analytics: LegacyInAppAnalytics(recorder: InAppEventRecorder(analytics: analytics)),
+            analytics: LegacyInAppAnalytics(recorder: eventRecorder),
             dataStore: dataStore,
             automationEngine: engine
         )

@@ -90,7 +90,7 @@ public class AirshipDebugManager {
 
     init(
         config: RuntimeConfig,
-        analytics: AirshipAnalytics,
+        analytics: AirshipAnalyticsProtocol,
         remoteData: RemoteDataProtocol
     ) {
         self.remoteData = remoteData

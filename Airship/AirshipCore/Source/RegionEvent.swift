@@ -2,7 +2,7 @@
 
 /// Represents the boundary crossing event type.
 @objc
-public enum UABoundaryEvent: Int {
+public enum UABoundaryEvent: Int, Sendable {
     /**
      * Enter event
      */
@@ -17,7 +17,10 @@ public enum UABoundaryEvent: Int {
 
 /// A region event captures information regarding a region event for analytics.
 @objc(UARegionEvent)
-public class RegionEvent: NSObject, AirshipEvent {
+public class RegionEvent: NSObject {
+
+    @objc
+    public static let eventType: String = "region_event"
 
     @objc
     public static let regionIDKey = "region_id"
@@ -64,29 +67,6 @@ public class RegionEvent: NSObject, AirshipEvent {
      */
     @objc
     public let proximityRegion: ProximityRegion?
-
-    @objc
-    public var eventType: String {
-        return "region_event"
-    }
-
-    @objc
-    public var priority: EventPriority {
-        return .high
-    }
-
-    @objc
-    public var data: [AnyHashable: Any] {
-        return self.generatePayload(stringifyFields: true)
-    }
-
-    /**
-     * - Note: For internal use only. :nodoc:
-     */
-    @objc
-    public var payload: [AnyHashable: Any] {
-        return self.generatePayload(stringifyFields: false)
-    }
 
     /**
      * Default constructor.
@@ -199,7 +179,7 @@ public class RegionEvent: NSObject, AirshipEvent {
         return true
     }
 
-    private func generatePayload(stringifyFields: Bool) -> [String: Any] {
+    func eventBody(stringifyFields: Bool) throws -> AirshipJSON {
         var dictionary: [String: Any] = [:]
         dictionary[RegionEvent.sourceKey] = self.source
         dictionary[RegionEvent.regionIDKey] = self.regionID
@@ -272,6 +252,6 @@ public class RegionEvent: NSObject, AirshipEvent {
             dictionary[RegionEvent.circularRegionKey] = circularData
         }
 
-        return dictionary
+        return try AirshipJSON.wrap(dictionary)
     }
 }

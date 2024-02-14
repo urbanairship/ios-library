@@ -108,21 +108,21 @@ class AnalyticsTest: XCTestCase {
             analytics?.trackScreen("another_screen")
         }
 
-        let unwrappedBody: [String: Any] = events[0].unwrappedBody
+        let body: AirshipJSON = events[0].body
 
         XCTAssertEqual("screen_tracking", events[0].type)
-        XCTAssertEqual("test_screen", unwrappedBody["screen"] as? String)
-        XCTAssertEqual("3.000", unwrappedBody["duration"] as? String)
+        XCTAssertEqual("test_screen", body.object?["screen"]?.string)
+        XCTAssertEqual("3.000", body.object?["duration"]?.string)
 
-        compareTimestamps(unwrappedBody, key: "entered_time", expectedValue: currentTime)
-        compareTimestamps(unwrappedBody, key: "exited_time", expectedValue: currentTime + timeOffset)
+        compareTimestamps(value: body.object?["entered_time"]?.string, expectedValue: currentTime)
+        compareTimestamps(value: body.object?["exited_time"]?.string, expectedValue: currentTime + timeOffset)
     }
 
-    private func compareTimestamps(_ unwrappedBody: [String: Any], key: String, expectedValue: TimeInterval) {
-        if let stringValue = unwrappedBody[key] as? String, let actualValue = Double(stringValue) {
-            XCTAssertEqual(actualValue, expectedValue, accuracy: 1, "Timestamp for \(key) does not match")
+    private func compareTimestamps(value: String?, expectedValue: TimeInterval) {
+        if let value = value, let actualValue = Double(value) {
+            XCTAssertEqual(actualValue, expectedValue, accuracy: 1)
         } else {
-            XCTFail("Timestamp for \(key) could not be extracted or converted to Double")
+            XCTFail("Not a double")
         }
     }
 
@@ -157,7 +157,7 @@ class AnalyticsTest: XCTestCase {
 
         let expectation = XCTestExpectation()
         self.eventManager.scheduleUploadCallback = { priority in
-            XCTAssertEqual(EventPriority.normal, priority)
+            XCTAssertEqual(AirshipEventPriority.normal, priority)
             expectation.fulfill()
         }
         self.privacyManager.enableFeatures(.analytics)
@@ -218,7 +218,7 @@ class AnalyticsTest: XCTestCase {
         var update = await updates.next()
         XCTAssertEqual(Set(), update)
 
-        self.analytics.addEvent(
+        self.analytics.recordRegionEvent(
             RegionEvent(regionID: "foo", source: "source", boundaryEvent: .enter)!
         )
         
@@ -226,7 +226,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual(Set(["foo"]), update)
         XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
 
-        self.analytics.addEvent(
+        self.analytics.recordRegionEvent(
             RegionEvent(regionID: "bar", source: "source", boundaryEvent: .enter)!
         )
 
@@ -234,7 +234,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual(Set(["foo", "bar"]), update)
         XCTAssertEqual(Set(["foo", "bar"]), self.analytics.currentRegions)
 
-        self.analytics.addEvent(
+        self.analytics.recordRegionEvent(
             RegionEvent(regionID: "bar", source: "source", boundaryEvent: .exit)!
         )
 
@@ -242,7 +242,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual(Set(["foo"]), update)
         XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
 
-        self.analytics.addEvent(
+        self.analytics.recordRegionEvent(
             RegionEvent(regionID: "baz", source: "source", boundaryEvent: .exit)!
         )
 
@@ -250,7 +250,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual(Set(["foo"]), update)
         XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
 
-        self.analytics.addEvent(
+        self.analytics.recordRegionEvent(
             RegionEvent(regionID: "foo", source: "source", boundaryEvent: .exit)!
         )
 
@@ -266,7 +266,7 @@ class AnalyticsTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.analytics.addEvent(ValidEvent())
+        self.analytics.recordEvent(AirshipEvent(priority: .normal, eventType: "valid", eventData: .string("body")))
 
         wait(for: [expectation], timeout: 5.0)
     }
@@ -332,67 +332,36 @@ class AnalyticsTest: XCTestCase {
         XCTAssertNil(self.analytics.conversionSendID)
     }
 
-    func testForwardScreenTracking() async throws {
-        let eventAdded = self.expectation(description: "Event added")
-        self.notificationCenter.addObserver(
-            forName: AirshipAnalytics.screenTracked
-        ) { notification in
-
-            XCTAssertEqual(
-                ["screen": "some screen"],
-                notification.userInfo as? [String: String]
-            )
-            eventAdded.fulfill()
-        }
-
+    func testScreenEventFeed() async throws {
+        var feed = self.analytics.eventFeed.updates.makeAsyncIterator()
         await self.analytics.trackScreen("some screen")
 
-        await self.fulfillment(of: [eventAdded])
+        let next = await feed.next()
+        XCTAssertEqual(next, .screenChange(screen: "some screen"))
     }
 
-    func testForwardRegionEvents() throws {
+    func testRegionEventEventFeed() async throws {
         let event = RegionEvent(
             regionID: "foo",
             source: "test",
             boundaryEvent: .enter
         )!
 
-        let eventAdded = self.expectation(description: "Event added")
-        self.notificationCenter.addObserver(
-            forName: AirshipAnalytics.regionEventAdded,
-            object: nil,
-            queue: nil
-        ) { notification in
+        var feed = self.analytics.eventFeed.updates.makeAsyncIterator()
+        self.analytics.recordRegionEvent(event)
 
-            XCTAssertEqual(
-                event,
-                notification.userInfo?["event"] as? RegionEvent
-            )
-            eventAdded.fulfill()
-        }
-
-        self.analytics.addEvent(event)
-        self.wait(for: [eventAdded], timeout: 1)
+        let next = await feed.next()
+        XCTAssertEqual(next, .regionEnter(body: try event.eventBody(stringifyFields: false)))
     }
 
-    func testForwardCustomEvents() throws {
+    func testForwardCustomEvents() async throws {
         let event = CustomEvent(name: "foo")
 
-        let eventAdded = self.expectation(description: "Event added")
-        self.notificationCenter.addObserver(
-            forName: AirshipAnalytics.customEventAdded,
-            object: nil,
-            queue: nil
-        ) { notification in
-            XCTAssertEqual(
-                event,
-                notification.userInfo?["event"] as? CustomEvent
-            )
-            eventAdded.fulfill()
-        }
+        var feed = self.analytics.eventFeed.updates.makeAsyncIterator()
+        self.analytics.recordCustomEvent(event)
 
-        self.analytics.addEvent(event)
-        self.wait(for: [eventAdded], timeout: 1)
+        let next = await feed.next()
+        XCTAssertEqual(next, .customEvent(body: event.eventBody(sendID: nil, metadata: nil, formatValue: false), value: 1.0))
     }
 
     func testSDKExtensions() async throws {
@@ -532,15 +501,6 @@ class AnalyticsTest: XCTestCase {
     }
 }
 
-class ValidEvent: NSObject, AirshipEvent {
-    var data: [AnyHashable: Any] = [:]
-    var eventType: String = "valid"
-    var priority: EventPriority = .normal
-
-    func isValid() -> Bool {
-        return true
-    }
-}
 
 final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
     var uploadsEnabled: Bool = false
@@ -557,9 +517,9 @@ final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
         self.deleteEventsCallback?()
     }
 
-    var scheduleUploadCallback: ((EventPriority) -> Void)?
+    var scheduleUploadCallback: ((AirshipEventPriority) -> Void)?
 
-    func scheduleUpload(eventPriority: EventPriority) async {
+    func scheduleUpload(eventPriority: AirshipEventPriority) async {
         scheduleUploadCallback?(eventPriority)
     }
 
@@ -587,30 +547,18 @@ final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
 
 final class TestSessionEventFactory: SessionEventFactoryProtocol, @unchecked Sendable {
     func make(event: SessionEvent) -> AirshipEvent {
-        return TestLifeCycleEvent(type: event.type)
-    }
-}
-
-class TestLifeCycleEvent: NSObject, AirshipEvent {
-    var data: [AnyHashable: Any] = [:]
-    let eventType: String
-    var priority: EventPriority = .normal
-
-    init(type: SessionEvent.EventType) {
-        switch(type) {
+        let name: String = switch(event.type) {
         case .backgroundInit:
-            self.eventType = "app_background_init"
+            "app_background_init"
         case .foregroundInit:
-            self.eventType = "app_foreground_init"
+            "app_foreground_init"
         case .background:
-            self.eventType = "app_background"
+            "app_background"
         case .foreground:
-            self.eventType = "app_foreground"
+            "app_foreground"
         }
-    }
 
-    func isValid() -> Bool {
-        return true
+        return AirshipEvent(eventType: name, eventData: AirshipJSON.null)
     }
 }
 

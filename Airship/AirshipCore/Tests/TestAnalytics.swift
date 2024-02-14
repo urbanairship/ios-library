@@ -1,9 +1,35 @@
 import Foundation
 
 @testable import AirshipCore
+import Combine
 
 @objc(UATestAnalytics)
 public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
+    public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
+    
+    let eventSubject = PassthroughSubject<AirshipEventData, Never>()
+
+    /// Airship event publisher
+    public var eventPublisher: AnyPublisher<AirshipEventData, Never> {
+        eventSubject.eraseToAnyPublisher()
+    }
+
+
+    public func recordCustomEvent(_ event: CustomEvent) {
+        self.customEvents.append(event)
+    }
+    
+    public func recordRegionEvent(_ event: RegionEvent) {
+
+    }
+    
+    public func trackInstallAttribution(appPurchaseDate: Date?, iAdImpressionDate: Date?) {
+
+    }
+    
+    public func recordEvent(_ event: AirshipEvent) {
+        self.events.append(event)
+    }
 
     private let screen = AirshipMainActorValue<String?>(nil)
     private let regions = AirshipMainActorValue<Set<String>>(Set())
@@ -70,8 +96,8 @@ public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponen
 
     public var isComponentEnabled: Bool = true
 
-    @objc
     public var events: [AirshipEvent] = []
+    public var customEvents: [CustomEvent] = []
 
     @objc
     public var conversionSendID: String?
@@ -80,7 +106,7 @@ public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponen
     public var conversionPushMetadata: String?
 
     @objc
-    public var sessionID: String?
+    public var sessionID: String = ""
 
     public func addEvent(_ event: AirshipEvent) {
         events.append(event)
