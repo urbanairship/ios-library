@@ -81,6 +81,8 @@ jobs:
         run: make test
 
   deploy-github:
+    permissions:
+      contents: write
     runs-on: macos-13-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
@@ -110,44 +112,16 @@ jobs:
           path: ./build
       - name: Github Release
         id: create_release
-        uses: actions/create-release@v1.1.4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           release_name: ${{ steps.get_version.outputs.VERSION }}
           body: ${{ steps.get_release_notes.outputs.NOTES }}
           draft: false
           prerelease: false
-      - name: Upload zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/Airship.zip
-          asset_name: Airship.zip
-          asset_content_type: application/zip
-      - name: Upload carthage zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/Airship.xcframeworks.zip
-          asset_name: Airship.xcframeworks.zip
-          asset_content_type: application/zip
-      - name: Update prebuilt repo
-        env:
-          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
-        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
-      - name: Slack Notification
-        uses: homoluctus/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: "Deploy iOS SDK to Github :octocat:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
+          files: |
+            ./build/Airship.zip
+            ./build/Airship.xcframeworks.zip
 
   deploy-pods:
     runs-on: macos-13-xlarge
