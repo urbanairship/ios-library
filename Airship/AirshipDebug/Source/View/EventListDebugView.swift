@@ -105,7 +105,7 @@ private struct EventDetailsView: View {
                 makeInfoItem("ID", self.event.identifier)
                 makeInfoItem(
                     "Date",
-                    AirshipUtils.ISODateFormatterUTC().string(from: self.event.date)
+                    AirshipUtils.isoDateFormatterUTC().string(from: self.event.date)
                 )
             }
 

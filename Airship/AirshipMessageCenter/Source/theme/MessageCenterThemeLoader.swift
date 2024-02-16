@@ -94,7 +94,7 @@ extension String {
 
     fileprivate func toColor() -> Color {
         let colorString = self.trimmingCharacters(in: .whitespaces)
-        if let uiColor = ColorUtils.color(colorString) {
+        if let uiColor = AirshipColorUtils.color(colorString) {
             return Color(uiColor)
         }
         return Color(colorString)

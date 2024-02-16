@@ -204,6 +204,45 @@ class PreferenceDataStoreTest: XCTestCase {
         value = await dataStore.isAppRestore
         XCTAssertTrue(value)
     }
+
+    func testKeyIsStoredAndRetrieved() {
+        let dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            deviceID: testDeviceID
+        )
+
+        let value = ProcessInfo.processInfo.globallyUniqueString
+        dataStore.setObject(value, forKey: "key")
+        XCTAssertEqual(dataStore.string(forKey: "key"), value)
+    }
+
+    func testKeyIsRemoved() {
+        let dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            deviceID: testDeviceID
+        )
+
+        let value = ProcessInfo.processInfo.globallyUniqueString
+        dataStore.setObject(value, forKey: "key")
+        XCTAssertEqual(dataStore.object(forKey: "key") as? String, value)
+        dataStore.removeObject(forKey: "key")
+        XCTAssertNil(dataStore.object(forKey: "key"))
+    }
+
+    func testMigration() {
+        let prefix = UUID().uuidString
+        UserDefaults.standard.set(true, forKey: "\(prefix)some-key")
+
+        let dataStore = PreferenceDataStore(
+            appKey: prefix,
+            dispatcher: TestDispatcher(),
+            deviceID: testDeviceID
+        )
+
+        XCTAssertTrue(dataStore.bool(forKey: "some-key"))
+    }
 }
 
 private struct FooCodable: Codable, Equatable {

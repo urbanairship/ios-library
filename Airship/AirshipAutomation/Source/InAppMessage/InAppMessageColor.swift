@@ -17,7 +17,7 @@ public struct InAppMessageColor: Codable, Sendable, Equatable {
 
     public init(hexColorString: String) {
         self.hexColorString = hexColorString
-        self.color = Color(ColorUtils.color(hexColorString) ?? .clear)
+        self.color = Color(AirshipColorUtils.color(hexColorString) ?? .clear)
     }
 
     public init(from decoder: Decoder) throws {

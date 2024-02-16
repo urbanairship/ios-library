@@ -274,7 +274,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
             headerFields: [:]
         )
 
-        self.session.data = try JSONUtils.data(
+        self.session.data = try AirshipJSONUtils.data(
             [
                 "user_id": "some user id",
                 "password": "some password",
@@ -338,7 +338,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
             headerFields: [:]
         )
 
-        self.session.data = try JSONUtils.data([:])
+        self.session.data = try AirshipJSONUtils.data([:])
         do {
             let _ = try await self.client.createUser(withChannelID: "channelID")
             XCTFail("Expected error")

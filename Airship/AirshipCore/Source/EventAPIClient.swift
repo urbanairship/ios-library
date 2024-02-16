@@ -92,7 +92,7 @@ final class EventAPIClient: EventAPIClientProtocol {
             return eventBody
         }
 
-        return try JSONUtils.data(preparedEvents, options: [])
+        return try AirshipJSONUtils.data(preparedEvents, options: [])
     }
 }
 

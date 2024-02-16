@@ -1,9 +1,8 @@
 // Copyright Airship and Contributors
 
-@objc(UAJSONUtils)
-public class JSONUtils: NSObject {
+/// - NOTE: Internal use only :nodoc:
+public class AirshipJSONUtils: NSObject {
 
-    @objc(dataWithObject:options:error:)
     public class func data(
         _ obj: Any,
         options: JSONSerialization.WritingOptions = []
@@ -12,7 +11,6 @@ public class JSONUtils: NSObject {
         return try JSONSerialization.data(withJSONObject: obj, options: options)
     }
 
-    @objc(stringWithObject:options:error:)
     public class func string(
         _ obj: Any,
         options: JSONSerialization.WritingOptions
@@ -26,17 +24,14 @@ public class JSONUtils: NSObject {
         return string
     }
 
-    @objc(stringWithObject:)
     public class func string(_ obj: Any) -> String? {
         return try? self.string(obj, options: [])
     }
 
-    @objc(objectWithString:)
     public class func object(_ string: String) -> Any? {
         return try? self.object(string, options: [])
     }
 
-    @objc(objectWithString:options:error:)
     public class func object(
         _ string: String,
         options: JSONSerialization.ReadingOptions

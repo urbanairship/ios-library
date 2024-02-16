@@ -115,7 +115,7 @@ public class Airship: NSObject {
     /// wallet action, open external URL action, deep link
     /// action (if delegate is not set), and HTML in-app messages.
     @objc(URLAllowList)
-    public var urlAllowList: URLAllowList {
+    public var urlAllowList: URLAllowListProtocol {
         return airshipInstance.urlAllowList
     }
 

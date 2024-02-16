@@ -2,29 +2,28 @@
 
 import AirshipCore
 
-@objc(UATestURLAllowList)
-public class TestURLAllowList: URLAllowList {
+public class TestURLAllowList: URLAllowListProtocol {
 
     @objc
     public var isAllowedReturnValue: Bool = true
     @objc
     public var addEntryReturnValue: Bool = true
 
-    public override func isAllowed(_ url: URL?) -> Bool {
+    public func isAllowed(_ url: URL?) -> Bool {
         return isAllowedReturnValue
     }
 
-    public override func isAllowed(_ url: URL?, scope: URLAllowListScope)
+    public func isAllowed(_ url: URL?, scope: URLAllowListScope)
         -> Bool
     {
         return isAllowedReturnValue
     }
 
-    public override func addEntry(_ patternString: String) -> Bool {
+    public func addEntry(_ patternString: String) -> Bool {
         return addEntryReturnValue
     }
 
-    public override func addEntry(
+    public func addEntry(
         _ patternString: String,
         scope: URLAllowListScope
     ) -> Bool {

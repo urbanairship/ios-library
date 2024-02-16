@@ -59,7 +59,7 @@ public protocol URLAllowListProtocol {
 /// All URL allow list entries for internationalized domains must be in ASCII IDNA format as
 /// specified in https://tools.ietf.org/html/rfc3490
 @objc(UAURLAllowList)
-open class URLAllowList: NSObject, URLAllowListProtocol {
+public final class URLAllowList: NSObject, URLAllowListProtocol {
     /// `<scheme> := <any chars (no spaces), '*' will match 0 or more characters>`
     private static let schemeRegex = "^([^\\s]*)$"
 
@@ -162,7 +162,7 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @objc
     @discardableResult
-    open func addEntry(_ patternString: String) -> Bool {
+    public func addEntry(_ patternString: String) -> Bool {
         return addEntry(patternString, scope: .all)
     }
 
@@ -175,7 +175,7 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @objc
     @discardableResult
-    open func addEntry(
+    public func addEntry(
         _ patternString: String,
         scope: URLAllowListScope
     ) -> Bool {
@@ -263,7 +263,7 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @objc
-    open func isAllowed(_ url: URL?) -> Bool {
+    public func isAllowed(_ url: URL?) -> Bool {
         return isAllowed(url, scope: .all)
     }
 
@@ -275,7 +275,7 @@ open class URLAllowList: NSObject, URLAllowListProtocol {
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @objc
-    open func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
+    public func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
         guard let url = url else {
             return false
         }

@@ -5,7 +5,7 @@ import SwiftUI
 
 extension HexColor {
     func toColor() -> Color {
-        guard let uiColor = ColorUtils.color(self.hex) else {
+        guard let uiColor = AirshipColorUtils.color(self.hex) else {
             return Color.clear
         }
 

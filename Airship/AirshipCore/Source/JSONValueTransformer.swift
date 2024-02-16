@@ -19,7 +19,7 @@ public class JSONValueTransformer: ValueTransformer {
         }
 
         do {
-            return try JSONUtils.data(
+            return try AirshipJSONUtils.data(
                 value,
                 options: JSONSerialization.WritingOptions.prettyPrinted
             )

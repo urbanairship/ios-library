@@ -201,7 +201,7 @@ public extension DeviceAudienceSelector {
 
         let digest = AirshipUtils.sha256Digest(input: channel).subdata(with: NSMakeRange(0, 16))
         return testDevices.contains { testDevice in
-            Base64.dataFromString(testDevice) == digest
+            AirshipBase64.data(from: testDevice) == digest
         }
     }
 

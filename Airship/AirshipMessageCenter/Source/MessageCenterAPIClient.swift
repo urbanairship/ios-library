@@ -109,7 +109,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
         return try await self.session.performHTTPRequest(request) { data, response in
             guard response.isSuccess else { return nil }
 
-            let parsed: MessageListResponse = try JSONUtils.decode(data: data)
+            let parsed: MessageListResponse = try AirshipJSONUtils.decode(data: data)
             return try parsed.convertMessages()
         }
     }
@@ -145,7 +145,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             ],
             method: "POST",
             auth: .basic(username: user.username, password: user.password),
-            body: try JSONUtils.encode(object: body)
+            body: try AirshipJSONUtils.encode(object: body)
         )
 
         AirshipLogger.trace(
@@ -187,7 +187,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             headers: headers,
             method: "POST",
             auth: .basic(username: user.username, password: user.password),
-            body: try JSONUtils.encode(object: body)
+            body: try AirshipJSONUtils.encode(object: body)
         )
 
         AirshipLogger.trace(
@@ -218,7 +218,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             headers: headers,
             method: "POST",
             auth: .channelAuthToken(identifier: channelID),
-            body: try JSONUtils.encode(object: body)
+            body: try AirshipJSONUtils.encode(object: body)
         )
 
         AirshipLogger.trace(
@@ -230,7 +230,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             response in
             guard response.isSuccess else { return nil }
 
-            let response: MessageCenterUser = try JSONUtils.decode(data: data)
+            let response: MessageCenterUser = try AirshipJSONUtils.decode(data: data)
             return response
         }
     }
@@ -256,7 +256,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
             )
         )
 
-        let bodyData = try JSONUtils.encode(object: body)
+        let bodyData = try AirshipJSONUtils.encode(object: body)
         let request = AirshipRequest(
             url: URL(string: urlString),
             headers: headers,
@@ -332,7 +332,7 @@ private struct MessageListResponse: Decodable {
 extension MessageListResponse {
     fileprivate func convertMessages() throws -> [MessageCenterMessage] {
         return try self.messages.map { responseMessage in
-            let rawJSONData = try JSONUtils.encode(object: responseMessage)
+            let rawJSONData = try AirshipJSONUtils.encode(object: responseMessage)
             let rawJSON = try JSONSerialization.jsonObject(with: rawJSONData)
             return MessageCenterMessage(
                 title: responseMessage.title,

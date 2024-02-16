@@ -1,9 +1,7 @@
 /* Copyright Airship and Contributors */
 
-@objc(UAirshipCoreResources)
 public class AirshipCoreResources: NSObject {
 
-    @objc
     public static let bundle = findBundle()
 
     private class func findBundle() -> Bundle {

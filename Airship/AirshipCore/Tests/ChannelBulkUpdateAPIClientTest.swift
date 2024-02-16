@@ -108,7 +108,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
         let lastRequest = self.session.lastRequest!
         let body =
-            JSONUtils.object(String(data: lastRequest.body!, encoding: .utf8)!)
+            AirshipJSONUtils.object(String(data: lastRequest.body!, encoding: .utf8)!)
             as? NSDictionary
         XCTAssertEqual("PUT", lastRequest.method)
         XCTAssertEqual(expectedBody, body)

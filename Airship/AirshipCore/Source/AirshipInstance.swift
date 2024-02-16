@@ -15,7 +15,7 @@ protocol AirshipInstanceProtocol {
     #endif
 
     var deepLinkDelegate: DeepLinkDelegate? { get set }
-    var urlAllowList: URLAllowList { get }
+    var urlAllowList: URLAllowListProtocol { get }
     var localeManager: AirshipLocaleManager { get }
     var privacyManager: AirshipPrivacyManager { get }
     var components: [AirshipComponent] { get }
@@ -40,7 +40,7 @@ class AirshipInstance: AirshipInstanceProtocol {
     #endif
 
     public weak var deepLinkDelegate: DeepLinkDelegate?
-    public let urlAllowList: URLAllowList
+    public let urlAllowList: URLAllowListProtocol
     public let localeManager: AirshipLocaleManager
     public let privacyManager: AirshipPrivacyManager
     public let components: [AirshipComponent]

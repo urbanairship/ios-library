@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For internal use only. :nodoc:
-@objc(UAColorUtils)
-public class ColorUtils: NSObject {
+public final class AirshipColorUtils {
     private class func normalizeColorString(_ hexString: String) -> String {
         var string = hexString.trimmingCharacters(
             in: CharacterSet.whitespacesAndNewlines
@@ -20,7 +19,6 @@ public class ColorUtils: NSObject {
         return CGFloat(component) / 255.0
     }
 
-    @objc(colorWithHexString:)
     public class func color(_ hexString: String) -> UIColor? {
         let string = normalizeColorString(hexString)
 
@@ -53,7 +51,6 @@ public class ColorUtils: NSObject {
         return UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 
-    @objc(hexStringWithColor:)
     public class func hexString(_ color: UIColor) -> String? {
         var red = 0.0 as CGFloat
         var green = 0.0 as CGFloat

@@ -63,7 +63,7 @@ final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendab
                 return nil
             }
 
-            return try JSONUtils.decode(data: data)
+            return try AirshipJSONUtils.decode(data: data)
         }
     }
 }

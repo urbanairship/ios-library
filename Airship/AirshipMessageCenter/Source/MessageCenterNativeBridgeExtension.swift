@@ -46,7 +46,7 @@ public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtension
         )
         js.add(
             "getMessageSentDate",
-            string: AirshipUtils.ISODateFormatterUTC().string(from: message.sentDate)
+            string: AirshipUtils.isoDateFormatterUTC().string(from: message.sentDate)
         )
         js.add("getMessageExtras", dictionary: message.extra)
         js.add("getUserId", string: self.user.username)

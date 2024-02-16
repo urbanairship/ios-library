@@ -27,7 +27,7 @@ final class ChannelAPIClientTest: XCTestCase {
     func testCreate() async throws {
         let payload = ChannelRegistrationPayload()
 
-        self.session.data = try JSONUtils.data([
+        self.session.data = try AirshipJSONUtils.data([
             "channel_id": "some-channel-id"
         ])
 
@@ -55,7 +55,7 @@ final class ChannelAPIClientTest: XCTestCase {
     func testCreateInvalidResponse() async throws {
         let payload = ChannelRegistrationPayload()
 
-        self.session.data = try JSONUtils.data([
+        self.session.data = try AirshipJSONUtils.data([
             "not-right": "some-channel-id"
         ])
 

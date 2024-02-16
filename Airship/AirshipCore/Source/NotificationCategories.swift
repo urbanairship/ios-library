@@ -222,7 +222,7 @@ public class NotificationCategories: NSObject {
             return nil
         }
         if let titleResource = actionDefinition["title_resource"] as? String {
-            let localizedTitle = LocalizationUtils.localizedString(
+            let localizedTitle = AirshipLocalizationUtils.localizedString(
                 titleResource,
                 withTable: "UrbanAirship",
                 moduleBundle: AirshipCoreResources.bundle,
@@ -230,7 +230,7 @@ public class NotificationCategories: NSObject {
             )
 
             if localizedTitle == title {
-                return LocalizationUtils.localizedString(
+                return AirshipLocalizationUtils.localizedString(
                     titleResource,
                     withTable: "AirshipAccengage",
                     moduleBundle: AirshipCoreResources.bundle,

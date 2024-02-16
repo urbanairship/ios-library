@@ -195,7 +195,7 @@ struct PreferenceCenterThemeLoader {
 extension String {
     fileprivate func toColor() -> Color {
         let colorString = self.trimmingCharacters(in: .whitespaces)
-        if let uiColor = ColorUtils.color(colorString) {
+        if let uiColor = AirshipColorUtils.color(colorString) {
             return Color(uiColor)
         }
 
@@ -204,7 +204,7 @@ extension String {
 
     fileprivate func toUIColor() -> UIColor? {
         let colorString = self.trimmingCharacters(in: .whitespaces)
-        if let uiColor = ColorUtils.color(colorString) {
+        if let uiColor = AirshipColorUtils.color(colorString) {
             return uiColor
         }
 

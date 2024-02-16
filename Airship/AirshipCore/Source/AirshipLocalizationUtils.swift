@@ -3,10 +3,8 @@
 import Foundation
 
 /// - NOTE: Internal use only :nodoc:
-@objc(UALocalizationUtils)
-public class LocalizationUtils: NSObject {
+public class AirshipLocalizationUtils: NSObject {
 
-    @objc
     private static func sanitizedLocalizedString(
         _ localizedString: String,
         withTable table: String?,
@@ -55,7 +53,6 @@ public class LocalizationUtils: NSObject {
         return string
     }
 
-    @objc
     private static func localizedString(
         _ string: String,
         withTable table: String,
@@ -125,8 +122,6 @@ public class LocalizationUtils: NSObject {
      *   - defaultValue The default value.
      * - Returns: The localized string corresponding to the key and table, or the default value if it cannot be found.
      */
-
-    @objc
     public static func localizedString(
         _ string: String,
         withTable table: String,
@@ -153,8 +148,6 @@ public class LocalizationUtils: NSObject {
      *   - moduleBundle The module bundle.
      * - Returns: The localized string corresponding to the key and table, or the key if it cannot be found.
      */
-
-    @objc
     public static func localizedString(
         _ string: String,
         withTable table: String,
@@ -181,7 +174,6 @@ public class LocalizationUtils: NSObject {
      *   - fallbackLocale The locale to use in case a localized string for the current locale cannot be found.
      * - Returns: The localized string corresponding to the key and table, or the key if it cannot be found.
      */
-    @objc
     public static func localizedString(
         _ string: String,
         withTable table: String,
@@ -208,7 +200,6 @@ public class LocalizationUtils: NSObject {
      *   - moduleBundle The module bundle.
      * - Returns: YES if a localized string corresponding to the key and table was found, or NO if it cannot be found.
      */
-    @objc
     public static func localizedStringExists(
         _ string: String,
         inTable table: String,
@@ -234,7 +225,6 @@ public class LocalizationUtils: NSObject {
      *   - fallbackLocale The locale to use in case a localized string for the current locale cannot be found.
      * - Returns: YES if a localized string corresponding to the key and table was found, or NO if it cannot be found.
      */
-    @objc
     public static func localizedStringExists(
         _ string: String,
         inTable table: String,

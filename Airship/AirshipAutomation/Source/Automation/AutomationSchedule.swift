@@ -300,7 +300,7 @@ fileprivate extension String {
 
 fileprivate extension Date {
     func toISOString() -> String {
-        return AirshipUtils.ISODateFormatterUTC().string(from: self)
+        return AirshipUtils.isoDateFormatterUTC().string(from: self)
     }
 }
 

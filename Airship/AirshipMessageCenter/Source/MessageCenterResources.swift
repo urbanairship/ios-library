@@ -42,7 +42,7 @@ class MessageCenterResources {
     }
 
     public static func localizedString(key: String) -> String? {
-        return LocalizationUtils.localizedString(
+        return AirshipLocalizationUtils.localizedString(
             key,
             withTable: "UrbanAirship",
             moduleBundle: bundle

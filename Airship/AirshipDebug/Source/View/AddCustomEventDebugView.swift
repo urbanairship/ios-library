@@ -159,7 +159,7 @@ private enum PropertyValue: Equatable {
         case .string(let value): return value
         case .number(let value): return String(value)
         case .json(let value):
-            return (try? JSONUtils.string(value, options: .prettyPrinted)) ?? ""
+            return (try? AirshipJSONUtils.string(value, options: .prettyPrinted)) ?? ""
         }
     }
 }
@@ -237,7 +237,7 @@ private struct AddPropetyView: View {
         case .number: return .number(self.numberValue)
         case .string: return .string(self.stringValue)
         case .json:
-            return .json(JSONUtils.object(self.jsonValue) as! AnyHashable)
+            return .json(AirshipJSONUtils.object(self.jsonValue) as! AnyHashable)
         }
     }
 
@@ -251,7 +251,7 @@ private struct AddPropetyView: View {
         case .string: return !self.stringValue.isEmpty
         case .json:
             return !self.jsonValue.isEmpty
-                && (JSONUtils.object(self.jsonValue)) != nil
+                && (AirshipJSONUtils.object(self.jsonValue)) != nil
         }
     }
 

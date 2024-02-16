@@ -219,7 +219,7 @@ public class AirshipUtils: NSObject {
     ///
     /// - Returns: A DateFormatter with the default attributes.
     @objc
-    public class func ISODateFormatterUTC() -> DateFormatter {
+    public class func isoDateFormatterUTC() -> DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = Locale.init(identifier: "en_US_POSIX")
         formatter.timeStyle = .full
@@ -241,7 +241,7 @@ public class AirshipUtils: NSObject {
     /// - Returns: A DateFormatter with the default attributes, matching the optional `T` delimiter.
     @objc(ISODateFormatterUTCWithDelimiter)
     public class func isoDateFormatterUTCWithDelimiter() -> DateFormatter {
-        let formatter = ISODateFormatterUTC()
+        let formatter = isoDateFormatterUTC()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
         return formatter
     }
@@ -525,7 +525,7 @@ public class AirshipUtils: NSObject {
         guard let data = "\(username):\(password)".data(using: .utf8) else {
             return nil
         }
-        guard let encodedData = Base64.stringFromData(data) else {
+        guard let encodedData = AirshipBase64.string(from: data) else {
             return nil
         }
         let authString =

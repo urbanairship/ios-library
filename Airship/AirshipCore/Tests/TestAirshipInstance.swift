@@ -53,9 +53,9 @@ public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
         }
     }
 
-    private var _urlAllowList: URLAllowList?
+    private var _urlAllowList: URLAllowListProtocol?
     @objc
-    public var urlAllowList: URLAllowList {
+    public var urlAllowList: URLAllowListProtocol {
         get {
             return _urlAllowList!
         }

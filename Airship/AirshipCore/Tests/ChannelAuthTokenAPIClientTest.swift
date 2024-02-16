@@ -17,7 +17,7 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
     }
     
     func testTokenWithChannelID() async throws {
-        self.session.data = try JSONUtils.data([
+        self.session.data = try AirshipJSONUtils.data([
             "token": "abc123",
             "expires_in": 12345
         ] as [String : Any])
@@ -42,7 +42,7 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
     }
     
     func testTokenWithChannelIDMalformedPayload() async throws {
-        self.session.data = try JSONUtils.data([
+        self.session.data = try AirshipJSONUtils.data([
             "not a token": "abc123",
             "expires_in_3_2_1": 12345
         ] as [String : Any])
@@ -62,7 +62,7 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
     }
     
     func testTokenWithChannelIDClientError() async throws {
-        self.session.data = try JSONUtils.data([
+        self.session.data = try AirshipJSONUtils.data([
             "too": "bad"
         ])
         self.session.response = HTTPURLResponse(
