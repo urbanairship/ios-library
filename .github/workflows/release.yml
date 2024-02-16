@@ -111,6 +111,8 @@ jobs:
         run: make test
 
   deploy-github:
+    permissions:
+      contents: write
     runs-on: macos-13-xlarge
     needs: [run-tests, build-package, build-samples, build-package-xcode15]
     steps:
