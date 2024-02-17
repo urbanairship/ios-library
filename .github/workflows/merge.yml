@@ -38,7 +38,7 @@ jobs:
     needs: [build-sdk, build-docs]
     steps:
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: ${{ failure() }}
         with:
           type: ${{ job.status }}

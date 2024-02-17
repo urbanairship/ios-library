@@ -20,7 +20,7 @@ jobs:
       - name: Check Version
         run: bash ./scripts/check_version.sh ${{ steps.get_version.outputs.VERSION }}
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         with:
           type: ${{ job.status }}
           job_name: "iOS SDK Release Started :apple_og:"
@@ -137,7 +137,7 @@ jobs:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
         run: make pod-publish
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: always()
         with:
           type: ${{ job.status }}
@@ -167,7 +167,7 @@ jobs:
       - name: Upload Docs
         run: bash ./scripts/upload_docs.sh
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: always()
         with:
           type: ${{ job.status }}
@@ -183,7 +183,7 @@ jobs:
         run: |
           echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: always()
         with:
           type: ${{ job.status }}
