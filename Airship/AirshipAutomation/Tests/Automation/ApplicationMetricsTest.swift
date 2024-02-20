@@ -2,11 +2,11 @@
 
 import XCTest
 
+@testable import AirshipAutomation
 @testable import AirshipCore
 
 final class ApplicationMetricsTest: XCTestCase {
 
-    private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
     )
@@ -29,15 +29,8 @@ final class ApplicationMetricsTest: XCTestCase {
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            date: self.date,
             appVersion: "1.0.0"
         )
-    }
-
-    func testApplicationActive() throws {
-        XCTAssertNil(self.metrics.lastApplicationOpenDate)
-        self.notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
-        XCTAssertEqual(self.date.now, self.metrics.lastApplicationOpenDate)
     }
 
 
@@ -50,7 +43,6 @@ final class ApplicationMetricsTest: XCTestCase {
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            date: self.date,
             appVersion: "1.0.0"
         )
         XCTAssertFalse(self.metrics.isAppVersionUpdated)
@@ -60,23 +52,31 @@ final class ApplicationMetricsTest: XCTestCase {
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            date: self.date,
             appVersion: "2.0.0"
         )
+
+
         XCTAssertTrue(self.metrics.isAppVersionUpdated)
     }
 
     func testOptedOut() {
-        self.notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
-        XCTAssertEqual(self.date.now, self.metrics.lastApplicationOpenDate)
+        // Update
+        self.metrics = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "2.0.0"
+        )
+
+        XCTAssertTrue(self.metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = [.analytics, .push]
-        XCTAssertEqual(self.date.now, self.metrics.lastApplicationOpenDate)
+        XCTAssertTrue(self.metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = [.inAppAutomation, .push]
-        XCTAssertEqual(self.date.now, self.metrics.lastApplicationOpenDate)
+        XCTAssertTrue(self.metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = .push
-        XCTAssertNil(self.metrics.lastApplicationOpenDate)
+        XCTAssertFalse(self.metrics.isAppVersionUpdated)
     }
 }

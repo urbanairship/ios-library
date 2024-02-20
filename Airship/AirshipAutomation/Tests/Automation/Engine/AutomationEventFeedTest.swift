@@ -10,7 +10,6 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     private let date = UATestDate(offset: 0, dateOverride: Date())
     private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
     private var subject: AutomationEventFeed!
-    private let airship = TestAirshipInstance()
     private let analyticsFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
 
@@ -25,21 +24,15 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
             defaultEnabledFeatures: .all
         )
 
-        let metrics = TestApplicationMetrics(dataStore: self.datastore, privacyManager: privacyManager, appVersion: "test")
+        let metrics = TestApplicationMetrics()
         metrics.versionUpdated = true
         
         subject = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: stateTracker, analyticsFeed: analyticsFeed)
 
-        airship.applicationMetrics = metrics
-        airship.components = [TestAnalytics()]
-        airship.makeShared()
-        
         iterator = await subject.feed.makeAsyncIterator()
     }
     
-    override func tearDown() async throws {
-        TestAirshipInstance.clearShared()
-    }
+
     
     func testFirstAttachProducesInitAndVersionUpdated() async throws {
         await subject.attach()
@@ -167,4 +160,15 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
             return []
         }
     }
+}
+
+
+
+class TestApplicationMetrics: ApplicationMetricsProtocol, @unchecked Sendable {
+    var currentAppVersion: String? = "test"
+
+
+    var versionUpdated = false
+
+    var isAppVersionUpdated: Bool { return versionUpdated }
 }

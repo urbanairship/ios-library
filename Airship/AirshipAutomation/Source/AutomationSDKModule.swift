@@ -26,7 +26,6 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
         let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
         let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! AirshipMeteredUsageProtocol
-        let metrics = dependencies[SDKDependencyKeys.applicationMetrics] as! ApplicationMetrics
 
         /// Utils
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)
@@ -35,6 +34,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let frequencyLimits = FrequencyLimitManager(config: config)
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
         let eventRecorder = InAppEventRecorder(airshipAnalytics: airshipAnalytics)
+        let metrics = ApplicationMetrics(dataStore: dataStore, privacyManager: privacyManager)
 
         /// Preperation
         let actionPreparer = ActionAutomationPreparer()

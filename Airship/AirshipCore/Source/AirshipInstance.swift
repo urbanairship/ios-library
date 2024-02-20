@@ -6,7 +6,6 @@ protocol AirshipInstanceProtocol {
     var config: RuntimeConfig { get }
     var preferenceDataStore: PreferenceDataStore { get }
     var actionRegistry: ActionRegistry { get }
-    var applicationMetrics: ApplicationMetrics { get }
     var permissionsManager: AirshipPermissionsManager { get }
 
     #if !os(tvOS) && !os(watchOS)
@@ -30,7 +29,6 @@ class AirshipInstance: AirshipInstanceProtocol {
     public let preferenceDataStore: PreferenceDataStore
 
     public let actionRegistry: ActionRegistry
-    public let applicationMetrics: ApplicationMetrics
     public let permissionsManager: AirshipPermissionsManager
 
     #if !os(tvOS) && !os(watchOS)
@@ -68,10 +66,6 @@ class AirshipInstance: AirshipInstanceProtocol {
 
         self.actionRegistry = ActionRegistry()
         self.urlAllowList = URLAllowList.allowListWithConfig(self.config)
-        self.applicationMetrics = ApplicationMetrics(
-            dataStore: dataStore,
-            privacyManager: privacyManager
-        )
         self.localeManager = AirshipLocaleManager(
             dataStore: dataStore,
             config: self.config
@@ -175,8 +169,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             experimentsManager: experimentManager,
             meteredUsage: meteredUsage,
             deferredResolver: deferredResolver,
-            cache: CoreDataAirshipCache(appKey: self.config.appKey),
-            metrics: applicationMetrics
+            cache: CoreDataAirshipCache(appKey: self.config.appKey)
         )
 
         var components: [AirshipComponent] = [

@@ -2,31 +2,39 @@
 
 import Foundation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
+protocol ApplicationMetricsProtocol: Sendable {
+    var isAppVersionUpdated: Bool { get }
+    var currentAppVersion: String? { get }
+
+}
+
 /// The ApplicationMetrics class keeps track of application-related metrics.
-public class ApplicationMetrics {
+final class ApplicationMetrics: ApplicationMetricsProtocol {
     private static let lastOpenDataKey = "UAApplicationMetricLastOpenDate"
     private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
 
     private let dataStore: PreferenceDataStore
-    private let date: AirshipDateProtocol
     private let privacyManager: AirshipPrivacyManager
-    private var _isAppVersionUpdated = false
 
     /**
      * Determines whether the application's short version string has been updated.
      * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
      */
     public var isAppVersionUpdated: Bool {
-        return _isAppVersionUpdated
-    }
+        guard
+            self.privacyManager.isApplicationMetricsEnabled,
+            let currentVersion = self.currentAppVersion,
+            let lastVersion = self.lastAppVersion,
+            AirshipUtils.compareVersion(lastVersion, toVersion: currentVersion) == .orderedAscending
+        else {
+            return false
+        }
 
-    /**
-     * The date of the last time the application was active.
-     * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
-     */
-    public var lastApplicationOpenDate: Date? {
-        return dataStore.object(forKey: ApplicationMetrics.lastOpenDataKey)
-            as? Date
+        return true
     }
 
     /**
@@ -34,26 +42,34 @@ public class ApplicationMetrics {
      */
     public let currentAppVersion: String?
 
+    public let lastAppVersion: String?
+
+
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        date: AirshipDateProtocol = AirshipDate.shared,
         appVersion: String? = AirshipUtils.bundleShortVersionString()
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
-        self.date = date
         self.currentAppVersion = appVersion
 
-        updateData()
 
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(applicationDidBecomeActive),
-            name: AppStateTracker.didBecomeActiveNotification,
-            object: nil
+        self.lastAppVersion = if privacyManager.isApplicationMetricsEnabled {
+            self.dataStore.string(
+                forKey: ApplicationMetrics.lastAppVersionKey
+            )
+        } else {
+            nil
+        }
+
+        // Delete old
+        self.dataStore.removeObject(
+            forKey: ApplicationMetrics.lastOpenDataKey
         )
+
+        updateData()
 
         notificationCenter.addObserver(
             self,
@@ -64,36 +80,10 @@ public class ApplicationMetrics {
     }
 
     @objc
-    func applicationDidBecomeActive() {
-        if self.privacyManager.isEnabled(.inAppAutomation)
-            || self.privacyManager.isEnabled(.analytics)
-        {
-            self.dataStore.setObject(
-                date.now,
-                forKey: ApplicationMetrics.lastOpenDataKey
-            )
-        }
-    }
-
-    @objc
     func updateData() {
-        if self.privacyManager.isEnabled(.inAppAutomation)
-            || self.privacyManager.isEnabled(.analytics)
-        {
-
+        if self.privacyManager.isApplicationMetricsEnabled {
             guard let currentVersion = self.currentAppVersion else {
                 return
-            }
-
-            let lastVersion = self.dataStore.string(
-                forKey: ApplicationMetrics.lastAppVersionKey
-            )
-
-            if lastVersion != nil
-                && AirshipUtils.compareVersion(lastVersion!, toVersion: currentVersion)
-                    == .orderedAscending
-            {
-                self._isAppVersionUpdated = true
             }
 
             self.dataStore.setObject(
@@ -102,11 +92,15 @@ public class ApplicationMetrics {
             )
         } else {
             self.dataStore.removeObject(
-                forKey: ApplicationMetrics.lastOpenDataKey
-            )
-            self.dataStore.removeObject(
                 forKey: ApplicationMetrics.lastAppVersionKey
             )
         }
+    }
+}
+
+
+fileprivate extension AirshipPrivacyManager {
+    var isApplicationMetricsEnabled: Bool {
+        self.isEnabled(.inAppAutomation) || self.isEnabled(.analytics)
     }
 }

@@ -30,17 +30,7 @@ public class TestAirshipInstance: AirshipInstanceProtocol {
             _actionRegistry = newValue
         }
     }
-
-    private var _applicationMetrics: ApplicationMetrics?
-    public var applicationMetrics: ApplicationMetrics {
-        get {
-            return _applicationMetrics!
-        }
-        set {
-            _applicationMetrics = newValue
-        }
-    }
-
+    
     private var _channelCapture: ChannelCapture?
     @objc
     public var channelCapture: ChannelCapture {
@@ -117,11 +107,4 @@ public class TestAirshipInstance: AirshipInstanceProtocol {
 
     public func airshipReady() {
     }
-}
-
-class TestApplicationMetrics: ApplicationMetrics, @unchecked Sendable {
-    
-    var versionUpdated = false
-    
-    override var isAppVersionUpdated: Bool { return versionUpdated }
 }

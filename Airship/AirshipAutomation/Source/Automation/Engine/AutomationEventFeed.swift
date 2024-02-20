@@ -53,7 +53,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
     private var isFirstAttach = false
     private var listenerTask: Task<Void, Never>?
 
-    private let applicationMetrics: ApplicationMetrics
+    private let applicationMetrics: ApplicationMetricsProtocol
     private let applicationStateTracker: AppStateTrackerProtocol
     private let analyticsFeed: AirshipAnalyticsFeed
 
@@ -68,7 +68,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
     let feed: Stream
 
     init(
-        applicationMetrics: ApplicationMetrics,
+        applicationMetrics: ApplicationMetricsProtocol,
         applicationStateTracker: AppStateTrackerProtocol,
         analyticsFeed: AirshipAnalyticsFeed
     ) {

@@ -583,7 +583,6 @@
 		6E5A64DA2AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */; };
 		6E5A64DB2AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */; };
 		6E5B1A052AFF090B0019CA61 /* SessionTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5B1A042AFF090B0019CA61 /* SessionTrackerTest.swift */; };
-		6E60EF6629DF4BB5003F7A8D /* ApplicationMetricsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */; };
 		6E60EF6A29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
 		6E60EF6B29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
 		6E60EF6C29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
@@ -625,6 +624,8 @@
 		6E664BE826C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE626C5B21600A2C8E5 /* ModifyAttributesAction.swift */; };
 		6E664BEA26C6DB7600A2C8E5 /* AirshipUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE926C6DB7500A2C8E5 /* AirshipUtils.swift */; };
 		6E664BEB26C6DB7600A2C8E5 /* AirshipUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE926C6DB7500A2C8E5 /* AirshipUtils.swift */; };
+		6E68028B2B850DDE00F4591F /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
+		6E68028C2B85149900F4591F /* ApplicationMetricsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */; };
 		6E68203228EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */; };
 		6E68203328EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */; };
 		6E68203428EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68203128EDE3E200A4F90B /* LiveActivityRestorer.swift */; };
@@ -716,8 +717,6 @@
 		6E6ED1602683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED14F2683DBC200A2CBD0 /* AirshipCoreResources.swift */; };
 		6E6ED1612683DBC300A2CBD0 /* AirshipVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1502683DBC300A2CBD0 /* AirshipVersion.swift */; };
 		6E6ED1622683DBC300A2CBD0 /* AirshipVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1502683DBC300A2CBD0 /* AirshipVersion.swift */; };
-		6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
-		6E6ED1642683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
 		6E6ED1672683DBC300A2CBD0 /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
 		6E6ED1682683DBC300A2CBD0 /* UACoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */; };
 		6E6ED1692683DBC300A2CBD0 /* AirshipNetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* AirshipNetworkChecker.swift */; };
@@ -1383,7 +1382,6 @@
 		A6722A57281A9EB80033F54D /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E56267BF63B00654DB2 /* ApplicationState.swift */; };
 		A6722A58281A9EB80033F54D /* AppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E53267BF63A00654DB2 /* AppStateTracker.swift */; };
 		A6722A59281A9EB80033F54D /* AppStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E52267BF63A00654DB2 /* AppStateTrackerAdapter.swift */; };
-		A6722A5B281A9EB80033F54D /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
 		A6722A5C281A9EB80033F54D /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
 		A6722A5D281A9EB80033F54D /* AttributesEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E3B267BEDC300654DB2 /* AttributesEditor.swift */; };
 		A6722A5E281A9EB80033F54D /* AttributeMutations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E739D6726B9DB9000BC6F6D /* AttributeMutations.swift */; };
@@ -3266,6 +3264,7 @@
 		6E0F4BE32B32644200673CA4 /* Automation */ = {
 			isa = PBXGroup;
 			children = (
+				6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */,
 				6EC0CA5F2B491CC800333A87 /* Engine */,
 				6E0F4BE12B32190400673CA4 /* AutomationSchedule.swift */,
 				6E0F4BE42B32645600673CA4 /* AutomationTrigger.swift */,
@@ -3281,6 +3280,7 @@
 			children = (
 				6EC0CA692B4B696500333A87 /* Engine */,
 				6E6B2DBD2B33B768008BF788 /* AutomationScheduleTest.swift */,
+				6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */,
 			);
 			path = Automation;
 			sourceTree = "<group>";
@@ -3719,7 +3719,6 @@
 		6E411D1B2538CE6200FEE4E8 /* Application Metrics */ = {
 			isa = PBXGroup;
 			children = (
-				6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */,
 			);
 			name = "Application Metrics";
 			sourceTree = "<group>";
@@ -3828,7 +3827,6 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */,
 				99D1B3272B44F08900447840 /* AirshipSceneManager.swift */,
 				6E8E1C9A26447B3800B11791 /* AirshipLock.swift */,
 				6E44626629E6813A00CB2B56 /* AsyncSerialQueue.swift */,
@@ -4806,7 +4804,6 @@
 				6E96ED1129416E990053CC91 /* EventSchedulerTest.swift */,
 				6E96ED1329417A600053CC91 /* EventStoreTest.swift */,
 				6E96ED192941A0EC0053CC91 /* EventTestUtils.swift */,
-				6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */,
 				6E4326042B7C361F00A9B000 /* AssociatedIdentifiersTest.swift */,
 			);
 			name = Analytics;
@@ -5888,7 +5885,6 @@
 				3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */,
 				32F97AC129E5986B00FED65F /* StoryIndicator.swift in Sources */,
 				6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */,
-				6E6ED1632683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
 				324D3BFF273E6B4500058EE4 /* BannerView.swift in Sources */,
 				6E6BD26D2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */,
 				320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */,
@@ -6258,6 +6254,7 @@
 				6EE6AA202B4F5246002FEA75 /* InAppMessageSceneManager.swift in Sources */,
 				6EE6AAFD2B58AA4F002FEA75 /* InAppEventContext.swift in Sources */,
 				6E1A9BD52B5EE97000A6489B /* TriggeringInfo.swift in Sources */,
+				6E68028B2B850DDE00F4591F /* ApplicationMetrics.swift in Sources */,
 				6E15282C2B4DE81E00DF1377 /* AutomationSDKModule.swift in Sources */,
 				99E0BD0D2B4DD4AB00465B37 /* FullScreenView.swift in Sources */,
 				6E1528262B4DC64B00DF1377 /* DisplayAdapterFactory.swift in Sources */,
@@ -6311,6 +6308,7 @@
 				6E4AEE2C2B6B302D008AEAC1 /* ActionAutomationPreparerTest.swift in Sources */,
 				6E1B7B162B715FFE00695561 /* LandingPageActionTest.swift in Sources */,
 				60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */,
+				6E68028C2B85149900F4591F /* ApplicationMetricsTest.swift in Sources */,
 				6EE6AAD52B58A977002FEA75 /* TestInAppEvent.swift in Sources */,
 				6EC0CA792B4B8C2B00333A87 /* TestAudienceChecker.swift in Sources */,
 				6EE6AAEE2B58A9D5002FEA75 /* InAppPageActionEventTest.swift in Sources */,
@@ -6604,7 +6602,6 @@
 				A6722A57281A9EB80033F54D /* ApplicationState.swift in Sources */,
 				A6722A58281A9EB80033F54D /* AppStateTracker.swift in Sources */,
 				A6722A59281A9EB80033F54D /* AppStateTrackerAdapter.swift in Sources */,
-				A6722A5B281A9EB80033F54D /* ApplicationMetrics.swift in Sources */,
 				A6722A5C281A9EB80033F54D /* AttributeUpdate.swift in Sources */,
 				A6722A5D281A9EB80033F54D /* AttributesEditor.swift in Sources */,
 				A6722A5E281A9EB80033F54D /* AttributeMutations.swift in Sources */,
@@ -6874,7 +6871,6 @@
 				6E87BE1626E29BC90005D20D /* TestAirshipInstance.swift in Sources */,
 				6068E0082B2A2A6700349E82 /* AccountEventTemplateTest.swift in Sources */,
 				6068E0322B2B785A00349E82 /* MediaEventTemplateTest.swift in Sources */,
-				6E60EF6629DF4BB5003F7A8D /* ApplicationMetricsTest.swift in Sources */,
 				6E032A502B210E6000404630 /* RemoteConfigTest.swift in Sources */,
 				A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */,
 				6EC7E46E269E2A4C0038CFDD /* AttributeEditorTest.swift in Sources */,
@@ -7014,7 +7010,6 @@
 				3CC95B2C2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */,
 				6E6BD26E2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */,
 				6ED6ECA526ADCA6F00973364 /* BlockAction.swift in Sources */,
-				6E6ED1642683DBC300A2CBD0 /* ApplicationMetrics.swift in Sources */,
 				6E698E13267A98AB00654DB2 /* ChannelAPIClient.swift in Sources */,
 				6E15B71526CEB4190099C92D /* RemoteDataStorePayload.swift in Sources */,
 				6E664BE826C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */,

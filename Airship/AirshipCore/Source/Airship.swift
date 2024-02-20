@@ -67,11 +67,6 @@ public class Airship: NSObject {
         return airshipInstance.actionRegistry
     }
 
-    /// Stores common application metrics such as last open.
-    public var applicationMetrics: ApplicationMetrics {
-        return airshipInstance.applicationMetrics
-    }
-
     /// The Airship permissions manager.
     @objc
     public var permissionsManager: AirshipPermissionsManager {
