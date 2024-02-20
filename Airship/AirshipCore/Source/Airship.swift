@@ -226,9 +226,6 @@ public class Airship: NSObject {
             AirshipLogger.impError("Config is invalid. Unable to takeOff.")
             return
         }
-
-        // register transformers
-        JSONValueTransformer.register()
         
         commonTakeOff(config)
 

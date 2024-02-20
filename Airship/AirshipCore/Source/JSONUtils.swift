@@ -11,6 +11,45 @@ public class JSONUtils: NSObject {
         try validateJSONObject(obj, options: options)
         return try JSONSerialization.data(withJSONObject: obj, options: options)
     }
+    
+    public class func toData(
+        _ obj: Any?
+    ) -> Data? {
+        guard let obj = obj else {
+            return nil
+        }
+        
+        do {
+            return try JSONUtils.data(
+                obj,
+                options: JSONSerialization.WritingOptions.prettyPrinted
+            )
+        } catch {
+            AirshipLogger.error(
+                "Failed to transform value: \(obj), error: \(error)"
+            )
+            return nil
+        }
+    }
+    
+    public class func json(_ data: Data?) -> Any? {
+        
+        guard let data = data, !data.isEmpty else {
+            return nil
+        }
+        
+        do {
+            return try JSONSerialization.jsonObject(
+                with: data,
+                options: .mutableContainers
+            )
+        } catch {
+            AirshipLogger.error("Converting data \(data) failed with error \(error)")
+            return nil
+        }
+        
+    }
+    
 
     @objc(stringWithObject:options:error:)
     public class func string(

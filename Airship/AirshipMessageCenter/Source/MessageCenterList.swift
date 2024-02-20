@@ -538,7 +538,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             
             return true
         } catch {
-            AirshipLogger.error("Retrieve message list failed")
+            AirshipLogger.error("Retrieve message list failed with error \(error.localizedDescription)")
         }
 
         return false
