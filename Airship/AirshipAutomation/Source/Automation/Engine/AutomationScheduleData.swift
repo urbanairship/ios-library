@@ -15,7 +15,7 @@ struct AutomationScheduleData: Sendable, Equatable, CustomDebugStringConvertible
     var preparedScheduleInfo: PreparedScheduleInfo?
     
     var debugDescription: String {
-        return "\(schedule.identifier), \(scheduleState)"
+        return "AutomationSchedule(id: \(schedule.identifier), state: \(scheduleState))"
     }
 }
 
@@ -65,17 +65,15 @@ extension AutomationScheduleData {
         self.triggerInfo = nil
     }
 
-    mutating func attempRehabilitateSchedule(date: Date) {
+    mutating func updateState(date: Date) {
         if isOverLimit || isExpired(date: date) {
-            if isInState([.idle, .paused]) {
-                finished(date: date)
-            }
+            finished(date: date)
         } else if isInState([.finished]) {
             self.idle(date: date)
         }
     }
 
-    mutating func prepareSkipped(date: Date, penalize: Bool) {
+    mutating func prepareCancelled(date: Date, penalize: Bool) {
         guard self.isInState([.triggered]) else {
             return
         }
@@ -84,11 +82,12 @@ extension AutomationScheduleData {
             self.executionCount += 1
         }
 
-        if isOverLimit || isExpired(date: date) {
+        guard !isOverLimit, !isExpired(date: date) else {
             finished(date: date)
-        } else {
-            idle(date: date)
+            return
         }
+
+        idle(date: date)
     }
 
     mutating func prepareInterrupted(date: Date) {
@@ -101,22 +100,7 @@ extension AutomationScheduleData {
             return
         }
 
-        if self.scheduleState != .triggered {
-            self.scheduleState = .triggered
-            self.scheduleStateChangeDate = date
-        }
-    }
-
-    mutating func prepareCancelled(date: Date) {
-        guard self.isInState([.prepared, .triggered]) else {
-            return
-        }
-
-        if isOverLimit || isExpired(date: date) {
-            finished(date: date)
-        } else {
-            idle(date: date)
-        }
+        setState(.triggered, date: date)
     }
 
     mutating func prepared(info: PreparedScheduleInfo, date: Date) {
@@ -129,8 +113,21 @@ extension AutomationScheduleData {
             return
         }
 
-        self.scheduleState = .prepared
         self.preparedScheduleInfo = info
+        self.setState(.prepared, date: date)
+    }
+
+    mutating func executionCancelled(date: Date) {
+        guard self.isInState([.prepared]) else {
+            return
+        }
+
+        guard !isOverLimit, !isExpired(date: date) else {
+            finished(date: date)
+            return
+        }
+
+        idle(date: date)
     }
 
     mutating func executionSkipped(date: Date) {
@@ -138,9 +135,12 @@ extension AutomationScheduleData {
             return
         }
 
-        if isOverLimit || isExpired(date: date) {
+        guard !isOverLimit, !isExpired(date: date) else {
             finished(date: date)
-        } else if self.schedule.interval != nil {
+            return
+        }
+
+        if self.schedule.interval != nil {
             paused(date: date)
         } else {
             idle(date: date)
@@ -152,11 +152,13 @@ extension AutomationScheduleData {
             return
         }
 
-        if isOverLimit || isExpired(date: date) {
+        guard !isOverLimit, !isExpired(date: date) else {
             finished(date: date)
-        } else {
-            self.preparedScheduleInfo = nil
+            return
         }
+
+        self.preparedScheduleInfo = nil
+        self.setState(.triggered, date: date)
     }
 
     mutating func executing(date: Date) {
@@ -174,14 +176,17 @@ extension AutomationScheduleData {
         }
 
         if (retry) {
-            self.scheduleState = .triggered
-            self.scheduleStateChangeDate = date
-            prepareInterrupted(date: date)
+            guard !isOverLimit, !isExpired(date: date) else {
+                finished(date: date)
+                return
+            }
+
+            self.preparedScheduleInfo = nil
+            self.setState(.triggered, date: date)
         } else {
             finishedExecuting(date: date)
         }
     }
-
 
     mutating func finishedExecuting(date: Date) {
         guard self.isInState([.executing]) else {
@@ -190,16 +195,18 @@ extension AutomationScheduleData {
 
         self.executionCount += 1
 
-        if isOverLimit || isExpired(date: date) {
+        guard !isOverLimit, !isExpired(date: date) else {
             finished(date: date)
-        } else if self.schedule.interval != nil {
+            return
+        }
+
+        if self.schedule.interval != nil {
             paused(date: date)
         } else {
             idle(date: date)
         }
     }
 
-    
     func shouldDelete(date: Date) -> Bool {
         guard self.scheduleState == .finished else { return false }
         guard let editGracePeriod = self.schedule.editGracePeriodDays else {
@@ -223,9 +230,8 @@ extension AutomationScheduleData {
             return
         }
 
-        self.scheduleStateChangeDate = date
         self.preparedScheduleInfo = nil
         self.triggerInfo = TriggeringInfo(context: triggerContext, date: date)
-        self.scheduleState = .triggered
+        setState(.triggered, date: date)
     }
 }

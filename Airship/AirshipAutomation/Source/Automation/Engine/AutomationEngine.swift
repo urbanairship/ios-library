@@ -120,7 +120,7 @@ actor AutomationEngine : AutomationEngineProtocol {
             }
 
             var updated = try schedule.updateOrCreate(data: data, date: self.date.now)
-            updated.attempRehabilitateSchedule(date: date.now)
+            updated.updateState(date: date.now)
             return updated
         }
 
@@ -254,7 +254,7 @@ fileprivate extension AutomationEngine {
                 switch (result.triggerExecutionType) {
                 case .delayCancellation:
                     let updated = try await self.updateState(identifier: result.scheduleID) { data in
-                        data.prepareCancelled(date: now)
+                        data.executionCancelled(date: now)
                     }
 
                     if let updated = updated {
@@ -295,35 +295,37 @@ fileprivate extension AutomationEngine {
         }
     }
 
-
     private func processTriggeredSchedule(scheduleID: String) async throws {
-        /// Using a while loop to retry prepared schedule if fails
-        while true {
-            guard
-                let data = try await self.store.getSchedule(scheduleID: scheduleID),
-                data.isInState([.triggered])
-            else {
-                AirshipLogger.trace("Aborting processing schedule \(scheduleID), no longer triggered.")
-                return
-            }
-
-            guard data.isActive(date: self.date.now) else {
-                AirshipLogger.trace("Aborting processing schedule \(scheduleID), no longer active.")
-                await self.preparer.cancelled(schedule: data.schedule)
-                return
-            }
-
-            /// Prepare
-            guard let preparedSchedule = try await self.prepareSchedule(data: data) else {
-                return
-            }
-
-            // Execute
-            try await self.startExecuting(data: data, preparedSchedule: preparedSchedule)
+        guard
+            let data = try await self.store.getSchedule(scheduleID: scheduleID)
+        else {
+            AirshipLogger.trace("Aborting processing schedule \(scheduleID), no longer in database.")
+            return
         }
+
+        guard
+            data.isInState([.triggered])
+        else {
+            AirshipLogger.trace("Aborting processing schedule \(data), no longer triggered.")
+            return
+        }
+
+        guard data.isActive(date: self.date.now) else {
+            AirshipLogger.trace("Aborting processing schedule \(data), no longer active.")
+            await self.preparer.cancelled(schedule: data.schedule)
+            return
+        }
+
+        /// Prepare
+        guard let prepared = try await self.prepareSchedule(data: data) else {
+            return
+        }
+
+        // Execute
+        try await self.startExecuting(data: prepared.0, preparedSchedule: prepared.1)
     }
 
-    private func prepareSchedule(data: AutomationScheduleData) async throws -> PreparedSchedule? {
+    private func prepareSchedule(data: AutomationScheduleData) async throws -> (AutomationScheduleData, PreparedSchedule)? {
         AirshipLogger.trace("Preparing schedule \(data)")
 
         let prepareResult = await self.preparer.prepare(
@@ -337,7 +339,7 @@ fileprivate extension AutomationEngine {
             return nil
         }
 
-        try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+        let updated = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
             guard data.isInState([.triggered]) else { return }
 
             switch (prepareResult) {
@@ -346,15 +348,15 @@ fileprivate extension AutomationEngine {
             case .invalidate, .cancel:
                break
             case .skip:
-                data.prepareSkipped(date: date.now, penalize: false)
+                data.prepareCancelled(date: date.now, penalize: false)
             case .penalize:
-                data.prepareSkipped(date: date.now, penalize: true)
+                data.prepareCancelled(date: date.now, penalize: true)
             }
         }
 
         switch prepareResult {
         case .prepared(let info): 
-            return info
+            return (updated ?? data, info)
         case .invalidate:
             await self.startTaskToProcessTriggeredSchedule(
                 scheduleID: data.schedule.identifier
@@ -480,31 +482,31 @@ fileprivate extension AutomationEngine {
         )
 
         guard precheckResult == .ready else {
-            AirshipLogger.trace("Precheck not ready \(data)")
+            AirshipLogger.trace("Precheck not ready \(fromStore)")
             return precheckResult
         }
 
         // Verify conditions still met
         guard
-            self.delayProcessor.areConditionsMet(delay: data.schedule.delay)
+            self.delayProcessor.areConditionsMet(delay: fromStore.schedule.delay)
         else {
-            AirshipLogger.trace("Delay conditions not met, not ready \(data)")
+            AirshipLogger.trace("Delay conditions not met, not ready \(fromStore)")
             return .notReady
         }
 
         guard !self.isExecutionPaused.value, !self.isEnginePaused.value else {
-            AirshipLogger.trace("Executor paused, not ready \(data)")
+            AirshipLogger.trace("Executor paused, not ready \(fromStore)")
             return .notReady
         }
 
         guard data.isActive(date: self.date.now) else {
-            AirshipLogger.trace("Schedule no longer active, Invalidating \(data)")
+            AirshipLogger.trace("Schedule no longer active, Invalidating \(fromStore)")
             return .invalidate
         }
 
         let result = self.executor.isReady(preparedSchedule: preparedSchedule)
         if result != .ready {
-            AirshipLogger.trace("Schedule not ready \(data)")
+            AirshipLogger.trace("Schedule not ready \(fromStore)")
         }
         return result
     }
