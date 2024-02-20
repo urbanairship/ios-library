@@ -68,7 +68,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
             let container = try decoder.singleValueContainer()
             let dateStr = try container.decode(String.self)
 
-            guard let date = AirshipUtils.parseISO8601Date(from: dateStr) else {
+            guard let date = AirshipDateFormatter.date(fromISOString: dateStr) else {
                 throw AirshipErrors.error("Invalid date \(dateStr)")
             }
             return date
@@ -81,7 +81,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(
-                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+                AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter)
             )
         })
         return encoder

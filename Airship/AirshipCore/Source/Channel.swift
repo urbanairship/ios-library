@@ -51,7 +51,7 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
     private let notificationCenter: AirshipNotificationCenter
     private let appStateTracker: AppStateTrackerProtocol
     private let tagsLock = AirshipLock()
-    private let subscriptions: AirshipMainActorWrapper<Set<AnyCancellable>> = AirshipMainActorWrapper(Set())
+    private let subscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
 
     #if canImport(ActivityKit)
     private let liveActivityRegistry: LiveActivityRegistry
@@ -158,12 +158,11 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         self.migrateTags()
 
 
-        self.channelRegistrar.updatesPublisher
+        self.subscription.value = self.channelRegistrar.updatesPublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] update in
                 self?.processChannelUpdate(update)
             }
-            .store(in: &self.subscriptions.value)
 
         self.channelRegistrar.addChannelRegistrationExtender(
             extender: self.extendPayload

@@ -2,6 +2,8 @@
 
 import XCTest
 
+import AirshipCore
+
 @testable
 import AirshipAutomation
 
@@ -207,3 +209,10 @@ final class AssetCacheManagerTest: XCTestCase {
         XCTAssertTrue(isCancelled, "The caching task should be canceled after clearing the cache.")
     }
 }
+
+fileprivate extension URL {
+    var assetFilename: String {
+        return AirshipUtils.sha256Hash(input: self.path)
+    }
+}
+

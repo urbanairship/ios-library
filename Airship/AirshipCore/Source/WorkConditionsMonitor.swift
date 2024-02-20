@@ -5,10 +5,10 @@ import Combine
 struct WorkConditionsMonitor: @unchecked Sendable {
     private let cancellable: AnyCancellable
     private let conditionsSubject = PassthroughSubject<Void, Never>()
-    private let networkMonitor: NetworkMonitor
+    private let networkMonitor: AirshipNetworkCheckerProtocol
 
     init(
-        networkMonitor: NetworkMonitor = NetworkMonitor()
+        networkMonitor: AirshipNetworkChecker = AirshipNetworkChecker()
     ) {
         self.networkMonitor = networkMonitor
         self.cancellable = Publishers.CombineLatest(
@@ -22,9 +22,11 @@ struct WorkConditionsMonitor: @unchecked Sendable {
         .sink { [conditionsSubject] _ in
             conditionsSubject.send()
         }
-        
-        networkMonitor.connectionUpdates = { [conditionsSubject] _ in
-            conditionsSubject.send()
+
+        Task { [conditionsSubject] in
+            for await _ in await networkMonitor.connectionUpdates {
+                conditionsSubject.send()
+            }
         }
     }
 

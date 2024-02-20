@@ -56,7 +56,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let expected = ContactIdentifyResult(
             contact: ContactIdentifyResult.ContactInfo(
-                channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+                channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
                 contactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
                 isAnonymous: true
             ),
@@ -117,7 +117,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let expected = ContactIdentifyResult(
             contact: ContactIdentifyResult.ContactInfo(
-                channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+                channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
                 contactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
                 isAnonymous: true
             ),
@@ -177,7 +177,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let expected = ContactIdentifyResult(
             contact: ContactIdentifyResult.ContactInfo(
-                channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+                channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
                 contactID: "1a32e8c7-5a73-47c0-9716-99fd3d41924b",
                 isAnonymous: true
             ),
@@ -249,7 +249,6 @@ class ContactAPIClientTest: XCTestCase {
             options: []
         ) as! [String : AnyHashable]
 
-        let formatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
         let previousExpectedBody: [String : AnyHashable] = [
             "channel": [
                 "type": "email",
@@ -257,7 +256,7 @@ class ContactAPIClientTest: XCTestCase {
                 "timezone": TimeZone.current.identifier,
                 "locale_country": "CA",
                 "locale_language": "fr",
-                "transactional_opted_in": formatter.string(from: date),
+                "transactional_opted_in": AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter),
             ],
             "opt_in_mode": "double",
             "properties": [
@@ -538,10 +537,8 @@ class ContactAPIClientTest: XCTestCase {
             options: []
         ) as! [String: Any]
 
-        let formattedDate = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-            .string(
-                from: date
-            )
+        let formattedDate = AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter)
+        
         let expectedBody = [
             "attributes": [
                 [

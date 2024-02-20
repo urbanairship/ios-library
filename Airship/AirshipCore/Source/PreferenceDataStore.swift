@@ -4,8 +4,7 @@ import Foundation
 
 /// Preference data store.
 /// - Note: For internal use only. :nodoc:
-@objc(UAPreferenceDataStore)
-public final class PreferenceDataStore: NSObject, @unchecked Sendable {
+public final class PreferenceDataStore: @unchecked Sendable {
     private let defaults: UserDefaults
     private let appKey: String
     static let deviceIDKey = "deviceID"
@@ -39,7 +38,6 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         }
     }
 
-    @objc
     public convenience init(appKey: String) {
         self.init(
             appKey: appKey,
@@ -53,7 +51,6 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         self.appKey = appKey
         self.dispatcher = dispatcher
         self.deviceID = deviceID
-        super.init()
         mergeKeys()
     }
 
@@ -75,11 +72,11 @@ public final class PreferenceDataStore: NSObject, @unchecked Sendable {
         return defaults
     }
 
-    public override func value(forKey key: String) -> Any? {
+    public func value(forKey key: String) -> Any? {
         return read(key)
     }
 
-    public override func setValue(_ value: Any?, forKey key: String) {
+    public func setValue(_ value: Any?, forKey key: String) {
         write(key, value: value)
     }
 

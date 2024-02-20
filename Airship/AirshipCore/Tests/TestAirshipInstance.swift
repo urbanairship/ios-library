@@ -4,8 +4,7 @@ import Foundation
 
 @testable import AirshipCore
 
-@objc(UATestAirshipInstance)
-public class TestAirshipInstance: NSObject, AirshipInstanceProtocol {
+public class TestAirshipInstance: AirshipInstanceProtocol {
     public let preferenceDataStore: AirshipCore.PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
 
     private var _config: RuntimeConfig?

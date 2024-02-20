@@ -200,7 +200,7 @@ struct InAppMessageBannerView: View {
             .onAppear {
                 setShowing(state: true)
             }
-            .onChangeOf(environment.isDismissed) { _ in
+            .airshipOnChangeOf(environment.isDismissed) { _ in
                 setShowing(state:false, completion: {
                     onDismiss()
                 })

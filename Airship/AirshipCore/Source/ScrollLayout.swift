@@ -51,7 +51,7 @@ struct ScrollLayout: View {
         ScrollViewReader { proxy in
             makeScrollView(axis: axis)
             .clipped()
-            .onChangeOf(self.thomasEnvironment.keyboardState) { newValue in
+            .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { newValue in
                 if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
                     if let focusedID = self.thomasEnvironment.focusedID {
                         switch newValue {

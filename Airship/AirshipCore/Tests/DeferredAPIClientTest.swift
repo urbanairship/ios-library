@@ -10,7 +10,7 @@ final class DeferredAPIClientTest: AirshipBaseTest {
     private let testSession: TestAirshipRequestSession = TestAirshipRequestSession()
     private let exampleURL: URL = URL(string: "exampleurl://")!
 
-    let date = AirshipUtils.parseISO8601Date(from: "2023-10-27T21:18:15")!
+    let date = AirshipDateFormatter.date(fromISOString: "2023-10-27T21:18:15")!
 
     override func setUpWithError() throws {
         self.apiClient = DeferredAPIClient(

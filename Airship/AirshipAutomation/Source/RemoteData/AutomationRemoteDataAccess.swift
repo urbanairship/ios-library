@@ -21,13 +21,13 @@ protocol AutomationRemoteDataAccessProtocol: Sendable {
 
 final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
     private let remoteData: RemoteDataProtocol
-    private let network: NetworkCheckerProtocol
+    private let network: AirshipNetworkCheckerProtocol
 
     private static let remoteDataTypes = ["in_app_messages"]
 
     init(
         remoteData: RemoteDataProtocol,
-        network: NetworkCheckerProtocol = NetworkChecker()
+        network: AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
     ) {
         self.remoteData = remoteData
         self.network = network

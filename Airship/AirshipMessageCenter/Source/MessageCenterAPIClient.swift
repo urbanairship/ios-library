@@ -360,7 +360,7 @@ extension HTTPURLResponse {
 
 extension String {
     fileprivate func toDate() throws -> Date {
-        guard let date = AirshipUtils.parseISO8601Date(from: self) else {
+        guard let date = AirshipDateFormatter.date(fromISOString: self) else {
             throw AirshipErrors.error("Invalid date \(self)")
         }
         return date

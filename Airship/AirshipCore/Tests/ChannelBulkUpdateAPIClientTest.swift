@@ -97,10 +97,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                     [
                         "action": "set",
                         "key": "some-attribute",
-                        "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
-                            .string(
-                                from: date
-                            ),
+                        "timestamp": AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter),
                         "value": "hello",
                     ]
                 ],

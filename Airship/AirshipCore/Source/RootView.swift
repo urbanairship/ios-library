@@ -81,7 +81,7 @@ struct RootView<Content: View>: View {
         #if os(tvOS) || os(watchOS)
         return .landscape
         #else
-        let scene = try? SceneManager.shared.lastActiveScene
+        let scene = try? AirshipSceneManager.shared.lastActiveScene
 
         if let scene = scene {
             if scene.interfaceOrientation.isLandscape {

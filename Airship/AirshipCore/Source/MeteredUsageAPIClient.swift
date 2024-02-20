@@ -19,7 +19,7 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(
-                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+                AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter)
             )
         })
         return encoder

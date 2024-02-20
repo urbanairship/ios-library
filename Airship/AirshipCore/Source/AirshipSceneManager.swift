@@ -8,18 +8,14 @@ public protocol AirshipSceneManagerProtocol: Sendable {
     var lastActiveScene: UIWindowScene  { get throws }
 }
 
-public extension AirshipSceneManagerProtocol {
-    static var shared: AirshipSceneManagerProtocol {
-        SceneManager.shared as AirshipSceneManagerProtocol
-    }
-}
 
 /**
  *  Scene manager
  *  Monitors scene connection and disconnection notifications and associated scenes to allow retrieving the latest scene.
  */
-public final class SceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
-    public static let shared = SceneManager()
+/// - Note: for internal use only.  :nodoc:
+public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
+    public static let shared = AirshipSceneManager()
 
     private var scenes: [UIWindowScene] = []
 
@@ -43,7 +39,7 @@ public final class SceneManager: AirshipSceneManagerProtocol, @unchecked Sendabl
                 .last
 
             guard let scene = lastActiveMessageScene else {
-                return try AirshipUtils.findWindowScene()
+                return try Self.findWindowScene()
             }
 
             return scene
@@ -89,6 +85,19 @@ public final class SceneManager: AirshipSceneManagerProtocol, @unchecked Sendabl
         }
         scenes.removeAll { $0 == scene }
     }
+
+    @MainActor
+    fileprivate class func findWindowScene() throws -> UIWindowScene {
+        guard
+            let scene = UIApplication.shared.connectedScenes.first(where: {
+                $0.isKind(of: UIWindowScene.self)
+            }) as? UIWindowScene
+        else {
+            throw AirshipErrors.error("Unable to find a window!")
+        }
+        return scene
+    }
+
 }
 
 #endif

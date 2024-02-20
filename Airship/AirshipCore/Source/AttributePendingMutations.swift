@@ -16,8 +16,7 @@ class AttributePendingMutations: NSObject, NSSecureCoding {
     }
 
     public var attributeUpdates: [AttributeUpdate] {
-        let dateFormatter = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-        
+
         return self.mutationsPayload.compactMap { update -> (AttributeUpdate?) in
             guard let attribute = update["key"] as? String,
                 let action = update["action"] as? String,
@@ -27,7 +26,7 @@ class AttributePendingMutations: NSObject, NSSecureCoding {
                 return nil
             }
 
-            guard let date = dateFormatter.date(from: dateString) else {
+            guard let date = AirshipDateFormatter.date(fromISOString:  dateString) else {
                 AirshipLogger.error("Unexpected date \(dateString)")
                 return nil
             }

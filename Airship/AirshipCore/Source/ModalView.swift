@@ -222,7 +222,7 @@ struct ModalView: View {
 
         var statusBarStyle = UIStatusBarStyle.default
 
-        if let scene = try? SceneManager.shared.lastActiveScene,
+        if let scene = try? AirshipSceneManager.shared.lastActiveScene,
            let sceneStyle = scene.statusBarManager?.statusBarStyle
         {
             statusBarStyle = sceneStyle

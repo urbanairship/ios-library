@@ -76,7 +76,7 @@ class ModuleLoader {
         ]
 
 #if !os(watchOS)
-        dependencies[SDKDependencyKeys.sceneManager] = SceneManager.shared
+        dependencies[SDKDependencyKeys.sceneManager] = AirshipSceneManager.shared
 #endif
 
         let swiftModules = ModuleLoader.loadModules(dependencies)

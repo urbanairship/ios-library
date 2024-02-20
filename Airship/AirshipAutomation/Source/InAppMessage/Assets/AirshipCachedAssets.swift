@@ -2,6 +2,10 @@
 
 import Foundation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
  /// Convenience struct representing an assets directory containing asset files
  /// with filenames derived from their remote URL using sha256.
 public protocol AirshipCachedAssetsProtocol: Sendable {
@@ -68,3 +72,8 @@ struct AirshipCachedAssets: AirshipCachedAssetsProtocol, Equatable {
 }
 
 
+fileprivate extension URL {
+    var assetFilename: String {
+        return AirshipUtils.sha256Hash(input: self.path)
+    }
+}

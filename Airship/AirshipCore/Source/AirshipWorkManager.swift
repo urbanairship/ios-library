@@ -11,7 +11,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private let backgroundTasks = WorkBackgroundTasks()
     private let workers: Workers = Workers()
     private let startTask: Task<Void, Never>
-    private let backgroundWaitTask: AirshipMainActorWrapper<AirshipCancellable?> = AirshipMainActorWrapper(nil)
+    private let backgroundWaitTask: AirshipMainActorValue<AirshipCancellable?> = AirshipMainActorValue(nil)
     private let queue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
     private let backgroundWorkRequests: Atomic<[AirshipWorkRequest]> = Atomic([])
 
@@ -65,7 +65,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
             background?.cancel()
         }
 
-        backgroundWaitTask.value = cancellable
+        backgroundWaitTask.set(cancellable)
     }
 
     @objc

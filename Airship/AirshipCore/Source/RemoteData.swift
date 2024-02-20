@@ -31,7 +31,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private let refreshResultSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
     private let refreshStatusSubjectMap: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]
 
-    private let lastActiveRefreshDate: AirshipMainActorWrapper<Date> = AirshipMainActorWrapper(Date.distantPast)
+    private let lastActiveRefreshDate: AirshipMainActorValue<Date> = AirshipMainActorValue(Date.distantPast)
     private let changeTokenLock: AirshipLock = AirshipLock()
     private let contactSubscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
     let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
@@ -227,7 +227,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         if now >= nextUpdate {
             updateChangeToken()
             self.enqueueRefreshTask()
-            self.lastActiveRefreshDate.value = now
+            self.lastActiveRefreshDate.set(now)
         }
     }
 

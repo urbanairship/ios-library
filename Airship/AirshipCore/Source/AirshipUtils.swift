@@ -30,43 +30,6 @@ public class ConnectionType: NSObject {
 @objc(UAUtils)
 public class AirshipUtils: NSObject {
 
-    class func clamp<T>(_ value: T, min: T, max: T) -> T where T: Comparable {
-        if value < min {
-            return min
-        }
-
-        if value > max {
-            return max
-        }
-
-        return value
-    }
-
-    // MARK: Math Utilities
-
-    /// Compares two `float` values and returns `true` if the difference between them is less than or equal
-    /// to the absolute value of the specified `accuracy`.
-    ///
-    /// - Parameters:
-    ///   - float1: The first `float`.
-    ///   - float2: The second `float`.
-    ///   - accuracy: The maximum allowed difference between values to be compared as equal.
-    ///
-    /// - Returns: `true` if the difference between the two floats is within the given `accuracy`, `false` otherwise.
-    @objc(float:isEqualToFloat:withAccuracy:)
-    public class func isApproximatelyEqual(
-        float1: CGFloat,
-        float2: CGFloat,
-        accuracy: CGFloat
-    ) -> Bool {
-        if float1 == float2 {
-            return true
-        }
-
-        let diff = abs(float1 - float2)
-        return diff <= abs(accuracy)
-    }
-
     // MARK: Device Utilities
 
     /// Get the device model name (e.g.,` iPhone3,1`).
@@ -208,55 +171,6 @@ public class AirshipUtils: NSObject {
         return .orderedSame
     }
 
-    // MARK: Date Formatting
-
-    /// Creates an ISO dateFormatter (UTC).
-    ///
-    /// The Formatter is created with the following attributes:
-    /// - `locale` set to `en_US_POSIX`
-    /// - `timestyle` set to `NSDateFormatterFullStyle`
-    /// - `dateFormat` set to `yyyy-MM-dd HH:mm:ss`
-    ///
-    /// - Returns: A DateFormatter with the default attributes.
-    @objc
-    public class func isoDateFormatterUTC() -> DateFormatter {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.init(identifier: "en_US_POSIX")
-        formatter.timeStyle = .full
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        formatter.timeZone = TimeZone.init(secondsFromGMT: 0)
-        return formatter
-    }
-
-    /// Creates an ISO dateFormatter (UTC).
-    ///
-    /// The Formatter is created with the following attributes:
-    /// - `locale` set to `en_US_POSIX`
-    /// - `timestyle` set to `NSDateFormatterFullStyle`
-    /// - `dateFormat` set to `yyyy-MM-dd'T'HH:mm:ss`.
-    ///
-    /// The formatter returned by this method is identical to that of `ISODateFormatterUTC`, except that the format matches
-    /// the optional `T` delimiter between date and time.
-    ///
-    /// - Returns: A DateFormatter with the default attributes, matching the optional `T` delimiter.
-    @objc(ISODateFormatterUTCWithDelimiter)
-    public class func isoDateFormatterUTCWithDelimiter() -> DateFormatter {
-        let formatter = isoDateFormatterUTC()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        return formatter
-    }
-
-    /// Parses ISO 8601 date strings.
-    ///
-    /// Supports timestamps with just year all the way up to seconds with and without the optional `T` delimiter.
-    ///
-    /// - Parameter from: The ISO 8601 timestamp.
-    ///
-    /// - Returns: A parsed NSDate object, or nil if the timestamp is not a valid format.
-    @objc(parseISO8601DateFromString:)
-    public class func parseISO8601Date(from: String) -> Date? {
-        return AirshipDateFormatter.date(fromISOString: from)
-    }
 
     // MARK: UI Utilities
 
@@ -269,7 +183,7 @@ public class AirshipUtils: NSObject {
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @MainActor
     public class func mainWindow() throws -> UIWindow? {
-        let scene = try SceneManager.shared.lastActiveScene
+        let scene = try AirshipSceneManager.shared.lastActiveScene
 
         let sharedApp: UIApplication = UIApplication.shared
         for window in scene.windows {
@@ -299,58 +213,6 @@ public class AirshipUtils: NSObject {
         }
 
         return try? self.mainWindow()
-    }
-
-    /// Returns the window containing the provided view.
-    ///
-    /// - Parameter view: The view.
-    ///
-    /// - Returns: The window containing the view, or `nil` if the view is not currently displayed.
-    @objc
-    @MainActor
-    public class func windowFor(view: UIView) -> UIWindow? {
-        var view: UIView? = view
-        var window: UIWindow? = nil
-
-        repeat {
-            view = view?.superview
-            if view is UIWindow {
-                window = view as? UIWindow
-            }
-        } while view != nil
-
-        return window
-    }
-
-    @MainActor
-    class func presentInNewWindow(
-        _ rootViewController: UIViewController,
-        windowLevel: UIWindow.Level = .normal
-    ) -> UIWindow? {
-        do {
-            let scene = try findWindowScene()
-            let window = UIWindow(windowScene: scene)
-            window.rootViewController = rootViewController
-            window.windowLevel = windowLevel
-            window.makeKeyAndVisible()
-            return window
-        } catch {
-            AirshipLogger.error("\(error)")
-            return nil
-        }
-    }
-
-    @objc
-    @MainActor
-    public class func findWindowScene() throws -> UIWindowScene {
-        guard
-            let scene = UIApplication.shared.connectedScenes.first(where: {
-                $0.isKind(of: UIWindowScene.self)
-            }) as? UIWindowScene
-        else {
-            throw AirshipErrors.error("Unable to find a window!")
-        }
-        return scene
     }
 
 
@@ -579,41 +441,6 @@ public class AirshipUtils: NSObject {
         CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA256), secret.bytes, secret.count, message.bytes, message.count, hash.mutableBytes)
 
         return hash.base64EncodedString(options: [])
-    }
-}
-
-
-extension Date {
-    var millisecondsSince1970: Int64 {
-        Int64((self.timeIntervalSince1970 * 1000.0).rounded())
-    }
-
-    init(milliseconds: Int64) {
-        self = Date(timeIntervalSince1970: TimeInterval(milliseconds / 1000))
-    }
-}
-
-public extension URL {
-    var assetFilename: String {
-        return AirshipUtils.sha256Hash(input: self.path)
-    }
-}
-
-public extension View {
-    /// Wrapper to prevent linter warnings for deprecated onChange method
-    /// - Parameters:
-    ///   - value: The value to observe for changes.
-    ///   - initial: A Boolean value that determines whether the action should be fired initially.
-    ///   - action: The action to perform when the value changes.
-    @ViewBuilder
-    func onChangeOf<Value: Equatable>(_ value: Value, initial: Bool = false, _ action: @escaping (Value) -> Void) -> some View {
-        if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *) {
-            self.onChange(of: value, initial: initial, {
-                action(value)
-            })
-        } else {
-            self.onChange(of: value, perform: action)
-        }
     }
 }
 

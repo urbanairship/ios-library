@@ -49,7 +49,7 @@ public final class AttributesEditor: NSObject {
         add(
             attribute: attribute,
             value: .string(
-                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
+                AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter)
             )
         )
     }

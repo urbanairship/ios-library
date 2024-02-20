@@ -54,7 +54,7 @@ public final class ShareAction: AirshipAction {
         ]
 
         let viewController = UIViewController()
-        var window: UIWindow? = AirshipUtils.presentInNewWindow(
+        var window: UIWindow? = Self.presentInNewWindow(
             viewController,
             windowLevel: .alert
         )
@@ -79,6 +79,24 @@ public final class ShareAction: AirshipAction {
         )
 
         return nil
+    }
+
+    @MainActor
+    class func presentInNewWindow(
+        _ rootViewController: UIViewController,
+        windowLevel: UIWindow.Level = .normal
+    ) -> UIWindow? {
+        do {
+            let scene = try AirshipSceneManager.shared.lastActiveScene
+            let window = UIWindow(windowScene: scene)
+            window.rootViewController = rootViewController
+            window.windowLevel = windowLevel
+            window.makeKeyAndVisible()
+            return window
+        } catch {
+            AirshipLogger.error("\(error)")
+            return nil
+        }
     }
 }
 #endif

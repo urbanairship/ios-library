@@ -238,7 +238,6 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         return remoteConfigCache.remoteConfig.airshipConfig?.meteredUsageURL
     }
 
-    @objc
     public convenience init(
         config: AirshipConfig,
         dataStore: PreferenceDataStore
@@ -341,10 +340,10 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
             listener(nil, self.remoteConfig)
         }
 
-        self.remoteConfigListeners.value.append(listener)
+        self.remoteConfigListeners.update { $0.append(listener) }
     }
 
-    let remoteConfigListeners: AirshipMainActorWrapper<[@MainActor @Sendable (RemoteConfig?, RemoteConfig) -> Void]> = AirshipMainActorWrapper([])
+    let remoteConfigListeners: AirshipMainActorValue<[@MainActor @Sendable (RemoteConfig?, RemoteConfig) -> Void]> = AirshipMainActorValue([])
 }
 
 extension String {

@@ -119,9 +119,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         }
 
         if let date = value as? Date {
-            return .string(
-                AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date)
-            )
+            return .string(AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter))
         }
 
         if let number = value as? NSNumber {

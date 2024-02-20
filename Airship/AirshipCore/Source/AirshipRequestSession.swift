@@ -310,7 +310,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
 
         case .generatedChannelToken(let channelID):
             let nonce = self.nonceFactory()
-            let timestamp = AirshipUtils.isoDateFormatterUTC().string(from: self.date.now)
+            let timestamp = AirshipDateFormatter.string(fromDate: self.date.now, format: .iso)
             let token = try AirshipUtils.generateSignedToken(
                 secret: self.appSecret,
                 tokenParams: [
@@ -333,7 +333,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
 
         case .generatedAppToken:
             let nonce = self.nonceFactory()
-            let timestamp = AirshipUtils.isoDateFormatterUTC().string(from: self.date.now)
+            let timestamp = AirshipDateFormatter.string(fromDate: self.date.now, format: .iso)
             let token = try AirshipUtils.generateSignedToken(
                 secret: self.appSecret,
                 tokenParams: [

@@ -215,10 +215,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         let attributePayload = [
             "action": "remove",
             "key": "some-attribute",
-            "timestamp": AirshipUtils.isoDateFormatterUTCWithDelimiter()
-                .string(
-                    from: testDate.now
-                ),
+            "timestamp": AirshipDateFormatter.string(fromDate: testDate.now, format: .isoDelimitter)
         ]
 
         let attributeMutation = AttributePendingMutations(mutationsPayload: [
@@ -261,7 +258,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             [
                 AttributeUpdate.remove(
                     attribute: "some-attribute",
-                    date: AirshipUtils.parseISO8601Date(from: attributePayload["timestamp"]!)!
+                    date: AirshipDateFormatter.date(fromISOString: attributePayload["timestamp"]!)!
                 )
             ],
             pending?.attributes

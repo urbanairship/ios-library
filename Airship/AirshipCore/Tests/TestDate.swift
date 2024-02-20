@@ -3,23 +3,15 @@
 @testable
 import AirshipCore
 
-@objc(UATestDate)
-public class UATestDate: NSObject, @unchecked Sendable, AirshipDateProtocol  {
+public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 
-    @objc
-    public init(offset: TimeInterval, dateOverride: Date?) {
+    public init(offset: TimeInterval = 0, dateOverride: Date? = nil) {
         self._offSet = Atomic(offset)
         self.dateOverride = dateOverride
-        super.init()
-    }
-    @objc
-    public override convenience init() {
-        self.init(offset: 0, dateOverride: nil)
     }
 
     private var _offSet: Atomic<TimeInterval>
 
-    @objc
     public var offset: TimeInterval {
         get {
             return self._offSet.value
@@ -30,10 +22,8 @@ public class UATestDate: NSObject, @unchecked Sendable, AirshipDateProtocol  {
         }
     }
 
-    @objc
     public var dateOverride: Date?
 
-    @objc
     public var now: Date {
         let date = dateOverride ?? Date()
         return date.addingTimeInterval(offset)

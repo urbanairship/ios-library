@@ -195,7 +195,7 @@ struct Pager: View {
                 }
                 .applyIf(self.model.hasGestureType(type: .hold)) { view in
                     view.simultaneousGesture(makeLongPressGesture())
-                        .onChangeOf( isPressingDown) { value in
+                        .airshipOnChangeOf( isPressingDown) { value in
                             handleLongPress(isPressed: value, index: index)
                         }
                 }

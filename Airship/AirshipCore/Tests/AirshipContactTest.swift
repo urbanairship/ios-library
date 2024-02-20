@@ -55,9 +55,7 @@ class AirshipContactTest: XCTestCase {
     func testMigrateNamedUser() async throws {
         await self.verifyOperations([])
 
-        let attributeDate = AirshipUtils.isoDateFormatterUTCWithDelimiter().string(
-            from: self.date.now
-        )
+        let attributeDate = AirshipDateFormatter.string(fromDate: self.date.now, format: .isoDelimitter)
 
         let attributePayload = [
             "action": "remove",
@@ -101,7 +99,7 @@ class AirshipContactTest: XCTestCase {
                 .identify("named-user"),
                 .update(
                     tagUpdates: [ TagGroupUpdate(group: "some-group", tags: ["tag"], type: .add) ],
-                    attributeUpdates: [ AttributeUpdate.remove(attribute: "some-attribute", date: AirshipUtils.parseISO8601Date(from: attributeDate)!) ],
+                    attributeUpdates: [ AttributeUpdate.remove(attribute: "some-attribute", date: AirshipDateFormatter.date(fromISOString: attributeDate)!) ],
                     subscriptionListsUpdates: nil
                 )
             ]

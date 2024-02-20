@@ -275,7 +275,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "primary_color": "#ABCDEF",
             "secondary_color": "#FEDCBA",
             "extra": ["extra_value": "some text"],
-            "expiry": AirshipUtils.isoDateFormatterUTCWithDelimiter().string(from: date.now),
+            "expiry": AirshipDateFormatter.string(fromDate: date.now, format: .isoDelimitter),
             "on_click": ["onclick": "action"],
             "button_group": "ua_shop_now_share",
             "button_actions": ["shop_now": ["test": "json"], "share": ["test-2": "json-2"]],

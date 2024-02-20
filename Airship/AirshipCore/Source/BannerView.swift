@@ -50,7 +50,7 @@ struct BannerView: View {
                 )
                 
                 createBanner(placement: placement, metrics: metrics)
-                    .onChangeOf(thomasEnvironment.isDismissed, { _ in
+                    .airshipOnChangeOf(thomasEnvironment.isDismissed, { _ in
                         withAnimation(.linear(duration: BannerView.animationOutDuration)) {
                             self.positionState = .hidden
                         }

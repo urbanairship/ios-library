@@ -63,7 +63,7 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             payloads: [
                 RemoteDataPayload(
                     type: "test_data_type",
-                    timestamp: AirshipUtils.parseISO8601Date(from: "2017-01-01T12:00:00")!,
+                    timestamp: AirshipDateFormatter.date(fromISOString: "2017-01-01T12:00:00")!,
                     data: try! AirshipJSON.from(json: RemoteDataAPIClientTest.validData),
                     remoteDataInfo: RemoteDataInfo(
                         url: self.exampleURL,

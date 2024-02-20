@@ -211,6 +211,6 @@ extension AirshipHTTPResponse {
             return seconds
         }
 
-        return AirshipUtils.parseISO8601Date(from: retryAfter)?.timeIntervalSinceNow
+        return AirshipDateFormatter.date(fromISOString: retryAfter)?.timeIntervalSince1970
     }
 }

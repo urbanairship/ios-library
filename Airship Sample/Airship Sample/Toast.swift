@@ -38,7 +38,7 @@ struct Toast: View {
     @ViewBuilder
     var body: some View {
         makeView()
-            .onChangeOf( self.message) { incoming in
+            .airshipOnChangeOf( self.message) { incoming in
                 if incoming != nil {
                     showToast()
                 }

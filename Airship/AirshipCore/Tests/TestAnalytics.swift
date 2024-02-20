@@ -3,8 +3,7 @@ import Foundation
 @testable import AirshipCore
 import Combine
 
-@objc(UATestAnalytics)
-public class TestAnalytics: NSObject, InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
+public class TestAnalytics: InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
     public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
     
     let eventSubject = PassthroughSubject<AirshipEventData, Never>()

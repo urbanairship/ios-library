@@ -86,7 +86,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
         let container = try decoder.container(keyedBy: FeatureFlagObjectCodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
 
-        guard let created = AirshipUtils.parseISO8601Date(from: try container.decode(String.self, forKey: .created)) else {
+        guard let created = AirshipDateFormatter.date(fromISOString: try container.decode(String.self, forKey: .created)) else {
             throw DecodingError.typeMismatch(
                 FeatureFlagInfo.self,
                 DecodingError.Context(
@@ -98,7 +98,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
         }
         self.created = created
 
-        guard let lastUpdated = AirshipUtils.parseISO8601Date(from: try container.decode(String.self, forKey: .lastUpdated)) else {
+        guard let lastUpdated = AirshipDateFormatter.date(fromISOString: try container.decode(String.self, forKey: .lastUpdated)) else {
             throw DecodingError.typeMismatch(
                 FeatureFlagInfo.self,
                 DecodingError.Context(

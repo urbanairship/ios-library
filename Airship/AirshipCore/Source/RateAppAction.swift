@@ -114,11 +114,7 @@ private struct DefaultAppRater: AppRaterProtocol {
 
     @MainActor
     private func findScene() -> UIWindowScene? {
-        if let mainWindowScene = try? AirshipUtils.mainWindow()?.windowScene {
-            return mainWindowScene
-        }
-
-        return try? AirshipUtils.findWindowScene()
+        return try? AirshipSceneManager.shared.lastActiveScene
     }
 }
 

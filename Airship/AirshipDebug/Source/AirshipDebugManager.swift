@@ -134,7 +134,7 @@ public class AirshipDebugManager {
 
     @MainActor
     public func open() {
-        guard let scene = try? AirshipUtils.findWindowScene() else {
+        guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
             AirshipLogger.error("Unable to display, missing scene.")
             return
         }

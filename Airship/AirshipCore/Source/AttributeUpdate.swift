@@ -85,10 +85,7 @@ struct AttributeUpdate: Codable, Sendable, Equatable {
 
 extension AttributeUpdate {
     var operation: AttributeOperation {
-        let timestamp = AirshipUtils.isoDateFormatterUTCWithDelimiter()
-            .string(
-                from: self.date
-            )
+        let timestamp = AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter)
         switch self.type {
         case .set:
             return AttributeOperation(

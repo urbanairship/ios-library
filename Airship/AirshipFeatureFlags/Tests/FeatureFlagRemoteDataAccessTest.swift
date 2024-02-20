@@ -73,8 +73,8 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
         let expected: [FeatureFlagInfo] = [
             FeatureFlagInfo(
                 id: "27f26d85-0550-4df5-85f0-7022fa7a5925",
-                created: AirshipUtils.parseISO8601Date(from: "2023-07-10T18:10:46.203")!,
-                lastUpdated: AirshipUtils.parseISO8601Date(from: "2023-07-10T18:10:46.203")!,
+                created: AirshipDateFormatter.date(fromISOString: "2023-07-10T18:10:46.203")!,
+                lastUpdated: AirshipDateFormatter.date(fromISOString: "2023-07-10T18:10:46.203")!,
                 name: "cool_flag",
                 reportingMetadata: try! AirshipJSON.wrap(["flag_id":"27f26d85-0550-4df5-85f0-7022fa7a5925"]),
                 flagPayload: .staticPayload(
@@ -132,8 +132,8 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
         let expected: [FeatureFlagInfo] = [
             FeatureFlagInfo(
                 id: "27f26d85-0550-4df5-85f0-7022fa7a5925",
-                created: AirshipUtils.parseISO8601Date(from: "2023-07-10T18:10:46.203")!,
-                lastUpdated: AirshipUtils.parseISO8601Date(from: "2023-07-10T18:10:46.203")!,
+                created: AirshipDateFormatter.date(fromISOString: "2023-07-10T18:10:46.203")!,
+                lastUpdated: AirshipDateFormatter.date(fromISOString: "2023-07-10T18:10:46.203")!,
                 name: "cool_flag",
                 reportingMetadata: try! AirshipJSON.wrap(["flag_id":"27f26d85-0550-4df5-85f0-7022fa7a5925"]),
                 flagPayload: .staticPayload(

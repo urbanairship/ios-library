@@ -57,7 +57,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
                         )
                 }
             }
-            .onChangeOf(isVisible) { newValue in
+            .airshipOnChangeOf(isVisible) { newValue in
                 self.isImageVisible = newValue
                 if newValue {
                     self.loopsCompleted = 0 // Reset gif frame loop counter every time isVisible changes

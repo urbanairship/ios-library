@@ -2,8 +2,7 @@ import Foundation
 
 @testable import AirshipCore
 
-@objc(UATestLocaleManager)
-public class TestLocaleManager: NSObject, AirshipLocaleManagerProtocol, @unchecked Sendable {
+public class TestLocaleManager: AirshipLocaleManagerProtocol, @unchecked Sendable {
 
     public var _locale: Locale? = nil
 

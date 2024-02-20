@@ -16,7 +16,7 @@ final class ContactManagerTest: XCTestCase {
 
     private let anonIdentifyResponse: ContactIdentifyResult = ContactIdentifyResult(
         contact: ContactIdentifyResult.ContactInfo(
-            channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+            channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
             contactID: "some contact",
             isAnonymous: true
         ),
@@ -26,7 +26,7 @@ final class ContactManagerTest: XCTestCase {
 
     private let nonAnonIdentifyResponse: ContactIdentifyResult = ContactIdentifyResult(
         contact: ContactIdentifyResult.ContactInfo(
-            channelAssociatedDate: AirshipUtils.parseISO8601Date(from: "2022-12-29T10:15:30.00")!,
+            channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
             contactID: "some other contact",
             isAnonymous: false
         ),

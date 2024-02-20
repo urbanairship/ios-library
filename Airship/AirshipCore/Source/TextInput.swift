@@ -58,7 +58,7 @@ struct TextInput: View {
                 isEditing: $isEditing
             )
             .constraints(constraints, alignment: .topLeading)
-            .onChangeOf( self.isEditing) { newValue in
+            .airshipOnChangeOf( self.isEditing) { newValue in
                 let focusedID = newValue ? self.model.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
             }
@@ -147,7 +147,7 @@ struct AirshipTexField: View {
         let axis: Axis = self.model.inputType == .textMultiline ? .vertical : .horizontal
         TextField("", text: $binding, axis: axis)
             .padding(5)
-            .onChangeOf( binding) { [binding] newValue in
+            .airshipOnChangeOf( binding) { [binding] newValue in
                 if (axis == .vertical) {
                     let oldCount = binding.filter { $0 == "\n" }.count
                     let newCount = newValue.filter { $0 == "\n" }.count
@@ -169,7 +169,7 @@ struct AirshipTexField: View {
             .applyIf(isUnderlined, transform: { content in
                 content.underline()
             })
-            .onChangeOf( focused) { newValue in
+            .airshipOnChangeOf( focused) { newValue in
                 if (newValue) {
                     self.thomasEnvironment.focusedID = self.model.identifier
                 } else if (self.thomasEnvironment.focusedID == self.model.identifier) {

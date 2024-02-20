@@ -27,8 +27,8 @@ final class SessionTracker: SessionTrackerProtocol {
 
     private let date: AirshipDateProtocol
     private let taskSleeper: AirshipTaskSleeper
-    private let isForeground: AirshipMainActorWrapper<Bool?> = AirshipMainActorWrapper(nil)
-    private let initialized: AirshipMainActorWrapper<Bool> = AirshipMainActorWrapper(false)
+    private let isForeground: AirshipMainActorValue<Bool?> = AirshipMainActorValue(nil)
+    private let initialized: AirshipMainActorValue<Bool> = AirshipMainActorValue(false)
     private let _sessionState: Atomic<SessionState>
     private let appStateTracker: AppStateTrackerProtocol
     private let sessionStateFactory: @Sendable () -> SessionState
@@ -96,8 +96,8 @@ final class SessionTracker: SessionTrackerProtocol {
     @MainActor
     private func ensureInit(isForeground: Bool, date: Date? = nil, onInit: () -> Void) {
         guard self.initialized.value else {
-            self.initialized.value = true
-            self.isForeground.value = isForeground
+            self.initialized.set(true)
+            self.isForeground.set(isForeground)
             self.addEvent(isForeground ? .foregroundInit : .backgroundInit, date: date)
             onInit()
             return
@@ -125,7 +125,7 @@ final class SessionTracker: SessionTrackerProtocol {
 
         // Background -> foreground
         if isForeground.value == false {
-            isForeground.value = true
+            isForeground.set(true)
             self._sessionState.update { [sessionStateFactory] old in
                 var session = sessionStateFactory()
                 session.conversionMetadata = old.conversionMetadata
@@ -148,7 +148,7 @@ final class SessionTracker: SessionTrackerProtocol {
 
         // Foreground -> background
         if isForeground.value == true {
-            isForeground.value = false
+            isForeground.set(false)
             addEvent(.background)
 
             self._sessionState.value = self.sessionStateFactory()

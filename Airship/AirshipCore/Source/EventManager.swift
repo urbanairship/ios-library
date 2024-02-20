@@ -14,7 +14,7 @@ protocol EventManagerProtocol: AnyObject, Sendable {
 
 final class EventManager: EventManagerProtocol {
 
-    private let headerBlocks: AirshipMainActorWrapper<[@Sendable () async -> [String: String]]> = AirshipMainActorWrapper([])
+    private let headerBlocks: AirshipMainActorValue<[@Sendable () async -> [String: String]]> = AirshipMainActorValue([])
 
     private let _uploadsEnabled = Atomic<Bool>(false)
     var uploadsEnabled: Bool  {
@@ -77,7 +77,7 @@ final class EventManager: EventManagerProtocol {
     func addHeaderProvider(
         _ headerProvider: @Sendable @escaping () async -> [String : String]
     ) {
-        self.headerBlocks.value.append(headerProvider)
+        self.headerBlocks.update { $0.append(headerProvider) }
     }
 
     func scheduleUpload(eventPriority: AirshipEventPriority) async {
@@ -206,7 +206,7 @@ fileprivate actor EventManagerState {
 
 
     var minBatchInterval: TimeInterval {
-        AirshipUtils.clamp(
+        Self.clamp(
             self.tuningInfo?.minBatchInterval ?? EventManagerState.minBatchInterval,
             min: EventManagerState.minBatchInterval,
             max: EventManagerState.maxBatchInterval
@@ -214,7 +214,7 @@ fileprivate actor EventManagerState {
     }
 
     var maxTotalStoreSizeKB: UInt {
-        AirshipUtils.clamp(
+        Self.clamp(
             self.tuningInfo?.maxTotalStoreSizeKB ?? EventManagerState.maxTotalDBSizeKB,
             min: EventManagerState.minTotalDBSizeKB,
             max: EventManagerState.maxTotalDBSizeKB
@@ -222,7 +222,7 @@ fileprivate actor EventManagerState {
     }
 
     var maxBatchSizeKB: UInt {
-        AirshipUtils.clamp(
+        Self.clamp(
             self.tuningInfo?.maxBatchSizeKB ?? EventManagerState.maxBatchSizeKB,
             min: EventManagerState.minBatchSizeKB,
             max: EventManagerState.maxBatchSizeKB
@@ -237,5 +237,18 @@ fileprivate actor EventManagerState {
 
     func updateTuniningInfo(_ tuningInfo: EventUploadTuningInfo?) {
         self.tuningInfo = tuningInfo
+    }
+
+
+    static func clamp<T>(_ value: T, min: T, max: T) -> T where T: Comparable {
+        if value < min {
+            return min
+        }
+
+        if value > max {
+            return max
+        }
+
+        return value
     }
 }

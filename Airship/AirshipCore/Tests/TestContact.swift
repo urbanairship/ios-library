@@ -3,8 +3,7 @@ import Combine
 
 @testable import AirshipCore
 
-@objc(UATestContact)
-class TestContact: NSObject, InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
+class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
     func notifyRemoteLogin() {
 
     }

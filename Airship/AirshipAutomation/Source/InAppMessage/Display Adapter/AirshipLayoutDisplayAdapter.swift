@@ -11,12 +11,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     private let message: InAppMessage
     private let assets: AirshipCachedAssetsProtocol
-    private let networkChecker: NetworkCheckerProtocol
+    private let networkChecker: AirshipNetworkCheckerProtocol
 
     init(
         message: InAppMessage,
         assets: AirshipCachedAssetsProtocol,
-        networkChecker: NetworkCheckerProtocol = NetworkChecker()
+        networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
     ) throws {
         self.message = message
         self.assets = assets

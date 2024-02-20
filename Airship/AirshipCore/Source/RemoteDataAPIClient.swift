@@ -19,7 +19,7 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
             let container = try decoder.singleValueContainer()
             let dateStr = try container.decode(String.self)
 
-            guard let date = AirshipUtils.parseISO8601Date(from: dateStr) else {
+            guard let date = AirshipDateFormatter.date(fromISOString: dateStr) else {
                 throw AirshipErrors.error("Invalid date \(dateStr)")
             }
             return date

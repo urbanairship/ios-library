@@ -253,7 +253,7 @@ extension MessageCenter {
             return
         }
 
-        guard let scene = try? AirshipUtils.findWindowScene() else {
+        guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
             AirshipLogger.error(
                 "Unable to display message center, missing scene."
             )

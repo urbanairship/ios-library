@@ -180,7 +180,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         
         if 
             let rawDate = payload[ParseKey.expiry.rawValue] as? String,
-            let date = AirshipUtils.parseISO8601Date(from: rawDate)
+            let date = AirshipDateFormatter.date(fromISOString: rawDate)
         {
             self.expiry = date
         } else {
