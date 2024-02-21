@@ -4,7 +4,7 @@ import CoreData
 
 final class RemoteDataStore: Sendable {
     
-    private static let remoteDataEntity = "UARemoteDataStorePayload"
+    static let remoteDataEntity = "UARemoteDataStorePayload"
     
     private let coreData: UACoreData
     private let inMemory: Bool
@@ -61,16 +61,15 @@ final class RemoteDataStore: Sendable {
                         remoteDataInfo = try RemoteDataInfo.fromJSON(data: data)
                     }
                 } catch {
-                    AirshipLogger.error("Unable to parse remote-data info from data \(error)")
+                    AirshipLogger.error("Unable to parse remote-data info from data \(error.localizedDescription)")
                 }
 
                 var data: AirshipJSON = AirshipJSON.null
 
-
                 do {
-                    data = try AirshipJSON.wrap($0.data)
+                    data = try AirshipJSON.from(data: $0.data)
                 } catch {
-                    AirshipLogger.error("Unable to parse remote-data data \(error)")
+                    AirshipLogger.error("Unable to parse remote-data data \(error.localizedDescription)")
                 }
 
 
@@ -144,7 +143,7 @@ final class RemoteDataStore: Sendable {
         // set the properties
         remoteDataStorePayload.type = payload.type
         remoteDataStorePayload.timestamp = payload.timestamp
-        remoteDataStorePayload.data = (payload.data.unWrap() as? [AnyHashable : Any]) ?? [:]
+        remoteDataStorePayload.data = AirshipJSONUtils.toData(payload.data.unWrap() as? [AnyHashable : Any]) ?? Data()
         do {
             remoteDataStorePayload.remoteDataInfo = try payload.remoteDataInfo?.toEncodedJSONData()
         } catch {

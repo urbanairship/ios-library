@@ -17,7 +17,7 @@ class RemoteDataStorePayload: NSManagedObject {
 
     /// The actual data associated with this payload
     @objc
-    @NSManaged public var data: [AnyHashable: Any]
+    @NSManaged public var data: Data
 
     /// The remote data info as json encoded data.
     @objc

@@ -50,17 +50,3 @@ public class JSONValueTransformer: ValueTransformer {
         }
     }
 }
-
-extension JSONValueTransformer {
-    static let name = NSValueTransformerName(
-        String(describing: JSONValueTransformer.self)
-    )
-    
-    /// Registers the value transformer
-    public static func register() {
-        ValueTransformer.setValueTransformer(
-            JSONValueTransformer(),
-            forName: JSONValueTransformer.name
-        )
-    }
-}

@@ -420,13 +420,13 @@ actor MessageCenterStore {
 
                 data.messageID = message.id
                 data.title = message.title
-                data.extra = message.extra
+                data.extra = AirshipJSONUtils.toData(message.extra)
                 data.messageBodyURL = message.bodyURL
                 data.messageURL = message.messageURL
                 data.unread = message.unread
                 data.messageSent = message.sentDate
-                data.rawMessageObject = message.rawMessageObject.unWrap() as? [String: Any]
-                data.messageReporting = message.messageReporting?.unWrap() as? [String: Any]
+                data.rawMessageObject = AirshipJSONUtils.toData(message.rawMessageObject.unWrap() as? [String: Any])
+                data.messageReporting = AirshipJSONUtils.toData (message.messageReporting?.unWrap()as? [String: Any])
                 data.messageExpiration = message.expirationDate
             }
 
@@ -465,14 +465,14 @@ extension InboxMessageData {
         return MessageCenterMessage(
             title: title,
             id: messageID,
-            extra: self.extra ?? [:],
+            extra: AirshipJSONUtils.json(self.extra) as? [String : String] ?? [:],
             bodyURL: messageBodyURL,
             expirationDate: self.messageExpiration,
-            messageReporting: messageReporting,
+            messageReporting: AirshipJSONUtils.json(messageReporting) as? [String : Any] ?? [:],
             unread: (self.unread && self.unreadClient),
             sentDate: messageSent,
             messageURL: messageURL,
-            rawMessageObject: rawMessageObject
+            rawMessageObject: AirshipJSONUtils.json(rawMessageObject) as? [String : Any] ?? [:]
         )
     }
 }
