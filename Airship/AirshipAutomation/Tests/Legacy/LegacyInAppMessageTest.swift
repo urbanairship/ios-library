@@ -8,13 +8,13 @@ final class LegacyInAppMessageTest: XCTestCase {
     let date = UATestDate(offset: 0, dateOverride: Date())
     
     func testParseMinPayload() {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
-        
-    
         
         let message = LegacyInAppMessage(payload: payload, date: date)!
         
@@ -37,17 +37,21 @@ final class LegacyInAppMessageTest: XCTestCase {
         
         let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "position": "top",
-            "alert": "test alert",
-            "duration": 100.0,
-            "primary_color": "#ABCDEF",
-            "secondary_color": "#FEDCBA",
+            "display": [
+                "type": "banner",
+                "alert": "test alert",
+                "position": "top",
+                "primary_color": "#ABCDEF",
+                "secondary_color": "#FEDCBA",
+                "duration": 100.0,
+            ],
             "extra": ["extra_value": "some text"],
             "expiry": AirshipDateFormatter.string(fromDate: date.now, format: .isoDelimitter),
-            "on_click": ["onclick": "action"],
-            "button_group": "button group",
-            "button_actions": ["name": ["test": "json"]],
+            "actions": [
+                "on_click": ["onclick": "action"],
+                "button_group": "button group",
+                "button_actions": ["name": ["test": "json"]],
+            ],
             "campaigns": ["test-campaing": "json"],
             "message_type": "test-message"
         ]
@@ -72,10 +76,12 @@ final class LegacyInAppMessageTest: XCTestCase {
     }
     
     func testOverrideId() {
-        let payload = [
+        let payload: [String : Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         let overridId = "override"
@@ -85,10 +91,12 @@ final class LegacyInAppMessageTest: XCTestCase {
     }
     
     func testOverrideOnClick() {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         let overridJson = try! AirshipJSON.wrap(["test": "json"])
@@ -98,28 +106,36 @@ final class LegacyInAppMessageTest: XCTestCase {
     }
     
     func testMissingRequiredFields() {
-        var payload = [
-            "type": "banner",
-            "alert": "test alert"
+        var payload: [String: Any] = [
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         XCTAssertNil(LegacyInAppMessage(payload: payload))
         
         payload = [
             "identifier": "test-id",
-            "alert": "test alert"
+            "display": [
+                "alert": "test alert"
+            ]
         ]
         XCTAssertNil(LegacyInAppMessage(payload: payload))
         
         payload = [
             "identifier": "test-id",
-            "type": "banner"
+            "display": [
+                "type": "banner",
+            ]
         ]
         XCTAssertNil(LegacyInAppMessage(payload: payload))
         
         payload = [
             "identifier": "test-id",
-            "type": "invalid",
-            "alert": "test alert"
+            "display": [
+                "type": "invalid",
+                "alert": "test alert"
+            ]
         ]
         XCTAssertNil(LegacyInAppMessage(payload: payload))
     }

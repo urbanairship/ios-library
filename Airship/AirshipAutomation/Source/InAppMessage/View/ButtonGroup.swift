@@ -173,11 +173,8 @@ struct ButtonView: View {
     }
 
     private func onTap() {
-        if buttonInfo.behavior == .cancel {
-            environment.onUserDismissed()
-        } else {
-            environment.onButtonDismissed(buttonInfo: self.buttonInfo)
-        }
+        environment.onButtonDismissed(buttonInfo: self.buttonInfo)
+        environment.runActions(actions: self.buttonInfo.actions)
     }
 }
 

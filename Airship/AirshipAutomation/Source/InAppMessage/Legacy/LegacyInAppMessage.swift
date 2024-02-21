@@ -155,12 +155,14 @@ public struct LegacyInAppMessage: Sendable, Equatable {
     ) {
         guard
             let identifier = overrideId ?? (payload[ParseKey.identifier.rawValue] as? String),
-            let displayTypeRaw = payload[ParseKey.Display.type.rawValue] as? String,
+            let displayInfo = payload[ParseKey.display.rawValue] as? [String: Any],
+            let displayTypeRaw = displayInfo[ParseKey.Display.type.rawValue] as? String,
             let displayType = DisplayType(rawValue: displayTypeRaw),
-            let alert = payload[ParseKey.Display.alert.rawValue] as? String
+            let alert = displayInfo[ParseKey.Display.alert.rawValue] as? String
         else {
             return nil
         }
+        
         
         let wrapJson: (Any?) -> AirshipJSON? = { input in
             guard let input = input else { return nil }
@@ -190,31 +192,36 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         self.displayType = displayType
         
         self.alert = alert
-        self.duration = payload[ParseKey.Display.duration.rawValue] as? Double ?? Defaults.duration
+        self.duration = displayInfo[ParseKey.Display.duration.rawValue] as? Double ?? Defaults.duration
         
         if
-            let positionRaw = payload[ParseKey.Display.position.rawValue] as? String,
+            let positionRaw = displayInfo[ParseKey.Display.position.rawValue] as? String,
             let position = Position(rawValue: positionRaw) {
             self.position = position
         } else {
             self.position = .bottom
         }
         
-        self.primaryColor = payload[ParseKey.Display.primaryColor.rawValue] as? String
-        self.secondaryColor = payload[ParseKey.Display.secondaryColor.rawValue] as? String
+        self.primaryColor = displayInfo[ParseKey.Display.primaryColor.rawValue] as? String
+        self.secondaryColor = displayInfo[ParseKey.Display.secondaryColor.rawValue] as? String
         
-        self.buttonGroup = payload[ParseKey.Action.buttonGroup.rawValue] as? String
-        if let actions = payload[ParseKey.Action.buttonActions.rawValue] as? [String: Any] {
-            self.buttonActions = actions.reduce(into: [String: AirshipJSON]()) { partialResult, record in
-                if let json = wrapJson(record.value) {
-                    partialResult[record.key] = json
+        if let actionsInfo = payload[ParseKey.actions.rawValue] as? [String: Any] {
+            self.buttonGroup = actionsInfo[ParseKey.Action.buttonGroup.rawValue] as? String
+            if let actions = actionsInfo[ParseKey.Action.buttonActions.rawValue] as? [String: Any] {
+                self.buttonActions = actions.reduce(into: [String: AirshipJSON]()) { partialResult, record in
+                    if let json = wrapJson(record.value) {
+                        partialResult[record.key] = json
+                    }
                 }
+            } else {
+                self.buttonActions = nil
             }
+            self.onClick = overrideOnClick ?? wrapJson(actionsInfo[ParseKey.Action.onClick.rawValue])
         } else {
+            self.buttonGroup = nil
             self.buttonActions = nil
+            self.onClick = overrideOnClick
         }
-        
-        self.onClick = overrideOnClick ?? wrapJson(payload[ParseKey.Action.onClick.rawValue])
     }
 
     private enum ParseKey: String {

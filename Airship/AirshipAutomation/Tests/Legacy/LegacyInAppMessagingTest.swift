@@ -169,10 +169,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     
     func testReceiveRemoteNotificationSchedulesMessageWithDefaults() async throws {
         let messageId = "test-id"
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": messageId,
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         await assertLastCancalledScheduleIDEquals(nil)
@@ -246,12 +248,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
     func testReceiveNotificationRecordsReplacement() async throws {
         subject.pendingMessageId = "some-pending"
 
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
-
 
         let expection = XCTestExpectation(description: "schedule legacy message")
         subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
@@ -268,17 +271,21 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let messageId = "test-id"
         let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "position": "top",
-            "alert": "test alert",
-            "duration": 100.0,
-            "primary_color": "#ABCDEF",
-            "secondary_color": "#FEDCBA",
+            "display": [
+                "type": "banner",
+                "alert": "test alert",
+                "position": "top",
+                "duration": 100.0,
+                "primary_color": "#ABCDEF",
+                "secondary_color": "#FEDCBA",
+            ],
             "extra": ["extra_value": "some text"],
             "expiry": AirshipDateFormatter.string(fromDate: date.now, format: .isoDelimitter),
-            "on_click": ["onclick": "action"],
-            "button_group": "ua_shop_now_share",
-            "button_actions": ["shop_now": ["test": "json"], "share": ["test-2": "json-2"]],
+            "actions": [
+                "on_click": ["onclick": "action"],
+                "button_group": "ua_shop_now_share",
+                "button_actions": ["shop_now": ["test": "json"], "share": ["test-2": "json-2"]],
+            ],
             "campaigns": ["test-campaing": "json"],
             "message_type": "test-message"
         ]
@@ -370,10 +377,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
     
     func testTriggertIsLessAgressiveIfNotDisplayAsap() async throws {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         let expection = XCTestExpectation(description: "schedule legacy message")
@@ -402,10 +411,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
     
     func testCustomMessageConverter() async throws {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         let overridenId = "converter override id"
@@ -432,10 +443,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
     
     func testMessageExtenderFunction() async throws {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         let extendedMessageName = "extended message name"
@@ -467,10 +480,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
     
     func testScheduleExtendFunction() async throws {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         let extendedScheduleId = "extended schedule id"
@@ -516,10 +531,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     
     func testReceiveRemoteNotificationHandlesMessageIdOverride() async throws {
         let messageId = "overriden"
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         await assertEmptySchedules()
@@ -542,10 +559,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
     
     func testReceiveRemoteNotificationOverridesOnClick() async throws {
-        let payload = [
+        let payload: [String: Any] = [
             "identifier": "test-id",
-            "type": "banner",
-            "alert": "test alert"
+            "display": [
+                "type": "banner",
+                "alert": "test alert"
+            ]
         ]
         
         await assertEmptySchedules()

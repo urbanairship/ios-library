@@ -194,8 +194,11 @@ struct InAppMessageBannerView: View {
             .addSwipeDismiss(placement: displayContent.placement ?? .top,
                              swipeOffset: $swipeOffset,
                              onDismiss: environment.onUserDismissed)
-            .gesture(TapGesture().onEnded { value in
-                environment.onUserDismissed()
+            .applyIf(displayContent.actions != nil, transform: { view in
+                view.gesture(TapGesture().onEnded { value in
+                    environment.onUserDismissed()
+                    environment.runActions(actions: displayContent.actions)
+                })
             })
             .onAppear {
                 setShowing(state: true)

@@ -59,6 +59,14 @@ class InAppMessageEnvironment: ObservableObject {
             self.delegate.onButtonDismissed(buttonInfo: buttonInfo)
         }
     }
+    
+    func runActions(actions: AirshipJSON?) {
+        guard let actions = actions else { return }
+        
+        Task {
+            await ActionRunner.run(actionsPayload: actions, situation: .automation, metadata: [:])
+        }
+    }
 
     /// Called when a message dismisses after the set timeout period
     @MainActor
