@@ -9,7 +9,7 @@ import AirshipCore
 
 /// Airship native bridge extension for the Message Center.
 @objc(UAMessageCenterNativeBridgeExtension)
-public class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate {
+public final class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate, Sendable {
 
     let message: MessageCenterMessage
     let user: MessageCenterUser

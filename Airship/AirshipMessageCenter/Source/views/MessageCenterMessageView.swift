@@ -133,7 +133,7 @@ struct MessageCenterWebView: UIViewRepresentable {
     @Binding
     var phase: Phase
     let nativeBridgeExtension:
-        (() async throws -> NativeBridgeExtensionDelegate)?
+        (() async throws -> MessageCenterNativeBridgeExtension)?
 
     let request: () async throws -> URLRequest
 
@@ -341,7 +341,7 @@ private struct MessageCenterMessageContentView: View {
 
     @MainActor
     private func makeExtensionDelegate(messageID: String) async throws
-        -> NativeBridgeExtensionDelegate
+        -> MessageCenterNativeBridgeExtension
     {
         guard let message = await getMessage(messageID),
             let user = await MessageCenter.shared.inbox.user

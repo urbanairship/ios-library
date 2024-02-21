@@ -20,6 +20,8 @@
 		606137042A82ACEA0064E62A /* HomeView23Grande.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606137032A82ACEA0064E62A /* HomeView23Grande.swift */; };
 		6E3C66FA2AB3770A000E1057 /* Layouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C66F92AB3770A000E1057 /* Layouts.swift */; };
 		6E3C67062AB37B72000E1057 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C67052AB37B72000E1057 /* AppView.swift */; };
+		6E6802AC2B867B0900F4591F /* Messages in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AA2B867B0900F4591F /* Messages */; };
+		6E6802AD2B867B0900F4591F /* Scenes in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AB2B867B0900F4591F /* Scenes */; };
 		6E938DCE2AC3DA0600F691D9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E938DCD2AC3DA0600F691D9 /* AirshipConfig.plist */; };
 		6EABB8212AB272C0008B89E3 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */; };
 		991BE0D02B047417006109EE /* MapRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0CF2B047417006109EE /* MapRouteView.swift */; };
@@ -37,8 +39,6 @@
 		995902F82B031690001614AF /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 995902F72B031690001614AF /* GoogleMobileAds */; };
 		995902FA2B031842001614AF /* AdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995902F92B031842001614AF /* AdView.swift */; };
 		9970D2312B0667B2003F4A8B /* BiometricLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */; };
-		998E80892B48C2F700D453D7 /* Scenes in Resources */ = {isa = PBXBuildFile; fileRef = 998E80872B48C2F700D453D7 /* Scenes */; };
-		998E808A2B48C2F700D453D7 /* Messages in Resources */ = {isa = PBXBuildFile; fileRef = 998E80882B48C2F700D453D7 /* Messages */; };
 		99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */ = {isa = PBXBuildFile; fileRef = 99F662CC2B61DB4600696098 /* JurassicPark.otf */; };
 /* End PBXBuildFile section */
 
@@ -201,6 +201,8 @@
 		606137032A82ACEA0064E62A /* HomeView23Grande.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView23Grande.swift; sourceTree = "<group>"; };
 		6E3C66F92AB3770A000E1057 /* Layouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layouts.swift; sourceTree = "<group>"; };
 		6E3C67052AB37B72000E1057 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		6E6802AA2B867B0900F4591F /* Messages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Messages; sourceTree = "<group>"; };
+		6E6802AB2B867B0900F4591F /* Scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scenes; sourceTree = "<group>"; };
 		6E938DCD2AC3DA0600F691D9 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
 		6ED807A5273DEA1800D1F455 /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -217,8 +219,6 @@
 		995902F42B02C710001614AF /* CustomViewExampleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewExampleHelper.swift; sourceTree = "<group>"; };
 		995902F92B031842001614AF /* AdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdView.swift; sourceTree = "<group>"; };
 		9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricLoginView.swift; sourceTree = "<group>"; };
-		998E80872B48C2F700D453D7 /* Scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scenes; sourceTree = "<group>"; };
-		998E80882B48C2F700D453D7 /* Messages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Messages; sourceTree = "<group>"; };
 		99F662CC2B61DB4600696098 /* JurassicPark.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = JurassicPark.otf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -290,8 +290,8 @@
 		3244495B2721A5CB00D108B5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				998E80882B48C2F700D453D7 /* Messages */,
-				998E80872B48C2F700D453D7 /* Scenes */,
+				6E6802AA2B867B0900F4591F /* Messages */,
+				6E6802AB2B867B0900F4591F /* Scenes */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -571,9 +571,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E6802AD2B867B0900F4591F /* Scenes in Resources */,
+				6E6802AC2B867B0900F4591F /* Messages in Resources */,
 				99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */,
-				998E808A2B48C2F700D453D7 /* Messages in Resources */,
-				998E80892B48C2F700D453D7 /* Scenes in Resources */,
 				6E938DCE2AC3DA0600F691D9 /* AirshipConfig.plist in Resources */,
 				324449362721668100D108B5 /* Preview Assets.xcassets in Resources */,
 				324449332721668100D108B5 /* Assets.xcassets in Resources */,

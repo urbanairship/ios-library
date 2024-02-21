@@ -8,7 +8,7 @@ import AirshipCore
 
 /// Preference center config.
 @objc(UAPreferenceCenterConfig)
-public class PreferenceCenterConfig: NSObject, Decodable {
+public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
     /// The config's identifier.
     @objc
@@ -65,7 +65,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Config options.
     @objc(UAPreferenceCenterConfigOptions)
-    public class Options: NSObject, Decodable {
+    public final class Options: NSObject, Decodable, Sendable {
 
         /**
          * The config identifier.
@@ -107,7 +107,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Common display info
     @objc(UAPreferenceConfigCommonDisplay)
-    public class CommonDisplay: NSObject, Decodable {
+    public final class CommonDisplay: NSObject, Decodable, Sendable {
 
         /// Title
         @objc
@@ -138,12 +138,11 @@ public class PreferenceCenterConfig: NSObject, Decodable {
     }
 
     @objc(UAPreferenceCenterConfigNotificationOptInCondition)
-    public class NotificationOptInCondition: NSObject, Decodable,
-        PreferenceConfigCondition
+    public final class NotificationOptInCondition: NSObject, Decodable, PreferenceConfigCondition, Sendable
     {
 
         @objc(UANotificationOptInConditionStatus)
-        public enum OptInStatus: Int, Equatable {
+        public enum OptInStatus: Int, Equatable, Sendable {
             case optedIn
             case optedOut
         }
@@ -191,7 +190,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
     /**
      * Typed conditions.
      */
-    public enum Condition: Decodable, Equatable {
+    public enum Condition: Decodable, Equatable, Sendable {
         case notificationOptIn(NotificationOptInCondition)
 
         enum CodingKeys: String, CodingKey {
@@ -218,7 +217,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Common section.
     @objc(UAPreferenceCenterConfigCommonSection)
-    public class CommonSection: NSObject, Decodable,
+    public final class CommonSection: NSObject, Decodable,
         PreferenceCenterConfigSection
     {
 
@@ -284,7 +283,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Labeled section break info.
     @objc(UAPreferenceLabeledSectionBreak)
-    public class LabeledSectionBreak: NSObject, Decodable,
+    public final class LabeledSectionBreak: NSObject, Decodable,
         PreferenceCenterConfigSection
     {
 
@@ -337,7 +336,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
     }
 
     /// Preference config section.
-    public enum Section: Decodable, Equatable {
+    public enum Section: Decodable, Equatable, Sendable {
 
         /// Common section
         case common(CommonSection)
@@ -370,9 +369,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
     }
     /// Channel subscription item info.
     @objc(UAPreferenceCenterConfigChannelSubscription)
-    public class ChannelSubscription: NSObject, Decodable,
-        PreferenceCenterConfigItem
-    {
+    public final class ChannelSubscription: NSObject, Decodable, PreferenceCenterConfigItem, Sendable {
 
         /// The item's type.
         @objc
@@ -432,7 +429,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Group contact subscription item info.
     @objc(UAPreferenceCenterConfigContactSubscriptionGroup)
-    public class ContactSubscriptionGroup: NSObject, Decodable,
+    public final class ContactSubscriptionGroup: NSObject, Decodable,
         PreferenceCenterConfigItem
     {
 
@@ -502,7 +499,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         /// Contact subscription group component.
         @objc(UAPreferenceContactSubscriptionGroupComponent)
-        public class Component: NSObject, Decodable {
+        public final class Component: NSObject, Decodable, Sendable {
 
             /// The component's scopes.
             public var scopes: [ChannelScope] {
@@ -542,7 +539,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Contact subscription item info.
     @objc(UAPreferenceCenterConfigContactSubscription)
-    public class ContactSubscription: NSObject, Decodable,
+    public final class ContactSubscription: NSObject, Decodable,
         PreferenceCenterConfigItem
     {
 
@@ -616,7 +613,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
     /// Alert item info.
     @objc(UAPreferenceCenterConfigAlert)
-    public class Alert: NSObject, Decodable, PreferenceCenterConfigItem {
+    public final class Alert: NSObject, Decodable, PreferenceCenterConfigItem {
 
         @objc
         public let type = PreferenceCenterConfigItemType.alert
@@ -673,7 +670,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         /// Alert button info.
         @objc(UAPreferenceCenterConfigAlertButton)
-        public class Button: NSObject, Decodable {
+        public final class Button: NSObject, Decodable, Sendable {
 
             /// The buttton's text.
             @objc
@@ -720,7 +717,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 
         /// Alert display info
         @objc(UAPreferenceConfigAlertDisplay)
-        public class Display: NSObject, Decodable {
+        public final class Display: NSObject, Decodable, Sendable {
 
             /// Title
             @objc
@@ -763,7 +760,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
     }
 
     /// Config item.
-    public enum Item: Decodable, Equatable {
+    public enum Item: Decodable, Equatable, Sendable {
         case channelSubscription(ChannelSubscription)
         case contactSubscription(ContactSubscription)
         case contactSubscriptionGroup(ContactSubscriptionGroup)
@@ -806,7 +803,7 @@ public class PreferenceCenterConfig: NSObject, Decodable {
 /// Condition types
 @objc(UAPreferenceCenterConfigConditionType)
 public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
-    Equatable
+    Equatable, Sendable
 {
 
     /// Notification opt-in condition.
@@ -837,7 +834,7 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
 
 /// Condition
 @objc(UAPreferenceConfigCondition)
-public protocol PreferenceConfigCondition {
+public protocol PreferenceConfigCondition: Sendable {
 
     /**
      * Condition type.
@@ -849,7 +846,7 @@ public protocol PreferenceConfigCondition {
 /// Item types.
 @objc(UAPreferenceCenterConfigItemType)
 public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
-    Equatable
+    Equatable, Sendable
 {
 
     /// Channel subscription type.
@@ -893,7 +890,7 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
 
 /// Preference section item info.
 @objc(UAPreferenceCenterConfigItem)
-public protocol PreferenceCenterConfigItem {
+public protocol PreferenceCenterConfigItem: Sendable {
     /// The type.
     @objc
     var type: PreferenceCenterConfigItemType { get }
@@ -906,7 +903,7 @@ public protocol PreferenceCenterConfigItem {
 /// Preference config section type.
 @objc(UAPreferenceCenterConfigSectionType)
 public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
-    Equatable
+    Equatable, Sendable
 {
 
     /// Common section type.
@@ -942,7 +939,7 @@ public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
 
 /// Preference config section.
 @objc(UAPreferenceCenterConfigSection)
-public protocol PreferenceCenterConfigSection {
+public protocol PreferenceCenterConfigSection: Sendable {
 
     /**
      * The section's type.

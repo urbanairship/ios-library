@@ -5,7 +5,7 @@ import SwiftUI
 import UIKit
 
 /// Preferenece Center theme
-public struct PreferenceCenterTheme: Equatable {
+public struct PreferenceCenterTheme: Equatable, Sendable {
 
     /// View controller theme
     public var viewController: PreferenceCenterTheme.ViewController? = nil
@@ -32,7 +32,7 @@ public struct PreferenceCenterTheme: Equatable {
     public var contactSubscriptionGroup: ContactSubscriptionGroup? = nil
 
     /// Navigation bar theme
-    public struct NavigationBar: Equatable {
+    public struct NavigationBar: Equatable, Sendable {
         /// The default title
         public var title: String? = nil
 
@@ -55,7 +55,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// View controller theme
-    public struct ViewController: Equatable {
+    public struct ViewController: Equatable, Sendable {
         /// Navigation bar theme
         public var navigationBar: NavigationBar? = nil
 
@@ -69,7 +69,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Preference center
-    public struct PreferenceCenter: Equatable {
+    public struct PreferenceCenter: Equatable, Sendable {
         /// Subtitle appearance
         public var subtitleAppearance: TextAppearance? = nil
 
@@ -99,7 +99,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Text apperance
-    public struct TextAppearance: Equatable {
+    public struct TextAppearance: Equatable, Sendable {
         /// The text font
         public var font: Font? = nil
 
@@ -113,7 +113,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Chip theme for contact subscription groups
-    public struct Chip: Equatable {
+    public struct Chip: Equatable, Sendable {
         /// The check color
         public var checkColor: Color? = nil
 
@@ -131,7 +131,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Common section theme
-    public struct CommonSection: Equatable {
+    public struct CommonSection: Equatable, Sendable {
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 
@@ -145,7 +145,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Labeled section break theme
-    public struct LabeledSectionBreak: Equatable {
+    public struct LabeledSectionBreak: Equatable, Sendable {
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 
@@ -159,7 +159,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Alert item theme
-    public struct Alert: Equatable {
+    public struct Alert: Equatable, Sendable {
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 
@@ -181,7 +181,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Channel subscription item theme
-    public struct ChannelSubscription: Equatable {
+    public struct ChannelSubscription: Equatable, Sendable {
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 
@@ -199,7 +199,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Contact subscription item theme
-    public struct ContactSubscription: Equatable {
+    public struct ContactSubscription: Equatable, Sendable {
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 
@@ -217,7 +217,7 @@ public struct PreferenceCenterTheme: Equatable {
     }
 
     /// Contact subscription group item theme
-    public struct ContactSubscriptionGroup: Equatable {
+    public struct ContactSubscriptionGroup: Equatable, Sendable {
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 

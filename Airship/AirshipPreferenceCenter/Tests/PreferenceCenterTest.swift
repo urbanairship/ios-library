@@ -20,7 +20,8 @@ class PreferenceCenterTest: XCTestCase {
             defaultEnabledFeatures: .all
         )
 
-        self.preferenceCenter = PreferenceCenter(
+        
+        self.preferenceCenter = await PreferenceCenter(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             remoteData: self.remoteDataProvider
@@ -104,6 +105,7 @@ class PreferenceCenterTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testOpenDelegate() {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate

@@ -17,7 +17,7 @@ class PreferenceCenterViewLoader: ObservableObject {
 
     public func load(
         preferenceCenterID: String,
-        onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)? = nil
+        onLoad: (@Sendable @MainActor (String) async -> PreferenceCenterViewPhase)? = nil
     ) {
         self.task?.cancel()
         self.task = Task {
@@ -31,7 +31,7 @@ class PreferenceCenterViewLoader: ObservableObject {
     @MainActor
     private func loadAsync(
         preferenceCenterID: String,
-        onLoad: ((String) async -> PreferenceCenterViewPhase)? = nil
+        onLoad: (@Sendable @MainActor (String) async -> PreferenceCenterViewPhase)? = nil
     ) async {
         self.phase = .loading
 
@@ -50,6 +50,7 @@ class PreferenceCenterViewLoader: ObservableObject {
         }
     }
 
+    @MainActor
     private func fetchState(preferenceCenterID: String) async throws
         -> PreferenceCenterState
     {

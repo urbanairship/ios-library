@@ -23,7 +23,7 @@ public protocol PreferenceCenterOpenDelegate {
 
 /// Airship PreferenceCenter module.
 @objc(UAPreferenceCenter)
-public class PreferenceCenter: NSObject {
+public final class PreferenceCenter: NSObject, Sendable {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
@@ -34,29 +34,52 @@ public class PreferenceCenter: NSObject {
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
 
+    private let delegates: Delegates = Delegates()
     /**
      * Open delegate.
      *
-     * If set, the delegate will be called instead of launching the OOTB preference center screen.
+     * If set, the delegate will be called instead of launching the OOTB preference center screen. Must be set
+     * on the main actor.
      */
     @objc
-    public weak var openDelegate: PreferenceCenterOpenDelegate?
+    @MainActor
+    public weak var openDelegate: PreferenceCenterOpenDelegate? {
+        get {
+            self.delegates.openDelegate
+        }
+        set {
+            self.delegates.openDelegate = newValue
+        }
+    }
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
     private let remoteData: RemoteDataProtocol
-    private var currentDisplay: AirshipMainActorCancellable?
 
+    @MainActor
+    private let currentDisplay: AirshipMainActorValue<AirshipMainActorCancellable?> = AirshipMainActorValue(nil)
+
+    private let _theme: AirshipMainActorValue<PreferenceCenterTheme?> = AirshipMainActorValue(nil)
     /**
      * Preference center theme
      */
-    public var theme: PreferenceCenterTheme?
+    @MainActor
+    public var theme: PreferenceCenterTheme? {
+        get {
+            self._theme.value
+        }
+        set {
+            self._theme.set(newValue)
+        }
+    }
 
     @objc
+    @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
     }
 
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
@@ -65,7 +88,7 @@ public class PreferenceCenter: NSObject {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteData = remoteData
-        self.theme = PreferenceCenterThemeLoader.defaultPlist()
+        self._theme.set(PreferenceCenterThemeLoader.defaultPlist())
         super.init()
         AirshipLogger.info("PreferenceCenter initialized")
     }
@@ -76,6 +99,7 @@ public class PreferenceCenter: NSObject {
      *   - preferenceCenterID: The preference center ID.
      */
     @objc(openPreferenceCenter:)
+    @MainActor
     public func open(_ preferenceCenterID: String) {
         if self.openDelegate?.openPreferenceCenter(preferenceCenterID) == true {
             AirshipLogger.trace(
@@ -98,14 +122,16 @@ public class PreferenceCenter: NSObject {
             return
         }
 
-        currentDisplay?.cancel()
+        currentDisplay.value?.cancel()
 
         AirshipLogger.debug("Opening default preference center UI")
 
-        self.currentDisplay = showPreferenceCenter(
-            preferenceCenterID,
-            scene: scene,
-            theme: theme
+        self.currentDisplay.set(
+            showPreferenceCenter(
+                preferenceCenterID,
+                scene: scene,
+                theme: theme
+            )
         )
     }
 
@@ -146,6 +172,13 @@ public class PreferenceCenter: NSObject {
 
         throw AirshipErrors.error("Preference center not found \(preferenceCenterID)")
     }
+}
+
+/// Delegates holder so I can keep the executor sendable
+private final class Delegates: @unchecked Sendable {
+    @MainActor
+    weak var openDelegate: PreferenceCenterOpenDelegate?
+
 }
 
 extension PreferenceCenter {
