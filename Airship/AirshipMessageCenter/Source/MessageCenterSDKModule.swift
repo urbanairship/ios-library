@@ -21,7 +21,7 @@ public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
     ) -> AirshipSDKModule? {
         let dataStore = dependencies[SDKDependencyKeys.dataStore] as? PreferenceDataStore
         let config = dependencies[SDKDependencyKeys.config] as? RuntimeConfig
-        let channel = dependencies[SDKDependencyKeys.channel] as? AirshipChannel
+        let channel = dependencies[SDKDependencyKeys.channel] as? InternalAirshipChannelProtocol
         let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as? AirshipPrivacyManager
         let workManager = dependencies[SDKDependencyKeys.workManager] as? AirshipWorkManagerProtocol
 

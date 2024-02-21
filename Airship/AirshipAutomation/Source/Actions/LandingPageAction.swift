@@ -34,7 +34,7 @@ public final class LandingPageAction: AirshipAction {
         self.init(
             borderRadius: borderRadius,
             scheduleExtender: scheduleExtender,
-            allowListChecker: { Airship.shared.urlAllowList.isAllowed($0, scope: .openURL) },
+            allowListChecker: { Airship.urlAllowList.isAllowed($0, scope: .openURL) },
             scheduler: { try await InAppAutomation.shared.upsertSchedules([$0]) }
         )
     }

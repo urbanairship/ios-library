@@ -6,20 +6,7 @@ import Combine
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContactProtocol)
-public protocol AirshipContactBaseProtocol: Sendable {
-    // NSNotification event name when a conflict event is emitted. The `ContactConflictEvent`
-    // will be available in the userInfo under the key `contactConflictEventKey`.
-    @objc
-    static var contactConflictEvent: NSNotification.Name { get }
-
-    // NSNotification userInfo key to get the `ContactConflictEvent`.
-    @objc
-    static var contactConflictEventKey: String { get }
-
-    // The max named user ID length - 128 characters.
-    @objc
-    static var maxNamedUserIDLength: Int { get }
-
+public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
     /**
      * The current named user ID if set through the SDK.
      */
@@ -28,6 +15,7 @@ public protocol AirshipContactBaseProtocol: Sendable {
 
     /**
      * Associates the contact with the given named user identifier.
+     * The named user ID must be between 1 and 128 characters
      * - Parameters:
      *   - namedUserID: The named user ID.
      */
@@ -133,7 +121,9 @@ public protocol AirshipContactBaseProtocol: Sendable {
     func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes]
 }
 
-public protocol AirshipContactProtocol: AirshipContactBaseProtocol {
+/// Airship contact. A contact is distinct from a channel and  represents a "user"
+/// within Airship. Contacts may be named and have channels associated with it.
+public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// Current named user ID
     var namedUserID: String? { get async }
 

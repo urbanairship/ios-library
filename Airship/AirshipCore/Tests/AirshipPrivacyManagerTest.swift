@@ -115,7 +115,7 @@ class AirshipPrivacyManagerTest: XCTestCase {
     @MainActor
     func testNotifiedOnChange() {
         var eventCount = 0
-        let observer = notificationCenter.addObserver(forName: AirshipPrivacyManager.changeEvent, object: nil, queue: nil) { _ in
+        let observer = notificationCenter.addObserver(forName: AirshipNotifications.privacyManagerChangeEvent, object: nil, queue: nil) { _ in
             eventCount += 1
         }
 

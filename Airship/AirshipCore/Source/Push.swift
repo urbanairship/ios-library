@@ -11,8 +11,7 @@ import UIKit
 #endif
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(UAPush)
-public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
+final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     private let pushTokenSubject = PassthroughSubject<String?, Never>()
     private var pushTokenPublisher: AnyPublisher<String?, Never> {
@@ -25,11 +24,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    @objc
-    public static let notificationStatusUpdateEvent = NSNotification.Name(
-        "com.urbanairship.notification.status.update"
-    )
-
     private let notificationStatusSubject = PassthroughSubject<AirshipNotificationStatus, Never>()
     public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
         notificationStatusSubject
@@ -41,37 +35,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
-
-    /// The shared Push instance.
-    @objc
-    public static var shared: AirshipPush {
-        return Airship.push
-    }
-
-    /// NSNotification event when a notification response is received.
-    /// The event will contain the notification response object.
-    @objc
-    public static let receivedNotificationResponseEvent = NSNotification.Name(
-        "com.urbanairship.push.received_notification_response"
-    )
-
-    /// Response key for ReceivedNotificationResponseEvent
-    @objc
-    public static let receivedNotificationResponseEventResponseKey = "response"
-
-    /// NSNotification event when a foreground notification is received.
-    /// The event will contain the payload dictionary as user info.
-    @objc
-    public static let receivedForegroundNotificationEvent = NSNotification.Name(
-        "com.urbanairship.push.received_foreground_notification"
-    )
-
-    /// NSNotification event when a background notification is received.
-    /// The event will contain the payload dictionary as user info.
-    @objc
-    public static let receivedBackgroundNotificationEvent = NSNotification.Name(
-        "com.urbanairship.push.received_background_notification"
-    )
 
     /// Quiet Time dictionary start key. For internal use only :nodoc:
     @objc
@@ -89,20 +52,7 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         "UABackgroundPushNotificationsEnabled"
     private static let requestExplicitPermissionWhenEphemeralKey =
         "UAExtendedPushNotificationPermissionEnabled"
-    
-    @objc
-    public static let areNotificationsAllowed = "areNotificationsAllowed"
-    @objc
-    public static let isOptedIn = "isOptedIn"
-    @objc
-    public static let isPushPrivacyFeatureEnabled = "isPushPrivacyFeatureEnabled"
-    @objc
-    public static let isPushTokenRegistered = "isPushTokenRegistered"
-    @objc
-    public static let isUserNotificationsEnabled = "isUserNotificationsEnabled"
-    @objc
-    public static let isUserOptedIn = "isUserOptedIn"
-    
+
     
     private static let badgeSettingsKey = "UAPushBadge"
     private static let deviceTokenKey = "UADeviceToken"
@@ -197,24 +147,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
 
         super.init()
 
-        self.notificationStatusSubject
-            .receive(on: RunLoop.main)
-            .sink { status in
-                notificationCenter.post(
-                    name: AirshipPush.notificationStatusUpdateEvent,
-                    object: nil,
-                    userInfo:
-                        [
-                            AirshipPush.areNotificationsAllowed : status.areNotificationsAllowed,
-                            AirshipPush.isOptedIn : status.isOptedIn,
-                            AirshipPush.isPushPrivacyFeatureEnabled : status.isPushPrivacyFeatureEnabled,
-                            AirshipPush.isPushTokenRegistered : status.isPushTokenRegistered,
-                            AirshipPush.isUserNotificationsEnabled : status.isUserNotificationsEnabled,
-                            AirshipPush.isUserOptedIn : status.isUserOptedIn
-                        ]
-                )
-            }
-            .store(in: &self.subscriptions)
 
         if config.requestAuthorizationToUseNotifications {
             let permissionDelegate = NotificationPermissionDelegate(
@@ -310,7 +242,7 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(onEnabledFeaturesChanged),
-            name: AirshipPrivacyManager.changeEvent,
+            name: AirshipNotifications.privacyManagerChangeEvent,
             object: nil
         )
     }
@@ -512,11 +444,9 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// Set a delegate that implements the PushNotificationDelegate protocol.
     @objc
     public weak var pushNotificationDelegate: PushNotificationDelegate?
 
-    /// Set a delegate that implements the UARegistrationDelegate protocol.
     @objc
     public weak var registrationDelegate: RegistrationDelegate?
 
@@ -525,11 +455,7 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
     @objc
     public private(set) var launchNotificationResponse: UNNotificationResponse?
     #endif
-    /// The current authorized notification settings.
-    /// If push is disabled in privacy manager, this value could be out of date.
-    ///
-    /// Note: this value reflects all the notification settings currently enabled in the
-    /// Settings app and does not take into account which options were originally requested.
+
     @objc
     @MainActor
     public private(set) var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
@@ -554,8 +480,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// The current authorization status.
-    /// If push is disabled in privacy manager, this value could be out of date.
     @objc
     public private(set) var authorizationStatus: UAAuthorizationStatus {
         set {
@@ -580,8 +504,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// Indicates whether the user has been prompted for notifications or not.
-    /// If push is disabled in privacy manager, this value will be out of date.
     @objc
     public private(set) var userPromptedForNotifications: Bool {
         set {
@@ -597,7 +519,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// The default presentation options to use for foreground notifications.
     @objc
     public var defaultPresentationOptions: UNNotificationPresentationOptions =
         []
@@ -638,14 +559,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         return(status, settings)
     }
 
-
-    /// Enables user notifications on this device through Airship.
-    ///
-    /// - Note: The completion handler will return the success state of system push authorization as it is defined by the
-    /// user's response to the push authorization prompt. The completion handler success state does NOT represent the
-    /// state of the userPushNotificationsEnabled flag, which will be invariably set to `true` after the completion of this call.
-    ///
-    /// - Parameter completionHandler: The completion handler with success flag representing the system authorization state.
     @objc
     public func enableUserPushNotifications() async -> Bool {
         self.dataStore.setBool(
@@ -694,7 +607,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// Indicates whether the user is opted in for push notifications or not.
     @objc
     @MainActor
     public var isPushNotificationsOptedIn: Bool {
@@ -782,8 +694,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-
-
     @MainActor
     private func onNotificationRegistrationFinished() async {
         guard self.privacyManager.isEnabled(.push) else {
@@ -816,9 +726,8 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
     }
 
     #if !os(watchOS)
-    /// The current badge number used by the device and on the Airship server.
-    ///
-    /// - Note: This property must be accessed on the main thread.
+
+
     @objc
     @MainActor
     public var badgeNumber: Int {
@@ -843,8 +752,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
-    /// badge number stored by Airship every time the app is started or foregrounded.
     @objc
     public var autobadgeEnabled: Bool {
         set {
@@ -862,10 +769,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
-    /// convenience method for setting the `badgeNumber` property to zero.
-    ///
-    /// - Note: This method must be called on the main thread.
     @objc
     @MainActor
     public func resetBadge() {
@@ -874,7 +777,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
 
     #endif
 
-    /// Quiet time settings for this device.
     @objc
     public private(set) var quietTime: [AnyHashable: Any]? {
         set {
@@ -924,22 +826,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         }
     }
 
-    /// Sets the quiet time start and end time.  The start and end time does not change
-    /// if the time zone changes.  To set the time zone, see 'timeZone'.
-    ///
-    /// Update the server after making changes to the quiet time with the
-    /// `updateRegistration` call. Batching these calls improves API and client performance.
-    ///
-    /// - Warning: This method does not automatically enable quiet time and does not
-    /// automatically update the server. Please refer to `quietTimeEnabled` and
-    /// `updateRegistration` for more information.
-    ///
-    /// - Parameters:
-    ///   - startHour: Quiet time start hour. Only 0-23 is valid.
-    ///   - startMinute: Quiet time start minute. Only 0-59 is valid.
-    ///   - endHour: Quiet time end hour. Only 0-23 is valid.
-    ///   - endMinute: Quiet time end minute. Only 0-59 is valid.
-
     @objc
     public func setQuietTimeStartHour(
         _ startHour: Int,
@@ -976,12 +862,7 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
         ]
     }
 
-    /// Registers or updates the current registration with an API call. If push notifications are
-    /// not enabled, this unregisters the device token.
-    ///
-    /// Add a `UARegistrationDelegate` to `UAPush` to receive success and failure callbacks.
-    @objc
-    public func updateRegistration() {
+    private func updateRegistration() {
         self.dispatchUpdateNotifications()
     }
 
@@ -1027,13 +908,6 @@ public final class AirshipPush: NSObject, PushProtocol, @unchecked Sendable {
             )
 
             await self.onNotificationRegistrationFinished()
-        }
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    private func onComponentEnableChange() {
-        self.serialQueue.enqueue {
-            await self.updatePushEnablement()
         }
     }
 
@@ -1266,10 +1140,10 @@ extension AirshipPush: InternalPushProtocol {
         }
 
         self.notificationCenter.post(
-            name: AirshipPush.receivedNotificationResponseEvent,
+            name: AirshipNotifications.receivedNotificationResponseEvent,
             object: self,
             userInfo: [
-                AirshipPush.receivedNotificationResponseEventResponseKey: response
+                AirshipNotifications.receivedNotificationResponseEventResponseKey: response
             ]
         )
 
@@ -1303,7 +1177,7 @@ extension AirshipPush: InternalPushProtocol {
 
         if isForeground {
             self.notificationCenter.post(
-                name: AirshipPush.receivedForegroundNotificationEvent,
+                name: AirshipNotifications.receivedForegroundNotificationEvent,
                 object: self,
                 userInfo: notification
             )
@@ -1327,7 +1201,7 @@ extension AirshipPush: InternalPushProtocol {
             }
         } else {
             self.notificationCenter.post(
-                name: AirshipPush.receivedBackgroundNotificationEvent,
+                name: AirshipNotifications.receivedBackgroundNotificationEvent,
                 object: self,
                 userInfo: notification
             )
@@ -1393,3 +1267,32 @@ extension UNNotification {
 
 
 extension AirshipPush: AirshipComponent {}
+
+
+public extension AirshipNotifications {
+
+    /// NSNotification event when a notification response is received.
+    /// The event will contain the notification response object.
+    @objc
+    static let receivedNotificationResponseEvent = NSNotification.Name(
+        "com.urbanairship.push.received_notification_response"
+    )
+
+    /// Response key for ReceivedNotificationResponseEvent
+    @objc
+    static let receivedNotificationResponseEventResponseKey = "response"
+
+    /// NSNotification event when a foreground notification is received.
+    /// The event will contain the payload dictionary as user info.
+    @objc
+    static let receivedForegroundNotificationEvent = NSNotification.Name(
+        "com.urbanairship.push.received_foreground_notification"
+    )
+
+    /// NSNotification event when a background notification is received.
+    /// The event will contain the payload dictionary as user info.
+    @objc
+    static let receivedBackgroundNotificationEvent = NSNotification.Name(
+        "com.urbanairship.push.received_background_notification"
+    )
+}

@@ -163,21 +163,21 @@ public class AirshipDebugManager {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedForegroundNotification(notification:)),
-            name: AirshipPush.receivedForegroundNotificationEvent,
+            name: AirshipNotifications.receivedForegroundNotificationEvent,
             object: nil
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedBackgroundNotification(notification:)),
-            name: AirshipPush.receivedBackgroundNotificationEvent,
+            name: AirshipNotifications.receivedBackgroundNotificationEvent,
             object: nil
         )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedNotificationResponse(notification:)),
-            name: AirshipPush.receivedNotificationResponseEvent,
+            name: AirshipNotifications.receivedNotificationResponseEvent,
             object: nil
         )
     }
@@ -201,7 +201,7 @@ public class AirshipDebugManager {
         guard
             let response =
                 notification.userInfo?[
-                    AirshipPush.receivedNotificationResponseEventResponseKey
+                    AirshipNotifications.receivedNotificationResponseEventResponseKey
                 ] as? UNNotificationResponse
         else {
             return

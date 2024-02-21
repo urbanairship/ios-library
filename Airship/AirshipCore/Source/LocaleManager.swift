@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+/// Airship locale manager.
 @objc(UALocaleManagerProtocol)
 public protocol AirshipLocaleManagerProtocol: AnyObject, Sendable {
     /**
@@ -9,26 +10,18 @@ public protocol AirshipLocaleManagerProtocol: AnyObject, Sendable {
     func clearLocale()
 
     /**
-     * The current locale used by Airship. Defaults to `autoupdatingCurrent`.
+     * The current locale used by Airship. Defaults to `autoupdatingCurrent` or the user preferred lanaguage, depending on
+     * `AirshipConfig.useUserPreferredLocale`.
      */
     @objc
-    var currentLocale: Locale { get }
+    var currentLocale: Locale { get set }
 
 }
 
-/// Airship locale manager.
-@objc(UALocaleManager)
-public final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
+
+final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
 
     fileprivate static let storeKey = "com.urbanairship.locale.locale"
-
-    @objc
-    public static let localeUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.locale.locale_updated"
-    )
-
-    @objc
-    public static let localeEventKey = "locale"
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
@@ -92,8 +85,8 @@ public final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol 
 
     private func dispatchUpdate() {
         notificationCenter.postOnMain(
-            name: AirshipLocaleManager.localeUpdatedEvent,
-            object: [AirshipLocaleManager.localeEventKey: self.currentLocale]
+            name: AirshipNotifications.localeUpdatedEvent,
+            object: [AirshipNotifications.localeEventKey: self.currentLocale]
         )
     }
 }
@@ -132,4 +125,15 @@ fileprivate extension PreferenceDataStore {
             )
         }
     }
+}
+
+
+public extension AirshipNotifications {
+    @objc
+    static let localeUpdatedEvent = NSNotification.Name(
+        "com.urbanairship.locale.locale_updated"
+    )
+
+    @objc
+    static let localeEventKey = "locale"
 }

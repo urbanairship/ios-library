@@ -23,7 +23,6 @@ class AddTagsDetailViewController: UIViewController, UITextFieldDelegate,
         Airship.channel.editTags { editor in
             editor.add(text)
         }
-        Airship.channel.updateRegistration()
 
         tagsTableView.reloadData()
         refreshMasterView()

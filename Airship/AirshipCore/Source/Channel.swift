@@ -3,44 +3,11 @@
 import Combine
 import Foundation
 
+
 /// This singleton provides an interface to the channel functionality.
-@objc(UAChannel)
-public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendable {
-
+final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendable {
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
-
-    /**
-     * Notification event when the channel is created.
-     */
-    @objc
-    public static let channelCreatedEvent = NSNotification.Name(
-        "com.urbanairship.channel.channel_created"
-    )
-
-    /**
-     * Channel ID key for channelCreatedEvent and channelUpdatedEvent.
-     */
-    @objc
-    public static let channelIdentifierKey = "channel_identifier"
-
-    /**
-     * Channel existing key for channelCreatedEvent.
-     */
-    @objc
-    public static let channelExistingKey = "channel_existing"
-
-    /**
-     * Notification event when the channel is updated.
-     */
-    @objc
-    public static let channelUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.channel.channel_updated"
-    )
-
-
-    /// NOTE: For internal use only. :nodoc:
-    @objc
-    public static let legacyTagsSettingsKey = "UAPushTags"
+    private static let legacyTagsSettingsKey = "UAPushTags"
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
@@ -61,8 +28,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
 
     private var isChannelCreationEnabled: Bool
 
-
-    /// The channel identifier.
     public var identifier: String? {
         return self.channelRegistrar.channelID
     }
@@ -103,17 +68,7 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         }
     }
 
-    /// Allows setting tags from the device. Tags can be set from either the server or the device, but not both (without synchronizing the data),
-    /// so use this flag to explicitly enable or disable the device-side flags.
-    /// Set this to `false` to prevent the device from sending any tag information to the server when using server-side tagging. Defaults to `true`.
     public var isChannelTagRegistrationEnabled = true
-
-    /// The shared Channel instance.
-    /// - Returns The shared Channel instance.
-    @objc
-    public static var shared: AirshipChannel {
-        return Airship.channel
-    }
 
     @MainActor
     init(
@@ -262,13 +217,13 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         notificationCenter.addObserver(
             self,
             selector: #selector(onEnableFeaturesChanged),
-            name: AirshipPrivacyManager.changeEvent
+            name: AirshipNotifications.privacyManagerChangeEvent
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(localeUpdates),
-            name: AirshipLocaleManager.localeUpdatedEvent
+            name: AirshipNotifications.localeUpdatedEvent
         )
     }
 
@@ -305,7 +260,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         }
     }
 
-    /// NOTE: For internal use only. :nodoc:
     public func addRegistrationExtender(
         _ extender: @escaping (ChannelRegistrationPayload) -> ChannelRegistrationPayload
     ) {
@@ -314,8 +268,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         )
     }
 
-    /// Begins a tag editing session
-    /// - Returns: A TagEditor
     @objc
     public func editTags() -> TagEditor {
         return TagEditor { tagApplicator in
@@ -325,9 +277,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         }
     }
 
-    /// Begins a tag editing session
-    /// - Parameter editorBlock: A tag editor block.
-    /// - Returns: A TagEditor
     @objc
     public func editTags(_ editorBlock: (TagEditor) -> Void) {
         let editor = editTags()
@@ -335,8 +284,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         editor.apply()
     }
 
-    /// Begins a tag group editing session
-    /// - Returns: A TagGroupsEditor
     @objc
     public func editTagGroups() -> TagGroupsEditor {
         let allowDeviceTags = !self.isChannelTagRegistrationEnabled
@@ -345,9 +292,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         )
     }
 
-    /// Begins a tag group editing session
-    /// - Parameter editorBlock: A tag group editor block.
-    /// - Returns: A TagGroupsEditor
     @objc
     public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
         let editor = editTagGroups()
@@ -355,16 +299,11 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         editor.apply()
     }
 
-    /// Begins a subscription list editing session
-    /// - Returns: A SubscriptionListEditor
     @objc
     public func editSubscriptionLists() -> SubscriptionListEditor {
         return self.audienceManager.editSubscriptionLists()
     }
 
-    /// Begins a subscription list editing session
-    /// - Parameter editorBlock: A subscription list editor block.
-    /// - Returns: A SubscriptionListEditor
     @objc
     public func editSubscriptionLists(
         _ editorBlock: (SubscriptionListEditor) -> Void
@@ -374,30 +313,21 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         editor.apply()
     }
 
-
-    /// Fetches subscription lists.
-    /// - Returns: Subscriptions lists.
     @objc
     public func fetchSubscriptionLists() async throws -> [String] {
         return try await self.audienceManager.fetchSubscriptionLists()
     }
 
-    /// Publishes edits made to the subscription lists through the SDK
     public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
     {
         audienceManager.subscriptionListEdits
     }
 
-    /// Begins an attributes editing session
-    /// - Returns: An AttributesEditor
     @objc
     public func editAttributes() -> AttributesEditor {
         return self.audienceManager.editAttributes()
     }
 
-    /// Begins an attributes editing session
-    /// - Parameter editorBlock An attributes editor block.
-    /// - Returns: An AttributesEditor
     @objc
     public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
         let editor = editAttributes()
@@ -405,116 +335,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         editor.apply()
     }
 
-    /**
-     * Adds a device tag.
-     *  - Parameters:
-     *      - tag: The tag.
-     */
-    @available(*, deprecated, message: "Use editTags instead.")
-    @objc(addTag:)
-    public func addTag(_ tag: String) {
-        editTags { editor in
-            editor.add(tag)
-        }
-    }
-
-    /**
-     * Adds a list of device tags.
-     *  - Parameters:
-     *      - tags: The tags.
-     */
-    @available(*, deprecated, message: "Use editTags instead.")
-    @objc(addTags:)
-    public func addTags(_ tags: [String]) {
-        editTags { editor in
-            editor.add(tags)
-        }
-    }
-
-    /**
-     * Removes a device tag.
-     *  - Parameters:
-     *      - tag: The tag.
-     */
-    @available(*, deprecated, message: "Use editTags instead.")
-    @objc(removeTag:)
-    public func removeTag(_ tag: String) {
-        editTags { editor in
-            editor.remove(tag)
-        }
-    }
-
-    /**
-     * Removes a list of device tags.
-     *  - Parameters:
-     *      - tags: The tag.
-     */
-    @available(*, deprecated, message: "Use editTags instead.")
-    @objc(removeTags:)
-    public func removeTags(_ tags: [String]) {
-        editTags { editor in
-            editor.remove(tags)
-        }
-    }
-
-    /**
-     * Adds a list of tags to a group.
-     *  - Parameters:
-     *      - tags: The tags.
-     *      - group: The tag group.
-     */
-    @available(*, deprecated, message: "Use editTagGroups instead.")
-    @objc(addTags:group:)
-    public func addTags(_ tags: [String], group: String) {
-        editTagGroups { editor in
-            editor.add(tags, group: group)
-        }
-    }
-
-    /**
-     * Removes a list of tags from a group.
-     *  - Parameters:
-     *      - tags: The tags.
-     *      - group: The tag group.
-     */
-    @available(*, deprecated, message: "Use editTagGroups instead.")
-    @objc(removeTags:group:)
-    public func removeTags(_ tags: [String], group: String) {
-        editTagGroups { editor in
-            editor.remove(tags, group: group)
-        }
-    }
-
-    /**
-     * Sets a list of tags to a group.
-     *  - Parameters:
-     *      - tags: The tags.
-     *      - group: The tag group.
-     */
-    @available(*, deprecated, message: "Use editTagGroups instead.")
-    @objc(setTags:group:)
-    public func setTags(_ tags: [String], group: String) {
-        editTagGroups { editor in
-            editor.set(tags, group: group)
-        }
-    }
-
-    /**
-     * Applies attribute mutations.
-     *  - Parameters:
-     *      - mutations: The mutations.
-     */
-    @available(*, deprecated, message: "Use editAttributes instead.")
-    @objc(applyAttributeMutations:)
-    public func apply(_ mutations: AttributeMutations) {
-        editAttributes { editor in
-            mutations.applyMutations(editor: editor)
-        }
-    }
-
-    /**
-     * Enables channel creation if channelCreationDelayEnabled was set to `YES` in the config.
-     */
     @objc(enableChannelCreation)
     public func enableChannelCreation() {
         if !self.isChannelCreationEnabled {
@@ -547,7 +367,6 @@ public final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked 
         return true
     }
 
-    /// - Note: For internal use only. :nodoc:
     public func updateRegistration(forcefully: Bool) {
         guard self.isRegistrationAllowed else {
             return
@@ -588,19 +407,19 @@ extension AirshipChannel: AirshipPushableComponent {
             AirshipLogger.importantInfo("Channel ID: \(channelID)")
             self.audienceManager.channelID = channelID
             self.notificationCenter.post(
-                name: AirshipChannel.channelCreatedEvent,
+                name: AirshipNotifications.channelCreatedEvent,
                 object: self,
                 userInfo: [
-                    AirshipChannel.channelIdentifierKey: channelID,
-                    AirshipChannel.channelExistingKey: isExisting,
+                    AirshipNotifications.channelIdentifierKey: channelID,
+                    AirshipNotifications.channelExistingKey: isExisting,
                 ]
             )
         case .updated(let channelID):
             AirshipLogger.info("Channel updated.")
             self.notificationCenter.post(
-                name: AirshipChannel.channelUpdatedEvent,
+                name: AirshipNotifications.channelUpdatedEvent,
                 object: self,
-                userInfo: [AirshipChannel.channelIdentifierKey: channelID]
+                userInfo: [AirshipNotifications.channelIdentifierKey: channelID]
             )
         }
     }
@@ -728,3 +547,34 @@ extension AirshipChannel {
 #endif
 
 extension AirshipChannel: AirshipComponent {}
+
+
+public extension AirshipNotifications {
+    /**
+     * Notification event when the channel is created.
+     */
+    @objc
+    static let channelCreatedEvent = NSNotification.Name(
+        "com.urbanairship.channel.channel_created"
+    )
+
+    /**
+     * Channel ID key for channelCreatedEvent and channelUpdatedEvent.
+     */
+    @objc
+    static let channelIdentifierKey = "channel_identifier"
+
+    /**
+     * Channel existing key for channelCreatedEvent.
+     */
+    @objc
+    static let channelExistingKey = "channel_existing"
+
+    /**
+     * Notification event when the channel is updated.
+     */
+    @objc
+    static let channelUpdatedEvent = NSNotification.Name(
+        "com.urbanairship.channel.channel_updated"
+    )
+}

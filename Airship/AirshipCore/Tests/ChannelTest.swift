@@ -235,13 +235,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
-            AirshipChannel.channelExistingKey: true,
-            AirshipChannel.channelIdentifierKey: "someChannelID",
+            AirshipNotifications.channelExistingKey: true,
+            AirshipNotifications.channelIdentifierKey: "someChannelID",
         ]
 
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
-            forName: AirshipChannel.channelCreatedEvent,
+            forName: AirshipNotifications.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -266,13 +266,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
-            AirshipChannel.channelExistingKey: false,
-            AirshipChannel.channelIdentifierKey: "someChannelID",
+            AirshipNotifications.channelExistingKey: false,
+            AirshipNotifications.channelIdentifierKey: "someChannelID",
         ]
 
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
-            forName: AirshipChannel.channelCreatedEvent,
+            forName: AirshipNotifications.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -304,7 +304,7 @@ class ChannelTest: XCTestCase {
         let expectation = self.expectation(description: "Notification received")
 
         self.notificationCenter.addObserver(
-            forName: AirshipChannel.channelCreatedEvent,
+            forName: AirshipNotifications.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -325,13 +325,13 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
-            AirshipChannel.channelIdentifierKey: "someChannelID",
+            AirshipNotifications.channelIdentifierKey: "someChannelID",
         ]
 
         
         let expectation = self.expectation(description: "Notification received")
         self.notificationCenter.addObserver(
-            forName: AirshipChannel.channelUpdatedEvent,
+            forName: AirshipNotifications.channelUpdatedEvent,
             object: nil,
             queue: nil
         ) { notification in
@@ -356,7 +356,7 @@ class ChannelTest: XCTestCase {
         self.channelRegistrar.registerCalled = false
 
         self.notificationCenter.post(
-            name: AirshipLocaleManager.localeUpdatedEvent,
+            name: AirshipNotifications.localeUpdatedEvent,
             object: nil
         )
 

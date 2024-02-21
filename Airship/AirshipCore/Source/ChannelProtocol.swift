@@ -5,7 +5,7 @@ import Foundation
 
 /// Airship Channel protocol.
 @objc(UAChannelProtocol)
-public protocol BaseAirshipChannelProtocol: Sendable {
+public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
     /**
      * The Channel ID.
      */
@@ -102,8 +102,63 @@ public protocol BaseAirshipChannelProtocol: Sendable {
     func enableChannelCreation()
 }
 
-public protocol AirshipChannelProtocol: BaseAirshipChannelProtocol {
+#if canImport(ActivityKit)
+import ActivityKit
+#endif
 
+/// Airship Channel protocol.
+public protocol AirshipChannelProtocol: AirshipBaseChannelProtocol {
+    /// Publishes edits made to the subscription lists through the SDK
+    var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
+
+#if canImport(ActivityKit)
+
+    /// Gets an AsyncSequence of `LiveActivityRegistrationStatus` updates for a given live acitvity name.
+    /// - Parameters:
+    ///     - name: The live activity name
+    /// - Returns A `LiveActivityRegistrationStatusUpdates`
+    @available(iOS 16.1, *)
+    func liveActivityRegistrationStatusUpdates(
+        name: String
+    ) -> LiveActivityRegistrationStatusUpdates
+
+    /// Gets an AsyncSequence of `LiveActivityRegistrationStatus` updates for a given live acitvity ID.
+    /// - Parameters:
+    ///     - activity: The live activity
+    /// - Returns A `LiveActivityRegistrationStatusUpdates`
+    @available(iOS 16.1, *)
+    func liveActivityRegistrationStatusUpdates<T: ActivityAttributes>(
+        activity: Activity<T>
+    ) -> LiveActivityRegistrationStatusUpdates
+
+    /// Tracks a live activity with Airship for the given name.
+    /// Airship will monitor the push token and status and automatically
+    /// add and remove it from the channel for the App. If an activity is already
+    /// tracked with the given name it will be replaced with the new activity.
+    ///
+    /// The name will be used to send updates through Airship. It can be unique
+    /// for the device or shared across many devices.
+    ///
+    /// - Parameters:
+    ///     - activity: The live activity
+    ///     - name: The name of the activity
+    @available(iOS 16.1, *)
+    func trackLiveActivity<T: ActivityAttributes>(
+        _ activity: Activity<T>,
+        name: String
+    )
+
+    /// Called to restore live activity tracking. This method needs to be called exactly once
+    /// during `application(_:didFinishLaunchingWithOptions:)` right
+    /// after takeOff. Any activities not restored will stop being tracked by Airship.
+    /// - Parameters:
+    ///     - callback: Callback with the restorer.
+    @available(iOS 16.1, *)
+    func restoreLiveActivityTracking(
+        callback: @escaping @Sendable (LiveActivityRestorer) async -> Void
+    )
+
+#endif
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -112,12 +167,8 @@ public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
         _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
     )
 
-    /**
-     * Updates channel registration if needed. Applications should not need to call this method.
-     */
     func updateRegistration()
 
-    /// NOTE: For internal use only. :nodoc:
     func updateRegistration(forcefully: Bool)
 
     func clearSubscriptionListsCache()

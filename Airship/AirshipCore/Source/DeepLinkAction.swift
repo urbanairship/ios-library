@@ -50,7 +50,7 @@ public final class DeepLinkAction: AirshipAction {
 
     @MainActor
     private func openURL(_ url: URL) async throws {
-        guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL) else {
+        guard Airship.urlAllowList.isAllowed(url, scope: .openURL) else {
             throw AirshipErrors.error("URL \(url) not allowed")
         }
 

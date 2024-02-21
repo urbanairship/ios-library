@@ -48,7 +48,7 @@ public final class FetchDeviceInfoAction: AirshipAction {
 
     private let channel: @Sendable () -> AirshipChannelProtocol
     private let contact: @Sendable () -> AirshipContactProtocol
-    private let push: @Sendable () -> PushProtocol
+    private let push: @Sendable () -> AirshipPushProtocol
 
     @objc
     public convenience init() {
@@ -62,7 +62,7 @@ public final class FetchDeviceInfoAction: AirshipAction {
     init(
         channel: @escaping @Sendable () -> AirshipChannelProtocol,
         contact: @escaping @Sendable () -> AirshipContactProtocol,
-        push: @escaping @Sendable () -> PushProtocol
+        push: @escaping @Sendable () -> AirshipPushProtocol
     ) {
         self.channel = channel
         self.contact = contact

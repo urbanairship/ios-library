@@ -1,10 +1,11 @@
 import Foundation
+import ActivityKit
 
 @testable import AirshipCore
+import Combine
 
-class TestChannel: NSObject, BaseAirshipChannelProtocol, AirshipComponent, @unchecked Sendable {
-
-    public var isComponentEnabled: Bool = true
+class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecked Sendable {
+    private let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
 
     public var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []
 
@@ -120,13 +121,40 @@ class TestChannel: NSObject, BaseAirshipChannelProtocol, AirshipComponent, @unch
     ) {
         self.contactUpdates.append(contentsOf: updates)
     }
+
+
+    public var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
+        subscriptionListEditsSubject.eraseToAnyPublisher()
+    }
+
+
+    func liveActivityRegistrationStatusUpdates(name: String) -> LiveActivityRegistrationStatusUpdates {
+        return LiveActivityRegistrationStatusUpdates { _ in
+            return .notTracked
+        }
+    }
+
+    @available(iOS 16.1, *)
+    func liveActivityRegistrationStatusUpdates<T>(activity: Activity<T>) -> LiveActivityRegistrationStatusUpdates where T : ActivityAttributes {
+        return LiveActivityRegistrationStatusUpdates { _ in
+            return .notTracked
+        }
+    }
+
+    @available(iOS 16.1, *)
+    func trackLiveActivity<T>(_ activity: Activity<T>, name: String) where T : ActivityAttributes {
+
+    }
+
+    @available(iOS 16.1, *)
+    func restoreLiveActivityTracking(callback: @escaping @Sendable (AirshipCore.LiveActivityRestorer) async -> Void) {
+
+    }
+
 }
 
 extension TestChannel: InternalAirshipChannelProtocol {
     func clearSubscriptionListsCache() {
         
     }
-}
-extension TestChannel: AirshipChannelProtocol {
-
 }

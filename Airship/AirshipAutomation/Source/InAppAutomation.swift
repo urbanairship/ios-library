@@ -107,7 +107,7 @@ extension InAppAutomation: AirshipComponent, AirshipPushableComponent {
             await self.engine.start()
         }
 
-        self.notificationCenter.addObserver(forName: AirshipPrivacyManager.changeEvent) { [weak self] _ in
+        self.notificationCenter.addObserver(forName: AirshipNotifications.privacyManagerChangeEvent) { [weak self] _ in
             self?.privacyManagerUpdated()
         }
         self.privacyManagerUpdated()

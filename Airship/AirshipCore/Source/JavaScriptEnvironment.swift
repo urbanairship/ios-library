@@ -138,7 +138,7 @@ public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtoco
 
             makeGetter(
                 name: "getAppKey",
-                string: Airship.shared.config.appKey
+                string: Airship.config.appKey
             )
         ]
     }

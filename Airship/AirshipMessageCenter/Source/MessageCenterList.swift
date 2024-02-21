@@ -8,8 +8,8 @@ import AirshipCore
 #endif
 
 /// Airship Message Center inbox base protocol.
-@objc(UAMessageCenterInboxBaseProtocol)
-public protocol MessageCenterInboxBaseProtocol {
+@objc(UAMessageCenterInboxProtocol)
+public protocol MessageCenterInboxBaseProtocol: AnyObject {
 
     /// Gets the list of messages in the inbox.
     /// - Returns: the list of messages in the inbox.
@@ -86,9 +86,8 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
 }
 
 /// Airship Message Center inbox.
-@objc(UAMessageCenterInbox)
-public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
-    
+final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
+
     private enum UpdateType {
         case local
         case refreshSucess
@@ -98,10 +97,6 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     private let updateSubject = PassthroughSubject<UpdateType, Never>()
 
     private let updateWorkID = "Airship.MessageCenterInbox#update"
-
-    public static let messageListUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.notification.message_list_updated"
-    )
 
     private let store: MessageCenterStore
     private let controller: MessageCenterController
@@ -225,7 +220,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
 
         notificationCenter.addObserver(
-            forName: AirshipChannel.channelCreatedEvent,
+            forName: AirshipNotifications.channelCreatedEvent,
             object: nil,
             queue: nil
         ) { [weak self] _ in
@@ -240,7 +235,7 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             .receive(on: RunLoop.main)
             .sink { _ in
                 notificationCenter.post(
-                    name: MessageCenterInbox.messageListUpdatedEvent,
+                    name: AirshipNotifications.messageCenterListUpdatedEvent,
                     object: nil
                 )
             }
@@ -630,4 +625,12 @@ public class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             )
         }
     }
+}
+
+
+public extension AirshipNotifications {
+    /// Message Center list updated event
+    static let messageCenterListUpdatedEvent = NSNotification.Name(
+        "com.urbanairship.notification.message_list_updated"
+    )
 }

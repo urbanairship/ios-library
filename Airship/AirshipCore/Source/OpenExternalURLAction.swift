@@ -44,7 +44,7 @@ public final class OpenExternalURLAction: AirshipAction {
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         let url = try parseURL(arguments.value)
 
-        guard Airship.shared.urlAllowList.isAllowed(url, scope: .openURL) else {
+        guard Airship.urlAllowList.isAllowed(url, scope: .openURL) else {
             throw AirshipErrors.error("URL \(url) not allowed")
         }
 

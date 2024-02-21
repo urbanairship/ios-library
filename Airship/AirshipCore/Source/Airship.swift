@@ -32,24 +32,6 @@ public class Airship: NSObject {
 
     private static let itunesIDKey = "itunesID"
 
-    /// Notification when Airship is ready.
-    @objc
-    public static let airshipReadyNotification = NSNotification.Name(
-        "com.urbanairship.airship_ready"
-    )
-
-    /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
-    @objc
-    public static let airshipReadyChannelIdentifier = "channel_id"
-
-    /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
-    @objc
-    public static let airshipReadyAppKey = "app_key"
-
-    /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
-    @objc
-    public static let airshipReadyPayloadVersion = "payload_version"
-
     /// A flag that checks if the Airship instance is available. `true` if available, otherwise `false`.
     @objc
     public static var isFlying: Bool {
@@ -60,17 +42,17 @@ public class Airship: NSObject {
 
     /// Airship config.
     @objc
-    public var config: RuntimeConfig { return airshipInstance.config }
+    public static var config: RuntimeConfig { return shared.airshipInstance.config }
 
     /// Action registry.
-    public var actionRegistry: ActionRegistry {
-        return airshipInstance.actionRegistry
+    public static var actionRegistry: ActionRegistry {
+        return shared.airshipInstance.actionRegistry
     }
 
     /// The Airship permissions manager.
     @objc
-    public var permissionsManager: AirshipPermissionsManager {
-        return airshipInstance.permissionsManager
+    public static var permissionsManager: AirshipPermissionsManager {
+        return shared.airshipInstance.permissionsManager
     }
 
     #if !os(tvOS) && !os(watchOS)
@@ -78,31 +60,31 @@ public class Airship: NSObject {
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
     @objc
-    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
+    public static weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
         get {
-            return airshipInstance.javaScriptCommandDelegate
+            return shared.airshipInstance.javaScriptCommandDelegate
         }
         set {
-            airshipInstance.javaScriptCommandDelegate = newValue
+            shared.airshipInstance.javaScriptCommandDelegate = newValue
         }
     }
 
     /// The channel capture utility.
     @objc
-    public var channelCapture: ChannelCapture {
-        return airshipInstance.channelCapture
+    public static var channelCapture: ChannelCapture {
+        return shared.airshipInstance.channelCapture
     }
     #endif
 
     /// A user configurable deep link delegate.
     /// - NOTE: this delegate is not retained.
     @objc
-    public weak var deepLinkDelegate: DeepLinkDelegate? {
+    public static weak var deepLinkDelegate: DeepLinkDelegate? {
         get {
-            return airshipInstance.deepLinkDelegate
+            return shared.airshipInstance.deepLinkDelegate
         }
         set {
-            airshipInstance.deepLinkDelegate = newValue
+            shared.airshipInstance.deepLinkDelegate = newValue
         }
     }
 
@@ -110,20 +92,20 @@ public class Airship: NSObject {
     /// wallet action, open external URL action, deep link
     /// action (if delegate is not set), and HTML in-app messages.
     @objc(URLAllowList)
-    public var urlAllowList: URLAllowListProtocol {
-        return airshipInstance.urlAllowList
+    public static var urlAllowList: URLAllowListProtocol {
+        return shared.airshipInstance.urlAllowList
     }
 
     /// The locale manager.
     @objc
-    public var localeManager: AirshipLocaleManager {
-        return airshipInstance.localeManager
+    public static var localeManager: AirshipLocaleManagerProtocol {
+        return shared.airshipInstance.localeManager
     }
 
     /// The privacy manager
     @objc
-    public var privacyManager: AirshipPrivacyManager {
-        return airshipInstance.privacyManager
+    public static var privacyManager: AirshipPrivacyManager {
+        return shared.airshipInstance.privacyManager
     }
 
     /// - NOTE: For internal use only. :nodoc:
@@ -131,9 +113,7 @@ public class Airship: NSObject {
 
     static var _shared: Airship?
 
-    /// Shared Airship instance.
-    @objc
-    public static var shared: Airship {
+    static var shared: Airship {
         if !Airship.isFlying {
             assertionFailure("TakeOff must be called before accessing Airship.")
         }
@@ -141,15 +121,24 @@ public class Airship: NSObject {
     }
 
     /// Shared Push instance.
-    @objc
-    public static var push: AirshipPush {
-        return requireComponent(ofType: AirshipPush.self)
+    public static var push: AirshipPushProtocol {
+        return requireComponent(ofType: AirshipPushProtocol.self)
+    }
+
+    /// Shared Push instance.
+    @objc(push)
+    static var _push: AirshipBasePushProtocol {
+        return requireComponent(ofType: AirshipBasePushProtocol.self)
     }
 
     /// Shared Contact instance.
-    @objc
-    public static var contact: AirshipContact {
-        return requireComponent(ofType: AirshipContact.self)
+    public static var contact: AirshipContactProtocol {
+        return requireComponent(ofType: AirshipContactProtocol.self)
+    }
+
+    @objc(contact)
+    static var _contact: AirshipBaseContactProtocol {
+        return requireComponent(ofType: AirshipBaseContactProtocol.self)
     }
 
     /// Shared Analytics instance.
@@ -163,13 +152,16 @@ public class Airship: NSObject {
         return requireComponent(ofType: AirshipAnalyticsProtocol.self)
     }
 
-
     /// Shared Channel instance.
-    @objc
-    public static var channel: AirshipChannel {
-        return requireComponent(ofType: AirshipChannel.self)
+    public static var channel: AirshipChannelProtocol {
+        return requireComponent(ofType: AirshipChannelProtocol.self)
     }
 
+    /// Shared Channel instance.
+    @objc(channel)
+    public static var _channel: AirshipBaseChannelProtocol {
+        return requireComponent(ofType: AirshipBaseChannelProtocol.self)
+    }
 
     init(instance: AirshipInstanceProtocol) {
         self.airshipInstance = instance
@@ -231,41 +223,24 @@ public class Airship: NSObject {
         // register transformers
         JSONValueTransformer.register()
         
-        commonTakeOff(config)
+        commonTakeOff(config) {
 
-        #if !os(tvOS) && !os(watchOS)
-        if let remoteNotification =
-            launchOptions?[
-                UIApplication.LaunchOptionsKey.remoteNotification
-            ]
-            as? [AnyHashable: Any]
-        {
-            if AppStateTracker.shared.state != .background {
-                self.requireComponent(ofType: InternalAnalyticsProtocol.self).launched(
-                    fromNotification: remoteNotification
-                )
+#if !os(tvOS) && !os(watchOS)
+            if let remoteNotification =
+                launchOptions?[
+                    UIApplication.LaunchOptionsKey.remoteNotification
+                ]
+                as? [AnyHashable: Any]
+            {
+                if AppStateTracker.shared.state != .background {
+                    self.requireComponent(ofType: InternalAnalyticsProtocol.self).launched(
+                        fromNotification: remoteNotification
+                    )
+                }
             }
+#endif
         }
-        #endif
 
-        self.shared.airshipInstance.airshipReady()
-
-        if self.shared.config.isExtendedBroadcastsEnabled {
-            var userInfo: [String: Any] = [:]
-            userInfo[airshipReadyChannelIdentifier] =
-                self.channel.identifier
-            userInfo[airshipReadyAppKey] = self.shared.config.appKey
-            userInfo[airshipReadyPayloadVersion] = 1
-            NotificationCenter.default.post(
-                name: airshipReadyNotification,
-                object: userInfo
-            )
-        } else {
-            NotificationCenter.default.post(
-                name: airshipReadyNotification,
-                object: nil
-            )
-        }
     }
 
     #else
@@ -316,31 +291,12 @@ public class Airship: NSObject {
         }
 
         commonTakeOff(config)
-
-        self.shared.components.forEach { $0.airshipReady() }
-
-        if self.shared.config.isExtendedBroadcastsEnabled {
-            var userInfo: [String: Any] = [:]
-            userInfo[airshipReadyChannelIdentifier] =
-                self.channel.identifier
-            userInfo[airshipReadyAppKey] = self.shared.config.appKey
-            userInfo[airshipReadyPayloadVersion] = 1
-            NotificationCenter.default.post(
-                name: airshipReadyNotification,
-                object: userInfo
-            )
-        } else {
-            NotificationCenter.default.post(
-                name: airshipReadyNotification,
-                object: nil
-            )
-        }
     }
 
     #endif
 
     @MainActor
-    private class func commonTakeOff(_ config: AirshipConfig?) {
+    private class func commonTakeOff(_ config: AirshipConfig?, onReady: (() -> Void)? = nil) {
 
         let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
 
@@ -375,6 +331,27 @@ public class Airship: NSObject {
             UAAutoIntegration.integrate(with: integrationDelegate)
         } else {
             AppIntegration.integrationDelegate = integrationDelegate
+        }
+
+        onReady?()
+
+        self.shared.airshipInstance.airshipReady()
+
+        if self.shared.airshipInstance.config.isExtendedBroadcastsEnabled {
+            var userInfo: [String: Any] = [:]
+            userInfo[AirshipNotifications.airshipReadyChannelIdentifier] =
+                self.channel.identifier
+            userInfo[AirshipNotifications.airshipReadyAppKey] = self.shared.airshipInstance.config.appKey
+            userInfo[AirshipNotifications.airshipReadyPayloadVersion] = 1
+            NotificationCenter.default.post(
+                name: AirshipNotifications.airshipReadyNotification,
+                object: userInfo
+            )
+        } else {
+            NotificationCenter.default.post(
+                name: AirshipNotifications.airshipReadyNotification,
+                object: nil
+            )
         }
 
     }
@@ -439,8 +416,7 @@ public class Airship: NSObject {
     ///     - deepLink: The deep link.
     ///     - completionHandler: The result. `true` if the link was able to be processed, otherwise `false`.
     @MainActor
-    @objc
-    public func deepLink(
+    func deepLink(
         _ deepLink: URL
     ) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {
@@ -483,7 +459,6 @@ public class Airship: NSObject {
     ///     - deepLink: The deep link.
     /// - Returns: `true` if the deeplink is handled, `false` otherwise.
     @MainActor
-    @objc
     private func handleAirshipDeeplink(_ deeplink: URL) -> Bool {
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
@@ -527,7 +502,7 @@ public class Airship: NSObject {
             .reduce(into: [String: String?]()) {
                 $0[$1.name] = $1.value
             } ?? [:]
-        return queryMap[Airship.itunesIDKey] as? String ?? config.itunesID
+        return queryMap[Airship.itunesIDKey] as? String ?? airshipInstance.config.itunesID
     }
 
 
@@ -553,4 +528,28 @@ public class Airship: NSObject {
         self.airshipInstance.preferenceDataStore.setObject(date, forKey: Airship.newUserCutOffDateKey)
         return date
     }
+}
+
+
+
+/// NSNotificationCenter keys event names
+@objc(UAirshipNotifications)
+public final class AirshipNotifications: NSObject {
+    /// Notification when Airship is ready.
+    @objc
+    public static let airshipReadyNotification = NSNotification.Name(
+        "com.urbanairship.airship_ready"
+    )
+
+    /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
+    @objc
+    public static let airshipReadyChannelIdentifier = "channel_id"
+
+    /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
+    @objc
+    public static let airshipReadyAppKey = "app_key"
+
+    /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
+    @objc
+    public static let airshipReadyPayloadVersion = "payload_version"
 }

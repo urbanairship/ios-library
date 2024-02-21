@@ -38,8 +38,13 @@ public class MessageCenter: NSObject, ObservableObject {
     private let privacyManager: AirshipPrivacyManager
 
     /// Message center inbox.
-    @objc
-    public var inbox: MessageCenterInbox
+    @objc(inbox)
+    var _inbox: MessageCenterInboxBaseProtocol {
+        return self.inbox
+    }
+
+    /// Message center inbox.
+    public var inbox: MessageCenterInboxProtocol
 
     private var currentDisplay: AirshipMainActorCancellable?
 
@@ -84,21 +89,20 @@ public class MessageCenter: NSObject, ObservableObject {
         super.init()
 
         notificationCenter.addObserver(
-            forName: AirshipPrivacyManager.changeEvent,
+            forName: AirshipNotifications.privacyManagerChangeEvent,
             object: nil,
             queue: nil
-        ) { [weak self] _ in
-            self?.updateEnableState()
+        ) { [weak self, inbox] _ in
+            inbox.enabled = self?.enabled ?? false
         }
 
-
-        self.updateEnableState()
+        inbox.enabled = self.enabled
     }
 
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: AirshipChannel,
+        channel: InternalAirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
         workManager: AirshipWorkManagerProtocol
     ) {
@@ -174,10 +178,6 @@ public class MessageCenter: NSObject, ObservableObject {
                 self.dismissDefaultMessageCenter()
             }
         }
-    }
-
-    private func updateEnableState() {
-        self.inbox.enabled = self.enabled
     }
 }
 

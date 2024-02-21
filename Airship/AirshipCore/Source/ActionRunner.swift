@@ -44,7 +44,7 @@ public class ActionRunner: NSObject {
         arguments: ActionArguments
     ) async -> ActionResult {
         guard
-            let entry = await Airship.shared.actionRegistry.entry(name: actionName)
+            let entry = await Airship.actionRegistry.entry(name: actionName)
         else {
             return .actionNotFound
         }

@@ -144,8 +144,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
     public var buttonCategory: UNNotificationCategory? {
         guard let group = buttonGroup else { return nil }
         
-        return Airship.requireComponent(ofType: PushProtocol.self)
-            .combinedCategories.first(where: { $0.identifier == group })
+        return Airship.push.combinedCategories.first(where: { $0.identifier == group })
     }
     
     init?(

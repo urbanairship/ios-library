@@ -78,7 +78,7 @@ final class RemoteDataTest: AirshipBaseTest {
     func testLocaleUpdatesEnqueuesRefresh() {
         XCTAssertEqual(0, testWorkManager.workRequests.count)
         notificationCenter.post(
-            name: AirshipLocaleManager.localeUpdatedEvent
+            name: AirshipNotifications.localeUpdatedEvent
         )
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }

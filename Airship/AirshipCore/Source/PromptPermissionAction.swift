@@ -31,7 +31,7 @@ public final class PromptPermissionAction: AirshipAction {
     public convenience init() {
            self.init {
                return AirshipPermissionPrompter(
-                   permissionsManager: Airship.shared.permissionsManager
+                   permissionsManager: Airship.permissionsManager
                )
            }
        }

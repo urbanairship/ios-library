@@ -8,9 +8,9 @@ protocol SessionEventFactoryProtocol: Sendable {
 
 struct SessionEventFactory: SessionEventFactoryProtocol {
 
-    let push: @Sendable () -> PushProtocol
+    let push: @Sendable () -> AirshipPushProtocol
 
-    init(push: @escaping @Sendable () -> PushProtocol = Airship.componentSupplier()) {
+    init(push: @escaping @Sendable () -> AirshipPushProtocol = Airship.componentSupplier()) {
         self.push = push
     }
 

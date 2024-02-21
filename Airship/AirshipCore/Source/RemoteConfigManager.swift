@@ -32,7 +32,7 @@ final class RemoteConfigManager: @unchecked Sendable {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateRemoteConfigSubscription),
-            name: AirshipPrivacyManager.changeEvent,
+            name: AirshipNotifications.privacyManagerChangeEvent,
             object: nil
         )
 

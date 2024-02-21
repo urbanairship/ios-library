@@ -36,7 +36,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(PushSettingsViewController.refreshView),
-            name: AirshipChannel.channelCreatedEvent,
+            name: AirshipNotifications.channelCreatedEvent,
             object: nil
         )
 
@@ -48,7 +48,7 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
         )
 
         pushEnabled = Airship.push.userPushNotificationsEnabled
-        analytics = Airship.shared.privacyManager.isEnabled(.analytics)
+        analytics = Airship.privacyManager.isEnabled(.analytics)
 
         refreshView()
 
@@ -127,9 +127,9 @@ class PushSettingsViewController: UITableViewController, RegistrationDelegate {
         ):
             analytics = !analytics
             if analytics {
-                Airship.shared.privacyManager.enableFeatures(.analytics)
+                Airship.privacyManager.enableFeatures(.analytics)
             } else {
-                Airship.shared.privacyManager.disableFeatures(.analytics)
+                Airship.privacyManager.disableFeatures(.analytics)
             }
             refreshView()
             break

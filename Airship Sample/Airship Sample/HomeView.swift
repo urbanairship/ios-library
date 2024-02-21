@@ -195,7 +195,7 @@ struct HomeView: View {
         @MainActor
         init() {
             NotificationCenter.default
-                .publisher(for: AirshipChannel.channelCreatedEvent)
+                .publisher(for: AirshipNotifications.channelCreatedEvent)
                 .receive(on: RunLoop.main)
                 .sink { _ in
                     self.channelID = Airship.channel.identifier
@@ -227,7 +227,7 @@ struct HomeView: View {
         @MainActor
         func togglePushEnabled() {
             if (!pushEnabled) {
-                Airship.shared.privacyManager.enableFeatures(.push)
+                Airship.privacyManager.enableFeatures(.push)
                 Airship.push.userPushNotificationsEnabled = true
                 Airship.push.backgroundPushNotificationsEnabled = true
             } else {

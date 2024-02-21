@@ -18,14 +18,6 @@ import Foundation
 @objc(UAPrivacyManager)
 public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
 
-    /**
-    * NSNotification event when enabled feature list is updated.
-     */
-    @objc
-    public static let changeEvent = Notification.Name(
-        "com.urbanairship.privacymanager.enabledfeatures_changed"
-    )
-
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
 
     private let legacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
@@ -223,7 +215,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
             let enabledFeatures = self.enabledFeatures
             guard enabledFeatures != lastUpdated else { return }
             self.lastUpdated = enabledFeatures
-            self.notificationCenter.postOnMain(name: Self.changeEvent)
+            self.notificationCenter.postOnMain(name: AirshipNotifications.privacyManagerChangeEvent)
         }
     }
 }
@@ -366,4 +358,15 @@ extension AirshipFeature: Codable {
             throw AirshipErrors.error("Failed to parse features")
         }
     }
+}
+
+
+public extension AirshipNotifications {
+    /**
+    * NSNotification event when enabled feature changed on PrivacyManager.
+     */
+    @objc
+    static let privacyManagerChangeEvent = Notification.Name(
+        "com.urbanairship.privacymanager.enabledfeatures_changed"
+    )
 }

@@ -140,7 +140,9 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
             if let contactID = self.contactID {
                 return contactID
             }
-            return await Airship.contact.getStableContactID()
+            return await Airship.requireComponent(
+                ofType: InternalAirshipContactProtocol.self
+            ).getStableContactID()
         }
     }
 
@@ -161,14 +163,14 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     }
 
     public var locale: Locale {
-        return Airship.shared.localeManager.currentLocale
+        return Airship.localeManager.currentLocale
     }
 
     public var permissions: [AirshipPermission : AirshipPermissionStatus] {
         get async {
             var results: [AirshipPermission : AirshipPermissionStatus] = [:]
-            for permission in Airship.shared.permissionsManager.configuredPermissions {
-                results[permission] = await Airship.shared.permissionsManager.checkPermissionStatus(permission)
+            for permission in Airship.permissionsManager.configuredPermissions {
+                results[permission] = await Airship.permissionsManager.checkPermissionStatus(permission)
             }
             return results
         }
@@ -181,7 +183,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     }
 
     public var analyticsEnabled: Bool {
-        return Airship.shared.privacyManager.isEnabled(.analytics)
+        return Airship.privacyManager.isEnabled(.analytics)
     }
 }
 

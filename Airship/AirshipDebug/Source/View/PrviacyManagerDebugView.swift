@@ -96,7 +96,7 @@ public struct PrivacyManagerDebugView: View {
 
         init() {
             if Airship.isFlying {
-                let privacyManager = Airship.shared.privacyManager
+                let privacyManager = Airship.privacyManager
                 self.iaaEnabled = privacyManager.isEnabled(.inAppAutomation)
                 self.messageCenterEnabled = privacyManager.isEnabled(
                     .messageCenter
@@ -121,9 +121,9 @@ public struct PrivacyManagerDebugView: View {
             guard Airship.isFlying else { return }
 
             if enable {
-                Airship.shared.privacyManager.enableFeatures(features)
+                Airship.privacyManager.enableFeatures(features)
             } else {
-                Airship.shared.privacyManager.disableFeatures(features)
+                Airship.privacyManager.disableFeatures(features)
             }
         }
     }

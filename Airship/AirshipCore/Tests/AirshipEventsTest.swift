@@ -341,7 +341,25 @@ class AirshipEventsTest: XCTestCase {
     }
 }
 
-private final class EventTestPush: PushProtocol, @unchecked Sendable {
+private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
+    func enableUserPushNotifications() async -> Bool {
+        return true
+    }
+
+    var autobadgeEnabled: Bool = false
+
+    func resetBadge() {
+
+    }
+
+    var timeZone: NSTimeZone?
+
+    var quietTimeEnabled: Bool = false
+
+    func setQuietTimeStartHour(_ startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) {
+
+    }
+
     var notificationStatusPublisher: AnyPublisher<AirshipCore.AirshipNotificationStatus, Never> {
         fatalError("not implemented")
     }

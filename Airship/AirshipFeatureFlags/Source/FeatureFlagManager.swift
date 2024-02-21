@@ -249,5 +249,4 @@ public final class FeatureFlagManager: Sendable {
     }
 }
 
-
 extension FeatureFlagManager: AirshipComponent {}

@@ -302,7 +302,7 @@ private class AirshipDebugViewModel: ObservableObject {
     var airshipLocaleIdentifier: String {
         didSet {
             if Airship.isFlying {
-                Airship.shared.localeManager.currentLocale = Locale(
+                Airship.localeManager.currentLocale = Locale(
                     identifier: self.airshipLocaleIdentifier
                 )
             }
@@ -361,7 +361,7 @@ private class AirshipDebugViewModel: ObservableObject {
             self.isPushNotificationsOptedIn =
                 Airship.push.isPushNotificationsOptedIn
             self.airshipLocaleIdentifier =
-                Airship.shared.localeManager.currentLocale.identifier
+                Airship.localeManager.currentLocale.identifier
             self.userPushNotificationsEnabled =
                 Airship.push.userPushNotificationsEnabled
             self.backgroundPushEnabled =
@@ -383,7 +383,7 @@ private class AirshipDebugViewModel: ObservableObject {
 
     private func subscribeUpdates() {
         NotificationCenter.default
-            .publisher(for: AirshipChannel.channelCreatedEvent)
+            .publisher(for: AirshipNotifications.channelCreatedEvent)
             .sink(receiveValue: { _ in
                 self.channelID = Airship.channel.identifier
             })
@@ -410,7 +410,7 @@ private class AirshipDebugViewModel: ObservableObject {
     func clearLocaleOverride() {
         if Airship.isFlying {
             self.airshipLocaleIdentifier = Locale.autoupdatingCurrent.identifier
-            Airship.shared.localeManager.clearLocale()
+            Airship.localeManager.clearLocale()
         }
     }
 }

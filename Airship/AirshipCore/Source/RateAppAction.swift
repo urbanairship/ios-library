@@ -39,7 +39,7 @@ public final class RateAppAction: AirshipAction, Sendable {
 
     public convenience init() {
         self.init(appRater: DefaultAppRater()) {
-            return Airship.shared.config.itunesID
+            return Airship.config.itunesID
         }
     }
 

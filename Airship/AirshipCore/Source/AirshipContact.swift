@@ -22,15 +22,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     // Subscription list cache age
     private static let maxSubscriptionListCacheAge: TimeInterval = 600.0 // 10 mins
 
-    @objc
-    public static let contactConflictEvent = NSNotification.Name(
-        "com.urbanairship.contact_conflict"
-    )
-
-    @objc
-    public static let contactConflictEventKey = "event"
-
-    @objc
     public static let maxNamedUserIDLength = 128
 
     private let dataStore: PreferenceDataStore
@@ -106,12 +97,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }
     }
 
-    /// The shared Contact instance.
-    @objc
-    public static var shared: AirshipContact {
-        return Airship.contact
-    }
-
     private var foregroundInterval: TimeInterval {
         let interval = self.config.remoteConfig.contactConfig?.foregroundInterval
         return interval ?? Self.defaultForegroundResolveInterval
@@ -121,7 +106,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         let age = self.config.remoteConfig.contactConfig?.channelRegistrationMaxResolveAge
         return age ?? Self.defaultVefiedContactIDAge
     }
-
 
     /**
      * Internal only
@@ -193,10 +177,10 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             .receive(on: RunLoop.main)
             .sink { event in
                 notificationCenter.post(
-                    name: AirshipContact.contactConflictEvent,
+                    name: AirshipNotifications.contactConflictEvent,
                     object: nil,
                     userInfo: [
-                        AirshipContact.contactConflictEventKey: event
+                        AirshipNotifications.contactConflictEventKey: event
                     ]
                 )
             }.store(in: &self.subscriptions)
@@ -225,14 +209,14 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         notificationCenter.addObserver(
             self,
             selector: #selector(channelCreated),
-            name: AirshipChannel.channelCreatedEvent,
+            name: AirshipNotifications.channelCreatedEvent,
             object: nil
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: AirshipPrivacyManager.changeEvent,
+            name: AirshipNotifications.privacyManagerChangeEvent,
             object: nil
         )
 
@@ -638,7 +622,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }
 
         let existing =
-            notification.userInfo?[AirshipChannel.channelExistingKey] as? Bool
+            notification.userInfo?[AirshipNotifications.channelExistingKey] as? Bool
 
 
         if existing == true && self.config.clearNamedUserOnAppRestore {
@@ -782,3 +766,17 @@ extension AirshipContact : InternalAirshipContactProtocol {
 
 
 extension AirshipContact: AirshipComponent {}
+
+
+public extension AirshipNotifications {
+    // NSNotification event name when a conflict event is emitted. The `ContactConflictEvent`
+    // will be available in the userInfo under the key `contactConflictEventKey`.
+    @objc
+    static let contactConflictEvent = NSNotification.Name(
+        "com.urbanairship.contact_conflict"
+    )
+
+    // NSNotification userInfo key to get the `ContactConflictEvent`.
+    @objc
+    static let contactConflictEventKey = "event"
+}

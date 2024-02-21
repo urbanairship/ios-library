@@ -6,7 +6,24 @@ import AirshipCore
 import Foundation
 import Combine
 
-final class TestPush: NSObject, InternalPushProtocol, PushProtocol, AirshipComponent, @unchecked Sendable {
+final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {
+    func enableUserPushNotifications() async -> Bool {
+        return true
+    }
+
+    var autobadgeEnabled: Bool = false
+
+    func resetBadge() {
+
+    }
+
+    var timeZone: NSTimeZone?
+
+    var quietTimeEnabled: Bool = false
+
+    func setQuietTimeStartHour(_ startHour: Int, startMinute: Int, endHour: Int, endMinute: Int) {
+
+    }
 
     let notificationStatusSubject: PassthroughSubject<AirshipNotificationStatus, Never> = PassthroughSubject()
 

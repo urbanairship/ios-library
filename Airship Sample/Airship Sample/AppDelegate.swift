@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         Airship.push.notificationOptions = [.alert, .badge, .sound, .carPlay]
         Airship.push.defaultPresentationOptions = [.sound, .banner, .list]
 
-        Airship.shared.deepLinkDelegate = self
+        Airship.deepLinkDelegate = self
         MessageCenter.shared.displayDelegate = self
         PreferenceCenter.shared.openDelegate = self
 

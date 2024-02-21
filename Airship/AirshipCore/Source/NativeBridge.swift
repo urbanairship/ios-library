@@ -444,7 +444,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             return true
         }
 
-        if Airship.shared.javaScriptCommandDelegate?
+        if Airship.javaScriptCommandDelegate?
             .performCommand(
                 command,
                 webView: webView
@@ -516,7 +516,7 @@ extension URL {
     }
 
     fileprivate func isAllowed(scope: URLAllowListScope) -> Bool {
-        return Airship.shared.urlAllowList.isAllowed(self, scope: scope)
+        return Airship.urlAllowList.isAllowed(self, scope: scope)
     }
 }
 

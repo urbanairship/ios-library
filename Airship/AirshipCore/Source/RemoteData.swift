@@ -126,7 +126,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(enqueueRefreshTask),
-            name: AirshipLocaleManager.localeUpdatedEvent,
+            name: AirshipNotifications.localeUpdatedEvent,
             object: nil
         )
 
@@ -140,7 +140,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(enqueueRefreshTask),
-            name: AirshipPrivacyManager.changeEvent,
+            name: AirshipNotifications.privacyManagerChangeEvent,
             object: nil
         )
         
