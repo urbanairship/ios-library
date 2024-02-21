@@ -5,6 +5,7 @@ import AirshipCore
 #endif
 
 
+/// NOTE: For internal use only. :nodoc:
 @objc(UAAutomationSDKModule)
 public class AutomationSDKModule: NSObject, AirshipSDKModule {
     public let components: [AirshipComponent]
@@ -113,10 +114,13 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             config: config
         )
 
-        return AutomationSDKModule(components: [inAppAutomation])
+        return AutomationSDKModule(
+            components: [
+                InAppAutomationComponent(inAppAutomation: inAppAutomation)
+            ]
+        )
     }
 }
-
 
 fileprivate struct AutomationActionManifest : ActionsManifest {
     var manifest: [[String] : () -> ActionEntry] = [

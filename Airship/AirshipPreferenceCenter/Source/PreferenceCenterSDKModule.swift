@@ -6,7 +6,6 @@ import AirshipCore
 
 /// AirshipPreferenceCenter module loader.
 /// @note For internal use only. :nodoc:
-
 @objc(UAPreferenceCenterSDKModule)
 public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
     public let actionsManifest: ActionsManifest? = nil
@@ -30,6 +29,8 @@ public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
 
 
     private init(_ preferenceCenter: PreferenceCenter) {
-        self.components = [preferenceCenter]
+        self.components = [
+            PreferenceCenterComponent(preferenceCenter: preferenceCenter)
+        ]
     }
 }

@@ -10,11 +10,10 @@ import AirshipCore
 import AirshipKit
 #endif
 
-public class AirshipDebugManager {
+public final class AirshipDebugManager {
+
     public static var shared: AirshipDebugManager {
-        return Airship.requireComponent(
-            ofType: AirshipDebugManager.self
-        )
+        return Airship.requireComponent(ofType: DebugComponent.self).debugManager
     }
 
     private var currentDisplay: AirshipMainActorCancellable?
@@ -290,6 +289,3 @@ private struct DebugRootView: View {
         .navigationViewStyle(.stack)
     }
 }
-
-
-extension AirshipDebugManager: AirshipComponent {}

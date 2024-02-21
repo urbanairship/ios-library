@@ -13,7 +13,7 @@ public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
     public let components: [AirshipComponent]
 
     init(messageCenter: MessageCenter) {
-        self.components = [messageCenter]
+        self.components = [MessageCenterComponent(messageCenter: messageCenter)]
     }
 
     public static func load(

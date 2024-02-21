@@ -29,6 +29,6 @@ public class DebugSDKModule: NSObject, AirshipSDKModule {
     }
 
     private init(_ debugManager: AirshipDebugManager) {
-        self.components = [debugManager]
+        self.components = [DebugComponent(debugManager: debugManager)]
     }
 }

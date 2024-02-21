@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
 #if canImport(AirshipCore)
@@ -24,7 +26,7 @@ public final class InAppAutomation: Sendable {
 
     /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
     public static var shared: InAppAutomation {
-        return Airship.requireComponent(ofType: InAppAutomation.self)
+        return Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
     }
 
     @MainActor
@@ -98,9 +100,9 @@ public final class InAppAutomation: Sendable {
     }
 }
 
-extension InAppAutomation: AirshipComponent, AirshipPushableComponent {
+extension InAppAutomation {
     @MainActor
-    public func airshipReady() {
+    func airshipReady() {
         self.engine.setExecutionPaused(self.isPaused)
 
         Task {
@@ -113,14 +115,14 @@ extension InAppAutomation: AirshipComponent, AirshipPushableComponent {
         self.privacyManagerUpdated()
     }
 
-    public func receivedRemoteNotification(
+    func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         self._legacyInAppMessaging.receivedRemoteNotification(notification, completionHandler: completionHandler)
     }
 
-    public func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         self._legacyInAppMessaging.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
 }

@@ -34,7 +34,9 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
                 deferredResolver: deferredResolver
             )
         )
-        return AirshipFeatureFlagsSDKModule(components: [manager])
+
+        let compoenent = FeatureFlagComponent(featureFlagManager: manager)
+        return AirshipFeatureFlagsSDKModule(components: [compoenent])
     }
 
     init(components: [AirshipComponent]) {

@@ -28,7 +28,7 @@ public final class PreferenceCenter: NSObject, Sendable {
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
     public static var shared: PreferenceCenter {
-        return Airship.requireComponent(ofType: PreferenceCenter.self)
+        return Airship.requireComponent(ofType: PreferenceCenterComponent.self).preferenceCenter
     }
 
     private static let payloadType = "preference_forms"
@@ -218,9 +218,9 @@ extension PreferenceCenter {
 }
 
 
-extension PreferenceCenter : AirshipComponent {
+extension PreferenceCenter {
     @MainActor
-    public func deepLink(_ deepLink: URL) -> Bool {
+    func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == Airship.deepLinkScheme,
             deepLink.host == "preferences",
             deepLink.pathComponents.count == 2

@@ -25,7 +25,7 @@ public final class FeatureFlagManager: Sendable {
 
     /// The shared FeatureFlagManager instance. `Airship.takeOff` must be called before accessing this instance.
     public static var shared: FeatureFlagManager {
-        return Airship.requireComponent(ofType: FeatureFlagManager.self)
+        return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
     }
 
     private let remoteDataAccess: FeatureFlagRemoteDataAccessProtocol
@@ -248,5 +248,3 @@ public final class FeatureFlagManager: Sendable {
         let reportingMetadata: AirshipJSON?
     }
 }
-
-extension FeatureFlagManager: AirshipComponent {}

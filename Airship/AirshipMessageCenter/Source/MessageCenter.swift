@@ -71,7 +71,7 @@ public class MessageCenter: NSObject, ObservableObject {
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
     public static var shared: MessageCenter {
-        return Airship.requireComponent(ofType: MessageCenter.self)
+        return Airship.requireComponent(ofType: MessageCenterComponent.self).messageCenter
     }
 
     init(
@@ -181,11 +181,11 @@ public class MessageCenter: NSObject, ObservableObject {
     }
 }
 
-extension MessageCenter: AirshipComponent, AirshipPushableComponent {
+extension MessageCenter {
     private static let kUARichPushMessageIDKey = "_uamid"
 
     @MainActor
-    public func deepLink(_ deepLink: URL) -> Bool {
+    func deepLink(_ deepLink: URL) -> Bool {
         if !(deepLink.scheme == Airship.deepLinkScheme) {
             return false
         }
@@ -212,11 +212,10 @@ extension MessageCenter: AirshipComponent, AirshipPushableComponent {
     }
 
     @MainActor
-    public func receivedRemoteNotification(
+    func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-
         guard
             let messageID = MessageCenterMessage.parseMessageID(
                 userInfo: notification
@@ -243,9 +242,6 @@ extension MessageCenter: AirshipComponent, AirshipPushableComponent {
             completionHandler(.newData)
         }
     }
-}
-
-extension MessageCenter {
 
     @MainActor
     fileprivate func showDefaultMessageCenter() {
