@@ -12,6 +12,10 @@ struct InAppMessageModalView: View {
 
     @Environment(\.orientation) var orientation
 
+    @State
+    private var scrollViewContentSize: CGSize = .zero
+
+
     private var padding: EdgeInsets {
         environment.theme.modalTheme.additionalPadding
     }
@@ -97,8 +101,9 @@ struct InAppMessageModalView: View {
         self.displayContent = displayContent
     }
 
-    var body: some View {
-        ZStack {
+    @ViewBuilder
+    private var content: some View {
+        VStack(spacing:0) {
             ScrollView {
                 VStack(spacing:24) {
                     switch displayContent.template {
@@ -115,24 +120,36 @@ struct InAppMessageModalView: View {
                         headerView
                         bodyView
                     }
-
-                }.padding(padding)
-                    .background(Color.tappableClear)
-            }
-            VStack {
-                Spacer()
-                VStack(spacing:24) {
-                    buttonsView
-                    footerButton
                 }
                 .padding(padding)
-                .background(displayContent.backgroundColor?.color ?? Color.black)
+                .background(
+                    GeometryReader { geo -> Color in
+                        DispatchQueue.main.async {
+                            scrollViewContentSize = geo.size
+                        }
+                        return Color.clear
+                    }
+                )
             }
-        }.addBackground(color: displayContent.backgroundColor?.color ?? Color.black)
-        .addCloseButton(dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
-                         dismissIconResource: dismissIconResource,
-                         circleColor: .tappableClear, /// Probably should just do this everywhere and remove circleColor entirely
-                         onUserDismissed: { environment.onUserDismissed() })
+            .frame(maxHeight: scrollViewContentSize.height)
+
+            VStack(spacing:24) {
+                buttonsView
+                footerButton
+            }
+            .padding(padding)
+        }
+    }
+
+    var body: some View {
+        content
+        .addCloseButton(
+            dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
+            dismissIconResource: dismissIconResource,
+            circleColor: .tappableClear, /// Probably should just do this everywhere and remove circleColor entirely
+            onUserDismissed: { environment.onUserDismissed() }
+        )
+        .background(displayContent.backgroundColor?.color ?? Color.black)
         .cornerRadius(displayContent.borderRadius ?? 0)
         .parentClampingResize(maxWidth: maxWidth, maxHeight: maxHeight)
         .padding(padding)

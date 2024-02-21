@@ -114,10 +114,24 @@ extension View {
     }
 
     @ViewBuilder
-    private func applyTransition(placement:InAppMessageDisplayContent.Banner.Placement) -> some View {
-        self.transition(placement == .top ?
-            .asymmetric(insertion: .move(edge: .top), removal: .move(edge: .top).combined(with: .opacity)) :
-                .asymmetric(insertion: .move(edge: .bottom), removal: .move(edge: .bottom).combined(with: .opacity)))
+    private func applyTransition(
+        placement: InAppMessageDisplayContent.Banner.Placement
+    ) -> some View {
+        if (placement == .top) {
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: .top),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                )
+            )
+        } else {
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: .bottom),
+                    removal: .move(edge: .bottom).combined(with: .opacity)
+                )
+            )
+        }
     }
 
     @ViewBuilder
@@ -131,11 +145,21 @@ extension View {
     }
 
     @ViewBuilder
-    func addCloseButton(dismissButtonColor: Color, dismissIconResource: String, circleColor:Color? = nil, onUserDismissed: @escaping () -> Void) -> some View {
+    func addCloseButton(
+        dismissButtonColor: Color,
+        dismissIconResource: String,
+        circleColor:Color? = nil,
+        onUserDismissed: @escaping () -> Void
+    ) -> some View {
         ZStack(alignment: .topTrailing) { // Align close button to the top trailing corner
             self.zIndex(0)
-            CloseButton(dismissIconColor: dismissButtonColor, dismissIconResource: dismissIconResource, circleColor: circleColor, onTap: onUserDismissed)
-                .zIndex(1)
+            CloseButton(
+                dismissIconColor: dismissButtonColor,
+                dismissIconResource: dismissIconResource,
+                circleColor: circleColor,
+                onTap: onUserDismissed
+            )
+            .zIndex(1)
         }
     }
 }

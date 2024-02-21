@@ -65,7 +65,7 @@ final class Layouts {
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
-        let scene = try SceneManager.shared.lastActiveScene
+        let scene = try AirshipSceneManager.shared.lastActiveScene
 
         Task { @MainActor in
             try await message.display(scene: scene)
@@ -75,7 +75,7 @@ final class Layouts {
     @MainActor
     private func displayMessage(_ data: Data) throws {
         let message = try JSONDecoder().decode(InAppMessage.self, from: data)
-        let scene = try SceneManager.shared.lastActiveScene
+        let scene = try AirshipSceneManager.shared.lastActiveScene
 
         Task { @MainActor in
             try await message.display(scene: scene)
