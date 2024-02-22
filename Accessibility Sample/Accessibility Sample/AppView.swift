@@ -17,7 +17,7 @@ struct AppView: View {
                 systemImage: "square.3.layers.3d.down.left"
             )
         }.onAppear {
-            Airship.shared.privacyManager.enableFeatures(.push)
+            Airship.privacyManager.enableFeatures(.push)
             Airship.push.userPushNotificationsEnabled = true
             Airship.push.backgroundPushNotificationsEnabled = true
         }

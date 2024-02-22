@@ -148,7 +148,12 @@ struct InAppMessageBannerView: View {
         let itemSpacing: CGFloat = 16
 
         VStack(spacing:itemSpacing) {
-            contentBody
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+                contentBody.geometryGroup()
+            } else {
+                contentBody.transformEffect(.identity)
+            }
+
             buttonsView
         }.padding([.top, .horizontal], itemSpacing)
             .addNub(placement: displayContent.placement,
