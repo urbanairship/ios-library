@@ -9,6 +9,7 @@ final class LiveActivityRegistryTest: XCTestCase {
     let date: UATestDate = UATestDate()
     let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     var registry: LiveActivityRegistry!
+    var tracker = TestPushToStartTracker()
 
     override func setUpWithError() throws {
         self.date.dateOverride = Date(timeIntervalSince1970: 0)
@@ -29,11 +30,9 @@ final class LiveActivityRegistryTest: XCTestCase {
         await assertUpdate(
             LiveActivityUpdate(
                 action: .set,
-                id: "foo id",
-                name: "foo",
-                token: "foo token",
-                actionTimeMS: 1000,
-                startTimeMS: 0
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
+                actionTimeMS: 1000, 
+                token: "foo token"
             )
         )
 
@@ -43,10 +42,8 @@ final class LiveActivityRegistryTest: XCTestCase {
         await assertUpdate(
             LiveActivityUpdate(
                 action: .remove,
-                id: "foo id",
-                name: "foo",
-                actionTimeMS: 2000,
-                startTimeMS: 0
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
+                actionTimeMS: 2000
             )
         )
     }
@@ -59,11 +56,9 @@ final class LiveActivityRegistryTest: XCTestCase {
         await assertUpdate(
             LiveActivityUpdate(
                 action: .set,
-                id: "first id",
-                name: "foo",
-                token: "first token",
+                source: .liveActivity(id: "first id", name: "foo", startTimeMS: 0),
                 actionTimeMS: 0,
-                startTimeMS: 0
+                token: "first token"
             )
         )
 
@@ -73,10 +68,8 @@ final class LiveActivityRegistryTest: XCTestCase {
         await assertUpdate(
             LiveActivityUpdate(
                 action: .remove,
-                id: "first id",
-                name: "foo",
-                actionTimeMS: 0,
-                startTimeMS: 0
+                source: .liveActivity(id: "first id", name: "foo", startTimeMS: 0),
+                actionTimeMS: 0
             )
         )
     }
@@ -92,19 +85,76 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
         activity = TestLiveActivity("foo id")
 
-        await self.registry.restoreTracking(activities: [activity])
-        await self.registry.clearUntracked()
+        await self.registry.restoreTracking(activities: [activity], startTokenTrackers: [])
 
         activity.pushTokenString = "neat"
 
         await assertUpdate(
             LiveActivityUpdate(
                 action: .set,
-                id: "foo id",
-                name: "foo",
-                token: "neat",
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
                 actionTimeMS: 0,
-                startTimeMS: 0
+                token: "neat"
+            )
+        )
+    }
+    
+    func testRestoreEmitsStartTokenEvent() async throws {
+        tracker.token = "activity-token"
+        
+        await self.registry.restoreTracking(activities: [], startTokenTrackers: [tracker])
+
+        await assertUpdate(LiveActivityUpdate(
+            action: .set,
+            source: .startToken(attributeType: "TestPushToStartTracker"),
+            actionTimeMS: 0,
+            token: "activity-token"
+        ))
+
+        // Recreate it
+        self.registry = LiveActivityRegistry(
+            dataStore: self.dataStore,
+            date: self.date
+        )
+
+        await self.registry.restoreTracking(activities: [], startTokenTrackers: [])
+
+        await assertUpdate(LiveActivityUpdate(
+            action: .remove,
+            source: .startToken(attributeType: "TestPushToStartTracker"),
+            actionTimeMS: 0
+        ))
+    }
+    
+    @available(iOS 15.0, *)
+    func testRestoreResendsStaleTokens() async throws {
+        tracker.token = "activity-token"
+
+        await self.registry.restoreTracking(activities: [], startTokenTrackers: [tracker])
+
+        await assertUpdate(LiveActivityUpdate(
+            action: .set,
+            source: .startToken(attributeType: "TestPushToStartTracker"),
+            actionTimeMS: 0,
+            token: "activity-token"
+        ))
+
+        self.date.offset = 172800 + 2
+
+        // Recreate it
+        self.registry = LiveActivityRegistry(
+            dataStore: self.dataStore,
+            date: self.date
+        )
+
+        await self.registry.restoreTracking(activities: [], startTokenTrackers: [tracker])
+
+        await assertUpdate(
+            LiveActivityUpdate(
+                action: .set,
+                source: .startToken(attributeType: "TestPushToStartTracker"),
+                actionTimeMS: 172802000,
+                token: "activity-token"
             )
         )
     }
@@ -117,11 +167,9 @@ final class LiveActivityRegistryTest: XCTestCase {
         await assertUpdate(
             LiveActivityUpdate(
                 action: .set,
-                id: "foo id",
-                name: "foo",
-                token: "neat",
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
                 actionTimeMS: 0,
-                startTimeMS: 0
+                token: "neat"
             )
         )
 
@@ -132,16 +180,13 @@ final class LiveActivityRegistryTest: XCTestCase {
         )
 
         self.date.offset += 3
-        await self.registry.restoreTracking(activities: [])
-        await self.registry.clearUntracked()
+        await self.registry.restoreTracking(activities: [], startTokenTrackers: [])
 
         await assertUpdate(
             LiveActivityUpdate(
                 action: .remove,
-                id: "foo id",
-                name: "foo",
-                actionTimeMS: 3000,
-                startTimeMS: 0
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
+                actionTimeMS: 3000
             )
         )
     }
@@ -154,11 +199,9 @@ final class LiveActivityRegistryTest: XCTestCase {
         await assertUpdate(
             LiveActivityUpdate(
                 action: .set,
-                id: "foo id",
-                name: "foo",
-                token: "neat",
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
                 actionTimeMS: 0,
-                startTimeMS: 0
+                token: "neat"
             )
         )
 
@@ -168,17 +211,14 @@ final class LiveActivityRegistryTest: XCTestCase {
             date: self.date
         )
 
-        self.date.offset += 288000.1  // 8 hours and .1 second
-        await self.registry.restoreTracking(activities: [])
-        await self.registry.clearUntracked()
+        self.date.offset += 28800.1  // 8 hours and .1 second
+        await self.registry.restoreTracking(activities: [], startTokenTrackers: [])
 
         await assertUpdate(
             LiveActivityUpdate(
                 action: .remove,
-                id: "foo id",
-                name: "foo",
-                actionTimeMS: 288_000_000,  // 8 hours
-                startTimeMS: 0
+                source: .liveActivity(id: "foo id", name: "foo", startTimeMS: 0),
+                actionTimeMS: 2_880_0000  // 8 hours
             )
         )
     }
@@ -199,7 +239,11 @@ final class LiveActivityRegistryTest: XCTestCase {
 
         await self.registry.updatesProcessed(
             updates: [
-                LiveActivityUpdate(action: .set, id: "some-id", name: "some-name", actionTimeMS: 100, startTimeMS: 100)
+                LiveActivityUpdate(
+                    action: .set,
+                    source: .liveActivity(id: "some-id", name: "some-name", startTimeMS: 100),
+                    actionTimeMS: 100
+                )
             ]
         )
 
@@ -232,7 +276,11 @@ final class LiveActivityRegistryTest: XCTestCase {
 
         await self.registry.updatesProcessed(
             updates: [
-                LiveActivityUpdate(action: .set, id: "some-id", name: "some-name", actionTimeMS: 100, startTimeMS: 100)
+                LiveActivityUpdate(
+                    action: .set,
+                    source: .liveActivity(id: "some-id", name: "some-name", startTimeMS: 100),
+                    actionTimeMS: 100
+                )
             ]
         )
 
@@ -264,7 +312,11 @@ final class LiveActivityRegistryTest: XCTestCase {
 
         await self.registry.updatesProcessed(
             updates: [
-                LiveActivityUpdate(action: .set, id: "some-id", name: "some-name", actionTimeMS: 100, startTimeMS: 100)
+                LiveActivityUpdate(
+                    action: .set,
+                    source: .liveActivity(id: "some-id", name: "some-name", startTimeMS: 100),
+                    actionTimeMS: 100
+                )
             ]
         )
 
@@ -282,6 +334,84 @@ final class LiveActivityRegistryTest: XCTestCase {
         var updates = registry.registrationUpdates(name: "foo", id: nil).makeAsyncIterator()
         let status = await updates.next()
         XCTAssertEqual(status, .pending)
+    }
+    
+    func testLiveUpdateV1Restoring() throws {
+        let payload: [String: Any] = [
+            "id": "test-id",
+            "action": "set",
+            "name": "update-name",
+            "token": "some token",
+            "action_ts_ms": 123,
+            "start_ts_ms": 100
+        ]
+        
+        let updateToken = try decode(payload)
+
+        let expected = LiveActivityUpdate(
+            action: .set,
+            source: .liveActivity(
+                id: "test-id",
+                name: "update-name",
+                startTimeMS: 100
+            ),
+            actionTimeMS: 123,
+            token: "some token"
+        )
+
+        XCTAssertEqual(updateToken, expected)
+    }
+    
+    func testLiveUpdateV2RestoringUpdateToken() throws {
+        let payload: [String: Any] = [
+            "id": "test-id",
+            "action": "set",
+            "name": "update-name",
+            "token": "some token",
+            "action_ts_ms": 123,
+            "start_ts_ms": 100,
+            "type": "update_token"
+        ]
+
+        let updateToken = try decode(payload)
+        let expected = LiveActivityUpdate(
+            action: .set,
+            source: .liveActivity(
+                id: "test-id",
+                name: "update-name",
+                startTimeMS: 100
+            ),
+            actionTimeMS: 123,
+            token: "some token"
+        )
+
+        XCTAssertEqual(updateToken, expected)
+    }
+
+    func testLiveUpdateV2RestoringStartToken() throws {
+        let payload: [String: Any] = [
+            "action": "set",
+            "token": "some token",
+            "action_ts_ms": 123,
+            "attributes_type": "test-attribute types",
+            "type": "start_token"
+        ]
+
+        let startToken = try decode(payload)
+
+        let expected = LiveActivityUpdate(
+            action: .set,
+            source: .startToken(attributeType: "test-attribute types"),
+            actionTimeMS: 123,
+            token: "some token"
+        )
+
+        XCTAssertEqual(startToken, expected)
+    }
+    
+    private func decode(_ dict: [String: Any]) throws -> LiveActivityUpdate {
+        let data = try JSONSerialization.data(withJSONObject: dict)
+        return try JSONDecoder().decode(LiveActivityUpdate.self, from: data)
     }
 
     private func assertUpdate(
@@ -351,5 +481,16 @@ private final class TestLiveActivity: LiveActivityProtocol, @unchecked Sendable 
                 break
             }
         }
+    }
+}
+
+final class TestPushToStartTracker: LiveActivityPushToStartTrackerProtocol, @unchecked Sendable {
+    var attributeType: String { return String(describing: Self.self) }
+    
+    var token: String?
+    
+    func track(tokenUpdates: @escaping @Sendable (String) async -> Void) async {
+        guard let token = self.token else { return }
+        await tokenUpdates(token)
     }
 }

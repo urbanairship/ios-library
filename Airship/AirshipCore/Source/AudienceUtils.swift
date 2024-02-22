@@ -221,22 +221,24 @@ final class AudienceUtils {
     class func normalize(_ updates: [LiveActivityUpdate])
         -> [LiveActivityUpdate]
     {
-        var timeStamps: [String: Int64] = [:]
-
+        var timeStamps: Set<Int64> = Set()
         var normalized: [LiveActivityUpdate] = []
 
         updates.forEach { update in
-            if let timeStamp = timeStamps[update.name],
-                timeStamp >= update.actionTimeMS
-            {
+            var timeStamp = update.actionTimeMS
+            while timeStamps.contains(timeStamp) {
+                timeStamp = timeStamp + 1
+            }
+
+            if (timeStamp != update.actionTimeMS) {
                 var mutable = update
-                mutable.actionTimeMS = timeStamp + 1
+                mutable.actionTimeMS = timeStamp
                 normalized.append(mutable)
-                timeStamps[mutable.name] = mutable.actionTimeMS
             } else {
                 normalized.append(update)
-                timeStamps[update.name] = update.actionTimeMS
             }
+
+            timeStamps.insert(timeStamp)
         }
 
         return normalized

@@ -78,10 +78,8 @@ class ChannelAudienceManagerTest: XCTestCase {
 
         let activityUpdate = LiveActivityUpdate(
             action: .set,
-            id: "foo",
-            name: "bar",
-            actionTimeMS: 10,
-            startTimeMS: 10
+            source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+            actionTimeMS: 10
         )
 
         self.audienceManager.addLiveActivityUpdate(activityUpdate)
@@ -324,10 +322,8 @@ class ChannelAudienceManagerTest: XCTestCase {
     func testLiveActivityUpdates() async throws {
         let activityUpdate = LiveActivityUpdate(
             action: .set,
-            id: "foo",
-            name: "bar",
-            actionTimeMS: 10,
-            startTimeMS: 10
+            source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+            actionTimeMS: 10
         )
 
         self.audienceManager.addLiveActivityUpdate(activityUpdate)
@@ -352,62 +348,46 @@ class ChannelAudienceManagerTest: XCTestCase {
         let activityUpdates = [
             LiveActivityUpdate(
                 action: .set,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 10,
-                startTimeMS: 10
+                source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 10
             ),
             LiveActivityUpdate(
                 action: .remove,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 10,
-                startTimeMS: 10
+                source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 10
             ),
             LiveActivityUpdate(
                 action: .set,
-                id: "some other foo",
-                name: "bar",
-                actionTimeMS: 10,
-                startTimeMS: 10
+                source: .liveActivity(id: "some other foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 10
             ),
             LiveActivityUpdate(
                 action: .set,
-                id: "something else",
-                name: "something else",
-                actionTimeMS: 1,
-                startTimeMS: 1
+                source: .liveActivity(id: "something else", name: "something else", startTimeMS: 10),
+                actionTimeMS: 10
             ),
         ]
 
         let expected = [
             LiveActivityUpdate(
                 action: .set,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 10,
-                startTimeMS: 10
+                source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 10
             ),
             LiveActivityUpdate(
                 action: .remove,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 11,
-                startTimeMS: 10
+                source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 11
             ),
             LiveActivityUpdate(
                 action: .set,
-                id: "some other foo",
-                name: "bar",
-                actionTimeMS: 12,
-                startTimeMS: 10
+                source: .liveActivity(id: "some other foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 12
             ),
             LiveActivityUpdate(
                 action: .set,
-                id: "something else",
-                name: "something else",
-                actionTimeMS: 1,
-                startTimeMS: 1
+                source: .liveActivity(id: "something else", name: "something else", startTimeMS: 10),
+                actionTimeMS: 13
             ),
         ]
 
@@ -436,24 +416,18 @@ class ChannelAudienceManagerTest: XCTestCase {
         let updates = [
             LiveActivityUpdate(
                 action: .set,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 10,
-                startTimeMS: 10
+                source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 10
             ),
             LiveActivityUpdate(
                 action: .remove,
-                id: "foo",
-                name: "bar",
-                actionTimeMS: 11,
-                startTimeMS: 10
+                source: .liveActivity(id: "foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 11
             ),
             LiveActivityUpdate(
                 action: .set,
-                id: "some other foo",
-                name: "bar",
-                actionTimeMS: 12,
-                startTimeMS: 10
+                source: .liveActivity(id: "some other foo", name: "bar", startTimeMS: 10),
+                actionTimeMS: 12
             ),
         ]
 

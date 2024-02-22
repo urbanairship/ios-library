@@ -35,8 +35,10 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
         let url = try makeURL(channelID: channelID)
         let payload = update.clientPayload
 
+        let data = try encoder.encode(payload)
+
         AirshipLogger.debug(
-            "Updating channel with url \(url.absoluteString) payload \(payload)"
+            "Updating channel with url \(url.absoluteString) payload \(String(data: data, encoding: .utf8) ?? "")"
         )
 
         let request = AirshipRequest(
@@ -47,7 +49,7 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
             ],
             method: "PUT",
             auth: .channelAuthToken(identifier: channelID),
-            body: try? encoder.encode(payload)
+            body: try encoder.encode(payload)
         )
         return try await session.performHTTPRequest(request)
     }

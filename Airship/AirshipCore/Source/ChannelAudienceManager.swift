@@ -361,7 +361,6 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             channelID: channelID
         )
 
-
         AirshipLogger.debug(
             "Update finished with response: \(response)"
         )

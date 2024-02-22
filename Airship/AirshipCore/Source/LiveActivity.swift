@@ -3,6 +3,12 @@
 import Foundation
 
 /// LiveActivity protocol. Makes everything testable.
+protocol LiveActivityPushToStartTrackerProtocol: Sendable {
+    var attributeType: String { get }
+    func track(tokenUpdates: @Sendable @escaping (String) async -> Void) async
+}
+
+/// LiveActivity protocol. Makes everything testable.
 protocol LiveActivityProtocol: Sendable {
     /// The activity's ID
     var id: String { get }
@@ -21,6 +27,35 @@ protocol LiveActivityProtocol: Sendable {
 #if canImport(ActivityKit)
 
 import ActivityKit
+
+@available(iOS 17.2, *)
+struct LiveActivityPushToStartTracker<T: ActivityAttributes>: LiveActivityPushToStartTrackerProtocol {
+    var attributeType: String {
+        return String(describing: T.self)
+    }
+
+
+    func track(tokenUpdates: @escaping @Sendable (String) async -> Void) async {
+        var tokenString: String? = Activity<T>.pushToStartToken?.tokenString
+
+        if let tokenString = tokenString {
+            await tokenUpdates(tokenString)
+        }
+
+        for await token in Activity<T>.pushToStartTokenUpdates {
+            if Task.isCancelled {
+               break
+            }
+
+            let newTokenString = token.tokenString
+            if tokenString != newTokenString {
+                tokenString = newTokenString
+                await tokenUpdates(newTokenString)
+            }
+        }
+    }
+}
+
 
 @available(iOS 16.1, *)
 fileprivate struct ActivityProvider<T : ActivityAttributes>: Sendable {

@@ -20,6 +20,9 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
     private let tagsLock = AirshipLock()
     private let subscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
 
+    private let liveActivityQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
+
+
     #if canImport(ActivityKit)
     private let liveActivityRegistry: LiveActivityRegistry
     #endif
@@ -124,13 +127,15 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         )
 
         self.audienceManager.channelID = self.channelRegistrar.channelID
-
+        self.audienceManager.enabled = true
+        
         if let identifier = self.identifier {
             AirshipLogger.importantInfo("Channel ID \(identifier)")
         }
 
         self.observeNotificationCenterEvents()
         self.updateRegistration()
+
 
 
         #if canImport(ActivityKit)
@@ -515,10 +520,9 @@ extension AirshipChannel {
     ) {
         let liveActivity = LiveActivity(activity: activity)
 
-        Task {
+        liveActivityQueue.enqueue { [liveActivityRegistry] in
             await liveActivityRegistry.addLiveActivity(liveActivity, name: name)
         }
-
     }
 
     /// Called to restore live activity tracking. This method needs to be called exactly once
@@ -529,12 +533,10 @@ extension AirshipChannel {
     public func restoreLiveActivityTracking(
         callback: @escaping @Sendable (LiveActivityRestorer) async -> Void
     ) {
-        let restorer = AirshipLiveActivityRestorer(
-            registry: self.liveActivityRegistry
-        )
-        Task {
+        liveActivityQueue.enqueue { [liveActivityRegistry] in
+            let restorer = AirshipLiveActivityRestorer()
             await callback(restorer)
-            await self.liveActivityRegistry.clearUntracked()
+            await restorer.apply(registry: liveActivityRegistry)
         }
     }
 }
