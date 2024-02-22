@@ -115,8 +115,11 @@ public final class AirshipDebugManager {
                     date: incoming.date,
                     body: body
                 )
-
-                self.eventDataManager.saveEvent(airshipEvent)
+                
+                Task {
+                    await self.eventDataManager.saveEvent(airshipEvent)
+                }
+                
                 self.eventReceivedSubject.send(airshipEvent)
             }
 
@@ -216,7 +219,9 @@ public final class AirshipDebugManager {
         }
 
         self.pushNotifiacitonReceivedSubject.send(pushPayload)
-        self.pushDataManager.savePushNotification(pushPayload)
+        Task {
+            await self.pushDataManager.savePushNotification(pushPayload)
+        }
     }
 }
 

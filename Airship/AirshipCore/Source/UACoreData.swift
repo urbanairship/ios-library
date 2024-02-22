@@ -208,86 +208,40 @@ public final class UACoreData: @unchecked Sendable {
     }
 
     
-    public func safePerform(
-        _ block: @escaping (Bool, NSManagedObjectContext) -> Void
-    ) {
-        context.perform({ [weak self] in
-            guard let strongSelf = self else {
-                return
+    @discardableResult
+    public func safePerform<T: Sendable>(
+        _ block: @escaping @Sendable (Bool, NSManagedObjectContext) -> T
+    ) async -> T? {
+        
+        do {
+            return try await performWithResult { context in
+                return block(true, context)
             }
-
-            guard !strongSelf.isFinished else {
-                return
-            }
-
-            strongSelf.shouldCreateStore = true
-            strongSelf.createPendingStores()
-
-            if (strongSelf.context.persistentStoreCoordinator?.persistentStores
-                .count
-                ?? 0) != 0
-            {
-                block(true, strongSelf.context)
+        } catch {
+            if context.persistentStoreCoordinator?.persistentStores.count == 0 {
+                return block(false, context)
             } else {
-                block(false, strongSelf.context)
+                AirshipLogger.error("Failed to perform block: \(error)")
+                return nil
             }
-        })
-    }
-
-    public func safePerformAndWait(
-        _ block: @escaping (Bool, NSManagedObjectContext) -> Void
-    ) {
-        context.performAndWait({ [weak self] in
-            guard let strongSelf = self else {
-                return
-            }
-
-            guard !strongSelf.isFinished else {
-                return
-            }
-
-            strongSelf.shouldCreateStore = true
-            strongSelf.createPendingStores()
-
-            if (strongSelf.context.persistentStoreCoordinator?.persistentStores
-                .count
-                ?? 0) != 0
-            {
-                block(true, strongSelf.context)
-            } else {
-                block(false, strongSelf.context)
-            }
-        })
+        }
     }
 
     public func performBlockIfStoresExist(
-        _ block: @escaping (Bool, NSManagedObjectContext) -> Void
-    ) {
-        context.perform({ [weak self] in
-            guard let strongSelf = self else {
-                return
+        _ block: @escaping @Sendable (Bool, NSManagedObjectContext) -> Void
+    ) async {
+        
+        do {
+            try await perform(skipIfStoreNotCreated: true) { context in
+                block(true, context)
             }
-
-            guard !strongSelf.isFinished else {
-                return
-            }
-
-            guard strongSelf.inMemory || strongSelf.storesExistOnDisk() else {
-                return
-            }
-
-            strongSelf.shouldCreateStore = true
-            strongSelf.createPendingStores()
-
-            if (strongSelf.context.persistentStoreCoordinator?.persistentStores
-                .count
-                ?? 0) != 0
-            {
-                block(true, strongSelf.context)
+        } catch {
+            if context.persistentStoreCoordinator?.persistentStores.count == 0 {
+                block(false, context)
             } else {
-                block(false, strongSelf.context)
+                AirshipLogger.error("Failed to perform block: \(error)")
             }
-        })
+        }
     }
 
     public func waitForIdle() {

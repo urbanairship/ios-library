@@ -26,29 +26,24 @@ class PushDataManager {
             stores: ["AirshipDebugPushData-\(appKey).sqlite"]
         )
 
-        self.trimDatabase()
+        Task {
+            await self.trimDatabase()
+        }
     }
 
-    private func trimDatabase() {
-        coreData.performBlockIfStoresExist { isSafe, context in
+    private func trimDatabase() async {
+        
+        let storageDaysInterval = Date()
+            .addingTimeInterval(-self.maxAge)
+            .timeIntervalSince1970
+        
+        await coreData.performBlockIfStoresExist { isSafe, context in
             guard isSafe else { return }
 
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> =
-                PushData.fetchRequest()
-
-            let storageDaysInterval = Date()
-                .addingTimeInterval(
-                    -self.maxAge
-                )
-                .timeIntervalSince1970
-
-            fetchRequest.predicate = NSPredicate(
-                format: "time < %f",
-                storageDaysInterval
-            )
-            let batchDeleteRequest = NSBatchDeleteRequest(
-                fetchRequest: fetchRequest
-            )
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = PushData.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "time < %f", storageDaysInterval)
+            
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
             do {
                 _ = try context.execute(batchDeleteRequest)
@@ -58,10 +53,11 @@ class PushDataManager {
         }
     }
 
-    public func savePushNotification(_ push: PushNotification) {
-        coreData.safePerform { isSafe, context in
-            guard isSafe,
-                !self.pushExists(id: push.pushID, context: context)
+    public func savePushNotification(_ push: PushNotification) async {
+        await coreData.safePerform { [isExists = self.pushExists] isSafe, context in
+            guard 
+                isSafe,
+                !isExists(push.pushID, context)
             else {
                 return
             }
@@ -78,6 +74,7 @@ class PushDataManager {
         }
     }
 
+    @Sendable
     private func pushExists(id: String, context: NSManagedObjectContext) -> Bool
     {
         let fetchRequest: NSFetchRequest = PushData.fetchRequest()
@@ -92,33 +89,30 @@ class PushDataManager {
     }
 
     func pushNotifications() async -> [PushNotification] {
-        return await withUnsafeContinuation { continuation in
-            coreData.safePerform { isSafe, context in
-                guard isSafe else {
-                    continuation.resume(returning: [])
-                    return
-                }
-
-                let fetchRequest: NSFetchRequest = PushData.fetchRequest()
-                fetchRequest.sortDescriptors = [
-                    NSSortDescriptor(key: "time", ascending: false)
-                ]
-
-                do {
-                    let result = try context.fetch(fetchRequest)
-                    let notifications = result.map {
-                        PushNotification(pushData: $0)
-                    }
-                    continuation.resume(returning: notifications)
-                } catch {
-                    if let error = error as NSError? {
-                        print(
-                            "ERROR: error fetching push payload list - \(error), \(error.userInfo)"
-                        )
-                    }
-                    continuation.resume(returning: [])
-                }
+        return await coreData.safePerform { (isSafe, context) -> [PushNotification] in
+            guard isSafe else {
+                return []
             }
-        }
+            
+            let fetchRequest: NSFetchRequest = PushData.fetchRequest()
+            fetchRequest.sortDescriptors = [
+                NSSortDescriptor(key: "time", ascending: false)
+            ]
+            
+            do {
+                let result = try context.fetch(fetchRequest)
+                let notifications = result.map {
+                    PushNotification(pushData: $0)
+                }
+                return notifications
+            } catch {
+                if let error = error as NSError? {
+                    print(
+                        "ERROR: error fetching push payload list - \(error), \(error.userInfo)"
+                    )
+                }
+                return []
+            }
+        } ?? []
     }
 }
