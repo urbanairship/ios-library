@@ -242,7 +242,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(onEnabledFeaturesChanged),
-            name: AirshipNotifications.privacyManagerChangeEvent,
+            name: AirshipNotifications.PrivacyManagerUpdated.name,
             object: nil
         )
     }
@@ -1140,10 +1140,10 @@ extension AirshipPush: InternalPushProtocol {
         }
 
         self.notificationCenter.post(
-            name: AirshipNotifications.receivedNotificationResponseEvent,
+            name: AirshipNotifications.ReceivedNotificationResponse.name,
             object: self,
             userInfo: [
-                AirshipNotifications.receivedNotificationResponseEventResponseKey: response
+                AirshipNotifications.ReceivedNotificationResponse.responseKey: response
             ]
         )
 
@@ -1175,12 +1175,16 @@ extension AirshipPush: InternalPushProtocol {
 
         let delegate = self.pushNotificationDelegate
 
+        self.notificationCenter.post(
+            name: AirshipNotifications.RecievedNotification.name,
+            object: self,
+            userInfo: [
+                AirshipNotifications.RecievedNotification.isForegroundKey: isForeground,
+                AirshipNotifications.RecievedNotification.notificationKey: notification
+            ]
+        )
+
         if isForeground {
-            self.notificationCenter.post(
-                name: AirshipNotifications.receivedForegroundNotificationEvent,
-                object: self,
-                userInfo: notification
-            )
             if let callback = delegate?.receivedForegroundNotification {
                 callback(
                     notification,
@@ -1200,11 +1204,6 @@ extension AirshipPush: InternalPushProtocol {
                 #endif
             }
         } else {
-            self.notificationCenter.post(
-                name: AirshipNotifications.receivedBackgroundNotificationEvent,
-                object: self,
-                userInfo: notification
-            )
             if let callback = delegate?.receivedBackgroundNotification {
                 callback(
                     notification,
@@ -1271,28 +1270,35 @@ extension AirshipPush: AirshipComponent {}
 
 public extension AirshipNotifications {
 
-    /// NSNotification event when a notification response is received.
-    /// The event will contain the notification response object.
-    @objc
-    static let receivedNotificationResponseEvent = NSNotification.Name(
-        "com.urbanairship.push.received_notification_response"
-    )
+    /// NSNotification info when enabled feature changed on PrivacyManager.
+    @objc(UAirshipNotificationReceivedNotificationResponse)
+    final class ReceivedNotificationResponse: NSObject {
 
-    /// Response key for ReceivedNotificationResponseEvent
-    @objc
-    static let receivedNotificationResponseEventResponseKey = "response"
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.push.received_notification_response"
+        )
 
-    /// NSNotification event when a foreground notification is received.
-    /// The event will contain the payload dictionary as user info.
-    @objc
-    static let receivedForegroundNotificationEvent = NSNotification.Name(
-        "com.urbanairship.push.received_foreground_notification"
-    )
+        /// NSNotification userInfo key to get the response dictionary.
+        public static let responseKey: String = "response"
+    }
 
-    /// NSNotification event when a background notification is received.
-    /// The event will contain the payload dictionary as user info.
-    @objc
-    static let receivedBackgroundNotificationEvent = NSNotification.Name(
-        "com.urbanairship.push.received_background_notification"
-    )
+
+    /// NSNotification info when enabled feature changed on PrivacyManager.
+    @objc(UAirshipNotificationRecievedNotification)
+    final class RecievedNotification: NSObject {
+
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.push.received_notification"
+        )
+
+        /// NSNotification userInfo key to get a boolean if the notification was received in the foreground or not.
+        public static let isForegroundKey: String = "is_foreground"
+
+        /// NSNotification userInfo key to get the notification user info.
+        public static let notificationKey: String = "notification"
+    }
 }

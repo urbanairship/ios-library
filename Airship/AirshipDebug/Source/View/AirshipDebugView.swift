@@ -383,7 +383,7 @@ private class AirshipDebugViewModel: ObservableObject {
 
     private func subscribeUpdates() {
         NotificationCenter.default
-            .publisher(for: AirshipNotifications.channelCreatedEvent)
+            .publisher(for: AirshipNotifications.ChannelCreated.name)
             .sink(receiveValue: { _ in
                 self.channelID = Airship.channel.identifier
             })

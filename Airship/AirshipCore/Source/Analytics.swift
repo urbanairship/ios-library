@@ -144,14 +144,14 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateEnablement),
-            name: AirshipNotifications.privacyManagerChangeEvent,
+            name: AirshipNotifications.PrivacyManagerUpdated.name,
             object: nil
         )
 
         self.notificationCenter.addObserver(
             self,
             selector: #selector(updateEnablement),
-            name: AirshipNotifications.channelCreatedEvent,
+            name: AirshipNotifications.ChannelCreated.name,
             object: nil
         )
 

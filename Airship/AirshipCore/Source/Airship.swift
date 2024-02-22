@@ -336,17 +336,17 @@ public class Airship: NSObject {
 
         if self.shared.airshipInstance.config.isExtendedBroadcastsEnabled {
             var userInfo: [String: Any] = [:]
-            userInfo[AirshipNotifications.airshipReadyChannelIdentifier] =
+            userInfo[AirshipNotifications.AirshipReady.channelIDKey] =
                 self.channel.identifier
-            userInfo[AirshipNotifications.airshipReadyAppKey] = self.shared.airshipInstance.config.appKey
-            userInfo[AirshipNotifications.airshipReadyPayloadVersion] = 1
+            userInfo[AirshipNotifications.AirshipReady.appKey] = self.shared.airshipInstance.config.appKey
+            userInfo[AirshipNotifications.AirshipReady.payloadVersionKey] = 1
             NotificationCenter.default.post(
-                name: AirshipNotifications.airshipReadyNotification,
+                name: AirshipNotifications.AirshipReady.name,
                 object: userInfo
             )
         } else {
             NotificationCenter.default.post(
-                name: AirshipNotifications.airshipReadyNotification,
+                name: AirshipNotifications.AirshipReady.name,
                 object: nil
             )
         }
@@ -527,26 +527,29 @@ public class Airship: NSObject {
     }
 }
 
-
-
 /// NSNotificationCenter keys event names
 @objc(UAirshipNotifications)
 public final class AirshipNotifications: NSObject {
+
     /// Notification when Airship is ready.
-    @objc
-    public static let airshipReadyNotification = NSNotification.Name(
-        "com.urbanairship.airship_ready"
-    )
+    @objc(UAirshipNotificationsAirshipReady)
+    public final class AirshipReady: NSObject {
+        /// Notification name
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.airship_ready"
+        )
 
-    /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
-    @objc
-    public static let airshipReadyChannelIdentifier = "channel_id"
+        /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
+        @objc
+        public static let channelIDKey = "channel_id"
 
-    /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
-    @objc
-    public static let airshipReadyAppKey = "app_key"
+        /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
+        @objc
+        public static let appKey = "app_key"
 
-    /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
-    @objc
-    public static let airshipReadyPayloadVersion = "payload_version"
+        /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
+        @objc
+        public static let payloadVersionKey = "payload_version"
+    }
 }

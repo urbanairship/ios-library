@@ -59,7 +59,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
     func testNotificationWhenOverrideChanges() {
         let expectation = self.expectation(description: "update called")
         self.notificationCenter.addObserver(
-            forName: AirshipNotifications.localeUpdatedEvent
+            forName: AirshipNotifications.LocaleUpdated.name
         ) { _ in
             expectation.fulfill()
         }
@@ -74,7 +74,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
 
         let expectation = self.expectation(description: "update called")
         self.notificationCenter.addObserver(
-            forName: AirshipNotifications.localeUpdatedEvent
+            forName: AirshipNotifications.LocaleUpdated.name
         ) { _ in
             expectation.fulfill()
         }
@@ -87,7 +87,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
     func testNotificationWhenAutoUpdateChanges() {
         let expectation = self.expectation(description: "update called")
         self.notificationCenter.addObserver(
-            forName: AirshipNotifications.localeUpdatedEvent
+            forName: AirshipNotifications.LocaleUpdated.name
         ) { _ in
             expectation.fulfill()
         }

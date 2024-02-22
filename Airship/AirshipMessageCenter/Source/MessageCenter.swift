@@ -89,7 +89,7 @@ public class MessageCenter: NSObject, ObservableObject {
         super.init()
 
         notificationCenter.addObserver(
-            forName: AirshipNotifications.privacyManagerChangeEvent,
+            forName: AirshipNotifications.PrivacyManagerUpdated.name,
             object: nil,
             queue: nil
         ) { [weak self, inbox] _ in

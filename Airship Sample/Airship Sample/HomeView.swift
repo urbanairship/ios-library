@@ -195,7 +195,7 @@ struct HomeView: View {
         @MainActor
         init() {
             NotificationCenter.default
-                .publisher(for: AirshipNotifications.channelCreatedEvent)
+                .publisher(for: AirshipNotifications.ChannelCreated.name)
                 .receive(on: RunLoop.main)
                 .sink { _ in
                     self.channelID = Airship.channel.identifier

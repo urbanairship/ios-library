@@ -74,7 +74,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(updateData),
-            name: AirshipNotifications.privacyManagerChangeEvent,
+            name: AirshipNotifications.PrivacyManagerUpdated.name,
             object: nil
         )
     }

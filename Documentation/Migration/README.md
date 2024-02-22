@@ -1,5 +1,6 @@
 
 # Airship iOS SDK Migration Guides
+* [SDK 17.x to 18.x](migration-guide-17-18.md)
 * [SDK 16.x to 17.x](migration-guide-16-17.md)
 * [SDK 15.x to 16.x](migration-guide-15-16.md)
 * [SDK 14.5 to 16.x](migration-guide-14-16.md)

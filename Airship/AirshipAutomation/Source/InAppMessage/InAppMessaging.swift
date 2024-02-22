@@ -31,6 +31,11 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
         forType: CustomDisplayAdapterType,
         factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
     )
+
+    /// Notifies In-App messages that the display conditions should be reevaluated.
+    /// This should only be called when state that was used to prevent a display with  `InAppMessageDisplayDelegate` changes.
+    @MainActor
+    func notifyDisplayConditionsChanged()
 }
 
 final class InAppMessaging: InAppMessagingProtocol {
@@ -82,4 +87,11 @@ final class InAppMessaging: InAppMessagingProtocol {
         self.executor = executor
         self.preparer = preparer
     }
+
+    @MainActor
+    func notifyDisplayConditionsChanged() {
+        executor.notifyDisplayConditionsChanged()
+    }
+
+
 }

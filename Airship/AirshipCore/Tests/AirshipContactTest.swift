@@ -146,7 +146,7 @@ class AirshipContactTest: XCTestCase {
     @MainActor
     func testChannelCreatedEnqueuesUpdateTask() async throws {
         notificationCenter.post(
-            name: AirshipNotifications.channelCreatedEvent
+            name: AirshipNotifications.ChannelCreated.name
         )
 
         await verifyOperations([.resolve])
@@ -392,7 +392,7 @@ class AirshipContactTest: XCTestCase {
     @MainActor
     func testResolveSkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
-        notificationCenter.post(name: AirshipNotifications.channelCreatedEvent)
+        notificationCenter.post(name:  AirshipNotifications.ChannelCreated.name)
         await self.verifyOperations([.reset])
     }
 
@@ -776,8 +776,8 @@ class AirshipContactTest: XCTestCase {
         )
 
         let expectation = XCTestExpectation()
-        self.notificationCenter.addObserver(forName: AirshipNotifications.contactConflictEvent, object: nil, queue: nil) { notification in
-            XCTAssertEqual(event, notification.userInfo?[AirshipNotifications.contactConflictEventKey] as? ContactConflictEvent)
+        self.notificationCenter.addObserver(forName: AirshipNotifications.ContactConflict.name, object: nil, queue: nil) { notification in
+            XCTAssertEqual(event, notification.userInfo?[AirshipNotifications.ContactConflict.eventKey] as? ContactConflictEvent)
             expectation.fulfill()
         }
 

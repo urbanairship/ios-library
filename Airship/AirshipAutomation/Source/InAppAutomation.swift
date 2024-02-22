@@ -109,7 +109,7 @@ extension InAppAutomation {
             await self.engine.start()
         }
 
-        self.notificationCenter.addObserver(forName: AirshipNotifications.privacyManagerChangeEvent) { [weak self] _ in
+        self.notificationCenter.addObserver(forName: AirshipNotifications.PrivacyManagerUpdated.name) { [weak self] _ in
             self?.privacyManagerUpdated()
         }
         self.privacyManagerUpdated()

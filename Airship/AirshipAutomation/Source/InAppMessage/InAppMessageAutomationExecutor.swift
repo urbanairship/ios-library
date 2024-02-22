@@ -165,6 +165,11 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         return .finish
     }
 
+    @MainActor
+    func notifyDisplayConditionsChanged() {
+        self.scheduleConditionsChangedNotifier.notify()
+    }
+
     /// Delegates holder so I can keep the executor sendable
     private final class Delegates: @unchecked Sendable {
         @MainActor

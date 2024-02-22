@@ -215,7 +215,9 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
             let enabledFeatures = self.enabledFeatures
             guard enabledFeatures != lastUpdated else { return }
             self.lastUpdated = enabledFeatures
-            self.notificationCenter.postOnMain(name: AirshipNotifications.privacyManagerChangeEvent)
+            self.notificationCenter.postOnMain(
+                name: AirshipNotifications.PrivacyManagerUpdated.name
+            )
         }
     }
 }
@@ -362,11 +364,15 @@ extension AirshipFeature: Codable {
 
 
 public extension AirshipNotifications {
-    /**
-    * NSNotification event when enabled feature changed on PrivacyManager.
-     */
-    @objc
-    static let privacyManagerChangeEvent = Notification.Name(
-        "com.urbanairship.privacymanager.enabledfeatures_changed"
-    )
+
+    /// NSNotification info when enabled feature changed on PrivacyManager.
+    @objc(UAirshipNotificationPrivacyManagerUpdated)
+    final class PrivacyManagerUpdated: NSObject {
+
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.privacymanager.enabledfeatures_changed"
+        )
+    }
 }

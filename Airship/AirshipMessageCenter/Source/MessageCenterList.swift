@@ -220,7 +220,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
 
         notificationCenter.addObserver(
-            forName: AirshipNotifications.channelCreatedEvent,
+            forName: AirshipNotifications.ChannelCreated.name,
             object: nil,
             queue: nil
         ) { [weak self] _ in
@@ -235,7 +235,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
             .receive(on: RunLoop.main)
             .sink { _ in
                 notificationCenter.post(
-                    name: AirshipNotifications.messageCenterListUpdatedEvent,
+                    name: AirshipNotifications.MessageCenterListUpdated.name,
                     object: nil
                 )
             }
@@ -629,8 +629,15 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
 
 
 public extension AirshipNotifications {
-    /// Message Center list updated event
-    static let messageCenterListUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.notification.message_list_updated"
-    )
+    
+    /// NSNotification info when the inbox is updated is updated.
+    @objc(UAirshipNotificationMessageCenterListUpdated)
+    final class MessageCenterListUpdated: NSObject {
+
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.notification.message_list_updated"
+        )
+    }
 }

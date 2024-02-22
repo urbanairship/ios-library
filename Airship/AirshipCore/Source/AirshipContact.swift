@@ -177,10 +177,10 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             .receive(on: RunLoop.main)
             .sink { event in
                 notificationCenter.post(
-                    name: AirshipNotifications.contactConflictEvent,
+                    name: AirshipNotifications.ContactConflict.name,
                     object: nil,
                     userInfo: [
-                        AirshipNotifications.contactConflictEventKey: event
+                        AirshipNotifications.ContactConflict.eventKey: event
                     ]
                 )
             }.store(in: &self.subscriptions)
@@ -209,14 +209,14 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         notificationCenter.addObserver(
             self,
             selector: #selector(channelCreated),
-            name: AirshipNotifications.channelCreatedEvent,
+            name: AirshipNotifications.ChannelCreated.name,
             object: nil
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: AirshipNotifications.privacyManagerChangeEvent,
+            name: AirshipNotifications.PrivacyManagerUpdated.name,
             object: nil
         )
 
@@ -621,9 +621,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             return
         }
 
-        let existing =
-            notification.userInfo?[AirshipNotifications.channelExistingKey] as? Bool
-
+        let existing = notification.userInfo?[AirshipNotifications.ChannelCreated.isExistingChannelKey] as? Bool
 
         if existing == true && self.config.clearNamedUserOnAppRestore {
             self.addOperation(.reset)
@@ -769,14 +767,19 @@ extension AirshipContact: AirshipComponent {}
 
 
 public extension AirshipNotifications {
-    // NSNotification event name when a conflict event is emitted. The `ContactConflictEvent`
-    // will be available in the userInfo under the key `contactConflictEventKey`.
-    @objc
-    static let contactConflictEvent = NSNotification.Name(
-        "com.urbanairship.contact_conflict"
-    )
 
-    // NSNotification userInfo key to get the `ContactConflictEvent`.
-    @objc
-    static let contactConflictEventKey = "event"
+    /// NSNotification info when a conflict event is emitted.
+    @objc(UAirshipNotificationContactConflict)
+    final class ContactConflict: NSObject {
+
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.contact_conflict"
+        )
+
+        /// NSNotification userInfo key to get the `ContactConflictEvent`.
+        @objc
+        public static let eventKey = "event"
+    }
 }

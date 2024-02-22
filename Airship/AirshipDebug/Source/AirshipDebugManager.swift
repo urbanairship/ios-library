@@ -164,46 +164,33 @@ public final class AirshipDebugManager {
     func observePayloadEvents() {
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(receivedForegroundNotification(notification:)),
-            name: AirshipNotifications.receivedForegroundNotificationEvent,
+            selector: #selector(receivedNotification(notification:)),
+            name: AirshipNotifications.RecievedNotification.name,
             object: nil
         )
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(receivedBackgroundNotification(notification:)),
-            name: AirshipNotifications.receivedBackgroundNotificationEvent,
-            object: nil
-        )
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(receivedNotificationResponse(notification:)),
-            name: AirshipNotifications.receivedNotificationResponseEvent,
+            name: AirshipNotifications.ReceivedNotificationResponse.name,
             object: nil
         )
     }
 
-    @objc func receivedForegroundNotification(notification: NSNotification) {
-        guard let userInfo = notification.userInfo else {
+    @objc func receivedNotification(notification: NSNotification) {
+        guard let userInfo = notification.userInfo?[AirshipNotifications.RecievedNotification.notificationKey] as? [AnyHashable: Any] else {
             return
         }
         savePush(userInfo: userInfo)
     }
 
-    @objc func receivedBackgroundNotification(notification: NSNotification) {
-        guard let userInfo = notification.userInfo else {
-            return
-        }
-
-        savePush(userInfo: userInfo)
-    }
 
     @objc func receivedNotificationResponse(notification: NSNotification) {
         guard
             let response =
                 notification.userInfo?[
-                    AirshipNotifications.receivedNotificationResponseEventResponseKey
+                    AirshipNotifications.ReceivedNotificationResponse.responseKey
                 ] as? UNNotificationResponse
         else {
             return

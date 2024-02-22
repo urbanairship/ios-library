@@ -122,7 +122,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         notificationCenter.addObserver(
             self,
             selector: #selector(checkPrivacyManager),
-            name: AirshipNotifications.privacyManagerChangeEvent,
+            name: AirshipNotifications.PrivacyManagerUpdated.name,
             object: nil
         )
 

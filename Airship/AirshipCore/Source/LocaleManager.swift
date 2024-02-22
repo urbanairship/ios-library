@@ -85,8 +85,8 @@ final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
 
     private func dispatchUpdate() {
         notificationCenter.postOnMain(
-            name: AirshipNotifications.localeUpdatedEvent,
-            object: [AirshipNotifications.localeEventKey: self.currentLocale]
+            name: AirshipNotifications.LocaleUpdated.name,
+            object: [AirshipNotifications.LocaleUpdated.localeKey: self.currentLocale]
         )
     }
 }
@@ -129,11 +129,20 @@ fileprivate extension PreferenceDataStore {
 
 
 public extension AirshipNotifications {
-    @objc
-    static let localeUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.locale.locale_updated"
-    )
 
-    @objc
-    static let localeEventKey = "locale"
+    /// NSNotification info when the locale is updated.
+    @objc(UAirshipNotificationLocaleUpdated)
+    final class LocaleUpdated: NSObject {
+
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.locale.locale_updated"
+        )
+        
+        /// NSNotification userInfo key to get the locale.
+        @objc
+        public static let localeKey = "locale"
+    }
+
 }

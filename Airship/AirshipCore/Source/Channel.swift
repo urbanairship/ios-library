@@ -217,13 +217,13 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         notificationCenter.addObserver(
             self,
             selector: #selector(onEnableFeaturesChanged),
-            name: AirshipNotifications.privacyManagerChangeEvent
+            name: AirshipNotifications.PrivacyManagerUpdated.name
         )
 
         notificationCenter.addObserver(
             self,
             selector: #selector(localeUpdates),
-            name: AirshipNotifications.localeUpdatedEvent
+            name: AirshipNotifications.LocaleUpdated.name
         )
     }
 
@@ -407,20 +407,15 @@ extension AirshipChannel: AirshipPushableComponent {
             AirshipLogger.importantInfo("Channel ID: \(channelID)")
             self.audienceManager.channelID = channelID
             self.notificationCenter.post(
-                name: AirshipNotifications.channelCreatedEvent,
+                name: AirshipNotifications.ChannelCreated.name,
                 object: self,
                 userInfo: [
-                    AirshipNotifications.channelIdentifierKey: channelID,
-                    AirshipNotifications.channelExistingKey: isExisting,
+                    AirshipNotifications.ChannelCreated.channelIDKey: channelID,
+                    AirshipNotifications.ChannelCreated.isExistingChannelKey: isExisting,
                 ]
             )
-        case .updated(let channelID):
+        case .updated(_):
             AirshipLogger.info("Channel updated.")
-            self.notificationCenter.post(
-                name: AirshipNotifications.channelUpdatedEvent,
-                object: self,
-                userInfo: [AirshipNotifications.channelIdentifierKey: channelID]
-            )
         }
     }
 
@@ -550,31 +545,24 @@ extension AirshipChannel: AirshipComponent {}
 
 
 public extension AirshipNotifications {
-    /**
-     * Notification event when the channel is created.
-     */
-    @objc
-    static let channelCreatedEvent = NSNotification.Name(
-        "com.urbanairship.channel.channel_created"
-    )
 
-    /**
-     * Channel ID key for channelCreatedEvent and channelUpdatedEvent.
-     */
-    @objc
-    static let channelIdentifierKey = "channel_identifier"
+    /// NSNotification info when the channel is created.
+    @objc(UAirshipNotificationChannelCreated)
+    final class ChannelCreated: NSObject {
 
-    /**
-     * Channel existing key for channelCreatedEvent.
-     */
-    @objc
-    static let channelExistingKey = "channel_existing"
+        /// NSNotification name.
+        @objc
+        public static let name = NSNotification.Name(
+            "com.urbanairship.channel.channel_created"
+        )
 
-    /**
-     * Notification event when the channel is updated.
-     */
-    @objc
-    static let channelUpdatedEvent = NSNotification.Name(
-        "com.urbanairship.channel.channel_updated"
-    )
+        /// NSNotification userInfo key to get the channel ID.
+        @objc
+        public static let channelIDKey = "channel_identifier"
+
+        /// NSNotification userInfo key to get a boolean if the channel is existing or not.
+        @objc
+        public static let isExistingChannelKey = "channel_existing"
+    }
+
 }
