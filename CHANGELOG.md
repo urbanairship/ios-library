@@ -3,7 +3,20 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 18.0.0-beta, February 2024
+## Version 18.0.0-beta.2, February 22, 2024
+
+Second SDK 18.0.0 beta.
+
+### Changes
+- Added support for push to start tokens in live activities. Start tokens will automatically be tracked for attribute types passed into the `restore` call.
+- Added migration guide for 17.x -> 18.x.
+- Updated Airship accessors to all be class vars instead of a mix of class and instance vars.
+- Replaced access to AirshipPush, AirshipContact, AirshipChannel, AirshipAnalytics with protocols.
+- Consolidated NSNotificationNames and keys to AirshipNotifications class.
+- Fixed sendable warnings in PreferenceCenter and MessageCenter module.
+- Fixed coredata warnings with Xcode 15.
+
+## Version 18.0.0-beta, February 9, 2024
 
 First beta release of SDK 18.0.0. This release contains a new automation module that has been rewritten in Swift and preliminary visionOS support.
 

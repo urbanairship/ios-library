@@ -10,6 +10,7 @@ services into your iOS applications.
 - [AirshipAutomation Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipAutomation)
 - [AirshipMessageCenter Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipMessageCenter)
 - [AirshipPreferenceCenter Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipPreferenceCenter)
+
 - [AirshipNotificationServiceExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationServiceExtension)
 - [AirshipNotificationContentExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationContentExtension)
 
@@ -18,7 +19,7 @@ services into your iOS applications.
 
 ## Installation
 
-Xcode 14.3+ is required to use the Airship SDK.
+Xcode 15.2+ is required to use the Airship SDK.
 
 ### CocoaPods
 
@@ -28,9 +29,7 @@ Make sure you have the [CocoaPods](http://cocoapods.org) dependency manager inst
 $ gem install cocoapods
 ```
 
-The primary Airship pod includes the standard feature set and is advisable to use
-for most use cases. The standard feature set includes Push, Actions,
-In-App Automation, and Message Center
+The primary Airship pod includes all subspecs and is advisable to use for most use cases.
 
 Example podfile:
 
@@ -49,6 +48,7 @@ selection of functionality is desired:
 - `Airship/MessageCenter` : Message center
 - `Airship/Automation` : Automation and in-app messaging
 - `Airship/PreferenceCenter` : Preference center
+- `Airship/FeatureFlags` : Feature flags
 
 Example podfile:
 
