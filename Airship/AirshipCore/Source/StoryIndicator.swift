@@ -68,7 +68,7 @@ struct StoryIndicator: View {
                             Rectangle()
                                 .frame(width: metrics.size.width * progressDelay.wrappedValue)
                                 .foregroundColor(model.style.progressColor.toColor(colorScheme))
-                                .animation(.linear, value: self.model)
+                                .animation(.linear(duration: Pager.animationSpeed), value: self.model)
                         }
                     }
                 }

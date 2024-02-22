@@ -32,6 +32,7 @@ struct Pager: View {
     private static let flingSpeed: CGFloat = 150.0
     private static let offsetPercent: CGFloat = 0.50
     private static let timerTransition = 0.01
+    static let animationSpeed: TimeInterval = 0.75
 
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var pagerState: PagerState
@@ -112,7 +113,7 @@ struct Pager: View {
             }
             .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
             .offset(x: calcDragOffset(index: index.wrappedValue))
-            .animation(.interactiveSpring(), value: index.wrappedValue)
+            .animation(.interactiveSpring(duration: Pager.animationSpeed), value: index.wrappedValue)
         }
         .frame(
             width: metrics.size.width,
