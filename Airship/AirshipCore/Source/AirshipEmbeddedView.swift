@@ -37,6 +37,21 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(id: id))
     }
 
+    /// Creates a new AirshipEmbeddedView.
+    ///
+    /// - Parameters:
+    ///   - id: The embedded ID.
+    ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    public init(
+        id: String,
+        embeddedSize: AirshipEmbeddedSize? = nil
+    ) where PlaceHolder == EmptyView {
+        self.id = id
+        self.embeddedSize = embeddedSize
+        self.placeholder = { EmptyView() }
+        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(id: id))
+    }
+
 
     @ViewBuilder
     public var body: some View {
