@@ -7,7 +7,6 @@ import SwiftUI
 import AirshipCore
 #endif
 
-
 struct InAppMessageRootView<Content: View>: View {
     @State private var currentOrientation: Orientation = InAppMessageRootView.resolveOrientation()
     @State private var displayedCalled: Bool = false

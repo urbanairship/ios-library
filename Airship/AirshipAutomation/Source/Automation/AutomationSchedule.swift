@@ -32,8 +32,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// Optional schedule group. Can be used to cancel a set of schedules.
     public var group: String?
 
-    /// Schedule priority. Priority is used to sort which schedules are processes first if multiple schedules are
-    /// processed at the same time.
+    /// Priority for determining order during simultaneous schedule processing
     public var priority: Int?
 
     /// Number of times the schedule can execute.
@@ -48,8 +47,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// On device automation selector
     public var audience: AutomationAudience?
 
-    /// Optional automation delay. Delay occurs after the schedule has been triggered and prepared
-    /// but before the schedule is executed.
+    /// Delay after trigger and prepare steps before execution
     public var delay: AutomationDelay?
 
     ///  Execution interval.
@@ -61,9 +59,10 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// If the schedule should bypass holdout groups or not
     public var bypassHoldoutGroups: Bool?
 
+
     /// After the schedule ends or is finished, how long to hold on to the schedule before
     /// deleting it. This is used to keep schedule state around for a period of time
-    /// after the schedule finishies to allow for extending the schedule.
+    /// after the schedule finishes to allow for extending the schedule.
     public var editGracePeriodDays: UInt?
 
     /// internal
@@ -112,6 +111,22 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case deferred
     }
 
+
+    /// <#Description#>
+    /// - Parameters:
+    ///   - identifier: The schedule ID
+    ///   - triggers: List of triggers for the schedule
+    ///   - data: Schedule data
+    ///   - group: Schedule group that can be used to cancel a set of schedules
+    ///   - priority: Priority for determining order during simultaneous schedule processing
+    ///   - limit: Number of times the schedule can execute
+    ///   - start: Start date
+    ///   - end: End date
+    ///   - audience: On device automation selector
+    ///   - delay: Duration after trigger and prepare steps after which execution occurs
+    ///   - interval: Execution interval
+    ///   - bypassHoldoutGroups: If the schedule should bypass holdout groups or not
+    ///   - editGracePeriodDays: Duration after which post-execution deletion occurs
     public init(
         identifier: String,
         triggers: [AutomationTrigger],

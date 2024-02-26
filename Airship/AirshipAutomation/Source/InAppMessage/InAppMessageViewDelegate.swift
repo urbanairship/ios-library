@@ -2,6 +2,8 @@
 
 import Foundation
 
+
+/// Delegate for receiving callback pertaining to in-app message lifecycle state
 public protocol InAppMessageViewDelegate {
     /// Called whenever the view appears
     @MainActor

@@ -6,6 +6,10 @@ import Foundation
 import AirshipCore
 #endif
 
+
+/**
+ * Provides a control interface for creating, canceling and executing in-app automations.
+ */
 public final class InAppAutomation: Sendable {
 
     private let engine: AutomationEngineProtocol
@@ -53,6 +57,8 @@ public final class InAppAutomation: Sendable {
         }
     }
 
+
+    /// Paused state of in-app automation.
     @MainActor
     public var isPaused: Bool {
         get {
@@ -64,26 +70,41 @@ public final class InAppAutomation: Sendable {
         }
     }
 
+
+    /// Creates the provided schedules or updates them if they already exist.
+    /// - Parameter schedules: The schedules to create or update.
     public func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
         try await self.engine.upsertSchedules(schedules)
     }
 
+    /// Cancels an in-app automation via its schedule identifier.
+    /// - Parameter identifier: The schedule identifier to cancel.
     public func cancelSchedule(identifier: String) async throws {
         try await self.engine.cancelSchedules(identifiers: [identifier])
     }
 
+    /// Cancels multiple in-app automations via their schedule identifiers.
+    /// - Parameter identifiers: The schedule identifiers to cancel.
     public func cancelSchedule(identifiers: [String]) async throws {
         try await self.engine.cancelSchedules(identifiers: identifiers)
     }
 
+    /// Cancels multiple in-app automations via their group.
+    /// - Parameter group: The group to cancel.
     public func cancelSchedules(group: String) async throws {
         try await self.engine.cancelSchedules(group: group)
     }
 
+    /// Gets the in-app automation with the provided schedule identifier.
+    /// - Parameter identifier: The schedule identifier.
+    /// - Returns: The in-app automation corresponding to the provided schedule identifier.
     public func getSchedule(identifier: String) async throws -> AutomationSchedule? {
         return try await self.engine.getSchedule(identifier: identifier)
     }
 
+    /// Gets the in-app automation with the provided group.
+    /// - Parameter identifier: The group to get.
+    /// - Returns: The in-app automation corresponding to the provided group.
     public func getSchedules(group: String) async throws -> [AutomationSchedule] {
         return try await self.engine.getSchedules(group: group)
     }

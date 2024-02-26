@@ -24,6 +24,10 @@ public struct AutomationAudience: Codable, Sendable, Equatable {
         case missBehavior = "miss_behavior"
     }
 
+    /// Automation audience initialized
+    /// - Parameters:
+    ///   - audienceSelector: The audience selector
+    ///   - missBehavior: Behavior when audience selector is not a match
     public init(
         audienceSelector: DeviceAudienceSelector,
         missBehavior: MissBehavior? = nil

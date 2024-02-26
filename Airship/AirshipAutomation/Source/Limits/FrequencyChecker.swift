@@ -4,14 +4,12 @@
 import AirshipCore
 #endif
 
-@objc(UAFrequencyChecker)
 public protocol FrequencyCheckerProtocol: Sendable {
     @MainActor
     var isOverLimit: Bool { get }
     @MainActor
     func checkAndIncrement() -> Bool
 }
-
 
 final class FrequencyChecker: FrequencyCheckerProtocol {
     private let isOverLimitBlock: @Sendable @MainActor () -> Bool

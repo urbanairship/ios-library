@@ -8,7 +8,7 @@ import AirshipCore
 #endif
 
 enum FrequencyLimitStoreError: Error, Sendable {
-    case coreDataUnavailble
+    case coreDataUnavailable
     case coreDataError
 }
 
@@ -54,11 +54,11 @@ actor FrequencyLimitStore {
         _ constraintIDs: [String]? = nil
     ) async throws -> [ConstraintInfo] {
         guard let coreData = self.coreData else {
-            throw FrequencyLimitStoreError.coreDataUnavailble
+            throw FrequencyLimitStoreError.coreDataUnavailable
         }
 
         AirshipLogger.trace(
-            "Fetching frenquency limit constraints"
+            "Fetching frequency limit constraints"
         )
         
         return try await coreData.performWithResult { context in
@@ -78,7 +78,7 @@ actor FrequencyLimitStore {
     ) async throws {
         
         guard let coreData = self.coreData else {
-            throw FrequencyLimitStoreError.coreDataUnavailble
+            throw FrequencyLimitStoreError.coreDataUnavailable
         }
 
         AirshipLogger.trace(
@@ -102,7 +102,7 @@ actor FrequencyLimitStore {
     ) async throws {
         
         guard let coreData = self.coreData else {
-            throw FrequencyLimitStoreError.coreDataUnavailble
+            throw FrequencyLimitStoreError.coreDataUnavailable
         }
         
         AirshipLogger.trace("Saving occurrences \(occurrences)")
@@ -119,7 +119,7 @@ actor FrequencyLimitStore {
 
                 if let constraintData = constraintsData.first {
                     try occurrences.forEach { occurrence in
-                        let occurrenceData = try self.makeOccurenceData(context: context)
+                        let occurrenceData = try self.makeOccurrenceData(context: context)
                         occurrenceData.timestamp = occurrence.timestamp
                         constraintData.occurrence.insert(occurrenceData)
                     }
@@ -135,7 +135,7 @@ actor FrequencyLimitStore {
         _ constraint: FrequencyConstraint
     ) async throws {
         guard let coreData = self.coreData else {
-            throw FrequencyLimitStoreError.coreDataUnavailble
+            throw FrequencyLimitStoreError.coreDataUnavailable
         }
 
         AirshipLogger.trace(
@@ -188,13 +188,13 @@ actor FrequencyLimitStore {
         return data
     }
     
-    fileprivate nonisolated func makeOccurenceData(
+    fileprivate nonisolated func makeOccurrenceData(
         context:NSManagedObjectContext
     ) throws -> OccurrenceData {
 
         guard 
             let data = NSEntityDescription.insertNewObject(
-                forEntityName: OccurrenceData.occurenceDataEntity,
+                forEntityName: OccurrenceData.occurrenceDataEntity,
                 into:context
             ) as? OccurrenceData
         else {
@@ -247,7 +247,7 @@ fileprivate class FrequencyConstraintData: NSManagedObject {
      /// The time range.
     @NSManaged var range: TimeInterval
 
-    /// The number of allowed occurences.
+    /// The number of allowed occurrences.
     @NSManaged var count: UInt
 
     /// The occurrences
@@ -258,10 +258,10 @@ fileprivate class FrequencyConstraintData: NSManagedObject {
 @objc(UAOccurrenceData)
 fileprivate class OccurrenceData: NSManagedObject {
 
-    static let occurenceDataEntity = "UAOccurrenceData"
+    static let occurrenceDataEntity = "UAOccurrenceData"
 
     @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
-        return NSFetchRequest<T>(entityName: OccurrenceData.occurenceDataEntity)
+        return NSFetchRequest<T>(entityName: OccurrenceData.occurrenceDataEntity)
     }
 
     /// The timestamp

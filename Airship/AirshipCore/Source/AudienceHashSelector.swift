@@ -17,13 +17,13 @@ public struct AudienceHashSelector: Codable, Sendable, Equatable {
             case channel, contact
         }
 
-        enum Algorightm: String, Codable, Equatable {
+        enum Algorithm: String, Codable, Equatable {
             case farm = "farm_hash"
         }
 
         let prefix: String
         let property: Identifier
-        let algorithm: Algorightm
+        let algorithm: Algorithm
         let seed: UInt?
         let numberOfBuckets: UInt64
         let overrides: [String: String]?

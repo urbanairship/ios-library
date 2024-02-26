@@ -10,7 +10,7 @@ import AirshipCore
 /// A concurrent queue that automatically retries an operation.
 ///
 /// Operations that retries will be removed from the queue to return or start work while it waits for the specified
-/// backOff. Oncethe backOff is passed, the operation will be inserted back into the queue in its original FIFO
+/// backOff. Once the backOff is passed, the operation will be inserted back into the queue in its original FIFO
 /// order. When an operation finishes, it will either wait to return its results in FIFO order,
 /// or immediately depending on the `ignoreReturnOrder` on the result.
 ///
@@ -25,7 +25,7 @@ actor RetryingQueue<T: Sendable> {
         /// - Parameters:
         ///     - value: The value to set
         ///     - key: The key
-        public func setValue(_ value: Sendable?, key: String) {
+        func setValue(_ value: Sendable?, key: String) {
             self.state[key] = value
         }
 
@@ -33,7 +33,7 @@ actor RetryingQueue<T: Sendable> {
         /// - Parameters:
         ///     - key: The key
         /// - Returns: The value if it exists
-        public func value<R: Sendable>(key: String) -> R? {
+        func value<R: Sendable>(key: String) -> R? {
             return self.state[key] as? R
         }
     }
@@ -51,7 +51,7 @@ actor RetryingQueue<T: Sendable> {
         ///     - retryAfter: The minimum amount of time to wait before retrying.
         case retryAfter(TimeInterval)
 
-        /// Retries using exponetial backOff
+        /// Retries using exponential backOff
         case retry
     }
 

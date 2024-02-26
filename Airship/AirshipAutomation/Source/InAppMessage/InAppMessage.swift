@@ -62,6 +62,15 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         case source
     }
 
+
+    /// In-app message constructor
+    /// - Parameters:
+    ///   - name: Name of the message
+    ///   - displayContent: Content model to be displayed in the message
+    ///   - extras: Extras payload as JSON
+    ///   - actions: Actions to be executed by the message as JSON
+    ///   - isReportingEnabled: Reporting enabled flag
+    ///   - displayBehavior: Display behavior
     public init(
         name: String,
         displayContent: InAppMessageDisplayContent,
@@ -222,7 +231,7 @@ extension InAppMessage {
         }
     }
 
-    public var isEmbedded: Bool {
+    var isEmbedded: Bool {
         guard case .airshipLayout(let data) = self.displayContent else {
             return false
         }

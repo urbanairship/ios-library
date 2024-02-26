@@ -219,7 +219,7 @@ struct InAppRemoteData: Sendable {
 
                 data.schedules[i].triggers.indices.forEach { j in
                     let trigger = data.schedules[i].triggers[j]
-                    if (trigger.shouldBackFillIdentifer) {
+                    if (trigger.shouldBackFillIdentifier) {
                         data.schedules[i].triggers[j] = trigger.backfilledIdentifier(executionType: .execution)
                     }
                 }
@@ -227,7 +227,7 @@ struct InAppRemoteData: Sendable {
                 if var delay = data.schedules[i].delay, var triggers = delay.cancellationTriggers {
                     triggers.indices.forEach { j in
                         let trigger = triggers[j]
-                        if (trigger.shouldBackFillIdentifer) {
+                        if (trigger.shouldBackFillIdentifier) {
                             triggers[j] = trigger.backfilledIdentifier(executionType: .delayCancellation)
                         }
                     }

@@ -3,8 +3,7 @@
 import Foundation
 
 class AutomationResources {
-    
-    public static let bundle = findBundle()
+    static let bundle = findBundle()
     
     private class func findBundle() -> Bundle {
         
@@ -21,7 +20,7 @@ class AutomationResources {
             }
         }
         
-        // Cocopaods (static)
+        // Cocoapods (static)
         if let path = mainBundle.path(
             forResource: "AirshipAutomationResources",
             ofType: "bundle"
@@ -31,7 +30,7 @@ class AutomationResources {
             }
         }
         
-        // Cocopaods (framework)
+        // Cocoapods (framework)
         if let path = sourceBundle.path(
             forResource: "AirshipAutomationResources",
             ofType: "bundle"
