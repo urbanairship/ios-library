@@ -10,38 +10,65 @@ import SwiftUI
 struct AdoptLayout: SwiftUI.Layout {
 
     let placement: EmbeddedPlacement
-    let bounds: AirshipEmbeddedViewBounds
 
     @Binding var viewConstraints: ViewConstraints?
+    let embeddedSize: AirshipEmbeddedSize?
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let proposed = proposal.replacingUnspecifiedDimensions()
-                
-        let height = placement.size.height.isFixedSize(false)
-            ? placement.size.height.calculateSize(nil)
-            : nil
-        
-        let width = placement.size.width.isFixedSize(false)
-            ? placement.size.width.calculateSize(nil)
-            : nil
-        
-        return CGSize(width: width ?? proposed.width, height: height ?? proposed.height)
+        let height = size(
+            constraint: placement.size.height,
+            parent: self.embeddedSize?.maxHeight,
+            proposal: proposal.height
+        )
+
+        let width = size(
+            constraint: placement.size.width,
+            parent: self.embeddedSize?.maxWidth,
+            proposal: proposal.width
+        )
+
+        let size = CGSize(width: width, height: height)
+
+        return size
+    }
+
+    private func size(constraint: SizeConstraint, parent: CGFloat?, proposal: CGFloat?) -> CGFloat {
+        switch (constraint) {
+        case .auto:
+            return 0
+        case .percent(_):
+            return parent ?? proposal ?? 10.0
+        case .points(let size):
+            return size
+        }
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let constraints = ConstraintsHelper.calculate(with: self.bounds, frame: bounds)
+        let constraints = ViewConstraints(
+            width: embeddedSize?.maxWidth ?? bounds.width,
+            height: embeddedSize?.maxHeight ?? bounds.height
+        )
 
         DispatchQueue.main.async {
             viewConstraints = constraints
         }
 
-        let proposal = ProposedViewSize(
-            width: placement.size.width.isFixedSize(false) ? placement.size.width.calculateSize(nil) : proposal.width,
-            height: placement.size.height.isFixedSize(false) ? placement.size.height.calculateSize(nil) : proposal.height
+        let viewProposal = ProposedViewSize(
+            width: size(
+                constraint: placement.size.width,
+                parent: embeddedSize?.maxWidth ?? bounds.width,
+                proposal: proposal.width
+            ),
+            height: size(
+                constraint: placement.size.height,
+                parent: embeddedSize?.maxHeight ?? bounds.height,
+                proposal: proposal.height
+            )
         )
 
+        let center = CGPoint(x: bounds.midX, y: bounds.midY)
         subviews.forEach { layout in
-            layout.place(at: bounds.origin, proposal: proposal)
+            layout.place(at: center, anchor: .center, proposal: viewProposal)
         }
     }
 }
@@ -50,11 +77,10 @@ struct EmbeddedView: View {
     let model: EmbeddedPresentationModel
     let layout: AirshipLayout
     let thomasEnvironment: ThomasEnvironment
-    let bounds: AirshipEmbeddedViewBounds
 
-    @State private var parentSize: CGSize? = nil
+    let embeddedSize: AirshipEmbeddedSize?
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
-    @State private var viewConstraints: ViewConstraints?
+    @State var viewConstraints: ViewConstraints?
     
     @ViewBuilder
     @MainActor
@@ -73,26 +99,15 @@ struct EmbeddedView: View {
                 windowSize: windowSize
             )
 
-            if (placement.size.width.isPercent() || placement.size.height.isPercent()) {
-                if #available(iOS 16, tvOS 16, watchOS 9.0, *) {
-                    AdoptLayout(placement: placement, bounds: bounds, viewConstraints: $viewConstraints) {
-                        makeBody(placement)
-                    }
-                    .frame(idealWidth: contentSize?.1.width, idealHeight: contentSize?.1.height)
-                } else {
-#if !os(watchOS)
-                    LegacyLayoutWrapperView(placement: placement, bounds: bounds, viewConstraints: $viewConstraints)
-                        .overlayView {
-                            makeBody(placement)
-                        }
-                        .frame(idealWidth: contentSize?.1.width, idealHeight: contentSize?.1.height)
-#endif
+            if #available(iOS 16, tvOS 16, watchOS 9.0, *) {
+                AdoptLayout(placement: placement, viewConstraints: $viewConstraints, embeddedSize: embeddedSize) {
+                    makeBody(placement)
                 }
+                .frame(idealWidth: contentSize?.1.width, idealHeight: contentSize?.1.height)
             } else {
                 let constraints = ViewConstraints(
-                    width: placement.size.width.calculateSize(nil),
-                    height: placement.size.height.calculateSize(nil),
-                    safeAreaInsets: ViewConstraints.emptyEdgeSet
+                    width: placement.size.width.calculateSize(self.embeddedSize?.maxWidth),
+                    height: placement.size.height.calculateSize(self.embeddedSize?.maxHeight)
                 )
 
                 createView(constraints: constraints, placement: placement)
@@ -106,19 +121,9 @@ struct EmbeddedView: View {
         if constraints == self.contentSize?.0 {
             contentSize = self.contentSize?.1
         }
-        
-        var placementSize = placement.size
-        
-        if (placementSize.width.isPercent() && !self.bounds.contains(.horizontal)) {
-            placementSize.width = .auto
-        }
-
-        if (placementSize.height.isPercent() && !self.bounds.contains(.vertical)) {
-            placementSize.height = .auto
-        }
 
         let contentConstraints = constraints.contentConstraints(
-            placementSize,
+            placement.size,
             contentSize: contentSize,
             margin: placement.margin
         )
@@ -143,7 +148,6 @@ struct EmbeddedView: View {
     }
 
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> EmbeddedPlacement {
-
         var placement = self.model.defaultPlacement
         for placementSelector in self.model.placementSelectors ?? [] {
             if placementSelector.windowSize != nil
@@ -162,17 +166,6 @@ struct EmbeddedView: View {
             placement = placementSelector.placement
         }
 
-//        self.viewControllerOptions.bannerPlacement = placement
-
         return placement
-    }
-}
-
-enum ConstraintsHelper {
-    static func calculate(with bounds: AirshipEmbeddedViewBounds, frame: CGRect) -> ViewConstraints {
-        let width = bounds.contains(.horizontal) ? frame.width : nil
-        let height = bounds.contains(.vertical) ? frame.height : nil
-
-        return ViewConstraints(width: width, height: height, safeAreaInsets: ViewConstraints.emptyEdgeSet)
     }
 }

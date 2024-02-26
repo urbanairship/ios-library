@@ -7,24 +7,7 @@ import Combine
  * Internal only
  * :nodoc:
  */
-public struct AirshipEmbeddedViewBounds: OptionSet {
-    public let rawValue: Int
-
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    public static let horizontal = AirshipEmbeddedViewBounds(rawValue: 1 << 0)
-    public static let vertical  = AirshipEmbeddedViewBounds(rawValue: 1 << 1)
-    public static let all: AirshipEmbeddedViewBounds = [.horizontal, .vertical]
-}
-
-/**
- * Internal only
- * :nodoc:
- */
-public struct AirshipEmbeddedView<Content: View>: View {
-    
+public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
     @Environment(\.airshipEmbeddedViewStyle)
     private var style
@@ -32,22 +15,29 @@ public struct AirshipEmbeddedView<Content: View>: View {
     @StateObject
     private var viewModel: EmbeddedViewModel
 
-    private let placeholder: () -> Content
+    private let placeholder: () -> PlaceHolder
     private let id: String
+    private let embeddedSize: AirshipEmbeddedSize?
 
-    private let bounds: AirshipEmbeddedViewBounds
 
+    /// Creates a new AirshipEmbeddedView.
+    ///
+    /// - Parameters:
+    ///   - id: The embedded ID.
+    ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - placeholder: The place holder block.
     public init(
         id: String,
-        bounds: AirshipEmbeddedViewBounds = .all,
-        @ViewBuilder placeholder: @escaping () -> Content
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        @ViewBuilder placeholder: @escaping () -> PlaceHolder = { EmptyView()}
     ) {
         self.id = id
-        self.bounds = bounds
+        self.embeddedSize = embeddedSize
         self.placeholder = placeholder
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(id: id))
     }
-    
+
+
     @ViewBuilder
     public var body: some View {
         let configuration = AirshipEmbeddedViewStyleConfiguration(
@@ -58,14 +48,15 @@ public struct AirshipEmbeddedView<Content: View>: View {
                             model: pending.presentation,
                             layout: pending.layout,
                             thomasEnvironment: pending.environment,
-                            bounds: bounds
+                            embeddedSize: embeddedSize
                         )
                     },
                     onDismiss: { pending.environment.dismiss() }
                 )
             },
-            placeHolder: AnyView(self.placeholder()))
-        
+            placeHolder: AnyView(self.placeholder())
+        )
+
         self.style.makeBody(configuration: configuration)
     }
 }
