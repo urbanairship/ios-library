@@ -268,7 +268,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             "some contact ID"
         }
 
-        await self.audienceOverridesProvider.contactUpdaed(
+        await self.audienceOverridesProvider.contactUpdated(
             contactID: "some contact ID",
             tags: nil,
             attributes: nil,
