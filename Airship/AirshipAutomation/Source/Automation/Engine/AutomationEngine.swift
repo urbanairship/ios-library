@@ -7,11 +7,11 @@ import AirshipCore
 #endif
 
 actor AutomationEngine : AutomationEngineProtocol {
-    private var startTask: Task<Void, Never>?
-    private var listenerTask: Task<Void, Never>?
+    internal var startTask: Task<Void, Never>?
+    internal var listenerTask: Task<Void, Never>?
 
-    nonisolated private let isEnginePaused: AirshipMainActorValue<Bool> = AirshipMainActorValue(false)
-    nonisolated private let isExecutionPaused: AirshipMainActorValue<Bool> = AirshipMainActorValue(false)
+    nonisolated internal let isEnginePaused: AirshipMainActorValue<Bool> = AirshipMainActorValue(false)
+    nonisolated internal let isExecutionPaused: AirshipMainActorValue<Bool> = AirshipMainActorValue(false)
     private let triggerQueue: AirshipSerialQueue = AirshipSerialQueue()
 
     private let store: AutomationStore
