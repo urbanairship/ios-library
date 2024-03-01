@@ -44,8 +44,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
 
     public let lastAppVersion: String?
 
-
-    init(
+    public init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
