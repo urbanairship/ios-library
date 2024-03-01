@@ -36,7 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		99DFF4362B76DC6700EDFB52 /* Accesship.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Accesship.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		99DFF4362B76DC6700EDFB52 /* a11y.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = a11y.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99DFF4392B76DC6700EDFB52 /* MainApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainApp.swift; sourceTree = "<group>"; };
 		99DFF43B2B76DC6700EDFB52 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		99DFF43D2B76DC6900EDFB52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -76,7 +76,7 @@
 		99DFF4372B76DC6700EDFB52 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				99DFF4362B76DC6700EDFB52 /* Accesship.app */,
+				99DFF4362B76DC6700EDFB52 /* a11y.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,7 +137,7 @@
 				99EAD63E2B7AD53100B7A4FC /* AirshipPreferenceCenter */,
 			);
 			productName = "Accessibility Sample";
-			productReference = 99DFF4362B76DC6700EDFB52 /* Accesship.app */;
+			productReference = 99DFF4362B76DC6700EDFB52 /* a11y.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -332,7 +332,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Accessibility Sample/Accessibility Sample.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Accessibility Sample/Preview Content\"";
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_PREVIEWS = YES;
@@ -348,9 +348,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.accessample;
-				PRODUCT_NAME = Accesship;
+				PRODUCT_NAME = a11y;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -364,7 +364,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Accessibility Sample/Accessibility Sample.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Accessibility Sample/Preview Content\"";
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_PREVIEWS = YES;
@@ -380,9 +380,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.accessample;
-				PRODUCT_NAME = Accesship;
+				PRODUCT_NAME = a11y;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

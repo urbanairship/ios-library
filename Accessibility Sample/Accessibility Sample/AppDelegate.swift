@@ -4,13 +4,14 @@ import AirshipCore
 import AirshipMessageCenter
 import AirshipPreferenceCenter
 import UIKit
+import SwiftUI
 
 #if canImport(ActivityKit)
 import ActivityKit
 #endif
 
 class AppDelegate: UIResponder, UIApplicationDelegate,
-    MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate
+    MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate, DeepLinkDelegate
 {
 
     func application(
@@ -29,6 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
         Airship.push.notificationOptions = [.alert, .badge, .sound, .carPlay]
         Airship.push.defaultPresentationOptions = [.sound, .banner, .list]
 
+        Airship.deepLinkDelegate = self
+
         MessageCenter.shared.displayDelegate = self
         PreferenceCenter.shared.openDelegate = self
 
@@ -44,13 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
         return true
     }
 
-    func showInvalidDeepLinkAlert(_ url: URL) {
-        AppState.shared.toastMessage = Toast.Message(
-            text: "App does not know how to handle deepLink \(url)",
-            duration: 2.0
-        )
-    }
-
     func displayMessageCenter(messageID: String) {
         AppState.shared.selectedTab = .messageCenter
         AppState.shared.messageCenterController.navigate(messageID: messageID)
@@ -60,8 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
         AppState.shared.selectedTab = .messageCenter
     }
 
-    func dismissMessageCenter() {
-    }
+    func dismissMessageCenter() {}
 
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {
         guard preferenceCenterID == MainApp.preferenceCenterID else {
@@ -69,8 +64,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
         }
 
         DispatchQueue.main.async {
-            AppState.shared.selectedTab = .preferenceCenter
+            withAnimation {
+                AppState.shared.selectedTab = .preferenceCenter
+            }
         }
         return true
+    }
+
+    func showInvalidDeepLinkAlert(_ url: URL) {
+        AppState.shared.toastMessage = Toast.Message(
+            text: "App does not know how to handle deepLink \(url)",
+            duration: 2.0
+        )
+    }
+
+    @MainActor
+    func receivedDeepLink(_ deepLink: URL) async  {
+        guard deepLink.host?.lowercased() == "deeplink" else {
+            self.showInvalidDeepLinkAlert(deepLink)
+            return
+        }
+
+        let components = deepLink.path.lowercased().split(separator: "/")
+        switch components.first {
+        case "home":
+            AppState.shared.selectedTab = .home
+        case "preferences":
+            AppState.shared.selectedTab = .preferenceCenter
+        case "message_center":
+            AppState.shared.selectedTab = .messageCenter
+        default:
+            self.showInvalidDeepLinkAlert(deepLink)
+        }
     }
 }
