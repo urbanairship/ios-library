@@ -17,10 +17,12 @@ final class InAppResolutionEventTest: XCTestCase {
 
         let expectedJSON = """
         {
-           "display_time":"100.00",
-           "button_description":"button description",
-           "type":"button_click",
-           "button_id":"button id"
+           "resolution": {
+               "display_time":"100.00",
+               "button_description":"button description",
+               "type":"button_click",
+               "button_id":"button id"
+            }
         }
         """
 
@@ -33,8 +35,10 @@ final class InAppResolutionEventTest: XCTestCase {
 
         let expectedJSON = """
         {
-           "display_time":"100.00",
-           "type":"message_click"
+           "resolution": {
+               "display_time":"100.00",
+               "type":"message_click"
+            }
         }
         """
 
@@ -47,8 +51,10 @@ final class InAppResolutionEventTest: XCTestCase {
 
         let expectedJSON = """
         {
-           "display_time":"100.00",
-           "type":"user_dismissed"
+           "resolution": {
+              "display_time":"100.00",
+              "type":"user_dismissed"
+           }
         }
         """
 
@@ -61,8 +67,10 @@ final class InAppResolutionEventTest: XCTestCase {
 
         let expectedJSON = """
         {
-           "display_time":"100.00",
-           "type":"timed_out"
+           "resolution": {
+              "display_time":"100.00",
+              "type":"timed_out"
+           }
         }
         """
 
@@ -82,12 +90,14 @@ final class InAppResolutionEventTest: XCTestCase {
 
         let expectedJSON = """
         {
-           "display_time":"0.00",
-           "type":"control",
+           "resolution": {
+              "display_time":"0.00",
+              "type":"control"
+           },
            "device": {
               "channel_id": "channel id",
-              "contact_id": "contact id",
-            }
+              "contact_id": "contact id"
+           }
         }
         """
 

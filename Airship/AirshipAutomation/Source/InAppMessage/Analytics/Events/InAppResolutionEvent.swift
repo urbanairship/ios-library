@@ -113,14 +113,18 @@ struct InAppResolutionEvent: InAppEvent {
             case displayTime = "display_time"
             case buttonID = "button_id"
             case buttonDescription = "button_description"
-            case device = "device"
+        }
 
+        enum ContainerCodingKeys: String, CodingKey {
+            case resolution = "resolution"
+            case device = "device"
         }
 
         public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
+            var container = encoder.container(keyedBy: ContainerCodingKeys.self)
+            var resolution = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .resolution)
 
-            try container.encode(
+            try resolution.encode(
                 String(format: "%.2f", displayTime),
                 forKey: .displayTime
             )
@@ -129,20 +133,20 @@ struct InAppResolutionEvent: InAppEvent {
 
             switch (self.resolutionType) {
             case .buttonTap(let identifier, let description):
-                try container.encode("button_click", forKey: .resolutionType)
-                try container.encode(identifier, forKey: .buttonID)
-                try container.encode(description, forKey: .buttonDescription)
+                try resolution.encode("button_click", forKey: .resolutionType)
+                try resolution.encode(identifier, forKey: .buttonID)
+                try resolution.encode(description, forKey: .buttonDescription)
 
             case .messageTap:
-                try container.encode("message_click", forKey: .resolutionType)
+                try resolution.encode("message_click", forKey: .resolutionType)
             case .userDismissed:
-                try container.encode("user_dismissed", forKey: .resolutionType)
+                try resolution.encode("user_dismissed", forKey: .resolutionType)
             case .timedOut:
-                try container.encode("timed_out", forKey: .resolutionType)
+                try resolution.encode("timed_out", forKey: .resolutionType)
             case .interrupted:
-                try container.encode("interrupted", forKey: .resolutionType)
+                try resolution.encode("interrupted", forKey: .resolutionType)
             case .control:
-                try container.encode("control", forKey: .resolutionType)
+                try resolution.encode("control", forKey: .resolutionType)
             }
         }
     }
