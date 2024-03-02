@@ -27,7 +27,6 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
     /// Airship layout messages
     case airshipLayout(AirshipLayout)
 
-
     /// Banner display content
     public struct Banner: Codable, Sendable, Equatable {
 
@@ -39,7 +38,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             case mediaRight = "media_right"
         }
 
-        /// Bannner placement
+        /// Banner placement
         public enum Placement: String, Codable, Sendable, Equatable {
             /// Top
             case top
@@ -98,6 +97,21 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             case placement
         }
 
+
+        /// Banner in-app message model initializer
+        /// - Parameters:
+        ///   - heading: Model defining the message heading
+        ///   - body: Model defining the message  body
+        ///   - media: Model defining the message  media
+        ///   - buttons: Message button models
+        ///   - buttonLayoutType: Button layout model
+        ///   - template: Layout template defining text position relative to media
+        ///   - backgroundColor: Background color
+        ///   - dismissButtonColor: Dismiss button color
+        ///   - borderRadius: Border radius of the message body
+        ///   - duration: Duration before message is dismissed
+        ///   - placement: Placement of message on its parent
+        ///   - actions: Actions to execute on message tap
         public init(
             heading: InAppMessageTextInfo? = nil,
             body: InAppMessageTextInfo? = nil,
@@ -187,6 +201,20 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             case allowFullscreenDisplay = "allow_fullscreen_display"
         }
 
+
+        /// Modal in-app message model initializer
+        /// - Parameters:
+        ///   - heading: Model defining the message heading
+        ///   - body: Model defining the message body
+        ///   - media: Model defining the message media
+        ///   - footer: Model defining a footer button
+        ///   - buttons: Message button models
+        ///   - buttonLayoutType: Layout for buttons
+        ///   - template: Layout template defining relative position of heading, body and media
+        ///   - dismissButtonColor: Dismiss button color
+        ///   - backgroundColor: Background color
+        ///   - borderRadius: Border radius of the message body
+        ///   - allowFullscreenDisplay: Flag determining if the message can be displayed as fullscreen on small devices
         public init(
             heading: InAppMessageTextInfo? = nil,
             body: InAppMessageTextInfo? = nil,
@@ -266,6 +294,18 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             case dismissButtonColor = "dismiss_button_color"
         }
 
+
+        /// Full screen in-app message model initializer
+        /// - Parameters:
+        ///   - heading: Model defining the message heading
+        ///   - body: Model defining the message body
+        ///   - media: Model defining the message media
+        ///   - footer: Model defining a footer button
+        ///   - buttons: Message button models
+        ///   - buttonLayoutType: Layout for buttons
+        ///   - template: Layout template defining relative position of heading, body and media
+        ///   - dismissButtonColor: Dismiss button color
+        ///   - backgroundColor: Background color
         public init(heading: InAppMessageTextInfo? = nil,
              body: InAppMessageTextInfo? = nil,
              media: InAppMessageMediaInfo? = nil,
@@ -330,6 +370,18 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             case allowFullscreen = "allow_fullscreen_display"
         }
 
+
+        /// HTML in-app message model initializer
+        /// - Parameters:
+        ///   - url: URL of content
+        ///   - height: Height of web view
+        ///   - width: Height of web view
+        ///   - aspectLock: Flag for locking aspect ratio
+        ///   - requiresConnectivity: Flag for determining if message can be displayed without connectivity
+        ///   - dismissButtonColor: Dismiss button color
+        ///   - backgroundColor: Background color
+        ///   - borderRadius: Border radius
+        ///   - allowFullscreen: Flag determining if the message can be displayed as fullscreen on small devices
         public init(
             url: String,
             height: Double? = nil,

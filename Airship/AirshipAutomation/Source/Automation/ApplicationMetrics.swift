@@ -38,10 +38,13 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
     }
 
     /**
-     * The application's current short version string.
+     * The application's current short version string also known as the marketing version.
      */
     public let currentAppVersion: String?
 
+    /**
+     * The application's last short version string also known as the marketing version.
+     */
     public let lastAppVersion: String?
 
     public init(

@@ -10,31 +10,40 @@ import AirshipCore
 
 /// Preference Center State
 public class PreferenceCenterState: ObservableObject {
-
+    
     /// The config
     public let config: PreferenceCenterConfig
-
+    
     private var contactSubscriptions: [String: Set<ChannelScope>]
     private var channelSubscriptions: Set<String>
-    private var channelUpdates: AnyCancellable?
-    private var contactUpdates: AnyCancellable?
+    private var channelsList: [String: AssociatedChannel]
+    private var subscriptions: Set<AnyCancellable> = []
     private let subscriber: PreferenceSubscriber
 
+    private let channelAssociationSubject = PassthroughSubject<[String: AssociatedChannel], Never>()
+    public var channelAssociationPublisher: AnyPublisher<[String: AssociatedChannel], Never>
+    {
+        return channelAssociationSubject.eraseToAnyPublisher()
+    }
+    
     /// Default constructor.
     /// - Parameters:
     ///     - config: The preference config
     ///     - contactSubscriptions: The relavent contact subscriptions
     ///     - channelSubscriptions: The relavent channel subscriptions.
+    ///     - channelsLists: The relavant channels list.
     public convenience init(
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
-        channelSubscriptions: Set<String> = Set()
+        channelSubscriptions: Set<String> = Set(),
+        channelsList: [String: AssociatedChannel] = [:]
     ) {
 
         self.init(
             config: config,
             contactSubscriptions: contactSubscriptions,
             channelSubscriptions: channelSubscriptions,
+            channelsList: channelsList,
             subscriber: PreferenceCenterState.makeSubscriber()
         )
     }
@@ -43,12 +52,13 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
+        channelsList: [String: AssociatedChannel] = [:],
         subscriber: PreferenceSubscriber
     ) {
-
         self.config = config
         self.contactSubscriptions = contactSubscriptions
         self.channelSubscriptions = channelSubscriptions
+        self.channelsList = channelsList
         self.subscriber = subscriber
 
         self.subscribeToUpdates()
@@ -56,15 +66,23 @@ public class PreferenceCenterState: ObservableObject {
 
     /// Subscribes to updates from the Airship instance
     private func subscribeToUpdates() {
-        self.channelUpdates = self.subscriber.channelSubscriptionListEdits
+        self.subscriber.channelSubscriptionListEdits
             .sink { edit in
                 self.processChannelEdit(edit)
             }
+            .store(in: &subscriptions)
 
-        self.contactUpdates = self.subscriber.contactSubscriptionListEdits
+        self.subscriber.contactSubscriptionListEdits
             .sink { edit in
                 self.processContactEdit(edit)
             }
+            .store(in: &subscriptions)
+        
+        self.subscriber.channelAssociationPublisher
+            .sink { edit in
+                self.processChannelAssociation(edit)
+            }
+            .store(in: &subscriptions)
     }
 
     /// Checks if the channel is subscribed to the preference state
@@ -191,24 +209,47 @@ public class PreferenceCenterState: ObservableObject {
 #endif
         }
     }
-
+    
+    private func processChannelAssociation(
+        _ state: ChannelRegistrationState
+    ) {
+        switch state {
+        case .failed:
+            AirshipLogger.error("Registration channel failed")
+        case .succeed(let channelRegistrationType):
+            switch channelRegistrationType {
+            case .optIn(let channel):
+                self.channelsList[channel.channelID] = channel
+            case .optOut(let channelID):
+                self.channelsList.removeValue(forKey: channelID)
+    #if canImport(AirshipCore)
+            @unknown default:
+                AirshipLogger.error("Unknown channel registration type")
+    #endif
+            }
+    #if canImport(AirshipCore)
+        @unknown default:
+            AirshipLogger.error("Unknown channel registration state")
+    #endif
+        }
+        self.channelAssociationSubject.send(self.channelsList)
+    }
+    
     static func makeSubscriber() -> PreferenceSubscriber {
         guard Airship.isFlying else {
             return PreviewPreferenceSubscriber()
         }
         return AirshipPreferenceSubscriber()
     }
+    
 }
 
 protocol PreferenceSubscriber {
-    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
-    {
-        get
-    }
-    var contactSubscriptionListEdits:
-        AnyPublisher<ScopedSubscriptionListEdit, Never>
-    { get }
-
+    
+    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
+    var contactSubscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
+    var channelAssociationPublisher: AnyPublisher<ChannelRegistrationState, Never> { get }
+    
     func updateChannelSubscription(
         _ listID: String,
         subscribe: Bool
@@ -222,14 +263,16 @@ protocol PreferenceSubscriber {
 }
 
 class PreviewPreferenceSubscriber: PreferenceSubscriber {
+    
     private let channelEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
     >()
+    
     var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
     {
         return channelEditsSubject.eraseToAnyPublisher()
     }
-
+    
     private let contactEditsSubject = PassthroughSubject<
         ScopedSubscriptionListEdit, Never
     >()
@@ -239,6 +282,12 @@ class PreviewPreferenceSubscriber: PreferenceSubscriber {
         return contactEditsSubject.eraseToAnyPublisher()
     }
 
+    private let channelAssociationSubject = PassthroughSubject<ChannelRegistrationState, Never>()
+    var channelAssociationPublisher: AnyPublisher<ChannelRegistrationState, Never>
+    {
+        return channelAssociationSubject.eraseToAnyPublisher()
+    }
+    
     func updateChannelSubscription(_ listID: String, subscribe: Bool) {
         if subscribe {
             channelEditsSubject.send(.subscribe(listID))
@@ -272,6 +321,11 @@ class AirshipPreferenceSubscriber: PreferenceSubscriber {
         AnyPublisher<ScopedSubscriptionListEdit, Never>
     {
         return Airship.contact.subscriptionListEdits
+    }
+    
+    var channelAssociationPublisher: AnyPublisher<ChannelRegistrationState, Never>
+    {
+        return Airship.contact.channelsListPublisher
     }
 
     func updateChannelSubscription(_ listID: String, subscribe: Bool) {

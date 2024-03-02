@@ -67,39 +67,38 @@ struct ViewConstraints: Equatable {
         let parentWidth: CGFloat? = self.width?.subtract(horizontalMargins)
         let parentHeight: CGFloat? = self.height?.subtract(verticalMargins)
 
-        let childMinWidth: CGFloat? = constrainedSize.minWidth?
-            .calculateSize(
-                parentWidth
-            )
-        let childMaxWidth: CGFloat? = constrainedSize.maxWidth?
-            .calculateSize(
-                parentWidth
-            )
+        let childMinWidth: CGFloat? = constrainedSize.minWidth?.calculateSize(
+            parentWidth
+        )
+
+        let childMaxWidth: CGFloat? = constrainedSize.maxWidth?.calculateSize(
+            parentWidth
+        )
+
         var childWidth: CGFloat? = constrainedSize.width.calculateSize(
             parentWidth
         )
-        childWidth = childWidth?
-            .bound(
-                minValue: childMinWidth,
-                maxValue: childMaxWidth
-            )
 
-        let childMinHeight: CGFloat? = constrainedSize.minHeight?
-            .calculateSize(
-                parentHeight
-            )
-        let childMaxHeight: CGFloat? = constrainedSize.maxHeight?
-            .calculateSize(
-                parentHeight
-            )
+        childWidth = childWidth?.bound(
+            minValue: childMinWidth,
+            maxValue: childMaxWidth
+        )
+
+        let childMinHeight: CGFloat? = constrainedSize.minHeight?.calculateSize(
+            parentHeight
+        )
+        let childMaxHeight: CGFloat? = constrainedSize.maxHeight?.calculateSize(
+            parentHeight
+        )
+
         var childHeight: CGFloat? = constrainedSize.height.calculateSize(
             parentHeight
         )
-        childHeight = childHeight?
-            .bound(
-                minValue: childMinHeight,
-                maxValue: childMaxHeight
-            )
+
+        childHeight = childHeight? .bound(
+            minValue: childMinHeight,
+            maxValue: childMaxHeight
+        )
 
         let isVerticalFixedSize: Bool = constrainedSize.height.isFixedSize(
             self.isVerticalFixedSize
@@ -167,21 +166,18 @@ struct ViewConstraints: Equatable {
         var childWidth: CGFloat? = size.width.calculateSize(parentWidth)
         var childHeight: CGFloat? = size.height.calculateSize(parentHeight)
 
-        if size.width.isPercent(), let width = childWidth,
-            let parentWidth = parentWidth
-        {
-            childWidth = min(width, parentWidth.subtract(horizontalMargins))
+        if size.width.isPercent, let width = childWidth, let parentWidth = parentWidth {
+            childWidth = max(0, min(width, parentWidth.subtract(horizontalMargins)))
         }
 
-        if size.height.isPercent(), let height = childHeight,
-            let parentHeight = parentHeight
-        {
-            childHeight = min(height, parentHeight.subtract(verticalMargins))
+        if size.height.isPercent, let height = childHeight, let parentHeight = parentHeight {
+            childHeight = max(0, min(height, parentHeight.subtract(verticalMargins)))
         }
 
         let isVerticalFixedSize: Bool = size.height.isFixedSize(
             self.isVerticalFixedSize
         )
+
         let isHorizontalFixedSize: Bool = size.width.isFixedSize(
             self.isHorizontalFixedSize
         )
@@ -222,7 +218,18 @@ extension SizeConstraint {
         }
     }
 
-    func isPercent() -> Bool {
+    var isAuto: Bool {
+        switch self {
+        case .points(_):
+            return false
+        case .percent(_):
+            return false
+        case .auto:
+            return true
+        }
+    }
+
+    var isPercent: Bool {
         switch self {
         case .points(_):
             return false

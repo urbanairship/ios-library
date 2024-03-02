@@ -10,9 +10,9 @@ public typealias MessageConvertor = @Sendable (LegacyInAppMessage) -> Automation
 public typealias MessageExtender = @Sendable (InAppMessage) -> InAppMessage
 public typealias ScheduleExtender = @Sendable (AutomationSchedule) -> AutomationSchedule
 
-/// Controls
+/// Legacy in-app messaging protocol 
 public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
-    /// Optionall message converter from a `LegacyInAppMessage` to an `AutomationSchedule`
+    /// Optional message converter from a `LegacyInAppMessage` to an `AutomationSchedule`
     @MainActor
     var customMessageConverter: MessageConvertor? { get set }
 
@@ -20,7 +20,7 @@ public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
     @MainActor
     var messageExtender: MessageExtender?  { get set }
 
-    /// Optioanl schedule extender.
+    /// Optional schedule extender.
     @MainActor
     var scheduleExtender: ScheduleExtender?  { get set }
 

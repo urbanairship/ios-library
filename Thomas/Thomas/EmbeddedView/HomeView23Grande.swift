@@ -20,7 +20,7 @@ struct HomeView23Grande: View {
                 ScrollView(showsIndicators: false) {
 
 
-                    AirshipEmbeddedView(id: "home_special_offer", bounds: .horizontal) {}
+                    AirshipEmbeddedView(id: "home_special_offer")
                         .setAirshipEmbeddedStyle(DismissableStyle())
 
 

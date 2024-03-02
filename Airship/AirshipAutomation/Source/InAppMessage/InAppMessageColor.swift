@@ -15,6 +15,8 @@ public struct InAppMessageColor: Codable, Sendable, Equatable {
     /// Parsed swiftUI color
     public let color: Color
 
+    /// In-app message color initializer
+    /// - Parameter hexColorString: Color represented  by hex string of the format #AARRGGBB
     public init(hexColorString: String) {
         self.hexColorString = hexColorString
         self.color = Color(AirshipColorUtils.color(hexColorString) ?? .clear)

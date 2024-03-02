@@ -21,6 +21,9 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
 
     /// Alert theme
     public var alert: Alert? = nil
+    
+    /// Contact management theme
+    public var  contactManagement: ContactManagement? = nil
 
     /// Channel subscription item theme
     public var channelSubscription: ChannelSubscription? = nil
@@ -62,7 +65,10 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Window background color
         public var backgroundColor: UIColor? = nil
 
-        public init(navigationBar: NavigationBar? = nil, backgroundColor: UIColor? = nil) {
+        public init(
+            navigationBar: NavigationBar? = nil,
+            backgroundColor: UIColor? = nil
+        ) {
             self.navigationBar = navigationBar
             self.backgroundColor = backgroundColor
         }
@@ -88,7 +94,14 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// The retry message appearance
         public var retryMessageAppearance: TextAppearance? = nil
 
-        public init(subtitleAppearance: TextAppearance? = nil, retryButtonBackgroundColor: Color? = nil, retryButtonLabelAppearance: TextAppearance? = nil, retryButtonLabel: String? = nil, retryMessage: String? = nil, retryMessageAppearance: TextAppearance? = nil) {
+        public init(
+            subtitleAppearance: TextAppearance? = nil,
+            retryButtonBackgroundColor: Color? = nil,
+            retryButtonLabelAppearance: TextAppearance? = nil,
+            retryButtonLabel: String? = nil, 
+            retryMessage: String? = nil,
+            retryMessageAppearance: TextAppearance? = nil
+        ) {
             self.subtitleAppearance = subtitleAppearance
             self.retryButtonBackgroundColor = retryButtonBackgroundColor
             self.retryButtonLabelAppearance = retryButtonLabelAppearance
@@ -106,7 +119,10 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// The text color
         public var color: Color? = nil
 
-        public init(font: Font? = nil, color: Color? = nil) {
+        public init(
+            font: Font? = nil,
+            color: Color? = nil
+        ) {
             self.font = font
             self.color = color
         }
@@ -123,7 +139,11 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Chip label appearance
         public var labelAppearance: TextAppearance? = nil
 
-        public init(checkColor: Color? = nil, borderColor: Color? = nil, labelAppearance: TextAppearance? = nil) {
+        public init(
+            checkColor: Color? = nil,
+            borderColor: Color? = nil,
+            labelAppearance: TextAppearance? = nil
+        ) {
             self.checkColor = checkColor
             self.borderColor = borderColor
             self.labelAppearance = labelAppearance
@@ -138,7 +158,10 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Subtitle appearance
         public var subtitleAppearance: TextAppearance? = nil
 
-        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil) {
+        public init(
+            titleAppearance: TextAppearance? = nil,
+            subtitleAppearance: TextAppearance? = nil
+        ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
         }
@@ -152,7 +175,10 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Background color
         public var backgroundColor: Color? = nil
 
-        public init(titleAppearance: TextAppearance? = nil, backgroundColor: Color? = nil) {
+        public init(
+            titleAppearance: TextAppearance? = nil, 
+            backgroundColor: Color? = nil
+        ) {
             self.titleAppearance = titleAppearance
             self.backgroundColor = backgroundColor
         }
@@ -172,14 +198,56 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Button background color
         public var buttonBackgroundColor: Color? = nil
 
-        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, buttonLabelAppearance: TextAppearance? = nil, buttonBackgroundColor: Color? = nil) {
+        public init(
+            titleAppearance: TextAppearance? = nil,
+            subtitleAppearance: TextAppearance? = nil,
+            buttonLabelAppearance: TextAppearance? = nil,
+            buttonBackgroundColor: Color? = nil
+        ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.buttonLabelAppearance = buttonLabelAppearance
             self.buttonBackgroundColor = buttonBackgroundColor
         }
     }
+    
+    /// Contact management item theme
+    public struct ContactManagement: Equatable, Sendable {
+        
+        /// Background color
+        public var backgroundColor: Color? = nil
+        
+        /// Title appearance
+        public var titleAppearance: TextAppearance? = nil
 
+        /// Subtitle appearance
+        public var subtitleAppearance: TextAppearance? = nil
+
+        /// Error appearance
+        public var errorAppearance: TextAppearance? = nil
+        
+        /// Button label  appearance
+        public var buttonLabelAppearance: TextAppearance? = nil
+
+        /// Button background color
+        public var buttonBackgroundColor: Color? = nil
+
+        public init(
+            backgroundColor: Color? = nil,
+            titleAppearance: TextAppearance? = nil,
+            subtitleAppearance: TextAppearance? = nil,
+            errorAppearance: TextAppearance? = nil,
+            buttonLabelAppearance: TextAppearance? = nil,
+            buttonBackgroundColor: Color? = nil
+        ) {
+            self.titleAppearance = titleAppearance
+            self.subtitleAppearance = subtitleAppearance
+            self.errorAppearance = errorAppearance
+            self.buttonLabelAppearance = buttonLabelAppearance
+            self.buttonBackgroundColor = buttonBackgroundColor
+        }
+    }
+    
     /// Channel subscription item theme
     public struct ChannelSubscription: Equatable, Sendable {
         /// Title appearance
@@ -191,7 +259,11 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
 
-        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, toggleTintColor: Color? = nil) {
+        public init(
+            titleAppearance: TextAppearance? = nil,
+            subtitleAppearance: TextAppearance? = nil,
+            toggleTintColor: Color? = nil
+        ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.toggleTintColor = toggleTintColor
@@ -209,7 +281,11 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
 
-        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, toggleTintColor: Color? = nil) {
+        public init(
+            titleAppearance: TextAppearance? = nil,
+            subtitleAppearance: TextAppearance? = nil,
+            toggleTintColor: Color? = nil
+        ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.toggleTintColor = toggleTintColor
@@ -227,7 +303,11 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Chip theme
         public var chip: Chip? = nil
 
-        public init(titleAppearance: TextAppearance? = nil, subtitleAppearance: TextAppearance? = nil, chip: Chip? = nil) {
+        public init(
+            titleAppearance: TextAppearance? = nil,
+            subtitleAppearance: TextAppearance? = nil,
+            chip: Chip? = nil
+        ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.chip = chip
@@ -240,6 +320,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         commonSection: CommonSection? = nil,
         labeledSectionBreak: LabeledSectionBreak? = nil,
         alert: Alert? = nil,
+        contactManagement: ContactManagement? = nil,
         channelSubscription: ChannelSubscription? = nil,
         contactSubscription: ContactSubscription? = nil,
         contactSubscriptionGroup: ContactSubscriptionGroup? = nil
@@ -249,6 +330,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         self.commonSection = commonSection
         self.labeledSectionBreak = labeledSectionBreak
         self.alert = alert
+        self.contactManagement = contactManagement
         self.channelSubscription = channelSubscription
         self.contactSubscription = contactSubscription
         self.contactSubscriptionGroup = contactSubscriptionGroup

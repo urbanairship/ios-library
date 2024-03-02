@@ -7,6 +7,7 @@ import XCTest
 class AirshipContactTest: XCTestCase {
     private let channel: TestChannel = TestChannel()
     private let apiClient: TestContactSubscriptionListAPIClient = TestContactSubscriptionListAPIClient()
+    private let apiChannel: TestChannelsListAPIClient = TestChannelsListAPIClient()
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
     )
@@ -43,7 +44,8 @@ class AirshipContactTest: XCTestCase {
             config: config,
             channel: self.channel,
             privacyManager: self.privacyManager,
-            subscriptionListAPIClient: self.apiClient,
+            subscriptionListAPIClient: self.apiClient, 
+            channelsListAPIClient: self.apiChannel,
             date: self.date,
             notificationCenter: self.notificationCenter,
             audienceOverridesProvider: self.audienceOverridesProvider,
@@ -595,7 +597,7 @@ class AirshipContactTest: XCTestCase {
         }
 
         /// Local history
-        await self.audienceOverridesProvider.contactUpdaed(
+        await self.audienceOverridesProvider.contactUpdated(
             contactID: "some-contact-id",
             tags: nil,
             attributes: nil,
@@ -812,7 +814,7 @@ class AirshipContactTest: XCTestCase {
 
 
 fileprivate actor TestContactManager: ContactManagerProtocol {
-
+    
     private var _currentNamedUserID: String? = nil
     private var _currentContactIDInfo: ContactIDInfo? = nil
     private var _pendingAudienceOverrides = ContactAudienceOverrides()
@@ -820,6 +822,8 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
 
     let contactUpdates: AsyncStream<ContactUpdate>
     let contactUpdatesContinuation: AsyncStream<ContactUpdate>.Continuation
+    let channelUpdates: AsyncStream<ChannelRegistrationState>
+    let channelUpdatesContinuation: AsyncStream<ChannelRegistrationState>.Continuation
 
     private(set) var operations: [ContactOperation] = []
     var generateDefaultContactIDCalled: Bool = false
@@ -829,6 +833,10 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
             self.contactUpdates,
             self.contactUpdatesContinuation
         ) = AsyncStream<ContactUpdate>.airshipMakeStreamWithContinuation()
+        (
+            self.channelUpdates,
+            self.channelUpdatesContinuation
+        ) = AsyncStream<ChannelRegistrationState>.airshipMakeStreamWithContinuation()
     }
 
     func onAudienceUpdated(

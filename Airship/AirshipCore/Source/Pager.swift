@@ -468,9 +468,7 @@ struct Pager: View {
             pageIndex: pageIndex
         )
         
-        withAnimation {
-            index.wrappedValue = pageIndex
-        }
+        index.wrappedValue = pageIndex
     }
     
     private func handlePagerTransition(
@@ -478,7 +476,6 @@ struct Pager: View {
         index: Binding<Int>,
         pageIndex: Int
     ) {
-        
         switch transition {
         case .defaultSwipe:
             thomasEnvironment.pageSwiped(

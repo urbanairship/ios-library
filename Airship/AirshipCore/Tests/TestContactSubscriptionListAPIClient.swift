@@ -15,3 +15,20 @@ class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProt
     }
 
 }
+
+
+class TestChannelsListAPIClient: ChannelsListAPIClientProtocol {
+    
+    var fetchChannelsListCallback:
+        ((String) async throws -> AirshipHTTPResponse<[AssociatedChannel]>)?
+    
+    var fetchSubscriptionListsCallback:
+        ((String) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]>)?
+
+    init() {}
+
+    func fetchChannelsList(contactID: String) async throws -> AirshipHTTPResponse<[AssociatedChannel]> {
+        return try await fetchChannelsListCallback!(contactID)
+    }
+
+}

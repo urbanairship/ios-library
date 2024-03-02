@@ -4,6 +4,8 @@ protocol ContactManagerProtocol: Actor, AuthTokenProvider {
 
     var contactUpdates: AsyncStream<ContactUpdate> { get }
 
+    var channelUpdates: AsyncStream<ChannelRegistrationState> { get }
+    
     func onAudienceUpdated(onAudienceUpdatedCallback: (@Sendable (ContactAudienceUpdate) async -> Void)?)
     func addOperation(_ operation: ContactOperation)
 

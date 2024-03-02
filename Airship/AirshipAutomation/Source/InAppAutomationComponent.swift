@@ -16,18 +16,18 @@ final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent
     }
 
     @MainActor
-    public func airshipReady() {
+    func airshipReady() {
         self.inAppAutomation.airshipReady()
     }
 
-    public func receivedRemoteNotification(
+    func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         self.inAppAutomation.receivedRemoteNotification(notification, completionHandler: completionHandler)
     }
 
-    public func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         self.inAppAutomation.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
 }

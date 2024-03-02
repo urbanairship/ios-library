@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-/// In-App messaging
+/// In-app messaging
 public protocol InAppMessagingProtocol: AnyObject, Sendable {
     /// Display interval
     @MainActor
@@ -43,7 +43,7 @@ final class InAppMessaging: InAppMessagingProtocol {
     let preparer: InAppMessageAutomationPreparer
 
     @MainActor
-    public var displayInterval: TimeInterval {
+    var displayInterval: TimeInterval {
         get {
             return preparer.displayInterval
         }
@@ -53,7 +53,7 @@ final class InAppMessaging: InAppMessagingProtocol {
     }
 
     @MainActor
-    public weak var displayDelegate: InAppMessageDisplayDelegate? {
+    weak var displayDelegate: InAppMessageDisplayDelegate? {
         get {
             return executor.displayDelegate
         }
@@ -63,7 +63,7 @@ final class InAppMessaging: InAppMessagingProtocol {
     }
 
     @MainActor
-    public weak var sceneDelegate: InAppMessageSceneDelegate? {
+    weak var sceneDelegate: InAppMessageSceneDelegate? {
         get {
             return executor.sceneDelegate
         }
@@ -92,6 +92,4 @@ final class InAppMessaging: InAppMessagingProtocol {
     func notifyDisplayConditionsChanged() {
         executor.notifyDisplayConditionsChanged()
     }
-
-
 }

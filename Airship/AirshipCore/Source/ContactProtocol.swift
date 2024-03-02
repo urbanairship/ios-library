@@ -102,6 +102,14 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      */
     @objc
     func associateChannel(_ channelID: String, type: ChannelType)
+    
+    /**
+     * Opt out a channel from the contact.
+     * - Parameters:
+     *   - channelID: The channel ID.
+     */
+    @objc
+    func optOutChannel(_ channelID: String)
 
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
@@ -130,6 +138,9 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// The named user ID current value publisher.
     var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
 
+    /// Channels list publisher
+    var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> { get }
+
     /// Conflict event publisher
     var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
 
@@ -139,6 +150,10 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// Fetches subscription lists.
     /// - Returns: Subscriptions lists.
     func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]]
+    
+    /// Fetches associated channels list.
+    /// - Returns: associated channels list.
+    func fetchChannelsList() async -> [AssociatedChannel]?
 }
 
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {

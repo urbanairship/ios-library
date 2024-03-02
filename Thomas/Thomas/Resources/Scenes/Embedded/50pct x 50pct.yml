@@ -7,11 +7,6 @@ presentation:
     size:
       width: 50%
       height: 50%
-    margin:
-        top: 16
-        bottom: 16
-        start: 16
-        end: 16
 view:
   type: container
   border:

@@ -5,17 +5,29 @@ import AirshipCore
 
 protocol EmbeddedViewMaker {}
 extension EmbeddedViewMaker {
-    func makeEmbeddedView<Content: View>(id: String, bounds:AirshipEmbeddedViewBounds?, isShowingPlaceholder: Bool,  @ViewBuilder placeholder: @escaping () -> Content) -> some View {
-        AirshipEmbeddedView(id: isShowingPlaceholder ? "nonexistent view id" : id ,
-                            bounds: bounds ?? .all,
-                            placeholder:placeholder)
-        .border(Color.red, width: 3)
+
+    func makeEmbeddedView<Content: View>(
+        id: String, 
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
+        isShowingPlaceholder: Bool,
+        @ViewBuilder placeholder: @escaping () -> Content
+    ) -> some View {
+        AirshipEmbeddedView(
+            id: isShowingPlaceholder ? "nonexistent view id" : id,
+            embeddedSize: AirshipEmbeddedSize(maxWidth: maxWidth, maxHeight: maxHeight),
+            placeholder:placeholder
+        )
     }
 }
 
 struct EmbeddedUnboundedHorizontalScrollView: View, EmbeddedViewMaker {
     @EnvironmentObject var model: EmbeddedPlaygroundMenuViewModel
 
+    @State
+    private var size: CGSize?
+
+    @ViewBuilder
     private var embeddedView: some View {
         let keyItems = [KeyItem(name: "Embedded view frame",
                                 color: .red),
@@ -24,7 +36,7 @@ struct EmbeddedUnboundedHorizontalScrollView: View, EmbeddedViewMaker {
                         KeyItem(name: "Placeholder view",
                                 color: .green)]
 
-        return ScrollView(.horizontal) {
+        ScrollView(.horizontal) {
             let exampleItem = Text("Example item")
                 .font(.largeTitle)
                 .frame(width: 200, height: 200)
@@ -33,21 +45,28 @@ struct EmbeddedUnboundedHorizontalScrollView: View, EmbeddedViewMaker {
             HStack(spacing: 20) {
                 exampleItem
                 exampleItem
-                makeEmbeddedView(id: model.selectedEmbeddedID,
-                                 bounds: .horizontal,
-                                 isShowingPlaceholder: model.isShowingPlaceholder) {
+
+                makeEmbeddedView(
+                    id: model.selectedEmbeddedID,
+                    maxWidth: $size.wrappedValue?.width,
+                    isShowingPlaceholder: model.isShowingPlaceholder
+                ) {
                     Text("Placeholder")
                         .font(.largeTitle)
                         .frame(width: 200, height: 200)
                         .background(Color.green)
-                }.id(model.isShowingPlaceholder)
+                }
+                .id(model.isShowingPlaceholder)
+
                 exampleItem
                 exampleItem
             }
-        }.border(Color.gray, width: 3)
-            .addKeyView(keyItems:keyItems)
-            .addPlaceholderToggle(state: $model.isShowingPlaceholder)
-            .navigationTitle(model.selectedFileID)
+        }
+        .airshipMeasureView($size)
+        .border(Color.gray, width: 3)
+        .addKeyView(keyItems:keyItems)
+        .addPlaceholderToggle(state: $model.isShowingPlaceholder)
+        .navigationTitle(model.selectedFileID)
     }
 
     var body: some View {
@@ -57,6 +76,9 @@ struct EmbeddedUnboundedHorizontalScrollView: View, EmbeddedViewMaker {
 
 struct EmbeddedUnboundedVerticalScrollView: View, EmbeddedViewMaker {
     @EnvironmentObject var model: EmbeddedPlaygroundMenuViewModel
+    
+    @State
+    private var size: CGSize?
 
     private var embeddedView: some View {
         let keyItems = [KeyItem(name: "Embedded view frame",
@@ -76,21 +98,27 @@ struct EmbeddedUnboundedVerticalScrollView: View, EmbeddedViewMaker {
             VStack(spacing: 20) {
                 exampleItem
                 exampleItem
-                makeEmbeddedView(id: model.selectedEmbeddedID,
-                                 bounds: .horizontal,
-                                 isShowingPlaceholder: model.isShowingPlaceholder) {
+                makeEmbeddedView(
+                    id: model.selectedEmbeddedID,
+                    maxWidth: size?.width,
+                    maxHeight: size?.height,
+                    isShowingPlaceholder: model.isShowingPlaceholder
+                ) {
                     Text("Placeholder")
                         .font(.largeTitle)
                         .frame(width: 200, height: 200)
                         .background(Color.green)
-                }.id(model.isShowingPlaceholder)
+                }
+                .id(model.isShowingPlaceholder)
                 exampleItem
                 exampleItem
             }
-        }.border(Color.gray, width: 3)
-            .addKeyView(keyItems:keyItems)
-            .addPlaceholderToggle(state: $model.isShowingPlaceholder)
-            .navigationTitle(model.selectedFileID)
+        }
+        .airshipMeasureView($size)
+        .border(Color.gray, width: 3)
+        .addKeyView(keyItems:keyItems)
+        .addPlaceholderToggle(state: $model.isShowingPlaceholder)
+        .navigationTitle(model.selectedFileID)
 
     }
 
@@ -101,6 +129,10 @@ struct EmbeddedUnboundedVerticalScrollView: View, EmbeddedViewMaker {
 
 struct EmbeddedHorizontalScrollView: View, EmbeddedViewMaker {
     @EnvironmentObject var model: EmbeddedPlaygroundMenuViewModel
+
+    @State
+    private var size: CGSize?
+
 
     var embeddedView: some View {
         let keyItems = [KeyItem(name: "Embedded view frame",
@@ -119,9 +151,12 @@ struct EmbeddedHorizontalScrollView: View, EmbeddedViewMaker {
             HStack(spacing: 20) {
                 exampleItem
                 exampleItem
-                makeEmbeddedView(id: model.selectedEmbeddedID,
-                                 bounds: .horizontal,
-                                 isShowingPlaceholder: model.isShowingPlaceholder) {
+                makeEmbeddedView(
+                    id: model.selectedEmbeddedID,
+                    maxWidth: size?.width,
+                    maxHeight: size?.height,
+                    isShowingPlaceholder: model.isShowingPlaceholder
+                ) {
                     Text("Placeholder")
                         .font(.largeTitle)
                         .frame(width: 200, height: 200)
@@ -130,10 +165,13 @@ struct EmbeddedHorizontalScrollView: View, EmbeddedViewMaker {
                 exampleItem
                 exampleItem
             }
-        }.border(Color.gray, width: 3)
-            .addKeyView(keyItems:keyItems)
-            .addPlaceholderToggle(state: $model.isShowingPlaceholder)
-            .navigationTitle(model.selectedFileID)
+        }
+        .airshipMeasureView($size)
+        .border(Color.gray, width: 3)
+        .addKeyView(keyItems:keyItems)
+        .addPlaceholderToggle(state: $model.isShowingPlaceholder)
+        .navigationTitle(model.selectedFileID)
+
 
     }
 
@@ -152,19 +190,22 @@ struct EmbeddedFixedFrameView: View, EmbeddedViewMaker {
 
     private var embeddedView: some View {
         Group {
-            makeEmbeddedView(id: model.selectedEmbeddedID,
-                             bounds: .all,
-                             isShowingPlaceholder: model.isShowingPlaceholder) {
+            makeEmbeddedView(
+                id: model.selectedEmbeddedID,
+                isShowingPlaceholder: model.isShowingPlaceholder
+            ) {
                 Text("Placeholder")
                     .font(.largeTitle)
                     .frame(width: 200, height: 200)
                     .background(Color.green)
-            }.frame(maxWidth: 200, maxHeight:200)
-                .border(Color.red, width: 3)
-                .id(model.isShowingPlaceholder)
-                .addKeyView(keyItems: keyItems)
-                .addPlaceholderToggle(state: $model.isShowingPlaceholder)
-        }.navigationTitle(model.selectedFileID)
+            }
+            .frame(maxWidth: 200, maxHeight:200)
+            .border(Color.red, width: 3)
+            .id(model.isShowingPlaceholder)
+            .addKeyView(keyItems: keyItems)
+            .addPlaceholderToggle(state: $model.isShowingPlaceholder)
+        }
+        .navigationTitle(model.selectedFileID)
     }
 
     var body: some View {
@@ -175,4 +216,6 @@ struct EmbeddedFixedFrameView: View, EmbeddedViewMaker {
 #Preview {
     EmbeddedUnboundedHorizontalScrollView()
 }
+
+
 

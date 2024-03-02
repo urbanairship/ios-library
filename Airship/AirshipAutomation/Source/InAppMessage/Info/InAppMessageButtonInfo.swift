@@ -39,6 +39,16 @@ public struct InAppMessageButtonInfo: Sendable, Codable, Equatable {
     public var borderRadius: Double?
 
 
+
+    /// In-app message button model
+    /// - Parameters:
+    ///   - identifier: Button identifier
+    ///   - label: Text model for the button text
+    ///   - actions: Actions for the button to execute
+    ///   - behavior: Behavior of the button on tap
+    ///   - backgroundColor: Background color
+    ///   - borderColor: Border color
+    ///   - borderRadius: Border radius
     public init(
         identifier: String,
         label: InAppMessageTextInfo,

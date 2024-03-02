@@ -125,11 +125,16 @@ class ProjectValidationTest: XCTestCase {
         sourcePaths: [String],
         excludeFiles: [String] = []
     ) {
+        guard let sourceRootURL = self.sourceRootURL else {
+            XCTFail("Source root is nil - check xcodeprojPath")
+            return
+        }
+
         let excludeUrls = excludeFiles.compactMap {
-            sourceRootURL!.appendingPathComponent($0)
+            sourceRootURL.appendingPathComponent($0)
         }
         let directories = sourcePaths.compactMap {
-            sourceRootURL!.appendingPathComponent($0)
+            sourceRootURL.appendingPathComponent($0)
         }
 
         let filesFromTarget = Set(getSourceFiles(target: target))

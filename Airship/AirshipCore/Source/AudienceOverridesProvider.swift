@@ -13,7 +13,7 @@ protocol AudienceOverridesProvider: Actor {
         _ provider: @escaping @Sendable (String) async -> ContactAudienceOverrides?
     )
     
-    func contactUpdaed(
+    func contactUpdated(
         contactID: String,
         tags: [TagGroupUpdate]?,
         attributes: [AttributeUpdate]?,
@@ -82,7 +82,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         return await self.pendingContactOverridesProvider?(contactID)
     }
 
-    func contactUpdaed(
+    func contactUpdated(
         contactID: String,
         tags: [TagGroupUpdate]?,
         attributes: [AttributeUpdate]?,

@@ -16,6 +16,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .registerSMS(_, _): return .registerSMS
         case .registerOpen(_, _): return .registerOpen
         case .associateChannel(_, _): return .associateChannel
+        case .optOutChannel(_): return .optOutChannel
         }
     }
 
@@ -29,6 +30,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case registerSMS
         case registerOpen
         case associateChannel
+        case optOutChannel
     }
 
     case update(
@@ -60,7 +62,10 @@ enum ContactOperation: Codable, Equatable, Sendable {
         channelType: ChannelType
     )
 
-
+    case optOutChannel(
+        channelID: String
+    )
+    
     enum CodingKeys: String, CodingKey {
         case payload
         case type
@@ -135,6 +140,11 @@ enum ContactOperation: Codable, Equatable, Sendable {
             try payloadContainer.encode(channelID, forKey: .channelID)
             try payloadContainer.encode(channelType, forKey: .channelType)
             try container.encode(OperationType.associateChannel, forKey: .type)
+            
+        case .optOutChannel(let channelID):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(channelID, forKey: .channelID)
+            try container.encode(OperationType.optOutChannel, forKey: .type)
         }
 
 
@@ -221,6 +231,15 @@ enum ContactOperation: Codable, Equatable, Sendable {
                 channelType: try payloadContainer.decode(
                     ChannelType.self,
                     forKey: .channelType
+                )
+            )
+          
+        case .optOutChannel:
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .optOutChannel(
+                channelID: try payloadContainer.decode(
+                    String.self,
+                    forKey: .channelID
                 )
             )
             

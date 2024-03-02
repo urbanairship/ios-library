@@ -6,31 +6,22 @@ import Foundation
 import AirshipCore
 #endif
 
-
-@objc(UAFrequencyLimitManagerProtocol)
-public protocol _FrequencyLimitManagerProtocol: Sendable {
-    @MainActor
-    func getFrequencyChecker(
-        constraintIDs: [String]?
-    ) async throws -> FrequencyCheckerProtocol
-
-    // Temp method until we have the updated in swift
-    func setConstraints(data: Data) async throws
-}
-
+/// Manager protocol for keeping track of frequency limits and occurrence counts.
 protocol FrequencyLimitManagerProtocol: Sendable {
+
+    /// Gets a frequency checker corresponding to the passed in constraints identifiers
+    /// - Parameter constraintIDs: Constraint identifiers
+    /// - Returns: The frequency checker instance
     @MainActor
     func getFrequencyChecker(
         constraintIDs: [String]?
     ) async throws -> FrequencyCheckerProtocol
-
 
     func setConstraints(_ constraints: [FrequencyConstraint]) async throws
 }
 
-
-@objc(UAFrequencyLimitManager)
-public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtocol, @unchecked Sendable {
+/// Manager for keeping track of frequency limits and occurrence counts.
+final class FrequencyLimitManager: FrequencyLimitManagerProtocol, @unchecked Sendable {
     private let frequencyLimitStore: FrequencyLimitStore
     private let date: AirshipDateProtocol
     private let storeQueue: AirshipSerialQueue
@@ -56,14 +47,12 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
         self.storeQueue = storeQueue
     }
     
-    @objc
-    public convenience init(config: RuntimeConfig) {
+    convenience init(config: RuntimeConfig) {
         self.init(dataStore: FrequencyLimitStore(config: config))
     }
 
     @MainActor
-    @objc
-    public func getFrequencyChecker(
+    func getFrequencyChecker(
         constraintIDs: [String]?
     ) async throws -> FrequencyCheckerProtocol {
         guard let constraintIDs = constraintIDs, !constraintIDs.isEmpty else {
@@ -100,8 +89,7 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
         }
     }
 
-    @objc
-    public func setConstraints(data: Data) async throws {
+    func setConstraints(data: Data) async throws {
         let constraints = try AirshipJSON.defaultDecoder.decode(
             [FrequencyConstraint].self,
             from: data
@@ -216,12 +204,12 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
             try await self.frequencyLimitStore.saveOccurrences(pending)
         } catch {
             AirshipLogger.error("Failed to write pending: \(pending) \(error)")
-            await appendPendingOccurences(pending)
+            await appendPendingOccurrences(pending)
         }
     }
 
     @MainActor
-    private func appendPendingOccurences(_ pending: [Occurrence]) {
+    private func appendPendingOccurrences(_ pending: [Occurrence]) {
         self.pendingOccurrences.append(contentsOf: pending)
     }
 
@@ -231,8 +219,4 @@ public final class FrequencyLimitManager: NSObject, _FrequencyLimitManagerProtoc
         self.pendingOccurrences = []
         return pending
     }
-    
 }
-
-
-extension FrequencyLimitManager: FrequencyLimitManagerProtocol {}

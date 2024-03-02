@@ -27,6 +27,8 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
 
     var registerOpenCallback:
         ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    
+    var optOutChannelCallback: ((String, String) async throws -> AirshipHTTPResponse<Bool>)?
 
     init() {}
 
@@ -66,7 +68,8 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     public func associateChannel(
         contactID: String,
         channelID: String,
-        channelType: ChannelType
+        channelType: ChannelType,
+        identifier: String
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
         return try await associateChannelCallback!(contactID, channelID, channelType)
     }
@@ -96,5 +99,11 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         locale: Locale
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
         return try await registerOpenCallback!(contactID, address, options, locale)
+    }
+    
+
+    
+    func optOutChannel(contactID: String, channelID: String) async throws -> AirshipHTTPResponse<Bool> {
+        return try await optOutChannelCallback!(contactID, channelID)
     }
 }

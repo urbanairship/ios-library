@@ -2,7 +2,7 @@
 
 import Foundation
 
-/// NOTE: For internal use only. :nodoc:
+/// A collection of properties defining an automation audience
 public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
     var newUser: Bool?
     var notificationOptIn: Bool?
@@ -30,7 +30,33 @@ public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
         case deviceTypes = "device_types"
     }
 
-    public init(newUser: Bool? = nil, notificationOptIn: Bool? = nil, locationOptIn: Bool? = nil, languageIDs: [String]? = nil, tagSelector: DeviceTagSelector? = nil, versionPredicate: JSONPredicate? = nil, requiresAnalytics: Bool? = nil, permissionPredicate: JSONPredicate? = nil, testDevices: [String]? = nil, hashSelector: AudienceHashSelector? = nil, deviceTypes: [String]? = nil) {
+
+    /// Audience selector initializer
+    /// - Parameters:
+    ///   - newUser: Flag indicating if audience consists of new users
+    ///   - notificationOptIn: Flag indicating if audience consists of users opted into notifications
+    ///   - locationOptIn: Flag indicating if audience consists of users that have opted into location
+    ///   - languageIDs: Array of language IDs representing a given audience
+    ///   - tagSelector: Internal-only selector
+    ///   - versionPredicate: Version predicate representing a given audience
+    ///   - requiresAnalytics: Flag indicating if audience consists of users that require analytics tracking
+    ///   - permissionPredicate: Flag indicating if audience consists of users that require certain permissions
+    ///   - testDevices:  Array of test device identifiers representing a given audience
+    ///   - hashSelector: Internal-only selector
+    ///   - deviceTypes: Array of device types representing a given audience
+    public init(
+        newUser: Bool? = nil,
+        notificationOptIn: Bool? = nil,
+        locationOptIn: Bool? = nil,
+        languageIDs: [String]? = nil,
+        tagSelector: DeviceTagSelector? = nil,
+        versionPredicate: JSONPredicate? = nil,
+        requiresAnalytics: Bool? = nil,
+        permissionPredicate: JSONPredicate? = nil,
+        testDevices: [String]? = nil,
+        hashSelector: AudienceHashSelector? = nil,
+        deviceTypes: [String]? = nil
+    ) {
         self.newUser = newUser
         self.notificationOptIn = notificationOptIn
         self.locationOptIn = locationOptIn
@@ -45,7 +71,7 @@ public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
     }
 }
 
-
+/// NOTE: For internal use only. :nodoc:
 public extension DeviceAudienceSelector {
 
     func evaluate(

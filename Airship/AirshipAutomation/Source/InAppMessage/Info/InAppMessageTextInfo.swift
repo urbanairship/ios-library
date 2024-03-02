@@ -41,6 +41,15 @@ public struct InAppMessageTextInfo: Sendable, Codable, Equatable {
     /// Style
     public var style: [Style]?
 
+
+    /// In-app message text model
+    /// - Parameters:
+    ///   - text: Text
+    ///   - color: Color
+    ///   - size: Size
+    ///   - fontFamilies: Font families
+    ///   - alignment: Text alignment inside its own frame
+    ///   - style: Text style
     public init(
         text: String,
         color: InAppMessageColor? = nil,

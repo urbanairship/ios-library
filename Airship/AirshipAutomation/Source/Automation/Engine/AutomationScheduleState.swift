@@ -12,6 +12,6 @@ enum AutomationScheduleState: String, Equatable, Sendable {
     // interval
     case paused
 
-    // waiting ot be cleaned up after grace period
+    // waiting to be cleaned up after grace period
     case finished
 }

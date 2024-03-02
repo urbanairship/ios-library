@@ -155,6 +155,9 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
         case .contactSubscriptionGroup(let item):
             ContactSubscriptionGroupView(item: item, state: state)
             Divider()
+        case .contactManagement(let item):
+            PreferenceCenterContactManagementView(item: item, state: state)
+            Divider()
         }
     }
 }

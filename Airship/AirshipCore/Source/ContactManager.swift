@@ -28,6 +28,10 @@ actor ContactManager: ContactManagerProtocol {
     let contactUpdates: AsyncStream<ContactUpdate>
     private let contactUpdatesContinuation: AsyncStream<ContactUpdate>.Continuation
 
+    let channelUpdates: AsyncStream<ChannelRegistrationState>
+    /// Publishes channel lists through the  SDK
+    private let channelUpdatesContinuation: AsyncStream<ChannelRegistrationState>.Continuation
+    
     private var isEnabled: Bool = false
     
     private var lastIdentifyOperationDate = Date.distantPast
@@ -107,6 +111,11 @@ actor ContactManager: ContactManagerProtocol {
             self.contactUpdates,
             self.contactUpdatesContinuation
         ) = AsyncStream<ContactUpdate>.airshipMakeStreamWithContinuation()
+
+        (
+            self.channelUpdates,
+            self.channelUpdatesContinuation
+        ) = AsyncStream<ChannelRegistrationState>.airshipMakeStreamWithContinuation()
 
         self.workManager.registerWorker(
             ContactManager.updateTaskID,
@@ -380,6 +389,11 @@ actor ContactManager: ContactManagerProtocol {
                 channelID: channelID,
                 type: type
             )
+            
+        case .optOutChannel(let channelID):
+            return try await performOptOutChannelOperation(
+                channelID: channelID
+            )
         }
     }
 
@@ -433,48 +447,90 @@ actor ContactManager: ContactManagerProtocol {
         address: String,
         options: EmailRegistrationOptions
     ) async throws -> Bool {
-        let result = try await self.apiClient.registerEmail(
+        let response = try await self.apiClient.registerEmail(
             contactID: try requireContactID(),
             address: address,
             options: options,
             locale: self.localeManager.currentLocale
         )
 
-        return result.isOperationComplete
+        performOptIn(response)
+
+        return response.isOperationComplete
     }
 
     private func performRegisterSMSOperation(msisdn: String, options: SMSRegistrationOptions) async throws -> Bool {
-        let result = try await self.apiClient.registerSMS(
+        let response = try await self.apiClient.registerSMS(
             contactID: try requireContactID(),
             msisdn: msisdn,
             options: options,
             locale: self.localeManager.currentLocale
         )
 
-        return result.isOperationComplete
+        performOptIn(response)
+        
+        return response.isOperationComplete
     }
 
     private func performRegisterOpenChannelOperation(address: String, options: OpenRegistrationOptions) async throws -> Bool {
-        let result = try await self.apiClient.registerOpen(
+        let response = try await self.apiClient.registerOpen(
             contactID: try requireContactID(),
             address: address,
             options: options,
             locale: self.localeManager.currentLocale
         )
 
-        return result.isOperationComplete
+        performOptIn(response)
+        
+        return response.isOperationComplete
     }
 
-    private func performAssociateChannelOperation(channelID: String, type: ChannelType) async throws -> Bool {
-        let result = try await self.apiClient.associateChannel(
+    private func performAssociateChannelOperation(
+        channelID: String,
+        type: ChannelType
+    ) async throws -> Bool {
+        let response = try await self.apiClient.associateChannel(
             contactID: try requireContactID(),
             channelID: channelID,
-            channelType: type
+            channelType: type,
+            identifier: channelID
         )
 
-        return result.isOperationComplete
+        performOptIn(response)
+        
+        return response.isOperationComplete
     }
+    
+    private func performOptOutChannelOperation(channelID: String) async throws -> Bool {
+        let response = try await self.apiClient.optOutChannel(
+            contactID: try requireContactID(),
+            channelID: channelID
+        )
 
+        performOptOut(response, channelID: channelID)
+        return response.isOperationComplete
+    }
+    
+    private func performOptIn(_ response: AirshipHTTPResponse<AssociatedChannel>) {
+        if response.isSuccess {
+            if let result = response.result {
+                self.channelUpdatesContinuation.yield(.succeed(.optIn(result)))
+            }
+        } else {
+            self.channelUpdatesContinuation.yield(.failed)
+        }
+    }
+    
+    private func performOptOut(_ response: AirshipHTTPResponse<Bool>, channelID: String) {
+        if response.isSuccess {
+            if response.result != nil {
+                self.channelUpdatesContinuation.yield(.succeed(.optOut(channelID)))
+            }
+        } else {
+            self.channelUpdatesContinuation.yield(.failed)
+        }
+    }
+    
     private func performUpdateOperation(
         tagGroupUpdates: [TagGroupUpdate]?,
         attributeUpdates: [AttributeUpdate]?,

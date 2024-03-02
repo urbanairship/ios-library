@@ -835,7 +835,10 @@ final class ContactManagerTest: XCTestCase {
             register.fulfill()
             return AirshipHTTPResponse(
                 result: AssociatedChannel(
-                    channelType: .email, channelID: "some channel"
+                    channelType: .email, 
+                    channelID: "some channel",
+                    identifier: address,
+                    registrationDate: Date()
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -884,7 +887,10 @@ final class ContactManagerTest: XCTestCase {
             register.fulfill()
             return AirshipHTTPResponse(
                 result: AssociatedChannel(
-                    channelType: .open, channelID: "some channel"
+                    channelType: .open, 
+                    channelID: "some channel",
+                    identifier: address,
+                    registrationDate: Date()
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -930,7 +936,10 @@ final class ContactManagerTest: XCTestCase {
             register.fulfill()
             return AirshipHTTPResponse(
                 result: AssociatedChannel(
-                    channelType: .open, channelID: "some channel"
+                    channelType: .open, 
+                    channelID: "some channel",
+                    identifier: address,
+                    registrationDate: Date()
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -972,7 +981,10 @@ final class ContactManagerTest: XCTestCase {
             register.fulfill()
             return AirshipHTTPResponse(
                 result: AssociatedChannel(
-                    channelType: .open, channelID: "some channel"
+                    channelType: .open, 
+                    channelID: "some channel",
+                    identifier: address,
+                    registrationDate: Date()
                 ),
                 statusCode: 200,
                 headers: [:]

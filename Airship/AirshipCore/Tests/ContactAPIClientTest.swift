@@ -443,7 +443,8 @@ class ContactAPIClientTest: XCTestCase {
         let response = try await contactAPIClient.associateChannel(
             contactID: "some-contact-id",
             channelID: "some-channel",
-            channelType: .sms
+            channelType: .sms,
+            identifier: "1234567"
         )
 
         XCTAssertTrue(response.isSuccess)

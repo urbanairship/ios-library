@@ -99,7 +99,7 @@ public enum AutomationTrigger: Sendable, Codable, Equatable {
 }
 
 extension AutomationTrigger {
-    var shouldBackFillIdentifer: Bool {
+    var shouldBackFillIdentifier: Bool {
         switch self {
         case .compound(_): return false
         case .event(let trigger): return trigger.allowBackfillID
@@ -114,8 +114,10 @@ extension AutomationTrigger {
     }
 }
 
+
+/// Model for defining when an automation is triggered.
 public struct EventAutomationTrigger: Sendable, Codable, Equatable {
-    /// The type
+    /// The trigger type
     public var type: EventAutomationTriggerType
 
     /// The trigger goal
@@ -131,6 +133,12 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
     /// an ID will be set and this will always be false.
     var allowBackfillID: Bool
 
+
+    /// Event automation trigger initializer
+    /// - Parameters:
+    ///   - type: Trigger type
+    ///   - goal: Trigger goal
+    ///   - predicate: Predicate to run on the event data
     public init(
         type: EventAutomationTriggerType,
         goal: Double,
@@ -217,6 +225,7 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
     }
 }
 
+/// NOTE: For internal use only. :nodoc:
 public struct CompoundAutomationTrigger: Sendable, Codable, Equatable {
     /// The ID
     var id: String
@@ -242,6 +251,7 @@ public struct CompoundAutomationTrigger: Sendable, Codable, Equatable {
     }
 }
 
+/// NOTE: For internal use only. :nodoc:
 public extension AutomationTrigger {
     static func activeSession(count: UInt) -> AutomationTrigger {
         return .event(EventAutomationTrigger(type: .activeSession, goal: Double(count)))

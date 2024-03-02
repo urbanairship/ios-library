@@ -12,6 +12,8 @@ public class InAppMessageNativeBridgeExtension: NativeBridgeExtensionDelegate {
 
     private let message: InAppMessage
 
+    /// Airship native bridge extension initializer
+    /// - Parameter message: In-app message
     public init(message: InAppMessage) {
         self.message = message
     }

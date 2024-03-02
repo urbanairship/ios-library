@@ -13,6 +13,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
     static let legacyNamedUserKey = "UANamedUserID"
 
+    private static let maxChannelListCacheAge: TimeInterval = 600
+
     // Interval for how often we emit a resolve operation on foreground
     static let defaultForegroundResolveInterval: TimeInterval = 3600.0 // 1 hour
 
@@ -28,14 +30,18 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
     private let subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol
+    private let channelsListAPIClient: ChannelsListAPIClientProtocol
     private let date: AirshipDateProtocol
     private let audienceOverridesProvider: AudienceOverridesProvider
     private let contactManager: ContactManagerProtocol
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
+    private let cachedChannelsList: CachedValue<(String, [AssociatedChannel])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
-    private let fetchSubscriptinListQueue: AirshipSerialQueue = AirshipSerialQueue()
+    private let fetchSubscriptionListQueue: AirshipSerialQueue = AirshipSerialQueue()
+    private let fetchChannelsListQueue: AirshipSerialQueue = AirshipSerialQueue()
     private let serialQueue: AirshipAsyncSerialQueue
+
 
     private var lastResolveDate: Date {
          get {
@@ -52,6 +58,13 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     /// Publishes all edits made to the subscription lists through the  SDK
     public var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
         subscriptionListEditsSubject.eraseToAnyPublisher()
+    }
+    
+    private let channelsListSubject = PassthroughSubject<ChannelRegistrationState, Never>()
+    
+    /// Publishes channels list through the  SDK
+    public var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> {
+        channelsListSubject.eraseToAnyPublisher()
     }
 
     private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
@@ -117,6 +130,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         channel: InternalAirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
         subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol,
+        channelsListAPIClient: ChannelsListAPIClientProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: AudienceOverridesProvider,
@@ -128,12 +142,14 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.config = config
         self.privacyManager = privacyManager
         self.subscriptionListAPIClient = subscriptionListAPIClient
+        self.channelsListAPIClient = channelsListAPIClient
         self.audienceOverridesProvider = audienceOverridesProvider
         self.date = date
         self.contactManager = contactManager
         self.serialQueue = serialQueue
 
         self.cachedSubscriptionLists = CachedValue(date: date)
+        self.cachedChannelsList = CachedValue(date: date)
 
         super.init()
 
@@ -149,7 +165,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             }
 
             await contactManager.onAudienceUpdated { update in
-                await audienceOverridesProvider.contactUpdaed(
+                await audienceOverridesProvider.contactUpdated(
                     contactID: update.contactID,
                     tags: update.tags,
                     attributes: update.attributes,
@@ -237,6 +253,12 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
                 }
             }
         }
+        
+        Task {
+            for await update in await self.contactManager.channelUpdates {
+                self.channelsListSubject.send(update)
+            }
+        }
     }
 
     /**
@@ -256,7 +278,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             config: config,
             channel: channel,
             privacyManager: privacyManager,
-            subscriptionListAPIClient: ContactSubscriptionListAPIClient(config: config),
+            subscriptionListAPIClient: ContactSubscriptionListAPIClient(config: config), 
+            channelsListAPIClient: ChannelsListAPIClient(config: config),
             audienceOverridesProvider: audienceOverridesProvider,
             contactManager: ContactManager(
                 dataStore: dataStore,
@@ -444,7 +467,72 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
         self.addOperation(.associateChannel(channelID: channelID, channelType: type))
     }
+    
+    /**
+     * Opt out a channel from the contact.
+     * - Parameters:
+     *   - channelID: The channel ID.
+     */
+    @objc
+    public func optOutChannel(_ channelID: String) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to associate channel."
+            )
+            return
+        }
 
+        self.addOperation(.optOutChannel(channelID: channelID))
+    }
+    
+    /**
+     * Fetch the channels list.
+     */
+    public func fetchChannelsList() async -> [AssociatedChannel]? {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to fetch channels list."
+            )
+            return nil
+        }
+        
+        do {
+            let contactID = await getStableContactID()
+            return try await self.resolveChannelsList(contactID)
+        } catch {
+            AirshipLogger.error("Fetching channels list failed with error \(error)")
+            return nil
+        }
+        
+    }
+    
+    private func resolveChannelsList(
+        _ contactID: String
+    ) async throws -> [AssociatedChannel] {
+        return try await self.fetchChannelsListQueue.run {
+            if let cached = self.cachedChannelsList.value,
+                cached.0 == contactID {
+                return cached.1
+            }
+
+            let response = try await self.channelsListAPIClient.fetchChannelsList(
+                contactID: contactID
+            )
+
+            guard response.isSuccess, let lists = response.result else {
+                throw AirshipErrors.error("Failed to fetch channels list")
+            }
+
+            AirshipLogger.debug("Fetching channels list finished with response: \(response)")
+            self.cachedChannelsList.set(
+                value: (contactID, lists),
+                expiresIn: AirshipContact.maxChannelListCacheAge
+            )
+            
+            return lists
+        }
+    }
+    
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
     @objc
@@ -566,7 +654,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private func resolveSubscriptionLists(
         _ contactID: String
     ) async throws -> [String:[ChannelScope]] {
-        return try await self.fetchSubscriptinListQueue.run {
+        return try await self.fetchSubscriptionListQueue.run {
             if let cached = self.cachedSubscriptionLists.value,
                 cached.0 == contactID {
                 return cached.1

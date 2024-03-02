@@ -10,6 +10,12 @@ version: 1
 view:
   type: linear_layout
   direction: vertical
+  border:
+    stroke_color:
+      default:
+        hex: "#FF0D49"
+        alpha: 1
+    stroke_width: 2
   background_color:
     default:
       alpha: 1

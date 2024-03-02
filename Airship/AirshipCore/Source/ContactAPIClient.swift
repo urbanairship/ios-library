@@ -32,7 +32,8 @@ protocol ContactsAPIClientProtocol {
     func associateChannel(
         contactID: String,
         channelID: String,
-        channelType: ChannelType
+        channelType: ChannelType,
+        identifier: String
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerEmail(
@@ -55,6 +56,11 @@ protocol ContactsAPIClientProtocol {
         options: OpenRegistrationOptions,
         locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
+    
+    func optOutChannel(
+        contactID: String,
+        channelID: String
+    ) async throws ->  AirshipHTTPResponse<Bool>
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -148,7 +154,8 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     func associateChannel(
         contactID: String,
         channelID: String,
-        channelType: ChannelType
+        channelType: ChannelType,
+        identifier: String
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         let requestBody = ContactUpdateRequestBody(
             attributes: nil,
@@ -167,7 +174,12 @@ class ContactAPIClient: ContactsAPIClientProtocol {
             requestBody: requestBody
         ).map { response in
             if (response.isSuccess) {
-                return AssociatedChannel(channelType: channelType, channelID: channelID)
+                return AssociatedChannel(
+                    channelType: channelType,
+                    channelID: channelID,
+                    identifier: identifier,
+                    registrationDate: Date()
+                )
             } else {
                 return nil
             }
@@ -188,7 +200,8 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 locale: locale,
                 timezone: TimeZone.current.identifier
             ),
-            channelType: .email
+            channelType: .email,
+            identifier: address
         )
     }
 
@@ -206,7 +219,8 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 locale: locale,
                 timezone: TimeZone.current.identifier
             ),
-            channelType: .sms
+            channelType: .sms,
+            identifier: msisdn
         )
     }
 
@@ -224,9 +238,23 @@ class ContactAPIClient: ContactsAPIClientProtocol {
                 locale: locale,
                 timezone: TimeZone.current.identifier
             ),
-            channelType: .open
+            channelType: .open,
+            identifier: address
         )
     }
+    
+    func optOutChannel(
+        contactID: String,
+        channelID: String
+    ) async throws ->  AirshipHTTPResponse<Bool> {
+        // TODO: add API call
+        return AirshipHTTPResponse(
+            result: true,
+            statusCode: 200,
+            headers: [:]
+        )
+    }
+    
 
     private func makeURL(path: String) throws -> URL {
         guard let deviceAPIURL = self.config.deviceAPIURL else {
@@ -256,7 +284,8 @@ class ContactAPIClient: ContactsAPIClientProtocol {
     private func performChannelRegistration<T: Encodable>(
         contactID: String,
         requestBody: T,
-        channelType: ChannelType
+        channelType: ChannelType,
+        identifier: String
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         let request = AirshipRequest(
             url: try self.makeChannelCreateURL(channelType: channelType),
@@ -291,7 +320,8 @@ class ContactAPIClient: ContactsAPIClientProtocol {
         return try await associateChannel(
             contactID: contactID,
             channelID: channelID,
-            channelType: channelType
+            channelType: channelType,
+            identifier: identifier
         )
     }
 

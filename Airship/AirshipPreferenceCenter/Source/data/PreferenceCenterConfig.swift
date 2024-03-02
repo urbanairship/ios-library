@@ -367,6 +367,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             }
         }
     }
+    
     /// Channel subscription item info.
     @objc(UAPreferenceCenterConfigChannelSubscription)
     public final class ChannelSubscription: NSObject, Decodable, PreferenceCenterConfigItem, Sendable {
@@ -758,13 +759,526 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             }
         }
     }
+    
+    /// Contact management item
+    public class ContactManagementItem: NSObject, Decodable, PreferenceCenterConfigItem, @unchecked Sendable {
 
+        @objc
+        public let type = PreferenceCenterConfigItemType.contactManagement
+        
+        /// The contact management item's identifier.
+        @objc
+        public let identifier: String
+        
+        public let platform: Platform
+        
+        // The display prompt
+        public let display: CommonDisplay
+        
+        /// The empty channel placeholder
+        public var emptyMessage: String?
+
+        // The add prompt
+        public let addPrompt: AddPrompt?
+        
+        /// The remove prompt
+        public let removePrompt: RemoveChannel?
+        
+        public let registrationOptions: RegistrationOptions
+        
+        enum CodingKeys: String, CodingKey {
+            case identifier = "id"
+            case platform = "platform"
+            case display = "display"
+            case emptyMessage = "empty_message"
+            case addPrompt = "add"
+            case removePrompt = "remove"
+            case registrationOptions = "registration_options"
+        }
+        
+        public init(
+            identifier: String,
+            platform: Platform,
+            display: CommonDisplay,
+            emptyMessage: String?,
+            addPrompt: AddPrompt?,
+            removePrompt: RemoveChannel?,
+            registrationOptions: RegistrationOptions
+        ) {
+            self.identifier = identifier
+            self.platform = platform
+            self.display = display
+            self.emptyMessage = emptyMessage
+            self.addPrompt = addPrompt
+            self.removePrompt = removePrompt
+            self.registrationOptions = registrationOptions
+        }
+        
+        public enum Platform: String, Decodable, Sendable {
+            
+            // SMS platform
+            case sms
+            
+            // Email platform
+            case email
+            
+            var stringValue: String {
+                switch self {
+                case .sms: return "sms"
+                case .email: return "email"
+                }
+            }
+
+            static func fromString(_ value: String) throws
+                -> RegistrationOptionsType
+            {
+                switch value {
+                case "sms": return .sms
+                case "email": return .email
+                default:
+                    throw AirshipErrors.error("invalid item \(value)")
+                }
+            }
+
+            public var description: String {
+                return stringValue
+            }
+            
+        }
+        
+        @objc(PreferenceCenterEmailRegistrationOption)
+        public class EmailRegistrationOption: NSObject, Decodable {
+            
+            @objc
+            public var placeholder: String
+            
+            public var properties: AirshipJSON?
+            
+            enum CodingKeys: String, CodingKey {
+                case placeholder = "placeholder_text"
+                case properties = "properties"
+            }
+            
+            public init(placeholder: String, properties: AirshipJSON? = nil) {
+                self.placeholder = placeholder
+                self.properties = properties
+            }
+            
+        }
+        
+        @objc(PreferenceCenterSmsRegistrationOption)
+        public class SmsRegistrationOption: NSObject, Decodable {
+            
+            @objc
+            public var senders: [SmsSenderInfo]
+            
+            enum CodingKeys: String, CodingKey {
+                case senders = "senders"
+            }
+            
+            public init(senders: [SmsSenderInfo]) {
+                self.senders = senders
+            }
+            
+        }
+        
+        /// Item types.
+        @objc(UAPreferenceCenterConfigRegistrationOptionsType)
+        public enum RegistrationOptionsType: Int, CustomStringConvertible,
+            Equatable
+        {
+            /// SMS type.
+            case sms
+
+            /// Email type.
+            case email
+            
+            var stringValue: String {
+                switch self {
+                case .sms: return "sms"
+                case .email: return "email"
+                }
+            }
+
+            static func fromString(_ value: String) throws
+                -> RegistrationOptionsType
+            {
+                switch value {
+                case "sms": return .sms
+                case "email": return .email
+                default:
+                    throw AirshipErrors.error("invalid item \(value)")
+                }
+            }
+
+            public var description: String {
+                return stringValue
+            }
+        }
+        
+        /// Registration options.
+        public enum RegistrationOptions: Decodable, Equatable {
+            case sms(SmsRegistrationOption)
+            case email(EmailRegistrationOption)
+
+            enum CodingKeys: String, CodingKey {
+                case type = "type"
+            }
+
+            public init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                let type = try RegistrationOptionsType.fromString(
+                    container.decode(String.self, forKey: .type)
+                )
+                let singleValueContainer = try decoder.singleValueContainer()
+
+                switch type {
+                case .sms:
+                    self = .sms(
+                        (try singleValueContainer.decode(SmsRegistrationOption.self))
+                    )
+                case .email:
+                    self = .email(
+                        (try singleValueContainer.decode(EmailRegistrationOption.self))
+                    )
+                }
+            }
+        }
+        
+        
+        @objc(UAPreferenceCenterConfigDisplayPrompt)
+        public class CommonDisplay: NSObject, Decodable {
+            
+            @objc
+            public let title: String
+            
+            @objc
+            public let subtitle: String?
+            
+            enum CodingKeys: String, CodingKey {
+                case title = "name"
+                case subtitle = "description"
+            }
+            
+            public init(title: String, subtitle: String? = nil) {
+                self.title = title
+                self.subtitle = subtitle
+            }
+        }
+           
+        @objc(UAPreferenceCenterConfigAddPrompt)
+        public class AddPrompt: NSObject, Decodable {
+            
+            @objc
+            public let view: AddChannelPrompt
+            
+            @objc
+            public let button: LabeledButton
+            
+            
+            enum CodingKeys: String, CodingKey {
+                case view = "view"
+                case button = "button"
+            }
+            
+            public init(
+                view: AddChannelPrompt,
+                button: LabeledButton
+            ) {
+                
+                self.view = view
+                self.button = button
+            }
+        }
+        
+        @objc(UAPreferenceCenterConfigRemoveChannel)
+        public class RemoveChannel: NSObject, Decodable {
+            
+            @objc
+            public let view: RemoveChannelPrompt
+            
+            @objc
+            public let button: LabeledButton
+            
+            
+            enum CodingKeys: String, CodingKey {
+                case view = "view"
+                case button = "button"
+            }
+            
+            public init(
+                view: RemoveChannelPrompt,
+                button: LabeledButton
+            ) {
+                
+                self.view = view
+                self.button = button
+            }
+        }
+        
+        @objc(UAPreferenceCenterConfigRemoveChannelPrompt)
+        public class RemoveChannelPrompt: NSObject, Decodable {
+            
+            @objc
+            public let display: PromptDisplay
+            
+            @objc
+            public let acceptButton: LabeledButton?
+            
+            
+            enum CodingKeys: String, CodingKey {
+                case display = "display"
+                case acceptButton = "accept_button"
+            }
+            
+            public init(
+                display: PromptDisplay,
+                acceptButton: LabeledButton?,
+                removeOnlyButton: LabeledButton?
+            ) {
+                
+                self.display = display
+                self.acceptButton = acceptButton
+            }
+        }
+        
+        @objc(UAPreferenceCenterConfigPromptDisplay)
+        public class PromptDisplay: NSObject, Decodable {
+            
+            /// The item's display info.
+            @objc
+            public let title: String
+            
+            @objc
+            public let body: String?
+            
+            @objc
+            public let footer: String?
+            
+            @objc
+            public let errorMessage: String?
+            
+            enum CodingKeys: String, CodingKey {
+                case title = "title"
+                case body = "body"
+                case footer = "footer"
+                case errorMessage = "error_message"
+            }
+            
+            public init(
+                title: String,
+                body: String? = nil,
+                footer: String? = nil,
+                errorMessage: String?
+            ) {
+                
+                self.title = title
+                self.body = body
+                self.footer = footer
+                self.errorMessage = errorMessage
+            }
+        }
+        
+        @objc(UAPreferenceCenterConfigAddChannelPrompt)
+        public class AddChannelPrompt: NSObject, Decodable {
+            
+            /// The item's identifier.
+            @objc
+            public let display: PromptDisplay
+            
+            /// The error message.
+            @objc
+            public let onSuccess: ActionableMessage?
+            
+            /// The list of senders
+            public let onError: ActionableMessage?
+            
+            /// The cancel prompt's button.
+            @objc
+            public let cancelButton: LabeledButton
+            
+            /// The submit prompt's button.
+            @objc
+            public let submitButton: LabeledButton
+            
+            enum CodingKeys: String, CodingKey {
+                case display = "display"
+                case onSuccess = "on_success"
+                case onError = "on_error"
+                case cancelButton = "cancel_button"
+                case submitButton = "submit_button"
+            }
+            
+            public init(
+                display: PromptDisplay,
+                onSuccess: ActionableMessage? = nil,
+                onError: ActionableMessage? = nil,
+                cancelButton: LabeledButton,
+                submitButton: LabeledButton
+            ) {
+                self.display = display
+                self.onSuccess = onSuccess
+                self.onError = onError
+                self.cancelButton = cancelButton
+                self.submitButton = submitButton
+            }
+        }
+        
+        
+        /// Alert button info.
+        @objc(UAPreferenceCenterConfigPromptButton)
+        public class LabeledButton: NSObject, Decodable {
+
+            /// The buttton's text.
+            @objc
+            public let text: String
+
+            /// The button's content description.
+            @objc
+            public let contentDescription: String?
+
+            enum CodingKeys: String, CodingKey {
+                case text = "text"
+                case contentDescription = "content_description"
+            }
+
+            public init(
+                text: String,
+                contentDescription: String? = nil
+            ) {
+
+                self.text = text
+                self.contentDescription = contentDescription
+            }
+
+            public override func isEqual(_ object: Any?) -> Bool {
+                guard let object = object as? LabeledButton else {
+                    return false
+                }
+
+                return self.text == object.text
+                    && self.contentDescription == object.contentDescription
+            }
+        }
+
+        /// Alert display info
+        @objc(UAPreferenceConfigActionableMessage)
+        public class ActionableMessage: NSObject, Decodable {
+
+            /// Title
+            @objc
+            public let title: String
+
+            /// Body
+            @objc
+            public let body: String
+
+            /// Button
+            @objc
+            public let button: LabeledButton
+            
+            enum CodingKeys: String, CodingKey {
+                case title = "name"
+                case body = "description"
+                case button = "button"
+            }
+
+            public init(
+                title: String,
+                body: String,
+                button: LabeledButton
+            ) {
+                self.title = title
+                self.body = body
+                self.button = button
+            }
+
+            public override func isEqual(_ object: Any?) -> Bool {
+                guard let object = object as? ActionableMessage else {
+                    return false
+                }
+
+                return self.title == object.title
+                && self.body == object.body
+            }
+        }
+        
+        @objc
+        public class RepromptOptions: NSObject, Decodable {
+            
+            var interval: Int
+            var message: String
+            var button: LabeledButton
+            
+            enum CodingKeys: String, CodingKey {
+                case interval = "interval"
+                case message = "message"
+                case button = "button"
+            }
+            
+            public init(interval: Int, message: String, button: LabeledButton) {
+                self.interval = interval
+                self.message = message
+                self.button = button
+            }
+        }
+        
+        @objc
+        public class SmsSenderInfo: NSObject, Decodable {
+            
+            var senderId: String
+            var placeHolderText: String
+            var countryCode: String
+            var displayName: String
+            
+            enum CodingKeys: String, CodingKey {
+                case senderId = "sender_id"
+                case placeHolderText = "placeholder_text"
+                case countryCode = "country_code"
+                case displayName = "display_name"
+            }
+            
+            public init(
+                senderId: String,
+                placeHolderText: String,
+                countryCode: String,
+                displayName: String
+            ) {
+                self.senderId = senderId
+                self.placeHolderText = placeHolderText
+                self.countryCode = countryCode
+                self.displayName = displayName
+            }
+            
+            public override func isEqual(_ object: Any?) -> Bool {
+                guard let object = object as? SmsSenderInfo else {
+                    return false
+                }
+
+                return self.senderId == object.senderId
+                && self.placeHolderText == object.placeHolderText
+                && self.countryCode == object.countryCode
+                && self.displayName == object.placeHolderText
+            }
+            
+            static let none = SmsSenderInfo(
+                senderId: "none",
+                placeHolderText: "none",
+                countryCode: "none",
+                displayName: "none"
+            )
+            
+        }
+
+    }
+    
     /// Config item.
     public enum Item: Decodable, Equatable, Sendable {
         case channelSubscription(ChannelSubscription)
         case contactSubscription(ContactSubscription)
         case contactSubscriptionGroup(ContactSubscriptionGroup)
         case alert(Alert)
+        case contactManagement(ContactManagementItem)
 
         enum CodingKeys: String, CodingKey {
             case type = "type"
@@ -794,6 +1308,8 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 )
             case .alert:
                 self = .alert((try singleValueContainer.decode(Alert.self)))
+            case .contactManagement:
+                self = .contactManagement((try singleValueContainer.decode(ContactManagementItem.self)))
             }
         }
     }
@@ -848,7 +1364,6 @@ public protocol PreferenceConfigCondition: Sendable {
 public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
-
     /// Channel subscription type.
     case channelSubscription
 
@@ -861,12 +1376,16 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
     /// Alert type.
     case alert
 
+    /// Contact management
+    case contactManagement
+    
     var stringValue: String {
         switch self {
         case .channelSubscription: return "channel_subscription"
         case .contactSubscription: return "contact_subscription"
         case .contactSubscriptionGroup: return "contact_subscription_group"
         case .alert: return "alert"
+        case .contactManagement: return "contact_management"
         }
     }
 
@@ -878,6 +1397,7 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
         case "contact_subscription": return .contactSubscription
         case "contact_subscription_group": return .contactSubscriptionGroup
         case "alert": return .alert
+        case "contact_management": return .contactManagement
         default:
             throw AirshipErrors.error("invalid item \(value)")
         }
@@ -899,13 +1419,12 @@ public protocol PreferenceCenterConfigItem: Sendable {
     @objc
     var identifier: String { get }
 }
-
+    
 /// Preference config section type.
 @objc(UAPreferenceCenterConfigSectionType)
 public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
-
     /// Common section type.
     case common
 
@@ -961,6 +1480,7 @@ extension PreferenceCenterConfig.Item {
         case .contactSubscription(let info): return info
         case .contactSubscriptionGroup(let info): return info
         case .alert(let info): return info
+        case .contactManagement(let info): return info
         }
     }
 }
@@ -1002,4 +1522,14 @@ extension PreferenceCenterConfig {
             })
         })
     }
+    
+    public func containsContactManagement() -> Bool {
+        return self.sections.contains(where: { section in
+            guard case .common(let info) = section else { return false }
+            return info.items.contains(where: { item in
+                return item.info.type == .contactManagement
+            })
+        })
+    }
+    
 }

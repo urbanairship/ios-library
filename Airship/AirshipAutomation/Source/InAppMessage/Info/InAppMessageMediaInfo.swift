@@ -29,6 +29,12 @@ public struct InAppMessageMediaInfo: Sendable, Codable, Equatable {
     /// Content description
     public var description: String?
 
+
+    /// In-app message media model
+    /// - Parameters:
+    ///   - url: URL from which to fetch the media
+    ///   - type: Media type
+    ///   - description: Content description for accessibility purposes
     public init(
         url: String,
         type: MediaType,
