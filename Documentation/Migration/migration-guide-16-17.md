@@ -341,6 +341,27 @@ await MessageCenter.shared.inbox.refreshMessages()
 
 #### Listening to message listing updates
 
+SDK 16:
+```
+        NotificationCenter.default.addObserver(self,
+                                            selector: #selector(messageListWillUpdate),
+                                            name: UAInboxMessageListWillUpdateNotification,
+                                            object: nil)
+        NotificationCenter.default.addObserver(self,
+                                            selector: #selector(messageListUpdated),
+                                            name: UAInboxMessageListUpdatedNotification,
+                                            object: nil)
+```
+
+SDK 17:
+```
+MessageCenter.shared.inbox.messagePublisher
+    .receive(on: RunLoop.main)
+    .sink(receiveValue: { messages in
+        // Latest messages
+    })
+    .store(in: &self.subscriptions)
+```
 
 ### Message Center UI
 

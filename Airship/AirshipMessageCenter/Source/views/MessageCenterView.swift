@@ -100,7 +100,7 @@ extension EnvironmentValues {
 
 
 extension View {
-    func addMessageCenterDismissAction(action: (() -> Void)?) -> some View {
+    public func addMessageCenterDismissAction(action: (() -> Void)?) -> some View {
         environment(\.messageCenterDismissAction, action)
     }
 }

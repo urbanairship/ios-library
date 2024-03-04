@@ -31,6 +31,7 @@ public final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol 
     public static let localeEventKey = "locale"
 
     private let dataStore: PreferenceDataStore
+    private let config: RuntimeConfig
     private let notificationCenter: AirshipNotificationCenter
 
     /**
@@ -39,22 +40,30 @@ public final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol 
     @objc
     public var currentLocale: Locale {
         get {
-            return dataStore.localeOverride ?? Locale.autoupdatingCurrent
+            if self.config.useUserPreferredLocale {
+                let preferredLanguage = Locale.preferredLanguages[0]
+                let preferredLocale = Locale(identifier: preferredLanguage)
+                return dataStore.localeOverride ?? preferredLocale
+            } else {
+                return dataStore.localeOverride ?? Locale.autoupdatingCurrent
+            }
         }
         set {
             dataStore.localeOverride = newValue
             dispatchUpdate()
         }
     }
-
+    
     /**
      * - Note: For internal use only. :nodoc:
      */
     init(
         dataStore: PreferenceDataStore,
+        config: RuntimeConfig,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
         self.dataStore = dataStore
+        self.config = config
         self.notificationCenter = notificationCenter
         super.init()
 

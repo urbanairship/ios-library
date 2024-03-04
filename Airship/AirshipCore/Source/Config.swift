@@ -291,6 +291,12 @@ public class AirshipConfig: NSObject, NSCopying {
     @objc
     public var chatWebSocketURL: String?
 
+    /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
+    ///
+    /// Defaults to `false`.
+    @objc
+    public var useUserPreferredLocale = false
+    
     /// Returns the resolved app key.
     /// - Returns: The resolved app key or an empty string.
     @objc
@@ -431,6 +437,7 @@ public class AirshipConfig: NSObject, NSCopying {
         _defaultProvisioningMode = config._defaultProvisioningMode
         _inProduction = config._inProduction
         autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
+        useUserPreferredLocale = config.useUserPreferredLocale
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -474,6 +481,7 @@ public class AirshipConfig: NSObject, NSCopying {
                 Use iTunes ID: %@\n\
                 Site:  %ld\n\
                 Enabled features  %ld\n
+                Use user preferred locale: %d\n
                 """,
             inProduction,
             inProduction,
@@ -508,7 +516,8 @@ public class AirshipConfig: NSObject, NSCopying {
             messageCenterStyleConfig ?? "",
             itunesID ?? "",
             site.rawValue,
-            enabledFeatures.rawValue
+            enabledFeatures.rawValue,
+            useUserPreferredLocale
         )
     }
     

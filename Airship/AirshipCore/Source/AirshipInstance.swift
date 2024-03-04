@@ -70,7 +70,10 @@ class AirshipInstance: AirshipInstanceProtocol {
             dataStore: dataStore,
             privacyManager: privacyManager
         )
-        self.localeManager = AirshipLocaleManager(dataStore: dataStore)
+        self.localeManager = AirshipLocaleManager(
+            dataStore: dataStore,
+            config: self.config
+        )
 
         #if !os(watchOS)
         let sharedApp = UIApplication.shared

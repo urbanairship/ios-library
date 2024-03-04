@@ -1076,6 +1076,7 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
 
         [schedulesToPrepare addObject:scheduleData];
         [scheduleData updateState:UAScheduleStatePreparingSchedule];
+        [scheduleData setTriggeredTime:self.date.now];
     }
 
     [self prepareSchedules:schedulesToPrepare];
@@ -1221,7 +1222,6 @@ static NSString * const UAAutomationEngineTaskExtrasIdentifier = @"identifier";
             readyResult = [self.delegate isScheduleReadyToExecute:schedule];
 
             if (readyResult == UAAutomationScheduleReadyResultContinue) {
-                [scheduleData setTriggeredTime:self.date.now];
                 [self.delegate executeSchedule:schedule completionHandler:^{
                     UA_STRONGIFY(self)
                     [self.automationStore getSchedule:schedule.identifier completionHandler:^(UAScheduleData *scheduleData) {

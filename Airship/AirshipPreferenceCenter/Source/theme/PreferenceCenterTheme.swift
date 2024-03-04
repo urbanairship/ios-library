@@ -36,11 +36,20 @@ public struct PreferenceCenterTheme: Equatable {
         /// The default title
         public var title: String? = nil
 
+        /// Override the preference center config title. If `false`, preference center will display the config title if exists otherwise the default title
+        /// Defaults to `true`
+        public var overrideConfigTitle: Bool?  = true
+        
         /// Navigation bar background color
         public var backgroundColor: UIColor? = nil
-
-        public init(title: String? = nil, backgroundColor: UIColor? = nil) {
+        
+        public init(
+            title: String? = nil,
+            overrideConfigTitle: Bool? = true,
+            backgroundColor: UIColor? = nil
+        ) {
             self.title = title
+            self.overrideConfigTitle = overrideConfigTitle
             self.backgroundColor = backgroundColor
         }
     }
