@@ -13,19 +13,17 @@
 		1B63FD6924F693A700A90D70 /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18D82385925300013FB9 /* UAGlobal.h */; };
 		1B63FD6A24F693AA00A90D70 /* UACarousel.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18C9238551FD00013FB9 /* UACarousel.h */; };
 		1B63FD6B24F693AD00A90D70 /* UACarouselViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18CA238551FD00013FB9 /* UACarouselViewController.h */; };
-		1BFF18472382F9BD00013FB9 /* UAMediaAttachmentPayload.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */; };
-		1BFF18482382F9BD00013FB9 /* UANotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BFF18492382F9BD00013FB9 /* UANotificationServiceExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */; };
-		1BFF184A2382F9BD00013FB9 /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1BFF184B2382F9BD00013FB9 /* UAMediaAttachmentPayload.h in Headers */ = {isa = PBXBuildFile; fileRef = 1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1BFF18CF238551FD00013FB9 /* UACarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CB238551FD00013FB9 /* UACarouselViewController.m */; };
 		1BFF18D0238551FD00013FB9 /* UACarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CC238551FD00013FB9 /* UACarousel.m */; };
 		1BFF18D42385520500013FB9 /* UAContentExtensionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */; };
 		5872C23EAB3330171E1EBDC3 /* Pods_AirshipNotificationServiceExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32B945B8885FAC3BD0955B04 /* Pods_AirshipNotificationServiceExtensionTests.framework */; };
+		60F8E7522B88AF8D00460EDF /* MediaAttachmentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */; };
+		60F8E7542B89272300460EDF /* UANotificationServiceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */; };
+		60F8E7562B8D11B300460EDF /* MediaAttachmentPayloadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7552B8D11B300460EDF /* MediaAttachmentPayloadTest.swift */; };
+		60F8E7582B8D259B00460EDF /* UANotificationServiceExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7572B8D259B00460EDF /* UANotificationServiceExtensionTests.swift */; };
+		60F8E75A2B8E5A4100460EDF /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4AEE3A2B6B3E94008AEAC1 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */; };
 		DF0C1B19244E483C0011ACCA /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */; };
-		DFE03CF9244E6C1400622F11 /* UAMediaAttachmentPayloadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 49AA010A1D65158C0081989A /* UAMediaAttachmentPayloadTests.m */; };
-		DFE03CFB2450A97900622F11 /* UANotificationServiceExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE03CFA2450A97900622F11 /* UANotificationServiceExtensionTests.m */; };
 		DFE03D082450E73400622F11 /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFF18AE23854F0C00013FB9 /* AirshipNotificationContentExtension.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,11 +45,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAMediaAttachmentPayload.m; sourceTree = "<group>"; };
-		1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UANotificationServiceExtension.h; sourceTree = "<group>"; };
-		1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UANotificationServiceExtension.m; sourceTree = "<group>"; };
-		1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipNotificationServiceExtension.h; sourceTree = "<group>"; };
-		1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAMediaAttachmentPayload.h; sourceTree = "<group>"; };
 		1BFF1862238543FF00013FB9 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		1BFF1864238543FF00013FB9 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		1BFF18AE23854F0C00013FB9 /* AirshipNotificationContentExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipNotificationContentExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -68,8 +61,12 @@
 		32B945B8885FAC3BD0955B04 /* Pods_AirshipNotificationServiceExtensionTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipNotificationServiceExtensionTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49AA01001D65158C0081989A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		49AA010A1D65158C0081989A /* UAMediaAttachmentPayloadTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAMediaAttachmentPayloadTests.m; sourceTree = "<group>"; };
 		49AA010C1D65158C0081989A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAttachmentPayload.swift; sourceTree = "<group>"; };
+		60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANotificationServiceExtension.swift; sourceTree = "<group>"; };
+		60F8E7552B8D11B300460EDF /* MediaAttachmentPayloadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAttachmentPayloadTest.swift; sourceTree = "<group>"; };
+		60F8E7572B8D259B00460EDF /* UANotificationServiceExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANotificationServiceExtensionTests.swift; sourceTree = "<group>"; };
+		60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipNotificationServiceExtension.h; sourceTree = "<group>"; };
 		6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = airship.jpg; path = AirshipNotificationServiceExtension/airship.jpg; sourceTree = SOURCE_ROOT; };
 		7A204D6B2E4F6CB08BBC7F93 /* Pods-AirshipNotificationServiceExtensionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipNotificationServiceExtensionTests.release.xcconfig"; path = "Target Support Files/Pods-AirshipNotificationServiceExtensionTests/Pods-AirshipNotificationServiceExtensionTests.release.xcconfig"; sourceTree = "<group>"; };
 		88FBEE6ABCCC5A5846767973 /* Pods-AirshipNotificationContentExtensionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipNotificationContentExtensionTests.release.xcconfig"; path = "Target Support Files/Pods-AirshipNotificationContentExtensionTests/Pods-AirshipNotificationContentExtensionTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -77,7 +74,6 @@
 		BC129D3B0D219A96DD91E832 /* Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig"; path = "Target Support Files/Pods-AirshipNotificationServiceExtensionTests/Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D5918B71FA79BCBD43EF2E05 /* Pods-AirshipNotificationContentExtensionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipNotificationContentExtensionTests.debug.xcconfig"; path = "Target Support Files/Pods-AirshipNotificationContentExtensionTests/Pods-AirshipNotificationContentExtensionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DF0C1B14244E483C0011ACCA /* AirshipNotificationServiceExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationServiceExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DFE03CFA2450A97900622F11 /* UANotificationServiceExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UANotificationServiceExtensionTests.m; sourceTree = "<group>"; };
 		DFE03D032450E73400622F11 /* AirshipNotificationContentExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationContentExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -221,9 +217,9 @@
 			isa = PBXGroup;
 			children = (
 				6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */,
-				49AA010A1D65158C0081989A /* UAMediaAttachmentPayloadTests.m */,
-				DFE03CFA2450A97900622F11 /* UANotificationServiceExtensionTests.m */,
 				49AA010C1D65158C0081989A /* Info.plist */,
+				60F8E7552B8D11B300460EDF /* MediaAttachmentPayloadTest.swift */,
+				60F8E7572B8D259B00460EDF /* UANotificationServiceExtensionTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -231,11 +227,9 @@
 		6E21736A237CCEDA0084933A /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				1BFF18452382F9BD00013FB9 /* AirshipNotificationServiceExtension.h */,
-				1BFF18432382F9BD00013FB9 /* UANotificationServiceExtension.h */,
-				1BFF18442382F9BD00013FB9 /* UANotificationServiceExtension.m */,
-				1BFF18462382F9BD00013FB9 /* UAMediaAttachmentPayload.h */,
-				1BFF18422382F9BD00013FB9 /* UAMediaAttachmentPayload.m */,
+				60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */,
+				60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */,
+				60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -271,9 +265,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BFF184A2382F9BD00013FB9 /* AirshipNotificationServiceExtension.h in Headers */,
-				1BFF184B2382F9BD00013FB9 /* UAMediaAttachmentPayload.h in Headers */,
-				1BFF18482382F9BD00013FB9 /* UANotificationServiceExtension.h in Headers */,
+				60F8E75A2B8E5A4100460EDF /* AirshipNotificationServiceExtension.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +364,7 @@
 					49AA00FB1D65158C0081989A = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = PGJV57GD94;
+						LastSwiftMigration = 1520;
 						ProvisioningStyle = Automatic;
 					};
 					DF0C1B13244E483C0011ACCA = {
@@ -498,8 +491,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BFF18472382F9BD00013FB9 /* UAMediaAttachmentPayload.m in Sources */,
-				1BFF18492382F9BD00013FB9 /* UANotificationServiceExtension.m in Sources */,
+				60F8E7522B88AF8D00460EDF /* MediaAttachmentPayload.swift in Sources */,
+				60F8E7542B89272300460EDF /* UANotificationServiceExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,8 +500,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DFE03CFB2450A97900622F11 /* UANotificationServiceExtensionTests.m in Sources */,
-				DFE03CF9244E6C1400622F11 /* UAMediaAttachmentPayloadTests.m in Sources */,
+				60F8E7582B8D259B00460EDF /* UANotificationServiceExtensionTests.swift in Sources */,
+				60F8E7562B8D11B300460EDF /* MediaAttachmentPayloadTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -722,6 +715,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -743,6 +737,8 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
@@ -751,6 +747,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
@@ -772,6 +769,7 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;
@@ -780,6 +778,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC129D3B0D219A96DD91E832 /* Pods-AirshipNotificationServiceExtensionTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = YES;
@@ -799,7 +798,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipNotificationServiceExtensionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OBJC_BRIDGING_HEADER = "AirshipNotificationServiceExtension/Tests/AirshipNotificationServiceExtensionTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -810,6 +809,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A204D6B2E4F6CB08BBC7F93 /* Pods-AirshipNotificationServiceExtensionTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_MODULES = YES;
@@ -828,7 +828,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipNotificationServiceExtensionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OBJC_BRIDGING_HEADER = "AirshipNotificationServiceExtension/Tests/AirshipNotificationServiceExtensionTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

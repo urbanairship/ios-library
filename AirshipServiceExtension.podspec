@@ -9,10 +9,13 @@ Pod::Spec.new do |s|
     s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
     s.author                  = { "Airship" => "support@airship.com" }
     s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
-    s.source_files            = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{h,m}"
+    s.source_files            = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{swift}"
     s.weak_frameworks         = "UserNotifications"
     s.module_name             = "AirshipServiceExtension"
     s.requires_arc            = true
-    s.ios.deployment_target   = "14.0"
+    s.ios.deployment_target      = "14.0"
+    s.watchos.deployment_target  = "7.0"
+    s.visionos.deployment_target = '1.0'
+    s.swift_versions             = "5.0"
     s.pod_target_xcconfig     = { 'DEFINES_MODULE' => 'YES' }
 end
