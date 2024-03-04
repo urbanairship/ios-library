@@ -7,6 +7,3 @@ FOUNDATION_EXPORT double AirshipNotificationServiceExtensionVersionNumber;
 
 //! Project version string for AirshipNotificationServiceExtension.
 FOUNDATION_EXPORT const unsigned char AirshipNotificationServiceExtensionVersionString[];
-
-#import "UANotificationServiceExtension.h"
-#import "UAMediaAttachmentPayload.h"
