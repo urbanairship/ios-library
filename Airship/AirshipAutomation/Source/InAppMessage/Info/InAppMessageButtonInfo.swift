@@ -38,8 +38,6 @@ public struct InAppMessageButtonInfo: Sendable, Codable, Equatable {
     /// Border radius in points
     public var borderRadius: Double?
 
-
-
     /// In-app message button model
     /// - Parameters:
     ///   - identifier: Button identifier
@@ -76,5 +74,4 @@ public struct InAppMessageButtonInfo: Sendable, Codable, Equatable {
         case borderColor = "border_color"
         case borderRadius = "border_radius"
     }
-
 }

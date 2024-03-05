@@ -126,209 +126,200 @@ extension AirshipLayout {
     static let minLayoutVersion = 1
     static let maxLayoutVersion = 2
 
-    public func validate() throws {
+    public func validate() -> Bool
+    {
         guard
             self.version >= Self.minLayoutVersion
-                && self.version <= Self.maxLayoutVersion
-        else {
-            throw AirshipErrors.error(
-                "Unable to process layout with version \(self.version)"
-            )
+                && self.version <= Self.maxLayoutVersion else {
+            return false
         }
-
         /// We only need to validate that the layout wont produce runtime exceptions due to expected environments
-        try self.view.validate(Set<ParentController>())
+        /// Pass in an initially empty set here for storing parent controllers since they're nested
+        return self.view.validate(Set<ParentController>())
     }
 }
 
 extension ViewModel {
-
-    fileprivate func validate(_ parentControllers: Set<ParentController>) throws
+    fileprivate func validate(_ parentControllers: Set<ParentController>) -> Bool
     {
         var controllers = parentControllers
 
         switch self {
         case .container(let model):
-            try model.items.forEach { try $0.view.validate(controllers) }
+            return model.items.allSatisfy{ $0.view.validate(controllers) }
         case .linearLayout(let model):
-            try model.items.forEach { try $0.view.validate(controllers) }
+            return model.items.allSatisfy { $0.view.validate(controllers) }
         case .scrollLayout(let model):
-            try model.view.validate(controllers)
+            return model.view.validate(controllers)
         case .pager(let model):
-            if !parentControllers.contains(.pager) {
-                throw AirshipErrors.error(
-                    "Pager must be a descendent of a pager controller"
-                )
-            }
-            try model.items.forEach { try $0.view.validate(controllers) }
+            return model.items.allSatisfy { $0.view.validate(controllers) }
         case .pagerIndicator(_):
             if !parentControllers.contains(.pager) {
-                throw AirshipErrors.error(
-                    "Pager indicator must be a descendent of a pager controller"
-                )
+                AirshipLogger.debug("Pager indicator must be a descendent of a pager controller")
+                return false
             }
         case .pagerController(let model):
             controllers.insert(.pager)
-            try model.view.validate(controllers)
-
+            return model.view.validate(controllers)
         case .npsController(let model):
             if model.submit == nil && !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Child NPS controller must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Child NPS controller must be a descendent of a form or nps controller")
+                return false
             }
 
             controllers.insert(.form)
-            try model.view.validate(controllers)
+            return model.view.validate(controllers)
         case .formController(let model):
             if model.submit == nil && !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Child form controller must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Child form controller must be a descendent of a form or nps controller")
+                return false
             }
 
             controllers.insert(.form)
-            try model.view.validate(controllers)
+            return model.view.validate(controllers)
         case .checkbox(_):
             if !controllers.contains(.checkbox) {
-                throw AirshipErrors.error(
-                    "Checkbox form controller must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Checkbox form controller must be a descendent of a form or nps controller")
+                return false
             }
         case .checkboxController(let model):
             if !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Checkbox controller must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Checkbox controller must be a descendent of a form or nps controller")
+                return false
             }
 
             controllers.insert(.checkbox)
-            try model.view.validate(controllers)
+            return model.view.validate(controllers)
         case .radioInput(_):
             if !controllers.contains(.radio) {
-                throw AirshipErrors.error(
-                    "Radio input must be a descendent of a radio input controller"
-                )
+                AirshipLogger.debug("Radio input must be a descendent of a radio input controller")
+                return false
             }
         case .radioInputController(let model):
             if !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Radio input controller must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Radio input controller must be a descendent of a form or nps controller")
+                return false
             }
 
             controllers.insert(.radio)
-            try model.view.validate(controllers)
+            return model.view.validate(controllers)
         case .textInput(_):
             if !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Text input must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Text input must be a descendent of a form or nps controller")
+                return false
             }
         case .score(_):
             if !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Score input must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Score input must be a descendent of a form or nps controller")
+                return false
             }
 
         case .toggle(_):
             if !controllers.contains(.form) {
-                throw AirshipErrors.error(
-                    "Toggle input must be a descendent of a form or nps controller"
-                )
+                AirshipLogger.debug("Toggle input must be a descendent of a form or nps controller")
+                return false
             }
         case .imageButton(let model):
-            try model.clickBehaviors?
-                .forEach {
+            guard let clickBehaviors = model.clickBehaviors else {
+                return true
+            }
+
+            return clickBehaviors
+                .allSatisfy {
                     switch $0 {
                     case .formSubmit:
                         if !controllers.contains(.form) {
-                            throw AirshipErrors.error(
-                                "Toggle input must be a descendent of a form or nps controller"
-                            )
+                            AirshipLogger.debug("Toggle input must be a descendent of a form or nps controller")
+                            return false
                         }
                     case .pagerNext:
                         if !controllers.contains(.form) {
-                            throw AirshipErrors.error(
-                                "Toggle input must be a descendent of a form or nps controller"
-                            )
+                            AirshipLogger.debug("Toggle input must be a descendent of a form or nps controller")
+                            return false
                         }
                     case .pagerPrevious:
                         if !controllers.contains(.form) {
-                            throw AirshipErrors.error(
-                                "Toggle input must be a descendent of a form or nps controller"
-                            )
+                            AirshipLogger.debug("Toggle input must be a descendent of a form or nps controller")
+                            return false
                         }
                     default:
-                        return
+                       return true
                     }
+
+                    return true
                 }
         default:
-            return
+            return true
         }
+
+        return true
     }
 
     private func validateButtonBehaviors(
         _ clickBehaviors: [ButtonClickBehavior]?,
         _ enableBehaviors: [EnableBehavior]?,
         _ controllers: Set<ParentController>
-    ) throws {
-        try clickBehaviors?
-            .forEach {
-                switch $0 {
-                case .formSubmit:
-                    if !controllers.contains(.form) {
-                        throw AirshipErrors.error(
-                            "Button with form submit behavior must be a descendent of a form or nps controller"
-                        )
-                    }
-                case .pagerNext:
-                    if !controllers.contains(.pager) {
-                        throw AirshipErrors.error(
-                            "Button with pager next behavior must be a descendent of a pager controller"
-                        )
-                    }
-                case .pagerPrevious:
-                    if !controllers.contains(.pager) {
-                        throw AirshipErrors.error(
-                            "Button with pager previous behavior must be a descendent of a pager controller"
-                        )
-                    }
-                default:
-                    return
-                }
+    ) -> Bool {
+        var clickBehaviorsValid:Bool = true
+        var enableBehaviorsValid:Bool = true
 
-            }
+        if let clickBehaviors = clickBehaviors {
+            clickBehaviorsValid = clickBehaviors
+                .allSatisfy {
+                    switch $0 {
+                    case .formSubmit:
+                        if !controllers.contains(.form) {
+                            AirshipLogger.debug("Button with form submit behavior must be a descendent of a form or nps controller")
+                            return false
+                        }
+                    case .pagerNext:
+                        if !controllers.contains(.pager) {
+                            AirshipLogger.debug("Button with pager next behavior must be a descendent of a pager controller")
+                            return false
+                        }
+                    case .pagerPrevious:
+                        if !controllers.contains(.pager) {
+                            AirshipLogger.debug("Button with pager previous behavior must be a descendent of a pager controller")
+                            return false
+                        }
+                    default:
+                        return true
+                    }
 
-        try enableBehaviors?
-            .forEach {
-                switch $0 {
-                case .formValidation:
-                    if !controllers.contains(.form) {
-                        throw AirshipErrors.error(
-                            "Button with form submit behavior must be a descendent of a form or nps controller"
-                        )
-                    }
-                case .formSubmission:
-                    if !controllers.contains(.form) {
-                        throw AirshipErrors.error(
-                            "Button with form submission behavior must be a descendent of a form or nps controller"
-                        )
-                    }
-                case .pagerNext:
-                    if !controllers.contains(.pager) {
-                        throw AirshipErrors.error(
-                            "Button with pager next behavior must be a descendent of a pager controller"
-                        )
-                    }
-                case .pagerPrevious:
-                    if !controllers.contains(.pager) {
-                        throw AirshipErrors.error(
-                            "Button with pager previous behavior must be a descendent of a pager controller"
-                        )
-                    }
+                    return true
                 }
-            }
+        }
+
+        if let enableBehaviors = enableBehaviors {
+            enableBehaviorsValid =  enableBehaviors
+                .allSatisfy {
+                    switch $0 {
+                    case .formValidation:
+                        if !controllers.contains(.form) {
+                            AirshipLogger.debug("Button with form submit behavior must be a descendent of a form or nps controller")
+                            return false
+                        }
+                    case .formSubmission:
+                        if !controllers.contains(.form) {
+                            AirshipLogger.debug("Button with form submission behavior must be a descendent of a form or nps controller")
+                            return false
+                        }
+                    case .pagerNext:
+                        if !controllers.contains(.pager) {
+                            AirshipLogger.debug("Button with pager next behavior must be a descendent of a pager controller")
+                            return false
+                        }
+                    case .pagerPrevious:
+                        if !controllers.contains(.pager) {
+                            AirshipLogger.debug("Button with pager previous behavior must be a descendent of a pager controller")
+                            return false
+                        }
+                    }
+
+                    return true
+                }
+        }
+
+        return clickBehaviorsValid && enableBehaviorsValid
     }
 }

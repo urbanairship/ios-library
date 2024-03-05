@@ -8,7 +8,6 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
     public static let defaultEncoder = JSONEncoder()
     public static let defaultDecoder = JSONDecoder()
 
-
     case string(String)
     case number(Double)
     case object([String: AirshipJSON])

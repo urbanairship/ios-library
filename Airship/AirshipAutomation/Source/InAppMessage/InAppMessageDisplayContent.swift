@@ -27,6 +27,24 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
     /// Airship layout messages
     case airshipLayout(AirshipLayout)
 
+    public func validate() -> Bool {
+        switch self {
+        case .banner(let layout):
+            return layout.validate()
+        case .fullscreen(let layout):
+            return layout.validate()
+        case .modal(let layout):
+            return layout.validate()
+        case .html(let layout):
+            return layout.validate()
+        case .custom(_):
+            /// Don't validate custom layouts
+            return true
+        case .airshipLayout(let layout):
+            return layout.validate()
+        }
+    }
+
     /// Banner display content
     public struct Banner: Codable, Sendable, Equatable {
 
@@ -402,7 +420,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             self.dismissButtonColor = dismissButtonColor
             self.borderRadius = borderRadius
             self.allowFullscreen = allowFullscreen
-        }
+        } 
     }
 }
 

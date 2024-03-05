@@ -109,6 +109,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .skip, ignoreReturnOrder: true)
             }
 
+
             let deviceInfoProvider = self.deviceInfoProviderFactory(
                 self.remoteDataAccess.contactID(forSchedule: schedule)
             )
@@ -187,6 +188,11 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             return .success(result: .prepared(preparedSchedule))
 
         case .inAppMessage(let data):
+            guard data.displayContent.validate() else {
+                AirshipLogger.debug("⚠️ Message did not pass validation: \(data.name) - skipping.")
+                return .success(result: .skip)
+            }
+
             let result = try await self.messagePreparer.prepare(
                 data: data,
                 preparedScheduleInfo: scheduleInfo
