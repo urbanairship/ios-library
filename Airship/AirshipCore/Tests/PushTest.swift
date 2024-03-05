@@ -4,6 +4,14 @@ import XCTest
 
 @testable import AirshipCore
 
+struct TestUserNotificationCenter: AirshipUserNotificationCenterProtocol {
+    static let shared = Self.init()
+
+    func setBadgeNumber(_ newBadgeNumber: Int) async throws {
+
+    }
+}
+
 class PushTest: XCTestCase {
 
     private static let validDeviceToken = "0123456789abcdef0123456789abcdef"
@@ -12,6 +20,8 @@ class PushTest: XCTestCase {
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
     private let permissionsManager = AirshipPermissionsManager()
+    private let userNotificationCenter = TestUserNotificationCenter()
+
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
     private let apnsRegistrar = TestAPNSRegistrar()
@@ -56,6 +66,7 @@ class PushTest: XCTestCase {
             analytics: analtyics,
             privacyManager: privacyManager,
             permissionsManager: permissionsManager,
+            userNotificationCenter: userNotificationCenter,
             notificationCenter: notificationCenter,
             notificationRegistrar: notificationRegistrar,
             apnsRegistrar: apnsRegistrar,
@@ -612,9 +623,11 @@ class PushTest: XCTestCase {
     }
 
     @MainActor
-    func testResetBadge() {
+    func testResetBadge() async {
         self.push.badgeNumber = 1000
-        self.push.resetBadge()
+        XCTAssertEqual(1000, self.push.badgeNumber)
+
+        await self.push.resetBadge()
         XCTAssertEqual(0, self.push.badgeNumber)
         XCTAssertEqual(0, self.badger.applicationIconBadgeNumber)
     }

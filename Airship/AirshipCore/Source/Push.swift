@@ -87,6 +87,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     private let channel: InternalAirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
     private let permissionsManager: AirshipPermissionsManager
+    private let userNotificationCenter: AirshipUserNotificationCenterProtocol
     private let notificationCenter: AirshipNotificationCenter
     private let notificationRegistrar: NotificationRegistrar
     private let apnsRegistrar: APNSRegistrar
@@ -115,7 +116,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         #endif
     }
 
-
     private var subscriptions: Set<AnyCancellable> = Set()
     
     @MainActor
@@ -126,6 +126,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         analytics: InternalAnalyticsProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
+        userNotificationCenter: AirshipUserNotificationCenterProtocol = AirshipUserNotificationCenter.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: NotificationRegistrar =
             UNNotificationRegistrar(),
@@ -140,6 +141,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         self.privacyManager = privacyManager
         self.permissionsManager = permissionsManager
         self.notificationCenter = notificationCenter
+        self.userNotificationCenter = userNotificationCenter
         self.notificationRegistrar = notificationRegistrar
         self.apnsRegistrar = apnsRegistrar
         self.badger = badger
@@ -727,17 +729,32 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     #if !os(watchOS)
 
+    @MainActor
+    public func setBadgeNumber(_ newBadgeNumber: Int) async {
+        do {
+            /// noop for unsupported platforms
+            try await userNotificationCenter.setBadgeNumber(newBadgeNumber)
+        } catch {
+            AirshipLogger.debug(
+                "Badge change failed"
+            )
+            return
+        }
 
+        self.badgeNumber = newBadgeNumber
+    }
+
+    /// deprecation warning
     @objc
     @MainActor
-    public var badgeNumber: Int {
+    internal var badgeNumber: Int {
         set {
-            if self.badger.applicationIconBadgeNumber == newValue {
+            guard badgeNumber != newValue else {
                 return
             }
 
             AirshipLogger.debug(
-                "Change Badge from \(self.badger.applicationIconBadgeNumber), to \(newValue)"
+                "Changed Badge from \(self.badger.applicationIconBadgeNumber), to \(newValue)"
             )
 
             self.badger.applicationIconBadgeNumber = newValue
@@ -771,8 +788,8 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     @objc
     @MainActor
-    public func resetBadge() {
-        self.badgeNumber = 0
+    func resetBadge() async {
+        await self.setBadgeNumber(0)
     }
 
     #endif

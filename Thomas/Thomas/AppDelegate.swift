@@ -48,8 +48,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         CustomViewExampleHelper.registerCameraView()
         CustomViewExampleHelper.registerBiometricLoginView()
 
-        // Set the icon badge to zero on startup (optional)
-        Airship.push.resetBadge()
+        Task {
+            // Set the icon badge to zero on startup (optional)
+            await Airship.push.resetBadge()
+        }
+
         return true
     }
 

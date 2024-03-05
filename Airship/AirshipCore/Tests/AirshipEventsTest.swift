@@ -342,15 +342,20 @@ class AirshipEventsTest: XCTestCase {
 }
 
 private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
+
     func enableUserPushNotifications() async -> Bool {
         return true
     }
 
-    var autobadgeEnabled: Bool = false
-
-    func resetBadge() {
+    func setBadgeNumber(_ newBadgeNumber: Int) async {
 
     }
+
+    func resetBadge() async {
+
+    }
+
+    var autobadgeEnabled: Bool = false
 
     var timeZone: NSTimeZone?
 

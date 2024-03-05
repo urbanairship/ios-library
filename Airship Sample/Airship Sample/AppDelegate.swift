@@ -38,8 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
             object: nil,
             queue: nil
         ) { _ in
-            // Set the icon badge to zero
-            Airship.push.resetBadge()
+            Task {
+                // Set the icon badge to zero
+                await Airship.push.resetBadge()
+            }
         }
         
         #if canImport(ActivityKit)

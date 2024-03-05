@@ -48,7 +48,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Config:\n \(config)")
 
         // Set the icon badge to zero on startup (optional)
-        Airship.push.resetBadge()
+        Task {
+           await Airship.push.resetBadge()
+        }
 
         // User notifications will not be enabled until userPushNotificationsEnabled is
         // enabled on UAPush. Once enabled, the setting will be persisted and the user

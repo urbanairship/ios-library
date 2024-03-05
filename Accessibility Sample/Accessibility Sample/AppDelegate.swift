@@ -40,8 +40,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
             object: nil,
             queue: nil
         ) { _ in
-            // Set the icon badge to zero
-            Airship.push.resetBadge()
+            Task {
+                // Set the icon badge to zero
+                await Airship.push.resetBadge()
+            }
         }
 
         return true

@@ -115,15 +115,17 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
 #if !os(watchOS)
     /// The current badge number used by the device and on the Airship server.
     ///
+    /// - Note: This property must be accessed on the main thread and must be set asynchronously using setBadgeNumber.
+    @objc
+    @MainActor
+    var badgeNumber: Int { get }
+
+    /// The current badge number used by the device and on the Airship server.
+    ///
     /// - Note: This property must be accessed on the main thread.
     @objc
     @MainActor
-    var badgeNumber: Int { get set }
-
-    /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
-    /// badge number stored by Airship every time the app is started or foregrounded.
-    @objc
-    var autobadgeEnabled: Bool { get set }
+    func setBadgeNumber(_ newBadgeNumber: Int) async
 
     /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
     /// convenience method for setting the `badgeNumber` property to zero.
@@ -131,7 +133,12 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     /// - Note: This method must be called on the main thread.
     @objc
     @MainActor
-    func resetBadge()
+    func resetBadge() async
+
+    /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
+    /// badge number stored by Airship every time the app is started or foregrounded.
+    @objc
+    var autobadgeEnabled: Bool { get set }
 #endif
 
 
