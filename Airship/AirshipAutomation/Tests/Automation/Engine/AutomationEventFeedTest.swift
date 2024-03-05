@@ -18,12 +18,6 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     override func setUp() async throws {
         let config = RuntimeConfig(config: AirshipConfig(), dataStore: datastore)
 
-        let privacyManager = await AirshipPrivacyManager(
-            dataStore: self.datastore,
-            config: config,
-            defaultEnabledFeatures: .all
-        )
-
         let metrics = TestApplicationMetrics()
         metrics.versionUpdated = true
         

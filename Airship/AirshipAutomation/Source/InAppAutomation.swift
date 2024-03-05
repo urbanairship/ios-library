@@ -94,6 +94,10 @@ public final class InAppAutomation: Sendable {
     public func cancelSchedules(group: String) async throws {
         try await self.engine.cancelSchedules(group: group)
     }
+    
+    func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws {
+        try await self.engine.cancelSchedulesWith(type: type)
+    }
 
     /// Gets the in-app automation with the provided schedule identifier.
     /// - Parameter identifier: The schedule identifier.

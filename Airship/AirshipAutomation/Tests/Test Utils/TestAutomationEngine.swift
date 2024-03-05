@@ -70,7 +70,16 @@ actor TestAutomationEngine: AutomationEngineProtocol {
     }
 
     func cancelSchedules(group: String) async throws {
-        throw AirshipErrors.error("Not implemented")
+        self.schedules.removeAll(where: { $0.group == group })
+    }
+    
+    func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws {
+        self.schedules.removeAll { schedule in
+            switch schedule.data {
+            case .actions: return true
+            default: return false
+            }
+        }
     }
 
 
