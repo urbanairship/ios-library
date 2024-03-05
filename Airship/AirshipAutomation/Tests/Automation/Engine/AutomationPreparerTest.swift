@@ -133,7 +133,7 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertTrue(prepareResult.isSkipped)
     }
 
-    func testAudinceMismatchSkip() async throws {
+    func testAudienceMismatchSkip() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
             triggers: [],
@@ -171,7 +171,7 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertTrue(prepareResult.isSkipped)
     }
     
-    func testAudinceMismatchPenalize() async throws {
+    func testAudienceMismatchPenalize() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
             triggers: [],
@@ -210,7 +210,7 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertTrue(prepareResult.isPenalize)
     }
 
-    func testAudinceMismatchCancel() async throws {
+    func testAudienceMismatchCancel() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
             triggers: [],
@@ -297,7 +297,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -349,6 +349,77 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertNotNil(prepared.frequencyChecker)
     }
 
+    func testPrepareInvalidMessage() async throws {
+        let invalidBanner = InAppMessageDisplayContent.Banner(
+            heading: nil,
+            body: nil,
+            media: nil,
+            buttons: nil,
+            buttonLayoutType: .stacked,
+            template: .mediaLeft,
+            backgroundColor: InAppMessageColor(hexColorString: ""),
+            dismissButtonColor:  InAppMessageColor(hexColorString: ""),
+            borderRadius: 5,
+            duration: 100.0,
+            placement: .top
+        )
+
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .banner(invalidBanner))
+            ),
+            triggers: [],
+            created: Date(),
+            lastUpdated: Date(),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: .penalize
+            ),
+            campaigns: .string("campaigns"),
+            frequencyConstraintIDs: ["constraint"]
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in
+            return "contact ID"
+        }
+
+        self.remoteDataAccess.requiresUpdateBlock = { _ in
+            return false
+        }
+
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in
+            return true
+        }
+
+        self.audienceChecker.onEvaluate = { _, _, provider in
+            return true
+        }
+
+        let checker = TestFrequencyChecker()
+        await self.frequencyLimits.setCheckerBlock { _ in
+            return checker
+        }
+
+        let preparedData = self.preparedMessageData!
+
+        self.messagePreparer.prepareBlock = { message, info in
+            XCTAssertEqual(.inAppMessage(message), automationSchedule.data)
+            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
+            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
+            XCTAssertEqual("contact ID", info.contactID)
+
+            return preparedData
+        }
+
+        let result = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext
+        )
+
+        XCTAssertTrue(result.isSkipped)
+    }
+
     func testPrepareActions() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -362,7 +433,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -430,7 +501,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -510,7 +581,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -630,7 +701,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -695,7 +766,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             messageType: "some message type"
         )
 
@@ -768,7 +839,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaings")
+            campaigns: .string("campaigns")
         )
 
         self.remoteDataAccess.contactIDBlock = { _ in
@@ -841,7 +912,7 @@ final class AutomationPreparerTest: XCTestCase {
                 missBehavior: .penalize
             ),
             bypassHoldoutGroups: true,
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             messageType: "some message type"
         )
 
@@ -899,7 +970,7 @@ final class AutomationPreparerTest: XCTestCase {
                 missBehavior: .penalize
             ),
             bypassHoldoutGroups: false, // even if false
-            campaigns: .string("campaings"),
+            campaigns: .string("campaigns"),
             messageType: "some message type"
         )
 

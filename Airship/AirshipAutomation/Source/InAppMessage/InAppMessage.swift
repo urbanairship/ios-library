@@ -18,7 +18,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
 
     /// Display behavior
     public enum DisplayBehavior: String, Codable, Equatable, Sendable {
-        /// Immediate display, allows it to be dispalyed on top of other IAX
+        /// Immediate display, allows it to be displayed on top of other IAX
         case immediate
 
         /// Displays one at a time with display interval between displays

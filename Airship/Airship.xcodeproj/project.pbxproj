@@ -1251,6 +1251,8 @@
 		99D1B3282B44F08900447840 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
 		99E0BD0D2B4DD4AB00465B37 /* FullScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */; };
 		99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */; };
+		99E6EF6A2B8E36BA0006326A /* InAppMessageValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */; };
+		99E6EF6D2B8E3C250006326A /* InAppMessageContentValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */; };
 		99E8D7972B4F17260099B6F3 /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7962B4F17260099B6F3 /* CloseButton.swift */; };
 		99E8D7992B4F19BA0099B6F3 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7982B4F19BA0099B6F3 /* TextView.swift */; };
 		99E8D79B2B4F2FCE0099B6F3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */; };
@@ -2696,6 +2698,8 @@
 		99D1B3272B44F08900447840 /* AirshipSceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneManager.swift; sourceTree = "<group>"; };
 		99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenView.swift; sourceTree = "<group>"; };
 		99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageHostingController.swift; sourceTree = "<group>"; };
+		99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageValidation.swift; sourceTree = "<group>"; };
+		99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageContentValidationTest.swift; sourceTree = "<group>"; };
 		99E8D7962B4F17260099B6F3 /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
 		99E8D7982B4F19BA0099B6F3 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -4460,6 +4464,7 @@
 				6E2E3CA02B3271BC00B8515B /* View */,
 				6E16208B2B31169F009240B2 /* Display Coordinators */,
 				6EDF1DA52B2A300100E23BC4 /* InAppMessage.swift */,
+				99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */,
 				99E8D7BC2B50AA060099B6F3 /* InAppMessageEnvironment.swift */,
 				99E8D7BA2B50A7C20099B6F3 /* InAppMessageViewDelegate.swift */,
 				99198E402B2FB453001F3054 /* Assets */,
@@ -4491,6 +4496,7 @@
 				6E1620902B3118BF009240B2 /* Display Coordinators */,
 				6EDF1DAA2B2A6D9900E23BC4 /* InAppMessageTest.swift */,
 				6EE6AA112B4F3003002FEA75 /* InAppMessageAutomationPreparerTest.swift */,
+				99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */,
 				6EE6AA142B4F302A002FEA75 /* InAppMessageAutomationExecutorTest.swift */,
 				99E8D79C2B4F9E830099B6F3 /* InAppMessageThemeTest.swift */,
 			);
@@ -6242,6 +6248,7 @@
 				6E1528202B4DC59C00DF1377 /* InAppMessageSceneDelegate.swift in Sources */,
 				99E8D7D52B55B0300099B6F3 /* EdgeInsets.swift in Sources */,
 				99E8D79B2B4F2FCE0099B6F3 /* Theme.swift in Sources */,
+				99E6EF6A2B8E36BA0006326A /* InAppMessageValidation.swift in Sources */,
 				99E8D7DE2B55C73B0099B6F3 /* ThemeExtensions.swift in Sources */,
 				6EDF1D982B2A25C800E23BC4 /* InAppMessageMediaInfo.swift in Sources */,
 				99E8D7DA2B55B05D0099B6F3 /* TextTheme.swift in Sources */,
@@ -6391,6 +6398,7 @@
 				6EC0CA792B4B8C2B00333A87 /* TestAudienceChecker.swift in Sources */,
 				6EE6AAEE2B58A9D5002FEA75 /* InAppPageActionEventTest.swift in Sources */,
 				6EC0CA512B4899DB00333A87 /* TestNetworkMonitor.swift in Sources */,
+				99E6EF6D2B8E3C250006326A /* InAppMessageContentValidationTest.swift in Sources */,
 				6E6A84932B68A57E006FFB35 /* AutomationStoreTest.swift in Sources */,
 				6EE6AA382B572897002FEA75 /* AutomationSourceInfoStoreTest.swift in Sources */,
 				60FCA3252B5EF3A8005C9232 /* AutomationEventFeedTest.swift in Sources */,

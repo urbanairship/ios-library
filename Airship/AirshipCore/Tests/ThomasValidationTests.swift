@@ -12,8 +12,8 @@ class ThomasValidationTests: XCTestCase {
             .forEach {
                 let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
 
-                XCTAssertNoThrow(
-                    try layout.validate()
+                XCTAssertTrue(
+                    layout.validate()
                 )
             }
     }
@@ -23,8 +23,8 @@ class ThomasValidationTests: XCTestCase {
             .map { self.layout(version: $0).data(using: .utf8)! }
             .forEach {
                 let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
-                XCTAssertThrowsError(
-                    try layout.validate()
+                XCTAssertFalse(
+                    layout.validate()
                 )
             }
     }
@@ -39,12 +39,28 @@ class ThomasValidationTests: XCTestCase {
             invalidRadioInputControllerOutsideFormController,
         ]
 
+
         try invalidPayloads
             .map { $0.data(using: .utf8)! }
             .forEach {
                 let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
-                XCTAssertThrowsError(
-                    try layout.validate()
+                XCTAssertFalse(
+                    layout.validate()
+                )
+            }
+    }
+
+    func testValidPayloads() throws {
+        let validPayloads = [
+            validCheckboxLayout
+        ]
+
+        try validPayloads
+            .map { $0.data(using: .utf8)! }
+            .forEach {
+                let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
+                XCTAssertFalse(
+                    layout.validate()
                 )
             }
     }
@@ -424,4 +440,360 @@ class ThomasValidationTests: XCTestCase {
         }
         """
 
+    let validCheckboxLayout = """
+        {
+        "presentation": {
+                "type": "modal",
+                "default_placement": {
+                    "size": {
+                        "width": "60%",
+                        "height": "60%"
+                    },
+                    "placement": {
+                        "horizontal": "center",
+                        "vertical": "center"
+                    }
+                }
+           },
+          "type": "checkbox_controller",
+          "version": 1,
+          "identifier": "checkboxes",
+          "view": {
+            "type": "linear_layout",
+            "direction": "vertical",
+            "items": [
+              {
+                "size": {
+                  "width": "100%",
+                  "height": "auto"
+                },
+                "view": {
+                  "type": "linear_layout",
+                  "direction": "horizontal",
+                  "items": [
+                    {
+                      "size": {
+                        "width": "auto",
+                        "height": "auto"
+                      },
+                      "margin": {
+                        "top": 0
+                      },
+                      "view": {
+                        "type": "checkbox",
+                        "reporting_value": "check_cyan",
+                        "event_handlers": [
+                          {
+                            "type": "tap",
+                            "state_actions": [
+                              {
+                                "type": "set",
+                                "key": "last_check",
+                                "value": "cyan"
+                              }
+                            ]
+                          }
+                        ],
+                        "style": {
+                          "type": "checkbox",
+                          "bindings": {
+                            "selected": {
+                              "icon": {
+                                "type": "icon",
+                                "icon": "checkmark",
+                                "color": {
+                                  "default": {
+                                    "hex": "#000000",
+                                    "alpha": 1
+                                  }
+                                },
+                                "scale": 0.5
+                              },
+                              "shapes": [
+                                {
+                                  "border": {
+                                    "radius": 5,
+                                    "stroke_color": {
+                                      "default": {
+                                        "hex": "#000000",
+                                        "alpha": 1
+                                      }
+                                    },
+                                    "stroke_width": 2
+                                  },
+                                  "color": {
+                                    "default": {
+                                      "hex": "#00ffff",
+                                      "alpha": 1
+                                    }
+                                  },
+                                  "scale": 1,
+                                  "type": "rectangle"
+                                }
+                              ]
+                            },
+                            "unselected": {
+                              "shapes": [
+                                {
+                                  "border": {
+                                    "radius": 5,
+                                    "stroke_color": {
+                                      "default": {
+                                        "hex": "#000000",
+                                        "alpha": 0.5
+                                      }
+                                    },
+                                    "stroke_width": 1
+                                  },
+                                  "color": {
+                                    "default": {
+                                      "hex": "#00ffff",
+                                      "alpha": 0.5
+                                    }
+                                  },
+                                  "scale": 1,
+                                  "type": "rectangle"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "size": {
+                        "width": "auto",
+                        "height": "auto"
+                      },
+                      "margin": {
+                        "start": 8
+                      },
+                      "view": {
+                        "type": "label",
+                        "text": "<-- Check it",
+                        "text_appearance": {
+                          "color": {
+                            "default": {
+                              "hex": "#000000",
+                              "alpha": 1
+                            }
+                          },
+                          "font_size": 14,
+                          "alignment": "start"
+                        },
+                        "visibility": {
+                          "default": true,
+                          "invert_when_state_matches": {
+                            "key": "last_check",
+                            "value": {
+                              "is_present": true
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "size": {
+                        "width": "auto",
+                        "height": "auto"
+                      },
+                      "margin": {
+                        "start": 8
+                      },
+                      "view": {
+                        "type": "label",
+                        "text": "<-- Tapped last",
+                        "text_appearance": {
+                          "color": {
+                            "default": {
+                              "hex": "#000000",
+                              "alpha": 1
+                            }
+                          },
+                          "font_size": 14,
+                          "alignment": "start"
+                        },
+                        "visibility": {
+                          "default": false,
+                          "invert_when_state_matches": {
+                            "key": "last_check",
+                            "value": {
+                              "equals": "cyan"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "size": {
+                  "width": "100%",
+                  "height": "auto"
+                },
+                "margin": {
+                  "top": 4
+                },
+                "view": {
+                  "type": "linear_layout",
+                  "direction": "horizontal",
+                  "items": [
+                    {
+                      "size": {
+                        "width": "auto",
+                        "height": "auto"
+                      },
+                      "view": {
+                        "type": "checkbox",
+                        "reporting_value": "check_magenta",
+                        "event_handlers": [
+                          {
+                            "type": "tap",
+                            "state_actions": [
+                              {
+                                "type": "set",
+                                "key": "last_check",
+                                "value": "magenta"
+                              }
+                            ]
+                          }
+                        ],
+                        "style": {
+                          "type": "checkbox",
+                          "bindings": {
+                            "selected": {
+                              "icon": {
+                                "type": "icon",
+                                "icon": "checkmark",
+                                "color": {
+                                  "default": {
+                                    "hex": "#000000",
+                                    "alpha": 1
+                                  }
+                                },
+                                "scale": 0.5
+                              },
+                              "shapes": [
+                                {
+                                  "border": {
+                                    "radius": 5,
+                                    "stroke_color": {
+                                      "default": {
+                                        "hex": "#000000",
+                                        "alpha": 1
+                                      }
+                                    },
+                                    "stroke_width": 2
+                                  },
+                                  "color": {
+                                    "default": {
+                                      "hex": "#ff00ff",
+                                      "alpha": 1
+                                    }
+                                  },
+                                  "scale": 1,
+                                  "type": "rectangle"
+                                }
+                              ]
+                            },
+                            "unselected": {
+                              "shapes": [
+                                {
+                                  "border": {
+                                    "radius": 5,
+                                    "stroke_color": {
+                                      "default": {
+                                        "hex": "#000000",
+                                        "alpha": 0.5
+                                      }
+                                    },
+                                    "stroke_width": 1
+                                  },
+                                  "color": {
+                                    "default": {
+                                      "hex": "#ff00ff",
+                                      "alpha": 0.5
+                                    }
+                                  },
+                                  "scale": 1,
+                                  "type": "rectangle"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "size": {
+                        "width": "auto",
+                        "height": "auto"
+                      },
+                      "margin": {
+                        "start": 8
+                      },
+                      "view": {
+                        "type": "label",
+                        "text": "<-- Check it",
+                        "text_appearance": {
+                          "color": {
+                            "default": {
+                              "hex": "#000000",
+                              "alpha": 1
+                            }
+                          },
+                          "font_size": 14,
+                          "alignment": "start"
+                        },
+                        "visibility": {
+                          "default": true,
+                          "invert_when_state_matches": {
+                            "key": "last_check",
+                            "value": {
+                              "is_present": true
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "size": {
+                        "width": "auto",
+                        "height": "auto"
+                      },
+                      "margin": {
+                        "start": 8
+                      },
+                      "view": {
+                        "type": "label",
+                        "text": "<-- Tapped last",
+                        "text_appearance": {
+                          "color": {
+                            "default": {
+                              "hex": "#000000",
+                              "alpha": 1
+                            }
+                          },
+                          "font_size": 14,
+                          "alignment": "start"
+                        },
+                        "visibility": {
+                          "default": false,
+                          "invert_when_state_matches": {
+                            "key": "last_check",
+                            "value": {
+                              "equals": "magenta"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+        """
 }
