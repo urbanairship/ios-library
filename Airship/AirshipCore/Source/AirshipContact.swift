@@ -136,7 +136,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.cachedSubscriptionLists = CachedValue(date: date)
 
         super.init()
-
+        
         self.setupTask = Task.detached(priority: .high) {
             await self.migrateNamedUser()
 
@@ -156,6 +156,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
                     subscriptionLists: update.subscriptionLists
                 )
             }
+            
+            await self.contactManager.setEnabled(enabled: true)
         }
         
         self.serialQueue.enqueue {
