@@ -6,7 +6,6 @@ public final class AirshipAsyncSerialQueue : Sendable {
     private let continuation: AsyncStream<@Sendable () async -> Void>.Continuation
     private let stream: AsyncStream<@Sendable () async -> Void>
 
-
     public init(priority: TaskPriority? = nil) {
         (
             self.stream,

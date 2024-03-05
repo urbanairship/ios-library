@@ -19,7 +19,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     static let defaultForegroundResolveInterval: TimeInterval = 3600.0 // 1 hour
 
     // Max age of a contact ID update that we consider verified for CRA
-    static let defaultVefiedContactIDAge: TimeInterval = 600.0 // 10 mins
+    static let defaultVerifiedContactIDAge: TimeInterval = 600.0 // 10 mins
 
     // Subscription list cache age
     private static let maxSubscriptionListCacheAge: TimeInterval = 600.0 // 10 mins
@@ -117,7 +117,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     private var verifiedContactIDMaxAge: TimeInterval {
         let age = self.config.remoteConfig.contactConfig?.channelRegistrationMaxResolveAge
-        return age ?? Self.defaultVefiedContactIDAge
+        return age ?? Self.defaultVerifiedContactIDAge
     }
 
     /**
@@ -152,7 +152,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.cachedChannelsList = CachedValue(date: date)
 
         super.init()
-
+        
         self.setupTask = Task.detached(priority: .high) {
             await self.migrateNamedUser()
 
@@ -172,6 +172,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
                     subscriptionLists: update.subscriptionLists
                 )
             }
+            
+            await self.contactManager.setEnabled(enabled: true)
         }
         
         self.serialQueue.enqueue {
@@ -418,7 +420,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     /**
      * Associates a SMS channel to the contact.
      * - Parameters:
-     *   - msisdn: The SMS msisdn.
+     *   - msisdn: The SMS Mobile Station International Subscriber Directory Number..
      *   - options: The SMS channel registration options.
      */
     public func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) {
@@ -653,7 +655,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     private func resolveSubscriptionLists(
         _ contactID: String
-    ) async throws -> [String:[ChannelScope]] {
+    ) async throws -> [String: [ChannelScope]] {
+
         return try await self.fetchSubscriptionListQueue.run {
             if let cached = self.cachedSubscriptionLists.value,
                 cached.0 == contactID {

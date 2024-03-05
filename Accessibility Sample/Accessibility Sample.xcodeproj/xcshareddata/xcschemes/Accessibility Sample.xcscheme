@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "99DFF4352B76DC6700EDFB52"
-               BuildableName = "Accesship.app"
+               BuildableName = "a11y.app"
                BlueprintName = "Accessibility Sample"
                ReferencedContainer = "container:Accessibility Sample.xcodeproj">
             </BuildableReference>
@@ -44,7 +44,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "99DFF4352B76DC6700EDFB52"
-            BuildableName = "Accesship.app"
+            BuildableName = "a11y.app"
             BlueprintName = "Accessibility Sample"
             ReferencedContainer = "container:Accessibility Sample.xcodeproj">
          </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "99DFF4352B76DC6700EDFB52"
-            BuildableName = "Accesship.app"
+            BuildableName = "a11y.app"
             BlueprintName = "Accessibility Sample"
             ReferencedContainer = "container:Accessibility Sample.xcodeproj">
          </BuildableReference>

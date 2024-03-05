@@ -1,3 +1,5 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
 /// - Note: For internal use only. :nodoc:

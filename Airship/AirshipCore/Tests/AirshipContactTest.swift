@@ -175,7 +175,7 @@ class AirshipContactTest: XCTestCase {
             ContactIDInfo(
                 contactID: "some-other-contact-id",
                 isStable: false,
-                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVefiedContactIDAge)
+                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVerifiedContactIDAge)
             )
         )
 
@@ -183,7 +183,7 @@ class AirshipContactTest: XCTestCase {
             ContactIDInfo(
                 contactID: "some-stable-contact-id",
                 isStable: true,
-                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVefiedContactIDAge)
+                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVerifiedContactIDAge)
             )
         )
         await contactManager.setCurrentContactIDInfo(

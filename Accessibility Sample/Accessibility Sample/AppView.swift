@@ -67,7 +67,7 @@ struct AppView: View {
     }
 
     var body: some View {
-        TabView() {
+        TabView(selection: $appState.selectedTab) {
             homeTab
             messageCenterTab
             preferenceCenterTab
