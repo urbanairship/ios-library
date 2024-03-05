@@ -105,7 +105,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case queue
     }
 
-    private enum ScheduleType: String, Codable {
+    enum ScheduleType: String, Codable {
         case actions
         case inAppMessage = "in_app_message"
         case deferred

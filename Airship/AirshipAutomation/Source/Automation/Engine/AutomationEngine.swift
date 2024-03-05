@@ -142,6 +142,24 @@ actor AutomationEngine : AutomationEngineProtocol {
         try await store.deleteSchedules(group: group)
         await self.triggersProcessor.cancel(group: group)
     }
+    
+    func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws {
+        AirshipLogger.debug("Cancelling schedules with type \(type)")
+        
+        await self.startTask?.value
+        
+        //we don't store schedule type as a separate field, but it's a part of airship json, so we
+        // can't utilize core data to filter out our results
+        let ids = try await self.schedules.compactMap { schedule in
+            switch schedule.data {
+            case .actions: return schedule.identifier
+            default: return nil
+            }
+        }
+        
+        try await store.deleteSchedules(scheduleIDs: ids)
+        await self.triggersProcessor.cancel(scheduleIDs: ids)
+    }
 
     var schedules: [AutomationSchedule] {
         get async throws {
@@ -557,6 +575,7 @@ protocol AutomationEngineProtocol: AnyActor, Sendable {
     func stopSchedules(identifiers: [String]) async throws
     func cancelSchedules(identifiers: [String]) async throws
     func cancelSchedules(group: String) async throws
+    func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws
 
     var schedules: [AutomationSchedule] { get async throws }
     func getSchedule(identifier: String) async throws -> AutomationSchedule?

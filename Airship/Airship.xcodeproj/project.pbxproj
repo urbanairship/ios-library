@@ -204,6 +204,10 @@
 		60EACF542B7BF2EA00CAFDBB /* AirshipApptimizeIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EACF532B7BF2EA00CAFDBB /* AirshipApptimizeIntegration.swift */; };
 		60EACFBF2B7D272000CAFDBB /* AirshipApptimizeIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EACF532B7BF2EA00CAFDBB /* AirshipApptimizeIntegration.swift */; };
 		60EACFC02B7D272100CAFDBB /* AirshipApptimizeIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EACF532B7BF2EA00CAFDBB /* AirshipApptimizeIntegration.swift */; };
+		60F8E75C2B8F3D4B00460EDF /* CancelSchedulesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E75B2B8F3D4B00460EDF /* CancelSchedulesAction.swift */; };
+		60F8E75E2B8FA12800460EDF /* CancelSchedulesActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E75D2B8FA12800460EDF /* CancelSchedulesActionTest.swift */; };
+		60F8E7602B8FAF5400460EDF /* ScheduleAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E75F2B8FAF5400460EDF /* ScheduleAction.swift */; };
+		60F8E7622B8FB2CC00460EDF /* ScheduleActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7612B8FB2CC00460EDF /* ScheduleActionTest.swift */; };
 		60FCA3052B4F1110005C9232 /* LegacyInAppMessaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3042B4F1110005C9232 /* LegacyInAppMessaging.swift */; };
 		60FCA3072B4F1C73005C9232 /* LegacyInAppMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3062B4F1C73005C9232 /* LegacyInAppMessage.swift */; };
 		60FCA30A2B51364A005C9232 /* LegacyInAppMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */; };
@@ -2011,6 +2015,10 @@
 		60D3BCCF2A154D9400E07524 /* MessageCriteria.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCriteria.swift; sourceTree = "<group>"; };
 		60E09FDA2B2780DB005A16EA /* JsonMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonMatcherTest.swift; sourceTree = "<group>"; };
 		60EACF532B7BF2EA00CAFDBB /* AirshipApptimizeIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipApptimizeIntegration.swift; sourceTree = "<group>"; };
+		60F8E75B2B8F3D4B00460EDF /* CancelSchedulesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelSchedulesAction.swift; sourceTree = "<group>"; };
+		60F8E75D2B8FA12800460EDF /* CancelSchedulesActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelSchedulesActionTest.swift; sourceTree = "<group>"; };
+		60F8E75F2B8FAF5400460EDF /* ScheduleAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleAction.swift; sourceTree = "<group>"; };
+		60F8E7612B8FB2CC00460EDF /* ScheduleActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleActionTest.swift; sourceTree = "<group>"; };
 		60FCA3042B4F1110005C9232 /* LegacyInAppMessaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessaging.swift; sourceTree = "<group>"; };
 		60FCA3062B4F1C73005C9232 /* LegacyInAppMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessage.swift; sourceTree = "<group>"; };
 		60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessageTest.swift; sourceTree = "<group>"; };
@@ -3481,6 +3489,8 @@
 			isa = PBXGroup;
 			children = (
 				6E1B7B122B714FFC00695561 /* LandingPageAction.swift */,
+				60F8E75B2B8F3D4B00460EDF /* CancelSchedulesAction.swift */,
+				60F8E75F2B8FAF5400460EDF /* ScheduleAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -3489,6 +3499,8 @@
 			isa = PBXGroup;
 			children = (
 				6E1B7B152B715FFE00695561 /* LandingPageActionTest.swift */,
+				60F8E75D2B8FA12800460EDF /* CancelSchedulesActionTest.swift */,
+				60F8E7612B8FB2CC00460EDF /* ScheduleActionTest.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -6364,6 +6376,8 @@
 				99E8D7972B4F17260099B6F3 /* CloseButton.swift in Sources */,
 				99E8D7C92B54A5CB0099B6F3 /* ModalTheme.swift in Sources */,
 				6E4AEE652B6B44EA008AEAC1 /* AutomationStore.swift in Sources */,
+				60F8E7602B8FAF5400460EDF /* ScheduleAction.swift in Sources */,
+				60F8E75C2B8F3D4B00460EDF /* CancelSchedulesAction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6385,6 +6399,7 @@
 				6E1620952B311D8A009240B2 /* DefaultDisplayCoordinatorTest.swift in Sources */,
 				6EE6AAF72B58A9D5002FEA75 /* InAppMessageAnalyticsTest.swift in Sources */,
 				6EE6AAF42B58A9D5002FEA75 /* InAppPageViewEventTest.swift in Sources */,
+				60F8E7622B8FB2CC00460EDF /* ScheduleActionTest.swift in Sources */,
 				6EE6AA132B4F3009002FEA75 /* InAppMessageAutomationPreparerTest.swift in Sources */,
 				6EE6AAF22B58A9D5002FEA75 /* InAppFormResultEventTest.swift in Sources */,
 				6EC0CA762B4B8A3A00333A87 /* TestRemoteDataAccess.swift in Sources */,
@@ -6414,6 +6429,7 @@
 				6E1A9BB52B5B1A0900A6489B /* ThomasPagerTrackerTest.swift in Sources */,
 				6EE6AB092B59C236002FEA75 /* CustomDisplayAdapterWrapperTest.swift in Sources */,
 				605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */,
+				60F8E75E2B8FA12800460EDF /* CancelSchedulesActionTest.swift in Sources */,
 				6E2E3CA62B327A6C00B8515B /* InAppMessageNativeBridgeExtensionTest.swift in Sources */,
 				6EE6AAF12B58A9D5002FEA75 /* InAppEventContextTest.swift in Sources */,
 				6EE6AA1B2B4F3062002FEA75 /* DisplayCoordinatorManagerTest.swift in Sources */,
