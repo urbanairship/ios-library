@@ -3,7 +3,18 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 18.0.0-beta.2, February 22, 2024
+## Version 18.0.0-rc March 6, 2024
+
+RC release for 18.0.0.
+
+### Changes
+- Fixed 18.0.0-beta regression where IAA would reset its internal state and display again after reaching the display limit
+- Fixed 18.0.0-beta regression with malformed IAA resolution events
+- Fixed 18.0.0-beta regression where contact operations where ignored
+- Notification Service extension is now rewritten in Swift
+- Badge modification methods are now async and use the updated UserNotification methods
+
+## Version 18.0.0-beta.2 February 22, 2024
 
 Second SDK 18.0.0 beta.
 
@@ -16,7 +27,7 @@ Second SDK 18.0.0 beta.
 - Fixed sendable warnings in PreferenceCenter and MessageCenter module.
 - Fixed coredata warnings with Xcode 15.
 
-## Version 18.0.0-beta, February 9, 2024
+## Version 18.0.0-beta February 9, 2024
 
 First beta release of SDK 18.0.0. This release contains a new automation module that has been rewritten in Swift and preliminary visionOS support.
 
@@ -26,7 +37,7 @@ First beta release of SDK 18.0.0. This release contains a new automation module 
 - Xcode 15.2+ is required
 
 
-## Version 17.7.3, Jan 29, 2024
+## Version 17.7.3 Jan 29, 2024
 Patch release that fixes an issue with message limits not being respected in certain cases.
 
 ### Changes
