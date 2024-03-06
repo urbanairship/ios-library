@@ -53,12 +53,41 @@ final class AutomationStoreTest: XCTestCase {
             return originalFoo
         }
 
+        let triggerInfo = TriggeringInfo(
+            context: AirshipTriggerContext(type: "foo", goal: 10.0, event: .string("event")),
+            date: Date.distantPast
+        )
+
+        let preparedInfo = PreparedScheduleInfo(
+            scheduleID: "full",
+            productID: "some product",
+            campaigns: .string("campaigns"),
+            contactID: "some contact",
+            experimentResult: ExperimentResult(
+                channelID: "some channel",
+                contactID: "some contact",
+                isMatch: true,
+                reportingMetadata: [AirshipJSON.string("reporing")]
+            )
+        )
+
+        let date = Date()
         let result = try await self.store.updateSchedule(scheduleID: "foo") { data in
+            data.executionCount = 100
+            data.triggerInfo = triggerInfo
             data.schedule.group = "bar"
+            data.preparedScheduleInfo = preparedInfo
+            data.scheduleState = .paused
+            data.scheduleStateChangeDate = date
         }
 
         var expected = originalFoo
         expected.schedule.group = "bar"
+        expected.executionCount = 100
+        expected.triggerInfo = triggerInfo
+        expected.preparedScheduleInfo = preparedInfo
+        expected.scheduleStateChangeDate = date
+        expected.scheduleState = .paused
         XCTAssertEqual(result, expected)
     }
 
@@ -191,7 +220,8 @@ final class AutomationStoreTest: XCTestCase {
         return AutomationScheduleData(
             schedule: schedule,
             scheduleState: .idle,
-            scheduleStateChangeDate: Date.distantPast
+            scheduleStateChangeDate: Date.distantPast,
+            executionCount: 0
         )
     }
 }

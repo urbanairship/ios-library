@@ -345,7 +345,7 @@ fileprivate extension UAScheduleData {
             schedule: schedule,
             scheduleState: scheduleState,
             scheduleStateChangeDate: self.executionStateChangeDate ?? Date.distantPast,
-            executionCount: self.triggeredCount?.uintValue ?? 0,
+            executionCount: self.triggeredCount?.intValue ?? 0,
             triggerInfo: triggerInfo,
             preparedScheduleInfo: preparedInfo
         )
