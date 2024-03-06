@@ -13,7 +13,7 @@ public extension View {
     @ViewBuilder
     func applyIf<Content: View>(
         _ predicate: @autoclosure () -> Bool,
-        transform: (Self) -> Content
+        @ViewBuilder transform: (Self) -> Content
     ) -> some View {
         if predicate() {
             transform(self)

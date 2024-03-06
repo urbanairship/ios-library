@@ -18,13 +18,12 @@ struct Media: View {
                 url: self.model.url,
                 imageLoader: thomasEnvironment.imageLoader
             ) { image, imageSize in
-                image
-                    .fitMedia(
-                        mediaFit: self.model.mediaFit,
-                        cropPosition: self.model.cropPosition,
-                        constraints: constraints,
-                        imageSize: imageSize
-                    )
+                image.fitMedia(
+                    mediaFit: self.model.mediaFit,
+                    cropPosition: self.model.cropPosition,
+                    constraints: constraints,
+                    imageSize: imageSize
+                )
             } placeholder: {
                 AirshipProgressView()
             }
@@ -42,10 +41,7 @@ struct Media: View {
                 video: model.video
             )
             .constraints(constraints)
-            .applyIf(
-                self.constraints.width != nil
-                    || self.constraints.height != nil
-            ) {
+            .applyIf(self.constraints.width != nil || self.constraints.height != nil) {
                 $0.aspectRatio((CGFloat)(model.video?.aspectRatio ?? 16.0 / 9.0), contentMode: .fit)
             }
             .background(self.model.backgroundColor)
@@ -79,7 +75,7 @@ extension Image {
         case .centerCrop:
             // If we do not have a fixed size in any direction then we should
             // use centerInside instead to match Android
-            if isUnbounded(constraints) {
+            if isUnbounded(filledInConstraints) {
                 centerInside(constraints: filledInConstraints)
             } else {
                 cropAligned(constraints: filledInConstraints)
@@ -138,14 +134,10 @@ extension Image {
         // Fill in any missing constraints
         var modifiedConstraints = constraints
         if let height = constraints.height {
-            modifiedConstraints.width =
-                modifiedConstraints.width
-                ?? ((imageSize.width / imageSize.height) * height)
+            modifiedConstraints.width = modifiedConstraints.width ?? ((imageSize.width / imageSize.height) * height)
             modifiedConstraints.isHorizontalFixedSize = true
         } else if let width = constraints.width {
-            modifiedConstraints.height =
-                modifiedConstraints.height
-                ?? ((imageSize.height / imageSize.width) * width)
+            modifiedConstraints.height = modifiedConstraints.height ?? ((imageSize.height / imageSize.width) * width)
             modifiedConstraints.isVerticalFixedSize = true
         }
         return modifiedConstraints
