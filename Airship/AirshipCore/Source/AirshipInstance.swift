@@ -111,7 +111,7 @@ class AirshipInstance: AirshipInstanceProtocol {
             privacyManager: self.privacyManager,
             permissionsManager: self.permissionsManager,
             apnsRegistrar: sharedApp,
-            badger: sharedApp
+            badger: Badger.shared
         )
 
         let contact = AirshipContact(

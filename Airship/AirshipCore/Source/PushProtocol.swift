@@ -121,26 +121,19 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     var badgeNumber: Int { get }
 
     /// The current badge number used by the device and on the Airship server.
-    ///
-    /// - Note: This property must be accessed on the main thread.
     @objc
-    @MainActor
-    func setBadgeNumber(_ newBadgeNumber: Int) async
+    func setBadgeNumber(_ newBadgeNumber: Int) async throws
 
     /// Resets the badge to zero (0) on both the device and on Airships servers. This is a
     /// convenience method for setting the `badgeNumber` property to zero.
-    ///
-    /// - Note: This method must be called on the main thread.
     @objc
-    @MainActor
-    func resetBadge() async
+    func resetBadge() async throws
 
     /// Toggle the Airship auto-badge feature. Defaults to `false` If enabled, this will update the
     /// badge number stored by Airship every time the app is started or foregrounded.
     @objc
     var autobadgeEnabled: Bool { get set }
 #endif
-
 
     /// Time Zone for quiet time. If the time zone is not set, the current
     /// local time zone is returned.

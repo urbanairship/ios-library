@@ -40,7 +40,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         ) { _ in
             Task {
                 // Set the icon badge to zero
-                await Airship.push.resetBadge()
+                do {
+                    try await Airship.push.resetBadge()
+                } catch {
+                    AirshipLogger.error("failed to reset badge")
+                }
             }
         }
         

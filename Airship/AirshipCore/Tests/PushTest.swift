@@ -4,13 +4,6 @@ import XCTest
 
 @testable import AirshipCore
 
-struct TestUserNotificationCenter: AirshipUserNotificationCenterProtocol {
-    static let shared = Self.init()
-
-    func setBadgeNumber(_ newBadgeNumber: Int) async throws {
-
-    }
-}
 
 class PushTest: XCTestCase {
 
@@ -20,7 +13,6 @@ class PushTest: XCTestCase {
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
     private let permissionsManager = AirshipPermissionsManager()
-    private let userNotificationCenter = TestUserNotificationCenter()
 
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
@@ -66,7 +58,6 @@ class PushTest: XCTestCase {
             analytics: analtyics,
             privacyManager: privacyManager,
             permissionsManager: permissionsManager,
-            userNotificationCenter: userNotificationCenter,
             notificationCenter: notificationCenter,
             notificationRegistrar: notificationRegistrar,
             apnsRegistrar: apnsRegistrar,
@@ -497,7 +488,7 @@ class PushTest: XCTestCase {
     @MainActor
     func testChannelPayloadAutoBadge() async throws {
         self.push.autobadgeEnabled = true
-        self.push.badgeNumber = 10
+        try await self.push.setBadgeNumber(10)
 
         let payload = await self.channel.channelPayload
 
@@ -596,25 +587,22 @@ class PushTest: XCTestCase {
     }
 
     @MainActor
-    func testBadge() throws {
-        self.push.badgeNumber = 100
+    func testBadge() async throws {
+        try await self.push.setBadgeNumber(100)
         XCTAssertEqual(100, self.badger.applicationIconBadgeNumber)
     }
 
     @MainActor
-    func testAutoBadge() throws {
+    func testAutoBadge() async throws {
         self.push.autobadgeEnabled = false
-        self.push.badgeNumber = 100
+        try await self.push.setBadgeNumber(10)
         XCTAssertFalse(self.channel.updateRegistrationCalled)
 
         self.push.autobadgeEnabled = true
         XCTAssertTrue(self.channel.updateRegistrationCalled)
 
         self.channel.updateRegistrationCalled = false
-        self.push.badgeNumber = 100
-        XCTAssertFalse(self.channel.updateRegistrationCalled)
-
-        self.push.badgeNumber = 101
+        try await self.push.setBadgeNumber(1)
         XCTAssertTrue(self.channel.updateRegistrationCalled)
 
         self.channel.updateRegistrationCalled = false
@@ -623,11 +611,11 @@ class PushTest: XCTestCase {
     }
 
     @MainActor
-    func testResetBadge() async {
-        self.push.badgeNumber = 1000
+    func testResetBadge() async throws {
+        try await self.push.setBadgeNumber(1000)
         XCTAssertEqual(1000, self.push.badgeNumber)
 
-        await self.push.resetBadge()
+        try await self.push.resetBadge()
         XCTAssertEqual(0, self.push.badgeNumber)
         XCTAssertEqual(0, self.badger.applicationIconBadgeNumber)
     }
@@ -1214,6 +1202,12 @@ final class TestAPNSRegistrar: APNSRegistrar, @unchecked Sendable {
     }
 }
 
-final class TestBadger: Badger, @unchecked Sendable {
+final class TestBadger: BadgerProtocol, @unchecked Sendable {
     var applicationIconBadgeNumber: Int = 0
+
+    func setBadgeNumber(_ newBadgeNumber: Int) async throws {
+        applicationIconBadgeNumber = newBadgeNumber
+    }
+
+    var badgeNumber: Int { return applicationIconBadgeNumber }
 }
