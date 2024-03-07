@@ -36,7 +36,6 @@
 		9948E61D2B464F1B00C1F21E /* PlaceholderToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6172B464F1B00C1F21E /* PlaceholderToggleView.swift */; };
 		9948E61E2B464F1B00C1F21E /* EmbeddedPlaygroundMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6192B464F1B00C1F21E /* EmbeddedPlaygroundMenuView.swift */; };
 		995902F52B02C710001614AF /* CustomViewExampleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995902F42B02C710001614AF /* CustomViewExampleHelper.swift */; };
-		995902F82B031690001614AF /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 995902F72B031690001614AF /* GoogleMobileAds */; };
 		995902FA2B031842001614AF /* AdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995902F92B031842001614AF /* AdView.swift */; };
 		9970D2312B0667B2003F4A8B /* BiometricLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */; };
 		99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */ = {isa = PBXBuildFile; fileRef = 99F662CC2B61DB4600696098 /* JurassicPark.otf */; };
@@ -227,7 +226,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				995902F82B031690001614AF /* GoogleMobileAds in Frameworks */,
 				32FC34EC2729AF10002D3F2C /* AirshipBasement.framework in Frameworks */,
 				3244495E2721A63400D108B5 /* AirshipCore.framework in Frameworks */,
 				993FB2CE2B4B423800790877 /* AirshipAutomation.framework in Frameworks */,
@@ -400,7 +398,6 @@
 			name = Thomas;
 			packageProductDependencies = (
 				3244494B2721784900D108B5 /* Yams */,
-				995902F72B031690001614AF /* GoogleMobileAds */,
 			);
 			productName = Thomas;
 			productReference = 3244492B2721667D00D108B5 /* Thomas.app */;
@@ -434,7 +431,6 @@
 			mainGroup = 324449222721667D00D108B5;
 			packageReferences = (
 				3244494A2721784900D108B5 /* XCRemoteSwiftPackageReference "Yams" */,
-				995902F62B031690001614AF /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = 3244492C2721667D00D108B5 /* Products */;
 			projectDirPath = "";
@@ -846,14 +842,6 @@
 				minimumVersion = 4.0.6;
 			};
 		};
-		995902F62B031690001614AF /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.13.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -861,11 +849,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3244494A2721784900D108B5 /* XCRemoteSwiftPackageReference "Yams" */;
 			productName = Yams;
-		};
-		995902F72B031690001614AF /* GoogleMobileAds */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 995902F62B031690001614AF /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
-			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

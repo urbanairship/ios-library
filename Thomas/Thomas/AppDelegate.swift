@@ -38,11 +38,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
 
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ "1a0dc64aa99c090d97d0da6a8ac47281" ]
-
-        /// Register CustomView examples
-        CustomViewExampleHelper.registerAdView()
         CustomViewExampleHelper.registerWeatherView()
         CustomViewExampleHelper.registerMapRouteView()
         CustomViewExampleHelper.registerCameraView()
@@ -50,7 +45,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         Task {
             // Set the icon badge to zero on startup (optional)
-            await Airship.push.resetBadge()
+            try await Airship.push.resetBadge()
         }
 
         return true

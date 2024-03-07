@@ -15,35 +15,44 @@ struct AdoptLayout: SwiftUI.Layout {
     let embeddedSize: AirshipEmbeddedSize?
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let viewSize = subviews.first?.sizeThatFits(proposal)
+
         let height = size(
             constraint: placement.size.height,
             parent: self.embeddedSize?.maxHeight,
-            proposal: proposal.height
+            proposal: proposal.height,
+            sizeThataFits: viewSize?.height
         )
 
         let width = size(
             constraint: placement.size.width,
             parent: self.embeddedSize?.maxWidth,
-            proposal: proposal.width
+            proposal: proposal.width,
+            sizeThataFits: viewSize?.width
         )
 
-        let size = CGSize(width: width, height: height)
 
+        /// proposal.replacingUnspecifiedDimensions() uses `10`, so we shall as well
+        let size = CGSize(width: width ?? 10, height: height ?? 10)
         return size
     }
 
-    private func size(constraint: SizeConstraint, parent: CGFloat?, proposal: CGFloat?) -> CGFloat {
+    private func size(constraint: SizeConstraint, parent: CGFloat?, proposal: CGFloat?, sizeThataFits: CGFloat? = nil) -> CGFloat? {
         switch (constraint) {
         case .auto:
-            return 0
-        case .percent(_):
-            return parent ?? proposal ?? 10.0
+            return sizeThataFits ?? proposal
+        case .percent(let percent):
+            if let parent = parent {
+                return parent * percent/100.0
+            }
+            return proposal ?? sizeThataFits
         case .points(let size):
             return size
         }
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+
         let constraints = ViewConstraints(
             width: embeddedSize?.maxWidth ?? bounds.width,
             height: embeddedSize?.maxHeight ?? bounds.height
@@ -66,6 +75,7 @@ struct AdoptLayout: SwiftUI.Layout {
             )
         )
 
+        print("placeSubViewss: \(bounds) proposal: \(proposal) constraints: \(constraints) viewProposal: \(viewProposal)")
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
         subviews.forEach { layout in
             layout.place(at: center, anchor: .center, proposal: viewProposal)
@@ -79,18 +89,7 @@ struct EmbeddedView: View {
     let thomasEnvironment: ThomasEnvironment
 
     let embeddedSize: AirshipEmbeddedSize?
-    @State private var contentSize: (ViewConstraints, CGSize)? = nil
     @State var viewConstraints: ViewConstraints?
-    
-    @ViewBuilder
-    @MainActor
-    private func makeBody(_ placement: EmbeddedPlacement) -> some View {
-        if let constraints = viewConstraints {
-            createView(constraints: constraints, placement: placement)
-        } else {
-            Color.clear
-        }
-    }
 
     var body: some View {
         RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
@@ -101,9 +100,12 @@ struct EmbeddedView: View {
 
             if #available(iOS 16, tvOS 16, watchOS 9.0, *) {
                 AdoptLayout(placement: placement, viewConstraints: $viewConstraints, embeddedSize: embeddedSize) {
-                    makeBody(placement)
+                    if let constraints = viewConstraints {
+                        createView(constraints: constraints, placement: placement)
+                    } else {
+                        Color.clear
+                    }
                 }
-                .frame(idealWidth: contentSize?.1.width, idealHeight: contentSize?.1.height)
             } else {
                 let constraints = ViewConstraints(
                     width: placement.size.width.calculateSize(self.embeddedSize?.maxWidth),
@@ -117,31 +119,18 @@ struct EmbeddedView: View {
 
     @MainActor
     private func createView(constraints: ViewConstraints, placement: EmbeddedPlacement) -> some View {
-        var contentSize: CGSize?
-        if constraints == self.contentSize?.0 {
-            contentSize = self.contentSize?.1
-        }
-
         let contentConstraints = constraints.contentConstraints(
             placement.size,
-            contentSize: contentSize,
+            contentSize: nil,
             margin: placement.margin
         )
-        
+
         return ViewFactory
             .createView(model: layout.view, constraints: contentConstraints)
             .background(placement.backgroundColor)
             .border(placement.border)
             .margin(placement.margin)
-            .background(
-                GeometryReader(content: { contentMetrics -> Color in
-                    let size = contentMetrics.size
-                    DispatchQueue.main.async {
-                        self.contentSize = (constraints, size)
-                    }
-                    return Color.clear
-                })
-            )
+            .constraints(contentConstraints)
             .onAppear {
                 self.thomasEnvironment.onAppear()
             }

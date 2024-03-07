@@ -12,18 +12,7 @@ class CustomViewExampleHelper {
         return keywordDictionary["ad_type"]
     }
    
-    static func registerAdView() {
-        let customViewName:String = "ad_custom_view"
-        var keywords:[String] = []
-
-        AirshipCustomViewManager.shared.register(name: customViewName) { json in
-            if let pushedKeyword = parseAdKeyword(json:json) {
-                keywords.append(pushedKeyword)
-            }
-
-            return AnyView(AdView(keywords:keywords))
-        }
-    }
+  
 
     static func registerWeatherView() {
         AirshipCustomViewManager.shared.register(name: "weather_custom_view") { json in

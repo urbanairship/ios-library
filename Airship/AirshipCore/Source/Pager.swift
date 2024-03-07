@@ -74,6 +74,7 @@ struct Pager: View {
                 constraints: constraints
             )
             .environment(\.isVisible, true)
+            .constraints(constraints)
             .airshipMeasureView(self.$size)
         } else {
             GeometryReader { metrics in
