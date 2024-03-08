@@ -26,6 +26,11 @@ public struct PreferenceCenterAlertView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    public init(item: PreferenceCenterConfig.Alert, state: PreferenceCenterState) {
+        self.item = item
+        self.state = state
+    }
+
     @ViewBuilder
     public var body: some View {
         let configuration = PrefernceCenterAlertStyleConfiguration(

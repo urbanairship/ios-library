@@ -8,7 +8,7 @@ import AirshipCore
 #endif
 
 /// Contact subscription group item view
-struct ContactSubscriptionGroupView: View {
+public struct ContactSubscriptionGroupView: View {
 
     /// The item's config
     public let item: PreferenceCenterConfig.ContactSubscriptionGroup
@@ -26,8 +26,13 @@ struct ContactSubscriptionGroupView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    public init(item: PreferenceCenterConfig.ContactSubscriptionGroup, state: PreferenceCenterState) {
+        self.item = item
+        self.state = state
+    }
+
     @ViewBuilder
-    var body: some View {
+    public var body: some View {
 
         let componentStates = self.item.components
             .map {

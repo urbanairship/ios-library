@@ -8,7 +8,7 @@ import AirshipCore
 #endif
 
 /// The channel subscription item view
-struct ChannelSubscriptionView: View {
+public struct ChannelSubscriptionView: View {
 
     /// The item's config
     public let item: PreferenceCenterConfig.ChannelSubscription
@@ -26,6 +26,11 @@ struct ChannelSubscriptionView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    public init(item: PreferenceCenterConfig.ChannelSubscription, state: PreferenceCenterState) {
+        self.item = item
+        self.state = state
+    }
+    
     @ViewBuilder
     public var body: some View {
         let isSubscribed = state.makeBinding(channelListID: item.subscriptionID)

@@ -89,12 +89,12 @@ extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
 /// The default comon section view style
 public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
+    public static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .system(size: 18).bold(),
         color: .primary
     )
 
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
+    public static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .system(size: 14),
         color: .secondary
     )
