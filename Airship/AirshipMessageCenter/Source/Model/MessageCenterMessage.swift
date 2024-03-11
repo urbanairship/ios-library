@@ -12,31 +12,31 @@ public final class MessageCenterMessage: NSObject, Sendable {
     /// The message title.
     @objc
     public let title: String
-    
+
     /// The Airship message ID.
     /// This ID may be used to match an incoming push notification to a specific message.
     @objc
     public let id: String
-    
+
     /// The message's extra dictionary.
     /// This dictionary can be populated with arbitrary key-value data at the time the message is composed.
     @objc
     public let extra: [String: String]
-    
+
     /// The URL for the message body itself.
     /// This URL may only be accessed with Basic Auth credentials set to the user ID and password.
     @objc
     public let bodyURL: URL
-    
+
     /// The date and time the message will expire.
     /// A nil value indicates it will never expire.
     @objc
     public let expirationDate: Date?
-    
+
     /// The date and time the message was sent (UTC).
     @objc
     public let sentDate: Date
-    
+
     /// The unread status of the message.
     /// `true` if the message is unread, otherwise `false`.
     @objc
@@ -44,11 +44,11 @@ public final class MessageCenterMessage: NSObject, Sendable {
 
     /// The reporting data of the message.
     let messageReporting: AirshipJSON?
-    
+
     /// The URL for the message.
     /// This URL may only be accessed with Basic Auth credentials set to the user ID and password.
     let messageURL: URL
-    
+
     /// The raw message dictionary.
     /// This is the dictionary that originally created the message.
     /// It can contain more values than the message.
@@ -112,7 +112,7 @@ extension MessageCenterMessage {
         else {
             return nil
         }
-            
+
         return listIcon
     }
 

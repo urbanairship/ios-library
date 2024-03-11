@@ -16,18 +16,18 @@ public enum MessageCenterState: Equatable {
 /// Controller for the Message Center View.
 @objc(UAMessageCenterController)
 public class MessageCenterController: NSObject, ObservableObject {
-    
+
     @Published
     var messageID: String? = nil
 
     @Published
     var visibleMessageID: String? = nil
-    
+
     @Published
     var isMessageCenterVisible: Bool = false
-    
+
     private var subscriptions: Set<AnyCancellable> = Set()
-    
+
     private let updateSubject = PassthroughSubject<MessageCenterState, Never>()
 
     /// Publisher that emits the message center state.
@@ -36,7 +36,7 @@ public class MessageCenterController: NSObject, ObservableObject {
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
-    
+
     /// Navigates to the message ID.
     /// - Parameters:
     ///     - messageID: The message ID to navigate to.
@@ -44,7 +44,7 @@ public class MessageCenterController: NSObject, ObservableObject {
     public func navigate(messageID: String?) {
         self.messageID = messageID
     }
-    
+
     @objc
     public override init() {
         super.init()

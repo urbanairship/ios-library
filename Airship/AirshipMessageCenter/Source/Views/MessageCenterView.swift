@@ -15,6 +15,8 @@ public struct MessageCenterView: View {
     @ObservedObject
     private var controller: MessageCenterController
 
+    @Environment(\.colorScheme) private var colorScheme
+
     @Environment(\.messageCenterDismissAction)
     private var dismissAction: (() -> Void)?
 
@@ -39,7 +41,7 @@ public struct MessageCenterView: View {
             Image(systemName: "chevron.backward")
                 .scaleEffect(0.68)
                 .font(Font.title.weight(.medium))
-                .foregroundColor(theme.backButtonColor)
+                .foregroundColor(theme.backButtonColor?.adaptiveColor(for: colorScheme, darkVariation: theme.backButtonColorDark))
         }
     }
 

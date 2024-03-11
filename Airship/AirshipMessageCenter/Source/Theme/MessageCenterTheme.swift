@@ -27,6 +27,9 @@ public struct MessageCenterTheme {
     /// The tint color of the "pull to refresh" control
     public var refreshTintColor: Color? = nil
 
+    /// The dark mode tint color of the "pull to refresh" control
+    public var refreshTintColorDark: Color? = nil
+
     /// Whether icons are enabled. Defaults to `NO`.
     public var iconsEnabled: Bool = false
 
@@ -42,11 +45,20 @@ public struct MessageCenterTheme {
     /// The regular color for message cells
     public var cellColor: Color? = nil
 
+    /// The dark mode color for message cells
+    public var cellColorDark: Color? = nil
+
     /// The regular color for message cell titles.
     public var cellTitleColor: Color? = .primary
 
+    /// The dark mode color for message cell titles.
+    public var cellTitleColorDark: Color? = nil
+
     /// The regular color for message cell dates.
     public var cellDateColor: Color? = .secondary
+
+    /// The dark mode color for message cell dates.
+    public var cellDateColorDark: Color? = nil
 
     /// The message cell separator style.
     public var cellSeparatorStyle: SeparatorStyle?
@@ -54,56 +66,130 @@ public struct MessageCenterTheme {
     /// The message cell separator color.
     public var cellSeparatorColor: Color? = Color(UIColor.separator)
 
+    /// The dark mode message cell separator color.
+    public var cellSeparatorColorDark: Color? = nil
+
     /// The message cell tint color.
     public var cellTintColor: Color? = nil
+
+    /// The dark mode message cell tint color.
+    public var cellTintColorDark: Color? = nil
 
     /// The background color for the unread indicator.
     public var unreadIndicatorColor: Color? = nil
 
+    /// The dark mode background color for the unread indicator.
+    public var unreadIndicatorColorDark: Color? = nil
+
     /// The title color for the "Select All" button.
     public var selectAllButtonTitleColor: Color? = nil
+
+    /// The dark mode title color for the "Select All" button.
+    public var selectAllButtonTitleColorDark: Color? = nil
 
     /// The title color for the "Delete" button.
     public var deleteButtonTitleColor: Color? = nil
 
+    /// The dark mode title color for the "Delete" button.
+    public var deleteButtonTitleColorDark: Color? = nil
+
     /// The title color for the "Mark Read" button.
     public var markAsReadButtonTitleColor: Color? = nil
-    
+
+    /// The dark mode title color for the "Mark Read" button.
+    public var markAsReadButtonTitleColorDark: Color? = nil
+
     /// Whether the delete message button from the message view is enabled. Defaults to `NO`.
     public var hideDeleteButton: Bool? = false
-    
+
     /// The title color for the "Edit" button.
     public var editButtonTitleColor: Color? = nil
+
+    /// The dark mode title color for the "Edit" button.
+    public var editButtonTitleColorDark: Color? = nil
 
     /// The title color for the "Cancel" button.
     public var cancelButtonTitleColor: Color? = nil
 
+    /// The dark mode title color for the "Cancel" button.
+    public var cancelButtonTitleColorDark: Color? = nil
+
     /// The title color for the "Done" button.
     public var backButtonColor: Color? = nil
+
+    /// The dark mode title color for the "Done" button.
+    public var backButtonColorDark: Color? = nil
 
     /// The navigation bar title
     public var navigationBarTitle: String? = nil
 
-    public init(refreshTintColor: Color? = nil, iconsEnabled: Bool = false, placeholderIcon: Image? = nil, cellTitleFont: Font? = nil, cellDateFont: Font? = nil, cellColor: Color? = nil, cellTitleColor: Color? = nil, cellDateColor: Color? = nil, cellSeparatorStyle: SeparatorStyle? = nil, cellSeparatorColor: Color? = nil, cellTintColor: Color? = nil, unreadIndicatorColor: Color? = nil, selectAllButtonTitleColor: Color? = nil, deleteButtonTitleColor: Color? = nil, markAsReadButtonTitleColor: Color? = nil, hideDeleteButton: Bool? = nil, editButtonTitleColor: Color? = nil, cancelButtonTitleColor: Color? = nil, backButtonColor: Color? = nil, navigationBarTitle: String? = nil) {
+    public init(
+        refreshTintColor: Color? = nil,
+        refreshTintColorDark: Color? = nil,
+        iconsEnabled: Bool = false,
+        placeholderIcon: Image? = nil,
+        cellTitleFont: Font? = nil,
+        cellDateFont: Font? = nil,
+        cellColor: Color? = nil,
+        cellColorDark: Color? = nil,
+        cellTitleColor: Color? = nil,
+        cellTitleColorDark: Color? = nil,
+        cellDateColor: Color? = nil,
+        cellDateColorDark: Color? = nil,
+        cellSeparatorStyle: SeparatorStyle? = nil,
+        cellSeparatorColor: Color? = nil,
+        cellSeparatorColorDark: Color? = nil,
+        cellTintColor: Color? = nil,
+        cellTintColorDark: Color? = nil,
+        unreadIndicatorColor: Color? = nil,
+        unreadIndicatorColorDark: Color? = nil,
+        selectAllButtonTitleColor: Color? = nil,
+        selectAllButtonTitleColorDark: Color? = nil,
+        deleteButtonTitleColor: Color? = nil,
+        deleteButtonTitleColorDark: Color? = nil,
+        markAsReadButtonTitleColor: Color? = nil,
+        markAsReadButtonTitleColorDark: Color? = nil,
+        hideDeleteButton: Bool? = nil,
+        editButtonTitleColor: Color? = nil,
+        editButtonTitleColorDark: Color? = nil,
+        cancelButtonTitleColor: Color? = nil,
+        cancelButtonTitleColorDark: Color? = nil,
+        backButtonColor: Color? = nil,
+        backButtonColorDark: Color? = nil,
+        navigationBarTitle: String? = nil
+    ) {
         self.refreshTintColor = refreshTintColor
+        self.refreshTintColorDark = refreshTintColorDark
         self.iconsEnabled = iconsEnabled
         self.placeholderIcon = placeholderIcon
         self.cellTitleFont = cellTitleFont
         self.cellDateFont = cellDateFont
         self.cellColor = cellColor
+        self.cellColorDark = cellColorDark
         self.cellTitleColor = cellTitleColor
+        self.cellTitleColorDark = cellTitleColorDark
         self.cellDateColor = cellDateColor
+        self.cellDateColorDark = cellDateColorDark
         self.cellSeparatorStyle = cellSeparatorStyle
         self.cellSeparatorColor = cellSeparatorColor
+        self.cellSeparatorColorDark = cellSeparatorColorDark
         self.cellTintColor = cellTintColor
+        self.cellTintColorDark = cellTintColorDark
         self.unreadIndicatorColor = unreadIndicatorColor
+        self.unreadIndicatorColorDark = unreadIndicatorColorDark
         self.selectAllButtonTitleColor = selectAllButtonTitleColor
+        self.selectAllButtonTitleColorDark = selectAllButtonTitleColorDark
         self.deleteButtonTitleColor = deleteButtonTitleColor
+        self.deleteButtonTitleColorDark = deleteButtonTitleColorDark
         self.markAsReadButtonTitleColor = markAsReadButtonTitleColor
+        self.markAsReadButtonTitleColorDark = markAsReadButtonTitleColorDark
         self.hideDeleteButton = hideDeleteButton
         self.editButtonTitleColor = editButtonTitleColor
+        self.editButtonTitleColorDark = editButtonTitleColorDark
         self.cancelButtonTitleColor = cancelButtonTitleColor
+        self.cancelButtonTitleColorDark = cancelButtonTitleColorDark
         self.backButtonColor = backButtonColor
+        self.backButtonColorDark = backButtonColorDark
         self.navigationBarTitle = navigationBarTitle
     }
 }

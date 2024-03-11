@@ -25,8 +25,8 @@ public struct MessageCenterMessageView: View {
 
     /// The message's title
     private let title: String?
-    
-    /// The dimiss action callback
+
+    /// The dismiss action callback
     private let dismissAction: (() -> Void)?
 
     /// Default constructor
@@ -148,7 +148,7 @@ struct MessageCenterWebView: UIViewRepresentable {
         }
         return true
     }
-    
+
     func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true

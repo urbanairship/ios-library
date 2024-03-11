@@ -53,10 +53,12 @@ public class MessageCenter: NSObject, ObservableObject {
     @objc
     public var controller: MessageCenterController
 
-    /// Message center theme.
+    /// Default message center theme. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
+    ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
     public var theme: MessageCenterTheme?
 
-    /// Loads a Message center theme from a plist file.
+    /// Loads a Message center theme from a plist file. If you are embedding the MessageCenterView directly
+    ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
     /// - Parameters:
     ///     - plist: The name of the plist in the bundle.
     @objc
@@ -76,6 +78,7 @@ public class MessageCenter: NSObject, ObservableObject {
 
     init(
         dataStore: PreferenceDataStore,
+        config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: MessageCenterInbox,
@@ -85,8 +88,16 @@ public class MessageCenter: NSObject, ObservableObject {
         self.privacyManager = privacyManager
         self.theme = MessageCenterThemeLoader.defaultPlist()
         self.controller = controller
-        
+
         super.init()
+
+        if let plist = config.messageCenterStyleConfig {
+            do {
+                try setThemeFromPlist(plist)
+            } catch {
+                AirshipLogger.error("Failed to load Message Center \(plist) theme \(error) ")
+            }
+        }
 
         notificationCenter.addObserver(
             forName: AirshipNotifications.PrivacyManagerUpdated.name,
@@ -118,6 +129,7 @@ public class MessageCenter: NSObject, ObservableObject {
 
         self.init(
             dataStore: dataStore,
+            config: config,
             privacyManager: privacyManager,
             inbox: inbox,
             controller: controller
