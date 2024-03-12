@@ -27,7 +27,8 @@ final class AutomationScheduleDataTest: XCTestCase {
                 data: .actions(.string("actions"))
             ),
             scheduleState: .idle,
-            scheduleStateChangeDate: self.date
+            scheduleStateChangeDate: self.date,
+            executionCount: 0
         )
     }
 

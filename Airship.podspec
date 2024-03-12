@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="18.0.0-beta.2"
+AIRSHIP_VERSION="18.0.0-rc"
 
 Pod::Spec.new do |s|
    s.version                    = AIRSHIP_VERSION
@@ -14,7 +14,6 @@ Pod::Spec.new do |s|
    s.ios.deployment_target      = "14.0"
    s.tvos.deployment_target     = "14.0"
    s.watchos.deployment_target  = "7.0"
-   s.visionos.deployment_target = '1.0'
    s.swift_versions             = "5.0"
    s.requires_arc               = true
    s.default_subspecs           = ["Basement", "Core", "Automation", "MessageCenter", "PreferenceCenter", "FeatureFlags"]
@@ -26,7 +25,6 @@ Pod::Spec.new do |s|
       basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
       basement.libraries                  = "z", "sqlite3"
       basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "UIKit", "CoreData"
-      basement.visionos.frameworks        = "WebKit", "SystemConfiguration"
       basement.ios.frameworks             = "WebKit", "CoreTelephony", "SystemConfiguration"
       basement.tvos.frameworks            = "SystemConfiguration"
       basement.watchos.frameworks         = "WatchKit"
@@ -48,9 +46,6 @@ Pod::Spec.new do |s|
       automation.ios.source_files          = "Airship/AirshipAutomation/Source/**/*.{h,m,swift}"
       automation.ios.exclude_files         = "Airship/AirshipAutomation/Source/AirshipAutomation.h"
       automation.ios.resource_bundle       = { 'AirshipAutomationResources' => "Airship/AirshipAutomation/Resources/**/*" }
-      automation.visionos.source_files     = "Airship/AirshipAutomation/Source/**/*.{h,m,swift}"
-      automation.visionos.exclude_files    = "Airship/AirshipAutomation/Source/AirshipAutomation.h"
-      automation.visionos.resource_bundle  = { 'AirshipAutomationResources' => "Airship/AirshipAutomation/Resources/**/*" }
       automation.dependency                "Airship/Core"
    end
 
@@ -58,25 +53,18 @@ Pod::Spec.new do |s|
       messageCenter.ios.source_files          = "Airship/AirshipMessageCenter/Source/**/*.{h,m,swift}"
       messageCenter.ios.exclude_files         = "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
       messageCenter.ios.resource_bundle       = { 'AirshipMessageCenterResources' => "Airship/AirshipMessageCenter/Resources/**/*" }
-      messageCenter.visionos.source_files     = "Airship/AirshipMessageCenter/Source/**/*.{h,m,swift}"
-      messageCenter.visionos.exclude_files    = "Airship/AirshipMessageCenter/Source/AirshipMessageCenter.h"
-      messageCenter.visionos.resource_bundle  = { 'AirshipMessageCenterResources' => "Airship/AirshipMessageCenter/Resources/**/*" }
       messageCenter.dependency                "Airship/Core"
    end
 
    s.subspec "PreferenceCenter" do |preferenceCenter|
       preferenceCenter.ios.source_files              = "Airship/AirshipPreferenceCenter/Source/**/*.{h,m,swift}"
       preferenceCenter.ios.exclude_files             = "Airship/AirshipPreferenceCenter/Source/AirshipPreferenceCenter.h"
-      preferenceCenter.visionos.source_files         = "Airship/AirshipPreferenceCenter/Source/**/*.{h,m,swift}"
-      preferenceCenter.visionos.exclude_files        = "Airship/AirshipPreferenceCenter/Source/AirshipPreferenceCenter.h"
       preferenceCenter.dependency                      "Airship/Core"
    end
 
    s.subspec "FeatureFlags" do |airshipFeatureFlags|
       airshipFeatureFlags.ios.source_files              = "Airship/AirshipFeatureFlags/Source/**/*.{h,m,swift}"
       airshipFeatureFlags.ios.exclude_files             = "Airship/AirshipFeatureFlags/Source/AirshipFeatureFlags.h"
-      airshipFeatureFlags.visionos.source_files         = "Airship/AirshipFeatureFlags/Source/**/*.{h,m,swift}"
-      airshipFeatureFlags.visionos.exclude_files        = "Airship/AirshipFeatureFlags/Source/AirshipFeatureFlags.h"
       airshipFeatureFlags.dependency                      "Airship/Core"
    end
 end

@@ -102,11 +102,13 @@ private struct MessageCenterListContentView: View {
     private static let unreadIndicatorSize: Double = 8.0
     private static let noIconSpacerWidth: Double = 20.0
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+    
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
     let message: MessageCenterMessage
-
 
     @ViewBuilder
     func makeIcon() -> some View {
@@ -137,10 +139,12 @@ private struct MessageCenterListContentView: View {
 
     @ViewBuilder
     func makeUnreadIndicator() -> some View {
+        let foregroundColor = theme.unreadIndicatorColor?.adaptiveColor(for: colorScheme, darkVariation: theme.unreadIndicatorColorDark) ?? theme.cellTintColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellTintColorDark)
+
         if self.message.unread {
             Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
                 .foregroundColor(
-                    theme.unreadIndicatorColor ?? theme.cellTintColor
+                    foregroundColor
                 )
                 .frame(
                     width: MessageCenterListContentView.unreadIndicatorSize,
@@ -154,7 +158,7 @@ private struct MessageCenterListContentView: View {
         VStack(alignment: .leading, spacing: 5) {
             Text(self.message.title)
                 .font(theme.cellTitleFont)
-                .foregroundColor(theme.cellTitleColor)
+                .foregroundColor(theme.cellTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellTitleColorDark))
                 .accessibilityHidden(true)
 
             if let subtitle = self.message.subtitle {
@@ -166,7 +170,7 @@ private struct MessageCenterListContentView: View {
 
             Text(self.message.sentDate, style: .date)
                 .font(theme.cellDateFont)
-                .foregroundColor(theme.cellDateColor)
+                .foregroundColor(theme.cellDateColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellDateColorDark))
                 .accessibilityHidden(true)
         }
     }

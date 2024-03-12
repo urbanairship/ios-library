@@ -370,6 +370,7 @@
 		6E2486F22898341400657CE4 /* ConditionsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F02898341400657CE4 /* ConditionsMonitor.swift */; };
 		6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */; };
 		6E2486FD2899C06100657CE4 /* PreferenceCenterViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */; };
+		6E28BA912B9BCFD400A641B6 /* MessageCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E28BA902B9BCFD400A641B6 /* MessageCenterUtils.swift */; };
 		6E29474B2AD47E15009EC6DD /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
 		6E29474D2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */; };
 		6E29474E2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */; };
@@ -537,7 +538,6 @@
 		6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */; };
 		6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
 		6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
-		6E4A468D28EF673800A25617 /* InboxMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A468B28EF673800A25617 /* InboxMessageData.swift */; };
 		6E4A469F28F4A7DF00A25617 /* MessageCenterAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A469E28F4A7DF00A25617 /* MessageCenterAction.swift */; };
 		6E4A46A128F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A46A028F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift */; };
 		6E4A4FDA2A30358F0049FEFC /* TagsActionArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A4FD92A30358F0049FEFC /* TagsActionArgs.swift */; };
@@ -1073,6 +1073,7 @@
 		6EDE293F2A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
 		6EDE29402A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
 		6EDE29412A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
+		6EDE5F192B9BD7E700E33D04 /* InboxMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */; };
 		6EDF1D932B292FB100E23BC4 /* InAppMessageTextInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1D922B292FB000E23BC4 /* InAppMessageTextInfo.swift */; };
 		6EDF1D962B2A25B400E23BC4 /* InAppMessageButtonInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1D952B2A25B400E23BC4 /* InAppMessageButtonInfo.swift */; };
 		6EDF1D982B2A25C800E23BC4 /* InAppMessageMediaInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDF1D972B2A25C800E23BC4 /* InAppMessageMediaInfo.swift */; };
@@ -1255,11 +1256,9 @@
 		99D1B3282B44F08900447840 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
 		99E0BD0D2B4DD4AB00465B37 /* FullScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */; };
 		99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */; };
-		99E6F0112B929CB60006326A /* AirshipUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0102B929CB60006326A /* AirshipUserNotificationCenter.swift */; };
-		99E6F0122B92A2EE0006326A /* AirshipUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0102B929CB60006326A /* AirshipUserNotificationCenter.swift */; };
-		99E6F0132B92A2F40006326A /* AirshipUserNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6F0102B929CB60006326A /* AirshipUserNotificationCenter.swift */; };
 		99E6EF6A2B8E36BA0006326A /* InAppMessageValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */; };
 		99E6EF6D2B8E3C250006326A /* InAppMessageContentValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */; };
+		99E6F0702B97EA8F0006326A /* ValidTestMessageCenterTheme.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */; };
 		99E8D7972B4F17260099B6F3 /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7962B4F17260099B6F3 /* CloseButton.swift */; };
 		99E8D7992B4F19BA0099B6F3 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7982B4F19BA0099B6F3 /* TextView.swift */; };
 		99E8D79B2B4F2FCE0099B6F3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */; };
@@ -1575,9 +1574,6 @@
 		C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */; };
 		CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */; };
-		CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */; };
-		CC64F12F1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */; };
-		CC64F1301D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */; };
 		CC64F14B1D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */; };
 		CC64F14C1D8B7954009CEF27 /* AirshipConfig-InProduction.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1441D8B7954009CEF27 /* AirshipConfig-InProduction.plist */; };
 		CC64F14D1D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1451D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */; };
@@ -2154,6 +2150,7 @@
 		6E2486F02898341400657CE4 /* ConditionsMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConditionsMonitor.swift; sourceTree = "<group>"; };
 		6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTheme.swift; sourceTree = "<group>"; };
 		6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewLoader.swift; sourceTree = "<group>"; };
+		6E28BA902B9BCFD400A641B6 /* MessageCenterUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterUtils.swift; sourceTree = "<group>"; };
 		6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatus.swift; sourceTree = "<group>"; };
 		6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatusUpdates.swift; sourceTree = "<group>"; };
 		6E299FD428D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAirshipRequestSessionTest.swift; sourceTree = "<group>"; };
@@ -2274,7 +2271,6 @@
 		6E4A466E28EF44F600A25617 /* AirshipMessageCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipMessageCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterAPIClientTest.swift; sourceTree = "<group>"; };
 		6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAirshipRequestSession.swift; sourceTree = "<group>"; };
-		6E4A468B28EF673800A25617 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InboxMessageData.swift; path = AirshipMessageCenter/Source/model/InboxMessageData.swift; sourceTree = SOURCE_ROOT; };
 		6E4A469E28F4A7DF00A25617 /* MessageCenterAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterAction.swift; sourceTree = "<group>"; };
 		6E4A46A028F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterNativeBridgeExtension.swift; sourceTree = "<group>"; };
 		6E4A4FD92A30358F0049FEFC /* TagsActionArgs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsActionArgs.swift; sourceTree = "<group>"; };
@@ -2575,6 +2571,7 @@
 		6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		6ED80799273DA56000D1F455 /* ThomasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewController.swift; sourceTree = "<group>"; };
 		6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionRunner.swift; sourceTree = "<group>"; };
+		6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxMessageData.swift; sourceTree = "<group>"; };
 		6EDF1D922B292FB000E23BC4 /* InAppMessageTextInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTextInfo.swift; sourceTree = "<group>"; };
 		6EDF1D952B2A25B400E23BC4 /* InAppMessageButtonInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageButtonInfo.swift; sourceTree = "<group>"; };
 		6EDF1D972B2A25C800E23BC4 /* InAppMessageMediaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageMediaInfo.swift; sourceTree = "<group>"; };
@@ -2709,9 +2706,9 @@
 		99D1B3272B44F08900447840 /* AirshipSceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneManager.swift; sourceTree = "<group>"; };
 		99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenView.swift; sourceTree = "<group>"; };
 		99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageHostingController.swift; sourceTree = "<group>"; };
-		99E6F0102B929CB60006326A /* AirshipUserNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipUserNotificationCenter.swift; sourceTree = "<group>"; };
 		99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageValidation.swift; sourceTree = "<group>"; };
 		99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageContentValidationTest.swift; sourceTree = "<group>"; };
+		99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ValidTestMessageCenterTheme.plist; sourceTree = "<group>"; };
 		99E8D7962B4F17260099B6F3 /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
 		99E8D7982B4F19BA0099B6F3 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -2784,9 +2781,6 @@
 		CC64F0581D8B77E3009CEF27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = CustomNotificationCategories.plist; path = ../CustomNotificationCategories.plist; sourceTree = "<group>"; };
 		CC64F0621D8B781C009CEF27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
-		CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Invalid-UAMessageCenterDefaultStyle.plist"; path = "../Invalid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
-		CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Valid-UAMessageCenterDefaultStyle.plist"; path = "../Valid-UAMessageCenterDefaultStyle.plist"; sourceTree = "<group>"; };
-		CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = ValidUAMessageCenterDefaultStyle.plist; path = ../ValidUAMessageCenterDefaultStyle.plist; sourceTree = "<group>"; };
 		CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-DetectProvisioningMode.plist"; sourceTree = "<group>"; };
 		CC64F1441D8B7954009CEF27 /* AirshipConfig-InProduction.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-InProduction.plist"; sourceTree = "<group>"; };
 		CC64F1451D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "AirshipConfig-Valid-Legacy-NeXTStep.plist"; sourceTree = "<group>"; };
@@ -3031,7 +3025,7 @@
 			path = Limits;
 			sourceTree = "<group>";
 		};
-		32B5BE2D28F8A7D600F2254B /* views */ = {
+		32B5BE2D28F8A7D600F2254B /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */,
@@ -3041,36 +3035,37 @@
 				32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */,
 				32B5BE2928F8A7D600F2254B /* MessageCenterMessageView.swift */,
 			);
-			path = views;
+			path = Views;
 			sourceTree = "<group>";
 		};
-		32B632852906CA17000D3E34 /* theme */ = {
+		32B632852906CA17000D3E34 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
 				32B632872906CA17000D3E34 /* MessageCenterTheme.swift */,
 				32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */,
 			);
-			path = theme;
+			path = Theme;
 			sourceTree = "<group>";
 		};
-		32BACFAA2901827D009DA5C8 /* viewModel */ = {
+		32BACFAA2901827D009DA5C8 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				32B5BE2B28F8A7D600F2254B /* MessageCenterListItemViewModel.swift */,
 				32B5BE2C28F8A7D600F2254B /* MessageCenterListViewModel.swift */,
 			);
-			path = viewModel;
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
-		32BACFAB290182B7009DA5C8 /* model */ = {
+		32BACFAB290182B7009DA5C8 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				6E4A468B28EF673800A25617 /* InboxMessageData.swift */,
+				6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */,
+				6E28BA902B9BCFD400A641B6 /* MessageCenterUtils.swift */,
 				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
 				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
 				329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */,
 			);
-			path = model;
+			path = Model;
 			sourceTree = "<group>";
 		};
 		3C927F8223A42609003C5FC8 /* App State */ = {
@@ -3141,6 +3136,7 @@
 			children = (
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
 				329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */,
+				99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3148,10 +3144,10 @@
 		3CA0E30B237E396100EE76CF /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				32B632852906CA17000D3E34 /* theme */,
-				32BACFAB290182B7009DA5C8 /* model */,
-				32BACFAA2901827D009DA5C8 /* viewModel */,
-				32B5BE2D28F8A7D600F2254B /* views */,
+				32B632852906CA17000D3E34 /* Theme */,
+				32BACFAB290182B7009DA5C8 /* Model */,
+				32BACFAA2901827D009DA5C8 /* ViewModel */,
+				32B5BE2D28F8A7D600F2254B /* Views */,
 				6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */,
 				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
 				32F68CED28F07C2C00F7F52A /* MessageCenter.swift */,
@@ -3942,7 +3938,6 @@
 				6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */,
 				6E6363EB29DDF84B009C358A /* SerialQueue.swift */,
 				6E07688729F9D28A0014E2A9 /* AirshipNotificationCenter.swift */,
-				99E6F0102B929CB60006326A /* AirshipUserNotificationCenter.swift */,
 				6E07689129FB39440014E2A9 /* AirshipUnsafeSendableWrapper.swift */,
 				6ECB627D2A36A0770095C85C /* ExternalURLProcessor.swift */,
 				6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */,
@@ -4989,11 +4984,8 @@
 		CC64F1421D8B7954009CEF27 /* Support */ = {
 			isa = PBXGroup;
 			children = (
-				CC64F0CB1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist */,
-				CC64F0CC1D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist */,
 				CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */,
 				CC64F0621D8B781C009CEF27 /* Info.plist */,
-				CC64F0631D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist */,
 				CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */,
 				CC64F1441D8B7954009CEF27 /* AirshipConfig-InProduction.plist */,
 				CC64F1451D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist */,
@@ -5703,6 +5695,7 @@
 				6E4AEE292B6B2E0A008AEAC1 /* airship.jpg in Resources */,
 				6E4AEE322B6B3A6A008AEAC1 /* Valid-UAInAppMessageBannerStyle.plist in Resources */,
 				6E4AEE352B6B3A6A008AEAC1 /* Valid-UAInAppMessageHTMLStyle.plist in Resources */,
+				99E6F0702B97EA8F0006326A /* ValidTestMessageCenterTheme.plist in Resources */,
 				6E4AEE332B6B3A6A008AEAC1 /* Valid-UAInAppMessageFullScreenStyle.plist in Resources */,
 				6E4AEE362B6B3A6A008AEAC1 /* Invalid-UAInAppMessageModalStyle.plist in Resources */,
 				6E4AEE272B6B2E0A008AEAC1 /* alternate-airship.jpg in Resources */,
@@ -5792,14 +5785,11 @@
 				CC64F14D1D8B7954009CEF27 /* AirshipConfig-Valid-Legacy-NeXTStep.plist in Resources */,
 				CC64F14B1D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist in Resources */,
 				CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */,
-				CC64F12F1D8B781C009CEF27 /* Valid-UAMessageCenterDefaultStyle.plist in Resources */,
 				CC64F0CE1D8B781C009CEF27 /* CustomNotificationCategories.plist in Resources */,
 				CC64F14C1D8B7954009CEF27 /* AirshipConfig-InProduction.plist in Resources */,
 				45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */,
 				CC64F1501D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */,
-				CC64F0D01D8B781C009CEF27 /* Invalid-UAMessageCenterDefaultStyle.plist in Resources */,
 				CC64F14E1D8B7954009CEF27 /* AirshipConfig-Valid-NeXTStep.plist in Resources */,
-				CC64F1301D8B781C009CEF27 /* ValidUAMessageCenterDefaultStyle.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5914,13 +5904,14 @@
 				6E6802962B86749900F4591F /* MessageCenterComponent.swift in Sources */,
 				6E4A46A128F4AEDF00A25617 /* MessageCenterNativeBridgeExtension.swift in Sources */,
 				32B632882906CA17000D3E34 /* MessageCenterThemeLoader.swift in Sources */,
-				6E4A468D28EF673800A25617 /* InboxMessageData.swift in Sources */,
 				32B5BE4928F8B66500F2254B /* MessageCenterViewController.swift in Sources */,
 				32B5BE4328F8A8CD00F2254B /* MessageCenterListViewModel.swift in Sources */,
 				6E4A466728EF448600A25617 /* MessageCenterMessage.swift in Sources */,
 				32B5BE4128F8A8C700F2254B /* MessageCenterListView.swift in Sources */,
 				329DFCD52B7E59700039C8C0 /* UAInboxDataMapping.swift in Sources */,
+				6EDE5F192B9BD7E700E33D04 /* InboxMessageData.swift in Sources */,
 				32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */,
+				6E28BA912B9BCFD400A641B6 /* MessageCenterUtils.swift in Sources */,
 				32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */,
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
 				32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */,
@@ -6081,7 +6072,6 @@
 				6E92EC90284954B10038802D /* ButtonState.swift in Sources */,
 				6E152BCA2743235800788402 /* Icons.swift in Sources */,
 				6E692AFD29E0CB2F00D96CCC /* JavaScriptCommand.swift in Sources */,
-				99E6F0112B929CB60006326A /* AirshipUserNotificationCenter.swift in Sources */,
 				6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */,
 				6EF27DE32730E6F900548DA3 /* RadioInputController.swift in Sources */,
 				6EE49C1D2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */,
@@ -6908,7 +6898,6 @@
 				6E1589522AFEF19F00954A04 /* SessionTracker.swift in Sources */,
 				A67229FC281A9E640033F54D /* AirshipWebview.swift in Sources */,
 				A67229FD281A9E640033F54D /* Icons.swift in Sources */,
-				99E6F0132B92A2F40006326A /* AirshipUserNotificationCenter.swift in Sources */,
 				A67229FE281A9E640033F54D /* AirshipProgressView.swift in Sources */,
 				A67229FF281A9E640033F54D /* AirshipAsyncImage.swift in Sources */,
 				A6722A00281A9E640033F54D /* RootView.swift in Sources */,
@@ -7227,7 +7216,6 @@
 				32F01B0929E83C87007A2131 /* StoryIndicator.swift in Sources */,
 				6E664BCB26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
 				6E6ED15C2683DBC300A2CBD0 /* AirshipBase64.swift in Sources */,
-				99E6F0122B92A2EE0006326A /* AirshipUserNotificationCenter.swift in Sources */,
 				A61517B326A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
 				32515871272B007C00DF8B44 /* MediaWebView.swift in Sources */,
 				6E952921268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,

@@ -26,6 +26,11 @@ public struct LabeledSectionBreakView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    public init(section: PreferenceCenterConfig.LabeledSectionBreak, state: PreferenceCenterState) {
+        self.section = section
+        self.state = state
+    }
+
     @ViewBuilder
     public var body: some View {
         let configuration = LabeledSectionBreakStyleConfiguration(

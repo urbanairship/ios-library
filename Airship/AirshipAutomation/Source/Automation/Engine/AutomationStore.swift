@@ -378,7 +378,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
         self.group = data.schedule.group
         self.scheduleState = data.scheduleState.rawValue
         self.scheduleStateChangeDate = data.scheduleStateChangeDate
-        self.executionCount = Int(data.executionCount)
+        self.executionCount = data.executionCount
 
         self.schedule = try AirshipJSON.defaultEncoder.encode(data.schedule)
 
@@ -417,6 +417,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
             schedule: schedule,
             scheduleState: scheduleState,
             scheduleStateChangeDate: self.scheduleStateChangeDate,
+            executionCount: executionCount,
             triggerInfo: triggerInfo,
             preparedScheduleInfo: preparedScheduleInfo
         )

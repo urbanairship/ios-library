@@ -93,10 +93,7 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     }
 }
 
-private class PreferenceCenterViewController<Content>: UIHostingController<
-    Content
->
-where Content: View {
+private class PreferenceCenterViewController<Content>: UIHostingController<Content> where Content: View {
     init(
         rootView: Content,
         backgroundColor: UIColor? = nil

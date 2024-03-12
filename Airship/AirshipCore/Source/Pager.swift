@@ -48,10 +48,10 @@ struct Pager: View {
 
     @GestureState private var translation: CGFloat = 0
     @GestureState private var isPressingDown: Bool = false
+    @State var size: CGSize?
 
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
-    @State private var pagerGestureEplorer: PagerGestureMapExplorer?
-    
+
     init(
         model: PagerModel,
         constraints: ViewConstraints
@@ -61,78 +61,68 @@ struct Pager: View {
         self.timer = Timer.publish(
             every: Pager.timerTransition,
             on: .main,
-            in: .default)
+            in: .default
+        )
         .autoconnect()
     }
 
     @ViewBuilder
-    func createStack<Content: View>(
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        LazyHStack(spacing: 0) {
-            content()
-        }
-    }
+    func makePager(index: Binding<Int>) -> some View {
+        if (self.model.items.count == 1) {
+            ViewFactory.createView(
+                model: self.model.items[0].view,
+                constraints: constraints
+            )
+            .environment(\.isVisible, true)
+            .constraints(constraints)
+            .airshipMeasureView(self.$size)
+        } else {
+            GeometryReader { metrics in
+                let childConstraints = ViewConstraints(
+                    width: metrics.size.width,
+                    height: metrics.size.height,
+                    isHorizontalFixedSize: self.constraints.isHorizontalFixedSize,
+                    isVerticalFixedSize: self.constraints.isVerticalFixedSize,
+                    safeAreaInsets: self.constraints.safeAreaInsets
+                )
 
-    @ViewBuilder
-    func createPager(metrics: GeometryProxy) -> some View {
-        let index = Binding<Int>(
-            get: { self.pagerState.pageIndex },
-            set: { self.pagerState.pageIndex = $0 }
-        )
-
-        let childConstraints = ViewConstraints(
-            width: metrics.size.width,
-            height: metrics.size.height,
-            isHorizontalFixedSize: self.constraints.isHorizontalFixedSize,
-            isVerticalFixedSize: self.constraints.isVerticalFixedSize,
-            safeAreaInsets: self.constraints.safeAreaInsets
-        )
-
-        let items = self.model.items
-
-        VStack {
-            createStack {
-                ForEach(0..<items.count, id: \.self) { i in
-                    VStack {
-                        ViewFactory.createView(
-                            model: items[i].view,
-                            constraints: childConstraints
-                        )
-                        .environment(
-                            \.isVisible,
-                            self.isVisible && i == index.wrappedValue
-                        )
-                        .accessibilityHidden(!(self.isVisible && i == index.wrappedValue))
+                VStack {
+                    LazyHStack(spacing: 0) {
+                        ForEach(0..<self.model.items.count, id: \.self) { i in
+                            VStack {
+                                ViewFactory.createView(
+                                    model: self.model.items[i].view,
+                                    constraints: childConstraints
+                                )
+                                .environment(
+                                    \.isVisible,
+                                     self.isVisible && i == index.wrappedValue
+                                )
+                                .accessibilityHidden(!(self.isVisible && i == index.wrappedValue))
+                            }
+                            .frame(
+                                width: metrics.size.width,
+                                height: metrics.size.height
+                            )
+                        }
                     }
-                    .frame(
-                        width: metrics.size.width,
-                        height: metrics.size.height
-                    )
+                    .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
+                    .offset(x: calcDragOffset(index: index.wrappedValue))
+                    .animation(.interactiveSpring(duration: Pager.animationSpeed), value: index.wrappedValue)
+                }
+                .frame(
+                    width: metrics.size.width,
+                    height: metrics.size.height,
+                    alignment: .leading
+                )
+                .clipped()
+                .onAppear {
+                    size = metrics.size
+                }.airshipOnChangeOf(metrics.size) { newSize in
+                    size = newSize
                 }
             }
-            .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
-            .offset(x: calcDragOffset(index: index.wrappedValue))
-            .animation(.interactiveSpring(duration: Pager.animationSpeed), value: index.wrappedValue)
         }
-        .frame(
-            width: metrics.size.width,
-            height: metrics.size.height,
-            alignment: .leading
-        )
-        .clipped()
-    }
-
-    private func calcDragOffset(index: Int) -> CGFloat {
-        var dragOffSet = self.translation
-
-        if index <= 0 {
-            dragOffSet = min(dragOffSet, 0)
-        } else if index >= self.model.items.count - 1 {
-            dragOffSet = max(dragOffSet, 0)
-        }
-
-        return dragOffSet
     }
 
     @ViewBuilder
@@ -142,75 +132,62 @@ struct Pager: View {
             set: { self.pagerState.pageIndex = $0 }
         )
         
-        GeometryReader { metrics in
-            createPager(metrics: metrics)
-                .onAppear() {
-                    pagerGestureEplorer = PagerGestureMapExplorer(
-                        CGRect(
-                            x: 0,
-                            y: 0,
-                            width: metrics.size.width,
-                            height: metrics.size.height
-                        )
+        makePager(index: index)
+            .onReceive(pagerState.$pageIndex) { value in
+                pagerState.pages = self.model.items.map {
+                    PageState(
+                        identifier: $0.identifier,
+                        delay: earliestNavigationAction($0.automatedActions)?.delay ?? 0.0,
+                        automatedActions: $0.automatedActions?.compactMap({ automatedAction in
+                            automatedAction.identifier
+                        })
                     )
                 }
-                .onReceive(pagerState.$pageIndex) { value in
-                    pagerState.pages = self.model.items.map {
-                        PageState(
-                            identifier: $0.identifier,
-                            delay: earliestNavigationAction($0.automatedActions)?.delay ?? 0.0,
-                            automatedActions: $0.automatedActions?.compactMap({ automatedAction in
-                                automatedAction.identifier
-                            })
-                        )
-                    }
-                    reportPage(value)
+                reportPage(value)
+            }
+            .onReceive(self.timer) { timer in
+                if let automatedActions = self.model.items[self.pagerState.pageIndex].automatedActions {
+                    handlePagerProgress(automatedActions, index: index)
                 }
-                .onReceive(self.timer) { timer in
-                    if let automatedActions = self.model.items[self.pagerState.pageIndex].automatedActions {
-                        handlePagerProgress(automatedActions, index: index)
-                    }
-                }
-#if !os(tvOS)
-                .applyIf(self.model.isDefaultSwipeEnabled || self.model.hasGestureType(type: .swipe)) { view in
-                    view.simultaneousGesture(makeSwipeGesture(size: metrics.size, index: index))
-                }
-                .applyIf(self.model.isDefaultSwipeEnabled) { view in
-                    view.accessibilityScrollAction  { edge in
-                        if (edge == Edge.leading) {
-                            if (self.layoutDirection == .leftToRight) {
-                                goToNextPage(index, transition: .defaultSwipe)
-                            } else {
-                                goToPreviousPage(index, transition: .defaultSwipe)
-                            }
+            }
+    #if !os(tvOS)
+            .applyIf(true) { view in
+                view.simultaneousGesture(makeSwipeGesture(index: index))
+            }
+            .applyIf(self.model.isDefaultSwipeEnabled) { view in
+                view.accessibilityScrollAction  { edge in
+                    if (edge == Edge.leading) {
+                        if (self.layoutDirection == .leftToRight) {
+                            goToNextPage(index, transition: .defaultSwipe)
+                        } else {
+                            goToPreviousPage(index, transition: .defaultSwipe)
                         }
+                    }
 
-                        if (edge == Edge.trailing) {
-                            if (self.layoutDirection == .leftToRight) {
-                                goToPreviousPage(index, transition: .defaultSwipe)
-                            } else {
-                                goToNextPage(index, transition: .defaultSwipe)
-                            }
+                    if (edge == Edge.trailing) {
+                        if (self.layoutDirection == .leftToRight) {
+                            goToPreviousPage(index, transition: .defaultSwipe)
+                        } else {
+                            goToNextPage(index, transition: .defaultSwipe)
                         }
                     }
                 }
-                .applyIf(self.model.hasGestureType(type: .hold)) { view in
-                    view.simultaneousGesture(makeLongPressGesture())
-                        .airshipOnChangeOf( isPressingDown) { value in
-                            handleLongPress(isPressed: value, index: index)
-                        }
-                }
-                .applyIf(self.model.hasGestureType(type: .tap)) { view in
-                    view.addLocationTapGesture(
-                        geometryProxy: metrics,
-                        layoutDirection: layoutDirection
-                    ) { locations in
-                        handleTap(locations: locations, index: index)
+            }
+            .applyIf(true) { view in
+                view.simultaneousGesture(makeLongPressGesture())
+                    .airshipOnChangeOf( isPressingDown) { value in
+                        handleLongPress(isPressed: value, index: index)
                     }
+            }
+            .applyIf(true) { view in
+                if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
+                    view.simultaneousGesture(makeTapGesture(index: index))
+                } else {
+                    view
                 }
+            }
 
-#endif
-        }
+    #endif
         .constraints(constraints)
         .background(self.model.backgroundColor)
         .border(self.model.border)
@@ -223,7 +200,6 @@ struct Pager: View {
     
 #if !os(tvOS)
     private func makeSwipeGesture(
-        size: CGSize,
         index: Binding<Int>
     ) -> some Gesture {
         return DragGesture(minimumDistance: 30)
@@ -233,6 +209,9 @@ struct Pager: View {
                 }
             }
             .onEnded { value in
+                guard let size = self.size else {
+                    return
+                }
                 let xVelocity = value.predictedEndLocation.x - value.location.x
                 let yVelocity = value.predictedEndLocation.y - value.location.y
                 let widhtOffset = value.translation.width / size.width
@@ -296,7 +275,35 @@ struct Pager: View {
                 }
             }
     }
-    
+
+    @available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *)
+    @available(tvOS, unavailable)
+    private func makeTapGesture(index: Binding<Int>) -> some Gesture {
+        return SpatialTapGesture()
+            .onEnded { event in
+                guard let size = size else {
+                    return
+                }
+
+                let pagerGestureEplorer = PagerGestureMapExplorer(
+                    CGRect(
+                        x: 0,
+                        y: 0,
+                        width: size.width,
+                        height: size.height
+                    )
+                )
+
+                handleTap(
+                    locations: pagerGestureEplorer.location(
+                        layoutDirection: layoutDirection,
+                        forPoint: event.location
+                    ),
+                    index: index
+                )
+            }
+    }
+
 #endif
     
     /// Handle tap gesture
@@ -598,39 +605,18 @@ struct Pager: View {
 
         }
     }
-}
 
 
-fileprivate extension View {
-    @ViewBuilder
-    func addLocationTapGesture(
-        geometryProxy: GeometryProxy,
-        layoutDirection: LayoutDirection,
-        action: @escaping ([PagerGestureLocation]) -> Void
-    ) -> some View {
-#if !os(tvOS)
-        if #available(iOS 16.0, watchOS 9.0, *) {
-            let pagerGestureEplorer = PagerGestureMapExplorer(
-                CGRect(
-                    x: 0,
-                    y: 0,
-                    width: geometryProxy.size.width,
-                    height: geometryProxy.size.height
-                )
-            )
+    private func calcDragOffset(index: Int) -> CGFloat {
+        var dragOffSet = self.translation
 
-            self.simultaneousGesture(
-                SpatialTapGesture()
-                    .onEnded { event in
-                        action(pagerGestureEplorer.location(layoutDirection: layoutDirection, forPoint: event.location))
-                    }
-            )
-        } else {
-            self
+        if index <= 0 {
+            dragOffSet = min(dragOffSet, 0)
+        } else if index >= self.model.items.count - 1 {
+            dragOffSet = max(dragOffSet, 0)
         }
-#else
-        self
-#endif
+
+        return dragOffSet
     }
 }
 

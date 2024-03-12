@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="18.0.0-beta.2"
+AIRSHIP_VERSION="18.0.0-rc"
 
 Pod::Spec.new do |s|
     s.version                 = AIRSHIP_VERSION
@@ -15,7 +15,6 @@ Pod::Spec.new do |s|
     s.requires_arc            = true
     s.ios.deployment_target      = "14.0"
     s.watchos.deployment_target  = "7.0"
-    s.visionos.deployment_target = '1.0'
     s.swift_versions             = "5.0"
     s.pod_target_xcconfig     = { 'DEFINES_MODULE' => 'YES' }
 end

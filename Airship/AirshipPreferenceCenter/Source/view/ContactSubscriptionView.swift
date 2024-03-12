@@ -26,6 +26,11 @@ public struct ContactSubscriptionView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    public init(item: PreferenceCenterConfig.ContactSubscription, state: PreferenceCenterState) {
+        self.item = item
+        self.state = state
+    }
+
     @ViewBuilder
     public var body: some View {
         let isSubscribed = state.makeBinding(

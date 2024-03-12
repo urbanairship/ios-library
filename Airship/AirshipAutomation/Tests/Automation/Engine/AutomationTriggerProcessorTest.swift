@@ -180,7 +180,9 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
                 group: group
             ),
             scheduleState: .idle,
-            scheduleStateChangeDate: self.date.now)
+            scheduleStateChangeDate: self.date.now,
+            executionCount: 0
+        )
     }
     
     

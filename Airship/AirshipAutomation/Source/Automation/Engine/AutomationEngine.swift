@@ -551,7 +551,8 @@ fileprivate extension AutomationSchedule {
             return AutomationScheduleData(
                 schedule: self,
                 scheduleState: .idle,
-                scheduleStateChangeDate: date
+                scheduleStateChangeDate: date,
+                executionCount: 0
             )
         }
 

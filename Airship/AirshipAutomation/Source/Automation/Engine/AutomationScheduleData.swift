@@ -10,7 +10,7 @@ struct AutomationScheduleData: Sendable, Equatable, CustomDebugStringConvertible
     var schedule: AutomationSchedule
     var scheduleState: AutomationScheduleState
     var scheduleStateChangeDate: Date
-    var executionCount: UInt = 0
+    var executionCount: Int
     var triggerInfo: TriggeringInfo?
     var preparedScheduleInfo: PreparedScheduleInfo?
     

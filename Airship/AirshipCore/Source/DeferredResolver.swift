@@ -131,7 +131,7 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
                 triggerContext: triggerContext
             )
         } catch {
-            AirshipLogger.error("Failed to resolve deferred: \(url)")
+            AirshipLogger.trace("Failed to resolve deferred: \(url) error: \(error)")
         }
 
 

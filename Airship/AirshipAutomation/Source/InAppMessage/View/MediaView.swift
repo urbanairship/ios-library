@@ -35,7 +35,8 @@ struct MediaView: View {
                 placeholder: {
                     ProgressView()
                 }
-            ).padding(mediaTheme.additionalPadding)
+            )
+            .padding(mediaTheme.additionalPadding)
         }
     }
 
