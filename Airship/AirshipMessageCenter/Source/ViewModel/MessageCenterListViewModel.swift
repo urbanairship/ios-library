@@ -8,6 +8,7 @@ import SwiftUI
 import AirshipCore
 #endif
 
+@MainActor
 class MessageCenterListViewModel: ObservableObject {
 
     @Published

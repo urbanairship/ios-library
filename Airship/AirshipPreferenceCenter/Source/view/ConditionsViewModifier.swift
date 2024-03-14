@@ -28,6 +28,7 @@ extension View {
         self
     }
 
+    @MainActor
     @ViewBuilder
     func preferenceConditions(
         _ conditions: [PreferenceCenterConfig.Condition]?,

@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
+@preconcurrency
 import Combine
+
 import Foundation
 
 #if canImport(AirshipCore)
@@ -9,7 +11,7 @@ import AirshipCore
 
 /// Airship Message Center inbox base protocol.
 @objc(UAMessageCenterInboxProtocol)
-public protocol MessageCenterInboxBaseProtocol: AnyObject {
+public protocol MessageCenterInboxBaseProtocol: AnyObject, Sendable {
 
     /// Gets the list of messages in the inbox.
     /// - Returns: the list of messages in the inbox.
@@ -86,9 +88,9 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
 }
 
 /// Airship Message Center inbox.
-final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
+final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 
-    private enum UpdateType {
+    private enum UpdateType: Sendable {
         case local
         case refreshSucess
         case refreshFailed
@@ -99,19 +101,24 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
     private let updateWorkID = "Airship.MessageCenterInbox#update"
 
     private let store: MessageCenterStore
-    private let controller: MessageCenterController
     private let channel: InternalAirshipChannelProtocol
     private let client: MessageCenterAPIClient
     private let config: RuntimeConfig
     private let notificationCenter: NotificationCenter
     private let date: AirshipDateProtocol
     private let workManager: AirshipWorkManagerProtocol
-    var enabled: Bool = false {
-        didSet {
-            self.dispatchUpdateWorkRequest()
+    
+    private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
+    var enabled: Bool {
+        get {
+            _enabled.value
+        }
+        set {
+            if (_enabled.setValue(newValue)) {
+                self.dispatchUpdateWorkRequest()
+            }
         }
     }
-
     private var messagesFuture: Future<[MessageCenterMessage], Never> {
         return Future { promise in
             Task {
@@ -173,7 +180,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         }
     }
     
-    private var subscriptions: Set<AnyCancellable> = Set()
+    private let subscriptions: AirshipUnsafeSendableWrapper<Set<AnyCancellable>> = AirshipUnsafeSendableWrapper(Set())
 
     init(
         channel: InternalAirshipChannelProtocol,
@@ -182,8 +189,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         store: MessageCenterStore,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: AirshipDateProtocol = AirshipDate.shared,
-        workManager: AirshipWorkManagerProtocol,
-        controller: MessageCenterController
+        workManager: AirshipWorkManagerProtocol
     ) {
         self.channel = channel
         self.client = client
@@ -192,7 +198,6 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         self.notificationCenter = notificationCenter
         self.date = date
         self.workManager = workManager
-        self.controller = controller
 
         super.init()
 
@@ -239,7 +244,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                     object: nil
                 )
             }
-            .store(in: &self.subscriptions)
+            .store(in: &self.subscriptions.value)
 
         self.channel.addRegistrationExtender { [weak self] payload in
             guard self?.enabled == true,
@@ -266,8 +271,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: InternalAirshipChannelProtocol,
-        workManager: AirshipWorkManagerProtocol,
-        controller: MessageCenterController
+        workManager: AirshipWorkManagerProtocol
     ) {
         self.init(
             channel: channel,
@@ -280,8 +284,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol {
                 config: config,
                 dataStore: dataStore
             ),
-            workManager: workManager, 
-            controller: controller
+            workManager: workManager
         )
     }
 

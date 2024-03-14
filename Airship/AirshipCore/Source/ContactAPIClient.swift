@@ -3,7 +3,7 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-protocol ContactsAPIClientProtocol {
+protocol ContactsAPIClientProtocol: Sendable {
     func resolve(
         channelID: String,
         contactID: String?,
@@ -58,11 +58,11 @@ protocol ContactsAPIClientProtocol {
 }
 
 /// NOTE: For internal use only. :nodoc:
-class ContactAPIClient: ContactsAPIClientProtocol {
+final class ContactAPIClient: ContactsAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
 
-    private lazy var decoder: JSONDecoder = {
+    private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let container = try decoder.singleValueContainer()
@@ -76,7 +76,7 @@ class ContactAPIClient: ContactsAPIClientProtocol {
         return decoder
     }()
 
-    private lazy var encoder: JSONEncoder = {
+    private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()

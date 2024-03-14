@@ -420,7 +420,7 @@ final class RemoteDataTest: AirshipBaseTest {
     }
 
     func testChangeTokenBgPush() async {
-        let changeToken = Atomic<String?>(nil)
+        let changeToken = AirshipAtomicValue<String?>(nil)
 
         // Capture the change token
         let testLocaleManager = self.testLocaleManager
@@ -452,7 +452,7 @@ final class RemoteDataTest: AirshipBaseTest {
     }
 
     func testChangeTokenAppForeground() async {
-        let changeToken = Atomic<String?>(nil)
+        let changeToken = AirshipAtomicValue<String?>(nil)
 
         // Capture the change token
         let testLocaleManager = self.testLocaleManager

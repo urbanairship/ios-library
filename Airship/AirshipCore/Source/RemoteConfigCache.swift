@@ -4,7 +4,7 @@
 final class RemoteConfigCache: Sendable {
     private static let dataStoreKey = "com.urbanairship.config.remote_config_cache"
     private let dataStore: PreferenceDataStore
-    private let _remoteConfig: Atomic<RemoteConfig>
+    private let _remoteConfig: AirshipAtomicValue<RemoteConfig>
 
     var remoteConfig: RemoteConfig {
         get {
@@ -35,6 +35,6 @@ final class RemoteConfigCache: Sendable {
             AirshipLogger.error("Failed to read remote config cache \(error)")
         }
         
-        self._remoteConfig = Atomic(fromStore ?? RemoteConfig())
+        self._remoteConfig = AirshipAtomicValue(fromStore ?? RemoteConfig())
     }
 }

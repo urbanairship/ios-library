@@ -16,7 +16,7 @@ final class EventManager: EventManagerProtocol {
 
     private let headerBlocks: AirshipMainActorValue<[@Sendable () async -> [String: String]]> = AirshipMainActorValue([])
 
-    private let _uploadsEnabled = Atomic<Bool>(false)
+    private let _uploadsEnabled = AirshipAtomicValue<Bool>(false)
     var uploadsEnabled: Bool  {
         get {
             _uploadsEnabled.value
@@ -32,6 +32,7 @@ final class EventManager: EventManagerProtocol {
     private let state: EventManagerState
     private let channel: AirshipChannelProtocol
 
+    @MainActor
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -45,17 +46,18 @@ final class EventManager: EventManagerProtocol {
         )
     }
 
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         channel: AirshipChannelProtocol,
         eventStore: EventStore,
         eventAPIClient: EventAPIClientProtocol,
-        eventScheduler: EventUploadSchedulerProtocol = EventUploadScheduler()
+        eventScheduler: EventUploadSchedulerProtocol? = nil
     ) {
         self.channel = channel
         self.eventStore = eventStore
         self.eventAPIClient = eventAPIClient
-        self.eventScheduler = eventScheduler
+        self.eventScheduler = eventScheduler ?? EventUploadScheduler()
         self.state = EventManagerState(dataStore: dataStore)
 
         Task {

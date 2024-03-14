@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Actual airship component for MessageCenter. Used to hide AirshipComponent methods.
-final class MessageCenterComponent : AirshipComponent, AirshipPushableComponent {
+final class MessageCenterComponent : AirshipComponent, AirshipPushableComponent, Sendable {
     final let messageCenter: MessageCenter
 
     init(messageCenter: MessageCenter) {

@@ -59,7 +59,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.subscriptionListEditsSubject.eraseToAnyPublisher()
     }
 
-    private let _channelID: Atomic<String?> = Atomic(nil)
+    private let _channelID: AirshipAtomicValue<String?> = AirshipAtomicValue(nil)
     var channelID: String? {
         get {
             _channelID.value
@@ -71,7 +71,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
-    private let _enabled: Atomic<Bool> = Atomic(false)
+    private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
     var enabled: Bool {
         get {
             _enabled.value

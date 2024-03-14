@@ -71,7 +71,7 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
 
     private func startAnimation() {
         self.animationTask?.cancel()
-        self.animationTask = Task {
+        self.animationTask = Task { @MainActor in
             await animateImage()
         }
     }

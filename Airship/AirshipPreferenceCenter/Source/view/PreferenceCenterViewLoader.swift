@@ -8,7 +8,8 @@ import SwiftUI
 import AirshipCore
 #endif
 
-class PreferenceCenterViewLoader: ObservableObject {
+@MainActor
+final class PreferenceCenterViewLoader: ObservableObject {
 
     @Published
     public private(set) var phase: PreferenceCenterViewPhase = .loading
@@ -20,7 +21,7 @@ class PreferenceCenterViewLoader: ObservableObject {
         onLoad: (@Sendable @MainActor (String) async -> PreferenceCenterViewPhase)? = nil
     ) {
         self.task?.cancel()
-        self.task = Task {
+        self.task = Task { @MainActor in
             await loadAsync(
                 preferenceCenterID: preferenceCenterID,
                 onLoad: onLoad

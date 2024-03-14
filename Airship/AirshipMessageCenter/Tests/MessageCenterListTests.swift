@@ -53,8 +53,7 @@ final class MessageCenterListTest: XCTestCase {
         ),
         config: config,
         store: store,
-        workManager: workManager, 
-        controller: MessageCenterController()
+        workManager: workManager
     )
 
     func testMessageCenterInboxUser() async throws {

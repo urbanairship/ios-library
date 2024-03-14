@@ -6,11 +6,11 @@ import AirshipCore
 public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 
     public init(offset: TimeInterval = 0, dateOverride: Date? = nil) {
-        self._offSet = Atomic(offset)
+        self._offSet = AirshipAtomicValue(offset)
         self.dateOverride = dateOverride
     }
 
-    private var _offSet: Atomic<TimeInterval>
+    private var _offSet: AirshipAtomicValue<TimeInterval>
 
     public var offset: TimeInterval {
         get {

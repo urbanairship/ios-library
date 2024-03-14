@@ -371,7 +371,7 @@ class RemoteDataProviderTest: XCTestCase {
             source: self.delegate.source
         )
 
-        let requestCount = Atomic<Int>(0)
+        let requestCount = AirshipAtomicValue<Int>(0)
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             requestCount.value += 1
             let refreshResult = RemoteDataResult(
