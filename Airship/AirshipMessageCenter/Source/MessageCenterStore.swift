@@ -83,6 +83,7 @@ actor MessageCenterStore {
         )
     }
 
+    
     var messages: [MessageCenterMessage] {
         get async {
             let predicate = AirshipCoreDataPredicate(
@@ -90,7 +91,7 @@ actor MessageCenterStore {
                     "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
                 args: [AirshipDate().now]
             )
-
+            
             let messages = try? await fetchMessages(withPredicate: predicate)
             return messages ?? []
         }

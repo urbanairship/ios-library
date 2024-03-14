@@ -70,7 +70,12 @@ public class MessageCenter: NSObject, ObservableObject {
     public static var shared: MessageCenter {
         return Airship.requireComponent(ofType: MessageCenter.self)
     }
-
+    
+    /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
+    ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
+    @objc
+    public var predicate: MessageCenterPredicate?
+    
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
@@ -293,7 +298,8 @@ extension MessageCenter {
         }
 
         let viewController = MessageCenterViewControllerFactory.make(
-            theme: theme,
+            theme: theme, 
+            predicate: predicate,
             controller: self.controller
         ) {
             self.currentDisplay?.dispose()
