@@ -20,6 +20,8 @@ public struct MessageCenterListView: View {
     @Environment(\.editMode)
     private var editMode
 
+    @Environment(\.colorScheme) private var colorScheme
+
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
@@ -83,12 +85,12 @@ public struct MessageCenterListView: View {
         }
 
         if #available(iOS 15.0, *) {
-            cell.listRowBackground(theme.cellColor)
+            cell.listRowBackground(theme.cellColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellColorDark))
                 .listRowSeparator(
                     (theme.cellSeparatorStyle == SeparatorStyle.none)
                         ? .hidden : .automatic
                 )
-                .listRowSeparatorTint(theme.cellSeparatorColor)
+                .listRowSeparatorTint(theme.cellSeparatorColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellSeparatorColorDark))
         } else {
             cell.listRowBackground(theme.cellColor)
         }
@@ -200,10 +202,10 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_delete_messages".messageCenterlocalizedString) (\(self.selection.count))"
                     )
-                    .foregroundColor(theme.deleteButtonTitleColor)
+                    .foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
                 } else {
                     Text("ua_delete_messages".messageCenterlocalizedString)
-                        .foregroundColor(theme.deleteButtonTitleColor)
+                        .foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
                 }
             }
         )
@@ -222,10 +224,10 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_mark_messages_read".messageCenterlocalizedString) (\(self.selection.count))"
                     )
-                    .foregroundColor(theme.markAsReadButtonTitleColor)
+                    .foregroundColor(theme.markAsReadButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.markAsReadButtonTitleColorDark))
                 } else {
                     Text("ua_mark_messages_read".messageCenterlocalizedString)
-                        .foregroundColor(theme.markAsReadButtonTitleColor)
+                        .foregroundColor(theme.markAsReadButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.markAsReadButtonTitleColorDark))
                 }
             }
         )
@@ -247,7 +249,7 @@ public struct MessageCenterListView: View {
             self.selection = Set(self.messageIDs)
         } label: {
             Text("ua_select_all_messages".messageCenterlocalizedString)
-                .foregroundColor(theme.selectAllButtonTitleColor)
+                .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))
         }
         .accessibilityHint("ua_select_all_messages".messageCenterlocalizedString)
     }
@@ -257,7 +259,7 @@ public struct MessageCenterListView: View {
             self.selection = Set()
         } label: {
             Text("ua_select_none_messages".messageCenterlocalizedString)
-                .foregroundColor(theme.selectAllButtonTitleColor)
+                .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))
         }
         .accessibilityHint("ua_select_none_messages".messageCenterlocalizedString)
     }
@@ -279,8 +281,10 @@ public struct MessageCenterListView: View {
     private func editButton() -> some View {
         let isEditMode = self.editMode?.wrappedValue.isEditing ?? false
         let color =
-            isEditMode
-            ? theme.cancelButtonTitleColor : theme.editButtonTitleColor
+        isEditMode
+        ? theme.cancelButtonTitleColor : (theme.editButtonTitleColor != nil)
+        ? theme.cancelButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cancelButtonTitleColorDark) :
+        theme.editButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.editButtonTitleColorDark)
 
         return EditButton().foregroundColor(color).accessibilityHint("ua_edit_messages_description".messageCenterlocalizedString)
     }

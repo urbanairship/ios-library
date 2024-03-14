@@ -1313,6 +1313,13 @@
 		997140F11FB0F3E600EF5445 /* UAInAppMessageManagerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140EE1FB0F3E600EF5445 /* UAInAppMessageManagerTest.m */; };
 		997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */; };
 		997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */; };
+		997D6C672BA3487600B500E3 /* MessageCenterThemeLoaderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997D6C662BA3487600B500E3 /* MessageCenterThemeLoaderTest.swift */; };
+		997D6C692BA34BEC00B500E3 /* MessageCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997D6C682BA34BEC00B500E3 /* MessageCenterUtils.swift */; };
+		997D6C6B2BA34CD900B500E3 /* ValidTestMessageCenterTheme.plist in Resources */ = {isa = PBXBuildFile; fileRef = 997D6C6A2BA34CD900B500E3 /* ValidTestMessageCenterTheme.plist */; };
+		997D6C6D2BA34D5400B500E3 /* TestAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 997D6C6C2BA34D5400B500E3 /* TestAssets.xcassets */; };
+		997D6C802BA34E5F00B500E3 /* AirshipColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997D6C7F2BA34E5F00B500E3 /* AirshipColorUtils.swift */; };
+		997D6C812BA34E6700B500E3 /* AirshipColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997D6C7F2BA34E5F00B500E3 /* AirshipColorUtils.swift */; };
+		997D6C822BA34E6800B500E3 /* AirshipColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997D6C7F2BA34E5F00B500E3 /* AirshipColorUtils.swift */; };
 		9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */; };
 		999DC8562B5B57FA0048C6AF /* MessageCenterMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999DC8552B5B57FA0048C6AF /* MessageCenterMessageTest.swift */; };
 		A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
@@ -2768,6 +2775,11 @@
 		997AC8151FE37C4200260440 /* UAInAppMessageDismissButton+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageDismissButton+Internal.h"; sourceTree = "<group>"; };
 		997AC8161FE37C4200260440 /* UAInAppMessageDismissButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageDismissButton.m; sourceTree = "<group>"; };
 		997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageFullScreenDisplayContentTest.m; sourceTree = "<group>"; };
+		997D6C662BA3487600B500E3 /* MessageCenterThemeLoaderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterThemeLoaderTest.swift; sourceTree = "<group>"; };
+		997D6C682BA34BEC00B500E3 /* MessageCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterUtils.swift; sourceTree = "<group>"; };
+		997D6C6A2BA34CD900B500E3 /* ValidTestMessageCenterTheme.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ValidTestMessageCenterTheme.plist; sourceTree = "<group>"; };
+		997D6C6C2BA34D5400B500E3 /* TestAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TestAssets.xcassets; sourceTree = "<group>"; };
+		997D6C7F2BA34E5F00B500E3 /* AirshipColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColorUtils.swift; sourceTree = "<group>"; };
 		998767201FBCF98B00197AF4 /* UAInAppMessageBannerDisplayContent+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageBannerDisplayContent+Internal.h"; sourceTree = "<group>"; };
 		998767231FBD0EE300197AF4 /* UAInAppMessageMediaInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageMediaInfo.h; sourceTree = "<group>"; };
 		998767241FBD0EE300197AF4 /* UAInAppMessageMediaInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageMediaInfo.m; sourceTree = "<group>"; };
@@ -3258,6 +3270,7 @@
 			children = (
 				32B632872906CA17000D3E34 /* MessageCenterTheme.swift */,
 				32B632862906CA17000D3E34 /* MessageCenterThemeLoader.swift */,
+				997D6C682BA34BEC00B500E3 /* MessageCenterUtils.swift */,
 			);
 			path = theme;
 			sourceTree = "<group>";
@@ -3347,6 +3360,8 @@
 			isa = PBXGroup;
 			children = (
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
+				997D6C6A2BA34CD900B500E3 /* ValidTestMessageCenterTheme.plist */,
+				997D6C6C2BA34D5400B500E3 /* TestAssets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -4107,6 +4122,7 @@
 			children = (
 				6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */,
 				32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */,
+				997D6C662BA3487600B500E3 /* MessageCenterThemeLoaderTest.swift */,
 				999DC8552B5B57FA0048C6AF /* MessageCenterMessageTest.swift */,
 				32F615A628F708980015696D /* MessageCenterListTests.swift */,
 			);
@@ -4627,6 +4643,7 @@
 				6E4A4FDD2A3132850049FEFC /* AirshipSDKModule.swift */,
 				6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */,
 				6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */,
+				997D6C7F2BA34E5F00B500E3 /* AirshipColorUtils.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -6140,6 +6157,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				997D6C6D2BA34D5400B500E3 /* TestAssets.xcassets in Resources */,
+				997D6C6B2BA34CD900B500E3 /* ValidTestMessageCenterTheme.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6376,6 +6395,7 @@
 				32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */,
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
 				32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */,
+				997D6C692BA34BEC00B500E3 /* MessageCenterUtils.swift in Sources */,
 				32B5BE4228F8A8CA00F2254B /* MessageCenterListItemViewModel.swift in Sources */,
 				32B5BE4028F8A8C500F2254B /* MessageCenterMessageView.swift in Sources */,
 			);
@@ -6491,6 +6511,7 @@
 				6EFD6D78272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6EE49C222A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
 				6EF1401B2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
+				997D6C802BA34E5F00B500E3 /* AirshipColorUtils.swift in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
@@ -6778,6 +6799,7 @@
 				6EF13FFD2A16F390009A125D /* AirshipBaseTest.swift in Sources */,
 				6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */,
 				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
+				997D6C672BA3487600B500E3 /* MessageCenterThemeLoaderTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7248,6 +7270,7 @@
 				A67229E5281A9E640033F54D /* NpsController.swift in Sources */,
 				A67229E6281A9E640033F54D /* RadioInputController.swift in Sources */,
 				A67229E7281A9E640033F54D /* RadioInput.swift in Sources */,
+				997D6C822BA34E6800B500E3 /* AirshipColorUtils.swift in Sources */,
 				6E4A4FDC2A30358F0049FEFC /* TagsActionArgs.swift in Sources */,
 				A67229E8281A9E640033F54D /* Score.swift in Sources */,
 				A67229EB281A9E640033F54D /* Pager.swift in Sources */,
@@ -7608,6 +7631,7 @@
 				6E6ED1412683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6EFD6D79272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
+				997D6C812BA34E6700B500E3 /* AirshipColorUtils.swift in Sources */,
 				6EE49C232A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
 				6EF1401C2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
 				A6F6726426E1163A008C69C3 /* JSONUtils.swift in Sources */,

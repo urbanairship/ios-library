@@ -59,6 +59,7 @@
 		6EDB2B2428D4E34500A01377 /* LiveActivityManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */; };
 		6EDB2B2528D4E4EF00A01377 /* LiveActivityManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */; };
 		6EDB2B2E28D4F97F00A01377 /* Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B2A28D4F27800A01377 /* Widgets.swift */; };
+		997D6C6F2BA34DD000B500E3 /* SampleMessageCenterTheme.plist in Resources */ = {isa = PBXBuildFile; fileRef = 997D6C6E2BA34DD000B500E3 /* SampleMessageCenterTheme.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -426,6 +427,7 @@
 		6EDB2B0F28D4E25100A01377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityManagementView.swift; sourceTree = "<group>"; };
 		6EDB2B2A28D4F27800A01377 /* Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets.swift; sourceTree = "<group>"; };
+		997D6C6E2BA34DD000B500E3 /* SampleMessageCenterTheme.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SampleMessageCenterTheme.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -509,6 +511,7 @@
 			isa = PBXGroup;
 			children = (
 				6EAAE99628C7E257003CAE53 /* Airship-Sample-Info.plist */,
+				997D6C6E2BA34DD000B500E3 /* SampleMessageCenterTheme.plist */,
 				6EAAE99528C7E254003CAE53 /* Airship Sample.entitlements */,
 				6EDB2B2328D4E34500A01377 /* LiveActivityManagementView.swift */,
 				32B5BE4D28F94FD200F2254B /* Toast.swift */,
@@ -923,6 +926,7 @@
 				6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */,
 				6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */,
 				6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */,
+				997D6C6F2BA34DD000B500E3 /* SampleMessageCenterTheme.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

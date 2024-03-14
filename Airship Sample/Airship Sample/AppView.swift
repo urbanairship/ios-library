@@ -26,6 +26,8 @@ struct AppView: View {
 
             MessageCenterView(
                 controller: self.appState.messageCenterController
+            ).messageCenterTheme(
+                try! MessageCenterTheme.fromPlist("SampleMessageCenterTheme")
             )
             .tabItem {
                 Label(
