@@ -286,6 +286,8 @@ final class PreparedTriggerTest: XCTestCase {
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
     }
     
+    
+    
     func testCompoundComplexOrTrigger() throws {
         let trigger = AutomationTrigger.compound(
             CompoundAutomationTrigger(
@@ -393,6 +395,26 @@ final class PreparedTriggerTest: XCTestCase {
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
+    }
+    
+    func testCompoundChainTriggerWithChildState() throws {
+        let trigger = AutomationTrigger.compound(CompoundAutomationTrigger(
+            id: "state-child-chain",
+            type: .chain,
+            goal: 1,
+            children: [
+                .init(trigger: .event(EventAutomationTrigger(id: "custom-event", type: .customEventValue, goal: 1)), isSticky: true),
+                .init(trigger: .activeSession(count: 1)),
+            ]))
+        
+        let instance = makeTrigger(trigger: trigger)
+        instance.activate()
+        
+        var state = instance.process(event: .stateChanged(state: TriggerableState(appSessionID: "test")))
+        XCTAssertNil(state?.triggerResult)
+        
+        state = instance.process(event: .customEvent(data: .null, value: 1))
+        XCTAssertNotNil(state?.triggerResult)
     }
     
     func testCompoundComplexChainTrigger() {

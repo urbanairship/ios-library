@@ -227,8 +227,23 @@ extension EventAutomationTrigger {
 
 extension CompoundAutomationTrigger {
     fileprivate func matchEvent(_ event: AutomationEvent, data: inout TriggerData) -> MatchResult? {
-
-        let childResults = self.matchChildren(event: event, data: &data)
+        
+        let triggeredChildren = triggeredChildrenCount(data: data)
+        
+        var childResults = self.matchChildren(event: event, data: &data)
+        
+        //resend state event if children is triggered for chain triggers
+        if
+            self.type == .chain,
+            let state = data.lastTriggerableState,
+            !event.isStateEvent,
+            triggeredChildren != triggeredChildrenCount(data: data)  {
+            
+            childResults = self.matchChildren(event: .stateChanged(state: state), data: &data)
+        } else if case .stateChanged(let state) = event {
+            // remember state on compound trigger level in order to be able to re-send it 
+            data.lastTriggerableState = state
+        }
 
         switch self.type {
         case .and, .chain:
@@ -314,6 +329,14 @@ extension CompoundAutomationTrigger {
 
         data.children = updatedData
     }
+    
+    private func triggeredChildrenCount(data: TriggerData) -> Int {
+        return children
+            .filter { child in
+                guard let state = data.children[child.trigger.id] else { return false }
+                return state.count >= child.trigger.goal
+            }.count
+    }
 }
 
 extension AutomationTrigger {
@@ -355,4 +378,13 @@ extension AutomationTrigger {
 fileprivate struct MatchResult {
    var triggerID: String
    var isTriggered: Bool
+}
+
+fileprivate extension AutomationEvent {
+    var isStateEvent: Bool {
+        switch self {
+        case .stateChanged: return true
+        default: return false
+        }
+    }
 }
