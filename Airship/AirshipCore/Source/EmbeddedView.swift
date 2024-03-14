@@ -75,7 +75,6 @@ struct AdoptLayout: SwiftUI.Layout {
             )
         )
 
-        print("placeSubViewss: \(bounds) proposal: \(proposal) constraints: \(constraints) viewProposal: \(viewProposal)")
         let center = CGPoint(x: bounds.midX, y: bounds.midY)
         subviews.forEach { layout in
             layout.place(at: center, anchor: .center, proposal: viewProposal)
