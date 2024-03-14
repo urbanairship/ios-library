@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
-public class AirshipCoreResources: NSObject {
+/// Airship core resources
+public final class AirshipCoreResources {
 
+    /// Bundle
     public static let bundle = findBundle()
 
     private class func findBundle() -> Bundle {

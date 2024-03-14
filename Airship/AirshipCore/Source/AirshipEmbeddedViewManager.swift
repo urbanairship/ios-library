@@ -9,25 +9,33 @@ protocol AirshipEmbeddedViewManagerProtocol {
         presentation: EmbeddedPresentationModel,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
-        delegate: ThomasDelegate
+        delegate: ThomasDelegate,
+        extras: AirshipJSON?
     ) -> AirshipMainActorCancellable
 
+    var publisher: AnyPublisher<[PendingEmbedded], Never> { get }
     func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never>
 }
 
 final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
+
+    
     public static let shared = AirshipEmbeddedViewManager()
 
     private var pending: [PendingEmbedded] = []
     private let viewSubject = CurrentValueSubject<[PendingEmbedded], Never>([])
 
+    var publisher: AnyPublisher<[PendingEmbedded], Never> {
+        viewSubject.eraseToAnyPublisher()
+    }
 
     @MainActor
     func addPending(
         presentation: EmbeddedPresentationModel,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
-        delegate: ThomasDelegate
+        delegate: ThomasDelegate,
+        extras: AirshipJSON?
     ) -> AirshipMainActorCancellable {
         let id = UUID().uuidString
 
@@ -41,7 +49,12 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
                 id: id,
                 presentation: presentation,
                 layout: layout,
-                environment: environment
+                environment: environment,
+                embeddedInfo: AirshipEmbeddedInfo(
+                    instanceID: id,
+                    embeddedID: presentation.embeddedID,
+                    extras: extras
+                )
             )
         )
 
@@ -66,4 +79,7 @@ struct PendingEmbedded {
     let presentation: EmbeddedPresentationModel
     let layout: AirshipLayout
     let environment: ThomasEnvironment
+    let embeddedInfo: AirshipEmbeddedInfo
 }
+
+

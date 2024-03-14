@@ -3,7 +3,6 @@
 import AirshipCore
 import Foundation
 import SwiftUI
-import GoogleMobileAds
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 

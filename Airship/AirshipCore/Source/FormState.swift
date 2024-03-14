@@ -3,6 +3,7 @@
 import Foundation
 import Combine
 
+@MainActor
 class FormState: ObservableObject {
     @Published var data: FormInputData
     @Published var isVisible: Bool = false

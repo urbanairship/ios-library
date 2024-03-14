@@ -2,9 +2,10 @@
 
 import Foundation
 
-final class AirshipUnsafeSendableWrapper<T>: @unchecked Sendable {
-    var value: T
-    init(_ value: T) {
+/// - Note: for internal use only.  :nodoc:
+public final class AirshipUnsafeSendableWrapper<T>: @unchecked Sendable {
+    public var value: T
+    public init(_ value: T) {
         self.value = value
     }
 }

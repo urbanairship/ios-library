@@ -7,6 +7,7 @@ import Foundation
 import AirshipCore
 #endif
 
+@MainActor
 class ConditionsMonitor: ObservableObject {
     @Published
     public private(set) var isMet: Bool = true
@@ -17,22 +18,21 @@ class ConditionsMonitor: ObservableObject {
     init(conditions: [PreferenceCenterConfig.Condition]) {
         self.conditions = conditions
 
-        Task {
-            self.updateConditions
+        Task { @MainActor [weak self] in
+            self?.updateConditions()
         }
 
         let conditionUpdates = conditions.map { self.conditionUpdates($0) }
         self.cancellable = Publishers.MergeMany(conditionUpdates)
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                Task { [weak self] in
-                    await self?.updateConditions()
+                Task { @MainActor [weak self] in
+                    self?.updateConditions()
                 }
-
             }
     }
 
-    @MainActor(unsafe)
+    @MainActor
     private func updateConditions() {
         self.isMet = self.checkConditions()
     }

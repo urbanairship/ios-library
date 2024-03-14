@@ -9,6 +9,7 @@ public protocol AirshipPermissionDelegate {
     /// Called when a permission needs to be checked.
     /// - Returns: the permission status.
     @objc
+    @MainActor
     func checkPermissionStatus() async -> AirshipPermissionStatus
 
     /// Called when a permission should be requested.
@@ -17,5 +18,6 @@ public protocol AirshipPermissionDelegate {
     ///
     /// - Returns: the permission status.
     @objc
+    @MainActor
     func requestPermission() async -> AirshipPermissionStatus
 }

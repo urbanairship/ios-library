@@ -24,7 +24,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     private let sessionTracker: SessionTrackerProtocol
     private let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
-    private let sdkExtensions: Atomic<[String]> = Atomic([])
+    private let sdkExtensions: AirshipAtomicValue<[String]> = AirshipAtomicValue([])
 
     // Screen tracking state
     private let screenState: AirshipMainActorValue<ScreenState> = AirshipMainActorValue(ScreenState())
@@ -102,7 +102,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         eventManager: EventManagerProtocol,
-        sessionTracker: SessionTrackerProtocol = SessionTracker(),
+        sessionTracker: SessionTrackerProtocol? = nil,
         sessionEventFactory: SessionEventFactoryProtocol = SessionEventFactory()
     ) {
         self.config = config
@@ -114,7 +114,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         self.privacyManager = privacyManager
         self.permissionsManager = permissionsManager
         self.eventManager = eventManager
-        self.sessionTracker = sessionTracker
+        self.sessionTracker = sessionTracker ?? SessionTracker()
 
         self.eventManager.addHeaderProvider {
             await self.makeHeaders()

@@ -20,7 +20,8 @@ final class EventManagerTest: XCTestCase {
     )
     private var eventManager: EventManager!
 
-    override func setUpWithError() throws {
+    @MainActor
+    override func setUp() async throws {
         self.eventManager = EventManager(
             dataStore: dataStore,
             channel: channel,

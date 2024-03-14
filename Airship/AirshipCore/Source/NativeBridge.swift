@@ -107,7 +107,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         if let requestURL = requestURL, isAirshipJSAllowed, requestURL.isAirshipCommand {
             if navigationType == .linkActivated || navigationType == .other {
                 let command = JavaScriptCommand(url: requestURL)
-                Task {
+                Task { @MainActor in
                     await self.handleAirshipCommand(
                         command: command,
                         webView: webView
@@ -356,6 +356,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         forward(webView, challenge, completionHandler)
     }
 
+    @MainActor
     private func makeJSEnvironment(webView: WKWebView) async -> String {
         let jsEnvironment: JavaScriptEnvironmentProtocol = self.javaScriptEnvironmentFactoryBlock()
 

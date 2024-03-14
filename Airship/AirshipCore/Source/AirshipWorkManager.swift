@@ -13,7 +13,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private let startTask: Task<Void, Never>
     private let backgroundWaitTask: AirshipMainActorValue<AirshipCancellable?> = AirshipMainActorValue(nil)
     private let queue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
-    private let backgroundWorkRequests: Atomic<[AirshipWorkRequest]> = Atomic([])
+    private let backgroundWorkRequests: AirshipAtomicValue<[AirshipWorkRequest]> = AirshipAtomicValue([])
 
     /// Shared instance
     static let shared = AirshipWorkManager()

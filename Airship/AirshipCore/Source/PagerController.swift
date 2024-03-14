@@ -2,12 +2,14 @@ import Foundation
 import SwiftUI
 
 
+
 struct PagerController: View {
     let model: PagerControllerModel
     let constraints: ViewConstraints
     @State var pagerState: PagerState
     @Environment(\.layoutState) var layoutState
 
+    @MainActor
     init(model: PagerControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints

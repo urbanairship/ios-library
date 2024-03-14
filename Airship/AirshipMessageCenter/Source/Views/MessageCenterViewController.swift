@@ -11,12 +11,14 @@ public class MessageCenterViewControllerFactory: NSObject {
     /// Makes a message view controller with the given theme.
     /// - Parameters:
     ///     - theme: The message center theme.
+    ///     - predicate: The message center predicate.
     ///     - controller: The Message Center controller
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
     @MainActor
     public class func make(
         theme: MessageCenterTheme? = nil,
+        predicate: MessageCenterPredicate? = nil,
         controller: MessageCenterController,
         dismissAction: (() -> Void)? = nil
     ) -> UIViewController {
@@ -26,6 +28,7 @@ public class MessageCenterViewControllerFactory: NSObject {
                 controller: controller
             )
             .messageCenterTheme(theme)
+            .messageCenterPredicate(predicate)
             .addMessageCenterDismissAction(
                 action: dismissAction
             )
@@ -45,7 +48,7 @@ public class MessageCenterViewControllerFactory: NSObject {
         controller: MessageCenterController,
         dismissAction: (() -> Void)? = nil
     ) throws -> UIViewController {
-
+        
         if let themePlist = themePlist {
             return make(
                 theme: try MessageCenterThemeLoader.fromPlist(themePlist),
@@ -54,6 +57,38 @@ public class MessageCenterViewControllerFactory: NSObject {
             )
         } else {
             return make(
+                controller: controller,
+                dismissAction: dismissAction
+            )
+        }
+    }
+    
+    /// Makes a message view controller with the given theme.
+    /// - Parameters:
+    ///     - themePlist: A path to a theme plist
+    ///     - predicate: The message center predicate
+    ///     - controller: The Message Center controller
+    ///     - dismissAction: Optional action to dismiss the view controller.
+    /// - Returns: A view controller.
+    @objc
+    @MainActor
+    public class func make(
+        themePlist: String?,
+        predicate: MessageCenterPredicate?,
+        controller: MessageCenterController,
+        dismissAction: (() -> Void)? = nil
+    ) throws -> UIViewController {
+
+        if let themePlist = themePlist {
+            return make(
+                theme: try MessageCenterThemeLoader.fromPlist(themePlist),
+                predicate: predicate,
+                controller: controller,
+                dismissAction: dismissAction
+            )
+        } else {
+            return make(
+                predicate: predicate,
                 controller: controller,
                 dismissAction: dismissAction
             )

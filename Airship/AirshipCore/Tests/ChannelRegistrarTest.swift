@@ -17,7 +17,8 @@ class ChannelRegistrarTest: XCTestCase {
 
     private var channelRegistrar: ChannelRegistrar!
 
-    override func setUpWithError() throws {
+    @MainActor
+    override func setUp() async throws {
         self.channelRegistrar = ChannelRegistrar(
             dataStore: self.dataStore,
             channelAPIClient: self.client,

@@ -16,25 +16,36 @@ public protocol MessageCenterDisplayDelegate {
     /// - Parameters:
     ///   - messageID: The message ID.
     @objc(displayMessageCenterForMessageID:)
+    @MainActor
     func displayMessageCenter(messageID: String)
 
     /// Called when the message center is requested to be displayed.
     @objc
+    @MainActor
     func displayMessageCenter()
 
     /// Called when the message center is requested to be dismissed.
     @objc
+    @MainActor
     func dismissMessageCenter()
 }
 
 /// Airship Message Center module.
 @objc(UAMessageCenter)
-public class MessageCenter: NSObject, ObservableObject {
-
+public final class MessageCenter: NSObject, Sendable {
     /// Message center display delegate.
     @objc
-    public var displayDelegate: MessageCenterDisplayDelegate?
+    @MainActor
+    public var displayDelegate: MessageCenterDisplayDelegate? {
+        get {
+            mutable.displayDelegate
+        }
+        set {
+            mutable.displayDelegate = newValue
+        }
+    }
 
+    private let mutable: MutableValues
     private let privacyManager: AirshipPrivacyManager
 
     /// Message center inbox.
@@ -44,26 +55,52 @@ public class MessageCenter: NSObject, ObservableObject {
     }
 
     /// Message center inbox.
-    public var inbox: MessageCenterInboxProtocol
-
-    private var currentDisplay: AirshipMainActorCancellable?
+    public let inbox: MessageCenterInboxProtocol
 
     /// The message center controller.
-    @Published
-    @objc
-    public var controller: MessageCenterController
+    @MainActor
+    public var controller: MessageCenterController {
+        get {
+            self.mutable.controller
+        }
+        set {
+            self.mutable.controller = newValue
+        }
+    }
 
     /// Default message center theme. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
-    public var theme: MessageCenterTheme?
+    @MainActor
+    public var theme: MessageCenterTheme? {
+        get {
+            self.mutable.theme
+        }
+        set {
+            self.mutable.theme = newValue
+        }
+    }
 
     /// Loads a Message center theme from a plist file. If you are embedding the MessageCenterView directly
     ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
     /// - Parameters:
     ///     - plist: The name of the plist in the bundle.
     @objc
+    @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try MessageCenterTheme.fromPlist(plist)
+    }
+
+    /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
+    ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
+    @objc
+    @MainActor
+    public var predicate: MessageCenterPredicate? {
+        get {
+            self.mutable.predicate
+        }
+        set {
+            self.mutable.predicate = newValue
+        }
     }
 
     private var enabled: Bool {
@@ -75,7 +112,8 @@ public class MessageCenter: NSObject, ObservableObject {
     public static var shared: MessageCenter {
         return Airship.requireComponent(ofType: MessageCenterComponent.self).messageCenter
     }
-
+    
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
@@ -86,8 +124,7 @@ public class MessageCenter: NSObject, ObservableObject {
     ) {
         self.inbox = inbox
         self.privacyManager = privacyManager
-        self.theme = MessageCenterThemeLoader.defaultPlist()
-        self.controller = controller
+        self.mutable = MutableValues(controller: controller, theme: MessageCenterThemeLoader.defaultPlist())
 
         super.init()
 
@@ -110,6 +147,7 @@ public class MessageCenter: NSObject, ObservableObject {
         inbox.enabled = self.enabled
     }
 
+    @MainActor
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
@@ -123,8 +161,7 @@ public class MessageCenter: NSObject, ObservableObject {
             with: config,
             dataStore: dataStore,
             channel: channel,
-            workManager: workManager, 
-            controller: controller
+            workManager: workManager
         )
 
         self.init(
@@ -182,6 +219,7 @@ public class MessageCenter: NSObject, ObservableObject {
 
     /// Dismiss the message center.
     @objc
+    @MainActor
     public func dismiss() {
         if let displayDelegate = self.displayDelegate {
             displayDelegate.dismissMessageCenter()
@@ -190,6 +228,37 @@ public class MessageCenter: NSObject, ObservableObject {
                 self.dismissDefaultMessageCenter()
             }
         }
+    }
+
+    final class MutableValues : @unchecked Sendable {
+        @MainActor
+        var displayDelegate: MessageCenterDisplayDelegate?
+
+        @MainActor
+        var controller: MessageCenterController
+
+        @MainActor
+        var predicate: MessageCenterPredicate?
+
+        @MainActor
+        var theme: MessageCenterTheme?
+
+        @MainActor
+        var currentDisplay: AirshipMainActorCancellable?
+
+        @MainActor
+        init(
+            displayDelegate: MessageCenterDisplayDelegate? = nil,
+            controller: MessageCenterController,
+            predicate: MessageCenterPredicate? = nil,
+            theme: MessageCenterTheme? = nil,
+            currentDisplay: AirshipMainActorCancellable? = nil
+        ) {
+            self.displayDelegate = displayDelegate
+            self.controller = controller
+            self.predicate = predicate
+        }
+
     }
 }
 
@@ -257,7 +326,7 @@ extension MessageCenter {
 
     @MainActor
     fileprivate func showDefaultMessageCenter() {
-        guard self.currentDisplay == nil else {
+        guard self.mutable.currentDisplay == nil else {
             return
         }
 
@@ -270,18 +339,19 @@ extension MessageCenter {
 
         var window: UIWindow? = UIWindow(windowScene: scene)
 
-        self.currentDisplay = AirshipMainActorCancellableBlock {
+        self.mutable.currentDisplay = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal
             window?.isHidden = true
             window = nil
         }
 
         let viewController = MessageCenterViewControllerFactory.make(
-            theme: theme,
+            theme: theme, 
+            predicate: predicate,
             controller: self.controller
         ) {
-            self.currentDisplay?.cancel()
-            self.currentDisplay = nil
+            self.mutable.currentDisplay?.cancel()
+            self.mutable.currentDisplay = nil
         }
 
         window?.isHidden = false
@@ -292,7 +362,7 @@ extension MessageCenter {
 
     @MainActor
     fileprivate func dismissDefaultMessageCenter() {
-        self.currentDisplay?.cancel()
-        self.currentDisplay = nil
+        self.mutable.currentDisplay?.cancel()
+        self.mutable.currentDisplay = nil
     }
 }

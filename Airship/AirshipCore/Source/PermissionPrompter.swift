@@ -7,7 +7,7 @@ typealias PermissionResultReceiver = @Sendable (
     AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus
 ) async -> Void
 
-protocol PermissionPrompter {
+protocol PermissionPrompter: Sendable {
 
     func prompt(
         permission: AirshipPermission,

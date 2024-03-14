@@ -3,17 +3,17 @@
 import Foundation
 import UserNotifications
 
-class NotificationPermissionDelegate: AirshipPermissionDelegate {
+final class NotificationPermissionDelegate: AirshipPermissionDelegate {
 
-    struct Config {
+    struct Config: Sendable {
         let options: UANotificationOptions
         let skipIfEphemeral: Bool
     }
 
     let registrar: NotificationRegistrar
-    let config: () -> Config
+    let config: @Sendable () -> Config
 
-    init(registrar: NotificationRegistrar, config: @escaping () -> Config) {
+    init(registrar: NotificationRegistrar, config: @Sendable @escaping () -> Config) {
         self.registrar = registrar
         self.config = config
     }

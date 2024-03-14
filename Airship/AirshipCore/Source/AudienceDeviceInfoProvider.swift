@@ -190,7 +190,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
 fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendable {
     private let lock = AirshipLock()
-    private var atomicValue: Atomic<T?> = Atomic(nil)
+    private var atomicValue: AirshipAtomicValue<T?> = AirshipAtomicValue(nil)
     private var provider: () -> T
 
     var cachedValue: T? {
@@ -221,7 +221,7 @@ fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendab
 
 fileprivate final class OneTimeAsyncValue<T: Equatable & Sendable>: @unchecked Sendable {
     private let queue: AirshipSerialQueue = AirshipSerialQueue()
-    private var atomicValue: Atomic<T?> = Atomic(nil)
+    private var atomicValue: AirshipAtomicValue<T?> = AirshipAtomicValue(nil)
     private var provider: @Sendable () async -> T
 
     var cachedValue: T? {

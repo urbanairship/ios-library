@@ -64,7 +64,7 @@ protocol MessageCenterAPIClientProtocol {
     ) async throws -> AirshipHTTPResponse<Void>
 }
 
-struct MessageCenterAPIClient: MessageCenterAPIClientProtocol {
+struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
 
     private static let channelIDHeader = "X-UA-Channel-ID"
     private static let lastModifiedIDHeader = "If-Modified-Since"

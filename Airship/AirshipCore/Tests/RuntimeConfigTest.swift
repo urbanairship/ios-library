@@ -83,7 +83,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testRemoteConfigOverride() async throws {
-        let updatedCount = Atomic<Int>(0)
+        let updatedCount = AirshipAtomicValue<Int>(0)
         self.notificationCenter.addObserver(
             forName: RuntimeConfig.configUpdatedEvent,
             object: nil,

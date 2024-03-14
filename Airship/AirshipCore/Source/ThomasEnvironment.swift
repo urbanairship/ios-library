@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 
+@MainActor
 class ThomasEnvironment: ObservableObject {
     private let delegate: ThomasDelegate
     let extensions: ThomasExtensions?
@@ -356,6 +357,7 @@ extension ButtonState {
 }
 
 extension LayoutState {
+    @MainActor
     fileprivate func toLayoutContext() -> ThomasLayoutContext {
         ThomasLayoutContext(
             formInfo: self.formState?.toFormInfo(),

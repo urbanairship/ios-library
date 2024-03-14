@@ -24,8 +24,9 @@ class AnalyticsTest: XCTestCase {
     private let testAirship = TestAirshipInstance()
 
 
+    @MainActor
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             config:  RuntimeConfig(
                 config: self.config,
@@ -36,7 +37,7 @@ class AnalyticsTest: XCTestCase {
         )
         
 
-        self.analytics = await makeAnalytics()
+        self.analytics = makeAnalytics()
     }
 
     @MainActor
@@ -567,7 +568,7 @@ final class TestSessionTracker: SessionTrackerProtocol {
     let eventsContinuation: AsyncStream<SessionEvent>.Continuation
     public let events: AsyncStream<SessionEvent>
 
-    private let _sessionState: Atomic<SessionState> = Atomic(SessionState())
+    private let _sessionState: AirshipAtomicValue<SessionState> = AirshipAtomicValue(SessionState())
 
     var sessionState: SessionState {
         return _sessionState.value

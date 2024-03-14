@@ -8,14 +8,15 @@ import SwiftUI
 import AirshipCore
 #endif
 
+@MainActor
 class MessageCenterListViewModel: ObservableObject {
 
     @Published
-    var messageIDs: [String] = []
+    var messages: [MessageCenterMessage] = []
 
     @Published
     var messagesLoaded: Bool = false
-
+    
     private var messageItems: [String: MessageCenterListItemViewModel] = [:]
     private var updates = Set<AnyCancellable>()
     private let messageCenter: MessageCenter?
@@ -35,23 +36,24 @@ class MessageCenterListViewModel: ObservableObject {
 
                 strongSelf.messagesLoaded = true
 
-                var incomingIDs: [String] = []
+                var incomings: [MessageCenterMessage] = []
                 incoming.forEach { message in
-                    incomingIDs.append(message.id)
+                    incomings.append(message)
                     if strongSelf.messageItems[message.id] == nil {
                         strongSelf.messageItems[message.id] =
-                            MessageCenterListItemViewModel(
-                                message: message
-                            )
+                        MessageCenterListItemViewModel(
+                            message: message
+                        )
                     }
                 }
 
+                let incomingIDs = incomings.map { $0.id }
                 Set(strongSelf.messageItems.keys)
                     .subtracting(incomingIDs)
                     .forEach {
                         strongSelf.messageItems.removeValue(forKey: $0)
                     }
-                strongSelf.messageIDs = incomingIDs
+                strongSelf.messages = incomings
             }
             .store(in: &self.updates)
 

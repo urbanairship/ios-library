@@ -32,6 +32,7 @@ struct Pager: View {
     private static let flingSpeed: CGFloat = 150.0
     private static let offsetPercent: CGFloat = 0.50
     private static let timerTransition = 0.01
+
     static let animationSpeed: TimeInterval = 0.75
 
     @EnvironmentObject var formState: FormState
@@ -47,7 +48,6 @@ struct Pager: View {
     @State var lastIndex = -1
 
     @GestureState private var translation: CGFloat = 0
-    @GestureState private var isPressingDown: Bool = false
     @State var size: CGSize?
 
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
@@ -131,7 +131,7 @@ struct Pager: View {
             get: { self.pagerState.pageIndex },
             set: { self.pagerState.pageIndex = $0 }
         )
-        
+
         makePager(index: index)
             .onReceive(pagerState.$pageIndex) { value in
                 pagerState.pages = self.model.items.map {
@@ -150,7 +150,12 @@ struct Pager: View {
                     handlePagerProgress(automatedActions, index: index)
                 }
             }
-    #if !os(tvOS)
+#if !os(tvOS)
+            .applyIf(true) { view in
+                view.onTouch { isPressed in
+                    handleTouch(isPressed: isPressed, index: index)
+                }
+            }
             .applyIf(true) { view in
                 view.simultaneousGesture(makeSwipeGesture(index: index))
             }
@@ -173,12 +178,7 @@ struct Pager: View {
                     }
                 }
             }
-            .applyIf(true) { view in
-                view.simultaneousGesture(makeLongPressGesture())
-                    .airshipOnChangeOf( isPressingDown) { value in
-                        handleLongPress(isPressed: value, index: index)
-                    }
-            }
+
             .applyIf(true) { view in
                 if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
                     view.simultaneousGesture(makeTapGesture(index: index))
@@ -187,15 +187,14 @@ struct Pager: View {
                 }
             }
 
-    #endif
-        .constraints(constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
-        .common(self.model)
+#endif
+            .constraints(constraints)
+            .background(self.model.backgroundColor)
+            .border(self.model.border)
+            .common(self.model)
     }
-   
+
     // MARK: Handle Gesture
-    
 
     
 #if !os(tvOS)
@@ -243,7 +242,7 @@ struct Pager: View {
                 guard let swipeDirection = swipeDirection else {
                     return
                 }
-
+                print("swipe: \(swipeDirection)")
 
                 switch(swipeDirection) {
                 case .up:
@@ -264,17 +263,6 @@ struct Pager: View {
             }
     }
     
-    private func makeLongPressGesture() -> some Gesture {
-        return LongPressGesture(minimumDuration: 0.1)
-            .sequenced(before: LongPressGesture(minimumDuration: .infinity))
-            .updating($isPressingDown) { value, state, transaction in
-                switch value {
-                    case .second(true, nil):
-                        state = true
-                    default: break
-                }
-            }
-    }
 
     @available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *)
     @available(tvOS, unavailable)
@@ -294,6 +282,7 @@ struct Pager: View {
                     )
                 )
 
+                print("tap: \(event.location)")
                 handleTap(
                     locations: pagerGestureEplorer.location(
                         layoutDirection: layoutDirection,
@@ -346,7 +335,9 @@ struct Pager: View {
             }
     }
     
-    private func handleLongPress(isPressed: Bool, index: Binding<Int>) {
+    private func handleTouch(isPressed: Bool, index: Binding<Int>) {
+        print("isPressed: \(isPressed)")
+
         self.model.retrieveGestures(type: PagerHoldGesture.self).forEach { gesture in
             let behavior = isPressed ? gesture.pressBehavior : gesture.releaseBehavior
             handleGestureBehavior(

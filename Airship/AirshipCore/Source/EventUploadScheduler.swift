@@ -25,22 +25,19 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     private let workManager: AirshipWorkManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
     private let date: AirshipDateProtocol
-    private let delayer: (TimeInterval) async throws -> Void
+    private let taskSleeper: AirshipTaskSleeper
 
+    @MainActor
     init(
-        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared,
+        appStateTracker: AppStateTrackerProtocol? = nil,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         date: AirshipDateProtocol = AirshipDate.shared,
-        delayer: ((TimeInterval) async throws -> Void)? = nil
+        taskSleeper: AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
     ) {
-        self.appStateTracker = appStateTracker
+        self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.workManager = workManager
         self.date = date
-        self.delayer = delayer ??  { time in
-            try await Task.sleep(
-                nanoseconds: UInt64(time * 1_000_000_000)
-            )
-        }
+        self.taskSleeper = taskSleeper
 
         self.workManager.registerWorker(
             EventUploadScheduler.workID,
@@ -62,7 +59,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
             batchDelay = EventUploadScheduler.foregroundWorkBatchDelay
         }
         
-        try await self.delayer(batchDelay)
+        try await self.taskSleeper.sleep(timeInterval: batchDelay)
 
         guard let workBlock = self.workBlock else {
             return .success

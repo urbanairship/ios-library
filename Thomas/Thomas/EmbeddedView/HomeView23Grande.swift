@@ -2,6 +2,10 @@ import SwiftUI
 import AirshipCore
 
 struct HomeView23Grande: View {
+
+    @StateObject
+    private var embeddedViewModel: AirshipEmbeddedViewModel = AirshipEmbeddedViewModel()
+
     @State var tabIndex = 0
     var body: some View {
         GeometryReader { geo in
@@ -20,7 +24,7 @@ struct HomeView23Grande: View {
                 ScrollView(showsIndicators: false) {
 
 
-                    AirshipEmbeddedView(id: "home_special_offer")
+                    AirshipEmbeddedView(id: "home_image")
                         .setAirshipEmbeddedStyle(DismissableStyle())
 
 
@@ -51,6 +55,9 @@ struct HomeView23Grande: View {
             }
             .navigationTitle("")
             .navigationBarHidden(true)
+        }
+        .airshipOnChangeOf(self.embeddedViewModel.embeddedInfos) { value in
+            print("changed: \(value)")
         }
         .onAppear {
             Layouts.shared.layouts.filter { $0.type == .sceneEmbedded }.forEach {

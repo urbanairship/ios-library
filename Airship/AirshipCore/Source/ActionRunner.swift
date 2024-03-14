@@ -2,7 +2,7 @@
 
 /// A helper class for running actions by name or by reference.
 @objc(UAActionRunner)
-public class ActionRunner: NSObject {
+public final class ActionRunner: NSObject {
 
     /// Runs an action
     /// - Parameters:

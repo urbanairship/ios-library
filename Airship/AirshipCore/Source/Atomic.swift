@@ -1,16 +1,18 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 
-
-final class Atomic<T: Sendable>: @unchecked Sendable {
+/// - Note: for internal use only.  :nodoc:
+public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
 
     fileprivate let lock = AirshipLock()
     fileprivate var _value: T
 
-    init(_ value: T) {
+    public init(_ value: T) {
         self._value = value
     }
 
-    var value: T {
+    public var value: T {
         get {
             var result: T!
             lock.sync {
@@ -26,14 +28,14 @@ final class Atomic<T: Sendable>: @unchecked Sendable {
         }
     }
 
-    func update(onModify: (T) -> T) {
+    public func update(onModify: (T) -> T) {
         lock.sync {
             self.value = onModify(self.value)
         }
     }
 }
 
-extension Atomic where T: Equatable {
+public extension AirshipAtomicValue where T: Equatable {
 
     @discardableResult
     func setValue(_ value: T, onChange:(() -> Void)? = nil) -> Bool {

@@ -247,8 +247,9 @@ fileprivate struct AirshipLayoutWrapper: Codable {
 /// These are just for view testing purposes
 extension InAppMessage {
     /// We return a window since we are implementing display
+    /// - Note: for internal use only.  :nodoc:
     @MainActor
-    public func display(
+    public func _display(
         scene: UIWindowScene
     ) async throws {
         let adapter = try AirshipLayoutDisplayAdapter(message: self, assets: EmptyAirshipCachedAssets())

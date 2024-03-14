@@ -11,16 +11,15 @@ final class EventSchedulerTest: XCTestCase {
     private let workManager = TestWorkManager()
     private let appStateTracker = TestAppStateTracker()
     private var eventScheduler: EventUploadScheduler!
-    private var lastDelay: TimeInterval?
+    private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
-    override func setUpWithError() throws {
+    @MainActor
+    override func setUp() async throws {
         self.eventScheduler = EventUploadScheduler(
             appStateTracker: appStateTracker,
             workManager: workManager,
             date: date,
-            delayer: { time in
-                self.lastDelay = time
-            }
+            taskSleeper: taskSleeper
         )
     }
 
@@ -145,7 +144,7 @@ final class EventSchedulerTest: XCTestCase {
     }
 
     func testWorkBlockFailed() async throws {
-        let called = Atomic<Bool>(false)
+        let called = AirshipAtomicValue<Bool>(false)
         await self.eventScheduler.setWorkBlock {
             called.value = true
             return .failure
@@ -158,7 +157,7 @@ final class EventSchedulerTest: XCTestCase {
     }
 
     func testWorkBlockSuccess() async throws {
-        let called = Atomic<Bool>(false)
+        let called = AirshipAtomicValue<Bool>(false)
         await self.eventScheduler.setWorkBlock {
             called.value = true
             return .success
@@ -176,7 +175,7 @@ final class EventSchedulerTest: XCTestCase {
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
         XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertEqual(1.0, self.lastDelay)
+        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
     }
 
     @MainActor
@@ -185,6 +184,6 @@ final class EventSchedulerTest: XCTestCase {
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
         XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertEqual(5.0, self.lastDelay)
+        XCTAssertEqual([5.0], self.taskSleeper.sleeps)
     }
 }

@@ -307,7 +307,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                     layout: layout,
                     scene: scene,
                     extensions: extensions,
-                    delegate: listener
+                    delegate: listener,
+                    extras: message.extras
                 )
             } catch {
                 continuation.resume(throwing: error)

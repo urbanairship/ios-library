@@ -55,7 +55,7 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
 
     private final let audienceOverridesProvider: AudienceOverridesProvider
     private final let client: DeferredAPIClientProtocol
-    private final let locationMap: Atomic<[URL: URL]> = Atomic([:])
+    private final let locationMap: AirshipAtomicValue<[URL: URL]> = AirshipAtomicValue([:])
 
     convenience init(
         config: RuntimeConfig,

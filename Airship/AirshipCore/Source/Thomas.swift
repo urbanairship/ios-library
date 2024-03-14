@@ -14,7 +14,8 @@ public final class Thomas {
         layout: AirshipLayout,
         scene: UIWindowScene,
         extensions: ThomasExtensions? = nil,
-        delegate: ThomasDelegate
+        delegate: ThomasDelegate,
+        extras: AirshipJSON?
     ) throws -> AirshipMainActorCancellable {
         switch layout.presentation {
         case .banner(let presentation):
@@ -38,7 +39,8 @@ public final class Thomas {
                 presentation: presentation,
                 layout: layout,
                 extensions: extensions,
-                delegate: delegate
+                delegate: delegate,
+                extras: extras
             )
         }
     }
@@ -143,6 +145,7 @@ public final class Thomas {
         }
     }
 
+    @MainActor
     private class func windowSize(_ window: UIWindow) -> CGSize {
         #if os(iOS) || os(tvOS)
         return window.screen.bounds.size

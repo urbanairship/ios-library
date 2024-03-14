@@ -21,10 +21,11 @@ protocol AirshipInstanceProtocol {
 
     func component<E>(ofType componentType: E.Type) -> E?
 
+    @MainActor
     func airshipReady()
 }
 
-class AirshipInstance: AirshipInstanceProtocol {
+final class AirshipInstance: AirshipInstanceProtocol {
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
 

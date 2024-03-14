@@ -11,6 +11,7 @@ struct FormController: View {
     let constraints: ViewConstraints
     @State var formState: FormState
 
+    @MainActor
     init(model: FormControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints

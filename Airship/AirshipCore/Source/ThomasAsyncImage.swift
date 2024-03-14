@@ -84,11 +84,11 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
         self.imageTask?.cancel()
 
         if isImageVisible {
-            self.imageTask = Task {
+            self.imageTask = Task { @MainActor in
                 await animateImage()
             }
         } else {
-            self.imageTask = Task {
+            self.imageTask = Task { @MainActor in
                 await preloadFirstImage()
             }
         }

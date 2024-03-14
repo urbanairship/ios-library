@@ -13,9 +13,10 @@ final class SessionTrackerTest: XCTestCase {
 
     var tracker: SessionTracker!
 
-    var sessionCount = Atomic<Int>(1)
+    var sessionCount = AirshipAtomicValue<Int>(1)
 
-    override func setUpWithError() throws {
+    @MainActor
+    override func setUp() async throws {
         self.tracker = SessionTracker(
             date: date,
             taskSleeper: taskSleeper,
@@ -487,7 +488,7 @@ final class SessionTrackerTest: XCTestCase {
     }
 }
 
-fileprivate final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
+final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
     var sleeps : [TimeInterval] = []
 
     func sleep(timeInterval: TimeInterval) async throws {

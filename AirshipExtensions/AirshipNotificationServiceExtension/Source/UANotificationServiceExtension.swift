@@ -235,4 +235,21 @@ private struct FileHeader {
     ]
 }
 
+public extension UNNotificationRequest {
+
+    // Checks if the request is from Airship
+    var isAirship: Bool {
+        return containsAirshipMediaAttachments ||
+        self.content.userInfo["com.urbanairship.metadata"] != nil ||
+        self.content.userInfo["_"] != nil
+    }
+
+    /// Checks if the request is from Airship and contains media attachments
+    var containsAirshipMediaAttachments: Bool {
+        return self.content.userInfo["com.urbanairship.media_attachment"] != nil
+    }
+}
+
 #endif
+
+

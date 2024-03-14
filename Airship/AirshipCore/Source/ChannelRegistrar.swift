@@ -79,18 +79,19 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         return self.updatesSubject.eraseToAnyPublisher()
     }
 
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         channelAPIClient: ChannelAPIClientProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        appStateTracker: AppStateTrackerProtocol = AppStateTracker.shared
+        appStateTracker: AppStateTrackerProtocol? = nil
     ) {
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
         self.date = date
         self.workManager = workManager
-        self.appStateTracker = appStateTracker
+        self.appStateTracker = appStateTracker ?? AppStateTracker.shared
 
         if self.channelID != nil {
             checkAppRestoreTask = Task {
@@ -108,6 +109,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         }
     }
 
+    @MainActor
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore
