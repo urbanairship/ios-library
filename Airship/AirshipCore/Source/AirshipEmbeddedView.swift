@@ -3,10 +3,7 @@
 import SwiftUI
 import Combine
 
-/**
- * Internal only
- * :nodoc:
- */
+/// NOTE: For internal use only. :nodoc:
 public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
     @Environment(\.airshipEmbeddedViewStyle)
@@ -18,7 +15,6 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     private let placeholder: () -> PlaceHolder
     private let id: String
     private let embeddedSize: AirshipEmbeddedSize?
-
 
     /// Creates a new AirshipEmbeddedView.
     ///
@@ -52,12 +48,13 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(id: id))
     }
 
-
-    @ViewBuilder
     public var body: some View {
+        let pending = viewModel.pending
+
         let configuration = AirshipEmbeddedViewStyleConfiguration(
-            views: self.viewModel.pending.map{ pending in
-                AirshipLayoutView(
+            views: pending.map{ pending in
+                AirshipEmbeddedContentView(
+                    embeddedInfo: pending.embeddedInfo,
                     view: {
                         EmbeddedView(
                             model: pending.presentation,
@@ -72,7 +69,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
             placeHolder: AnyView(self.placeholder())
         )
 
-        self.style.makeBody(configuration: configuration)
+        return self.style.makeBody(configuration: configuration)
     }
 }
 
@@ -104,15 +101,39 @@ private class EmbeddedViewModel: ObservableObject {
  * Internal only
  * :nodoc:
  */
+public struct AirshipEmbeddedContentView : View  {
+    public let embeddedInfo: AirshipEmbeddedInfo
+
+    private let view: () -> EmbeddedView
+    private let onDismiss: () -> Void
+
+    internal init(
+        embeddedInfo: AirshipEmbeddedInfo,
+        view: @escaping () -> EmbeddedView,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.embeddedInfo = embeddedInfo
+        self.view = view
+        self.onDismiss = onDismiss
+    }
+
+    public func dismiss() {
+        self.onDismiss()
+    }
+
+    @ViewBuilder
+    public var body: some View {
+        view()
+    }
+}
+
+/// NOTE: For internal use only. :nodoc:
 public struct AirshipEmbeddedViewStyleConfiguration {
-    public let views: [AirshipLayoutView]
+    public let views: [AirshipEmbeddedContentView]
     public let placeHolder: AnyView
 }
 
-/**
- * Internal only
- * :nodoc:
- */
+/// NOTE: For internal use only. :nodoc:
 public protocol AirshipEmbeddedViewStyle {
     associatedtype Body: View
     typealias Configuration = AirshipEmbeddedViewStyleConfiguration
@@ -126,10 +147,7 @@ extension AirshipEmbeddedViewStyle where Self == DefaultAirshipEmbeddedViewStyle
     }
 }
 
-/**
- * Internal only
- * :nodoc:
- */
+/// NOTE: For internal use only. :nodoc:
 public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
@@ -179,3 +197,6 @@ extension View {
         )
     }
 }
+
+
+

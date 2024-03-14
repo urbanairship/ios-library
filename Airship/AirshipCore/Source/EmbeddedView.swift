@@ -2,10 +2,6 @@
 
 import SwiftUI
 
-/**
- * Internal only
- * :nodoc:
- */
 @available(iOS 16, tvOS 16, watchOS 9.0, *)
 struct AdoptLayout: SwiftUI.Layout {
 

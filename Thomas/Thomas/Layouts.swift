@@ -68,7 +68,7 @@ final class Layouts {
         let scene = try AirshipSceneManager.shared.lastActiveScene
 
         Task { @MainActor in
-            try await message.display(scene: scene)
+            try await message._display(scene: scene)
         }
     }
 
@@ -78,7 +78,7 @@ final class Layouts {
         let scene = try AirshipSceneManager.shared.lastActiveScene
 
         Task { @MainActor in
-            try await message.display(scene: scene)
+            try await message._display(scene: scene)
         }
     }
 

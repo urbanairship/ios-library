@@ -4,7 +4,7 @@ import SwiftUI
 import Foundation
 
 
-// Size info for an embedded view.
+/// NOTE: For internal use only. :nodoc:
 public struct AirshipEmbeddedSize: Equatable, Hashable, Sendable {
 
     /// Max width
