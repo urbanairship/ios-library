@@ -25,6 +25,8 @@ public struct MessageCenterListView: View {
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
+    @Environment(\.airshipMessageCenterPredicate)
+    private var predicate
 
     @StateObject
     private var viewModel = MessageCenterListViewModel()
@@ -40,6 +42,9 @@ public struct MessageCenterListView: View {
 
     @State
     private var isActive = false
+    
+    @State
+    private var messageIDs: [String] = []
     
     private func markRead(messages: Set<String>) {
         editMode?.animation().wrappedValue = .inactive
@@ -94,7 +99,7 @@ public struct MessageCenterListView: View {
     @ViewBuilder
     private func makeList() -> some View {
         let list = List(selection: $selection) {
-            ForEach(self.viewModel.messageIDs, id: \.self) { messageID in
+            ForEach(self.messageIDs, id: \.self) { messageID in
                 if let item = self.viewModel.messageItem(forID: messageID) {
                     makeCell(item: item, messageID: messageID)
                         .tag(messageID)
@@ -104,7 +109,7 @@ public struct MessageCenterListView: View {
             }
             .onDelete { offsets in
                 delete(
-                    messages: Set(offsets.map { viewModel.messageIDs[$0] })
+                    messages: Set(offsets.map { self.messageIDs[$0] })
                 )
             }
             .onReceive(Just(self.selection)) { _ in
@@ -114,6 +119,15 @@ public struct MessageCenterListView: View {
             }
             .onReceive(self.controller.$messageID) { messageID in
                 isActive = (messageID != nil)
+            }
+            .onReceive(self.viewModel.$messages) { messages in
+                self.messageIDs = messages.filter { message in
+                    if let predicate = self.predicate {
+                        return predicate.evaluate(message: message)
+                    }
+                    return true
+                }
+                .map { $0.id }
             }
         }
 
@@ -132,7 +146,7 @@ public struct MessageCenterListView: View {
             makeList()
                 .opacity(self.listOpacity)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
-                .onReceive(self.viewModel.$messageIDs) { ids in
+                .onChange(of: self.messageIDs) { ids in
                     if ids.isEmpty {
                         self.listOpacity = 0.0
                     } else {
@@ -143,7 +157,7 @@ public struct MessageCenterListView: View {
             if !self.viewModel.messagesLoaded {
                 ProgressView()
                     .opacity(1.0 - self.listOpacity)
-            } else if self.viewModel.messageIDs.isEmpty {
+            } else if self.messageIDs.isEmpty {
                 VStack {
                     Button {
                         Task {
@@ -223,7 +237,7 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func selectButton() -> some View {
-        if self.selection.count == self.viewModel.messageIDs.count {
+        if self.selection.count == self.messageIDs.count {
             selectNone()
         } else {
             selectAll()
@@ -232,7 +246,7 @@ public struct MessageCenterListView: View {
 
     private func selectAll() -> some View {
         Button {
-            self.selection = Set(self.viewModel.messageIDs)
+            self.selection = Set(self.messageIDs)
         } label: {
             Text("ua_select_all_messages".messageCenterlocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))

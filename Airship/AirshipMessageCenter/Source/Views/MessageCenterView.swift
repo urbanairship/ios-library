@@ -87,11 +87,10 @@ public struct MessageCenterView: View {
     }
 }
 
-
+// MARK: Message center dismiss action
 private struct MessageCenterDismissActionKey: EnvironmentKey {
     static let defaultValue: (() -> Void)? = nil
 }
-
 
 extension EnvironmentValues {
     var messageCenterDismissAction: (() -> Void)? {
@@ -99,7 +98,6 @@ extension EnvironmentValues {
         set { self[MessageCenterDismissActionKey.self] = newValue }
     }
 }
-
 
 extension View {
     public func addMessageCenterDismissAction(action: (() -> Void)?) -> some View {
