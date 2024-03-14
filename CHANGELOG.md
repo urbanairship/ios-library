@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.9.0, March 14, 2024
+Minor release with several bug fixes and stability improvements.
+
+### Changes
+- Added message center predicate functionality
+- Fixed top-placed in-app message corner rounding
+- Added message center theming support for named colors and dark mode
+- Exposed additional preference center constructors to enable styling
+
 ## Version 17.8.0, March 4, 2024
 Minor release with several bug fixes and stability improvements.
 
