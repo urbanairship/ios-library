@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct LayoutState {
+struct LayoutState: Sendable {
     static let empty = LayoutState(
         pagerState: nil,
         formState: nil,

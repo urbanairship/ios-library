@@ -143,6 +143,7 @@ public final class Thomas {
         }
     }
 
+    @MainActor
     private class func windowSize(_ window: UIWindow) -> CGSize {
         #if os(iOS) || os(tvOS)
         return window.screen.bounds.size

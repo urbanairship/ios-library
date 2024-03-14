@@ -1,8 +1,7 @@
 /* Copyright Airship and Contributors */
 
-@objc(UAirshipErrors)
-public class AirshipErrors: NSObject {
-    @objc
+/// - Note: for internal use only.  :nodoc:
+public final class AirshipErrors: NSObject {
     public class func parseError(_ message: String) -> Error {
         return NSError(
             domain: "com.urbanairship.parse_error",
@@ -13,7 +12,6 @@ public class AirshipErrors: NSObject {
         )
     }
 
-    @objc
     public class func error(_ message: String) -> Error {
         return NSError(
             domain: "com.urbanairship.error",

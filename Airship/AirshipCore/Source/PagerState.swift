@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct PageState {
+struct PageState: Sendable {
     var identifier: String
     var delay: Double
     // represent the automated action identifier and it's status (true if it's executed and false if not)
@@ -29,6 +29,7 @@ struct PageState {
     }
 }
 
+@MainActor
 class PagerState: ObservableObject {
     @Published var pageIndex: Int = 0
     @Published var pages: [PageState] = []

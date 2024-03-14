@@ -182,6 +182,7 @@ private struct MessageCenterListContentView: View {
         HStack(alignment: .top, spacing: 5) {
             if (theme.iconsEnabled) {
                 makeIcon()
+                    .padding(.trailing)
                 makeMessageInfo()
             } else {
                 Spacer().frame(

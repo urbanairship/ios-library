@@ -6,6 +6,7 @@ import XCTest
 
 class FormStateTest: XCTestCase {
 
+    @MainActor
     func testData() throws {
         let formState = FormState(
             identifier: "some-form-id",
@@ -125,6 +126,7 @@ class FormStateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testAttributes() throws {
         let formState = FormState(
             identifier: "some-form-id",

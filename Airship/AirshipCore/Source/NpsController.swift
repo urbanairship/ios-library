@@ -11,6 +11,7 @@ struct NpsController: View {
 
     @State var formState: FormState
 
+    @MainActor
     init(model: NpsControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints

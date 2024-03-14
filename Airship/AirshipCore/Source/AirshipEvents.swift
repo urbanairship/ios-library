@@ -247,6 +247,7 @@ fileprivate extension SessionEvent {
         }
     }
 
+    @MainActor
     private static var osVersion: String {
 #if !os(watchOS)
         return UIDevice.current.systemVersion

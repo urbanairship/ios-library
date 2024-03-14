@@ -167,10 +167,7 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"],
-            resources: [
-                .process("Resources")
-            ]
+            sources: ["Source"]
         ),
         .target(
             name: "AirshipFeatureFlags",
@@ -181,10 +178,7 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"],
-            resources: [
-                .process("Resources")
-            ]
+            sources: ["Source"]
         ),
         .target(
             name: "AirshipDebug",
@@ -199,7 +193,6 @@ let package = Package(
             exclude: [
                 "Source/AirshipDebug.h",
                 "Info.plist",
-                "Tests",
             ],
             sources: ["Source"],
             resources: [

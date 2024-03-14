@@ -7,9 +7,7 @@
 	<key>refreshTintColorDark</key>
 	<string>#001F9E</string>
 	<key>iconsEnabled</key>
-	<false/>
-	<key>placeholderIcon</key>
-	<string>placeholderIcon</string>
+	<true/>
 	<key>cellTitleFont</key>
 	<dict>
 		<key>fontName</key>

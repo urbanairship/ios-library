@@ -2,6 +2,7 @@
 
 import Foundation
 
+@MainActor
 class ButtonState: ObservableObject {
     let identifier: String
     init(identifier: String) {
