@@ -121,7 +121,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         return true
     }
 }
-
+#if canImport(ActivityKit)
 @available(iOS 16.2, *)
 struct LiveActivityUtils<T: ActivityAttributes>  {
     public static func trackActivities(
@@ -148,3 +148,4 @@ struct LiveActivityUtils<T: ActivityAttributes>  {
         }
     }
 }
+#endif

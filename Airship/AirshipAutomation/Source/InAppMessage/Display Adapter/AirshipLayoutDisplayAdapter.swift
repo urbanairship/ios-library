@@ -187,12 +187,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.animateOut()
+                window.airshipAnimateOut()
                 continuation.resume(returning: result)
             }
 
@@ -210,7 +210,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
 
-            window.animateIn()
+            window.airshipAnimateIn()
         }
     }
 
@@ -221,12 +221,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.animateOut()
+                window.airshipAnimateOut()
                 continuation.resume(returning: result)
             }
 
@@ -244,7 +244,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
 
-            window.animateIn()
+            window.airshipAnimateIn()
         }
     }
 
@@ -255,12 +255,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.animateOut()
+                window.airshipAnimateOut()
                 continuation.resume(returning: result)
             }
 
@@ -280,7 +280,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
 
-            window.animateIn()
+            window.airshipAnimateIn()
         }
     }
 
@@ -337,19 +337,6 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
 }
 
 private extension UIWindow {
-
-    static func makeModalReadyWindow(
-        scene: UIWindowScene
-    ) -> UIWindow {
-        let window: UIWindow = UIWindow(windowScene: scene)
-        window.accessibilityViewIsModal = false
-        window.alpha = 0
-        window.makeKeyAndVisible()
-        window.isUserInteractionEnabled = false
-        
-        return window
-    }
-    
     func addRootController<T: UIViewController>(
         _ viewController: T?
     ) {
@@ -365,33 +352,5 @@ private extension UIWindow {
         }
         
         self.isUserInteractionEnabled = true
-    }
-    
-    func animateIn() {
-        self.makeKeyAndVisible()
-        self.isUserInteractionEnabled = true
-
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.alpha = 1
-            },
-            completion: { _ in
-            }
-        )
-    }
-
-    func animateOut() {
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.alpha = 0
-            },
-            completion: { _ in
-                self.isHidden = true
-                self.isUserInteractionEnabled = false
-                self.removeFromSuperview()
-            }
-        )
     }
 }

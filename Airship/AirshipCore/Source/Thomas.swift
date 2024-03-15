@@ -111,9 +111,7 @@ public final class Thomas {
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate
     ) -> AirshipMainActorCancellable {
-
-        let window: UIWindow = UIWindow(windowScene: scene)
-        window.accessibilityViewIsModal = true
+        let window: UIWindow = UIWindow.airshipMakeModalReadyWindow(scene: scene)
         var viewController: ThomasModalViewController?
 
         let options = ThomasViewControllerOptions()
@@ -123,7 +121,7 @@ public final class Thomas {
             delegate: delegate,
             extensions: extensions
         ) {
-            window.isHidden = true
+            window.airshipAnimateOut()
         }
 
         let rootView = ModalView(
@@ -138,7 +136,7 @@ public final class Thomas {
         )
         viewController?.modalPresentationStyle = .currentContext
         window.rootViewController = viewController
-        window.makeKeyAndVisible()
+        window.airshipAnimateIn()
 
         return AirshipMainActorCancellableBlock { [environment] in
             environment.dismiss()
@@ -190,6 +188,3 @@ public struct ThomasExtensions {
     }
     #endif
 }
-
-
-
