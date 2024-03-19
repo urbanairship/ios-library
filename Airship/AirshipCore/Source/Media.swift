@@ -7,10 +7,19 @@ import SwiftUI
 
 struct Media: View {
 
+    static let defaultAspectRatio = 16.0 / 9.0
     let model: MediaModel
     let constraints: ViewConstraints
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
+    private var contentMode: ContentMode {
+        var contentMode = ContentMode.fill
+        if case .centerInside = self.model.mediaFit {
+            contentMode = ContentMode.fit
+        }
+        return contentMode
+    }
+    
     var body: some View {
         switch model.mediaType {
         case .image:
@@ -40,10 +49,10 @@ struct Media: View {
                 accessibilityLabel: model.contentDescription,
                 video: model.video
             )
-            .constraints(constraints)
             .applyIf(self.constraints.width != nil || self.constraints.height != nil) {
-                $0.aspectRatio((CGFloat)(model.video?.aspectRatio ?? 16.0 / 9.0), contentMode: .fit)
+                $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? 16.0 / 9.0), contentMode: .fit)
             }
+            .constraints(constraints)
             .background(self.model.backgroundColor)
             .border(self.model.border)
             .common(self.model)
