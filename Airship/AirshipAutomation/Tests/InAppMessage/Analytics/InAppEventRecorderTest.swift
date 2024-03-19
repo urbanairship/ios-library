@@ -8,7 +8,10 @@ import AirshipCore
 
 class InAppEventRecorderTest: XCTestCase {
 
+    
     private let airshipAnalytics: TestAnalytics = TestAnalytics()
+    private let meteredUsage: TestMeteredUsage = TestMeteredUsage()
+
     private var eventRecorder: InAppEventRecorder!
 
     private let campaigns =  try! AirshipJSON.wrap(
@@ -25,7 +28,10 @@ class InAppEventRecorderTest: XCTestCase {
     private let renderedLocale = try! AirshipJSON.wrap(["en-US"])
 
     override func setUp() async throws {
-        self.eventRecorder = InAppEventRecorder(airshipAnalytics:  airshipAnalytics)
+        self.eventRecorder = InAppEventRecorder(
+            airshipAnalytics:  airshipAnalytics,
+            meteredUsage: meteredUsage
+        )
     }
 
     func testEventData() async throws {
@@ -177,3 +183,10 @@ fileprivate struct ErrorData: Encodable, Sendable {
     }
 }
 
+
+actor TestMeteredUsage: AirshipMeteredUsageProtocol {
+    var events: [AirshipMeteredUsageEvent] = []
+    func addEvent(_ event: AirshipCore.AirshipMeteredUsageEvent) async throws {
+        events.append(event)
+    }
+}

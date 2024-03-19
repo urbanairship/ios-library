@@ -35,17 +35,31 @@ class ThomasDisplayListenerTest: XCTestCase {
     }
 
     @MainActor
-    func testOnAppear() {
+    func testOnVisibilityChanged() {
         XCTAssertFalse(timer.isStarted)
 
-        listener.onAppear()
+        listener.onVisbilityChanged(isVisible: true, isForegrounded: true)
 
         verifyEvents([(InAppDisplayEvent(), nil)])
         XCTAssertTrue(timer.isStarted)
 
-        listener.onAppear()
-
+        listener.onVisbilityChanged(isVisible: false, isForegrounded: false)
         verifyEvents([(InAppDisplayEvent(), nil)])
+        XCTAssertFalse(timer.isStarted)
+
+        listener.onVisbilityChanged(isVisible: true, isForegrounded: false)
+        verifyEvents([(InAppDisplayEvent(), nil)])
+        XCTAssertFalse(timer.isStarted)
+
+        listener.onVisbilityChanged(isVisible: false, isForegrounded: true)
+        verifyEvents([(InAppDisplayEvent(), nil)])
+        XCTAssertFalse(timer.isStarted)
+
+
+        listener.onVisbilityChanged(isVisible: true, isForegrounded: true)
+        verifyEvents([(InAppDisplayEvent(), nil), (InAppDisplayEvent(), nil)])
+        XCTAssertTrue(timer.isStarted)
+
         XCTAssertNil(self.result.value)
     }
 

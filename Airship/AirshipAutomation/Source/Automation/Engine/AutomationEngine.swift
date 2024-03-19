@@ -282,7 +282,7 @@ fileprivate extension AutomationEngine {
 
                 case .execution:
                     try await self.updateState(identifier: result.scheduleID) { data in
-                        data.triggered(triggerContext: result.triggerInfo.context, date: now)
+                        data.triggered(triggerInfo: result.triggerInfo, date: now)
                     }
 
                     await self.startTaskToProcessTriggeredSchedule(
@@ -348,7 +348,8 @@ fileprivate extension AutomationEngine {
 
         let prepareResult = await self.preparer.prepare(
             schedule: data.schedule,
-            triggerContext: data.triggerInfo?.context
+            triggerContext: data.triggerInfo?.context,
+            triggerSessionID: data.triggerSessionID
         )
 
         AirshipLogger.trace("Preparing schedule \(data) result: \(prepareResult)")
@@ -457,7 +458,9 @@ fileprivate extension AutomationEngine {
             }
         }
 
-        let executeResult = await self.executor.execute(preparedSchedule: preparedSchedule)
+        let executeResult = await self.executor.execute(
+            preparedSchedule: preparedSchedule
+        )
 
         _ = try await updateStateTask.value
 
@@ -552,7 +555,8 @@ fileprivate extension AutomationSchedule {
                 schedule: self,
                 scheduleState: .idle,
                 scheduleStateChangeDate: date,
-                executionCount: 0
+                executionCount: 0,
+                triggerSessionID: UUID().uuidString
             )
         }
 

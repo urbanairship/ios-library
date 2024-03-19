@@ -10,6 +10,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private let assetManager: TestAssetManager = TestAssetManager()
     private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
     private let conditionsChangedNotifier: ScheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
+    private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
 
     private let displayAdapter: TestDisplayAdapter = TestDisplayAdapter()
     private let actionRunner: TestActionRunner = TestActionRunner()
@@ -20,7 +21,8 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         productID: UUID().uuidString,
         campaigns: .string(UUID().uuidString),
         contactID: UUID().uuidString,
-        reportingContext: .string(UUID().uuidString)
+        reportingContext: .string(UUID().uuidString),
+        triggerSessionID: UUID().uuidString
     )
 
     private var displayCoordinator: TestDisplayCoordinator!
@@ -36,7 +38,8 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
                 actions: .string("actions payload")
             ),
             displayAdapter: self.displayAdapter,
-            displayCoordinator: self.displayCoordinator
+            displayCoordinator: self.displayCoordinator,
+            analytics: analytics
         )
 
         self.executor = InAppMessageAutomationExecutor(
@@ -46,6 +49,10 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             scheduleConditionsChangedNotifier: conditionsChangedNotifier,
             actionRunner: actionRunner
         )
+
+        await self.analyticsFactory.setOnMake { _, _ in
+            return self.analytics
+        }
     }
 
     @MainActor
@@ -115,10 +122,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             data: .inAppMessage(preparedData.message)
         )
 
-        let analytics = TestInAppMessageAnalytics()
-        await self.analyticsFactory.setOnMake { _, _, _, _, _, _ in
-            return analytics
-        }
+
 
 
         _ = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
@@ -135,29 +139,13 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             return scene
         }
 
-
-        let analytics = TestInAppMessageAnalytics()
-        self.analyticsFactory.onMake = { [preparedData, preparedInfo] scheduleID, productID, contactID, message, campaigns, reportingContext in
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
-            XCTAssertEqual(preparedInfo.productID, productID)
-            XCTAssertEqual(preparedInfo.contactID, contactID)
-            XCTAssertEqual(campaigns, preparedInfo.campaigns)
-            XCTAssertEqual(reportingContext, preparedInfo.reportingContext)
-            XCTAssertEqual(message, preparedData!.message)
-            return analytics
-        }
-
-        self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
+        self.displayAdapter.onDisplay = { [preparedData] incomingScene, incomingAnalytics in
             XCTAssertTrue(scene === (incomingScene as? TestScene))
-            XCTAssertTrue(analytics === (incomingAnalytics as? TestInAppMessageAnalytics))
-            await incomingAnalytics.recordImpression()
+            XCTAssertTrue(preparedData!.analytics === incomingAnalytics)
             return .finished
         }
 
-        XCTAssertEqual(0, analytics.impressionsRecored)
         let result =  try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
-
-        XCTAssertEqual(1, analytics.impressionsRecored)
         XCTAssertTrue(self.displayAdapter.displayed)
         XCTAssertEqual(result, .finished)
     }
@@ -178,11 +166,6 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         )
         var preparedInfo = preparedInfo
         preparedInfo.experimentResult = experimentResult
-
-        let analytics = TestInAppMessageAnalytics()
-        self.analyticsFactory.onMake = {  _, _, _, _, _, _ in
-            return analytics
-        }
 
         let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
 
@@ -211,10 +194,6 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             return TestScene()
         }
 
-        self.analyticsFactory.onMake = { _, _, _, _, _, _ in
-            return TestInAppMessageAnalytics()
-        }
-
         self.displayAdapter.onDisplay = { _, _ in
             XCTAssertTrue(delegate.onWillDisplayCalled)
             XCTAssertFalse(delegate.onFinishedDisplayingCalled)
@@ -237,15 +216,12 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         let analytics = TestInAppMessageAnalytics()
-        self.analyticsFactory.onMake = { [preparedData, preparedInfo] scheduleID, productID, contactID, message, campaigns, reportingContext in
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
-            XCTAssertEqual(productID, preparedInfo.productID)
-            XCTAssertEqual(contactID, preparedInfo.contactID)
-            XCTAssertEqual(campaigns, preparedInfo.campaigns)
-            XCTAssertEqual(reportingContext, preparedInfo.reportingContext)
-            XCTAssertEqual(message, preparedData!.message)
+        self.analyticsFactory.onMake = { [preparedData, preparedInfo] incomingInfo, incomingMessage in
+            XCTAssertEqual(incomingInfo, preparedInfo)
+            XCTAssertEqual(incomingMessage, preparedData!.message)
             return analytics
         }
+
 
         self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
             throw AirshipErrors.error("Failed")
@@ -262,10 +238,6 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     func testExecuteNoScene() async throws  {
         self.sceneManager.onScene = { _ in
             throw AirshipErrors.error("Fail")
-        }
-
-        self.analyticsFactory.onMake = { _, _, _, _, _, _ in
-            return TestInAppMessageAnalytics()
         }
 
         self.displayAdapter.onDisplay = { _, _ in
@@ -289,20 +261,9 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             return scene
         }
 
-        let analytics = TestInAppMessageAnalytics()
-        self.analyticsFactory.onMake = { [preparedData, preparedInfo] scheduleID, productID, contactID, message, campaigns, reportingContext in
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
-            XCTAssertEqual(productID, preparedInfo.productID)
-            XCTAssertEqual(contactID, preparedInfo.contactID)
-            XCTAssertEqual(campaigns, preparedInfo.campaigns)
-            XCTAssertEqual(reportingContext, preparedInfo.reportingContext)
-            XCTAssertEqual(message, preparedData!.message)
-            return analytics
-        }
-
-        self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
+        self.displayAdapter.onDisplay = { [preparedData] incomingScene, incomingAnalytics in
             XCTAssertTrue(scene === (incomingScene as? TestScene))
-            XCTAssertTrue(analytics === (incomingAnalytics as? TestInAppMessageAnalytics))
+            XCTAssertTrue(preparedData!.analytics === incomingAnalytics)
             return .cancel
         }
 
@@ -368,27 +329,17 @@ fileprivate final class TestSceneManager: InAppMessageSceneManagerProtocol, @unc
 }
 
 
-fileprivate final class TestAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol, @unchecked Sendable {
-  
-    
-    @MainActor
-    var onMake: ((String, String?, String?, InAppMessage, AirshipJSON?, AirshipJSON?) -> InAppMessageAnalyticsProtocol)?
-
-
-    @MainActor
-    func setOnMake(onMake: @escaping @Sendable (String, String?, String?, InAppMessage, AirshipJSON?, AirshipJSON?) -> InAppMessageAnalyticsProtocol) {
-        self.onMake = onMake
+final class TestAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol, @unchecked Sendable {
+    func makeAnalytics(preparedScheduleInfo: PreparedScheduleInfo, message: InAppMessage) async -> any InAppMessageAnalyticsProtocol {
+        return await self.onMake!(preparedScheduleInfo, message)
     }
+
     @MainActor
-    func makeAnalytics(
-        scheduleID: String,
-        productID: String?,
-        contactID: String?,
-        message: InAppMessage,
-        campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?,
-        experimentResult: ExperimentResult?
-    ) -> InAppMessageAnalyticsProtocol {
-        return self.onMake!(scheduleID, productID, contactID, message, campaigns, reportingContext)
+    var onMake: ((PreparedScheduleInfo, InAppMessage) async -> InAppMessageAnalyticsProtocol)?
+
+
+    @MainActor
+    func setOnMake(onMake: @escaping @Sendable (PreparedScheduleInfo, InAppMessage) -> InAppMessageAnalyticsProtocol) {
+        self.onMake = onMake
     }
 }

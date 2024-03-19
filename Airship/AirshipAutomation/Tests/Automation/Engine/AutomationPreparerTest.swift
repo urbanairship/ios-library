@@ -29,7 +29,8 @@ final class AutomationPreparerTest: XCTestCase {
                 displayContent: .custom(.string("custom"))
             ),
             displayAdapter: TestDisplayAdapter(),
-            displayCoordinator: TestDisplayCoordinator()
+            displayCoordinator: TestDisplayCoordinator(),
+            analytics: TestInAppMessageAnalytics()
         )
 
         self.preparer = AutomationPreparer(
@@ -65,7 +66,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
         
         XCTAssertTrue(prepareResult.isInvalidate)
@@ -91,7 +93,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(prepareResult.isInvalidate)
@@ -127,7 +130,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(prepareResult.isSkipped)
@@ -165,7 +169,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(prepareResult.isSkipped)
@@ -204,7 +209,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(prepareResult.isPenalize)
@@ -242,7 +248,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(prepareResult.isCancelled)
@@ -280,7 +287,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let _ = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
     }
 
@@ -333,9 +341,12 @@ final class AutomationPreparerTest: XCTestCase {
             return preparedData
         }
 
+        let triggerSessionID = UUID().uuidString
+
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: triggerSessionID
         )
 
         guard case .prepared(let prepared) = result else {
@@ -346,6 +357,8 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertEqual(automationSchedule.identifier, prepared.info.scheduleID)
         XCTAssertEqual(automationSchedule.campaigns, prepared.info.campaigns)
         XCTAssertEqual(prepared.data, .inAppMessage(preparedData))
+        XCTAssertEqual(triggerSessionID, prepared.info.triggerSessionID)
+
         XCTAssertNotNil(prepared.frequencyChecker)
     }
 
@@ -414,7 +427,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(result.isSkipped)
@@ -469,7 +483,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -544,7 +559,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -625,7 +641,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -682,7 +699,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         XCTAssertTrue(result.isSkipped)
@@ -739,7 +757,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -816,7 +835,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -888,7 +908,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -945,7 +966,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {
@@ -1002,7 +1024,8 @@ final class AutomationPreparerTest: XCTestCase {
 
         let result = await self.preparer.prepare(
             schedule: automationSchedule,
-            triggerContext: triggerContext
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
         )
 
         guard case .prepared(let prepared) = result else {

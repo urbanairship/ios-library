@@ -100,10 +100,17 @@ class InAppEventContextTest: XCTestCase {
             buttonInfo: ThomasButtonInfo(identifier: UUID().uuidString)
         )
 
+        let displayContext  = InAppEventContext.Display(
+            triggerSessionID: UUID().uuidString,
+            isFirstDisplay: true,
+            isFirstDisplayTriggerSessionID: false
+        )
+
         let context = InAppEventContext.makeContext(
             reportingContext: reportingMetadata,
             experimentsResult: experimentResult,
-            layoutContext: thomasLayoutContext
+            layoutContext: thomasLayoutContext,
+            displayContext: displayContext
         )
 
         let expected = InAppEventContext(
@@ -124,6 +131,7 @@ class InAppEventContextTest: XCTestCase {
                 responseType: thomasLayoutContext.formInfo!.formResponseType
 
             ),
+            display: displayContext,
             reportingContext: reportingMetadata,
             experimentsReportingData: experimentResult.reportingMetadata
         )
@@ -135,7 +143,8 @@ class InAppEventContextTest: XCTestCase {
         let context = InAppEventContext.makeContext(
             reportingContext: nil,
             experimentsResult: nil,
-            layoutContext: nil
+            layoutContext: nil,
+            displayContext: nil
         )
 
         XCTAssertNil(context)

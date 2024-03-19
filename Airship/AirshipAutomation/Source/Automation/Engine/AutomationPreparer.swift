@@ -9,7 +9,8 @@ import AirshipCore
 protocol AutomationPreparerProtocol: Sendable {
     func prepare(
         schedule: AutomationSchedule,
-        triggerContext: AirshipTriggerContext?
+        triggerContext: AirshipTriggerContext?,
+        triggerSessionID: String
     ) async -> SchedulePrepareResult
 
     func cancelled(schedule: AutomationSchedule) async
@@ -75,7 +76,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
     func prepare(
         schedule: AutomationSchedule,
-        triggerContext: AirshipTriggerContext?
+        triggerContext: AirshipTriggerContext?,
+        triggerSessionID: String
     ) async -> SchedulePrepareResult {
         AirshipLogger.trace("Preparing \(schedule.identifier)")
 
@@ -143,10 +145,12 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
             let scheduleInfo = PreparedScheduleInfo(
                 scheduleID: schedule.identifier,
+                productID: schedule.productID,
                 campaigns: schedule.campaigns,
                 contactID: await deviceInfoProvider.stableContactID,
                 experimentResult: experimentResult,
-                reportingContext: schedule.reportingContext
+                reportingContext: schedule.reportingContext,
+                triggerSessionID: triggerSessionID
             )
 
             AirshipLogger.trace("Preparing data \(schedule.identifier)")

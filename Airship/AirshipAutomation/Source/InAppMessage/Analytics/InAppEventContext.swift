@@ -24,6 +24,19 @@ struct InAppEventContext: Encodable, Equatable, Sendable {
         }
     }
 
+    struct Display: Encodable, Equatable, Sendable {
+        var triggerSessionID: String
+        var isFirstDisplay: Bool
+        var isFirstDisplayTriggerSessionID: Bool
+
+
+        enum CodingKeys: String, CodingKey {
+            case triggerSessionID = "trigger_session_id"
+            case isFirstDisplay = "is_first_display"
+            case isFirstDisplayTriggerSessionID = "is_first_display_trigger_session"
+        }
+    }
+
     struct Form: Encodable, Equatable, Sendable {
         var identifier: String
         var submitted: Bool
@@ -57,6 +70,8 @@ struct InAppEventContext: Encodable, Equatable, Sendable {
     var pager: Pager?
     var button: Button?
     var form: Form?
+    var display: Display?
+
     var reportingContext: AirshipJSON?
     var experimentsReportingData: [AirshipJSON]?
 }
@@ -66,7 +81,8 @@ extension InAppEventContext {
     static func makeContext(
         reportingContext: AirshipJSON?,
         experimentsResult: ExperimentResult?,
-        layoutContext: ThomasLayoutContext?
+        layoutContext: ThomasLayoutContext?,
+        displayContext: InAppEventContext.Display?
     ) -> InAppEventContext? {
         let pager = makePagerContext(layoutContext: layoutContext)
         let button = makeButtonContext(layoutContext: layoutContext)
@@ -85,6 +101,7 @@ extension InAppEventContext {
                 pager: pager,
                 button: button,
                 form: form,
+                display: displayContext,
                 reportingContext: reportingContext,
                 experimentsReportingData: experimentsReportingData
             )

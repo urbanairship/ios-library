@@ -45,7 +45,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "message",
                 reportingContext: try! AirshipJSON.wrap("event.1"),
                 timestamp: timestamp,
-                contactId: "contact-id-1"
+                contactID: "contact-id-1"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.2",
@@ -54,7 +54,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "landingpage",
                 reportingContext: try! AirshipJSON.wrap("event.2"),
                 timestamp: timestamp,
-                contactId: "contact-id-2"
+                contactID: "contact-id-2"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.3",
@@ -63,7 +63,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "Scene",
                 reportingContext: try! AirshipJSON.wrap("event.3"),
                 timestamp: timestamp,
-                contactId: "contact-id-3"
+                contactID: "contact-id-3"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.4",
@@ -72,7 +72,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "Survey",
                 reportingContext: try! AirshipJSON.wrap("event.4"),
                 timestamp: timestamp,
-                contactId: "contact-id-4"
+                contactID: "contact-id-4"
             )
         ]
 
@@ -101,7 +101,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "message",
                 reportingContext: try! AirshipJSON.wrap("event.1"),
                 timestamp: timestamp,
-                contactId: "contact-id-1"
+                contactID: "contact-id-1"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.2",
@@ -110,7 +110,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "landingpage",
                 reportingContext: try! AirshipJSON.wrap("event.2"),
                 timestamp: timestamp,
-                contactId: "contact-id-2"
+                contactID: "contact-id-2"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.3",
@@ -119,7 +119,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "Scene",
                 reportingContext: try! AirshipJSON.wrap("event.3"),
                 timestamp: timestamp,
-                contactId: "contact-id-3"
+                contactID: "contact-id-3"
             ),
             AirshipMeteredUsageEvent(
                 eventID: "event.4",
@@ -128,7 +128,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "Survey",
                 reportingContext: try! AirshipJSON.wrap("event.4"),
                 timestamp: timestamp,
-                contactId: "contact-id-4"
+                contactID: "contact-id-4"
             )
         ]
 
@@ -210,7 +210,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "message",
                 reportingContext: try! AirshipJSON.wrap("event.1"),
                 timestamp: timestamp,
-                contactId: "contact-id-1"
+                contactID: "contact-id-1"
             ).withDisabledAnalytics(),
             AirshipMeteredUsageEvent(
                 eventID: "event.2",
@@ -219,7 +219,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "landingpage",
                 reportingContext: try! AirshipJSON.wrap("event.2"),
                 timestamp: timestamp,
-                contactId: "contact-id-2"
+                contactID: "contact-id-2"
             ).withDisabledAnalytics(),
             AirshipMeteredUsageEvent(
                 eventID: "event.3",
@@ -228,7 +228,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "Scene",
                 reportingContext: try! AirshipJSON.wrap("event.3"),
                 timestamp: timestamp,
-                contactId: "contact-id-3"
+                contactID: "contact-id-3"
             ).withDisabledAnalytics(),
             AirshipMeteredUsageEvent(
                 eventID: "event.4",
@@ -237,7 +237,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 product: "Survey",
                 reportingContext: try! AirshipJSON.wrap("event.4"),
                 timestamp: timestamp,
-                contactId: "contact-id-4"
+                contactID: "contact-id-4"
             ).withDisabledAnalytics()
         ]
 

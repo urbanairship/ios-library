@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="UAScheduleEntity" representedClassName="UAScheduleEntity" syncable="YES">
+        <attribute name="associatedData" optional="YES" attributeType="Binary"/>
+        <attribute name="executionCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="group" optional="YES" attributeType="String"/>
+        <attribute name="identifier" attributeType="String"/>
+        <attribute name="preparedScheduleInfo" optional="YES" attributeType="Binary"/>
+        <attribute name="schedule" attributeType="Binary"/>
+        <attribute name="scheduleState" attributeType="String"/>
+        <attribute name="scheduleStateChangeDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="triggerInfo" optional="YES" attributeType="Binary"/>
+        <attribute name="triggerSessionID" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="UATriggerEntity" representedClassName="UATriggerEntity" syncable="YES">
+        <attribute name="scheduleID" optional="YES" attributeType="String"/>
+        <attribute name="state" optional="YES" attributeType="Binary"/>
+        <attribute name="triggerID" optional="YES" attributeType="String"/>
+    </entity>
+</model>

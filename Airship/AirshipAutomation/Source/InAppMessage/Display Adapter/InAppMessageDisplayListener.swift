@@ -10,7 +10,6 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
     private let analytics: InAppMessageAnalyticsProtocol
     private let timer: ActiveTimerProtocol
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
-    private var isFirstDisplay: Bool = true
 
     init(
         analytics: InAppMessageAnalyticsProtocol,
@@ -23,13 +22,6 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
     }
 
     func onAppear() {
-        guard isFirstDisplay else { return }
-        self.isFirstDisplay = false
-        
-        Task {
-            await analytics.recordImpression()
-        }
-        
         timer.start()
 
         analytics.recordEvent(

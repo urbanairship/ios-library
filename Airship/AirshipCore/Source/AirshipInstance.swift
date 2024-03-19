@@ -142,7 +142,9 @@ final class AirshipInstance: AirshipInstanceProtocol {
             config: self.config,
             dataStore: dataStore,
             channel: channel,
-            privacyManager: privacyManager)
+            contact: contact,
+            privacyManager: privacyManager
+        )
 
         #if !os(tvOS) && !os(watchOS)
         self.channelCapture = ChannelCapture(

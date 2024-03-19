@@ -87,7 +87,10 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     }
 
     @MainActor
-    func execute(data: PreparedInAppMessageData, preparedScheduleInfo: PreparedScheduleInfo) async throws -> ScheduleExecuteResult {
+    func execute(
+        data: PreparedInAppMessageData,
+        preparedScheduleInfo: PreparedScheduleInfo
+    ) async throws -> ScheduleExecuteResult {
         let scene = try self.sceneManager.scene(forMessage: data.message)
 
         // Display
@@ -96,16 +99,12 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
              scheduleID: preparedScheduleInfo.scheduleID
         )
         data.displayCoordinator.messageWillDisplay(data.message)
-        let analytics = analyticsFactory.makeAnalytics(
-            message: data.message,
-            preparedScheduleInfo: preparedScheduleInfo
-        )
 
         var result: ScheduleExecuteResult = .finished
         
         let experimentResult = preparedScheduleInfo.experimentResult
         if let experimentResult = experimentResult, experimentResult.isMatch {
-            analytics.recordEvent(
+            data.analytics.recordEvent(
                 InAppResolutionEvent.control(experimentResult: experimentResult),
                 layoutContext: nil
             )
@@ -113,7 +112,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             do {
                 AirshipLogger.info("Displaying message \(preparedScheduleInfo.scheduleID)")
 
-                let displayResult = try await data.displayAdapter.display(scene: scene, analytics: analytics)
+                let displayResult = try await data.displayAdapter.display(scene: scene, analytics: data.analytics)
                 switch (displayResult) {
                 case .cancel:
                     result = .cancel
@@ -155,7 +154,11 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             return .retry
         }
 
-        let analytics = self.analyticsFactory.makeAnalytics(message: message, preparedScheduleInfo: preparedScheduleInfo)
+        let analytics = await self.analyticsFactory.makeAnalytics(
+            preparedScheduleInfo: preparedScheduleInfo,
+            message: message
+        )
+
         analytics.recordEvent(
             InAppResolutionEvent.interrupted(),
             layoutContext: nil

@@ -9,6 +9,8 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     private let displayCoordinatorManager: TestDisplayCoordinatorManager = TestDisplayCoordinatorManager()
     private let displayAdapterFactory: TestDisplayAdapterFactory = TestDisplayAdapterFactory()
     private let assetManager: TestAssetManager = TestAssetManager()
+    private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
+    private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
 
     private var preparer: InAppMessageAutomationPreparer!
     private let message: InAppMessage = InAppMessage(
@@ -20,14 +22,19 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         scheduleID: UUID().uuidString,
         campaigns: .string("campigns"),
         contactID: UUID().uuidString,
-        experimentResult: nil
+        experimentResult: nil,
+        triggerSessionID: UUID().uuidString
     )
 
     override func setUp() async throws {
+        await analyticsFactory.setOnMake { [analytics] _, _ in
+            return analytics
+        }
         self.preparer = InAppMessageAutomationPreparer(
             assetManager: assetManager,
             displayCoordinatorManager: displayCoordinatorManager,
-            displayAdapterFactory: displayAdapterFactory
+            displayAdapterFactory: displayAdapterFactory,
+            analyticsFactory: analyticsFactory
         )
     }
 

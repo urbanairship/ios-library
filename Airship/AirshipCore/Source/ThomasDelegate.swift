@@ -8,7 +8,7 @@ public protocol ThomasDelegate: Sendable {
 
     /// Called whenever the view appears
     @MainActor
-    func onAppear()
+    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool)
 
     /// Called when a form is submitted
     /// - Parameters:

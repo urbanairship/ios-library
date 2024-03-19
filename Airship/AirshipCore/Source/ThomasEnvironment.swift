@@ -51,8 +51,8 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func onAppear() {
-        self.delegate.onAppear()
+    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool) {
+        self.delegate.onVisbilityChanged(isVisible: isVisible, isForegrounded: isForegrounded)
     }
 
     @MainActor

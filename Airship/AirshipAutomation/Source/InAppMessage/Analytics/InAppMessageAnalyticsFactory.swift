@@ -7,65 +7,42 @@ import AirshipCore
 #endif
 
 protocol InAppMessageAnalyticsFactoryProtocol: Sendable {
-    @MainActor
     func makeAnalytics(
-        scheduleID: String,
-        productID: String?,
-        contactID: String?,
-        message: InAppMessage,
-        campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?,
-        experimentResult: ExperimentResult?
-    ) -> InAppMessageAnalyticsProtocol
+        preparedScheduleInfo: PreparedScheduleInfo,
+        message: InAppMessage
+    ) async -> InAppMessageAnalyticsProtocol
 }
 
 struct InAppMessageAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol {
-    let eventRecorder: InAppEventRecorder
-    let impressionRecorder: AirshipMeteredUsageProtocol
+    private let eventRecorder: InAppEventRecorder
+    private let displayHistoryStore: MessageDisplayHistoryStoreProtocol
+    private let displayImpressionRuleProvider: InAppDisplayImpressionRuleProvider
 
-    init(eventRecorder: InAppEventRecorder, meteredUsage: AirshipMeteredUsageProtocol) {
+    init(
+        eventRecorder: InAppEventRecorder,
+        displayHistoryStore: MessageDisplayHistoryStoreProtocol,
+        displayImpressionRuleProvider: InAppDisplayImpressionRuleProvider
+    ) {
         self.eventRecorder = eventRecorder
-        self.impressionRecorder = meteredUsage
+        self.displayHistoryStore = displayHistoryStore
+        self.displayImpressionRuleProvider = displayImpressionRuleProvider
     }
 
-    @MainActor
     func makeAnalytics(
-        scheduleID: String,
-        productID: String?,
-        contactID: String?,
-        message: InAppMessage,
-        campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?,
-        experimentResult: ExperimentResult?
-    ) -> InAppMessageAnalyticsProtocol {
+        preparedScheduleInfo: PreparedScheduleInfo,
+        message: InAppMessage
+    ) async -> InAppMessageAnalyticsProtocol {
         return InAppMessageAnalytics(
-            scheduleID: scheduleID,
-            productID: productID,
-            contactID: contactID,
+            preparedScheduleInfo: preparedScheduleInfo,
             message: message,
-            campaigns: campaigns,
-            reportingMetadata: reportingContext,
-            experimentResult: experimentResult,
+            displayImpressionRule: displayImpressionRuleProvider.impressionRules(
+                for: message
+            ),
             eventRecorder: eventRecorder,
-            impressionRecorder: impressionRecorder
-        )
-    }
-}
-
-extension InAppMessageAnalyticsFactoryProtocol {
-    @MainActor
-    func makeAnalytics(
-        message: InAppMessage,
-        preparedScheduleInfo: PreparedScheduleInfo
-    ) -> InAppMessageAnalyticsProtocol {
-        return self.makeAnalytics(
-            scheduleID: preparedScheduleInfo.scheduleID,
-            productID: preparedScheduleInfo.productID,
-            contactID: preparedScheduleInfo.contactID,
-            message: message,
-            campaigns: preparedScheduleInfo.campaigns,
-            reportingContext: preparedScheduleInfo.reportingContext,
-            experimentResult: preparedScheduleInfo.experimentResult
+            historyStore: displayHistoryStore,
+            displayHistory: await self.displayHistoryStore.get(
+                scheduleID: preparedScheduleInfo.scheduleID
+            )
         )
     }
 }

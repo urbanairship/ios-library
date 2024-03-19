@@ -10,10 +10,10 @@ struct RootView<Content: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     #endif
 
-    @State private var currentOrientation: Orientation =
-        RootView.resolveOrientation()
+    @State private var currentOrientation: Orientation = RootView.resolveOrientation()
+
+    @State private var isForeground: Bool = true
     @State private var isVisible: Bool = false
-    @State private var displayedCalled: Bool = false
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
 
@@ -28,6 +28,7 @@ struct RootView<Content: View>: View {
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
         self.content = content
+        self.isForeground = AppStateTracker.shared.isForegrounded
     }
 
     @ViewBuilder
@@ -40,12 +41,22 @@ struct RootView<Content: View>: View {
         .environment(\.orientation, currentOrientation)
         .environment(\.windowSize, resolveWindowSize())
         .environment(\.isVisible, isVisible)
+        .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
+            self.isForeground = true
+            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToBackground)) { (_) in
+            self.isForeground = false
+            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+        }
         .onAppear {
             self.currentOrientation = RootView.resolveOrientation()
             self.isVisible = true
+            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
         }
         .onDisappear {
             self.isVisible = false
+            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
         }
         #if os(iOS)
         .onReceive(

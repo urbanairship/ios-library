@@ -7,6 +7,7 @@ import Combine
 @testable import AirshipCore
 
 actor TestAutomationEngine: AutomationEngineProtocol {
+    
     @MainActor
     var isPaused: Bool = false
     @MainActor

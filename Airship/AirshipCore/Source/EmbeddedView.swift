@@ -126,9 +126,6 @@ struct EmbeddedView: View {
             .border(placement.border)
             .margin(placement.margin)
             .constraints(contentConstraints)
-            .onAppear {
-                self.thomasEnvironment.onAppear()
-            }
     }
 
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> EmbeddedPlacement {

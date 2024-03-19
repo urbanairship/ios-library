@@ -22,6 +22,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var contactID: String?
     var experimentResult: ExperimentResult?
     var reportingContext: AirshipJSON?
+    var triggerSessionID: String
 
     init(
         scheduleID: String,
@@ -29,7 +30,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         campaigns: AirshipJSON? = nil,
         contactID: String? = nil,
         experimentResult: ExperimentResult? = nil,
-        reportingContext: AirshipJSON? = nil
+        reportingContext: AirshipJSON? = nil,
+        triggerSessionID: String
     ) {
         self.scheduleID = scheduleID
         self.productID = productID
@@ -37,6 +39,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.contactID = contactID
         self.experimentResult = experimentResult
         self.reportingContext = reportingContext
+        self.triggerSessionID = triggerSessionID
     }
 }
 

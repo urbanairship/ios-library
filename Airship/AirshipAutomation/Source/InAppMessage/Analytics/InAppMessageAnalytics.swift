@@ -6,9 +6,12 @@ import Foundation
 import AirshipCore
 #endif
 
-protocol InAppMessageAnalyticsProtocol: Sendable {
-    func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?)
-    func recordImpression() async
+protocol InAppMessageAnalyticsProtocol: AnyObject, Sendable {
+    @MainActor
+    func recordEvent(
+        _ event: InAppEvent,
+        layoutContext: ThomasLayoutContext?
+    )
 }
 
 final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
@@ -26,52 +29,104 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
 }
 
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
+    private let preparedScheduleInfo: PreparedScheduleInfo
     private let messageID: InAppEventMessageID
     private let source: InAppEventSource
     private let renderedLocale: AirshipJSON?
-    private let reportingMetadata: AirshipJSON?
-    private let experimentResult: ExperimentResult?
     private let eventRecorder: InAppEventRecorderProtocol
-    private let impressionRecorder: AirshipMeteredUsageProtocol
     private let isReportingEnabled: Bool
-    private let productID: String?
-    private let contactID: String?
     private let date: AirshipDateProtocol
 
+    private let historyStore: MessageDisplayHistoryStoreProtocol
+    private let displayImpressionRule: InAppDisplayImpressionRule
+
+    private let displayHistory: AirshipMainActorValue<MessageDisplayHistory>
+    private let displayContext: AirshipMainActorValue<InAppEventContext.Display>
+
     init(
-        scheduleID: String,
-        productID: String?,
-        contactID: String?,
+        preparedScheduleInfo: PreparedScheduleInfo,
         message: InAppMessage,
-        campaigns: AirshipJSON?,
-        reportingMetadata: AirshipJSON?,
-        experimentResult: ExperimentResult?,
+        displayImpressionRule: InAppDisplayImpressionRule,
         eventRecorder: InAppEventRecorderProtocol,
-        impressionRecorder: AirshipMeteredUsageProtocol,
+        historyStore: MessageDisplayHistoryStoreProtocol,
+        displayHistory: MessageDisplayHistory,
         date: AirshipDateProtocol = AirshipDate.shared
     ) {
-        self.messageID = Self.makeMessageID(message: message, scheduleID: scheduleID, campaigns: campaigns)
+        self.preparedScheduleInfo = preparedScheduleInfo
+        self.messageID = Self.makeMessageID(
+            message: message,
+            scheduleID: preparedScheduleInfo.scheduleID,
+            campaigns: preparedScheduleInfo.campaigns
+        )
         self.source = Self.makeEventSource(message: message)
-        self.productID = productID
-        self.contactID = contactID
         self.renderedLocale = message.renderedLocale
-        self.reportingMetadata = reportingMetadata
-        self.experimentResult = experimentResult
         self.eventRecorder = eventRecorder
-        self.impressionRecorder = impressionRecorder
         self.isReportingEnabled = message.isReportingEnabled ?? true
+        self.displayImpressionRule = displayImpressionRule
+        self.historyStore = historyStore
         self.date = date
+
+        self.displayHistory = AirshipMainActorValue(displayHistory)
+
+        self.displayContext = AirshipMainActorValue(
+            InAppEventContext.Display(
+                triggerSessionID: preparedScheduleInfo.triggerSessionID,
+                isFirstDisplay: displayHistory.lastDisplay == nil,
+                isFirstDisplayTriggerSessionID: preparedScheduleInfo.triggerSessionID != displayHistory.lastDisplay?.triggerSessionID
+            )
+        )
     }
 
-    func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
+    func recordEvent(
+        _ event: InAppEvent,
+        layoutContext: ThomasLayoutContext?
+    ) {
+        let now = self.date.now
+
+        if event is InAppDisplayEvent {
+            if let lastDisplay = displayHistory.value.lastDisplay {
+                if self.preparedScheduleInfo.triggerSessionID == lastDisplay.triggerSessionID {
+                    self.displayContext.update { value in
+                        value.isFirstDisplay = false
+                        value.isFirstDisplayTriggerSessionID = false
+                    }
+                } else {
+                    self.displayContext.update { value in
+                        value.isFirstDisplay = false
+                    }
+                }
+            }
+
+            if (recordImpression(date: now)) {
+                self.displayHistory.update { value in
+                    value.lastImpression = MessageDisplayHistory.LastImpression(
+                        date: now,
+                        triggerSessionID: self.preparedScheduleInfo.triggerSessionID
+                    )
+                }
+            }
+
+
+            self.displayHistory.update { value in
+                value.lastDisplay = MessageDisplayHistory.LastDisplay(
+                    triggerSessionID: self.preparedScheduleInfo.triggerSessionID
+                )
+            }
+
+
+            self.historyStore.set(displayHistory.value, scheduleID: preparedScheduleInfo.scheduleID)
+        }
+
+
         guard self.isReportingEnabled else { return }
 
         let data = InAppEventData(
             event: event, 
             context: InAppEventContext.makeContext(
-                reportingContext: self.reportingMetadata,
-                experimentsResult: self.experimentResult,
-                layoutContext: layoutContext
+                reportingContext: self.preparedScheduleInfo.reportingContext,
+                experimentsResult: self.preparedScheduleInfo.experimentResult,
+                layoutContext: layoutContext,
+                displayContext: self.displayContext.value
             ),
             source: self.source,
             messageID: self.messageID,
@@ -80,24 +135,41 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
 
         self.eventRecorder.recordEvent(inAppEventData: data)
     }
-    
-    func recordImpression() async {
-        guard let productID = self.productID else { return }
-        
-        let impression = AirshipMeteredUsageEvent(
+
+    @MainActor
+    var shouldRecordImpression: Bool {
+        guard
+            let lastImpression = displayHistory.value.lastImpression,
+            lastImpression.triggerSessionID == self.preparedScheduleInfo.triggerSessionID
+        else {
+            return true
+        }
+
+        switch (self.displayImpressionRule) {
+        case .interval(let interval):
+            return self.date.now.timeIntervalSince(lastImpression.date) >= interval
+        case .once:
+            return false
+        }
+    }
+
+    @MainActor
+    private func recordImpression(date: Date) -> Bool {
+        guard shouldRecordImpression else { return false }
+        guard let productID = self.preparedScheduleInfo.productID else { return false }
+
+        let event = AirshipMeteredUsageEvent(
             eventID: UUID().uuidString,
             entityID: self.messageID.identifier,
             usageType: .inAppExperienceImpression,
             product: productID,
-            reportingContext: self.reportingMetadata,
-            timestamp: date.now,
-            contactId: contactID)
-        
-        do {
-            try await self.impressionRecorder.addEvent(impression)
-        } catch {
-            AirshipLogger.error("Failed to record impression: \(error)")
-        }
+            reportingContext: self.preparedScheduleInfo.reportingContext,
+            timestamp: date,
+            contactID: self.preparedScheduleInfo.contactID
+        )
+        self.eventRecorder.recordImpressionEvent(event)
+
+        return true
     }
 
     private static func makeMessageID(

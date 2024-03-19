@@ -28,42 +28,34 @@ public protocol AppStateTrackerProtocol: Sendable {
 public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecked Sendable {
 
 
-    @objc
     public static let didBecomeActiveNotification = NSNotification.Name(
         "com.urbanairship.application_did_become_active"
     )
 
-    @objc
     public static let willEnterForegroundNotification = NSNotification.Name(
         "com.urbanairship.application_will_enter_foreground"
     )
 
-    @objc
     public static let didEnterBackgroundNotification = NSNotification.Name(
         "com.urbanairship.application_did_enter_background"
     )
 
-    @objc
     public static let willResignActiveNotification = NSNotification.Name(
         "com.urbanairship.application_will_resign_active"
     )
 
-    @objc
     public static let willTerminateNotification = NSNotification.Name(
         "com.urbanairship.application_will_terminate"
     )
 
-    @objc
     public static let didTransitionToBackground = NSNotification.Name(
         "com.urbanairship.application_did_transition_to_background"
     )
 
-    @objc
     public static let didTransitionToForeground = NSNotification.Name(
         "com.urbanairship.application_did_transition_to_foreground"
     )
 
-    @objc
     @MainActor
     public static let shared: AppStateTracker = AppStateTracker()
 
@@ -72,16 +64,14 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
     private let stateValue: AirshipMainActorValue<ApplicationState>
 
     @MainActor
-    private var isForegrounded: Bool? = nil
-    
-    @objc(isForgrounded)
+    private var _isForegrounded: Bool? = nil
+
     @MainActor
-    public var _isForegrounded: Bool {
+    public var isForegrounded: Bool {
         ensureForegroundSet()
-        return isForegrounded == true
+        return _isForegrounded == true
     }
 
-    @objc
     @MainActor
     public var state: ApplicationState {
         return stateValue.value
@@ -111,8 +101,8 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
             switch(event) {
             case .didBecomeActive:
                 self.postNotificaition(name: AppStateTracker.didBecomeActiveNotification)
-                if self.isForegrounded == false {
-                    self.isForegrounded = true
+                if self._isForegrounded == false {
+                    self._isForegrounded = true
                     self.postNotificaition(name: AppStateTracker.didTransitionToForeground)
                 }
                 
@@ -124,8 +114,8 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
                 
             case .didEnterBackground:
                 self.postNotificaition(name: AppStateTracker.didEnterBackgroundNotification)
-                if self.isForegrounded == true {
-                    self.isForegrounded = false
+                if self._isForegrounded == true {
+                    self._isForegrounded = false
                     self.postNotificaition(name: AppStateTracker.didTransitionToBackground)
                 }
                 
@@ -144,8 +134,8 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
     
     @MainActor
     private func ensureForegroundSet() {
-        if isForegrounded == nil {
-            isForegrounded = self.state == .active
+        if _isForegrounded == nil {
+            _isForegrounded = self.state == .active
         }
     }
 

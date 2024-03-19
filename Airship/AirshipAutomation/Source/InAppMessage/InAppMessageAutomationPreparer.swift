@@ -11,6 +11,7 @@ struct PreparedInAppMessageData: Sendable {
     var message: InAppMessage
     var displayAdapter: DisplayAdapter
     var displayCoordinator: DisplayCoordinator
+    var analytics: InAppMessageAnalyticsProtocol
 }
 
 final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
@@ -20,6 +21,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     private let displayCoordinatorManager: DisplayCoordinatorManagerProtocol
     private let displayAdapterFactory: DisplayAdapterFactoryProtocol
     private let assetManager: AssetCacheManagerProtocol
+    private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
 
     @MainActor
     public var displayInterval: TimeInterval {
@@ -34,11 +36,13 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     init(
         assetManager: AssetCacheManagerProtocol,
         displayCoordinatorManager: DisplayCoordinatorManagerProtocol,
-        displayAdapterFactory: DisplayAdapterFactoryProtocol = DisplayAdapterFactory()
+        displayAdapterFactory: DisplayAdapterFactoryProtocol = DisplayAdapterFactory(),
+        analyticsFactory: InAppMessageAnalyticsFactoryProtocol
     ) {
         self.assetManager = assetManager
         self.displayCoordinatorManager = displayCoordinatorManager
         self.displayAdapterFactory = displayAdapterFactory
+        self.analyticsFactory = analyticsFactory
     }
 
     func prepare(
@@ -60,7 +64,11 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         return PreparedInAppMessageData(
             message: data,
             displayAdapter: displayAdapter,
-            displayCoordinator: displayCoordinator
+            displayCoordinator: displayCoordinator,
+            analytics: await self.analyticsFactory.makeAnalytics(
+                preparedScheduleInfo: preparedScheduleInfo,
+                message: data
+            )
         )
     }
 
