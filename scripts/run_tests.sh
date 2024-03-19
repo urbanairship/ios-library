@@ -13,4 +13,4 @@ xcrun xcodebuild \
 -workspace "${ROOT_PATH}/Airship.xcworkspace" \
 -scheme $1 \
 -derivedDataPath $2 \
-test
+test | xcbeautify --renderer $XCBEAUTIY_RENDERER
