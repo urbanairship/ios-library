@@ -65,6 +65,7 @@ struct InAppEventContext: Encodable, Equatable, Sendable {
         case form
         case reportingContext = "reporting_context"
         case experimentsReportingData = "experiments"
+        case display
     }
 
     var pager: Pager?
@@ -95,7 +96,8 @@ extension InAppEventContext {
             button == nil,
             form == nil,
             reportingContext == nil,
-            experimentsReportingData?.isEmpty != false
+            experimentsReportingData?.isEmpty != false,
+            displayContext == nil
         else {
             return InAppEventContext(
                 pager: pager,

@@ -34,6 +34,11 @@ class InAppEventContextTest: XCTestCase {
                 submitted: true,
                 type: "form type"
             ),
+            display: .init(
+                triggerSessionID: "trigger session id",
+                isFirstDisplay: false,
+                isFirstDisplayTriggerSessionID: true
+            ),
             reportingContext: .string("reporting context"),
             experimentsReportingData: [
                 .string("experiment result 1"),
@@ -62,7 +67,12 @@ class InAppEventContextTest: XCTestCase {
               "experiments":[
                  "experiment result 1",
                  "experiment result 2"
-              ]
+              ],
+              "display":{
+                 "trigger_session_id":"trigger session id",
+                 "is_first_display":false,
+                 "is_first_display_trigger_session":true
+              }
            }
         """
 
