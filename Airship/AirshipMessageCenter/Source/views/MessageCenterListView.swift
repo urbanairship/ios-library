@@ -156,16 +156,11 @@ public struct MessageCenterListView: View {
 
             if !self.viewModel.messagesLoaded {
                 ProgressView()
+                    .appearanceTint()
                     .opacity(1.0 - self.listOpacity)
             } else if self.messageIDs.isEmpty {
                 VStack {
-                    Button {
-                        Task {
-                            await self.viewModel.refreshList()
-                        }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
+                    refreshButton()
                     Text("ua_empty_message_list".messageCenterlocalizedString)
                         .opacity(1.0 - self.listOpacity)
                 }
@@ -280,19 +275,27 @@ public struct MessageCenterListView: View {
 
     private func editButton() -> some View {
         let isEditMode = self.editMode?.wrappedValue.isEditing ?? false
-        let color =
-        isEditMode
-        ? theme.cancelButtonTitleColor : (theme.editButtonTitleColor != nil)
-        ? theme.cancelButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cancelButtonTitleColorDark) :
-        theme.editButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.editButtonTitleColorDark)
 
-        return EditButton().foregroundColor(color).accessibilityHint("ua_edit_messages_description".messageCenterlocalizedString)
+        var color: Color? = nil
+
+        if isEditMode {
+            color = theme.cancelButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cancelButtonTitleColorDark)
+        } else {
+            color = theme.editButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.editButtonTitleColorDark)
+        }
+
+        return EditButton()
+            .foregroundColor(color)
+            .accessibilityHint("ua_edit_messages_description".messageCenterlocalizedString)
     }
 
     @ViewBuilder
     private func refreshButton() -> some View {
+        let refreshColor = theme.refreshTintColor?.adaptiveColor(for: colorScheme, darkVariation: theme.refreshTintColorDark)
+
         if isRefreshing {
             ProgressView()
+                .appearanceTint()
         } else {
             Button {
                 Task {
@@ -302,6 +305,7 @@ public struct MessageCenterListView: View {
                 }
             } label: {
                 Image(systemName: "arrow.clockwise")
+                    .foregroundColor(refreshColor)
             }
             .disabled(isRefreshing)
             .opacity(isRefreshing ? 0 : 1)

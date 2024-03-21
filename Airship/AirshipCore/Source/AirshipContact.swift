@@ -330,6 +330,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     @objc
     public func reset() {
         guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.trace("Contacts are disabled, ignoring reset request")
             return
         }
         self.addOperation(.reset)
@@ -342,6 +343,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     @objc
     public func notifyRemoteLogin() {
         guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.trace("Contacts are disabled, ignoring notifyRemoteLogin request")
             return
         }
         self.addOperation(.verify(self.date.now, required: true))
@@ -353,6 +355,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     public func editTagGroups() -> TagGroupsEditor {
         return TagGroupsEditor { updates in
             guard !updates.isEmpty else {
+                AirshipLogger.trace("Empty tag group updates, ignoring")
                 return
             }
 
@@ -384,6 +387,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
     public func editAttributes() -> AttributesEditor {
         return AttributesEditor { updates in
             guard !updates.isEmpty else {
+                AirshipLogger.trace("Empty attribute updates, ignoring")
                 return
             }
 
@@ -684,6 +688,7 @@ public final class AirshipContact: NSObject, AirshipComponent, AirshipContactPro
 
     private func addOperation(_ operation: ContactOperation) {
         self.serialQueue.enqueue {
+            AirshipLogger.trace("Adding contact operation \(operation.type)")
             await self.contactManager.addOperation(operation)
         }
     }

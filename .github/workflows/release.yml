@@ -26,36 +26,6 @@ jobs:
           job_name: "iOS SDK Release Started :apple_og:"
           url: ${{ secrets.SLACK_WEBHOOK }}
 
-  build-package:
-    needs: check-version
-    runs-on: macos-13-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Coreutils
-        run: brew install coreutils
-      - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
-          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-      - name: Build SDK
-        run: make build-package XCODE=14.3.1
-      - name: Upload zip distribution
-        uses: actions/upload-artifact@v3
-        with:
-          name: airship
-          path: ./build/Airship.zip
-      - name: Upload zip distribution
-        uses: actions/upload-artifact@v3
-        with:
-          name: airship-carthage
-          path: ./build/Airship.xcframeworks.zip
-      - name: Upload Documentation
-        uses: actions/upload-artifact@v3
-        with:
-          name: docs
-          path: ./build/Documentation
-
   build-package-xcode15:
     needs: check-version
     runs-on: macos-13-xlarge
@@ -70,15 +40,15 @@ jobs:
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - name: Build SDK
         run: make build-package
-      - name: Upload zip distribution
+      - name: Upload zip distribution for Xcode 15
         uses: actions/upload-artifact@v3
         with:
-          name: airship-xcode15
+          name: Airship-Xcode15.zip
           path: ./build/Airship.zip
-      - name: Upload zip distribution
+      - name: Upload Xcode 15 Carthage zip distribution
         uses: actions/upload-artifact@v3
         with:
-          name: airship-carthage-xcode15
+          name: Airship-Xcode15.xcframeworks.zip
           path: ./build/Airship.xcframeworks.zip
       - name: Upload Documentation
         uses: actions/upload-artifact@v3
@@ -114,7 +84,7 @@ jobs:
     permissions:
       contents: write
     runs-on: macos-13-xlarge
-    needs: [run-tests, build-package, build-samples, build-package-xcode15]
+    needs: [run-tests, build-samples, build-package-xcode15]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -130,29 +100,18 @@ jobs:
           NOTES="${NOTES//$'\n'/%0A}"
           NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
-      - name: Download zip distribution
-        uses: actions/download-artifact@v3
-        with:
-          name: airship
-          path: ./build
-      - name: Download Carthage zip distribution
-        uses: actions/download-artifact@v3
-        with:
-          name: airship-carthage-xcode15
-          path: ./build
       - name: Download Xcode15 zip distribution
         uses: actions/download-artifact@v3
         with:
-          name: airship-xcode15
-          path: ./buildXcode15
+          name: Airship-Xcode15.zip
       - name: Download Xcode15 Carthage zip distribution
         uses: actions/download-artifact@v3
         with:
-          name: airship-carthage
-          path: ./buildXcode15
+          name: Airship-Xcode15.xcframeworks.zip
+
       - name: Github Release
         id: create_release
-        uses: actions/create-release@v1.1.4
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -161,42 +120,10 @@ jobs:
           body: ${{ steps.get_release_notes.outputs.NOTES }}
           draft: false
           prerelease: false
-      - name: Upload zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/Airship.zip
-          asset_name: Airship.zip
-          asset_content_type: application/zip
-      - name: Upload carthage zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/Airship.xcframeworks.zip
-          asset_name: Airship.xcframeworks.zip
-          asset_content_type: application/zip
-      - name: Upload Xcode15 zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./buildXcode15/Airship.zip
-          asset_name: Airship-Xcode15.zip
-          asset_content_type: application/zip
-      - name: Upload Xcode 15 carthage zip distribution
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./buildXcode15/Airship.xcframeworks.zip
-          asset_name: Airship-Xcode15.xcframeworks.zip
-          asset_content_type: application/zip
+          files: |
+              Airship-Xcode15.zip
+              Airship-Xcode15.xcframeworks.zip
+
       - name: Update prebuilt Xcode 14 repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
@@ -215,7 +142,7 @@ jobs:
 
   deploy-pods:
     runs-on: macos-13-xlarge
-    needs: [run-tests, build-package, build-samples]
+    needs: [run-tests, build-package-xcode15, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -236,7 +163,7 @@ jobs:
 
   deploy-docs:
     runs-on: macos-13-xlarge
-    needs: [run-tests, build-package, build-samples]
+    needs: [run-tests, build-package-xcode15, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
