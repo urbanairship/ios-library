@@ -3,11 +3,11 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
-## Version 17.9.1, March 19, 2024
-Patch release with a bug fix for edit button theming in Message Center.
+## Version 17.9.1, March 21, 2024
+Patch release with a bug fix for edit and refresh button theming in Message Center.
 
 ### Changes
-- Fixes color theme assignment for the edit button in Message Center.
+- Fixes color theme assignment for the edit and refresh button in Message Center.
 
 ## Version 17.9.0, March 14, 2024
 Minor release with several bug fixes and stability improvements.
