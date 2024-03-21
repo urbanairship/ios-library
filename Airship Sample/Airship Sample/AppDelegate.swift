@@ -55,11 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
                     forType: Activity<DeliveryAttributes>.self
                 )
             }
-        }
 
-        if #available(iOS 17.2, *) {
-            LiveActivityUtils<DeliveryAttributes>.trackActivitiesOnPushToStartUpdates {
-                $0.orderNumber
+            Activity<DeliveryAttributes>.airshipWatchActivities { activity in
+                Airship.channel.trackLiveActivity(activity, name: activity.attributes.orderNumber)
             }
         }
         #endif
@@ -121,31 +119,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         return true
     }
 }
-#if canImport(ActivityKit)
-@available(iOS 16.2, *)
-struct LiveActivityUtils<T: ActivityAttributes>  {
-    public static func trackActivities(
-        nameBlock: @escaping @Sendable (T) -> String?
-    ) {
-        Activity<T>.activities.filter { activity in
-            activity.activityState == .active || activity.activityState == .stale
-        }.forEach { activity in
-            if let name = nameBlock(activity.attributes) {
-                Airship.channel.trackLiveActivity(activity, name: name)
-            }
-        }
-    }
-
-    @available(iOS 17.2, *)
-    public static func trackActivitiesOnPushToStartUpdates(
-        nameBlock: @escaping @Sendable (T) -> String?
-    ) {
-        Task {
-            trackActivities(nameBlock: nameBlock)
-            for await update in Activity<T>.pushToStartTokenUpdates {
-                trackActivities(nameBlock: nameBlock)
-            }
-        }
-    }
-}
-#endif

@@ -231,9 +231,13 @@ actor ContactManager: ContactManagerProtocol {
 
     // Worker -> one at a time
     private func perfromNextOperation() async throws -> Bool {
-        guard self.isEnabled else { return true }
+        guard self.isEnabled else {
+            AirshipLogger.trace("Contact manager is not enabled, unable to perform operation")
+            return true
+        }
 
         guard !self.operationEntries.isEmpty else {
+            AirshipLogger.trace("Operations are empty")
             return true
         }
 
@@ -256,6 +260,7 @@ actor ContactManager: ContactManagerProtocol {
         yieldContactUpdates()
 
         guard let operationGroup = prepareNextOperationGroup() else {
+            AirshipLogger.trace("Next operation group is nil")
             return true
         }
 
@@ -287,10 +292,13 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func enqueueTask() {
-        guard
-            self.channel.identifier != nil,
-            self.isEnabled
-        else {
+        guard self.isEnabled else {
+            AirshipLogger.trace("Contact manager is not enabled, unable to enqueue task")
+            return
+        }
+
+        guard self.channel.identifier != nil else {
+            AirshipLogger.trace("Channel not created, unable to enqueue task")
             return
         }
 
@@ -323,7 +331,9 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func performOperation(_ operation: ContactOperation) async throws -> Bool {
+        AirshipLogger.trace("Performing operation \(operation.type)")
         guard !self.isSkippable(operation: operation) else {
+            AirshipLogger.trace("Operation skippable, finished operation \(operation.type)")
             return true
         }
 
@@ -778,7 +788,12 @@ actor ContactManager: ContactManagerProtocol {
            operationType == .resolve {
 
             self.operationEntries = self.operationEntries.filter { entry in
-                result.contact.channelAssociatedDate < entry.date
+                if (result.contact.channelAssociatedDate < entry.date) {
+                    return true
+                } else {
+                    AirshipLogger.trace("Dropping operation \(entry.operation.type) due to channel association date")
+                    return false
+                }
             }
         }
 
@@ -830,8 +845,7 @@ actor ContactManager: ContactManagerProtocol {
         channel: AssociatedChannel? = nil
     ) async {
 
-        guard let contactInfo = self.lastContactInfo,
-              contactInfo.contactID == contactID else {
+        guard let contactInfo = self.lastContactInfo, contactInfo.contactID == contactID else {
             return
         }
 

@@ -4,7 +4,7 @@ import AirshipCore
 struct HomeView23Grande: View {
 
     @StateObject
-    private var embeddedViewModel: AirshipEmbeddedViewModel = AirshipEmbeddedViewModel()
+    private var embeddedObserver: AirshipEmbeddedObserver = AirshipEmbeddedObserver()
 
     @State var tabIndex = 0
     var body: some View {
@@ -56,7 +56,7 @@ struct HomeView23Grande: View {
             .navigationTitle("")
             .navigationBarHidden(true)
         }
-        .airshipOnChangeOf(self.embeddedViewModel.embeddedInfos) { value in
+        .airshipOnChangeOf(self.embeddedObserver.embeddedInfos) { value in
             print("changed: \(value)")
         }
         .onAppear {

@@ -156,16 +156,11 @@ public struct MessageCenterListView: View {
 
             if !self.viewModel.messagesLoaded {
                 ProgressView()
+                    .appearanceTint()
                     .opacity(1.0 - self.listOpacity)
             } else if self.messageIDs.isEmpty {
                 VStack {
-                    Button {
-                        Task {
-                            await self.viewModel.refreshList()
-                        }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
+                    refreshButton()
                     Text("ua_empty_message_list".messageCenterlocalizedString)
                         .opacity(1.0 - self.listOpacity)
                 }
@@ -290,8 +285,11 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func refreshButton() -> some View {
+        let refreshColor = theme.refreshTintColor?.adaptiveColor(for: colorScheme, darkVariation: theme.refreshTintColorDark)
+
         if isRefreshing {
             ProgressView()
+                .appearanceTint()
         } else {
             Button {
                 Task {
@@ -301,6 +299,7 @@ public struct MessageCenterListView: View {
                 }
             } label: {
                 Image(systemName: "arrow.clockwise")
+                    .foregroundColor(refreshColor)
             }
             .disabled(isRefreshing)
             .opacity(isRefreshing ? 0 : 1)

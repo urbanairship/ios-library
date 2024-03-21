@@ -395,7 +395,7 @@ private struct MessageCenterMessageContentView: View {
             .animation(.easeInOut(duration: 0.5), value: self.opacity)
 
             if case .loading = self.webViewPhase {
-                ProgressView()
+                ProgressView().appearanceTint()
             } else if case .error(let error) = self.webViewPhase {
                 if let error = error as? MessageCenterMessageError,
                     error == .messageGone

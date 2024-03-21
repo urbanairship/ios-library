@@ -18,6 +18,8 @@ public enum AirshipSDKExtension: Int {
     case reactNative = 4
     /// The Titanium SDK extension.
     case titanium = 5
+    /// The Capacitor SDK extension.
+    case capacitor = 6
 }
 
 extension AirshipSDKExtension {
@@ -35,6 +37,8 @@ extension AirshipSDKExtension {
             return "react-native"
         case .titanium:
             return "titanium"
+        case .capacitor:
+            return "capacitor"
         }
     }
 }
