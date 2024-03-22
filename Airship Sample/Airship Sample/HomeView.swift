@@ -89,7 +89,7 @@ struct HomeView: View {
 
     @ViewBuilder
     private func makeHeroImage() -> some View {
-        AirshipEmbeddedView(id: "home_hero") {
+        AirshipEmbeddedView(embeddedID: "home_hero") {
             Image("HomeHeroImage")
                 .resizable()
                 .scaledToFit()

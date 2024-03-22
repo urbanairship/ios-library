@@ -73,22 +73,28 @@ final class AutomationExecutor: AutomationExecutorProtocol {
 
     @MainActor
     func isReady(preparedSchedule: PreparedSchedule) -> ScheduleReadyResult {
-        if (preparedSchedule.frequencyChecker?.checkAndIncrement() == false) {
-            return .skip
-        }
-        
-        switch (preparedSchedule.data) {
+        let result = switch (preparedSchedule.data) {
         case .inAppMessage(let data):
-            return self.messageExecutor.isReady(
+            self.messageExecutor.isReady(
                 data: data,
                 preparedScheduleInfo: preparedSchedule.info
             )
         case .actions(let data):
-            return self.actionExecutor.isReady(
+            self.actionExecutor.isReady(
                 data: data,
                 preparedScheduleInfo: preparedSchedule.info
             )
         }
+
+        guard result == .ready else {
+            return result
+        }
+
+        if (preparedSchedule.frequencyChecker?.checkAndIncrement() == false) {
+            return .skip
+        }
+
+        return .ready
     }
 
     @MainActor

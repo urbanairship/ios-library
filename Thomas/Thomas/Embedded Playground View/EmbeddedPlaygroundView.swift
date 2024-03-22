@@ -14,7 +14,7 @@ extension EmbeddedViewMaker {
         @ViewBuilder placeholder: @escaping () -> Content
     ) -> some View {
         AirshipEmbeddedView(
-            id: isShowingPlaceholder ? "nonexistent view id" : id,
+            embeddedID: isShowingPlaceholder ? "nonexistent view id" : id,
             embeddedSize: AirshipEmbeddedSize(maxWidth: maxWidth, maxHeight: maxHeight),
             placeholder:placeholder
         )

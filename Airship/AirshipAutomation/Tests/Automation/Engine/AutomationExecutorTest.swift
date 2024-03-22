@@ -85,6 +85,31 @@ final class AutomationExecutorTest: XCTestCase {
         }
     }
 
+    func testFrequencyChekerNotCheckedIfDelegateNotReady() async throws {
+        let frequencyChecker = TestFrequencyChecker()
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        self.actionExecutor.isReadyBlock = { _, _ in
+            return .notReady
+        }
+
+        frequencyChecker.checkAndIncrementBlock = {
+            return false
+        }
+
+        let result = await self.executor.isReady(
+            preparedSchedule: schedule
+        )
+
+        XCTAssertEqual(result, .notReady)
+        XCTAssertFalse(frequencyChecker.checkAndIncrementCalled)
+    }
+
     func testFrequencyCheckerCheckFailed() async throws {
         let frequencyChecker = TestFrequencyChecker()
 
@@ -94,6 +119,10 @@ final class AutomationExecutorTest: XCTestCase {
             frequencyChecker: frequencyChecker
         )
 
+        self.actionExecutor.isReadyBlock = { _, _ in
+            return .ready
+        }
+        
         frequencyChecker.checkAndIncrementBlock = {
             return false
         }

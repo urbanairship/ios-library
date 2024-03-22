@@ -41,6 +41,17 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.reportingContext = reportingContext
         self.triggerSessionID = triggerSessionID
     }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.scheduleID = try container.decode(String.self, forKey: .scheduleID)
+        self.productID = try container.decodeIfPresent(String.self, forKey: .productID)
+        self.campaigns = try container.decodeIfPresent(AirshipJSON.self, forKey: .campaigns)
+        self.contactID = try container.decodeIfPresent(String.self, forKey: .contactID)
+        self.experimentResult = try container.decodeIfPresent(ExperimentResult.self, forKey: .experimentResult)
+        self.reportingContext = try container.decodeIfPresent(AirshipJSON.self, forKey: .reportingContext)
+        self.triggerSessionID = try container.decodeIfPresent(String.self, forKey: .triggerSessionID) ?? UUID().uuidString
+    }
 }
 
 /// Prepared schedule data

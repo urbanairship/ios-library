@@ -3,6 +3,15 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.0.1 March 22, 2024
+
+Patch release that fixes a few regressions with 18.0.0.
+
+### Changes
+- Fixed issue with frequency checks being checked before the message is ready to display
+- Fixed an issue with InApp potentially being blocked when upgrading from the prerelease version of 18.0.0 to the final version of 18.0.0
+
+
 ## Version 18.0.0 March 21, 2024
 
 Major SDK release with several breaking changes. see the [Migration Guide](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration/migration-guide-17-18.md) for more info.

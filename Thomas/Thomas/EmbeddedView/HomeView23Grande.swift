@@ -24,7 +24,7 @@ struct HomeView23Grande: View {
                 ScrollView(showsIndicators: false) {
 
 
-                    AirshipEmbeddedView(id: "home_image")
+                    AirshipEmbeddedView(embeddedID: "home_image")
                         .setAirshipEmbeddedStyle(DismissableStyle())
 
 

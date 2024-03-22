@@ -1,6 +1,6 @@
 //* Copyright Airship and Contributors */
 
-CURRENT_PROJECT_VERSION = 18.0.0
+CURRENT_PROJECT_VERSION = 18.0.1
 
 // Uncomment to include the preview build warning
 // OTHER_CFLAGS = $(inherited) -DUA_PREVIEW=1
