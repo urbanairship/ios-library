@@ -141,10 +141,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 )
                 return
             }
-            
+
             var viewController: InAppMessageBannerViewController?
             let dismissViewController = {
+                viewController?.willMove(toParent: nil)
                 viewController?.view.removeFromSuperview()
+                viewController?.removeFromParent()
                 viewController = nil
             }
             
