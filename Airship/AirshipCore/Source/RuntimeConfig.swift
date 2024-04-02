@@ -39,7 +39,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc
     public let logLevel: AirshipLogLevel
 
-    /// The current default Airship log level.
+    /// The request session used to perform authenticated interactions with the API
     public let requestSession: AirshipRequestSession
 
     /// The production status of this application.
