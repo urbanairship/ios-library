@@ -34,28 +34,28 @@ protocol ContactsAPIClientProtocol: Sendable {
         channelID: String,
         channelType: ChannelType,
         identifier: String
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
 
     func registerEmail(
         contactID: String,
         address: String,
         options: EmailRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
 
     func registerSMS(
         contactID: String,
         msisdn: String,
         options: SMSRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
 
     func registerOpen(
         contactID: String,
         address: String,
         options: OpenRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
     
     func optOutChannel(
         contactID: String,
@@ -156,7 +156,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         channelID: String,
         channelType: ChannelType,
         identifier: String
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
         let requestBody = ContactUpdateRequestBody(
             attributes: nil,
             tags: nil,
@@ -174,12 +174,32 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             requestBody: requestBody
         ).map { response in
             if (response.isSuccess) {
-                return AssociatedChannel(
-                    channelType: channelType,
-                    channelID: channelID,
-                    identifier: identifier,
-                    registrationDate: Date()
-                )
+                switch channelType {
+                case .email:
+                    return .email(
+                        EmailAssociatedChannel(
+                            channelID: channelID,
+                            address: identifier,
+                            commercialOptedIn: Date(),
+                            commercialOptedOut: nil,
+                            transactionalOptedIn: Date()
+                        )
+                    )
+                case .sms:
+                    return .sms(
+                        SMSAssociatedChannel(
+                            channelID: channelID,
+                            msisdn: identifier,
+                            optIn: true
+                        )
+                    )
+                case .open:
+                    return .open(AssociatedChannel(
+                        channelType: channelType,
+                        channelID: channelID)
+                    )
+                }
+                
             } else {
                 return nil
             }
@@ -191,7 +211,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         address: String,
         options: EmailRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
         return try await performChannelRegistration(
             contactID: contactID,
             requestBody: EmailChannelRegistrationBody(
@@ -210,7 +230,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         msisdn: String,
         options: SMSRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
         return try await performChannelRegistration(
             contactID: contactID,
             requestBody: SMSRegistrationBody(
@@ -229,7 +249,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         address: String,
         options: OpenRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
         return try await performChannelRegistration(
             contactID: contactID,
             requestBody: OpenChannelRegistrationBody(
@@ -286,7 +306,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         requestBody: T,
         channelType: ChannelType,
         identifier: String
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
         let request = AirshipRequest(
             url: try self.makeChannelCreateURL(channelType: channelType),
             headers: [

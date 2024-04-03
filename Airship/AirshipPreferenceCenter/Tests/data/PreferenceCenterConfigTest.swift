@@ -99,7 +99,7 @@ class PreferenceCenterDecoderTest: XCTestCase {
                         conditions: [
                             .notificationOptIn(
                                 PreferenceCenterConfig
-                                    .NotificationOptInCondition(
+                                    .OptInCondition(
                                         optInStatus: .optedOut
                                     )
                             )

@@ -22,6 +22,9 @@ public struct PreferenceCenterContactManagementView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme: PreferenceCenterTheme
     
+    @State
+    private var displayConditionsMet: Bool = true
+    
     public init(
         item: PreferenceCenterConfig.ContactManagementItem,
         state: PreferenceCenterState
@@ -35,10 +38,15 @@ public struct PreferenceCenterContactManagementView: View {
         let configuration = ContactManagementSectionStyleConfiguration(
             section: self.item,
             state: self.state,
+            displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.theme
         )
         
         style.makeBody(configuration: configuration)
+            .preferenceConditions(
+                self.item.conditions,
+                binding: self.$displayConditionsMet
+            )
     }
 }
 
@@ -50,6 +58,9 @@ public struct ContactManagementSectionStyleConfiguration {
     
     /// The preference state
     public let state: PreferenceCenterState
+    
+    /// If the display conditions are met for this item
+    public let displayConditionsMet: Bool
     
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
@@ -112,7 +123,9 @@ public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyl
     
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
-        DefaultContactManagementView(configuration: configuration)
+        if configuration.displayConditionsMet {
+            DefaultContactManagementView(configuration: configuration)
+        }
     }
 }
 

@@ -511,7 +511,7 @@ actor ContactManager: ContactManagerProtocol {
         return response.isOperationComplete
     }
     
-    private func performOptIn(_ response: AirshipHTTPResponse<AssociatedChannel>) {
+    private func performOptIn(_ response: AirshipHTTPResponse<AssociatedChannelType>) {
         if response.isSuccess {
             if let result = response.result {
                 self.channelUpdatesContinuation.yield(.succeed(.optIn(result)))

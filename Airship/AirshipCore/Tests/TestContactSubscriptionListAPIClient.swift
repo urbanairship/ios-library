@@ -20,15 +20,22 @@ class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProt
 class TestChannelsListAPIClient: ChannelsListAPIClientProtocol {
     
     var fetchChannelsListCallback:
-        ((String) async throws -> AirshipHTTPResponse<[AssociatedChannel]>)?
+        ((String) async throws -> AirshipHTTPResponse<[AssociatedChannelType]>)?
     
     var fetchSubscriptionListsCallback:
         ((String) async throws -> AirshipHTTPResponse<[String: [ChannelScope]]>)?
 
     init() {}
 
-    func fetchChannelsList(contactID: String) async throws -> AirshipHTTPResponse<[AssociatedChannel]> {
+    func fetchChannelsList(contactID: String) async throws -> AirshipHTTPResponse<[AssociatedChannelType]> {
         return try await fetchChannelsListCallback!(contactID)
     }
 
+    func checkOptinStatus() async throws -> AirshipHTTPResponse<[AirshipChannelOptinStatus]> {
+        // TODO
+        return AirshipHTTPResponse(
+            result: [],
+            statusCode: 200,
+            headers: [:])
+    }
 }

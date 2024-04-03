@@ -157,7 +157,6 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
             Divider()
         case .contactManagement(let item):
             PreferenceCenterContactManagementView(item: item, state: state)
-            Divider()
         }
     }
 }

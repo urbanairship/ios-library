@@ -6,7 +6,9 @@ import Foundation
 public protocol ChannelsListAPIClientProtocol: Sendable {
     func fetchChannelsList(
         contactID: String
-    ) async throws -> AirshipHTTPResponse<[AssociatedChannel]>
+    ) async throws -> AirshipHTTPResponse<[AssociatedChannelType]>
+    
+    func checkOptinStatus() async throws -> AirshipHTTPResponse<[AirshipChannelOptinStatus]>
 }
 
 // NOTE: For internal use only. :nodoc:
@@ -25,12 +27,51 @@ final class ChannelsListAPIClient: ChannelsListAPIClientProtocol {
     
     func fetchChannelsList(
         contactID: String
-    ) async throws -> AirshipHTTPResponse<[AssociatedChannel]> {
+    ) async throws -> AirshipHTTPResponse<[AssociatedChannelType]> {
         AirshipLogger.debug("Retrieving channels list")
         
         // TODO: Fix API call
         return AirshipHTTPResponse(
-            result: [],
+            result: [
+                .sms(
+                    SMSAssociatedChannel(
+                        channelID: "00000000-0000-0000-0001",
+                        msisdn: "*******7734",
+                        optIn: true
+                    )
+                ),
+                .email(
+                    EmailAssociatedChannel(
+                        channelID: "00000000-0000-0000-0002",
+                        address: "t*****@example.com",
+                        commercialOptedIn: Date(),
+                        commercialOptedOut: nil,
+                        transactionalOptedIn: Date()
+                    )
+                )
+            ],
+            statusCode: 200,
+            headers: [:]
+        )
+    }
+    
+    func checkOptinStatus() throws -> AirshipHTTPResponse<[AirshipChannelOptinStatus]> {
+        // TODO: Fix API call
+        return AirshipHTTPResponse(
+            result: [
+                AirshipChannelOptinStatus(
+                    type: .email,
+                    id: "j****@gmail.com",
+                    sender: nil,
+                    status: .optIn
+                ),
+                AirshipChannelOptinStatus(
+                    type: .sms,
+                    id: "617-960-****",
+                    sender: "12345",
+                    status: .optIn
+                )
+            ],
             statusCode: 200,
             headers: [:]
         )

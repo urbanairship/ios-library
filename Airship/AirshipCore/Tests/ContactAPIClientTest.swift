@@ -234,64 +234,70 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual("some-channel", response.result!.channelID)
-        XCTAssertEqual(.email, response.result!.channelType)
+        if case .email(let associatedChannel) = response.result {
+            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            XCTAssertEqual(.email, associatedChannel.channelType)
 
-        let previousRequest = self.session.previousRequest!
-        XCTAssertNotNil(previousRequest)
-        XCTAssertEqual(
-            "https://example.com/api/channels/restricted/email",
-            previousRequest.url!.absoluteString
-        )
+            let previousRequest = self.session.previousRequest!
+            XCTAssertNotNil(previousRequest)
+            XCTAssertEqual(
+                "https://example.com/api/channels/restricted/email",
+                previousRequest.url!.absoluteString
+            )
 
-        let previousBody = try JSONSerialization.jsonObject(
-            with: previousRequest.body!,
-            options: []
-        ) as! [String : AnyHashable]
+            let previousBody = try JSONSerialization.jsonObject(
+                with: previousRequest.body!,
+                options: []
+            ) as! [String : AnyHashable]
 
-        let previousExpectedBody: [String : AnyHashable] = [
-            "channel": [
-                "type": "email",
-                "address": "ua@airship.com",
-                "timezone": TimeZone.current.identifier,
-                "locale_country": "CA",
-                "locale_language": "fr",
-                "transactional_opted_in": AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter),
-            ],
-            "opt_in_mode": "double",
-            "properties": [
-                "interests": "newsletter"
-            ],
-        ]
+            let previousExpectedBody: [String : AnyHashable] = [
+                "channel": [
+                    "type": "email",
+                    "address": "ua@airship.com",
+                    "timezone": TimeZone.current.identifier,
+                    "locale_country": "CA",
+                    "locale_language": "fr",
+                    "transactional_opted_in": AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter),
+                ],
+                "opt_in_mode": "double",
+                "properties": [
+                    "interests": "newsletter"
+                ],
+            ]
 
-        XCTAssertEqual(
-            previousBody,
-            previousExpectedBody
-        )
+            XCTAssertEqual(
+                previousBody,
+                previousExpectedBody
+            )
 
-        let lastRequest = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://example.com/api/contacts/some-contact-id",
-            lastRequest.url!.absoluteString
-        )
+            let lastRequest = self.session.lastRequest!
+            XCTAssertEqual(
+                "https://example.com/api/contacts/some-contact-id",
+                lastRequest.url!.absoluteString
+            )
 
-        let lastBody = try JSONSerialization.jsonObject(
-            with: lastRequest.body!,
-            options: []
-        ) as! [String : AnyHashable]
+            let lastBody = try JSONSerialization.jsonObject(
+                with: lastRequest.body!,
+                options: []
+            ) as! [String : AnyHashable]
 
-        let lastExpectedBody:[String : AnyHashable] = [
-            "associate": [
-                [
-                    "device_type": "email",
-                    "channel_id": "some-channel",
+            let lastExpectedBody:[String : AnyHashable] = [
+                "associate": [
+                    [
+                        "device_type": "email",
+                        "channel_id": "some-channel",
+                    ]
                 ]
             ]
-        ]
-        XCTAssertEqual(
-            lastBody,
-            lastExpectedBody
-        )
+            XCTAssertEqual(
+                lastBody,
+                lastExpectedBody
+            )
+        } else {
+            XCTAssertThrowsError("Error: Invalid associated channel type")
+        }
+        
+
     }
 
     func testRegisterSMS() async throws {
@@ -310,54 +316,58 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual("some-channel", response.result!.channelID)
-        XCTAssertEqual(.sms, response.result!.channelType)
-
-        let previousRequest = self.session.previousRequest!
-        XCTAssertNotNil(previousRequest)
-        XCTAssertEqual(
-            "https://example.com/api/channels/restricted/sms",
-            previousRequest.url!.absoluteString
-        )
-
-        let previousBody = try JSONSerialization.jsonObject(
-            with: previousRequest.body!,
-            options: []
-        )
-        let previousExpectedBody: Any = [
-            "msisdn": "15035556789",
-            "sender": "28855",
-            "timezone": TimeZone.current.identifier,
-            "locale_country": currentLocale.getRegionCode(),
-            "locale_language": currentLocale.getLanguageCode(),
-        ]
-        XCTAssertEqual(
-            previousBody as! NSDictionary,
-            previousExpectedBody as! NSDictionary
-        )
-
-        let lastRequest = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://example.com/api/contacts/some-contact-id",
-            lastRequest.url!.absoluteString
-        )
-
-        let lastBody = try JSONSerialization.jsonObject(
-            with: lastRequest.body!,
-            options: []
-        )
-        let lastExpectedBody: Any = [
-            "associate": [
-                [
-                    "device_type": "sms",
-                    "channel_id": "some-channel",
+        if case .sms(let associatedChannel) = response.result {
+            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            XCTAssertEqual(.sms, associatedChannel.channelType)
+            
+            let previousRequest = self.session.previousRequest!
+            XCTAssertNotNil(previousRequest)
+            XCTAssertEqual(
+                "https://example.com/api/channels/restricted/sms",
+                previousRequest.url!.absoluteString
+            )
+            
+            let previousBody = try JSONSerialization.jsonObject(
+                with: previousRequest.body!,
+                options: []
+            )
+            let previousExpectedBody: Any = [
+                "msisdn": "15035556789",
+                "sender": "28855",
+                "timezone": TimeZone.current.identifier,
+                "locale_country": currentLocale.getRegionCode(),
+                "locale_language": currentLocale.getLanguageCode(),
+            ]
+            XCTAssertEqual(
+                previousBody as! NSDictionary,
+                previousExpectedBody as! NSDictionary
+            )
+            
+            let lastRequest = self.session.lastRequest!
+            XCTAssertEqual(
+                "https://example.com/api/contacts/some-contact-id",
+                lastRequest.url!.absoluteString
+            )
+            
+            let lastBody = try JSONSerialization.jsonObject(
+                with: lastRequest.body!,
+                options: []
+            )
+            let lastExpectedBody: Any = [
+                "associate": [
+                    [
+                        "device_type": "sms",
+                        "channel_id": "some-channel",
+                    ]
                 ]
             ]
-        ]
-        XCTAssertEqual(
-            lastBody as! NSDictionary,
-            lastExpectedBody as! NSDictionary
-        )
+            XCTAssertEqual(
+                lastBody as! NSDictionary,
+                lastExpectedBody as! NSDictionary
+            )
+        } else {
+            XCTAssertThrowsError("Error: Invalid associated channel type")
+        }
     }
 
     func testRegisterOpen() async throws {
@@ -379,64 +389,68 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual("some-channel", response.result!.channelID)
-        XCTAssertEqual(.open, response.result!.channelType)
-
-        let previousRequest = self.session.previousRequest!
-        XCTAssertNotNil(previousRequest)
-        XCTAssertEqual(
-            "https://example.com/api/channels/restricted/open",
-            previousRequest.url!.absoluteString
-        )
-
-        let previousBody = try JSONSerialization.jsonObject(
-            with: previousRequest.body!,
-            options: []
-        )
-        let previousExpectedBody: [String: Any] = [
-            "channel": [
-                "type": "open",
-                "address": "open_address",
-                "timezone": TimeZone.current.identifier,
-                "locale_country": currentLocale.getRegionCode(),
-                "locale_language": currentLocale.getLanguageCode(),
-                "opt_in": true,
-                "open": [
-                    "open_platform_name": "my_platform",
-                    "identifiers": [
-                        "model": "4",
-                        "category": "1",
-                    ],
-                ] as [String : Any],
-            ] as [String : Any]
-        ]
-        XCTAssertEqual(
-            previousBody as! NSDictionary,
-            previousExpectedBody as NSDictionary
-        )
-
-        let lastRequest = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://example.com/api/contacts/some-contact-id",
-            lastRequest.url!.absoluteString
-        )
-
-        let lastBody = try JSONSerialization.jsonObject(
-            with: lastRequest.body!,
-            options: []
-        )
-        let lastExpectedBody: Any = [
-            "associate": [
-                [
-                    "device_type": "open",
-                    "channel_id": "some-channel",
+        if case .open(let associatedChannel) = response.result {
+            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            XCTAssertEqual(.open, associatedChannel.channelType)
+            
+            let previousRequest = self.session.previousRequest!
+            XCTAssertNotNil(previousRequest)
+            XCTAssertEqual(
+                "https://example.com/api/channels/restricted/open",
+                previousRequest.url!.absoluteString
+            )
+            
+            let previousBody = try JSONSerialization.jsonObject(
+                with: previousRequest.body!,
+                options: []
+            )
+            let previousExpectedBody: [String: Any] = [
+                "channel": [
+                    "type": "open",
+                    "address": "open_address",
+                    "timezone": TimeZone.current.identifier,
+                    "locale_country": currentLocale.getRegionCode(),
+                    "locale_language": currentLocale.getLanguageCode(),
+                    "opt_in": true,
+                    "open": [
+                        "open_platform_name": "my_platform",
+                        "identifiers": [
+                            "model": "4",
+                            "category": "1",
+                        ],
+                    ] as [String : Any],
+                ] as [String : Any]
+            ]
+            XCTAssertEqual(
+                previousBody as! NSDictionary,
+                previousExpectedBody as NSDictionary
+            )
+            
+            let lastRequest = self.session.lastRequest!
+            XCTAssertEqual(
+                "https://example.com/api/contacts/some-contact-id",
+                lastRequest.url!.absoluteString
+            )
+            
+            let lastBody = try JSONSerialization.jsonObject(
+                with: lastRequest.body!,
+                options: []
+            )
+            let lastExpectedBody: Any = [
+                "associate": [
+                    [
+                        "device_type": "open",
+                        "channel_id": "some-channel",
+                    ]
                 ]
             ]
-        ]
-        XCTAssertEqual(
-            lastBody as! NSDictionary,
-            lastExpectedBody as! NSDictionary
-        )
+            XCTAssertEqual(
+                lastBody as! NSDictionary,
+                lastExpectedBody as! NSDictionary
+            )
+        } else {
+            XCTAssertThrowsError("Error: Invalid associated channel type")
+        }
     }
 
     func testAssociateChannel() async throws {
@@ -448,28 +462,32 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual("some-channel", response.result!.channelID)
-        XCTAssertEqual(.sms, response.result!.channelType)
-
-        let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://example.com/api/contacts/some-contact-id",
-            request.url!.absoluteString
-        )
-
-        let body = try JSONSerialization.jsonObject(
-            with: request.body!,
-            options: []
-        )
-        let expectedBody: Any = [
-            "associate": [
-                [
-                    "device_type": "sms",
-                    "channel_id": "some-channel",
+        if case .sms(let associatedChannel) = response.result {
+            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            XCTAssertEqual(.sms, associatedChannel.channelType)
+            
+            let request = self.session.lastRequest!
+            XCTAssertEqual(
+                "https://example.com/api/contacts/some-contact-id",
+                request.url!.absoluteString
+            )
+            
+            let body = try JSONSerialization.jsonObject(
+                with: request.body!,
+                options: []
+            )
+            let expectedBody: Any = [
+                "associate": [
+                    [
+                        "device_type": "sms",
+                        "channel_id": "some-channel",
+                    ]
                 ]
             ]
-        ]
-        XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
+            XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
+        } else {
+            XCTAssertThrowsError("Error: Invalid associated channel type")
+        }
     }
 
     func testUpdate() async throws {

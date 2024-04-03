@@ -17,7 +17,7 @@ public enum ChannelRegistrationState: Sendable {
 public enum ChannelRegistrationType: Sendable {
     
     // Optin channel
-    case optIn(AssociatedChannel)
+    case optIn(AssociatedChannelType)
     
     // Optout channel
     case optOut(String)

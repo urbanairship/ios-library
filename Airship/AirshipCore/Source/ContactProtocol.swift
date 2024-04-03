@@ -139,8 +139,14 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
 
     /// Channels list publisher
-    var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> { get }
+    var channelRegistrationEditPublisher: AnyPublisher<ChannelRegistrationState, Never> { get }
+                
+    /// Notification status updates
+    var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> { get }
 
+    /// Gets the current channel status
+    var channelOptinStatus: [AirshipChannelOptinStatus]? { get }
+    
     /// Conflict event publisher
     var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
 
@@ -153,7 +159,11 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     
     /// Fetches associated channels list.
     /// - Returns: associated channels list.
-    func fetchChannelsList() async -> [AssociatedChannel]?
+    func fetchChannelsList() async -> [AssociatedChannelType]?
+    
+    /// Check the channel optin status
+    /// - Returns: Returs a list of  AirshipChannelOptinStatus
+    func checkOptinStatus() async -> [AirshipChannelOptinStatus]?
 }
 
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {

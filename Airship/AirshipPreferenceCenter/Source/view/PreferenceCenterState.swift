@@ -16,12 +16,12 @@ public class PreferenceCenterState: ObservableObject {
     
     private var contactSubscriptions: [String: Set<ChannelScope>]
     private var channelSubscriptions: Set<String>
-    private var channelsList: [String: AssociatedChannel]
+    private var channelsList: Set<AssociatedChannelType>
     private var subscriptions: Set<AnyCancellable> = []
     private let subscriber: PreferenceSubscriber
 
-    private let channelAssociationSubject = PassthroughSubject<[String: AssociatedChannel], Never>()
-    public var channelAssociationPublisher: AnyPublisher<[String: AssociatedChannel], Never>
+    private let channelAssociationSubject = PassthroughSubject<[AssociatedChannelType], Never>()
+    public var channelAssociationPublisher: AnyPublisher<[AssociatedChannelType], Never>
     {
         return channelAssociationSubject.eraseToAnyPublisher()
     }
@@ -36,7 +36,7 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
-        channelsList: [String: AssociatedChannel] = [:]
+        channelsList: Set<AssociatedChannelType> = Set()
     ) {
 
         self.init(
@@ -52,7 +52,7 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
-        channelsList: [String: AssociatedChannel] = [:],
+        channelsList: Set<AssociatedChannelType> = Set(),
         subscriber: PreferenceSubscriber
     ) {
         self.config = config
@@ -219,9 +219,19 @@ public class PreferenceCenterState: ObservableObject {
         case .succeed(let channelRegistrationType):
             switch channelRegistrationType {
             case .optIn(let channel):
-                self.channelsList[channel.channelID] = channel
+                self.channelsList.insert(channel)
             case .optOut(let channelID):
-                self.channelsList.removeValue(forKey: channelID)
+                let channel = self.channelsList.filter { channel in
+                    if case .sms(let associatedChannel) = channel {
+                        return associatedChannel.channelID == channelID
+                    } else if case .email(let associatedChannel) = channel {
+                        return associatedChannel.channelID == channelID
+                    }
+                    return false
+                }
+                if let channel = channel.first {
+                    self.channelsList.remove(channel)
+                }
     #if canImport(AirshipCore)
             @unknown default:
                 AirshipLogger.error("Unknown channel registration type")
@@ -232,7 +242,7 @@ public class PreferenceCenterState: ObservableObject {
             AirshipLogger.error("Unknown channel registration state")
     #endif
         }
-        self.channelAssociationSubject.send(self.channelsList)
+        self.channelAssociationSubject.send(Array(self.channelsList))
     }
     
     static func makeSubscriber() -> PreferenceSubscriber {
@@ -325,7 +335,7 @@ class AirshipPreferenceSubscriber: PreferenceSubscriber {
     
     var channelAssociationPublisher: AnyPublisher<ChannelRegistrationState, Never>
     {
-        return Airship.contact.channelsListPublisher
+        return Airship.contact.channelRegistrationEditPublisher
     }
 
     func updateChannelSubscription(_ listID: String, subscribe: Bool) {

@@ -99,6 +99,9 @@
 		329DFCFD2B7FB1690039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
 		329DFCFF2B7FB8810039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
 		329DFD002B7FB8E40039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
+		32B5133B2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5133A2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift */; };
+		32B5133C2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5133A2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift */; };
+		32B5133D2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5133A2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift */; };
 		32B513562B9F53A500BBE780 /* MessageCenterPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B513552B9F53A500BBE780 /* MessageCenterPredicate.swift */; };
 		32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */; };
 		32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */; };
@@ -1935,6 +1938,7 @@
 		329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARemoteDataMapping.swift; sourceTree = "<group>"; };
 		329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMapping.xcmappingmodel; sourceTree = "<group>"; };
 		329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAInboxDataMapping.swift; sourceTree = "<group>"; };
+		32B5133A2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipChannelOptinStatus.swift; sourceTree = "<group>"; };
 		32B513552B9F53A500BBE780 /* MessageCenterPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterPredicate.swift; sourceTree = "<group>"; };
 		32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemView.swift; sourceTree = "<group>"; };
 		32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterView.swift; sourceTree = "<group>"; };
@@ -3837,6 +3841,7 @@
 				6E6363E129DCD0CF009C358A /* ContactSubscriptionListClient.swift */,
 				32BBFB3F2B274C8600C6A998 /* ContactChannelListAPIClient.swift */,
 				6E60EF6929DF542B003F7A8D /* AnonContactData.swift */,
+				32B5133A2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift */,
 			);
 			name = Contacts;
 			sourceTree = "<group>";
@@ -6116,6 +6121,7 @@
 				6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
 				A6D6D48F2A0253AA0072A5CA /* ActionArguments.swift in Sources */,
 				6E6BD24E2AEAFEC500B9DFC9 /* AirshipStateOverrides.swift in Sources */,
+				32B5133B2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift in Sources */,
 				6E49D7C228401D2E00C7BB9D /* PermissionStatus.swift in Sources */,
 				6E6C3F8A27A266C0007F55C7 /* CachedValue.swift in Sources */,
 				6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */,
@@ -6876,6 +6882,7 @@
 				6EE49C0E2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				A67229DE281A9E640033F54D /* TextInput.swift in Sources */,
 				A67229DF281A9E640033F54D /* Checkbox.swift in Sources */,
+				32B5133D2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift in Sources */,
 				A67229E0281A9E640033F54D /* CheckboxController.swift in Sources */,
 				6E6363E429DCD0CF009C358A /* ContactSubscriptionListClient.swift in Sources */,
 				A67229E1281A9E640033F54D /* AirshipToggle.swift in Sources */,
@@ -7265,6 +7272,7 @@
 				6E510C1F2721DA79006D9126 /* LabelButton.swift in Sources */,
 				6E6BD24F2AEAFEC500B9DFC9 /* AirshipStateOverrides.swift in Sources */,
 				6E15B6DC26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
+				32B5133C2B9A13F900BBE780 /* AirshipChannelOptinStatus.swift in Sources */,
 				6ED8079B273DA56000D1F455 /* ThomasViewController.swift in Sources */,
 				6E510C222721DA80006D9126 /* Container.swift in Sources */,
 				6E49D7C328401D2E00C7BB9D /* PermissionStatus.swift in Sources */,

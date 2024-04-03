@@ -834,12 +834,12 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .email, 
+                result: .email(EmailAssociatedChannel(
                     channelID: "some channel",
-                    identifier: address,
-                    registrationDate: Date()
-                ),
+                    address: address,
+                    commercialOptedIn: Date(),
+                    commercialOptedOut: nil,
+                    transactionalOptedIn: Date())),
                 statusCode: 200,
                 headers: [:]
             )
@@ -886,11 +886,11 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .open, 
-                    channelID: "some channel",
-                    identifier: address,
-                    registrationDate: Date()
+                result: .open(
+                    AssociatedChannel(
+                        channelType: .open,
+                        channelID: "some channel"
+                    )
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -935,11 +935,11 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .open, 
-                    channelID: "some channel",
-                    identifier: address,
-                    registrationDate: Date()
+                result: .open(
+                    AssociatedChannel(
+                        channelType: .open,
+                        channelID: "some channel"
+                    )
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -980,11 +980,11 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(type, .open)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .open, 
-                    channelID: "some channel",
-                    identifier: address,
-                    registrationDate: Date()
+                result: .open(
+                    AssociatedChannel(
+                        channelType: .open,
+                        channelID: "some channel"
+                    )
                 ),
                 statusCode: 200,
                 headers: [:]

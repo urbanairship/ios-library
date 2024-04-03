@@ -4,9 +4,25 @@ import Combine
 @testable import AirshipCore
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
-    private let channelsListSubject = PassthroughSubject<ChannelRegistrationState, Never>()
-    public var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> {
-        channelsListSubject.eraseToAnyPublisher()
+    
+    private let channelOptinStatusSubject = PassthroughSubject<[AirshipChannelOptinStatus], Never>()
+    var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> {
+        channelOptinStatusSubject.eraseToAnyPublisher()
+    }
+    
+    var channelOptinStatus: [AirshipChannelOptinStatus]? = nil
+    
+    func fetchChannelsList() async -> [AssociatedChannelType]? {
+        return nil
+    }
+    
+    func checkOptinStatus() async -> [AirshipChannelOptinStatus]? {
+        return nil
+    }
+    
+    private let channelRegistrationEditSubject = PassthroughSubject<ChannelRegistrationState, Never>()
+    var channelRegistrationEditPublisher: AnyPublisher<ChannelRegistrationState, Never> {
+        channelRegistrationEditSubject.eraseToAnyPublisher()
     }
 
     func notifyRemoteLogin() {

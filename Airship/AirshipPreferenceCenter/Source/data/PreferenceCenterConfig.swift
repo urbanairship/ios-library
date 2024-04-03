@@ -137,8 +137,9 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
     }
 
-    @objc(UAPreferenceCenterConfigNotificationOptInCondition)
-    public final class NotificationOptInCondition: NSObject, Decodable, PreferenceConfigCondition, Sendable
+    
+    @objc(UAPreferenceCenterConfigOptInCondition)
+    public final class OptInCondition: NSObject, Decodable, PreferenceConfigCondition, Sendable
     {
 
         @objc(UANotificationOptInConditionStatus)
@@ -179,7 +180,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? NotificationOptInCondition else {
+            guard let object = object as? OptInCondition else {
                 return false
             }
 
@@ -191,8 +192,10 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
      * Typed conditions.
      */
     public enum Condition: Decodable, Equatable, Sendable {
-        case notificationOptIn(NotificationOptInCondition)
-
+        case notificationOptIn(OptInCondition)
+        case smsOptIn(OptInCondition)
+        case emailOptIn(OptInCondition)
+        
         enum CodingKeys: String, CodingKey {
             case type = "type"
         }
@@ -208,7 +211,19 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case .notificationOptIn:
                 self = .notificationOptIn(
                     try singleValueContainer.decode(
-                        NotificationOptInCondition.self
+                        OptInCondition.self
+                    )
+                )
+            case .smsOptIn:
+                self = .smsOptIn(
+                    try singleValueContainer.decode(
+                        OptInCondition.self
+                    )
+                )
+            case .emailOptIn:
+                self = .emailOptIn(
+                    try singleValueContainer.decode(
+                        OptInCondition.self
                     )
                 )
             }
@@ -255,7 +270,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
-
             self.identifier = identifier
             self.items = items
             self.display = display
@@ -786,6 +800,9 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         
         public let registrationOptions: RegistrationOptions
         
+        /// The section's display conditions.
+        public let conditions: [Condition]?
+        
         enum CodingKeys: String, CodingKey {
             case identifier = "id"
             case platform = "platform"
@@ -794,6 +811,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case addPrompt = "add"
             case removePrompt = "remove"
             case registrationOptions = "registration_options"
+            case conditions = "conditions"
         }
         
         public init(
@@ -803,7 +821,8 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             emptyMessage: String?,
             addPrompt: AddPrompt?,
             removePrompt: RemoveChannel?,
-            registrationOptions: RegistrationOptions
+            registrationOptions: RegistrationOptions,
+            conditions: [Condition]
         ) {
             self.identifier = identifier
             self.platform = platform
@@ -812,6 +831,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             self.addPrompt = addPrompt
             self.removePrompt = removePrompt
             self.registrationOptions = registrationOptions
+            self.conditions = conditions
         }
         
         public enum Platform: String, Decodable, Sendable {
@@ -1269,7 +1289,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             )
             
         }
-
     }
     
     /// Config item.
@@ -1324,11 +1343,21 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
 
     /// Notification opt-in condition.
     case notificationOptIn
+    
+    /// SMS opt-in condition.
+    case smsOptIn
+    
+    /// Email opt-in condition.
+    case emailOptIn
 
     var stringValue: String {
         switch self {
         case .notificationOptIn:
             return "notification_opt_in"
+        case .smsOptIn:
+            return "sms_opt_in"
+        case .emailOptIn:
+            return "email_opt_in"
         }
     }
 
@@ -1338,6 +1367,10 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
         switch value {
         case "notification_opt_in":
             return .notificationOptIn
+        case "sms_opt_in":
+            return .smsOptIn
+        case "email_opt_in":
+            return .emailOptIn
         default:
             throw AirshipErrors.error("invalid condition \(value)")
         }
@@ -1498,6 +1531,8 @@ extension PreferenceCenterConfig.Condition {
     var info: PreferenceConfigCondition {
         switch self {
         case .notificationOptIn(let info): return info
+        case .smsOptIn(let info): return info
+        case .emailOptIn(let info): return info
         }
     }
 }

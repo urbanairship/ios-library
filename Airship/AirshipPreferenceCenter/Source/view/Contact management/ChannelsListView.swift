@@ -20,7 +20,7 @@ public struct ChannelsListView: View {
     private var theme: PreferenceCenterTheme
     
     @State
-    private var channels: [AssociatedChannel] = []
+    private var channels: [AssociatedChannelType] = []
     
     @State
     var registrationState: RegistrationState = .inProgress(false)
@@ -35,7 +35,7 @@ public struct ChannelsListView: View {
     private var subscriptions: Set<AnyCancellable> = []
     
     @State
-    private var selectedChannel: AssociatedChannel?
+    private var selectedChannel: AssociatedChannelType?
     
     public init(
         item: PreferenceCenterConfig.ContactManagementItem,
@@ -68,7 +68,7 @@ public struct ChannelsListView: View {
                         updateChannelsList($0)
                     }
                     .store(in: &subscriptions)
-                Airship.contact.channelsListPublisher
+                Airship.contact.channelRegistrationEditPublisher
                     .sink { state in
                         switch state {
                         case .failed:
@@ -87,12 +87,22 @@ public struct ChannelsListView: View {
         }
     }
     
-    private func updateChannelsList(_ channelsList: [String: AssociatedChannel]) {
+    private func updateChannelsList(_ channelsList: [AssociatedChannelType]) {
         switch self.item.registrationOptions {
         case .sms(_):
-            self.channels = channelsList.values.filter { $0.channelType == .sms }
+            self.channels = channelsList.filter { channel in
+                if case .sms(_) = channel {
+                    return true
+                }
+                return false
+            }
         case .email(_):
-            self.channels = channelsList.values.filter { $0.channelType == .email }
+            self.channels = channelsList.filter { channel in
+                if case .email(_) = channel {
+                    return true
+                }
+                return false
+            }
         }
     }
     
@@ -119,7 +129,11 @@ public struct ChannelsListView: View {
                 item: view,
                 theme: self.theme.contactManagement) {
                     if let channel = self.selectedChannel {
-                        Airship.contact.optOutChannel(channel.channelID)
+                        if case .sms(let associatedChannel) = channel {
+                            Airship.contact.optOutChannel(associatedChannel.channelID)
+                        } else if case .email(let associatedChannel) = channel {
+                            Airship.contact.optOutChannel(associatedChannel.channelID)
+                        }
                     }
                     self.disposable?.cancel()
                 }
@@ -158,7 +172,12 @@ public struct ChannelsListView: View {
             VStack(alignment: .leading) {
                 Divider()
                 HStack {
-                    Text(channel.channelID.mask(self.item.registrationOptions))
+                    if case .sms(let associatedChannel) = channel {
+                        Text(associatedChannel.msisdn)
+                    } else if case .email(let associatedChannel) = channel {
+                        Text(associatedChannel.address)
+                    }
+                    
                     Spacer()
                     if let removePrompt = self.item.removePrompt {
                         LabeledButton(
@@ -214,7 +233,7 @@ public struct RePromptView: View {
     
     public var registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?
     
-    public var channel: AssociatedChannel
+    public var channel: AssociatedChannelType
     
     /// The preference center theme
     public var theme: PreferenceCenterTheme.ContactManagement?
@@ -242,7 +261,7 @@ public struct RePromptView: View {
     public init(
         item: PreferenceCenterConfig.ContactManagementItem.RepromptOptions,
         registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?,
-        channel: AssociatedChannel,
+        channel: AssociatedChannelType,
         theme: PreferenceCenterTheme.ContactManagement? = nil
     ) {
         self.item = item
@@ -277,9 +296,6 @@ public struct RePromptView: View {
                         // TODO: Retry
                     }
             }
-        }
-        .onAppear {
-            self.inputText = channel.channelID.deletePrefix("+44")
         }
     }
     
@@ -359,27 +375,6 @@ struct BackgroundShape: View {
 
 // MARK: Utils methods
 fileprivate extension String {
-    
-    func mask(_ type: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions) -> String {
-        switch type {
-        case .email(_):
-            return self.maskEmail
-        case .sms(_):
-            return self.maskPhoneNumber
-        }
-    }
-    
-    var maskEmail: String {
-        let components = self.components(separatedBy: "@")
-        return hideMidChars(components.first!) + "@" + components.last!
-    }
-    
-    var maskPhoneNumber: String {
-        return String(self.enumerated().map { index, char in
-            return [self.count - 1, self.count - 2].contains(index) ?
-            char : "*"
-        })
-    }
     
     private func hideMidChars(_ value: String) -> String {
         return String(value.enumerated().map { index, char in
@@ -464,11 +459,12 @@ struct ChannelsListView_Previews: PreviewProvider {
                         countryCode: "+44",
                         displayName: "US")
                 ])),
-                channel: AssociatedChannel(
-                    channelType: .sms,
-                    channelID: "1233",
-                    identifier: "+44256676",
-                    registrationDate: Date()
+                channel: .sms(
+                    SMSAssociatedChannel(
+                        channelID: "1233",
+                        msisdn: "*******6676",
+                        optIn: true
+                    )
                 )
             )
         }

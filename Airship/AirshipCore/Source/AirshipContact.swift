@@ -35,7 +35,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let audienceOverridesProvider: AudienceOverridesProvider
     private let contactManager: ContactManagerProtocol
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
-    private let cachedChannelsList: CachedValue<(String, [AssociatedChannel])>
+    private let cachedChannelsList: CachedValue<(String, [AssociatedChannelType])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
     private let fetchSubscriptionListQueue: AirshipSerialQueue = AirshipSerialQueue()
@@ -60,13 +60,21 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         subscriptionListEditsSubject.eraseToAnyPublisher()
     }
     
-    private let channelsListSubject = PassthroughSubject<ChannelRegistrationState, Never>()
-    
-    /// Publishes channels list through the  SDK
-    public var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> {
-        channelsListSubject.eraseToAnyPublisher()
+    private let channelRegistrationEditSubject = PassthroughSubject<ChannelRegistrationState, Never>()
+    /// Publishes channel edit through the  SDK
+    public var channelRegistrationEditPublisher: AnyPublisher<ChannelRegistrationState, Never> {
+        channelRegistrationEditSubject.eraseToAnyPublisher()
     }
-
+    
+    private let channelOptinStatusSubject = CurrentValueSubject<[AirshipChannelOptinStatus], Never>([])
+    /// Publishes channel optin status through the  SDK
+    public var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> {
+        channelOptinStatusSubject
+            .eraseToAnyPublisher()
+    }
+    
+    public var channelOptinStatus: [AirshipChannelOptinStatus]? = nil
+    
     private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
     public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
         conflictEventSubject.eraseToAnyPublisher()
@@ -174,6 +182,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             }
             
             await self.contactManager.setEnabled(enabled: true)
+            
+            self.channelOptinStatus = await self.checkOptinStatus()
         }
         
         self.serialQueue.enqueue {
@@ -258,7 +268,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         
         Task {
             for await update in await self.contactManager.channelUpdates {
-                self.channelsListSubject.send(update)
+                self.channelRegistrationEditSubject.send(update)
+                self.channelOptinStatus = await checkOptinStatus()
             }
         }
     }
@@ -466,7 +477,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             return
         }
 
-
         self.addOperation(.associateChannel(channelID: channelID, channelType: type))
     }
     
@@ -490,7 +500,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     /**
      * Fetch the channels list.
      */
-    public func fetchChannelsList() async -> [AssociatedChannel]? {
+    public func fetchChannelsList() async -> [AssociatedChannelType]? {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(
                 "Contacts disabled. Enable to fetch channels list."
@@ -505,12 +515,40 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             AirshipLogger.error("Fetching channels list failed with error \(error)")
             return nil
         }
+    }
+    
+    /**
+     * Fetch the channel optin status.
+     */
+    public func checkOptinStatus() async -> [AirshipChannelOptinStatus]? {
+        
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to fetch channels list."
+            )
+            return nil
+        }
+        
+        do {
+            let response = try await self.channelsListAPIClient.checkOptinStatus()
+
+            guard response.isSuccess, let result = response.result else {
+                throw AirshipErrors.error("Failed to fetch the channel optin status")
+            }
+
+            AirshipLogger.debug("Fetching channel optin status finished with response: \(response)")
+            self.channelOptinStatusSubject.send(result)
+            return result
+        } catch {
+            AirshipLogger.error("Fetching channel optin status failed with error \(error)")
+            return nil
+        }
         
     }
     
     private func resolveChannelsList(
         _ contactID: String
-    ) async throws -> [AssociatedChannel] {
+    ) async throws -> [AssociatedChannelType] {
         return try await self.fetchChannelsListQueue.run {
             if let cached = self.cachedChannelsList.value,
                 cached.0 == contactID {
