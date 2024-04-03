@@ -50,6 +50,11 @@ public class AirshipConfig: NSObject, NSCopying {
     /// Defaults to `all`.
     public var enabledFeatures: AirshipFeature = .all
 
+    /// Allows resetting enabled features to match the runtime config defaults on each takeOff
+    /// Defaults to `false`
+    @objc
+    public var resetEnabledFeatures: Bool = false
+
     /// :nodoc:
     @objc(enabledFeatures)
     public var _objc_enabledFeatures: _UAFeatures {
@@ -413,6 +418,7 @@ public class AirshipConfig: NSObject, NSCopying {
         developmentLogLevel = config.developmentLogLevel
         productionLogLevel = config.productionLogLevel
         enabledFeatures = config.enabledFeatures
+        resetEnabledFeatures = config.resetEnabledFeatures
         requestAuthorizationToUseNotifications =
             config.requestAuthorizationToUseNotifications
         requireInitialRemoteConfigEnabled =
@@ -480,7 +486,8 @@ public class AirshipConfig: NSObject, NSCopying {
                 Default Message Center Style Config File: %@\n\
                 Use iTunes ID: %@\n\
                 Site:  %ld\n\
-                Enabled features  %ld\n
+                Enabled features:  %ld\n\
+                Reset enabled features:  %ld\n\
                 Use user preferred locale: %d\n
                 """,
             inProduction,
@@ -517,6 +524,7 @@ public class AirshipConfig: NSObject, NSCopying {
             itunesID ?? "",
             site.rawValue,
             enabledFeatures.rawValue,
+            resetEnabledFeatures ? "YES" : "NO",
             useUserPreferredLocale
         )
     }

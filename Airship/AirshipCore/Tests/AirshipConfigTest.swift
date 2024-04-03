@@ -198,6 +198,8 @@ final class AirshipConfigTest: XCTestCase {
         
         XCTAssert(config.enabledFeatures.contains(.push))
         XCTAssert(config.enabledFeatures.contains(.inAppAutomation))
+
+        XCTAssertTrue(config.resetEnabledFeatures, "resetEnabledFeatures was improperly loaded.")
     }
     
     func testNeXTStepPlistParsing() {
@@ -284,6 +286,8 @@ final class AirshipConfigTest: XCTestCase {
         XCTAssertTrue(copy.itunesID == config.itunesID)
         XCTAssertTrue(copy.requestAuthorizationToUseNotifications == config.requestAuthorizationToUseNotifications)
         XCTAssertTrue(copy.requireInitialRemoteConfigEnabled == config.requireInitialRemoteConfigEnabled)
+        XCTAssertTrue(copy.resetEnabledFeatures == config.resetEnabledFeatures)
+
         XCTAssertEqual(copy.enabledFeatures, config.enabledFeatures)
     }
     
@@ -310,5 +314,6 @@ final class AirshipConfigTest: XCTestCase {
         XCTAssertFalse(config.isExtendedBroadcastsEnabled)
         XCTAssertTrue(config.requestAuthorizationToUseNotifications)
         XCTAssertTrue(config.requireInitialRemoteConfigEnabled)
+        XCTAssertFalse(config.resetEnabledFeatures)
     }
 }

@@ -3,7 +3,7 @@
 import Foundation
 
 /// The privacy manager allow enabling/disabling features in the SDK.
-/// The SDK will not make any network requests or collect data if all features our disabled, with
+/// The SDK will not make any network requests or collect data if all features are disabled, with
 /// a few exceptions when going from enabled -> disabled. To have the SDK opt-out of all features on startup,
 /// set the default enabled features in the Config to an empty option set, or in the
 /// airshipconfig.plist file with `enabledFeatures = none`.
@@ -64,7 +64,6 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
                 self.localEnabledFeatures = newValue
                 notifyUpdate()
             }
-
         }
     }
 
@@ -96,7 +95,18 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
         self.notificationCenter = notificationCenter
 
         super.init()
-        self.lastUpdated = self.enabledFeatures
+
+        let resetFlag = config.resetEnabledFeatures
+
+        if resetFlag {
+            /// Reset the defaults each time when reset flag is enabled
+            self.enabledFeatures = defaultEnabledFeatures
+            self.lastUpdated = defaultEnabledFeatures
+        } else {
+            /// Otherwise allow features set on the privacy manager to override
+            self.lastUpdated = self.enabledFeatures
+        }
+
         self.migrateData()
 
         self.config.addRemoteConfigListener { [weak self] _, _ in
@@ -225,7 +235,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
 /**
  * Airship features.
  */
-public struct AirshipFeature: OptionSet, Sendable {
+public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
     
     public let rawValue: UInt
 
@@ -275,6 +285,31 @@ public struct AirshipFeature: OptionSet, Sendable {
 
     public init(rawValue: UInt) {
         self.rawValue = rawValue
+    }
+
+    public var description: String {
+        var descriptions = [String]()
+        if self.contains(.inAppAutomation) {
+            descriptions.append("In-App Automation")
+        }
+        if self.contains(.messageCenter) {
+            descriptions.append("Message Center")
+        }
+        if self.contains(.push) {
+            descriptions.append("Push")
+        }
+        if self.contains(.analytics) {
+            descriptions.append("Analytics")
+        }
+        if self.contains(.tagsAndAttributes) {
+            descriptions.append("Tags and Attributes")
+        }
+        if self.contains(.contacts) {
+            descriptions.append("Contacts")
+        }
+
+        // add prefix indicating that these are enabled features
+        return "Enabled features: " + descriptions.joined(separator: ", ")
     }
 }
 
