@@ -153,7 +153,9 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     public let enabledFeatures: AirshipFeature
 
     /// Allows resetting enabled features to match the runtime config defaults on each takeOff
-    /// Defaults to false.
+    ///
+    /// Defaults to `false`.
+    @objc
     public let resetEnabledFeatures: Bool
 
     /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
