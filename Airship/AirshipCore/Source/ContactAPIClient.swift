@@ -57,6 +57,12 @@ protocol ContactsAPIClientProtocol: Sendable {
         locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
     
+    func validateSMS(
+        contactID: String,
+        msisdn: String,
+        sender: String
+    ) async throws ->  AirshipHTTPResponse<Bool>
+
     func optOutChannel(
         contactID: String,
         channelID: String
@@ -244,6 +250,21 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         )
     }
 
+    func validateSMS(
+        contactID: String,
+        msisdn: String,
+        sender: String
+    ) async throws -> AirshipHTTPResponse<Bool> {
+        return try await performSMSValidation(
+            contactID: contactID,
+            requestBody: SMSValidationBody(
+                msisdn: msisdn,
+                sender: sender
+            ),
+            channelType: .sms
+        )
+    }
+
     func registerOpen(
         contactID: String,
         address: String,
@@ -343,6 +364,37 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             channelType: channelType,
             identifier: identifier
         )
+    }
+
+    private func performSMSValidation<T: Encodable>(
+        contactID: String,
+        requestBody: T,
+        channelType: ChannelType
+    ) async throws -> AirshipHTTPResponse<Bool> {
+        let request = AirshipRequest(
+            url: try self.makeURL(path: "/api/channels/sms/validate"),
+            headers: [
+                "Accept":  "application/vnd.urbanairship+json; version=3;",
+                "Content-Type": "application/json"
+            ],
+            method: "POST",
+            auth: .generatedAppToken,
+            body: try self.encoder.encode(requestBody)
+        )
+
+        return try await self.session.performHTTPRequest(
+            request
+        ) { (data, response) in
+            AirshipLogger.debug(
+                "SMS Channel validation finished with response: \(response)"
+            )
+
+            guard let _ = data, response.statusCode == 200 || response.statusCode == 201 else {
+                return false
+            }
+
+            return true
+        }
     }
 
     private func performIdentify(
@@ -545,6 +597,24 @@ fileprivate struct ContactIdentifyRequestBody: Encodable {
             case contactID = "contact_id"
             case possiblyOrphanedContactID = "possibly_orphaned_contact_id"
         }
+    }
+}
+
+fileprivate struct SMSValidationBody: Encodable {
+    let msisdn: String
+    let sender: String
+
+    init(
+        msisdn: String,
+        sender: String
+    ) {
+        self.msisdn = msisdn
+        self.sender = sender
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case msisdn
+        case sender
     }
 }
 

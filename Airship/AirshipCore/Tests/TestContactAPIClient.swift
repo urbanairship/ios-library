@@ -25,6 +25,9 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     var registerSMSCallback:
         ((String, String, SMSRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannelType>)?
 
+    var validateSMSCallback:
+        ((String, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+
     var registerOpenCallback:
         ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannelType>)?
     
@@ -92,6 +95,14 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         return try await registerSMSCallback!(contactID, msisdn, options, locale)
     }
 
+    func validateSMS(
+        contactID: String,
+        msisdn: String,
+        sender: String
+    ) async throws -> AirshipHTTPResponse<Bool> {
+        return try await validateSMSCallback!(contactID, msisdn, sender)
+    }
+    
     public func registerOpen(
         contactID: String,
         address: String,

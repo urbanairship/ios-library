@@ -86,6 +86,15 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
     func registerSMS(_ msisdn: String, options: SMSRegistrationOptions)
 
     /**
+     * Validates SMS register data.
+     * - Parameters:
+     *   - msisdn: The mobile phone number to validate.
+     *   - sender: The SMS channel sender.
+     */
+    @objc
+    func validateSMS(_ msisdn: String, sender: String)
+
+    /**
      * Associates an Open channel to the contact.
      * - Parameters:
      *   - address: The open channel address.

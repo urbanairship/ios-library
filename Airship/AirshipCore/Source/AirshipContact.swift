@@ -445,6 +445,26 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.addOperation(.registerSMS(msisdn: msisdn, options: options))
     }
 
+    /**
+     * Validates SMS register data.
+     * - Parameters:
+     *   - msisdn: The mobile phone number to validate.
+     *   - sender: The SMS channel sender.
+     */
+    public func validateSMS(
+        _ msisdn: String,
+        sender: String
+    ) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to validate phone number."
+            )
+            return
+        }
+
+        self.addOperation(.validateSMS(msisdn: msisdn, sender: sender))
+    }
+
     /// Associates an open channel to the contact.
     /// - Parameter address: The open channel address.
     /// - Parameter options: The open channel registration options.

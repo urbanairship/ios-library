@@ -230,7 +230,6 @@ actor ContactManager: ContactManagerProtocol {
             return nil
         }
 
-
         return ContactIDInfo(
             contactID: lastContactInfo.contactID,
             isStable: self.isContactIDStable(),
@@ -378,6 +377,12 @@ actor ContactManager: ContactManagerProtocol {
                 options: options
             )
 
+        case .validateSMS(let msisdn, let sender):
+            return try await performValidateSMSOperation(
+                msisdn: msisdn,
+                sender: sender
+            )
+
         case .registerOpen(let address, let options):
             return try await performRegisterOpenChannelOperation(
                 address: address,
@@ -459,7 +464,10 @@ actor ContactManager: ContactManagerProtocol {
         return response.isOperationComplete
     }
 
-    private func performRegisterSMSOperation(msisdn: String, options: SMSRegistrationOptions) async throws -> Bool {
+    private func performRegisterSMSOperation(
+        msisdn: String,
+        options: SMSRegistrationOptions
+    ) async throws -> Bool {
         let response = try await self.apiClient.registerSMS(
             contactID: try requireContactID(),
             msisdn: msisdn,
@@ -468,6 +476,19 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         performOptIn(response)
+        
+        return response.isOperationComplete
+    }
+    
+    private func performValidateSMSOperation(
+        msisdn: String,
+        sender: String
+    ) async throws -> Bool {
+        let response = try await self.apiClient.validateSMS(
+            contactID: try requireContactID(),
+            msisdn: msisdn,
+            sender: sender
+        )
         
         return response.isOperationComplete
     }

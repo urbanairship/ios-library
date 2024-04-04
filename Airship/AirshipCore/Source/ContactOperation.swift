@@ -14,6 +14,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .reset: return .reset
         case .registerEmail(_, _): return .registerEmail
         case .registerSMS(_, _): return .registerSMS
+        case .validateSMS(_, _): return .validateSMS
         case .registerOpen(_, _): return .registerOpen
         case .associateChannel(_, _): return .associateChannel
         case .optOutChannel(_): return .optOutChannel
@@ -26,6 +27,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case resolve
         case reset
         case verify
+        case validateSMS
         case registerEmail
         case registerSMS
         case registerOpen
@@ -50,6 +52,11 @@ enum ContactOperation: Codable, Equatable, Sendable {
     case registerSMS(
         msisdn: String,
         options: SMSRegistrationOptions
+    )
+
+    case validateSMS(
+        msisdn: String,
+        sender: String
     )
 
     case registerOpen(
@@ -84,6 +91,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case channelType
         case date
         case required
+        case sender
     }
 
 
@@ -129,6 +137,12 @@ enum ContactOperation: Codable, Equatable, Sendable {
             try payloadContainer.encode(options, forKey: .options)
             try container.encode(OperationType.registerSMS, forKey: .type)
 
+        case .validateSMS(let msisdn, let options):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(msisdn, forKey: .msisdn)
+            try payloadContainer.encode(options, forKey: .options)
+            try container.encode(OperationType.validateSMS, forKey: .type)
+
         case .registerOpen(let address, let options):
             var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
             try payloadContainer.encode(address, forKey: .address)
@@ -146,8 +160,6 @@ enum ContactOperation: Codable, Equatable, Sendable {
             try payloadContainer.encode(channelID, forKey: .channelID)
             try container.encode(OperationType.optOutChannel, forKey: .type)
         }
-
-
     }
 
     init(from decoder: Decoder) throws {
@@ -195,6 +207,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
                     forKey: .options
                 )
             )
+            
         case .registerSMS:
             let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
             self = .registerSMS(
@@ -205,6 +218,19 @@ enum ContactOperation: Codable, Equatable, Sendable {
                 options: try payloadContainer.decode(
                     SMSRegistrationOptions.self,
                     forKey: .options
+                )
+            )
+            
+        case .validateSMS:
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .validateSMS(
+                msisdn: try payloadContainer.decode(
+                    String.self,
+                    forKey: .msisdn
+                ),
+                sender: try payloadContainer.decode(
+                    String.self,
+                    forKey: .sender
                 )
             )
 

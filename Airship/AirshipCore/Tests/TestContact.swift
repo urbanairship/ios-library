@@ -5,7 +5,12 @@ import Combine
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
     
-    private let channelOptinStatusSubject = PassthroughSubject<[AirshipChannelOptinStatus], Never>()
+    private let channelsListSubject = PassthroughSubject<ChannelRegistrationState, Never>()
+    public var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> {
+        channelsListSubject.eraseToAnyPublisher()
+    }
+
+    let channelOptinStatusSubject = PassthroughSubject<[AirshipChannelOptinStatus], Never>()
     var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> {
         channelOptinStatusSubject.eraseToAnyPublisher()
     }
@@ -133,10 +138,20 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         // TODO
     }
 
-    public func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) {
+    public func registerSMS(
+        _ msisdn: String,
+        options: SMSRegistrationOptions
+    ) {
         // TODO
     }
 
+    func validateSMS(
+        _ msisdn: String,
+        sender: String
+    ) {
+        // TODO
+    }
+    
     public func registerOpen(
         _ address: String,
         options: OpenRegistrationOptions
