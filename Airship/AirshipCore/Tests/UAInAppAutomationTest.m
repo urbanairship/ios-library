@@ -51,7 +51,7 @@
     [super setUp];
 
 
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll resetEnabledFeatures:NO];
 
     self.mockAutomationEngine = [self mockForClass:[UAAutomationEngine class]];
     self.mockInAppCoreSwiftBridge = [self mockForClass:[UAInAppCoreSwiftBridge class]];

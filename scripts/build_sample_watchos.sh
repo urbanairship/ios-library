@@ -18,4 +18,4 @@ xcrun xcodebuild \
 -configuration Debug \
 -workspace "${ROOT_PATH}/Airship.xcworkspace" \
 -scheme $SAMPLE \
--derivedDataPath "$DERIVED_DATA"
+-derivedDataPath "$DERIVED_DATA" | xcbeautify --renderer $XCBEAUTIY_RENDERER

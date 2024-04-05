@@ -28,6 +28,7 @@ class AnalyticsTest: XCTestCase {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: .all,
+            resetEnabledFeatures: false,
             notificationCenter: notificationCenter
         )
 

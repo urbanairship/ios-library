@@ -204,7 +204,7 @@ extension MessageCenterThemeLoader.Config {
         if let placeholderIcon = self.placeholderIcon {
             theme.placeholderIcon = Image(placeholderIcon)
         }
-        theme.cellTitleFont = try self.cellTitleFont?.toFont()
+        theme.cellTitleFont = try? self.cellTitleFont?.toFont()
         theme.cellDateFont = try? self.cellDateFont?.toFont()
         theme.cellColor = self.cellColor?.toColor(bundle)
         theme.cellColorDark = self.cellColorDark?.toColor(bundle)

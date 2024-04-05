@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 17.10.0, April 4, 2024
+Minor release with a new config option `resetEnabledFeatures` to reset the PrivacyManager enabled features to those specified in the Airship config on each launch and a bug fix for the delete button theming in the Message Center and back button theming in message views.
+
+### Changes
+- Added `resetEnabledFeatures` config option
+- Fixes color theme assignment for the delete button in Message Center and back button in message views.
+
 ## Version 17.9.1, March 21, 2024
 Patch release with a bug fix for edit and refresh button theming in Message Center.
 

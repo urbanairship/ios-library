@@ -21,7 +21,7 @@ final class RemoteDataTest: AirshipBaseTest {
     private let testWorkManager: TestWorkManager = TestWorkManager()
     private var remoteData: RemoteData!
     lazy var privacyManager: AirshipPrivacyManager = {
-        AirshipPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all)
+        AirshipPrivacyManager(dataStore: self.dataStore, defaultEnabledFeatures: .all, resetEnabledFeatures: false)
     }()
 
     override func setUp() async throws {

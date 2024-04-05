@@ -28,6 +28,7 @@ class PushTest: XCTestCase {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: AirshipFeature.all,
+            resetEnabledFeatures: false,
             notificationCenter: notificationCenter
         )
         self.push = await createPush()

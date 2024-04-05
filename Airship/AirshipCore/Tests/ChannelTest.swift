@@ -21,6 +21,7 @@ class ChannelTest: XCTestCase {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: [],
+            resetEnabledFeatures: false,
             notificationCenter: self.notificationCenter
         )
 

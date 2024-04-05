@@ -3,9 +3,11 @@ XCODE ?= 15.0.1
 
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=17.0.1,name=iPhone 15 Pro Max
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=17.0.1,name=Apple TV
+export XCBEAUTIY_RENDERER ?= github-actions
 
 export DEVELOPER_DIR = $(shell bash ./scripts/get_xcode_path.sh ${XCODE} $(XCODE_PATH))
 export AIRSHIP_VERSION = $(shell bash "./scripts/airship_version.sh")
+
 
 build_path = build
 derived_data_path = ${build_path}/derived_data
@@ -21,6 +23,7 @@ setup:
 	test ${DEVELOPER_DIR}
 	bundle install --quiet
 	bundle exec pod install
+	bash ./scripts/check_xcbeautify.sh
 
 .PHONY: all
 all: setup build test pod-lint

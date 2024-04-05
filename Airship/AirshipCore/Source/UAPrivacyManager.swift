@@ -73,11 +73,14 @@ public final class AirshipPrivacyManager: NSObject, Sendable {
     /*
      * - Note: For internal use only. :nodoc:
      */
-    @objc(privacyManagerWithDataStore:defaultEnabledFeatures:)
+    @objc(privacyManagerWithDataStore:defaultEnabledFeatures:resetEnabledFeatures:)
     public static func _objc_factory(
         dataStore: PreferenceDataStore,
-        defaultEnabledFeatures: _UAFeatures) -> AirshipPrivacyManager {
-        return AirshipPrivacyManager(dataStore: dataStore, defaultEnabledFeatures: defaultEnabledFeatures.toSwift)
+        defaultEnabledFeatures: _UAFeatures,
+        resetEnabledFeatures: Bool) -> AirshipPrivacyManager {
+            return AirshipPrivacyManager(dataStore: dataStore,
+                                         defaultEnabledFeatures: defaultEnabledFeatures.toSwift,
+                                         resetEnabledFeatures: resetEnabledFeatures)
     }
 
     /*
@@ -86,13 +89,15 @@ public final class AirshipPrivacyManager: NSObject, Sendable {
     public init(
         dataStore: PreferenceDataStore,
         defaultEnabledFeatures: AirshipFeature,
+        resetEnabledFeatures: Bool,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
 
         self.dataStore = dataStore
         self.notificationCenter = notificationCenter
 
-        if self.dataStore.keyExists(AirshipPrivacyManager.enabledFeaturesKey),
+        if !resetEnabledFeatures,
+           self.dataStore.keyExists(AirshipPrivacyManager.enabledFeaturesKey),
            let value = self.dataStore.unsignedInteger(forKey: AirshipPrivacyManager.enabledFeaturesKey) {
             self.currentEnabledFeatures.value = AirshipFeature(rawValue:(value & AirshipFeature.all.rawValue))
         } else {

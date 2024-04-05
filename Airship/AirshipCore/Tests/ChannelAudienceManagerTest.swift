@@ -22,6 +22,7 @@ class ChannelAudienceManagerTest: XCTestCase {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             defaultEnabledFeatures: .all,
+            resetEnabledFeatures: false,
             notificationCenter: self.notificationCenter
         )
 

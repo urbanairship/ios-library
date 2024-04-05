@@ -39,6 +39,8 @@
 	<string>ValidUAMessageCenterDefaultStyle</string>
 	<key>site</key>
 	<string>EU</string>
+	<key>resetEnabledFeatures</key>
+	<true/>
 	<key>enabledFeatures</key>
 	<array>
 		<string>in_app_automation</string>

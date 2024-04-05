@@ -152,6 +152,11 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// Defaults to FeaturesAll.
     public let enabledFeatures: AirshipFeature
 
+    /// Allows resetting enabled features to match the runtime config defaults on each takeOff
+    /// Defaults to false.
+    @objc
+    public let resetEnabledFeatures: Bool
+
     /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
     ///
     /// Defaults to `false`.
@@ -301,6 +306,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.messageCenterStyleConfig = config.messageCenterStyleConfig
         self.itunesID = config.itunesID
         self.enabledFeatures = config.enabledFeatures
+        self.resetEnabledFeatures = config.resetEnabledFeatures
         self.site = config.site
         self.autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
         self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()

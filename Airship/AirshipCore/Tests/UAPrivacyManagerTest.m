@@ -13,18 +13,18 @@
 @implementation UAPrivacyManagerTest
 
 - (void)setUp {
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesAll resetEnabledFeatures:NO];
 }
 
 - (void)testDefaultFeatures {
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesAll);
     
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone resetEnabledFeatures:NO];
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesNone);
 }
 
 - (void)testEnableFeatures {
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone resetEnabledFeatures:NO];
 
     XCTAssertEqual(self.privacyManager.enabledFeatures, UAFeaturesNone);
     
@@ -50,7 +50,7 @@
 }
 
 - (void)testIsEnabled {
-    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone];
+    self.privacyManager = [UAPrivacyManager privacyManagerWithDataStore:self.dataStore defaultEnabledFeatures:UAFeaturesNone resetEnabledFeatures:NO];
 
     XCTAssertFalse([self.privacyManager isEnabled:UAFeaturesAnalytics]);
     

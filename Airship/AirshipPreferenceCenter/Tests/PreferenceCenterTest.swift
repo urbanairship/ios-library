@@ -15,7 +15,8 @@ class PreferenceCenterTest: XCTestCase {
     override func setUp() {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
-            defaultEnabledFeatures: .all
+            defaultEnabledFeatures: .all,
+            resetEnabledFeatures: false
         )
 
         self.preferenceCenter = PreferenceCenter(

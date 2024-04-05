@@ -18,6 +18,7 @@ final class ApplicationMetricsTest: XCTestCase {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             defaultEnabledFeatures: .all,
+            resetEnabledFeatures: false,
             notificationCenter: notificationCenter
         )
 
