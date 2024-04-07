@@ -21,6 +21,21 @@ public protocol PreferenceCenterOpenDelegate {
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
+/// Preference center validator delegate
+@objc(UAPreferenceCenterValidatorDelegate)
+public protocol PreferenceCenterValidatorDelegate {
+    
+    /**
+     * Validates a given international phone number.
+     * - Parameters:
+     *   - phoneNumber: The phone number to validate.
+     *   - sender: The sender ID.
+     * - Returns: `true` if the phone number is valid, otherwise `false`.
+     */
+    @objc
+    func validate(phoneNumber: String, sender: String) async -> Bool
+}
+
 /// Airship PreferenceCenter module.
 @objc(UAPreferenceCenter)
 public final class PreferenceCenter: NSObject, Sendable {
@@ -52,6 +67,21 @@ public final class PreferenceCenter: NSObject, Sendable {
         }
     }
 
+    /**
+     * Validator delegate.
+     *
+     * If set, the delegate will be called to validate SMS contact management instead of using our default validator.
+     */
+    @objc
+    public weak var validatorDelegate: PreferenceCenterValidatorDelegate? {
+        get {
+            self.delegates.validateSMSDelegate
+        }
+        set {
+            self.delegates.validateSMSDelegate = newValue
+        }
+    }
+    
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
     private let remoteData: RemoteDataProtocol
@@ -179,6 +209,7 @@ private final class Delegates: @unchecked Sendable {
     @MainActor
     weak var openDelegate: PreferenceCenterOpenDelegate?
 
+    weak var validateSMSDelegate: PreferenceCenterValidatorDelegate?
 }
 
 extension PreferenceCenter {
@@ -202,7 +233,8 @@ extension PreferenceCenter {
 
         viewController = PreferenceCenterViewControllerFactory.makeViewController(
             view: PreferenceCenterView(
-                preferenceCenterID: preferenceCenterID
+                preferenceCenterID: preferenceCenterID,
+                validatorDelegate: self.validatorDelegate
             ),
             preferenceCenterTheme: theme,
             dismissAction: {

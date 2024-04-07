@@ -16,6 +16,8 @@ public struct PreferenceCenterContactManagementView: View {
     @ObservedObject
     public var state: PreferenceCenterState
     
+    private let validatorDelegate: PreferenceCenterValidatorDelegate?
+    
     @Environment(\.airshipContactManagementSectionStyle)
     private var style
     
@@ -27,16 +29,19 @@ public struct PreferenceCenterContactManagementView: View {
     
     public init(
         item: PreferenceCenterConfig.ContactManagementItem,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        validatorDelegate: PreferenceCenterValidatorDelegate? = nil
     ) {
         self.item = item
         self.state = state
+        self.validatorDelegate = validatorDelegate
     }
     
     @ViewBuilder
     public var body: some View {
         let configuration = ContactManagementSectionStyleConfiguration(
-            section: self.item,
+            section: self.item, 
+            validatorDelegate: self.validatorDelegate,
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.theme
@@ -55,6 +60,9 @@ public struct ContactManagementSectionStyleConfiguration {
     
     /// The section config
     public let section: PreferenceCenterConfig.ContactManagementItem
+    
+    /// The preference center validator delegate
+    public let validatorDelegate: PreferenceCenterValidatorDelegate?
     
     /// The preference state
     public let state: PreferenceCenterState
@@ -137,7 +145,8 @@ private struct DefaultContactManagementView: View {
     var body: some View {
         ChannelsListView(
             item: configuration.section,
-            state: configuration.state
+            state: configuration.state,
+            validatorDelegate: configuration.validatorDelegate
         )
         .transition(.scale)
     }

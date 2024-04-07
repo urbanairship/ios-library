@@ -13,6 +13,8 @@ public struct ChannelsListView: View {
     /// The item's config
     public let item: PreferenceCenterConfig.ContactManagementItem
     
+    public let validatorDelegate: PreferenceCenterValidatorDelegate?
+    
     @ObservedObject
     public var state: PreferenceCenterState
     
@@ -39,10 +41,12 @@ public struct ChannelsListView: View {
     
     public init(
         item: PreferenceCenterConfig.ContactManagementItem,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        validatorDelegate: PreferenceCenterValidatorDelegate?
     ) {
         self.item = item
         self.state = state
+        self.validatorDelegate = validatorDelegate
     }
     
     public var body: some View {
@@ -112,7 +116,8 @@ public struct ChannelsListView: View {
             AddChannelView(
                 item: view,
                 registrationOptions: self.item.registrationOptions,
-                state: self.$registrationState
+                state: self.$registrationState,
+                validatorDelegate: self.validatorDelegate
             ) {
                 self.disposable?.cancel()
             } onCancel: {

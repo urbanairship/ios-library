@@ -38,20 +38,24 @@ public struct PreferenceCenterList: View {
     private var preferenceCenterTheme
 
     private let preferenceCenterID: String
+    private let validatorDelegate: PreferenceCenterValidatorDelegate?
     private let onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)?
     private let onPhaseChange: ((PreferenceCenterViewPhase) -> Void)?
 
     /// The default constructor
     /// - Parameters:
-    ///     - preferenceCenterID: The preference center ID
-    ///     - onLoad: An optional load block to load the view phase
-    ///     - onPhaseChange: A callback when the phase changed
+    ///   - preferenceCenterID: The preference center ID
+    ///   - validatorDelegate: The validator delegate
+    ///   - onLoad: An optional load block to load the view phase
+    ///   - onPhaseChange: A callback when the phase changed
     public init(
         preferenceCenterID: String,
+        validatorDelegate: PreferenceCenterValidatorDelegate? = nil,
         onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)? = nil,
         onPhaseChange: ((PreferenceCenterViewPhase) -> Void)? = nil
     ) {
         self.preferenceCenterID = preferenceCenterID
+        self.validatorDelegate = validatorDelegate
         self.onLoad = onLoad
         self.onPhaseChange = onPhaseChange
     }
@@ -69,6 +73,7 @@ public struct PreferenceCenterList: View {
 
         let configuration = PreferenceCenterViewStyleConfiguration(
             phase: phase,
+            validatorDelegate: validatorDelegate,
             preferenceCenterTheme: self.preferenceCenterTheme,
             refresh: refresh
         )
@@ -109,7 +114,10 @@ public struct PreferenceCenterList: View {
 public struct PreferenceCenterViewStyleConfiguration {
     /// The view's phase
     public let phase: PreferenceCenterViewPhase
-
+    
+    /// The validator delegate
+    public let validatorDelegate: PreferenceCenterValidatorDelegate?
+    
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
 
@@ -214,6 +222,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         state: PreferenceCenterState
     ) -> some View {
         let theme = configuration.preferenceCenterTheme
+        let validatorDelegate = configuration.validatorDelegate
         return ScrollView {
             LazyVStack(alignment: .leading) {
                 if let subtitle = state.config.display?.subtitle {
@@ -227,7 +236,11 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                 }
 
                 ForEach(0..<state.config.sections.count, id: \.self) { index in
-                    self.section(state.config.sections[index], state: state)
+                    self.section(
+                        state.config.sections[index],
+                        validatorDelegate: validatorDelegate,
+                        state: state
+                    )
                 }
             }
             .padding(16)
@@ -252,13 +265,21 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     @ViewBuilder
     func section(
         _ section: PreferenceCenterConfig.Section,
+        validatorDelegate: PreferenceCenterValidatorDelegate?,
         state: PreferenceCenterState
     ) -> some View {
         switch section {
         case .common(let section):
-            CommonSectionView(section: section, state: state)
+            CommonSectionView(
+                section: section,
+                state: state,
+                validatorDelegate: validatorDelegate
+            )
         case .labeledSectionBreak(let section):
-            LabeledSectionBreakView(section: section, state: state)
+            LabeledSectionBreakView(
+                section: section,
+                state: state
+            )
         }
     }
 }
@@ -384,12 +405,19 @@ public struct PreferenceCenterView: View {
     private var theme
     
     private let preferenceCenterID: String
+    
+    private var validatorDelegate: PreferenceCenterValidatorDelegate?
 
     /// Default constructor
     /// - Parameters:
     ///     - preferenceCenterID: The preference center ID
-    public init(preferenceCenterID: String) {
+    ///     - validatorDelegate: The validator delegate
+    public init(
+        preferenceCenterID: String,
+        validatorDelegate: PreferenceCenterValidatorDelegate? = nil
+    ) {
         self.preferenceCenterID = preferenceCenterID
+        self.validatorDelegate = validatorDelegate
     }
     
     @ViewBuilder
@@ -412,7 +440,10 @@ public struct PreferenceCenterView: View {
     @ViewBuilder
     public var body: some View {
             
-        let content = PreferenceCenterList(preferenceCenterID: preferenceCenterID)
+        let content = PreferenceCenterList(
+            preferenceCenterID: preferenceCenterID,
+            validatorDelegate: validatorDelegate
+        )
             .airshipApplyIf(self.dismissAction != nil) { view in
                 view.toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {

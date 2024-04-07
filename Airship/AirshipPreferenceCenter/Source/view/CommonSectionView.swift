@@ -17,6 +17,8 @@ public struct CommonSectionView: View {
     @ObservedObject
     public var state: PreferenceCenterState
 
+    private var validatorDelegate: PreferenceCenterValidatorDelegate?
+    
     @Environment(\.airshipCommonSectionViewStyle)
     private var style
 
@@ -26,10 +28,21 @@ public struct CommonSectionView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    init(
+        section: PreferenceCenterConfig.CommonSection,
+        state: PreferenceCenterState,
+        validatorDelegate: PreferenceCenterValidatorDelegate? = nil
+    ) {
+        self.section = section
+        self.state = state
+        self.validatorDelegate = validatorDelegate
+    }
+    
     @ViewBuilder
     public var body: some View {
         let configuration = CommonSectionViewStyleConfiguration(
-            section: self.section,
+            section: self.section, 
+            validatorDelegate: self.validatorDelegate,
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme
@@ -61,6 +74,9 @@ public struct CommonSectionViewStyleConfiguration {
     /// The section config
     public let section: PreferenceCenterConfig.CommonSection
 
+    /// The validator delegate
+    public let validatorDelegate: PreferenceCenterValidatorDelegate?
+    
     /// The preference state
     public let state: PreferenceCenterState
 
@@ -103,6 +119,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     public func makeBody(configuration: Configuration) -> some View {
         let section = configuration.section
         let sectionTheme = configuration.preferenceCenterTheme.commonSection
+        let validatorDelegate = configuration.validatorDelegate
 
         if configuration.displayConditionsMet {
             VStack(alignment: .leading) {
@@ -131,7 +148,11 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                 }
 
                 ForEach(0..<section.items.count, id: \.self) { index in
-                    makeItem(section.items[index], state: configuration.state)
+                    makeItem(
+                        section.items[index],
+                        state: configuration.state,
+                        validatorDelegate: validatorDelegate
+                    )
                 }
             }
             .padding(.bottom, 8)
@@ -141,7 +162,8 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     @ViewBuilder
     func makeItem(
         _ item: PreferenceCenterConfig.Item,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        validatorDelegate: PreferenceCenterValidatorDelegate?
     ) -> some View {
         switch item {
         case .alert(let item):
@@ -156,7 +178,11 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
             ContactSubscriptionGroupView(item: item, state: state)
             Divider()
         case .contactManagement(let item):
-            PreferenceCenterContactManagementView(item: item, state: state)
+            PreferenceCenterContactManagementView(
+                item: item,
+                state: state,
+                validatorDelegate: validatorDelegate
+            )
         }
     }
 }

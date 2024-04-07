@@ -25,6 +25,8 @@ public struct AddChannelView: View {
     
     var state: Binding<RegistrationState>
     
+    var validatorDelegate: PreferenceCenterValidatorDelegate?
+    
     var onClose: (()->())?
     
     var onCancel: (()->())?
@@ -53,6 +55,7 @@ public struct AddChannelView: View {
         theme: PreferenceCenterTheme.ContactManagement? = nil,
         registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?,
         state: Binding<RegistrationState>,
+        validatorDelegate: PreferenceCenterValidatorDelegate?,
         onClose: (()->())? = nil,
         onCancel: (()->())? = nil,
         onSubmit: (()->())? = nil
@@ -60,6 +63,7 @@ public struct AddChannelView: View {
         self.item = item
         self.theme = theme
         self.registrationOptions = registrationOptions
+        self.validatorDelegate = validatorDelegate
         self.state = state
         self.onCancel = onCancel
         self.onSubmit = onSubmit
@@ -189,6 +193,18 @@ public struct AddChannelView: View {
                     alignment: .center
                 )
             }
+        }
+    }
+    
+    private func validateSMS(phoneNumber: String, sender: String) async {
+        if let delegate = self.validatorDelegate {
+            AirshipLogger.trace(
+                "Validate phone number through delegate"
+            )
+            let _ = await delegate.validate(phoneNumber: phoneNumber, sender: sender)
+        } else {
+            AirshipLogger.trace("Use default phone number validator")
+            Airship.contact.validateSMS(phoneNumber, sender: sender)
         }
     }
     
