@@ -43,7 +43,7 @@ struct HTMLView: View {
                 $0.addCloseButton(
                     dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
                     dismissIconResource: dismissIconResource,
-                    circleColor: .tappableClear, /// Probably should just do this everywhere and remove circleColor entirely
+                    circleColor: .airshipTappableClear, /// Probably should just do this everywhere and remove circleColor entirely
                     onUserDismissed: {
                         environment.onUserDismissed()
                     }
@@ -52,7 +52,7 @@ struct HTMLView: View {
                 $0.cornerRadius(displayContent.borderRadius ?? 0)
                     .aspectResize(width:displayContent.width, height:displayContent.height)
                     .padding(additionalPadding)
-                    .addBackground(color: .shadowColor)
+                    .addBackground(color: .airshipShadowColor)
             }.applyIf(!isModal) {
                 $0.padding(additionalPadding)
                     .padding(-24) /// Undo default padding when in fullscreen

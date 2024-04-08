@@ -3,6 +3,10 @@
 import SwiftUI
 import Combine
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 struct FullScreenView: View, Sendable {
     @EnvironmentObject var environment: InAppMessageEnvironment
     let displayContent: InAppMessageDisplayContent.Fullscreen
@@ -93,7 +97,7 @@ struct FullScreenView: View, Sendable {
                     buttonsView
                     footerButton
                 }.padding(padding)
-                    .background(Color.tappableClear)
+                    .background(Color.airshipTappableClear)
             }
             .addCloseButton(
                 dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,

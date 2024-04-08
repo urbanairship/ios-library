@@ -687,7 +687,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         @objc(UAPreferenceCenterConfigAlertButton)
         public final class Button: NSObject, Decodable, Sendable {
 
-            /// The buttton's text.
+            /// The button's text.
             @objc
             public let text: String
 
@@ -697,7 +697,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
             let actionJSON: AirshipJSON
 
-            /// Actions paylaod to run on tap
+            /// Actions payload to run on tap
             @objc
             public var actions: Any? {
                 return self.actionJSON.unWrap()
@@ -788,16 +788,16 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         
         // The display prompt
         public let display: CommonDisplay
-        
-        /// The empty channel placeholder
-        public var emptyMessage: String?
 
         // The add prompt
         public let addPrompt: AddPrompt?
         
         /// The remove prompt
         public let removePrompt: RemoveChannel?
-        
+
+        /// The empty label that's visible when no channels of this type have been added
+        public let emptyLabel: String?
+
         public let registrationOptions: RegistrationOptions
         
         /// The section's display conditions.
@@ -807,7 +807,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case identifier = "id"
             case platform = "platform"
             case display = "display"
-            case emptyMessage = "empty_message"
+            case emptyLabel = "empty_label"
             case addPrompt = "add"
             case removePrompt = "remove"
             case registrationOptions = "registration_options"
@@ -818,7 +818,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             identifier: String,
             platform: Platform,
             display: CommonDisplay,
-            emptyMessage: String?,
+            emptyLabel: String?,
             addPrompt: AddPrompt?,
             removePrompt: RemoveChannel?,
             registrationOptions: RegistrationOptions,
@@ -827,7 +827,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             self.identifier = identifier
             self.platform = platform
             self.display = display
-            self.emptyMessage = emptyMessage
+            self.emptyLabel = emptyLabel
             self.addPrompt = addPrompt
             self.removePrompt = removePrompt
             self.registrationOptions = registrationOptions
@@ -863,7 +863,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             public var description: String {
                 return stringValue
             }
-            
         }
         
         @objc(PreferenceCenterEmailRegistrationOption)
@@ -872,18 +871,22 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             @objc
             public var placeholder: String
             
+            @objc
+            public var addressLabel: String
+
             public var properties: AirshipJSON?
             
             enum CodingKeys: String, CodingKey {
                 case placeholder = "placeholder_text"
                 case properties = "properties"
+                case addressLabel = "address_label"
             }
             
-            public init(placeholder: String, properties: AirshipJSON? = nil) {
+            public init(placeholder: String, addressLabel: String, properties: AirshipJSON? = nil) {
                 self.placeholder = placeholder
+                self.addressLabel = addressLabel
                 self.properties = properties
             }
-            
         }
         
         @objc(PreferenceCenterSmsRegistrationOption)
@@ -891,15 +894,24 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             
             @objc
             public var senders: [SmsSenderInfo]
-            
+
+            @objc
+            public var countryLabel: String
+
+            @objc
+            public var msisdnLabel: String
+
             enum CodingKeys: String, CodingKey {
                 case senders = "senders"
+                case countryLabel = "country_label"
+                case msisdnLabel = "msisdn_label"
             }
             
-            public init(senders: [SmsSenderInfo]) {
+            public init(senders: [SmsSenderInfo], countryLabel: String, msisdnLabel: String) {
                 self.senders = senders
+                self.countryLabel = countryLabel
+                self.msisdnLabel = msisdnLabel
             }
-            
         }
         
         /// Item types.
@@ -1044,11 +1056,10 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             
             @objc
             public let acceptButton: LabeledButton?
-            
-            
+
             enum CodingKeys: String, CodingKey {
                 case display = "display"
-                case acceptButton = "accept_button"
+                case acceptButton = "submit_button"
             }
             
             public init(
@@ -1106,13 +1117,13 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             @objc
             public let display: PromptDisplay
             
-            /// The error message.
+            /// The success message.
             @objc
             public let onSuccess: ActionableMessage?
             
-            /// The list of senders
-            public let onError: ActionableMessage?
-            
+            /// The error messages
+            public let errorMessages: ErrorMessages?
+
             /// The cancel prompt's button.
             @objc
             public let cancelButton: LabeledButton
@@ -1124,7 +1135,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             enum CodingKeys: String, CodingKey {
                 case display = "display"
                 case onSuccess = "on_success"
-                case onError = "on_error"
+                case errorMessages = "error_messages"
                 case cancelButton = "cancel_button"
                 case submitButton = "submit_button"
             }
@@ -1132,13 +1143,13 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             public init(
                 display: PromptDisplay,
                 onSuccess: ActionableMessage? = nil,
-                onError: ActionableMessage? = nil,
+                errorMessages: ErrorMessages? = nil,
                 cancelButton: LabeledButton,
                 submitButton: LabeledButton
             ) {
                 self.display = display
                 self.onSuccess = onSuccess
-                self.onError = onError
+                self.errorMessages = errorMessages
                 self.cancelButton = cancelButton
                 self.submitButton = submitButton
             }
@@ -1149,7 +1160,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         @objc(UAPreferenceCenterConfigPromptButton)
         public class LabeledButton: NSObject, Decodable {
 
-            /// The buttton's text.
+            /// The button's text.
             @objc
             public let text: String
 
@@ -1222,7 +1233,17 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 && self.body == object.body
             }
         }
-        
+
+        public struct ErrorMessages: Codable {
+            var invalidMessage: String
+            var defaultMessage: String
+
+            enum CodingKeys: String, CodingKey {
+                case invalidMessage = "invalid"
+                case defaultMessage = "default"
+            }
+        }
+
         @objc
         public class RepromptOptions: NSObject, Decodable {
             
@@ -1244,28 +1265,28 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
         
         @objc
-        public class SmsSenderInfo: NSObject, Decodable {
-            
+        public class SmsSenderInfo: NSObject, Decodable, Identifiable {
+
             var senderId: String
-            var placeHolderText: String
+            var placeholderText: String
             var countryCode: String
             var displayName: String
             
             enum CodingKeys: String, CodingKey {
                 case senderId = "sender_id"
-                case placeHolderText = "placeholder_text"
+                case placeholderText = "placeholder_text"
                 case countryCode = "country_code"
                 case displayName = "display_name"
             }
             
             public init(
                 senderId: String,
-                placeHolderText: String,
+                placeholderText: String,
                 countryCode: String,
                 displayName: String
             ) {
                 self.senderId = senderId
-                self.placeHolderText = placeHolderText
+                self.placeholderText = placeholderText
                 self.countryCode = countryCode
                 self.displayName = displayName
             }
@@ -1276,14 +1297,14 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 }
 
                 return self.senderId == object.senderId
-                && self.placeHolderText == object.placeHolderText
+                && self.placeholderText == object.placeholderText
                 && self.countryCode == object.countryCode
-                && self.displayName == object.placeHolderText
+                && self.displayName == object.placeholderText
             }
             
             static let none = SmsSenderInfo(
                 senderId: "none",
-                placeHolderText: "none",
+                placeholderText: "none",
                 countryCode: "none",
                 displayName: "none"
             )
@@ -1566,5 +1587,4 @@ extension PreferenceCenterConfig {
             })
         })
     }
-    
 }

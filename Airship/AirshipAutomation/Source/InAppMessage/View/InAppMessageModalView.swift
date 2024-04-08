@@ -146,14 +146,14 @@ struct InAppMessageModalView: View {
         .addCloseButton(
             dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
             dismissIconResource: dismissIconResource,
-            circleColor: .tappableClear, /// Probably should just do this everywhere and remove circleColor entirely
+            circleColor: .airshipTappableClear, /// Probably should just do this everywhere and remove circleColor entirely
             onUserDismissed: { environment.onUserDismissed() }
         )
         .background(displayContent.backgroundColor?.color ?? Color.black)
         .cornerRadius(displayContent.borderRadius ?? 0)
         .parentClampingResize(maxWidth: maxWidth, maxHeight: maxHeight)
         .padding(padding)
-        .addBackground(color: .shadowColor)
+        .addBackground(color: .airshipShadowColor)
         .onAppear {
             self.environment.onAppear()
         }

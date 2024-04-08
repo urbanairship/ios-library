@@ -3,11 +3,6 @@
 import Foundation
 import SwiftUI
 
-extension Color {
-    static var tappableClear: Color { Color.white.opacity(0.001) }
-    static var shadowColor: Color { Color.black.opacity(0.33) }
-}
-
 extension View {
     @ViewBuilder
     func showing(isShowing: Bool) -> some View {

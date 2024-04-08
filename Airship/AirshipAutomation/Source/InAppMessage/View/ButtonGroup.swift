@@ -2,6 +2,10 @@
 
 import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 private let defaultButtonMargin: CGFloat = 15
 private let defaultFooterMargin: CGFloat = 0
 private let buttonDefaultBorderWidth: CGFloat = 2
@@ -55,7 +59,7 @@ struct ButtonGroup: View {
             .environmentObject(environment)
             .background(
                 GeometryReader {
-                    Color.tappableClear.preference(key: ViewHeightKey.self,
+                    Color.airshipTappableClear.preference(key: ViewHeightKey.self,
                                                    value: $0.frame(in: .global).size.height) }
                     .onPreferenceChange(ViewHeightKey.self) { value in
                         DispatchQueue.main.async {

@@ -102,7 +102,7 @@ extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
     }
 }
 
-/// The default comon section view style
+/// The default common section view style
 public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
     public static let titleAppearance = PreferenceCenterTheme.TextAppearance(
@@ -113,6 +113,11 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     public static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .system(size: 14),
         color: .secondary
+    )
+
+    public static let emptyTextAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .system(size: 14),
+        color: .gray.opacity(0.80)
     )
 
     @ViewBuilder
@@ -167,7 +172,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     ) -> some View {
         switch item {
         case .alert(let item):
-            PreferenceCenterAlertView(item: item, state: state)
+            PreferenceCenterAlertView(item: item, state: state).transition(.opacity)
         case .channelSubscription(let item):
             ChannelSubscriptionView(item: item, state: state)
             Divider()

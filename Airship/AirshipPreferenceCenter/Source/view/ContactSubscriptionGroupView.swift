@@ -74,7 +74,7 @@ extension View {
     }
 }
 
-/// The contaction subscription group item style config
+/// The contact subscription group item style config
 public struct ContactSubscriptionGroupStyleConfiguration {
     public let item: PreferenceCenterConfig.ContactSubscriptionGroup
     /// The preference state

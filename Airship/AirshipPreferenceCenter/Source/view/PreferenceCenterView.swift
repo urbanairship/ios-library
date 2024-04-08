@@ -108,206 +108,105 @@ public struct PreferenceCenterList: View {
     }
 }
 
+/// Preference Center View
+public struct PreferenceCenterView: View {
 
+    @Environment(\.preferenceCenterDismissAction)
+    private var dismissAction: (() -> Void)?
 
-/// Preference Center view style configuration
-public struct PreferenceCenterViewStyleConfiguration {
-    /// The view's phase
-    public let phase: PreferenceCenterViewPhase
+    @Environment(\.airshipPreferenceCenterTheme)
+    private var theme
     
-    /// The validator delegate
-    public let validatorDelegate: PreferenceCenterValidatorDelegate?
+    private let preferenceCenterID: String
     
-    /// The preference center theme
-    public let preferenceCenterTheme: PreferenceCenterTheme
+    private var validatorDelegate: PreferenceCenterValidatorDelegate?
 
-    /// A block that can be called to refresh the view
-    public let refresh: () -> Void
-}
-
-/// Preference Center view style
-public protocol PreferenceCenterViewStyle {
-    associatedtype Body: View
-    typealias Configuration = PreferenceCenterViewStyleConfiguration
-    func makeBody(configuration: Self.Configuration) -> Self.Body
-}
-
-extension PreferenceCenterViewStyle
-where Self == DefaultPreferenceCenterViewStyle {
-    /// Default style
-    public static var defaultStyle: Self {
-        return .init()
-    }
-}
-
-/// The default Preference Center view style
-public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline
-    )
-
-    static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        color: .white
-    )
-
-    private func navigationBarTitle(
-        configuration: Configuration,
-        state: PreferenceCenterState? = nil
-    ) -> String {
-        
-        var title: String?
-        if let state = state {
-            title = state.config.display?.title?.nullIfEmpty()
-        }
-
-        let theme = configuration.preferenceCenterTheme
-        if let overrideConfigTitle = theme.viewController?.navigationBar?.overrideConfigTitle, overrideConfigTitle {
-            title = configuration.preferenceCenterTheme.viewController?
-                .navigationBar?
-                .title
-        }
-        return title ?? "ua_preference_center_title".preferenceCenterlocalizedString
+    /// Default constructor
+    /// - Parameters:
+    ///     - preferenceCenterID: The preference center ID
+    ///     - validatorDelegate: The validator delegate
+    public init(
+        preferenceCenterID: String,
+        validatorDelegate: PreferenceCenterValidatorDelegate? = nil
+    ) {
+        self.preferenceCenterID = preferenceCenterID
+        self.validatorDelegate = validatorDelegate
     }
     
     @ViewBuilder
-    private func makeProgressView(configuration: Configuration) -> some View {
-        ProgressView()
-            .frame(alignment: .center)
-            .navigationTitle(navigationBarTitle(configuration: configuration))
+    private func makeBackButton(_ theme: PreferenceCenterTheme) -> some View {
+        Button(action: {
+            self.dismissAction?()
+        }) {
+            let backImage = Image(systemName: "chevron.backward")
+                .scaleEffect(0.68)
+                .font(Font.title.weight(.medium))
+            if let backgroundColor = theme.viewController?.navigationBar?.backgroundColor {
+                backImage
+                    .foregroundColor(Color(backgroundColor))
+            } else {
+                backImage
+            }
+        }
     }
 
     @ViewBuilder
-    public func makeErrorView(configuration: Configuration) -> some View {
-        let theme = configuration.preferenceCenterTheme.preferenceCenter
-        let retry = theme?.retryButtonLabel ?? "ua_retry_button".preferenceCenterlocalizedString
-        let errorMessage =
-            theme?.retryMessage ?? "ua_preference_center_empty".preferenceCenterlocalizedString
-
-        VStack {
-            Text(errorMessage)
-                .textAppearance(theme?.retryMessageAppearance)
-                .padding(16)
-
-            Button(
-                action: {
-                    configuration.refresh()
-                },
-                label: {
-                    Text(retry)
-                        .textAppearance(
-                            theme?.retryButtonLabelAppearance,
-                            base: DefaultPreferenceCenterViewStyle
-                                .buttonLabelAppearance
-                        )
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(
-                                    theme?.retryButtonBackgroundColor
-                                        ?? Color.blue
-                                )
-                        )
-                        .cornerRadius(8)
-                        .frame(minWidth: 44)
-                }
-            )
-        }
-        .navigationTitle(navigationBarTitle(configuration: configuration))
-    }
-
-    public func makePreferenceCenterView(
-        configuration: Configuration,
-        state: PreferenceCenterState
-    ) -> some View {
-        let theme = configuration.preferenceCenterTheme
-        let validatorDelegate = configuration.validatorDelegate
-        return ScrollView {
-            LazyVStack(alignment: .leading) {
-                if let subtitle = state.config.display?.subtitle {
-                    Text(subtitle)
-                        .textAppearance(
-                            theme.preferenceCenter?.subtitleAppearance,
-                            base: DefaultPreferenceCenterViewStyle
-                                .subtitleAppearance
-                        )
-                        .padding(.bottom, 16)
-                }
-
-                ForEach(0..<state.config.sections.count, id: \.self) { index in
-                    self.section(
-                        state.config.sections[index],
-                        validatorDelegate: validatorDelegate,
-                        state: state
-                    )
+    public var body: some View {
+            
+        let content = PreferenceCenterList(
+            preferenceCenterID: preferenceCenterID,
+            validatorDelegate: validatorDelegate
+        )
+            .airshipApplyIf(self.dismissAction != nil) { view in
+                view.toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        makeBackButton(theme)
+                    }
                 }
             }
-            .padding(16)
-            Spacer()
-        }
-        .navigationTitle(navigationBarTitle(configuration: configuration, state: state))
-    }
 
-    @ViewBuilder
-    public func makeBody(configuration: Configuration) -> some View {
-
-        switch configuration.phase {
-        case .loading:
-            makeProgressView(configuration: configuration)
-        case .error(_):
-            makeErrorView(configuration: configuration)
-        case .loaded(let state):
-            makePreferenceCenterView(configuration: configuration, state: state)
-        }
-    }
-
-    @ViewBuilder
-    func section(
-        _ section: PreferenceCenterConfig.Section,
-        validatorDelegate: PreferenceCenterValidatorDelegate?,
-        state: PreferenceCenterState
-    ) -> some View {
-        switch section {
-        case .common(let section):
-            CommonSectionView(
-                section: section,
-                state: state,
-                validatorDelegate: validatorDelegate
-            )
-        case .labeledSectionBreak(let section):
-            LabeledSectionBreakView(
-                section: section,
-                state: state
-            )
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                ZStack{
+                    content
+                }
+            }
+        } else {
+            NavigationView {
+                content
+            }
+            .navigationViewStyle(.stack)
         }
     }
 }
 
-struct AnyPreferenceCenterViewStyle: PreferenceCenterViewStyle {
-    @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
-
-    init<S: PreferenceCenterViewStyle>(style: S) {
-        _makeBody = { configuration in
-            AnyView(style.makeBody(configuration: configuration))
-        }
-    }
-
-    @ViewBuilder
-    func makeBody(configuration: Configuration) -> some View {
-        _makeBody(configuration)
-    }
+private struct PreferenceCenterDismissActionKey: EnvironmentKey {
+    static let defaultValue: (() -> Void)? = nil
 }
 
-struct PreferenceCenterViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyPreferenceCenterViewStyle(style: .defaultStyle)
-}
 
 extension EnvironmentValues {
-    var airshipPreferenceCenterStyle: AnyPreferenceCenterViewStyle {
-        get { self[PreferenceCenterViewStyleKey.self] }
-        set { self[PreferenceCenterViewStyleKey.self] = newValue }
+    var preferenceCenterDismissAction: (() -> Void)? {
+        get { self[PreferenceCenterDismissActionKey.self] }
+        set { self[PreferenceCenterDismissActionKey.self] = newValue }
+    }
+}
+
+extension View {
+    func addPreferenceCenterDismissAction(action: (() -> Void)?) -> some View {
+        environment(\.preferenceCenterDismissAction, action)
+    }
+    
+    @ViewBuilder
+    func airshipApplyIf<Content: View>(
+        _ predicate: @autoclosure () -> Bool,
+        transform: (Self) -> Content
+    ) -> some View {
+        if predicate() {
+            transform(self)
+        } else {
+            self
+        }
     }
 }
 
@@ -392,116 +291,5 @@ struct PreferenceCenterView_Previews: PreviewProvider {
             preferenceCenterID in
             return .loaded(PreferenceCenterState(config: config))
         }
-    }
-}
-
-/// Preference Center View
-public struct PreferenceCenterView: View {
-
-    @Environment(\.preferenceCenterDismissAction)
-    private var dismissAction: (() -> Void)?
-
-    @Environment(\.airshipPreferenceCenterTheme)
-    private var theme
-    
-    private let preferenceCenterID: String
-    
-    private var validatorDelegate: PreferenceCenterValidatorDelegate?
-
-    /// Default constructor
-    /// - Parameters:
-    ///     - preferenceCenterID: The preference center ID
-    ///     - validatorDelegate: The validator delegate
-    public init(
-        preferenceCenterID: String,
-        validatorDelegate: PreferenceCenterValidatorDelegate? = nil
-    ) {
-        self.preferenceCenterID = preferenceCenterID
-        self.validatorDelegate = validatorDelegate
-    }
-    
-    @ViewBuilder
-    private func makeBackButton(_ theme: PreferenceCenterTheme) -> some View {
-        Button(action: {
-            self.dismissAction?()
-        }) {
-            let backImage = Image(systemName: "chevron.backward")
-                .scaleEffect(0.68)
-                .font(Font.title.weight(.medium))
-            if let backgroundColor = theme.viewController?.navigationBar?.backgroundColor {
-                backImage
-                    .foregroundColor(Color(backgroundColor))
-            } else {
-                backImage
-            }
-        }
-    }
-
-    @ViewBuilder
-    public var body: some View {
-            
-        let content = PreferenceCenterList(
-            preferenceCenterID: preferenceCenterID,
-            validatorDelegate: validatorDelegate
-        )
-            .airshipApplyIf(self.dismissAction != nil) { view in
-                view.toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        makeBackButton(theme)
-                    }
-                }
-            }
-
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                ZStack{
-                    content
-                }
-            }
-        } else {
-            NavigationView {
-                content
-            }
-            .navigationViewStyle(.stack)
-        }
-    }
-}
-
-
-
-private struct PreferenceCenterDismissActionKey: EnvironmentKey {
-    static let defaultValue: (() -> Void)? = nil
-}
-
-
-extension EnvironmentValues {
-    var preferenceCenterDismissAction: (() -> Void)? {
-        get { self[PreferenceCenterDismissActionKey.self] }
-        set { self[PreferenceCenterDismissActionKey.self] = newValue }
-    }
-}
-
-
-extension View {
-    func addPreferenceCenterDismissAction(action: (() -> Void)?) -> some View {
-        environment(\.preferenceCenterDismissAction, action)
-    }
-    
-    @ViewBuilder
-    func airshipApplyIf<Content: View>(
-        _ predicate: @autoclosure () -> Bool,
-        transform: (Self) -> Content
-    ) -> some View {
-        if predicate() {
-            transform(self)
-        } else {
-            self
-        }
-    }
-}
-
-extension String {
-    fileprivate func nullIfEmpty() -> String? {
-        return self.isEmpty ? nil : self
     }
 }

@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 import UIKit
 
-/// Preferenece Center theme
+/// Preference Center theme
 public struct PreferenceCenterTheme: Equatable, Sendable {
 
     /// View controller theme
@@ -111,7 +111,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         }
     }
 
-    /// Text apperance
+    /// Text appearance
     public struct TextAppearance: Equatable, Sendable {
         /// The text font
         public var font: Font? = nil
@@ -232,19 +232,24 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Button background color
         public var buttonBackgroundColor: Color? = nil
 
+        /// Destructive button background color - used submit button background color when removing channels
+        public var buttonDestructiveBackgroundColor: Color? = nil
+
         public init(
             backgroundColor: Color? = nil,
             titleAppearance: TextAppearance? = nil,
             subtitleAppearance: TextAppearance? = nil,
             errorAppearance: TextAppearance? = nil,
             buttonLabelAppearance: TextAppearance? = nil,
-            buttonBackgroundColor: Color? = nil
+            buttonBackgroundColor: Color? = nil,
+            buttonDestructiveBackgroundColor: Color? = nil
         ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.errorAppearance = errorAppearance
             self.buttonLabelAppearance = buttonLabelAppearance
             self.buttonBackgroundColor = buttonBackgroundColor
+            self.buttonDestructiveBackgroundColor = buttonDestructiveBackgroundColor
         }
     }
     
@@ -255,6 +260,9 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
 
         /// Subtitle appearance
         public var subtitleAppearance: TextAppearance? = nil
+
+        /// Empty appearance - for when a section has an empty message set
+        public var emptyTextAppearance: TextAppearance? = nil
 
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
@@ -368,5 +376,66 @@ extension PreferenceCenterTheme {
         -> PreferenceCenterTheme
     {
         return try PreferenceCenterThemeLoader.fromPlist(plist)
+    }
+}
+
+extension ProgressView {
+    @ViewBuilder
+    func airshipSetTint(color: Color) -> some View {
+        if #available(iOS 15, *) {
+            self.tint(color)
+        } else {
+            self.accentColor(color)
+        }
+    }
+}
+
+extension Color {
+
+    /// Inverts the color - used for inverted primary and secondary colors on LabeledButtons
+    func inverted() -> Color {
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        let invertedColor = Color(red: Double(1 - red), green: Double(1 - green), blue: Double(1 - blue), opacity: Double(alpha))
+        return invertedColor
+    }
+
+    /**
+     ** Derives secondary variant for a particular color by shifting a given color's RGBA values
+     ** by the difference between the current primary and secondary colors
+     **/
+    func secondaryVariant(for colorScheme: ColorScheme) -> Color {
+        /// Convert target color to UIColor
+        let targetUIColor = UIColor(self)
+
+        /// Convert primary and secondary colors to UIColor
+        let primaryUIColor = UIColor(.primary)
+        let secondaryUIColor = UIColor(.secondary)
+
+        /// Calculate RGBA differences between primary and secondary
+        var primaryRed: CGFloat = 0, primaryGreen: CGFloat = 0, primaryBlue: CGFloat = 0, primaryAlpha: CGFloat = 0
+        primaryUIColor.getRed(&primaryRed, green: &primaryGreen, blue: &primaryBlue, alpha: &primaryAlpha)
+
+        var secondaryRed: CGFloat = 0, secondaryGreen: CGFloat = 0, secondaryBlue: CGFloat = 0, secondaryAlpha: CGFloat = 0
+        secondaryUIColor.getRed(&secondaryRed, green: &secondaryGreen, blue: &secondaryBlue, alpha: &secondaryAlpha)
+
+        let redDiff = secondaryRed - primaryRed
+        let greenDiff = secondaryGreen - primaryGreen
+        let blueDiff = secondaryBlue - primaryBlue
+        let alphaDiff = secondaryAlpha - primaryAlpha
+
+        /// Apply the differences to the target color
+        var targetRed: CGFloat = 0, targetGreen: CGFloat = 0, targetBlue: CGFloat = 0, targetAlpha: CGFloat = 0
+        if targetUIColor.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha) {
+            let newRed = colorScheme == .light ? max(targetRed - redDiff, 0) : min(targetRed + redDiff, 1)
+            let newGreen = colorScheme == .light ? max(targetGreen - greenDiff, 0) : min(targetGreen + greenDiff, 1)
+            let newBlue = colorScheme == .light ? max(targetBlue - blueDiff, 0) : min(targetBlue + blueDiff, 1)
+            let newAlpha = targetAlpha + alphaDiff
+
+            return Color(UIColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
+        } else {
+            return self /// Return the original color if unable to modify
+        }
     }
 }

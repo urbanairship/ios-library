@@ -191,7 +191,7 @@ struct InAppMessageBannerView: View {
                             self.lastSize = size
                         }
                     }
-                    return .tappableClear
+                    return Color.airshipTappableClear
                 })
             )
             .padding(padding)

@@ -9,7 +9,6 @@ import AirshipCore
 
 // MARK: Channel list view
 public struct ChannelsListView: View {
-    
     /// The item's config
     public let item: PreferenceCenterConfig.ContactManagementItem
     
@@ -23,9 +22,6 @@ public struct ChannelsListView: View {
     
     @State
     private var channels: [AssociatedChannelType] = []
-    
-    @State
-    var registrationState: RegistrationState = .inProgress(false)
     
     @State
     private var hideView: Bool = false
@@ -48,22 +44,38 @@ public struct ChannelsListView: View {
         self.state = state
         self.validatorDelegate = validatorDelegate
     }
-    
+
     public var body: some View {
         if !self.hideView {
             VStack {
                 Section {
-                    if self.channels.isEmpty {
-                        EmptyMessageView(message: item.emptyMessage) {
-                            withAnimation {
-                                self.hideView = true
+                    VStack(alignment: .leading) {
+                        if self.channels.isEmpty {
+                            EmptySectionLabel(label: item.emptyLabel) {
+                                withAnimation {
+                                    self.hideView = true
+                                }
+                            }
+                        } else {
+                            channelListView()
+                        }
+                        if let model = self.item.addPrompt?.button {
+                            LabeledButton(type: .outlineType,
+                                          item: model,
+                                          theme: self.theme.contactManagement) {
+                                self.disposable = ChannelsListView.showModalView(
+                                    rootView: addChannelPromptView,
+                                    theme: self.theme.contactManagement
+                                )
                             }
                         }
-                    } else {
-                        channelListView()
                     }
+
                 } header: {
-                    headerView()
+                    HStack {
+                        headerView
+                        Spacer()
+                    }
                 }
             }
             .onAppear {
@@ -76,9 +88,11 @@ public struct ChannelsListView: View {
                     .sink { state in
                         switch state {
                         case .failed:
-                            self.registrationState = .failed
+                            /// TODO: Update state of the listing to show items that didn't complete
+                            break
                         case .succeed(_):
-                            self.registrationState = .succeed
+                            /// TODO:  Update state of the listing to show items that completed
+                            break
 #if canImport(AirshipCore)
                         @unknown default:
                             AirshipLogger.error("Unknown registration state")
@@ -109,69 +123,19 @@ public struct ChannelsListView: View {
             }
         }
     }
-    
+
     @ViewBuilder
-    private func AddChannelPromptView() -> some View {
-        if let view = self.item.addPrompt?.view {
-            AddChannelView(
-                item: view,
-                registrationOptions: self.item.registrationOptions,
-                state: self.$registrationState,
-                validatorDelegate: self.validatorDelegate
-            ) {
-                self.disposable?.cancel()
-            } onCancel: {
-                self.disposable?.cancel()
+    private var headerView: some View {
+        VStack(alignment: .leading) {
+            Text(self.item.display.title)
+                .font(.headline)
+            if let subtitle = self.item.display.subtitle {
+                Text(subtitle)
+                    .font(.subheadline)
             }
-            .transition(.scale)
         }
     }
-    
-    @ViewBuilder
-    private func RemoveChannelPromptView() -> some View {
-        if let view = self.item.removePrompt {
-            RemoveChannelPrompt(
-                item: view,
-                theme: self.theme.contactManagement) {
-                    if let channel = self.selectedChannel {
-                        if case .sms(let associatedChannel) = channel {
-                            Airship.contact.optOutChannel(associatedChannel.channelID)
-                        } else if case .email(let associatedChannel) = channel {
-                            Airship.contact.optOutChannel(associatedChannel.channelID)
-                        }
-                    }
-                    self.disposable?.cancel()
-                }
-            
-        }
-    }
-    
-    private func headerView() -> some View {
-        return HStack {
-            VStack(alignment: .leading) {
-                Text(self.item.display.title)
-                    .font(.headline)
-                if let subtitle = self.item.display.subtitle {
-                    Text(subtitle)
-                        .font(.subheadline)
-                }
-            }
-            Spacer()
-            Button {
-                self.disposable = ChannelsListView.showModalView(
-                    rootView: AddChannelPromptView(),
-                    theme: self.theme.contactManagement
-                )
-                self.registrationState = .inProgress(false)
-            } label: {
-                Text(self.item.addPrompt?.button.text ?? "")
-            }
-            .optAccessibilityLabel(
-                string: self.item.addPrompt?.button.contentDescription
-            )
-        }
-    }
-    
+
     private func channelListView() -> some View {
         ForEach(self.channels, id: \.self) { channel in
             VStack(alignment: .leading) {
@@ -190,7 +154,7 @@ public struct ChannelsListView: View {
                             theme: self.theme.contactManagement
                         ) {
                             self.disposable = ChannelsListView.showModalView(
-                                rootView: RemoveChannelPromptView(),
+                                rootView: removePromptView,
                                 theme: self.theme.contactManagement
                             )
                             self.selectedChannel = channel
@@ -203,199 +167,46 @@ public struct ChannelsListView: View {
     }
 }
 
-// MARK: Empty message view
-private struct EmptyMessageView: View {
-    
-    static let padding = EdgeInsets(top: 0, leading: 25, bottom: 5, trailing: 0)
-    
-    // The empty message
-    var message: String?
-    
-    /// The preference center theme
-    var theme: PreferenceCenterTheme.ContactManagement?
-    
-    var action: (()->())?
-    
-    public var body: some View {
-        VStack(alignment: .leading) {
-            Divider()
-            /// Message
-            Text(self.message ?? "")
-                .textAppearance(
-                    theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
-                )
-        }
-        .transition(.scale)
-        .padding(5)
-    }
-}
-
-// MARK: Reprompt view
-public struct RePromptView: View {
-    
-    public var item: PreferenceCenterConfig.ContactManagementItem.RepromptOptions
-    
-    public var registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?
-    
-    public var channel: AssociatedChannelType
-    
-    /// The preference center theme
-    public var theme: PreferenceCenterTheme.ContactManagement?
-    
-    @State
-    private var selectedSender = PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo(
-        senderId: "",
-        placeHolderText: "",
-        countryCode: "",
-        displayName: ""
-    )
-    
-    @State
-    private var inputText = ""
-    
-    @State
-    private var isValid = true
-    
-    @State
-    private var startEditing = false
-    
-    @State
-    private var disposable: AirshipMainActorCancellableBlock? = nil
-
-    public init(
-        item: PreferenceCenterConfig.ContactManagementItem.RepromptOptions,
-        registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?,
-        channel: AssociatedChannelType,
-        theme: PreferenceCenterTheme.ContactManagement? = nil
-    ) {
-        self.item = item
-        self.registrationOptions = registrationOptions
-        self.channel = channel
-        self.theme = theme
-    }
-    
-    public var body: some View {
-        VStack(alignment: .leading) {
-            /// Title
-            Text(self.item.message)
-                .textAppearance(
-                    theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
-                )
-                .fixedSize(horizontal: false, vertical: true)
-            
-            HStack {
-                ChannelTextField(
-                    registrationOptions: self.registrationOptions,
-                    selectedSender: self.$selectedSender,
-                    inputText: self.$inputText,
-                    isValid: self.$isValid,
-                    startEditing: self.$startEditing)
-                .padding(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 3))
-                
-                //Retry button
-                LabeledButton(
-                    item: self.item.button,
-                    theme: self.theme) {
-                        // TODO: Retry
-                    }
-            }
-        }
-    }
-    
-}
-
-// MARK: Remove channel view
-private struct RemoveChannelPrompt: View {
-    
-    var item: PreferenceCenterConfig.ContactManagementItem.RemoveChannel
-    
-    /// The preference center theme
-    var theme: PreferenceCenterTheme.ContactManagement?
-    
-    var optOutAction: (()->())?
-    
-    var body: some View {
-        
-        VStack() {
-            /// Title
-            Text(item.view.display.title)
-                .textAppearance(
-                    theme?.titleAppearance,
-                    base: DefaultContactManagementSectionStyle.titleAppearance
-                )
-            
-            /// Body
-            if let body = item.view.display.body {
-                Text(body)
-                    .textAppearance(
-                        theme?.subtitleAppearance,
-                        base: DefaultContactManagementSectionStyle.subtitleAppearance
-                    )
-                    .multilineTextAlignment(.center)
-            }
-            
-            /// Buttons
-            HStack {
-                if let optOutButton = item.view.acceptButton {
-                    /// Opt out Button
-                    LabeledButton(
-                        item: optOutButton,
-                        theme: self.theme,
-                        action: optOutAction
-                    )
-                }
-            }
-            
-            /// Footer
-            if let footer = item.view.display.footer {
-                Text(footer)
-                    .textAppearance(
-                        theme?.subtitleAppearance,
-                        base: DefaultContactManagementSectionStyle.subtitleAppearance
-                    )
-            }
-        }
-        .frame(width: AddChannelView.alertWidth)
-        .padding()
-        .background(
-            BackgroundShape(
-                color: theme?.backgroundColor ?? DefaultContactManagementSectionStyle.backgroundColor
-            )
-        )
-    }
-}
-
-// MARK: Background
-struct BackgroundShape: View {
-    var color: Color
-    var body: some View {
-        Rectangle()
-            .fill(color)
-            .cornerRadius(10)
-            .shadow(radius: 5)
-    }
-}
-
-// MARK: Utils methods
-fileprivate extension String {
-    
-    private func hideMidChars(_ value: String) -> String {
-        return String(value.enumerated().map { index, char in
-            return [0, value.count, value.count].contains(index) ? char : "*"
-        })
-    }
-    
-    func deletePrefix(_ prefix: String) -> String {
-        guard self.hasPrefix(prefix) else { return self }
-        return String(self.dropFirst(prefix.count))
-    }
-}
-
-// MARK: Modal view
 extension ChannelsListView {
-    
+    // MARK: Prompt Views
+
+    @ViewBuilder
+    private var addChannelPromptView: some View {
+        if let view = self.item.addPrompt?.view {
+            AddChannelPromptView(item: view,
+                                 registrationOptions: self.item.registrationOptions,
+                                 validatorDelegate: self.validatorDelegate) {
+                /// onCancel
+                dismissPrompt()
+            } onSubmit: {
+
+            }
+            .transition(.opacity)
+        }
+    }
+
+    @ViewBuilder
+    private var removePromptView: some View {
+        if let view = self.item.removePrompt {
+            RemoveChannelPromptView(
+                item: view,
+                theme: self.theme.contactManagement) {
+                    dismissPrompt()
+                } optOutAction: {
+                    if let channel = self.selectedChannel {
+                        if case .sms(let associatedChannel) = channel {
+                            Airship.contact.optOutChannel(associatedChannel.channelID)
+                        } else if case .email(let associatedChannel) = channel {
+                            Airship.contact.optOutChannel(associatedChannel.channelID)
+                        }
+                    }
+                    dismissPrompt()
+                }
+        }
+    }
+
+    /// TODO: Pretty sure we use this extra window because creating the shadow view in the way we like is a pain since this isn't the top level view
+    /// Can probably improve on this and keep this more self-contained.
     @MainActor
     static func showModalView(
         rootView: some View,
@@ -407,71 +218,117 @@ extension ChannelsListView {
             return nil
         }
         
-        var window: UIWindow? = UIWindow(windowScene: scene)
-        
+        let window: UIWindow? = UIWindow(windowScene: scene)
+
         let disposable = AirshipMainActorCancellableBlock {
-            window?.windowLevel = .normal
-            window?.isHidden = true
-            window = nil
+            DispatchQueue.main.async {
+                window?.animateOut()
+            }
         }
         
-        let viewController = ModalCenterViewController(
+        let viewController = ChannelListViewHostingController(
             rootView: rootView,
             backgroundColor: .clear.withAlphaComponent(0.5)
         )
-        
-        window?.windowLevel = .alert
-        window?.makeKeyAndVisible()
+
         window?.rootViewController = viewController
-        
+        window?.alpha = 0
+        window?.animateIn()
+
         return disposable
+    }
+
+    private func dismissPrompt() {
+        self.disposable?.cancel()
     }
 }
 
-private class ModalCenterViewController<Content>: UIHostingController<
-Content
->
-where Content: View {
-    init(
-        rootView: Content,
-        backgroundColor: UIColor? = nil
-    ) {
-        super.init(rootView: rootView)
-        if let backgroundColor = backgroundColor {
-            self.view.backgroundColor = backgroundColor        }
+private extension UIWindow {
+
+    static func makeModalReadyWindow(
+        scene: UIWindowScene
+    ) -> UIWindow {
+        let window: UIWindow = UIWindow(windowScene: scene)
+        window.accessibilityViewIsModal = false
+        window.alpha = 0
+        window.makeKeyAndVisible()
+        window.isUserInteractionEnabled = false
+
+        return window
     }
-    
-    @objc
-    required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+
+    func addRootController<T: UIViewController>(
+        _ viewController: T?
+    ) {
+        viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
+        viewController?.view.isUserInteractionEnabled = true
+
+        if let viewController = viewController,
+           let rootController = self.rootViewController
+        {
+            rootController.addChild(viewController)
+            viewController.didMove(toParent: rootController)
+            rootController.view.addSubview(viewController.view)
+        }
+
+        self.isUserInteractionEnabled = true
+    }
+
+    func animateIn() {
+        self.windowLevel = .alert
+        self.makeKeyAndVisible()
+        self.isUserInteractionEnabled = true
+
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.alpha = 1
+            },
+            completion: { _ in
+            }
+        )
+    }
+
+    func animateOut() {
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.alpha = 0
+            },
+            completion: { _ in
+                self.isHidden = true
+                self.isUserInteractionEnabled = false
+                self.removeFromSuperview()
+            }
+        )
     }
 }
 
 // MARK: Preview
-struct ChannelsListView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        VStack {
-            RePromptView(
-                item: PreferenceCenterConfig.ContactManagementItem.RepromptOptions(
-                    interval: 5,
-                    message: "Failed to optin. Please try again",
-                    button: PreferenceCenterConfig.ContactManagementItem.LabeledButton(text: "Retry")),
-                registrationOptions: .sms(PreferenceCenterConfig.ContactManagementItem.SmsRegistrationOption(senders: [
-                    PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo(
-                        senderId: "34",
-                        placeHolderText: "Phone number",
-                        countryCode: "+44",
-                        displayName: "US")
-                ])),
-                channel: .sms(
-                    SMSAssociatedChannel(
-                        channelID: "1233",
-                        msisdn: "*******6676",
-                        optIn: true
-                    )
-                )
-            )
-        }
-    }
-}
+//struct ChannelsListView_Previews: PreviewProvider {
+//    
+//    static var previews: some View {
+//        VStack {
+//            RePromptView(
+//                item: PreferenceCenterConfig.ContactManagementItem.RepromptOptions(
+//                    interval: 5,
+//                    message: "Failed to optin. Please try again",
+//                    button: PreferenceCenterConfig.ContactManagementItem.LabeledButton(text: "Retry")),
+//                registrationOptions: .sms(PreferenceCenterConfig.ContactManagementItem.SmsRegistrationOption(senders: [
+//                    PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo(
+//                        senderId: "34",
+//                        placeholderText: "Phone number",
+//                        countryCode: "+44",
+//                        displayName: "US")
+//                ])),
+//                channel: .sms(
+//                    SMSAssociatedChannel(
+//                        channelID: "1233",
+//                        msisdn: "*******6676",
+//                        optIn: true
+//                    )
+//                )
+//            )
+//        }
+//    }
+//}

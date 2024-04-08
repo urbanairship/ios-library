@@ -5,6 +5,12 @@ import Foundation
 import SwiftUI
 
 /// NOTE: For internal use only. :nodoc:
+public extension Color {
+    static var airshipTappableClear: Color { Color.white.opacity(0.001) }
+    static var airshipShadowColor: Color { Color.black.opacity(0.33) }
+}
+
+/// NOTE: For internal use only. :nodoc:
 public extension View {
     /// Wrapper to prevent linter warnings for deprecated onChange method
     /// - Parameters:

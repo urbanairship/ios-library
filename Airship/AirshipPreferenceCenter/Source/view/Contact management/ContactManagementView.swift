@@ -8,10 +8,10 @@ import AirshipCore
 #endif
 
 public struct PreferenceCenterContactManagementView: View {
-    
+
     /// The item's config
     public let item: PreferenceCenterConfig.ContactManagementItem
-    
+
     /// The preference state
     @ObservedObject
     public var state: PreferenceCenterState
@@ -20,7 +20,7 @@ public struct PreferenceCenterContactManagementView: View {
     
     @Environment(\.airshipContactManagementSectionStyle)
     private var style
-    
+
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme: PreferenceCenterTheme
     
@@ -36,7 +36,7 @@ public struct PreferenceCenterContactManagementView: View {
         self.state = state
         self.validatorDelegate = validatorDelegate
     }
-    
+
     @ViewBuilder
     public var body: some View {
         let configuration = ContactManagementSectionStyleConfiguration(
@@ -46,7 +46,7 @@ public struct PreferenceCenterContactManagementView: View {
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.theme
         )
-        
+
         style.makeBody(configuration: configuration)
             .preferenceConditions(
                 self.item.conditions,
@@ -57,10 +57,10 @@ public struct PreferenceCenterContactManagementView: View {
 
 /// The labeled section break style configuration
 public struct ContactManagementSectionStyleConfiguration {
-    
+
     /// The section config
     public let section: PreferenceCenterConfig.ContactManagementItem
-    
+
     /// The preference center validator delegate
     public let validatorDelegate: PreferenceCenterValidatorDelegate?
     
@@ -97,7 +97,7 @@ public protocol ContactManagementSectionStyle {
 
 extension ContactManagementSectionStyle
 where Self == DefaultContactManagementSectionStyle {
-    
+
     /// Default style
     public static var defaultStyle: Self {
         return .init()
@@ -105,30 +105,39 @@ where Self == DefaultContactManagementSectionStyle {
 }
 
 // MARK: DEFAULT Contact Management View
-/// Default  contact management section style
+/// Default  contact management section style. Also styles alert views.
 public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyle {
-    
-    static let backgroundColor = Color.white
-    
+
+    static let backgroundColor = Color(.secondarySystemBackground)
+
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline,
+        font: .title.weight(.medium),
         color: .primary
     )
-    
+
     static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline,
+        font: .body,
         color: .primary
     )
-    
+
     static let defaultErrorAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .footnote.weight(.medium),
         color: .red
     )
+
     static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        color: .white
+        font: .headline.weight(.bold),
+        color: .primary.inverted() /// Don't use white because it doesn't properly shift for darkmode
     )
-    
+
+    static let buttonLabelOutlineAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline.weight(.bold),
+        color: .primary
+    )
+
     static let buttonBackgroundColor = Color.blue
-    
+    static let buttonDestructiveBackgroundColor = Color(AirshipColorUtils.color("#B9142B") ?? .red)
+
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         if configuration.displayConditionsMet {
@@ -138,87 +147,30 @@ public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyl
 }
 
 private struct DefaultContactManagementView: View {
-    
+
     /// The item's config
     public let configuration: ContactManagementSectionStyleConfiguration
-    
+
     var body: some View {
         ChannelsListView(
             item: configuration.section,
             state: configuration.state,
             validatorDelegate: configuration.validatorDelegate
         )
-        .transition(.scale)
+        .transition(.opacity)
     }
 }
-
-// MARK: LabeledButton
-public struct LabeledButton: View {
-    
-    public var item: PreferenceCenterConfig.ContactManagementItem.LabeledButton
-    public var enabled: Binding<Bool>?
-    var theme: PreferenceCenterTheme.ContactManagement?
-    public var action: (()->())?
-    
-    public init(
-        item: PreferenceCenterConfig.ContactManagementItem.LabeledButton,
-        enabled: Binding<Bool>? = nil,
-        theme: PreferenceCenterTheme.ContactManagement?,
-        action: (() -> ())?
-    ) {
-        self.item = item
-        self.enabled = enabled
-        self.theme = theme
-        self.action = action
-    }
-    
-    var isDisabled: Bool {
-        if let enabled = self.enabled {
-            return !enabled.wrappedValue
-        }
-        return false
-    }
-    
-    var activeBackgroundColor: Color {
-        return theme?.buttonBackgroundColor ?? DefaultContactManagementSectionStyle.buttonBackgroundColor
-    }
-    
-    public var body: some View {
-        VStack {
-            Button {
-                if let action = action {
-                    action()
-                }
-            } label: {
-                Text(self.item.text)
-                    .textAppearance(
-                        theme?.buttonLabelAppearance,
-                        base: DefaultContactManagementSectionStyle.buttonLabelAppearance
-                    )
-            }
-            .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
-            .background(isDisabled ? .gray : activeBackgroundColor)
-            .cornerRadius(3)
-            .disabled(isDisabled)
-            .optAccessibilityLabel(
-                string: self.item.contentDescription
-            )
-            
-        }
-    }
-}
-
 
 struct AnyContactManagementSectionStyle: ContactManagementSectionStyle {
     @ViewBuilder
     private var _makeBody: (Configuration) -> AnyView
-    
+
     init<S: ContactManagementSectionStyle>(style: S) {
         _makeBody = { configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
-    
+
     @ViewBuilder
     func makeBody(configuration: Configuration) -> some View {
         _makeBody(configuration)
