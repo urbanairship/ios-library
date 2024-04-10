@@ -16,7 +16,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     init(
         message: InAppMessage,
         assets: AirshipCachedAssetsProtocol,
-        networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
+        networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
     ) throws {
         self.message = message
         self.assets = assets
@@ -143,11 +143,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             }
 
             var viewController: InAppMessageBannerViewController?
+            let holder = AirshipWeakValueHolder<UIViewController>()
             let dismissViewController = {
-                viewController?.willMove(toParent: nil)
-                viewController?.view.removeFromSuperview()
-                viewController?.removeFromParent()
-                viewController = nil
+                holder.value?.willMove(toParent: nil)
+                holder.value?.view.removeFromSuperview()
+                holder.value?.removeFromParent()
+                holder.value = nil
             }
             
             let listener = InAppMessageDisplayListener(
@@ -167,16 +168,19 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 size: Self.windowSize(window)
             )
 
-            let rootView = InAppMessageBannerView(environment: environment, 
-                                                  displayContent: banner,
-                                                  bannerConstraints: bannerConstraints,
-                                                  onDismiss: dismissViewController)
+            let rootView = InAppMessageBannerView(
+                environment: environment,
+                displayContent: banner,
+                bannerConstraints: bannerConstraints,
+                onDismiss: dismissViewController
+            )
 
             viewController = InAppMessageBannerViewController(
                 rootView: rootView,
                 placement: banner.placement,
                 bannerConstraints: bannerConstraints
             )
+            holder.value = viewController
 
             window.addRootController(viewController)
         }

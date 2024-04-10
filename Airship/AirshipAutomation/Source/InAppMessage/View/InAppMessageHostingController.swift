@@ -21,6 +21,7 @@ class InAppMessageHostingController<Content> : UIHostingController<Content> wher
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.onDismiss?()
+        onDismiss = nil
     }
 
 #if !os(tvOS)

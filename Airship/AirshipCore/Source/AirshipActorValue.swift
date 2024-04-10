@@ -17,7 +17,12 @@ public actor AirshipActorValue<T: Sendable> {
     }
 
     public var updates: AsyncStream<T> {
-        AsyncStream { continuation in
+        AsyncStream { [weak subject] continuation in
+            guard let subject = subject else {
+                continuation.finish()
+                return
+            }
+
             let cancellable: AnyCancellable = subject.sink { value in
                 continuation.yield(value)
             }
@@ -60,15 +65,20 @@ public final class AirshipMainActorValue<T: Sendable>: @unchecked Sendable {
 
     @MainActor
     public var updates: AsyncStream<T> {
-        AsyncStream { continuation in
+        AsyncStream { [weak subject] continuation in
             continuation.yield(value)
 
-            let cancellable: AnyCancellable = subject.sink { value in
+            guard let subject = subject else {
+                continuation.finish()
+                return
+            }
+
+            let cancellable: AnyCancellable? = subject.sink { value in
                 continuation.yield(value)
             }
 
             continuation.onTermination = { _ in
-                cancellable.cancel()
+                cancellable?.cancel()
             }
         }
     }

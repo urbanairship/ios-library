@@ -223,6 +223,9 @@ actor AutomationEngine : AutomationEngineProtocol {
                 updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
                     data.executionInterrupted(date: now, retry: behavior == .retry)
                 }
+                if (updated?.scheduleState == .paused) {
+                    handleInterval(updated?.schedule.interval ?? 0.0, scheduleID: data.schedule.identifier)
+                }
             } else {
                 updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
                     data.prepareInterrupted(date: now)

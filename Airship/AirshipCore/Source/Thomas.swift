@@ -60,10 +60,13 @@ public final class Thomas {
         }
 
         var viewController: ThomasBannerViewController?
+        let holder = AirshipWeakValueHolder<UIViewController>()
 
         let dismissController = {
-            viewController?.view.removeFromSuperview()
-            viewController = nil
+            holder.value?.willMove(toParent: nil)
+            holder.value?.view.removeFromSuperview()
+            holder.value?.removeFromParent()
+            holder.value = nil
         }
 
         let options = ThomasViewControllerOptions()
@@ -90,7 +93,8 @@ public final class Thomas {
             options: options,
             constraints: bannerConstraints
         )
-
+        holder.value = viewController
+        
         if let viewController = viewController,
             let rootController = window.rootViewController
         {
@@ -138,8 +142,8 @@ public final class Thomas {
         window.rootViewController = viewController
         window.airshipAnimateIn()
 
-        return AirshipMainActorCancellableBlock { [environment] in
-            environment.dismiss()
+        return AirshipMainActorCancellableBlock { [weak environment] in
+            environment?.dismiss()
         }
     }
 

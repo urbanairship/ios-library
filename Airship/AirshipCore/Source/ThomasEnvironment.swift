@@ -9,7 +9,6 @@ class ThomasEnvironment: ObservableObject {
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
 
-
     let defaultFormState = FormState(identifier: "",
                                      formType: .form,
                                      formResponseType: "")
@@ -17,7 +16,6 @@ class ThomasEnvironment: ObservableObject {
     let defaultViewState = ViewState()
 
     let defaultPagerState = PagerState(identifier: "")
-
 
 
     @Published
@@ -265,7 +263,9 @@ class ThomasEnvironment: ObservableObject {
                 .map { _ in 0.0 }
         )
         .subscribe(on: DispatchQueue.main)
-        .assign(to: \.self.keyboardHeight, on: self)
+        .sink { [weak self] value in
+            self?.keyboardHeight = value
+        }
         .store(in: &self.subscriptions)
 
         Publishers.Merge3(
@@ -291,7 +291,9 @@ class ThomasEnvironment: ObservableObject {
         )
         .removeDuplicates()
         .subscribe(on: DispatchQueue.main)
-        .assign(to: \.self.keyboardState, on: self)
+        .sink { [weak self] value in
+            self?.keyboardState = value
+        }
         .store(in: &self.subscriptions)
     }
 

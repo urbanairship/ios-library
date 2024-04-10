@@ -51,9 +51,9 @@ struct ScrollLayout: View {
         ScrollViewReader { proxy in
             makeScrollView(axis: axis)
             .clipped()
-            .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { newValue in
+            .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { [weak thomasEnvironment] newValue in
                 if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
-                    if let focusedID = self.thomasEnvironment.focusedID {
+                    if let focusedID = thomasEnvironment?.focusedID {
                         switch newValue {
                         case .hidden:
                             scrollTask?.1.cancel()

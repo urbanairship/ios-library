@@ -7,16 +7,17 @@ struct CheckboxController: View {
     let model: CheckboxControllerModel
     let constraints: ViewConstraints
 
-    @State private var cancellable: AnyCancellable?
     @EnvironmentObject var formState: FormState
-    @State var checkboxState: CheckboxState
+    @StateObject var checkboxState: CheckboxState
 
     init(model: CheckboxControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.checkboxState = CheckboxState(
-            minSelection: self.model.minSelection,
-            maxSelection: self.model.maxSelection
+        self._checkboxState = StateObject(
+            wrappedValue: CheckboxState(
+                minSelection: model.minSelection,
+                maxSelection: model.maxSelection
+            )
         )
     }
 
@@ -29,29 +30,28 @@ struct CheckboxController: View {
             .accessible(self.model)
             .formElement()
             .environmentObject(checkboxState)
+            .airshipOnChangeOf(self.checkboxState.selectedItems) { [model, weak formState] incoming in
+                let selected = Array(incoming)
+                let isFilled =
+                    selected.count >= (model.minSelection ?? 0)
+                    && selected.count
+                        <= (model.maxSelection ?? Int.max)
+
+                let isValid =
+                    isFilled
+                    || (selected.count == 0
+                        && model.isRequired == false)
+
+                let data = FormInputData(
+                    model.identifier,
+                    value: .multipleCheckbox(selected),
+                    isValid: isValid
+                )
+
+                formState?.updateFormInput(data)
+            }
             .onAppear {
                 restoreFormState()
-                self.cancellable = self.checkboxState.$selectedItems.sink {
-                    incoming in
-                    let selected = Array(incoming)
-                    let isFilled =
-                        selected.count >= (self.model.minSelection ?? 0)
-                        && selected.count
-                            <= (self.model.maxSelection ?? Int.max)
-
-                    let isValid =
-                        isFilled
-                        || (selected.count == 0
-                            && self.model.isRequired == false)
-
-                    let data = FormInputData(
-                        self.model.identifier,
-                        value: .multipleCheckbox(selected),
-                        isValid: isValid
-                    )
-
-                    self.formState.updateFormInput(data)
-                }
             }
     }
 

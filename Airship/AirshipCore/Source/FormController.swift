@@ -9,16 +9,18 @@ struct FormController: View {
 
     let model: FormControllerModel
     let constraints: ViewConstraints
-    @State var formState: FormState
+    @StateObject var formState: FormState
 
     @MainActor
     init(model: FormControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.formState = FormState(
-            identifier: self.model.identifier,
-            formType: .form,
-            formResponseType: self.model.responseType
+        self._formState = StateObject(
+            wrappedValue: FormState(
+                identifier: model.identifier,
+                formType: .form,
+                formResponseType: model.responseType
+            )
         )
     }
 
@@ -48,7 +50,6 @@ private struct ParentFormController: View {
     @ObservedObject var formState: FormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
-    @State private var visibleCancellable: AnyCancellable?
 
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
@@ -63,18 +64,16 @@ private struct ParentFormController: View {
                 layoutState.override(formState: formState)
             )
             .environmentObject(formState)
-            .onAppear {
-                self.visibleCancellable = self.formState.$isVisible.sink {
-                    incoming in
-                    if incoming {
-                        self.thomasEnvironment.formDisplayed(
-                            self.formState,
-                            layoutState: layoutState.override(
-                                formState: formState
-                            )
-                        )
-                    }
+            .airshipOnChangeOf(formState.isVisible) { [weak formState, weak thomasEnvironment] incoming in
+                guard incoming, let formState, let thomasEnvironment else {
+                    return
                 }
+                thomasEnvironment.formDisplayed(
+                    formState,
+                    layoutState: layoutState.override(
+                        formState: formState
+                    )
+                )
             }
     }
 }

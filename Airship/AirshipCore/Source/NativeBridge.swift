@@ -230,8 +230,8 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
         if let url = webView.url, url.isAllowed(scope: .javaScriptInterface) {
             AirshipLogger.trace("Loading Airship JS bridge: \(url)")
 
-            let request = JSBridgeLoadRequest(webView: webView) {
-                return await self.makeJSEnvironment(webView: webView)
+            let request = JSBridgeLoadRequest(webView: webView) { [weak self] in
+                return await self?.makeJSEnvironment(webView: webView)
             }
             self.jsRequests.append(request)
             request.start()
@@ -525,10 +525,10 @@ extension URL {
 @MainActor
 fileprivate class JSBridgeLoadRequest: Sendable {
     private(set) weak var webView: WKWebView?
-    private let jsFactoryBlock: () async throws -> String
+    private let jsFactoryBlock: () async throws -> String?
     private var task: Task<Void, Never>?
 
-    init(webView: WKWebView? = nil, jsFactoryBlock: @escaping () async throws -> String) {
+    init(webView: WKWebView? = nil, jsFactoryBlock: @escaping () async throws -> String?) {
         self.webView = webView
         self.jsFactoryBlock = jsFactoryBlock
     }
@@ -540,7 +540,7 @@ fileprivate class JSBridgeLoadRequest: Sendable {
                 try Task.checkCancellation()
                 let js = try await jsFactoryBlock()
                 try Task.checkCancellation()
-                if let webView = webView {
+                if let webView = webView, let js = js {
                     try await webView.evaluateJavaScript(js)
                     AirshipLogger.trace("Native bridge injected")
                 }

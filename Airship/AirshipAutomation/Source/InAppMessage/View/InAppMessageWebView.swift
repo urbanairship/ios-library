@@ -12,7 +12,7 @@ struct InAppMessageWebView: View {
 
     @State var isWebViewLoading: Bool = false
 
-  let accessibilityLabel: String?
+    let accessibilityLabel: String?
 
     @EnvironmentObject var environment: InAppMessageEnvironment
 

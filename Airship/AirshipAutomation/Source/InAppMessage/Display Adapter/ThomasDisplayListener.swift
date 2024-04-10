@@ -210,5 +210,6 @@ final class ThomasDisplayListener: ThomasDelegate {
 
         let result = dismissBlock(self.timer.time)
         onDismiss(result)
+        self.onDismiss = nil
     }
 }

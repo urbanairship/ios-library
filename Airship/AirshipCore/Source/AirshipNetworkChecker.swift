@@ -45,6 +45,8 @@ public final class AirshipNetworkChecker: AirshipNetworkCheckerProtocol, Sendabl
         _isConnected.updates
     }
 
+    public static let shared: AirshipNetworkChecker = AirshipNetworkChecker()
+
     @MainActor
     public var isConnected: Bool {
         return _isConnected.value

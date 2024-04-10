@@ -5,12 +5,11 @@ import SwiftUI
 struct StateController: View {
     let model: StateControllerModel
     let constraints: ViewConstraints
-    @State var state: ViewState
+    @StateObject var state: ViewState = ViewState()
 
     init(model: StateControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.state = ViewState()
     }
 
     var body: some View {
