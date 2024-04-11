@@ -24,10 +24,14 @@ struct AirshipWebView: View {
                 url: self.model.url,
                 nativeBridgeExtension: self.thomasEnvironment.extensions?
                     .nativeBridgeExtension,
-                isWebViewLoading: self.$isWebViewLoading
-            ) {
-                thomasEnvironment.dismiss(layoutState: layoutState)
-            }
+                isWebViewLoading: self.$isWebViewLoading,
+                onRunActions: { name, value, _ in
+                    return await thomasEnvironment.runAction(name, arguments: value, layoutState: layoutState)
+                },
+                onDismiss: {
+                    thomasEnvironment.dismiss(layoutState: layoutState)
+                }
+            )
             .opacity(self.isWebViewLoading ? 0.0 : 1.0)
 
             if self.isWebViewLoading {
@@ -48,7 +52,7 @@ struct WebViewView: UIViewRepresentable {
     let url: String
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     @Binding var isWebViewLoading: Bool
-
+    let onRunActions: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
     let onDismiss: () -> Void
 
     func makeUIView(context: Context) -> WKWebView {
@@ -64,7 +68,7 @@ struct WebViewView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, actionRunner: BlockNativeBridgeActionRunner(onRun: onRunActions))
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
@@ -75,17 +79,16 @@ struct WebViewView: UIViewRepresentable {
         }
     }
 
+    
     class Coordinator: NSObject, UANavigationDelegate,
         JavaScriptCommandDelegate, NativeBridgeDelegate
     {
-
-
         private let parent: WebViewView
         let nativeBridge: NativeBridge
 
-        init(_ parent: WebViewView) {
+        init(_ parent: WebViewView, actionRunner: NativeBridgeActionRunner) {
             self.parent = parent
-            self.nativeBridge = NativeBridge()
+            self.nativeBridge = NativeBridge(actionRunner: actionRunner)
             super.init()
             self.nativeBridge.nativeBridgeExtensionDelegate =
                 self.parent.nativeBridgeExtension

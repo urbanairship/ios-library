@@ -220,7 +220,7 @@ final class AutomationStoreTest: XCTestCase {
     }
 
     func testAssociatedDataNull() async throws {
-        var schedule = self.makeSchedule(identifer: "bar")
+        let schedule = self.makeSchedule(identifer: "bar")
 
         let _ = try await self.store.upsertSchedules(scheduleIDs: ["bar"]) { [schedule] identifier, existing in
             return schedule

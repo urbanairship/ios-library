@@ -374,35 +374,6 @@ class ThomasDisplayListenerTest: XCTestCase {
     }
 
     @MainActor
-    func testPromptPermissionResult() {
-        self.timer.start()
-
-
-        listener.onPromptPermissionResult(
-            permission: .displayNotifications,
-            startingStatus: .denied,
-            endingStatus: .granted,
-            layoutContext: self.layoutContext
-        )
-
-        verifyEvents(
-            [
-                (
-                    InAppPermissionResultEvent(
-                        permission: .displayNotifications,
-                        startingStatus: .denied,
-                        endingStatus: .granted
-                    ),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
-    }
-
-    @MainActor
     func testDismissPagerSummary() {
         self.timer.start()
 

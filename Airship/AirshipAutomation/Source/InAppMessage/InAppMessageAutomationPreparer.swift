@@ -12,6 +12,7 @@ struct PreparedInAppMessageData: Sendable {
     var displayAdapter: DisplayAdapter
     var displayCoordinator: DisplayCoordinator
     var analytics: InAppMessageAnalyticsProtocol
+    var actionRunner: InAppActionRunner & ThomasActionRunner
 }
 
 final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
@@ -22,6 +23,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     private let displayAdapterFactory: DisplayAdapterFactoryProtocol
     private let assetManager: AssetCacheManagerProtocol
     private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
+    private let actionRunnerFactory: InAppActionRunnerFactoryProtocol
 
     @MainActor
     public var displayInterval: TimeInterval {
@@ -37,12 +39,14 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         assetManager: AssetCacheManagerProtocol,
         displayCoordinatorManager: DisplayCoordinatorManagerProtocol,
         displayAdapterFactory: DisplayAdapterFactoryProtocol = DisplayAdapterFactory(),
-        analyticsFactory: InAppMessageAnalyticsFactoryProtocol
+        analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
+        actionRunnerFactory: InAppActionRunnerFactoryProtocol = InAppActionRunnerFactory()
     ) {
         self.assetManager = assetManager
         self.displayCoordinatorManager = displayCoordinatorManager
         self.displayAdapterFactory = displayAdapterFactory
         self.analyticsFactory = analyticsFactory
+        self.actionRunnerFactory = actionRunnerFactory
     }
 
     func prepare(
@@ -54,21 +58,25 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             scheduleID: preparedScheduleInfo.scheduleID
         )
 
-        AirshipLogger.trace("Making display coordinator \(preparedScheduleInfo.scheduleID)")
         let displayCoordinator = self.displayCoordinatorManager.displayCoordinator(message: data)
+
+        let analytics = await self.analyticsFactory.makeAnalytics(
+            preparedScheduleInfo: preparedScheduleInfo,
+            message: data
+        )
+
+        let actionRunner = self.actionRunnerFactory.makeRunner(message: data, analytics: analytics)
+
         let displayAdapter = try await self.displayAdapterFactory.makeAdapter(
-            message: data,
-            assets: assets
+            args: DisplayAdapterArgs(message: data, assets: assets, _actionRunner: actionRunner)
         )
 
         return PreparedInAppMessageData(
             message: data,
             displayAdapter: displayAdapter,
             displayCoordinator: displayCoordinator,
-            analytics: await self.analyticsFactory.makeAnalytics(
-                preparedScheduleInfo: preparedScheduleInfo,
-                message: data
-            )
+            analytics: analytics,
+            actionRunner: actionRunner
         )
     }
 
@@ -98,11 +106,13 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     @MainActor
     func setAdapterFactoryBlock(
         forType type: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
     ) {
         self.displayAdapterFactory.setAdapterFactoryBlock(
             forType: type,
-            factoryBlock: factoryBlock
+            factoryBlock: { args in
+                factoryBlock(args)
+            }
         )
     }
 }

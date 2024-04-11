@@ -13,6 +13,7 @@ protocol AssetDownloaderSession: Sendable {
 
 extension URLSession: AssetDownloaderSession {
     func autoResumingDataTask(with url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> AirshipCancellable {
+        
         let task = self.dataTask(with: url, completionHandler: { data, response, error in
             completion(data, response, error)
         })

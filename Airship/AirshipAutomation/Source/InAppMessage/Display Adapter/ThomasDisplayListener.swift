@@ -168,22 +168,6 @@ final class ThomasDisplayListener: ThomasDelegate {
             layoutContext: layoutContext
         )
     }
-    
-    func onPromptPermissionResult(
-        permission: AirshipPermission,
-        startingStatus: AirshipPermissionStatus,
-        endingStatus: AirshipPermissionStatus,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppPermissionResultEvent(
-                permission: permission,
-                startingStatus: startingStatus,
-                endingStatus: endingStatus
-            ),
-            layoutContext: layoutContext
-        )
-    }
 
     private func tryDismiss(
         layoutContext: ThomasLayoutContext? = nil,

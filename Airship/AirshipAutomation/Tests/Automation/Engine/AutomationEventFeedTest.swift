@@ -16,8 +16,6 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     var iterator: AsyncStream<AutomationEvent>.Iterator!
     
     override func setUp() async throws {
-        let config = RuntimeConfig(config: AirshipConfig(), dataStore: datastore)
-
         let metrics = TestApplicationMetrics()
         metrics.versionUpdated = true
         

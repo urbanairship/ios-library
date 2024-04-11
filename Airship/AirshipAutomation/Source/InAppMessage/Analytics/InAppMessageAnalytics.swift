@@ -6,15 +6,27 @@ import Foundation
 import AirshipCore
 #endif
 
+struct InAppCustomEventContext: Sendable, Encodable, Equatable {
+    var id: InAppEventMessageID
+    var context: InAppEventContext?
+}
+
 protocol InAppMessageAnalyticsProtocol: AnyObject, Sendable {
     @MainActor
     func recordEvent(
         _ event: InAppEvent,
         layoutContext: ThomasLayoutContext?
     )
+
+    @MainActor
+    func makeCustomEventContext(layoutContext: ThomasLayoutContext?) -> InAppCustomEventContext?
 }
 
 final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
+    func makeCustomEventContext(layoutContext: ThomasLayoutContext?) -> InAppCustomEventContext? {
+        return nil
+    }
+    
     func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
         if let layoutContext = layoutContext {
             print("Event added: \(event) context: \(layoutContext)")
@@ -22,13 +34,12 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
             print("Event added: \(event)")
         }
     }
-    
-    func recordImpression() {
-        print("Impression recorded")
-    }
 }
 
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
+
+
+    
     private let preparedScheduleInfo: PreparedScheduleInfo
     private let messageID: InAppEventMessageID
     private let source: InAppEventSource
@@ -73,6 +84,19 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
                 triggerSessionID: preparedScheduleInfo.triggerSessionID,
                 isFirstDisplay: displayHistory.lastDisplay == nil,
                 isFirstDisplayTriggerSessionID: preparedScheduleInfo.triggerSessionID != displayHistory.lastDisplay?.triggerSessionID
+            )
+        )
+    }
+
+    @MainActor
+    func makeCustomEventContext(layoutContext: ThomasLayoutContext?) -> InAppCustomEventContext? {
+        return InAppCustomEventContext(
+            id: self.messageID,
+            context: InAppEventContext.makeContext(
+                reportingContext: self.preparedScheduleInfo.reportingContext,
+                experimentsResult: self.preparedScheduleInfo.experimentResult,
+                layoutContext: layoutContext,
+                displayContext: self.displayContext.value
             )
         )
     }

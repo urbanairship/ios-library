@@ -184,23 +184,33 @@ final class CancelSchedulesActionTest: XCTestCase {
     }
 }
 
-final class TestInAppMessaging: InAppMessagingProtocol {
+final class TestInAppMessaging: InAppMessagingProtocol, @unchecked Sendable {
     var displayInterval: TimeInterval = 0.0
     
-    var displayDelegate: AirshipAutomation.InAppMessageDisplayDelegate?
+    var displayDelegate: InAppMessageDisplayDelegate?
     
-    var sceneDelegate: AirshipAutomation.InAppMessageSceneDelegate?
+    var sceneDelegate: InAppMessageSceneDelegate?
     
-    func setAdapterFactoryBlock(forType: AirshipAutomation.CustomDisplayAdapterType, factoryBlock: @escaping @Sendable (AirshipAutomation.InAppMessage, AirshipAutomation.AirshipCachedAssetsProtocol) -> AirshipAutomation.CustomDisplayAdapter?) {
-        
+    func setAdapterFactoryBlock(
+        forType: CustomDisplayAdapterType,
+        factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+    ) {
+
     }
-    
+
+    func setCustomAdapter(
+        forType: CustomDisplayAdapterType,
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
+    ) {
+
+    }
+
     func notifyDisplayConditionsChanged() {
         
     }
 }
 
-final class TestLegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
+final class TestLegacyInAppMessaging: InternalLegacyInAppMessagingProtocol, @unchecked Sendable {
     
     init(customMessageConverter: AirshipAutomation.MessageConvertor? = nil, messageExtender: AirshipAutomation.MessageExtender? = nil, scheduleExtender: AirshipAutomation.ScheduleExtender? = nil, displayASAPEnabled: Bool = true) {
         self.customMessageConverter = customMessageConverter

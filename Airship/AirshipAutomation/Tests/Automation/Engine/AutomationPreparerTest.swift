@@ -30,7 +30,8 @@ final class AutomationPreparerTest: XCTestCase {
             ),
             displayAdapter: TestDisplayAdapter(),
             displayCoordinator: TestDisplayCoordinator(),
-            analytics: TestInAppMessageAnalytics()
+            analytics: TestInAppMessageAnalytics(),
+            actionRunner: TestInAppActionRunner()
         )
 
         self.preparer = AutomationPreparer(

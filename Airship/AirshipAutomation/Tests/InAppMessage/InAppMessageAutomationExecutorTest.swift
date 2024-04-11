@@ -11,9 +11,8 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
     private let conditionsChangedNotifier: ScheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
-
+    private let actionRunner: TestInAppActionRunner = TestInAppActionRunner()
     private let displayAdapter: TestDisplayAdapter = TestDisplayAdapter()
-    private let actionRunner: TestActionRunner = TestActionRunner()
 
 
     private let preparedInfo: PreparedScheduleInfo = PreparedScheduleInfo(
@@ -39,15 +38,15 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             ),
             displayAdapter: self.displayAdapter,
             displayCoordinator: self.displayCoordinator,
-            analytics: analytics
+            analytics: analytics,
+            actionRunner: actionRunner
         )
 
         self.executor = InAppMessageAutomationExecutor(
             sceneManager: sceneManager,
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
-            scheduleConditionsChangedNotifier: conditionsChangedNotifier,
-            actionRunner: actionRunner
+            scheduleConditionsChangedNotifier: conditionsChangedNotifier
         )
 
         await self.analyticsFactory.setOnMake { _, _ in
@@ -172,7 +171,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.control(experimentResult: experimentResult).name)
         XCTAssertFalse(self.displayAdapter.displayed)
         XCTAssertEqual(result, .finished)
-        XCTAssertNil(self.actionRunner.actions)
+        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
     }
 
     @MainActor
@@ -231,7 +230,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         XCTAssertTrue(self.displayAdapter.displayed)
         XCTAssertEqual(result, .retry)
-        XCTAssertNil(self.actionRunner.actions)
+        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
     }
 
     @MainActor
@@ -250,7 +249,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             XCTFail("should throw")
         } catch {}
 
-        XCTAssertNil(self.actionRunner.actions)
+        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
     }
 
     @MainActor
@@ -271,8 +270,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         XCTAssertTrue(self.displayAdapter.displayed)
         XCTAssertEqual(result, .cancel)
-        XCTAssertEqual(self.actionRunner.actions, self.preparedData.message.actions)
-
+        XCTAssertEqual(self.actionRunner.actionPayloads.first!.0, self.preparedData.message.actions)
     }
 }
 

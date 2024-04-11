@@ -30,6 +30,8 @@ public class CustomEvent: NSObject {
     @objc
     public static let eventInteractionTypeKey = "interaction_type"
 
+    static let eventInAppKey = "in_app"
+
     // Private data keys
     static let eventConversionMetadataKey = "conversion_metadata"
     static let eventConversionSendIDKey = "conversion_send_id"
@@ -59,6 +61,11 @@ public class CustomEvent: NSObject {
 
     private var _eventValue: NSDecimalNumber?
 
+
+    /// The in-app message context for custom event attribution
+    /// NOTE: For internal use only. :nodoc:
+    var inApp: AirshipJSON?
+    
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
@@ -326,6 +333,7 @@ public class CustomEvent: NSObject {
             object.set(string: transactionID, key: CustomEvent.eventTransactionIDKey)
             object.set(string: templateType, key: CustomEvent.eventTemplateTypeKey)
             object.set(json: wrappedProperities, key: CustomEvent.eventPropertiesKey)
+            object.set(json: inApp, key: CustomEvent.eventInAppKey)
 
             if formatValue {
                 let number = (self._eventValue ?? 1.0).multiplying(byPowerOf10: 6)

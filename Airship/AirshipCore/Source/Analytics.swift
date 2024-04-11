@@ -11,7 +11,6 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     static let pushMetadata = "com.urbanairship.metadata"
     static let pushSendID = "_"
 
-
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: AirshipChannelProtocol

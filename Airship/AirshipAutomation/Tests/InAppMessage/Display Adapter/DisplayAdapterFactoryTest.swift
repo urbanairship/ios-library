@@ -87,7 +87,11 @@ final class DisplayAdapterFactoryTest: XCTestCase {
         )
 
         do {
-            let _ = try await factory.makeAdapter(message: message, assets: assets)
+            let _ = try await factory.makeAdapter(
+                args: DisplayAdapterArgs(
+                    message: message, assets: assets, _actionRunner: TestInAppActionRunner()
+                )
+            )
             XCTFail("Wrong adapter")
         } catch {}
     }
@@ -102,7 +106,11 @@ final class DisplayAdapterFactoryTest: XCTestCase {
             displayContent: displayContent
         )
 
-        let adapter = try await factory.makeAdapter(message: message, assets: assets)
+        let adapter = try await factory.makeAdapter(
+            args: DisplayAdapterArgs(
+                message: message, assets: assets, _actionRunner: TestInAppActionRunner()
+            )
+        )
 
         guard adapter as? AirshipLayoutDisplayAdapter != nil else {
             XCTFail("Wrong adapter", line: line)
@@ -122,11 +130,11 @@ final class DisplayAdapterFactoryTest: XCTestCase {
 
         let assets = self.assets
         let adapter = TestCustomDisplayAdapter()
-        await factory.setAdapterFactoryBlock(forType: type) { incomingMessage, incomingAssets in
+        await factory.setAdapterFactoryBlock(forType: type) { args in
             guard
-                let incomingAssets = incomingAssets as? TestCachedAssets,
+                let incomingAssets = args.assets as? TestCachedAssets,
                 incomingAssets === assets,
-                message == incomingMessage
+                message == args.message
             else {
                 XCTFail("Invalid args", line: line)
                 return nil
@@ -135,7 +143,11 @@ final class DisplayAdapterFactoryTest: XCTestCase {
             return adapter
         }
 
-        let result = try await factory.makeAdapter(message: message, assets: assets)
+        let result = try await factory.makeAdapter(
+            args: DisplayAdapterArgs(
+                message: message, assets: assets, _actionRunner: TestInAppActionRunner()
+            )
+        )
 
         guard
             let wrappedAdapter = result as? CustomDisplayAdapterWrapper,

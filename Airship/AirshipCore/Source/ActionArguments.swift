@@ -45,13 +45,13 @@ public struct ActionArguments: Sendable {
     public static let responseInfoMetadataKey: String = "com.urbanairship.response_info"
 
     /// The action argument's value
-    public let value: AirshipJSON
+    public var value: AirshipJSON
 
     /// The action argument's situation
-    public let situation: ActionSituation
+    public var situation: ActionSituation
 
     /// The action argument's metadata
-    public let metadata: [String: Sendable]
+    public var metadata: [String: Sendable]
 
     public init(
         string: String,

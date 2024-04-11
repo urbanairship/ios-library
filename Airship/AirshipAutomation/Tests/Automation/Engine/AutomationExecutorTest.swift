@@ -26,7 +26,8 @@ final class AutomationExecutorTest: XCTestCase {
             ),
             displayAdapter: TestDisplayAdapter(),
             displayCoordinator: TestDisplayCoordinator(),
-            analytics: messageAnalyitics
+            analytics: messageAnalyitics,
+            actionRunner: TestInAppActionRunner()
         )
 
         self.executor = AutomationExecutor(
@@ -333,9 +334,6 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     }
 }
 
-
-
-
 extension ScheduleReadyResult {
     static var allResults: [ScheduleReadyResult] {
         return [.ready, .notReady, .invalidate, .skip]
@@ -357,6 +355,34 @@ extension PreparedScheduleData: Equatable {
             default: return false
             }
         }
+    }
+}
+
+final class TestInAppActionRunner: InternalInAppActionRunner, @unchecked Sendable {
+
+    var singleActions: [(String, ActionArguments, ThomasLayoutContext?)] = []
+    var actionPayloads: [(AirshipJSON, ThomasLayoutContext?)] = []
+
+    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?) {
+        actionPayloads.append((actions, layoutContext))
+    }
+
+    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext?) async -> ActionResult {
+        singleActions.append((actionName, arguments, layoutContext))
+        return .error(AirshipErrors.error("not implemented"))
+    }
+
+    func run(actionName: String, arguments: ActionArguments) async -> ActionResult {
+        singleActions.append((actionName, arguments, nil))
+        return .error(AirshipErrors.error("not implemented"))
+    }
+
+    func runAsync(actions: AirshipJSON) {
+        actionPayloads.append((actions, nil))
+    }
+
+    func run(actions: AirshipJSON) async {
+        actionPayloads.append((actions, nil))
     }
 
 }

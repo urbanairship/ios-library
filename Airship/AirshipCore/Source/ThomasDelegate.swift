@@ -113,21 +113,6 @@ public protocol ThomasDelegate: Sendable {
         to: ThomasPagerInfo,
         layoutContext: ThomasLayoutContext
     )
-
-
-    /// Called when actions should be ran.
-    /// - Parameters:
-    ///     - permission: The permission.
-    ///     - startingStatus: The starting status.
-    ///     - endingStatus: The ending status.
-    ///     - layoutContext: The layout context.
-    @MainActor
-    func onPromptPermissionResult(
-        permission: AirshipPermission,
-        startingStatus: AirshipPermissionStatus,
-        endingStatus: AirshipPermissionStatus,
-        layoutContext: ThomasLayoutContext
-    )
 }
 
 /// - Note: for internal use only.  :nodoc:

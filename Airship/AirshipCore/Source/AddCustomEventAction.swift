@@ -12,7 +12,6 @@
 /// Result value: nil
 public final class AddCustomEventAction: AirshipAction {
 
-
     /// Default names - "add_custom_event_action"
     public static let defaultNames = ["add_custom_event_action"]
     
@@ -24,6 +23,10 @@ public final class AddCustomEventAction: AirshipAction {
         return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
     }
 
+    /// Metadata key for in-app context.
+    /// - Note: For internal use only. :nodoc:
+    public static let _inAppMetadata = "in_app_metadata"
+
     public func accepts(arguments: ActionArguments) async -> Bool {
         return true
     }
@@ -34,7 +37,6 @@ public final class AddCustomEventAction: AirshipAction {
         else {
             throw AirshipErrors.error("Invalid custom event argument: \(arguments.value)")
         }
-
 
         let eventValue = parseString(dict, key: CustomEvent.eventValueKey)
         let interactionID = parseString(
@@ -52,6 +54,14 @@ public final class AddCustomEventAction: AirshipAction {
         let properties = dict[CustomEvent.eventPropertiesKey] as? [String: Any]
 
         let event = CustomEvent(name: eventName, stringValue: eventValue)
+
+        if let inApp = arguments.metadata[Self._inAppMetadata] {
+            do {
+                event.inApp = try AirshipJSON.wrap(inApp)
+            } catch {
+                AirshipLogger.error("Failed to encode in-app info for custom event: \(inApp), error: \(error)")
+            }
+        }
 
         event.transactionID = transactionID
         event.properties = properties ?? [:]

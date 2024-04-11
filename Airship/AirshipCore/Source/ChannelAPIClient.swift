@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: For internal use only. :nodoc:
-class ChannelAPIClient: ChannelAPIClientProtocol {
+final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
     private let channelPath = "/api/channels/"
 
     private let config: RuntimeConfig

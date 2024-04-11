@@ -4,7 +4,7 @@ import Foundation
 
 @testable import AirshipCore
 
-class TestPermissionPrompter: PermissionPrompter {
+final class TestPermissionPrompter: PermissionPrompter, @unchecked Sendable {
 
     var onPrompt:
         (

@@ -8,16 +8,8 @@ import AirshipCore
 
 /// Airship rendering engine extensions.
 /// - Note: for internal use only.  :nodoc:
-public struct InAppMessageExtensions {
+struct InAppMessageExtensions {
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
-
     let imageProvider: AirshipImageProvider?
-
-    public init(
-        nativeBridgeExtension: NativeBridgeExtensionDelegate? = nil,
-        imageProvider: AirshipImageProvider? = nil
-    ) {
-        self.nativeBridgeExtension = nativeBridgeExtension
-        self.imageProvider = imageProvider
-    }
+    let actionRunner: InAppActionRunner?
 }

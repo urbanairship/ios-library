@@ -14,20 +14,17 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let assetManager: AssetCacheManagerProtocol
     private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
-    private let actionRunner: AutomationActionRunnerProtocol
 
     init(
         sceneManager: InAppMessageSceneManagerProtocol,
         assetManager: AssetCacheManagerProtocol,
         analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
-        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
-        actionRunner: AutomationActionRunnerProtocol = AutomationActionRunner()
+        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
     ) {
         self.sceneManager = sceneManager
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
-        self.actionRunner = actionRunner
     }
 
     @MainActor
@@ -121,7 +118,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                 }
 
                 if let actions = data.message.actions  {
-                    actionRunner.runActionsAsync(actions, situation: .manualInvocation, metadata: [:])
+                    data.actionRunner.runAsync(actions: actions)
                 }
             } catch {
                 data.displayCoordinator.messageFinishedDisplaying(data.message)

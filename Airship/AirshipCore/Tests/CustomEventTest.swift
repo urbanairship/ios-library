@@ -285,4 +285,17 @@ final class CustomEventTest: XCTestCase {
         
         XCTAssertFalse(event.isValid())
     }
+
+    func testInApp() {
+        let event = CustomEvent(name: "event name")
+
+        // Defined in automation, just make sure it passes it through
+        event.inApp = AirshipJSON.makeObject { builder in
+            builder.set(string: "foo", key: "bar")
+        }
+
+        let result = try! AirshipJSON.wrap(event.data["in_app"])
+
+        XCTAssertEqual(event.inApp, result)
+    }
 }

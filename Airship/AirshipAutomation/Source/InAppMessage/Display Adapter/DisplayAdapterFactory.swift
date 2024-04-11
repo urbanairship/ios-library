@@ -6,67 +6,83 @@ import Foundation
 import AirshipCore
 #endif
 
+/// Display adapter args
+public struct DisplayAdapterArgs: Sendable {
+    /// The in-app message
+    public var message: InAppMessage
+    /// The assets
+    public var assets: AirshipCachedAssetsProtocol
+    /// Action runner
+    public var actionRunner: InAppActionRunner {
+        return _actionRunner
+    }
+    
+    var _actionRunner: InternalInAppActionRunner
+}
+
 protocol DisplayAdapterFactoryProtocol: Sendable {
 
     @MainActor
     func setAdapterFactoryBlock(
         forType: CustomDisplayAdapterType,
-        factoryBlock: @Sendable @escaping (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+        factoryBlock: @Sendable @escaping (DisplayAdapterArgs) -> CustomDisplayAdapter?
     )
 
     @MainActor
     func makeAdapter(
-        message: InAppMessage,
-        assets: AirshipCachedAssetsProtocol
+        args: DisplayAdapterArgs
     ) throws -> DisplayAdapter
 }
 
 final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sendable {
 
     @MainActor
-    var customAdapters: [CustomDisplayAdapterType: (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?] = [:]
+    var customAdapters: [CustomDisplayAdapterType: (DisplayAdapterArgs) -> CustomDisplayAdapter?] = [:]
 
     @MainActor
     func setAdapterFactoryBlock(
         forType type: CustomDisplayAdapterType,
-        factoryBlock: @Sendable @escaping (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+        factoryBlock: @Sendable @escaping (DisplayAdapterArgs) -> CustomDisplayAdapter?
     ) {
         customAdapters[type] = factoryBlock
     }
 
     @MainActor
     func makeAdapter(
-        message: InAppMessage,
-        assets: AirshipCachedAssetsProtocol
+        args: DisplayAdapterArgs
     ) throws -> DisplayAdapter {
-        switch (message.displayContent) {
+        switch (args.message.displayContent) {
         case .banner(_):
-            if let custom = customAdapters[.banner]?(message, assets) {
+            if let custom = customAdapters[.banner]?(args) {
                 return CustomDisplayAdapterWrapper(adapter: custom)
             }
         case .fullscreen(_):
-            if let custom = customAdapters[.fullscreen]?(message, assets) {
+            if let custom = customAdapters[.fullscreen]?(args) {
                 return CustomDisplayAdapterWrapper(adapter: custom)
             }
         case .modal(_):
-            if let custom = customAdapters[.modal]?(message, assets) {
+            if let custom = customAdapters[.modal]?(args) {
                 return CustomDisplayAdapterWrapper(adapter: custom)
             }
         case .html(_):
-            if let custom = customAdapters[.html]?(message, assets) {
+            if let custom = customAdapters[.html]?(args) {
                 return CustomDisplayAdapterWrapper(adapter: custom)
             }
         case .custom(_):
-            if let custom = customAdapters[.custom]?(message, assets) {
+            if let custom = customAdapters[.custom]?(args) {
                 return CustomDisplayAdapterWrapper(adapter: custom)
             } else {
-                throw AirshipErrors.error("No adapter for message: \(message)")
+                throw AirshipErrors.error("No adapter for message: \(args.message)")
             }
         case .airshipLayout(_):
             break
         }
 
-        return try AirshipLayoutDisplayAdapter(message: message, assets: assets)
+        return try AirshipLayoutDisplayAdapter(
+            message: args.message,
+            assets: args.assets,
+            actionRunner: args._actionRunner
+        )
     }
 }
 

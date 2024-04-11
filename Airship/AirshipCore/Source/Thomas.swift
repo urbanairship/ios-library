@@ -172,23 +172,42 @@ public final class Thomas {
 public struct ThomasExtensions {
 
     #if !os(tvOS) && !os(watchOS)
-    let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    var nativeBridgeExtension: NativeBridgeExtensionDelegate?
     #endif
 
-    let imageProvider: AirshipImageProvider?
+    var imageProvider: AirshipImageProvider?
+
+    var actionRunner: ThomasActionRunner?
 
     #if os(tvOS) || os(watchOS)
-    public init(imageProvider: AirshipImageProvider? = nil) {
+    public init(
+        imageProvider: AirshipImageProvider? = nil,
+        actionRunner: ThomasActionRunner? = nil
+    ) {
         self.imageProvider = imageProvider
     }
     #else
 
     public init(
         nativeBridgeExtension: NativeBridgeExtensionDelegate? = nil,
-        imageProvider: AirshipImageProvider? = nil
+        imageProvider: AirshipImageProvider? = nil,
+        actionRunner: ThomasActionRunner? = nil
     ) {
         self.nativeBridgeExtension = nativeBridgeExtension
         self.imageProvider = imageProvider
+        self.actionRunner = actionRunner
     }
     #endif
 }
+
+/// Thomas action runner
+/// - Note: for internal use only.  :nodoc:
+public protocol ThomasActionRunner: Sendable {
+    @MainActor
+    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?)
+
+    @MainActor
+    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext?) async -> ActionResult
+}
+
+

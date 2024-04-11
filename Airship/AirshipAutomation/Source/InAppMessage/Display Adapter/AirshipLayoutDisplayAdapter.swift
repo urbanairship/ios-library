@@ -11,15 +11,18 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     private let message: InAppMessage
     private let assets: AirshipCachedAssetsProtocol
+    private let actionRunner: InternalInAppActionRunner?
     private let networkChecker: AirshipNetworkCheckerProtocol
 
     init(
         message: InAppMessage,
         assets: AirshipCachedAssetsProtocol,
+        actionRunner: InternalInAppActionRunner? = nil,
         networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
     ) throws {
         self.message = message
         self.assets = assets
+        self.actionRunner = actionRunner
         self.networkChecker = networkChecker
 
         if case .custom(_) = message.displayContent {
@@ -125,6 +128,16 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 #endif
     }
 
+    private func makeInAppExtensions() -> InAppMessageExtensions {
+        InAppMessageExtensions(
+            nativeBridgeExtension: InAppMessageNativeBridgeExtension(
+                message: message
+            ),
+            imageProvider: AssetCacheImageProvider(assets: assets),
+            actionRunner: actionRunner
+        )
+    }
+
     @MainActor
     private func displayBanner(
         _ banner: InAppMessageDisplayContent.Banner,
@@ -161,7 +174,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.banner(BannerTheme()),
-                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let bannerConstraints = InAppMessageBannerConstraints(
@@ -205,7 +218,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.modal(ModalTheme()),
-                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
@@ -239,7 +252,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.fullScreen(FullScreenTheme()),
-                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
@@ -273,9 +286,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.html(HTMLTheme()),
-                extensions: InAppMessageExtensions(nativeBridgeExtension: InAppMessageNativeBridgeExtension(
-                    message: message
-                ), imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
@@ -305,7 +316,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 nativeBridgeExtension: InAppMessageNativeBridgeExtension(
                     message: message
                 ),
-                imageProvider: AssetCacheImageProvider(assets: assets)
+                imageProvider: AssetCacheImageProvider(assets: assets),
+                actionRunner: actionRunner
             )
 
             do {
