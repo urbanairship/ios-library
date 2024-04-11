@@ -8,7 +8,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-class PushDataManager {
+final class PushDataManager: Sendable {
 
     private let maxAge = TimeInterval(172800)  // 2 days
     private let appKey: String
@@ -54,10 +54,10 @@ class PushDataManager {
     }
 
     public func savePushNotification(_ push: PushNotification) async {
-        await coreData.safePerform { [isExists = self.pushExists] isSafe, context in
-            guard 
+        await coreData.safePerform { isSafe, context in
+            guard
                 isSafe,
-                !isExists(push.pushID, context)
+                !self.pushExists(id: push.pushID, context: context)
             else {
                 return
             }
@@ -74,7 +74,6 @@ class PushDataManager {
         }
     }
 
-    @Sendable
     private func pushExists(id: String, context: NSManagedObjectContext) -> Bool
     {
         let fetchRequest: NSFetchRequest = PushData.fetchRequest()

@@ -36,6 +36,7 @@ public struct ReceivedPushListDebugView: View {
         .navigationTitle("Push Notifications".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published private(set) var pushNotifications: [PushNotification] = []
         private var cancellable: AnyCancellable? = nil

@@ -154,9 +154,12 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
             object: nil
         )
 
-        Task { @MainActor in
-            for await event in self.sessionTracker.events {
-                self.recordEvent(
+        Task { @MainActor [weak self, tracker = self.sessionTracker] in
+            for await event in tracker.events {
+                guard let strongSelf = self else {
+                    return
+                }
+                strongSelf.recordEvent(
                     sessionEventFactory.make(event: event),
                     date: event.date,
                     sessionID: event.sessionState.sessionID

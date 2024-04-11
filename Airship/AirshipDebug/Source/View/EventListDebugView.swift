@@ -54,6 +54,7 @@ public struct EventListDebugView: View {
         .navigationTitle("Events".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published private(set) var events: [AirshipEvent] = []
 

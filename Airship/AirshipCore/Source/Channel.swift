@@ -122,9 +122,9 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
                 self?.processChannelUpdate(update)
             }
 
-        self.channelRegistrar.addChannelRegistrationExtender(
-            extender: self.extendPayload
-        )
+        self.channelRegistrar.addChannelRegistrationExtender { [weak self] payload in
+            return await self?.extendPayload(payload: payload) ?? payload
+        }
 
         self.audienceManager.channelID = self.channelRegistrar.channelID
         self.audienceManager.enabled = true

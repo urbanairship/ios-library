@@ -59,33 +59,22 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         conflictEventSubject.eraseToAnyPublisher()
     }
 
-    private let contactIDUpdatesSubject = PassthroughSubject<ContactIDInfo?, Never>()
+    private let contactIDUpdatesSubject = CurrentValueSubject<ContactIDInfo?, Never>(nil)
     var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> {
-        let contactManager = self.contactManager
         return self.contactIDUpdatesSubject
-            .prepend(Future { promise in
-                Task.detached {
-                    await promise(.success(contactManager.currentContactIDInfo()))
-                }
-            })
             .compactMap { $0 }
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
 
-    private let namedUserIDSubject = PassthroughSubject<String?, Never>()
+    private let namedUserUpdateSubject = CurrentValueSubject<NamedUserIDEvent?, Never>(nil)
     public var namedUserIDPublisher: AnyPublisher<String?, Never> {
-        namedUserIDSubject
-            .prepend(Future { promise in
-                Task {
-                    await promise(.success(self.contactManager.currentNamedUserID()))
-                }
-            })
+        namedUserUpdateSubject
+            .compactMap { $0 }
+            .map { $0.identifier }
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
-
-
 
     public func _getNamedUserID() async -> String? {
         return await self.namedUserID
@@ -137,7 +126,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
         super.init()
         
-        self.setupTask = Task.detached(priority: .high) {
+        self.setupTask = Task {
             await self.migrateNamedUser()
 
             await audienceOverridesProvider.setPendingContactOverridesProvider { contactID in
@@ -227,15 +216,31 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
 
     public func airshipReady() {
-        Task {
-            for await update in await self.contactManager.contactUpdates {
+        Task { [weak self] in
+            if let strongSelf = self {
+                let contactInfo = await strongSelf.contactManager.currentContactIDInfo()
+                strongSelf.contactIDUpdatesSubject.send(contactInfo)
+
+                let namedUserID = await strongSelf.contactManager.currentNamedUserID()
+                strongSelf.namedUserUpdateSubject.send(NamedUserIDEvent(identifier: namedUserID))
+            }
+
+            guard let updates = await self?.contactManager.contactUpdates else {
+                return
+            }
+
+            for await update in updates {
+                guard let strongSelf = self else {
+                    return
+                }
+
                 switch (update) {
                 case .conflict(let event):
-                    self.conflictEventSubject.send(event)
+                    strongSelf.conflictEventSubject.send(event)
                 case .contactIDUpdate(let update):
-                    self.contactIDUpdatesSubject.send(update)
+                    strongSelf.contactIDUpdatesSubject.send(update)
                 case .namedUserUpdate(let namedUserID):
-                    self.namedUserIDSubject.send(namedUserID)
+                    strongSelf.namedUserUpdateSubject.send(NamedUserIDEvent(identifier: namedUserID))
                 }
             }
         }
@@ -789,4 +794,8 @@ public extension AirshipNotifications {
         @objc
         public static let eventKey = "event"
     }
+}
+
+fileprivate struct NamedUserIDEvent {
+    let identifier: String?
 }

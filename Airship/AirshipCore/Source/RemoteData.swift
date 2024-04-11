@@ -84,7 +84,6 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
                 )
             ]
         )
-
     }
 
     @MainActor
@@ -230,8 +229,6 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
             self.lastActiveRefreshDate.set(now)
         }
     }
-
-    
 
     @objc
     private func enqueueRefreshTask() {
