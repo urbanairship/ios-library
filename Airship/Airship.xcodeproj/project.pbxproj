@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1227,6 +1227,9 @@
 		997140F61FB0F45000EF5445 /* UAInAppMessageTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997140F31FB0F45000EF5445 /* UAInAppMessageTest.m */; };
 		997AC8221FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 997AC8211FE5ACE000260440 /* UAInAppMessageFullScreenDisplayContentTest.m */; };
 		9987672A1FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 998767291FBE6B4200197AF4 /* UAInAppMessageBannerDisplayContentTest.m */; };
+		99D14DF12BBB80CA00C5B830 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 99D14DF02BBB80CA00C5B830 /* PrivacyInfo.xcprivacy */; };
+		99D14DF22BBB80D100C5B830 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 99D14DF02BBB80CA00C5B830 /* PrivacyInfo.xcprivacy */; };
+		99D14DF32BBB80D500C5B830 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 99D14DF02BBB80CA00C5B830 /* PrivacyInfo.xcprivacy */; };
 		A6031ED326738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A6031ED126738CE600FFE328 /* ChatMessageDataModel.xcdatamodeld */; };
 		A604DB7E25597F85001ADCA8 /* UASearchEventTemplateTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A604DB7D25597F85001ADCA8 /* UASearchEventTemplateTest.m */; };
 		A60A23EE258CEBBE006B7D80 /* UAModifyAttributesActionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = A60A23ED258CEBBE006B7D80 /* UAModifyAttributesActionTest.m */; };
@@ -2884,6 +2887,7 @@
 		998B22651FD89D4400C535AE /* UAInAppMessageBannerContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageBannerContentView.m; sourceTree = "<group>"; };
 		999028A91FDAE8FE0021C7DF /* UAInAppMessageButton+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageButton+Internal.h"; sourceTree = "<group>"; };
 		999028AA1FDAE8FE0021C7DF /* UAInAppMessageButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageButton.m; sourceTree = "<group>"; };
+		99D14DF02BBB80CA00C5B830 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		99E2DA2A1FB6271400C9F2CC /* UAInAppMessageManager+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAInAppMessageManager+Internal.h"; sourceTree = "<group>"; };
 		99E2DA361FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UAInAppMessageBannerAdapter.h; sourceTree = "<group>"; };
 		99E2DA371FBA298C00C9F2CC /* UAInAppMessageBannerAdapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAInAppMessageBannerAdapter.m; sourceTree = "<group>"; };
@@ -3338,13 +3342,6 @@
 				1B05132724AE103D00F5051F /* UALocaleManagerTest.m */,
 			);
 			name = Locale;
-			sourceTree = "<group>";
-		};
-		1B8DCF452507B9380006E595 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		1B8F1B6623CCBF7C00BEE715 /* AccengageInternal */ = {
@@ -3909,7 +3906,6 @@
 				6E5C32B627C9A2C9005B2DDE /* AirshipRelease */,
 				6E5C32D427C9A54A005B2DDE /* AirshipRelease tvOS */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
-				1B8DCF452507B9380006E595 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -5769,6 +5765,7 @@
 		CC89997D1D8B642D00A0CECC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				99D14DF02BBB80CA00C5B830 /* PrivacyInfo.xcprivacy */,
 				6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */,
 				6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */,
 				6E411C742538C60900FEE4E8 /* UrbanAirship.strings */,
@@ -6769,6 +6766,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99D14DF12BBB80CA00C5B830 /* PrivacyInfo.xcprivacy in Resources */,
 				6E411B742538C4E600FEE4E8 /* UADefaultActionsTvOS.plist in Resources */,
 				6E411B702538C4E600FEE4E8 /* UADefaultActions.plist in Resources */,
 				6E411C782538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
@@ -6863,6 +6861,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99D14DF32BBB80D500C5B830 /* PrivacyInfo.xcprivacy in Resources */,
 				A67229C0281A9E330033F54D /* UrbanAirship.strings in Resources */,
 				A67229C1281A9E330033F54D /* UADefaultActions.plist in Resources */,
 				A67229C2281A9E330033F54D /* UADefaultActionsTvOS.plist in Resources */,
@@ -6911,6 +6910,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99D14DF22BBB80D100C5B830 /* PrivacyInfo.xcprivacy in Resources */,
 				6E411B752538C4E600FEE4E8 /* UADefaultActionsTvOS.plist in Resources */,
 				6E411B712538C4E600FEE4E8 /* UADefaultActions.plist in Resources */,
 				6E411C792538C60900FEE4E8 /* UrbanAirship.strings in Resources */,

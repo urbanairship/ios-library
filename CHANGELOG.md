@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 16.12.7, Apr 11, 2024
+Patch release that adds a privacy manifest
+
+### Changes
+- Adds privacy manifest.
+
 ## Version 16.12.6, Jan 29, 2024
 Patch release that fixes an issue with message limits not being respected in certain cases. Apps on SDK v16 that make use of limits should update to this version or the latest 17.x release.
 
