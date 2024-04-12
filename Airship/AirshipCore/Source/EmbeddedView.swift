@@ -15,14 +15,14 @@ struct AdoptLayout: SwiftUI.Layout {
 
         let height = size(
             constraint: placement.size.height,
-            parent: self.embeddedSize?.maxHeight,
+            parent: self.embeddedSize?.parentHeight,
             proposal: proposal.height,
             sizeThataFits: viewSize?.height
         )
 
         let width = size(
             constraint: placement.size.width,
-            parent: self.embeddedSize?.maxWidth,
+            parent: self.embeddedSize?.parentWidth,
             proposal: proposal.width,
             sizeThataFits: viewSize?.width
         )
@@ -50,8 +50,8 @@ struct AdoptLayout: SwiftUI.Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
 
         let constraints = ViewConstraints(
-            width: embeddedSize?.maxWidth ?? bounds.width,
-            height: embeddedSize?.maxHeight ?? bounds.height
+            width: embeddedSize?.parentWidth ?? bounds.width,
+            height: embeddedSize?.parentHeight ?? bounds.height
         )
 
         DispatchQueue.main.async {
@@ -61,12 +61,12 @@ struct AdoptLayout: SwiftUI.Layout {
         let viewProposal = ProposedViewSize(
             width: size(
                 constraint: placement.size.width,
-                parent: embeddedSize?.maxWidth ?? bounds.width,
+                parent: embeddedSize?.parentWidth ?? bounds.width,
                 proposal: proposal.width
             ),
             height: size(
                 constraint: placement.size.height,
-                parent: embeddedSize?.maxHeight ?? bounds.height,
+                parent: embeddedSize?.parentHeight ?? bounds.height,
                 proposal: proposal.height
             )
         )
@@ -103,8 +103,8 @@ struct EmbeddedView: View {
                 }
             } else {
                 let constraints = ViewConstraints(
-                    width: placement.size.width.calculateSize(self.embeddedSize?.maxWidth),
-                    height: placement.size.height.calculateSize(self.embeddedSize?.maxHeight)
+                    width: placement.size.width.calculateSize(self.embeddedSize?.parentWidth),
+                    height: placement.size.height.calculateSize(self.embeddedSize?.parentHeight)
                 )
 
                 createView(constraints: constraints, placement: placement)

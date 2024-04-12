@@ -19,40 +19,6 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     /// Creates a new AirshipEmbeddedView.
     ///
     /// - Parameters:
-    ///   - id: The embedded ID.
-    ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
-    ///   - placeholder: The place holder block.
-    @available(*, deprecated,  message: "use init(embeddedID:embeddedSize:placeHolder:) instead")
-    public init(
-        id: String,
-        embeddedSize: AirshipEmbeddedSize? = nil,
-        @ViewBuilder placeholder: @escaping () -> PlaceHolder = { EmptyView()}
-    ) {
-        self.embeddedID = id
-        self.embeddedSize = embeddedSize
-        self.placeholder = placeholder
-        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: id))
-    }
-
-    /// Creates a new AirshipEmbeddedView.
-    ///
-    /// - Parameters:
-    ///   - id: The embedded ID.
-    ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
-    @available(*, deprecated,  message: "use init(embeddedID:embeddedSize:) instead")
-    public init(
-        id: String,
-        embeddedSize: AirshipEmbeddedSize? = nil
-    ) where PlaceHolder == EmptyView {
-        self.embeddedID = id
-        self.embeddedSize = embeddedSize
-        self.placeholder = { EmptyView() }
-        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: id))
-    }
-
-    /// Creates a new AirshipEmbeddedView.
-    ///
-    /// - Parameters:
     ///   - embeddedID: The embedded ID.
     ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - placeholder: The place holder block.
