@@ -36,13 +36,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    /// Quiet Time dictionary start key. For internal use only :nodoc:
-    @objc
-    public static let quietTimeStartKey = "start"
-
-    /// Quiet Time dictionary end key. For internal use only :nodoc:
-    @objc
-    public static let quietTimeEndKey = "end"
 
     private static let pushNotificationsOptionsKey =
         "UAUserPushNotificationsOptions"
@@ -767,18 +760,23 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     #endif
 
-    @objc
-    public private(set) var quietTime: [AnyHashable: Any]? {
-        set {
-            self.dataStore.setObject(
-                newValue,
-                forKey: AirshipPush.quietTimeSettingsKey
-            )
-            self.channel.updateRegistration()
-        }
-
+    public var quietTime: QuietTimeSettings? {
         get {
-            return self.dataStore.dictionary(forKey: AirshipPush.quietTimeSettingsKey)
+            guard let quietTime = self.dataStore.dictionary(forKey: Self.quietTimeSettingsKey) else {
+                return nil
+            }
+
+            return QuietTimeSettings(from: quietTime)
+        }
+        set {
+            if let newValue {
+                AirshipLogger.debug("Setting quiet time: \(newValue)")
+                self.dataStore.setObject(newValue.dictionary, forKey: Self.quietTimeSettingsKey)
+            } else {
+                AirshipLogger.debug("Clearing quiet time")
+                self.dataStore.removeObject(forKey: Self.quietTimeSettingsKey)
+            }
+            self.channel.updateRegistration()
         }
     }
 
@@ -823,34 +821,21 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         endHour: Int,
         endMinute: Int
     ) {
-        let startTimeString =
-            "\(String(format: "%02d", startHour)):\(String(format: "%02d", startMinute))"
-        let endTimeString =
-            "\(String(format: "%02d", endHour)):\(String(format: "%02d", endMinute))"
-
-        if startHour >= 24 || startMinute >= 60 {
-            AirshipLogger.error(
-                "Unable to set quiet time, invalid start time: \(startTimeString)"
+        do {
+            self.quietTime = try QuietTimeSettings(
+                startHour: UInt(startHour),
+                startMinute: UInt(startMinute),
+                endHour: UInt(endHour),
+                endMinute: UInt(endMinute)
             )
-            return
-        }
-
-        if endHour >= 24 || endMinute >= 60 {
+        } catch {
             AirshipLogger.error(
-                "Unable to set quiet time, invalid end time: \(endTimeString)"
+                "Unable to set quiet time, invalid time: \(error)"
             )
-            return
         }
-
-        AirshipLogger.debug(
-            "Setting quiet time: \(startTimeString) to \(endTimeString)"
-        )
-
-        self.quietTime = [
-            AirshipPush.quietTimeStartKey: startTimeString,
-            AirshipPush.quietTimeEndKey: endTimeString,
-        ]
     }
+
+
 
     private func updateRegistration() {
         self.dispatchUpdateNotifications()
@@ -975,17 +960,10 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
 #endif
 
-        if let timeZoneName = self.timeZone?.name,
-           let quietTimeStart = self.quietTime?[AirshipPush.quietTimeStartKey]
-            as? String,
-           let quietTimeEnd = self.quietTime?[AirshipPush.quietTimeEndKey]
-            as? String,
-           self.quietTimeEnabled
-        {
-
+        if let timeZoneName = self.timeZone?.name, let quietTime, self.quietTimeEnabled {
             let quietTime = ChannelRegistrationPayload.QuietTime(
-                start: quietTimeStart,
-                end: quietTimeEnd
+                start: quietTime.startString,
+                end: quietTime.endString
             )
             payload.channel.iOSChannelSettings?.quietTimeTimeZone =
             timeZoneName
@@ -1244,13 +1222,11 @@ extension AirshipPush: InternalPushProtocol {
 
 #if !os(tvOS)
 extension UNNotification {
-    
     /// Checks if the push was sent from Airship.
     /// - Returns: true if it's an Airship notification, otherwise false.
     public func isAirshipPush() -> Bool {
         return self.request.content.userInfo["com.urbanairship.metadata"] != nil
     }
-    
 }
 #endif
 
@@ -1291,4 +1267,77 @@ public extension AirshipNotifications {
         /// NSNotification userInfo key to get the notification user info.
         public static let notificationKey: String = "notification"
     }
+}
+
+/// Quiet time settings
+public struct QuietTimeSettings: Sendable, Equatable {
+    private static let quietTimeStartKey = "start"
+    private static let quietTimeEndKey = "end"
+
+    /// Start hour
+    public let startHour: UInt
+    /// Start minute
+    public let startMinute: UInt
+    /// End hour
+    public let endHour: UInt
+    /// End minute
+    public let endMinute: UInt
+
+    
+    var startString: String {
+        return "\(String(format: "%02d", startHour)):\(String(format: "%02d", startMinute))"
+    }
+
+    var endString: String {
+        return "\(String(format: "%02d", endHour)):\(String(format: "%02d", endMinute))"
+    }
+
+    var dictionary: [AnyHashable: Any] {
+        return [
+            Self.quietTimeStartKey: startString,
+            Self.quietTimeEndKey: endString,
+        ]
+    }
+
+    /// Default constructor.
+    /// - Parameters:
+    ///     - startHour: The starting hour. Must be between 0-23.
+    ///     - startMinute: The starting minute. Must be between 0-59.
+    ///     - endHour: The ending hour. Must be between 0-23.
+    ///     - endMinute: The ending minute. Must be between 0-59.
+    public init(startHour: UInt, startMinute: UInt, endHour: UInt, endMinute: UInt) throws {
+        guard startHour < 24, startMinute < 60 else {
+            throw AirshipErrors.error("Invalid start time")
+        }
+
+        guard endHour < 24, endMinute < 60 else {
+            throw AirshipErrors.error("Invalid end time")
+        }
+
+        self.startHour = startHour
+        self.startMinute = startMinute
+        self.endHour = endHour
+        self.endMinute = endMinute
+    }
+
+    fileprivate init?(from dictionary: [AnyHashable: Any])  {
+        guard
+            let startTime = dictionary[Self.quietTimeStartKey] as? String,
+            let endTime = dictionary[Self.quietTimeEndKey] as? String
+        else {
+            return nil
+        }
+
+        let startParts = startTime.components(separatedBy:":").compactMap { UInt($0) }
+        let endParts = endTime.components(separatedBy:":").compactMap { UInt($0) }
+
+        guard startParts.count == 2, endParts.count == 2 else { return nil }
+
+        self.startHour = startParts[0]
+        self.startMinute = startParts[1]
+        self.endHour = endParts[0]
+        self.endMinute = endParts[1]
+    }
+
+
 }

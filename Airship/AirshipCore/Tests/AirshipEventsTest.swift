@@ -342,6 +342,8 @@ class AirshipEventsTest: XCTestCase {
 }
 
 private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
+    var quietTime: QuietTimeSettings?
+    
 
     func enableUserPushNotifications() async -> Bool {
         return true

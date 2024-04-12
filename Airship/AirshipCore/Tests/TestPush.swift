@@ -7,6 +7,8 @@ import Foundation
 import Combine
 
 final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {
+    var quietTime: QuietTimeSettings?
+    
     func enableUserPushNotifications() async -> Bool {
         return true
     }

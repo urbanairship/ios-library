@@ -170,6 +170,11 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
 
 /// Airship Push protocol.
 public protocol AirshipPushProtocol: AirshipBasePushProtocol {
+
+    /// Quiet time settings. Setting this value only sets the start/end time for quiet time. It still needs to be
+    /// enabled with `quietTimeEnabled`. The timzone can be set with `timeZone`.
+    var quietTime: QuietTimeSettings? { get set }
+
     /// Notification status updates
     var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> { get }
 
