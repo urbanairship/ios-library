@@ -3,6 +3,38 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.1.0 April 16, 2024
+
+Minor release with several minor API additions.
+
+### Changes
+- `MessageCenterInboxProtocol` changes:
+  - Added new method `refreshMessages(timeout:)` that will throw if a timeout is reached.
+  - Updated the method `refreshMessages()` to properly cancel if the task is cancelled.
+  - Refreshing messages will no longer block on network connection availability.
+- Added property `identifierUpdates` on `AirshipChannelProtocol` that provides a stream of updates whenever the channel ID changes.
+- Added `resetEnabledFeatures` config option on `AirshipConfig` to reset the `PrivacyManager` enabled features to those specified in config on init.
+- Added `quietTime` property on `AirshipPushProtocol` to be able to get/set quiet time start and end time.
+- Custom event properties will now accept any `Encodable` values and be automatically encoded to JSON.
+- Added support for attributing a custom event to an in-app message if the event was generated from the message.
+- Updated the LICENSE file to use the standard Apache 2.0 text to be properly detected by Github. The license did not change, only the text describing the license.
+- Fixed `Package.swift` to properly support `VisionOS` platform.
+- Fixed in-app messages that were interrupted during display that define a display interval not able to be triggered for display again until the next app init.
+
+## Version 16.12.7, April 11, 2024
+Patch release that adds a privacy manifest
+
+### Changes
+- Adds privacy manifest.
+
+## Version 17.10.0, April 4, 2024
+Minor release with a new config option `resetEnabledFeatures` to reset the PrivacyManager enabled features to those specified in the Airship config on each launch and a bug fix for the delete button theming in the Message Center and back button theming in message views.
+
+### Changes
+- Added `resetEnabledFeatures` config option
+- Fixes color theme assignment for the delete button in Message Center and back button in message views.
+
+
 ## Version 18.0.1 March 22, 2024
 
 Patch release that fixes a few regressions with 18.0.0.

@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   run-tests-core:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
         run: make test-core
 
   run-tests-message-center:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
         run: make test-message-center
 
   run-tests-preference-center:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +50,7 @@ jobs:
         run: make test-preference-center
 
   run-tests-feature-flags:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
         run: make test-feature-flags
 
   run-tests-automation:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
         run: make test-automation
 
   run-tests-extensions:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -89,7 +89,7 @@ jobs:
         run: make test-content-extension test-service-extension
 
   run-package-tests:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -99,7 +99,7 @@ jobs:
         run: make test-packages
 
   build-samples:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +108,7 @@ jobs:
       
 
   # run-tests-watchos:
-  #   runs-on: macos-13-xlarge
+  #   runs-on: macos-14-xlarge
   #   steps:
   #     - uses: actions/checkout@v4
   #     - uses: ruby/setup-ruby@v1
@@ -139,35 +139,35 @@ jobs:
   #       run: make build-sample-watchos
         
   pod-lib-lint-watchos:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint-watchos
         
   pod-lib-lint-tvos:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint-tvos
 
   pod-lib-lint-ios:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint-ios
 
   pod-lib-lint-extensions:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint-extensions
 
   # pod-lib-lint-visonos:
-  #   runs-on: macos-13-xlarge
+  #   runs-on: macos-14-xlarge
   #   steps:
   #     - uses: actions/checkout@v4
   #     - name: Pod lint
