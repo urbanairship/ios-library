@@ -414,7 +414,7 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         if let result = response.result, response.isSuccess {
-            await updateContactInfo(result: result, operationType: .resolve)
+            await updateContactInfo(result: result, operationType: .reset)
         }
 
         return response.isOperationComplete
@@ -432,7 +432,7 @@ actor ContactManager: ContactManagerProtocol {
             await updateContactInfo(
                 result: result,
                 namedUserID: identifier,
-                operationType: .resolve
+                operationType: .identify
             )
         }
 
