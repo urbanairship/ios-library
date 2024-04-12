@@ -217,12 +217,12 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     public func airshipReady() {
         Task { [weak self] in
-            if let strongSelf = self {
-                let contactInfo = await strongSelf.contactManager.currentContactIDInfo()
-                strongSelf.contactIDUpdatesSubject.send(contactInfo)
+            if let self = self {
+                let contactInfo = await self.contactManager.currentContactIDInfo()
+                self.contactIDUpdatesSubject.send(contactInfo)
 
-                let namedUserID = await strongSelf.contactManager.currentNamedUserID()
-                strongSelf.namedUserUpdateSubject.send(NamedUserIDEvent(identifier: namedUserID))
+                let namedUserID = await self.contactManager.currentNamedUserID()
+                self.namedUserUpdateSubject.send(NamedUserIDEvent(identifier: namedUserID))
             }
 
             guard let updates = await self?.contactManager.contactUpdates else {
@@ -230,17 +230,17 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             }
 
             for await update in updates {
-                guard let strongSelf = self else {
+                guard let self else {
                     return
                 }
 
                 switch (update) {
                 case .conflict(let event):
-                    strongSelf.conflictEventSubject.send(event)
+                    self.conflictEventSubject.send(event)
                 case .contactIDUpdate(let update):
-                    strongSelf.contactIDUpdatesSubject.send(update)
+                    self.contactIDUpdatesSubject.send(update)
                 case .namedUserUpdate(let namedUserID):
-                    strongSelf.namedUserUpdateSubject.send(NamedUserIDEvent(identifier: namedUserID))
+                    self.namedUserUpdateSubject.send(NamedUserIDEvent(identifier: namedUserID))
                 }
             }
         }

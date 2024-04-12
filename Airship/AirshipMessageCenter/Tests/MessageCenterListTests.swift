@@ -43,14 +43,12 @@ final class MessageCenterListTest: XCTestCase {
     }()
 
     private let channel = TestChannel()
-    private let workManager = AirshipWorkManager()
+    private let workManager: TestWorkManager = TestWorkManager()
+    private let client: TestMessageCenterAPIClient = TestMessageCenterAPIClient()
 
     private lazy var inbox = MessageCenterInbox(
         channel: channel,
-        client: MessageCenterAPIClient(
-            config: config,
-            session: TestAirshipRequestSession()
-        ),
+        client: client,
         config: config,
         store: store,
         workManager: workManager
@@ -155,4 +153,188 @@ final class MessageCenterListTest: XCTestCase {
         XCTAssertNotNil(updatedMessage)
     }
 
+    func testRefreshMessages() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let expectations = self.expectation(description: "client called")
+        expectations.expectedFulfillmentCount = 2
+
+        let messages = MessageCenterMessage.generateMessages(1)
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+
+        self.client.onCreateUser = { channelID in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            expectations.fulfill()
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.client.onRetrieve = { user, channelID, lastModified in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            XCTAssertEqual(user, mcUser)
+            XCTAssertNil(lastModified)
+
+            expectations.fulfill()
+            return AirshipHTTPResponse(
+                result: messages,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        let result = await self.inbox.refreshMessages()
+        XCTAssertTrue(result)
+        XCTAssertFalse(self.workManager.workRequests.last!.requiresNetwork)
+        XCTAssertEqual(self.workManager.workRequests.last!.conflictPolicy, .replace)
+        await self.fulfillment(of: [expectations])
+    }
+
+    func testRefreshMessagesWithTimeout() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let expectations = self.expectation(description: "client called")
+        expectations.expectedFulfillmentCount = 2
+
+        let messages = MessageCenterMessage.generateMessages(1)
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+
+        self.client.onCreateUser = { channelID in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            expectations.fulfill()
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.client.onRetrieve = { user, channelID, lastModified in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            XCTAssertEqual(user, mcUser)
+            XCTAssertNil(lastModified)
+
+            expectations.fulfill()
+            return AirshipHTTPResponse(
+                result: messages,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        let result = try await self.inbox.refreshMessages(timeout: 4.0)
+        XCTAssertTrue(result)
+        XCTAssertFalse(self.workManager.workRequests.last!.requiresNetwork)
+        XCTAssertEqual(self.workManager.workRequests.last!.conflictPolicy, .replace)
+        await self.fulfillment(of: [expectations])
+    }
+    
+    func testRefreshMessagesNoChannel() async throws {
+        self.channel.identifier = nil
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        let result = await self.inbox.refreshMessages()
+        XCTAssertFalse(result)
+    }
+
+    func testRefreshMessagesUserCreationFailed() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        self.client.onCreateUser = { channelID in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 400,
+                headers: [:]
+            )
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        let result = await self.inbox.refreshMessages()
+        XCTAssertFalse(result)
+    }
+
+    func testRefreshMessagesRetrieveFailed() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+
+        self.client.onCreateUser = { channelID in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.client.onRetrieve = { user, channelID, lastModified in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            XCTAssertEqual(user, mcUser)
+            XCTAssertNil(lastModified)
+
+            return AirshipHTTPResponse(
+                result: [],
+                statusCode: 400,
+                headers: [:]
+            )
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        let result = await self.inbox.refreshMessages()
+        XCTAssertFalse(result)
+    }
+}
+
+
+fileprivate final class TestMessageCenterAPIClient : MessageCenterAPIClientProtocol, @unchecked Sendable {
+    var onRetrieve: ((MessageCenterUser, String, String?) async throws -> AirshipHTTPResponse<[MessageCenterMessage]>)?
+    var onDelete: (([MessageCenterMessage], MessageCenterUser, String) async throws -> AirshipHTTPResponse<Void>)?
+    var onRead: (([MessageCenterMessage], MessageCenterUser, String) async throws -> AirshipHTTPResponse<Void>)?
+    var onCreateUser: ((String) async throws -> AirshipHTTPResponse<MessageCenterUser>)?
+    var onUpdateUser: ((MessageCenterUser, String) async throws -> AirshipHTTPResponse<Void>)?
+
+    func retrieveMessageList(user: MessageCenterUser, channelID: String, lastModified: String?) async throws -> AirshipHTTPResponse<[MessageCenterMessage]> {
+        return try await self.onRetrieve!(user, channelID, lastModified)
+    }
+    
+    func performBatchDelete(forMessages messages: [MessageCenterMessage], user: MessageCenterUser, channelID: String) async throws -> AirshipHTTPResponse<Void> {
+        return try await self.onDelete!(messages, user, channelID)
+    }
+    
+    func performBatchMarkAsRead(forMessages messages: [MessageCenterMessage], user: MessageCenterUser, channelID: String) async throws -> AirshipHTTPResponse<Void> {
+        return try await self.onRead!(messages, user, channelID)
+    }
+    
+    func createUser(withChannelID channelID: String) async throws -> AirshipHTTPResponse<MessageCenterUser> {
+        return try await self.onCreateUser!(channelID)
+    }
+    
+    func updateUser(_ user: MessageCenterUser, channelID: String) async throws -> AirshipHTTPResponse<Void> {
+        return try await self.onUpdateUser!(user, channelID)
+    }
+    
 }
