@@ -155,7 +155,6 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// Allows resetting enabled features to match the runtime config defaults on each takeOff
     ///
     /// Defaults to `false`.
-    @objc
     public let resetEnabledFeatures: Bool
 
     /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.

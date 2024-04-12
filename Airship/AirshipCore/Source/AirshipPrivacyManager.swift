@@ -96,16 +96,11 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
 
         super.init()
 
-        let resetFlag = config.resetEnabledFeatures
+        if config.resetEnabledFeatures {
+            self.dataStore.removeObject(forKey:  AirshipPrivacyManager.enabledFeaturesKey)
+        } 
 
-        if resetFlag {
-            /// Reset the defaults each time when reset flag is enabled
-            self.enabledFeatures = defaultEnabledFeatures
-            self.lastUpdated = defaultEnabledFeatures
-        } else {
-            /// Otherwise allow features set on the privacy manager to override
-            self.lastUpdated = self.enabledFeatures
-        }
+        self.lastUpdated = self.enabledFeatures
 
         self.migrateData()
 
