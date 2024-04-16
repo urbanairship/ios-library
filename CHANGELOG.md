@@ -13,7 +13,9 @@ Minor release with several minor API additions.
   - Updated the method `refreshMessages()` to properly cancel if the task is cancelled.
   - Refreshing messages will no longer block on network connection availability.
 - Added property `identifierUpdates` on `AirshipChannelProtocol` that provides a stream of updates whenever the channel ID changes.
-- Added `resetEnabledFeatures` config option on `AirshipConfig` to reset the `PrivacyManager` enabled features to those specified in config on init.
+- Added new `AirshipConfig` properties:
+  - `resetEnabledFeatures` to reset the `PrivacyManager` enabled features to those specified in config on init.
+  - `restoreMessageCenterOnReinstall` to control Message Center recovery on reinstall.
 - Added `quietTime` property on `AirshipPushProtocol` to be able to get/set quiet time start and end time.
 - Custom event properties will now accept any `Encodable` values and be automatically encoded to JSON.
 - Added support for attributing a custom event to an in-app message if the event was generated from the message.

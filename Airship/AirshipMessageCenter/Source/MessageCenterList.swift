@@ -111,7 +111,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     private let notificationCenter: NotificationCenter
     private let date: AirshipDateProtocol
     private let workManager: AirshipWorkManagerProtocol
-    
+    private let startUpTask: Task<Void, Never>?
     private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
     var enabled: Bool {
         get {
@@ -221,6 +221,14 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         self.date = date
         self.workManager = workManager
 
+        self.startUpTask = if channel.identifier == nil, !config.restoreMessageCenterOnReinstall {
+            Task { [weak store] in
+                await store?.resetUser()
+            }
+        } else {
+            nil
+        }
+
         super.init()
 
         workManager.registerWorker(
@@ -251,10 +259,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            self?
-                .dispatchUpdateWorkRequest(
-                    conflictPolicy: .replace
-                )
+            self?.dispatchUpdateWorkRequest(
+                conflictPolicy: .replace
+            )
         }
 
         Task { @MainActor [weak self] in
@@ -269,6 +276,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
 
         self.channel.addRegistrationExtender { [weak self] payload in
+            await self?.startUpTask?.value
             guard self?.enabled == true,
                   let user = await self?.store.user
             else {
@@ -287,6 +295,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 
             return payload
         }
+
+
+
     }
 
     convenience init(
@@ -328,6 +339,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             return nil
         }
 
+        await self.startUpTask?.value
         return await self.store.user
     }
 
@@ -463,6 +475,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
                 guard let user = response.result else {
                     return nil
                 }
+                await self.store.setUserRequireUpdate(false)
                 await self.store.saveUser(user, channelID: channelID)
                 return user
             } catch {
@@ -479,6 +492,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         guard requireUpdate || channelMismatch else {
             return user
         }
+
         do {
             AirshipLogger.debug("Updating Message Center user")
             let response = try await self.client.updateUser(
@@ -493,7 +507,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             guard response.isSuccess else {
                 return nil
             }
-            await self.store.setUserRequireUpdate(true)
+
+            await self.store.setUserRegisteredChannelID(channelID)
+            await self.store.setUserRequireUpdate(false)
             return user
         } catch {
             AirshipLogger.info("Failed to update Message Center user: \(error)")
@@ -502,6 +518,8 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     }
 
     private func updateInbox() async throws -> AirshipWorkResult {
+        await self.startUpTask?.value
+
         guard let channelID = channel.identifier else {
             await self.sendUpdate(.refreshFailed)
             return .success

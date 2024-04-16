@@ -301,7 +301,15 @@ public class AirshipConfig: NSObject, NSCopying {
     /// Defaults to `false`.
     @objc
     public var useUserPreferredLocale = false
-    
+
+    /// If set to `true`, Message Center will attempt to be restored between reinstalls. If `false`,
+    /// the Message Center user will be reset and the Channel will not be able to use the user
+    /// as an identity hint to recover the past Channel ID.
+    ///
+    /// Defaults to `true`.
+    @objc
+    public var restoreMessageCenterOnReinstall = true
+
     /// Returns the resolved app key.
     /// - Returns: The resolved app key or an empty string.
     @objc
@@ -444,6 +452,7 @@ public class AirshipConfig: NSObject, NSCopying {
         _inProduction = config._inProduction
         autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
         useUserPreferredLocale = config.useUserPreferredLocale
+        restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -488,7 +497,8 @@ public class AirshipConfig: NSObject, NSCopying {
                 Site:  %ld\n\
                 Enabled features:  %ld\n\
                 Reset enabled features:  %ld\n\
-                Use user preferred locale: %d\n
+                Use user preferred locale: %d\n\
+                Restore Message Center on reinstall: %d\n
                 """,
             inProduction,
             inProduction,
@@ -525,7 +535,8 @@ public class AirshipConfig: NSObject, NSCopying {
             site.rawValue,
             enabledFeatures.rawValue,
             resetEnabledFeatures ? "YES" : "NO",
-            useUserPreferredLocale
+            useUserPreferredLocale,
+            restoreMessageCenterOnReinstall ? "YES" : "NO"
         )
     }
     

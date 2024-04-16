@@ -81,6 +81,87 @@ final class MessageCenterListTest: XCTestCase {
         XCTAssertNil(resetedUser)
     }
 
+    func testMessageCenterIdenityHint() async throws {
+        let user = MessageCenterUser(
+            username: "AnyName",
+            password: "AnyPassword"
+        )
+
+        // Save user
+        await store.saveUser(user, channelID: "987654433")
+
+        self.inbox.enabled = true
+
+        XCTAssertEqual(1, self.channel.extenders.count)
+        let payload = await self.channel.channelPayload
+        XCTAssertEqual(user.username, payload.identityHints?.userID)
+    }
+
+    func testMessageCenterIdenityHintRestoreMessageCenterDisabled() async throws {
+        self.channel.extenders.removeAll()
+        let config = AirshipConfig()
+        config.restoreMessageCenterOnReinstall = false
+
+        let user = MessageCenterUser(
+            username: "AnyName",
+            password: "AnyPassword"
+        )
+
+        // Save user
+        await store.saveUser(user, channelID: "987654433")
+
+        let inbox = MessageCenterInbox(
+            channel: channel,
+            client: client,
+            config: RuntimeConfig(
+                config: config,
+                dataStore: dataStore
+            ),
+            store: store,
+            workManager: workManager
+        )
+
+        inbox.enabled = true
+
+        XCTAssertEqual(1, self.channel.extenders.count)
+        let payload = await self.channel.channelPayload
+        XCTAssertNil(payload.identityHints?.userID)
+    }
+
+    func testRestoreMessageCenterDisabled() async throws {
+        self.channel.extenders.removeAll()
+        let config = AirshipConfig()
+        config.restoreMessageCenterOnReinstall = false
+
+        let user = MessageCenterUser(
+            username: "AnyName",
+            password: "AnyPassword"
+        )
+
+        // Save user
+        await store.saveUser(user, channelID: "987654433")
+
+        let inbox = MessageCenterInbox(
+            channel: channel,
+            client: client,
+            config: RuntimeConfig(
+                config: config,
+                dataStore: dataStore
+            ),
+            store: store,
+            workManager: workManager
+        )
+
+        inbox.enabled = true
+
+        let fromInbox = await self.inbox.user
+        let fromStore = await self.store.user
+
+        XCTAssertNil(fromInbox)
+        XCTAssertNil(fromStore)
+    }
+
+
     func testMessageRetrieve() async throws {
 
         self.inbox.enabled = true

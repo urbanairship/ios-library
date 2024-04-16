@@ -161,8 +161,16 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     ///
     /// Defaults to `false`.
     @objc
-    public var useUserPreferredLocale = false
-    
+    public var useUserPreferredLocale: Bool
+
+    /// If set to `true`, Message Center will attempt to be restored between reinstalls. If `false`,
+    /// the Message Center user will be reset and the Channel will not be able to use the user
+    /// as an identity hint to recover the past Channel ID.
+    ///
+    /// Defaults to `true`.
+    @objc
+    public var restoreMessageCenterOnReinstall: Bool
+
     private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache
     private let notificationCenter: NotificationCenter
@@ -316,6 +324,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
             self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
         }
         self.useUserPreferredLocale = config.useUserPreferredLocale
+        self.restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
         super.init()
