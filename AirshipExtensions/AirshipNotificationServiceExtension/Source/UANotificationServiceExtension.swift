@@ -15,8 +15,8 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
     private var bestAttemptContent: UNMutableNotificationContent?
     private var deliverHandler: ((UNNotificationContent) -> Void)?
     
-    public override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        
+    open override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+
         let userInfo = request.content.userInfo
         guard
             let source = userInfo[Const.AirshipMediaAttachment] ?? userInfo[Const.AccengageMediaAttachment],
@@ -175,7 +175,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
         }
     }
     
-    public override func serviceExtensionTimeWillExpire() {
+    open override func serviceExtensionTimeWillExpire() {
         self.loadingTasks?.cancelAll()
         
         if
