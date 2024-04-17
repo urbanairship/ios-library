@@ -49,7 +49,8 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             deferredResolver: deferredResolver,
             frequencyLimits: frequencyLimits,
             experiments: experiments,
-            remoteDataAccess: remoteDataAccess
+            remoteDataAccess: remoteDataAccess,
+            config: config
         )
 
         // Execution

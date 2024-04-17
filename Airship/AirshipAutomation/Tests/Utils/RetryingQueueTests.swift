@@ -11,7 +11,7 @@ final class RetryingQueueTests: XCTestCase {
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     func testState() async throws {
-        let queue = RetryingQueue<Int>(taskSleeper: taskSleeper)
+        let queue = RetryingQueue<Int>()
 
         let result = await queue.run(name: "testState") { state in
             let runCount: Int = await state.value(key: "runCount") ?? 1

@@ -1,13 +1,14 @@
 /* Copyright Airship and Contributors */
 
 /// NOTE: For internal use only. :nodoc:
-struct RemoteConfig: Codable, Equatable, Sendable {
+public struct RemoteConfig: Codable, Equatable, Sendable {
 
     let airshipConfig: AirshipConfig?
     let meteredUsageConfig: MeteredUsageConfig?
     let fetchContactRemoteData: Bool?
     let contactConfig: ContactConfig?
     let disabledFeatures: AirshipFeature?
+    public let iaaConfig: IAAConfig?
 
     var remoteDataRefreshInterval: TimeInterval? {
         return remoteDataRefreshIntervalMilliseconds?.timeInterval
@@ -21,7 +22,8 @@ struct RemoteConfig: Codable, Equatable, Sendable {
         fetchContactRemoteData: Bool? = nil,
         contactConfig: ContactConfig? = nil,
         disabledFeatures: AirshipFeature? = nil,
-        remoteDataRefreshIntervalMilliseconds: Int64? = nil
+        remoteDataRefreshIntervalMilliseconds: Int64? = nil,
+        iaaConfig: IAAConfig? = nil
     ) {
         self.airshipConfig = airshipConfig
         self.meteredUsageConfig = meteredUsageConfig
@@ -29,6 +31,7 @@ struct RemoteConfig: Codable, Equatable, Sendable {
         self.contactConfig = contactConfig
         self.disabledFeatures = disabledFeatures
         self.remoteDataRefreshIntervalMilliseconds = remoteDataRefreshIntervalMilliseconds
+        self.iaaConfig = iaaConfig
     }
 
     enum CodingKeys: String, CodingKey {
@@ -38,6 +41,7 @@ struct RemoteConfig: Codable, Equatable, Sendable {
         case contactConfig = "contact_config"
         case disabledFeatures = "disabled_features"
         case remoteDataRefreshIntervalMilliseconds = "remote_data_refresh_interval"
+        case iaaConfig = "in_app_config"
     }
 
     struct ContactConfig: Codable, Equatable, Sendable {
@@ -89,6 +93,28 @@ struct RemoteConfig: Codable, Equatable, Sendable {
             case deviceAPIURL = "device_api_url"
             case analyticsURL = "analytics_url"
             case meteredUsageURL = "metered_usage_url"
+        }
+    }
+    
+    public struct IAAConfig: Codable, Equatable, Sendable {
+        public let retryingQueue: RetryingQueueConfig?
+
+        enum CodingKeys: String, CodingKey {
+            case retryingQueue = "queue"
+        }
+    }
+    
+    public struct RetryingQueueConfig: Codable, Equatable, Sendable {
+        public let maxConcurrentOperations: UInt?
+        public let maxPendingResults: UInt?
+        public let initialBackoff: TimeInterval?
+        public let maxBackOff: TimeInterval?
+
+        enum CodingKeys: String, CodingKey {
+            case maxConcurrentOperations = "max_concurrent_operations"
+            case maxPendingResults = "max_pending_results"
+            case initialBackoff = "initial_back_off_seconds"
+            case maxBackOff = "max_back_off_seconds"
         }
     }
 }

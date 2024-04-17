@@ -20,6 +20,7 @@ final class AutomationPreparerTest: XCTestCase {
     private let triggerContext = AirshipTriggerContext(type: "some type", goal: 10, event: .null)
 
     private var preparedMessageData: PreparedInAppMessageData!
+    private var runtimeConfig: RuntimeConfig?
 
     @MainActor
     override func setUp() async throws {
@@ -32,6 +33,13 @@ final class AutomationPreparerTest: XCTestCase {
             displayCoordinator: TestDisplayCoordinator()
         )
 
+        let config = AirshipConfig()
+        config.requireInitialRemoteConfigEnabled = false
+        self.runtimeConfig = RuntimeConfig(
+            config: config,
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
+        )
+        
         self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,
@@ -39,10 +47,12 @@ final class AutomationPreparerTest: XCTestCase {
             frequencyLimits: frequencyLimits,
             audienceChecker: audienceChecker,
             experiments: experiments,
-            remoteDataAccess: remoteDataAccess
-        ) { contactID in
+            remoteDataAccess: remoteDataAccess,
+            config: self.runtimeConfig!,
+            deviceInfoProviderFactory: { contactID in
             TestDeviceInfoProvider(contactID: contactID)
-        }
+        })
+    
     }
 
     func testRequiresUpdate() async throws {

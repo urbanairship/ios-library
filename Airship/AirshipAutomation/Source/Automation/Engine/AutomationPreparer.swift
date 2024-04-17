@@ -36,7 +36,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private let audienceChecker: DeviceAudienceChecker
     private let experiments: ExperimentDataProvider
     private let remoteDataAccess: AutomationRemoteDataAccessProtocol
-    private let queues: Queues = Queues()
+    private let queues: Queues
+    private let config: RuntimeConfig
 
     private static let deferredResultKey: String = "AirshipAutomation#deferredResult"
     private static let defaultMessageType: String = "transactional"
@@ -51,6 +52,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         experiments: ExperimentDataProvider,
         remoteDataAccess: AutomationRemoteDataAccessProtocol,
+        config: RuntimeConfig,
         deviceInfoProviderFactory: @escaping @Sendable (String?) -> AudienceDeviceInfoProvider = { contactID in
             CachingAudienceDeviceInfoProvider(contactID: contactID)
         }
@@ -63,6 +65,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         self.experiments = experiments
         self.remoteDataAccess = remoteDataAccess
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
+        self.config = config
+        self.queues = Queues(config: config)
     }
 
     func cancelled(schedule: AutomationSchedule) async {
@@ -80,6 +84,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         AirshipLogger.trace("Preparing \(schedule.identifier)")
 
         let queue = await self.queues.queue(name: schedule.queue)
+        
         return await queue.run(name: "schedule: \(schedule.identifier)") { retryState in
 
             guard await !self.remoteDataAccess.requiresUpdate(schedule: schedule) else {
@@ -330,8 +335,16 @@ fileprivate extension AutomationSchedule {
 
 fileprivate actor Queues {
     var queues: [String: RetryingQueue<SchedulePrepareResult>] = [:]
-    let defaultQueue: RetryingQueue<SchedulePrepareResult> = RetryingQueue()
+    lazy var defaultQueue: RetryingQueue<SchedulePrepareResult>  = {
+        return RetryingQueue(config: config.remoteConfig.iaaConfig?.retryingQueue)
+    }()
+    private let config: RuntimeConfig
 
+    @MainActor
+    init(config: RuntimeConfig) {
+        self.config = config
+    }
+    
     func queue(name: String?) -> RetryingQueue<SchedulePrepareResult> {
         guard let name = name, !name.isEmpty else {
             return defaultQueue
@@ -341,7 +354,7 @@ fileprivate actor Queues {
             return queue
         }
 
-        let queue: RetryingQueue<SchedulePrepareResult> = RetryingQueue()
+        let queue: RetryingQueue<SchedulePrepareResult> = RetryingQueue(config: config.remoteConfig.iaaConfig?.retryingQueue)       
         queues[name] = queue
         return queue
     }

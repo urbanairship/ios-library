@@ -89,16 +89,16 @@ actor RetryingQueue<T: Sendable> {
     }
 
     /// Max number of operations to run simultaneously
-    private let maxConcurrentOperations: UInt
+    private var maxConcurrentOperations: UInt
 
     /// Max number of pending results before blocking new operations from starting
-    private let maxPendingResults: UInt
+    private var maxPendingResults: UInt
 
     /// Initial backOff interval
-    private let initialBackOff: TimeInterval
+    private var initialBackOff: TimeInterval
 
     // Max backOff
-    private let maxBackOff: TimeInterval
+    private var maxBackOff: TimeInterval
 
     private var operationState: [UInt: OperationState] = [:]
     private var nextID: UInt = 1
@@ -106,13 +106,24 @@ actor RetryingQueue<T: Sendable> {
     private let taskSleeper: AirshipTaskSleeper
 
     init(
+        config: RemoteConfig.RetryingQueueConfig? = nil,
+        taskSleeper: AirshipTaskSleeper = .shared
+    ) {
+        self.maxConcurrentOperations = config?.maxConcurrentOperations ?? 3
+        self.maxPendingResults = config?.maxPendingResults ?? 2
+        self.initialBackOff = config?.initialBackoff ?? 15
+        self.maxBackOff = config?.maxBackOff ?? 60
+        self.taskSleeper = taskSleeper
+    }
+    
+    init(
         maxConcurrentOperations: UInt = 3,
         maxPendingResults: UInt = 2,
         initialBackOff: TimeInterval = 15,
         maxBackOff: TimeInterval = 60,
         taskSleeper: AirshipTaskSleeper = .shared
     ) {
-        self.maxConcurrentOperations = max(1, maxConcurrentOperations)
+        self.maxConcurrentOperations = max(1,maxConcurrentOperations)
         self.maxPendingResults = max(1, maxPendingResults)
         self.initialBackOff = max(1, initialBackOff)
         self.maxBackOff = max(initialBackOff, maxBackOff)
