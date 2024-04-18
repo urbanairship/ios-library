@@ -2,30 +2,34 @@
 
 import SwiftUI
 
-/// Not sure why we need this, probably need to make a more abstract version of AddChannelPromptView and RemoveChannelView
-// MARK: ActionableMessageView view: error/succeed alert view
-public struct ActionableMessageView: View {
+/// Prompt that appears within the Add Channel Prompt View when an opt-in operation is initiated
+/// Subject to configuration by the user it tells users to check their email inbox, message app, etc.
+/// Purely informational and it's only behavior is dismissing itself and it's parent the AddChannelPromptView
+public struct ResultPromptView: View {
     var item: PreferenceCenterConfig.ContactManagementItem.ActionableMessage?
 
     /// The preference center theme
     var theme: PreferenceCenterTheme.ContactManagement?
 
-    var action: (()->())?
+    var onDismiss: (()->())?
 
     private var alertInternalPadding: CGFloat = 16
+    private var alertExternalPadding: CGFloat = 16
+
+    /// The maximum alert width
+    private let promptMaxWidth = 420.0
 
     public init(
-        item: PreferenceCenterConfig.ContactManagementItem.ActionableMessage? = nil,
-        theme: PreferenceCenterTheme.ContactManagement? = nil,
-        action: (() -> Void)? = nil
+        item: PreferenceCenterConfig.ContactManagementItem.ActionableMessage?,
+        theme: PreferenceCenterTheme.ContactManagement?,
+        onDismiss: @escaping () -> Void
     ) {
         self.item = item
         self.theme = theme
-        self.action = action
+        self.onDismiss = onDismiss
     }
 
     public var body: some View {
-
         if let item = self.item {
             VStack(alignment: .leading) {
 
@@ -49,7 +53,7 @@ public struct ActionableMessageView: View {
                     LabeledButton(
                         item: item.button,
                         theme: self.theme,
-                        action: action
+                        action: onDismiss
                     )
                 }
             }
@@ -59,9 +63,8 @@ public struct ActionableMessageView: View {
                     color: theme?.backgroundColor ?? DefaultContactManagementSectionStyle.backgroundColor
                 )
             )
-            .frame(maxWidth: AddChannelPromptView.alertWidth)
-        } else {
-            Rectangle().foregroundColor(.red)
+            .padding(alertExternalPadding)
+            .frame(maxWidth: promptMaxWidth)
         }
     }
 }

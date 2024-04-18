@@ -975,6 +975,15 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                     )
                 }
             }
+
+            public var isSms: Bool {
+                switch self {
+                case .sms:
+                    return true
+                case .email:
+                    return false
+                }
+            }
         }
         
         
@@ -1120,7 +1129,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             /// The success message.
             @objc
             public let onSuccess: ActionableMessage?
-            
+
             /// The error messages
             public let errorMessages: ErrorMessages?
 
@@ -1245,8 +1254,8 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         @objc
-        public class RepromptOptions: NSObject, Decodable {
-            
+        public class RetryPromptOptions: NSObject, Decodable {
+
             var interval: Int
             var message: String
             var button: LabeledButton
@@ -1267,6 +1276,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         @objc
         public class SmsSenderInfo: NSObject, Decodable, Identifiable {
 
+            /// The senderId is the number from which the SMS is sent
             var senderId: String
             var placeholderText: String
             var countryCode: String

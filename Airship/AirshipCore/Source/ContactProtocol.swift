@@ -86,13 +86,13 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
     func registerSMS(_ msisdn: String, options: SMSRegistrationOptions)
 
     /**
-     * Validates SMS register data.
+     * Validates MSISDN
      * - Parameters:
      *   - msisdn: The mobile phone number to validate.
-     *   - sender: The SMS channel sender.
+     *   - sender: The identifier given to the sender of the SMS message.
      */
     @objc
-    func validateSMS(_ msisdn: String, sender: String)
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
 
     /**
      * Associates an Open channel to the contact.
@@ -173,6 +173,10 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// Check the channel optin status
     /// - Returns: Returs a list of  AirshipChannelOptinStatus
     func checkOptinStatus() async -> [AirshipChannelOptinStatus]?
+
+    /// SMS validator delegate to allow overriding the default SMS validation
+    /// - Returns: Bool indicating if SMS is valid.
+    var SMSValidatorDelegate: SMSValidatorDelegate? { get set }
 }
 
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {

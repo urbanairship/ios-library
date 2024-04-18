@@ -2,8 +2,7 @@
 
 import SwiftUI
 
-/// TODO: Probably just remove this. It's not used anywhere but the preview - we have a bunch of models that are basically all the same with slight variations, we don't need a separate view for each.
-//// MARK: Reprompt view
+/// Prompt that appears when a user hits the re-send button on a given channel
 //public struct RePromptView: View {
 //
 //    public var item: PreferenceCenterConfig.ContactManagementItem.RepromptOptions
@@ -77,3 +76,5 @@ import SwiftUI
 //        }
 //    }
 //}
+
+

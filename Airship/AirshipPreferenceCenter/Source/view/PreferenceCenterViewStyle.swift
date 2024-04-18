@@ -8,9 +8,6 @@ public struct PreferenceCenterViewStyleConfiguration {
     /// The view's phase
     public let phase: PreferenceCenterViewPhase
 
-    /// The validator delegate
-    public let validatorDelegate: PreferenceCenterValidatorDelegate?
-
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
 
@@ -115,7 +112,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         state: PreferenceCenterState
     ) -> some View {
         let theme = configuration.preferenceCenterTheme
-        let validatorDelegate = configuration.validatorDelegate
         return ScrollView {
             LazyVStack(alignment: .leading) {
                 if let subtitle = state.config.display?.subtitle {
@@ -131,7 +127,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                 ForEach(0..<state.config.sections.count, id: \.self) { index in
                     self.section(
                         state.config.sections[index],
-                        validatorDelegate: validatorDelegate,
                         state: state
                     )
                 }
@@ -158,15 +153,13 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     @ViewBuilder
     func section(
         _ section: PreferenceCenterConfig.Section,
-        validatorDelegate: PreferenceCenterValidatorDelegate?,
         state: PreferenceCenterState
     ) -> some View {
         switch section {
         case .common(let section):
             CommonSectionView(
                 section: section,
-                state: state,
-                validatorDelegate: validatorDelegate
+                state: state
             )
         case .labeledSectionBreak(let section):
             LabeledSectionBreakView(

@@ -173,6 +173,12 @@ extension PreferenceCenterDecoder {
             },
             "senders": [
               {
+                "country_code": "+1",
+                "display_name": "United States",
+                "placeholder_text": "18222111000",
+                "sender_id": "14222111000"
+              },
+              {
                 "country_code": "+44",
                 "display_name": "United Kingdom",
                 "placeholder_text": "2222 22222",
@@ -189,12 +195,6 @@ extension PreferenceCenterDecoder {
                 "display_name": "Brazil",
                 "placeholder_text": "4444 44444",
                 "sender_id": "4444"
-              },
-              {
-                "country_code": "+1",
-                "display_name": "United States",
-                "placeholder_text": "111 1111",
-                "sender_id": "1111"
               }
             ]
           },

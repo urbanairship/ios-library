@@ -16,7 +16,7 @@ class AirshipContactTest: XCTestCase {
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private let contactManager: TestContactManager = TestContactManager()
     private var contactQueue: AirshipAsyncSerialQueue!
-
+    private let smsValidator: TestSMSValidator = TestSMSValidator()
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
     private var config: RuntimeConfig!
@@ -50,6 +50,7 @@ class AirshipContactTest: XCTestCase {
             notificationCenter: self.notificationCenter,
             audienceOverridesProvider: self.audienceOverridesProvider,
             contactManager: self.contactManager,
+            smsValidator: self.smsValidator,
             serialQueue: contactQueue
         )
     }
@@ -812,9 +813,16 @@ class AirshipContactTest: XCTestCase {
 
 }
 
+fileprivate class TestSMSValidator: SMSValidatorProtocol {
+    var delegate: SMSValidatorDelegate? = nil
+
+    func validateSMS(msisdn: String, sender: String) async throws -> Bool {
+        true
+    }
+}
+
 
 fileprivate actor TestContactManager: ContactManagerProtocol {
-    
     private var _currentNamedUserID: String? = nil
     private var _currentContactIDInfo: ContactIDInfo? = nil
     private var _pendingAudienceOverrides = ContactAudienceOverrides()
@@ -824,6 +832,10 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
     let contactUpdatesContinuation: AsyncStream<ContactUpdate>.Continuation
     let channelUpdates: AsyncStream<ChannelRegistrationState>
     let channelUpdatesContinuation: AsyncStream<ChannelRegistrationState>.Continuation
+
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool {
+        return true
+    }
 
     private(set) var operations: [ContactOperation] = []
     var generateDefaultContactIDCalled: Bool = false

@@ -11,9 +11,7 @@ import AirshipCore
 public struct ChannelsListView: View {
     /// The item's config
     public let item: PreferenceCenterConfig.ContactManagementItem
-    
-    public let validatorDelegate: PreferenceCenterValidatorDelegate?
-    
+
     @ObservedObject
     public var state: PreferenceCenterState
     
@@ -37,12 +35,10 @@ public struct ChannelsListView: View {
     
     public init(
         item: PreferenceCenterConfig.ContactManagementItem,
-        state: PreferenceCenterState,
-        validatorDelegate: PreferenceCenterValidatorDelegate?
+        state: PreferenceCenterState
     ) {
         self.item = item
         self.state = state
-        self.validatorDelegate = validatorDelegate
     }
 
     public var body: some View {
@@ -173,14 +169,14 @@ extension ChannelsListView {
     @ViewBuilder
     private var addChannelPromptView: some View {
         if let view = self.item.addPrompt?.view {
-            AddChannelPromptView(item: view,
-                                 registrationOptions: self.item.registrationOptions,
-                                 validatorDelegate: self.validatorDelegate) {
+            AddChannelPromptView(viewModel: AddChannelPromptViewModel(item: view,
+                                                                      theme: self.theme.contactManagement,
+                                                                      registrationOptions: self.item.registrationOptions) {
                 /// onCancel
                 dismissPrompt()
             } onSubmit: {
-
-            }
+                dismissPrompt()
+            })
             .transition(.opacity)
         }
     }
@@ -205,7 +201,7 @@ extension ChannelsListView {
         }
     }
 
-    /// TODO: Pretty sure we use this extra window because creating the shadow view in the way we like is a pain since this isn't the top level view
+    /// Pretty sure we use this extra window because creating the shadow view in the way we like is a pain since this isn't the top level view
     /// Can probably improve on this and keep this more self-contained.
     @MainActor
     static func showModalView(

@@ -1,7 +1,6 @@
 import Foundation
 
 actor ContactManager: ContactManagerProtocol {
-
     private static let operationsKey = "Contact.operationEntries"
     private static let legacyOperationsKey = "Contact.operations" // operations without the date
     private static let contactInfoKey = "Contact.contactInfo"
@@ -121,7 +120,7 @@ actor ContactManager: ContactManagerProtocol {
             ContactManager.updateTaskID,
             type: .serial
         ) { [weak self] _ in
-            if (try await self?.perfromNextOperation() != false) {
+            if (try await self?.performNextOperation() != false) {
                 return .success
             }
             return .failure
@@ -238,7 +237,7 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     // Worker -> one at a time
-    private func perfromNextOperation() async throws -> Bool {
+    private func performNextOperation() async throws -> Bool {
         guard self.isEnabled else { return true }
 
         guard !self.operationEntries.isEmpty else {
@@ -377,12 +376,6 @@ actor ContactManager: ContactManagerProtocol {
                 options: options
             )
 
-        case .validateSMS(let msisdn, let sender):
-            return try await performValidateSMSOperation(
-                msisdn: msisdn,
-                sender: sender
-            )
-
         case .registerOpen(let address, let options):
             return try await performRegisterOpenChannelOperation(
                 address: address,
@@ -476,19 +469,6 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         performOptIn(response)
-        
-        return response.isOperationComplete
-    }
-    
-    private func performValidateSMSOperation(
-        msisdn: String,
-        sender: String
-    ) async throws -> Bool {
-        let response = try await self.apiClient.validateSMS(
-            contactID: try requireContactID(),
-            msisdn: msisdn,
-            sender: sender
-        )
         
         return response.isOperationComplete
     }

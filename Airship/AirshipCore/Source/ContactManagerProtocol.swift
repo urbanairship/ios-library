@@ -7,6 +7,7 @@ protocol ContactManagerProtocol: Actor, AuthTokenProvider {
     var channelUpdates: AsyncStream<ChannelRegistrationState> { get }
     
     func onAudienceUpdated(onAudienceUpdatedCallback: (@Sendable (ContactAudienceUpdate) async -> Void)?)
+
     func addOperation(_ operation: ContactOperation)
 
     func generateDefaultContactIDIfNotSet() -> Void

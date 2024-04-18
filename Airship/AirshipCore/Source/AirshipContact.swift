@@ -34,6 +34,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let date: AirshipDateProtocol
     private let audienceOverridesProvider: AudienceOverridesProvider
     private let contactManager: ContactManagerProtocol
+    private var smsValidator: SMSValidatorProtocol
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
     private let cachedChannelsList: CachedValue<(String, [AssociatedChannelType])>
     private var setupTask: Task<Void, Never>? = nil
@@ -42,6 +43,16 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let fetchChannelsListQueue: AirshipSerialQueue = AirshipSerialQueue()
     private let serialQueue: AirshipAsyncSerialQueue
 
+    /// Publishes all edits made to the subscription lists through the  SDK
+    public var SMSValidatorDelegate: SMSValidatorDelegate? {
+        set {
+            self.smsValidator.delegate = newValue
+        }
+
+        get {
+            self.smsValidator.delegate
+        }
+    }
 
     private var lastResolveDate: Date {
          get {
@@ -143,6 +154,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: AudienceOverridesProvider,
         contactManager: ContactManagerProtocol,
+        smsValidator: SMSValidatorProtocol,
         serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
     ) {
 
@@ -154,6 +166,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.audienceOverridesProvider = audienceOverridesProvider
         self.date = date
         self.contactManager = contactManager
+        self.smsValidator = smsValidator
         self.serialQueue = serialQueue
 
         self.cachedSubscriptionLists = CachedValue(date: date)
@@ -299,7 +312,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
                 channel: channel,
                 localeManager: localeManager,
                 apiClient: ContactAPIClient(config: config)
-            )
+            ), 
+            smsValidator: SMSValidator(apiClient: SMSValidatorAPIClient(config: config))
         )
     }
 
@@ -331,7 +345,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }
         self.addOperation(.reset)
     }
-
 
     /// Can be called after the app performs a remote named user association for the channel instead
     /// of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
@@ -446,23 +459,26 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     }
 
     /**
-     * Validates SMS register data.
+     * Validates MSISDN
      * - Parameters:
      *   - msisdn: The mobile phone number to validate.
-     *   - sender: The SMS channel sender.
+     *   - sender: The identifier given to the sender of the SMS message.
+     *   - Returns: Async boolean indicating validity of msisdn
      */
     public func validateSMS(
         _ msisdn: String,
         sender: String
-    ) {
+    ) async throws -> Bool {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(
-                "Contacts disabled. Enable to validate phone number."
+                "Contacts disabled. Enable to validate SMS."
             )
-            return
+            throw AirshipErrors.error(
+                "Validation of SMS requires contacts to be enabled."
+            )
         }
 
-        self.addOperation(.validateSMS(msisdn: msisdn, sender: sender))
+        return try await self.smsValidator.validateSMS(msisdn:msisdn, sender: sender)
     }
 
     /// Associates an open channel to the contact.

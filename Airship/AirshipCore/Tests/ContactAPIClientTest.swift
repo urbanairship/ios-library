@@ -370,53 +370,6 @@ class ContactAPIClientTest: XCTestCase {
         }
     }
 
-    func testValidateSMS() async throws {
-        
-        self.session.response = HTTPURLResponse(
-            url: URL(string: "https://example.com/api/channels/sms/validate")!,
-            statusCode: 200,
-            httpVersion: "",
-            headerFields: [String: String]()
-        )
-        
-        self.session.data = """
-            {
-                "ok": true,
-            }
-            """
-            .data(using: .utf8)
-        
-        let response = try await contactAPIClient.validateSMS(
-            contactID: "some-contact-id",
-            msisdn: "15035556789",
-            sender: "28855"
-        )
-
-        XCTAssertTrue(response.isSuccess)
-        XCTAssertNotNil(response.result)
-        XCTAssertTrue(response.result!)
-
-        let lastRequest = self.session.lastRequest!
-        XCTAssertNotNil(lastRequest)
-        XCTAssertEqual(
-            "https://example.com/api/channels/sms/validate",
-            lastRequest.url!.absoluteString
-        )
-
-        let lastBody = try JSONSerialization.jsonObject(
-            with: lastRequest.body!,
-            options: []
-        )
-        let lastExpectedBody: Any = [
-            "msisdn": "15035556789",
-            "sender": "28855"
-        ]
-        XCTAssertEqual(
-            lastBody as! NSDictionary,
-            lastExpectedBody as! NSDictionary
-        )
-    }
-    
     func testRegisterOpen() async throws {
         self.session.data = """
             {

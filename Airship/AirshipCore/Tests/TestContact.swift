@@ -4,7 +4,8 @@ import Combine
 @testable import AirshipCore
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
-    
+
+
     private let channelsListSubject = PassthroughSubject<ChannelRegistrationState, Never>()
     public var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> {
         channelsListSubject.eraseToAnyPublisher()
@@ -14,7 +15,12 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> {
         channelOptinStatusSubject.eraseToAnyPublisher()
     }
-    
+
+    var SMSValidatorDelegate: SMSValidatorDelegate?
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool {
+        true
+    }
+
     var channelOptinStatus: [AirshipChannelOptinStatus]? = nil
     
     func fetchChannelsList() async -> [AssociatedChannelType]? {

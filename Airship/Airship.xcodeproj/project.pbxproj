@@ -1266,12 +1266,18 @@
 		99560C2D2BB3855800F28BDC /* EmptySectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C2C2BB3855800F28BDC /* EmptySectionLabel.swift */; };
 		99560C2F2BB385F500F28BDC /* ChannelListViewHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C2E2BB385F500F28BDC /* ChannelListViewHostingController.swift */; };
 		99560C312BB3864E00F28BDC /* RemoveChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C302BB3864E00F28BDC /* RemoveChannelPromptView.swift */; };
-		99560C332BB3869F00F28BDC /* RepromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C322BB3869F00F28BDC /* RepromptView.swift */; };
-		99560C352BB38A2900F28BDC /* ActionableMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C342BB38A2900F28BDC /* ActionableMessageView.swift */; };
+		99560C332BB3869F00F28BDC /* RetryPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C322BB3869F00F28BDC /* RetryPromptView.swift */; };
+		99560C352BB38A2900F28BDC /* ResultPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C342BB38A2900F28BDC /* ResultPromptView.swift */; };
 		99560C372BB38A5F00F28BDC /* ErrorLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C362BB38A5F00F28BDC /* ErrorLabel.swift */; };
 		998572BF2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */; };
 		998572C12B3CF97B0091E9C9 /* DefaultAssetFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */; };
 		999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999DC85D2B5B721D0048C6AF /* HTMLView.swift */; };
+		99C3CC762BCF23DF00B5BED5 /* SMSValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */; };
+		99C3CC792BCF3E5B00B5BED5 /* SMSValidatorAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC772BCF3DF700B5BED5 /* SMSValidatorAPIClientTest.swift */; };
+		99C3CC7A2BCF3FA200B5BED5 /* SMSValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */; };
+		99C3CC7B2BCF3FA300B5BED5 /* SMSValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */; };
+		99C3CC7E2BCF40B200B5BED5 /* SMSValidatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC7C2BCF401B00B5BED5 /* SMSValidatorTest.swift */; };
+		99CC0D952BC87868001D93D0 /* AddChannelPromptViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CC0D942BC87868001D93D0 /* AddChannelPromptViewModel.swift */; };
 		99CF46182B3217C300B6FD9B /* AirshipCachedAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF46172B3217C300B6FD9B /* AirshipCachedAssets.swift */; };
 		99CF461A2B3217DE00B6FD9B /* AssetCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF46192B3217DE00B6FD9B /* AssetCacheManager.swift */; };
 		99D1B3282B44F08900447840 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
@@ -2732,12 +2738,16 @@
 		99560C2C2BB3855800F28BDC /* EmptySectionLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptySectionLabel.swift; sourceTree = "<group>"; };
 		99560C2E2BB385F500F28BDC /* ChannelListViewHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewHostingController.swift; sourceTree = "<group>"; };
 		99560C302BB3864E00F28BDC /* RemoveChannelPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveChannelPromptView.swift; sourceTree = "<group>"; };
-		99560C322BB3869F00F28BDC /* RepromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepromptView.swift; sourceTree = "<group>"; };
-		99560C342BB38A2900F28BDC /* ActionableMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionableMessageView.swift; sourceTree = "<group>"; };
+		99560C322BB3869F00F28BDC /* RetryPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryPromptView.swift; sourceTree = "<group>"; };
+		99560C342BB38A2900F28BDC /* ResultPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultPromptView.swift; sourceTree = "<group>"; };
 		99560C362BB38A5F00F28BDC /* ErrorLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorLabel.swift; sourceTree = "<group>"; };
 		998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetDownloader.swift; sourceTree = "<group>"; };
 		998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetFileManager.swift; sourceTree = "<group>"; };
 		999DC85D2B5B721D0048C6AF /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
+		99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidator.swift; sourceTree = "<group>"; };
+		99C3CC772BCF3DF700B5BED5 /* SMSValidatorAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidatorAPIClientTest.swift; sourceTree = "<group>"; };
+		99C3CC7C2BCF401B00B5BED5 /* SMSValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidatorTest.swift; sourceTree = "<group>"; };
+		99CC0D942BC87868001D93D0 /* AddChannelPromptViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddChannelPromptViewModel.swift; sourceTree = "<group>"; };
 		99CF46172B3217C300B6FD9B /* AirshipCachedAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCachedAssets.swift; sourceTree = "<group>"; };
 		99CF46192B3217DE00B6FD9B /* AssetCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCacheManager.swift; sourceTree = "<group>"; };
 		99D1B3272B44F08900447840 /* AirshipSceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneManager.swift; sourceTree = "<group>"; };
@@ -3009,12 +3019,13 @@
 		322AAB1F2B5ACA3400652DAC /* Contact management */ = {
 			isa = PBXGroup;
 			children = (
+				99CC0D942BC87868001D93D0 /* AddChannelPromptViewModel.swift */,
 				32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */,
-				99560C322BB3869F00F28BDC /* RepromptView.swift */,
 				99560C302BB3864E00F28BDC /* RemoveChannelPromptView.swift */,
+				99560C342BB38A2900F28BDC /* ResultPromptView.swift */,
+				99560C322BB3869F00F28BDC /* RetryPromptView.swift */,
 				322AAB1C2B5A869000652DAC /* ContactManagementView.swift */,
 				322AAB202B5ACB2800652DAC /* ChannelsListView.swift */,
-				99560C342BB38A2900F28BDC /* ActionableMessageView.swift */,
 				99560C2E2BB385F500F28BDC /* ChannelListViewHostingController.swift */,
 				99560C292BB3848A00F28BDC /* Component Views */,
 			);
@@ -3863,6 +3874,7 @@
 				6EB11C862697ACBF00DC698F /* ContactOperation.swift */,
 				6EC7E48C26A738C70038CFDD /* ContactConflictEvent.swift */,
 				6E698E3A267BEDC300654DB2 /* AirshipContact.swift */,
+				99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */,
 				E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */,
 				E99605A327A075B800365AE4 /* SMSRegistrationOptions.swift */,
 				E99605A627A075C600365AE4 /* OpenRegistrationOptions.swift */,
@@ -4815,7 +4827,9 @@
 				6EC7E46D269E2A4C0038CFDD /* AttributeEditorTest.swift */,
 				6EC7E46F269E33290038CFDD /* TagGroupsEditorTest.swift */,
 				6EC7E471269E51030038CFDD /* AttributeUpdateTest.swift */,
+				99C3CC772BCF3DF700B5BED5 /* SMSValidatorAPIClientTest.swift */,
 				6EC7E473269E52600038CFDD /* ContactOperationTest.swift */,
+				99C3CC7C2BCF401B00B5BED5 /* SMSValidatorTest.swift */,
 				6EC7E47526A5EE910038CFDD /* AudienceUtilsTest.swift */,
 				6EC7E47726A604080038CFDD /* AirshipContactTest.swift */,
 				6E6363E529DCE9A2009C358A /* ContactSubscriptionListAPIClientTest.swift */,
@@ -6185,6 +6199,7 @@
 				6EB5158128A47BD700870C5A /* SubscriptionListEdit.swift in Sources */,
 				6E91E43D28EF423400B6F25E /* WorkConditionsMonitor.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
+				99C3CC762BCF23DF00B5BED5 /* SMSValidator.swift in Sources */,
 				6E2D6AEE26B083DB00B7C226 /* ChannelAudienceManager.swift in Sources */,
 				6E698E3F267BEDC300654DB2 /* AttributesEditor.swift in Sources */,
 				6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */,
@@ -6575,7 +6590,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				99560C2D2BB3855800F28BDC /* EmptySectionLabel.swift in Sources */,
-				99560C352BB38A2900F28BDC /* ActionableMessageView.swift in Sources */,
+				99560C352BB38A2900F28BDC /* ResultPromptView.swift in Sources */,
 				6E2486F22898341400657CE4 /* ConditionsMonitor.swift in Sources */,
 				99560C372BB38A5F00F28BDC /* ErrorLabel.swift in Sources */,
 				99560C282BB3843600F28BDC /* PreferenceCenterUtils.swift in Sources */,
@@ -6583,7 +6598,7 @@
 				6E3B231328A32EC30005D46E /* PreferenceCenterViewExtensions.swift in Sources */,
 				6E9B48912891B68C00C905B1 /* PreferenceCenterAlertView.swift in Sources */,
 				99560C2B2BB384A700F28BDC /* BackgroundShape.swift in Sources */,
-				99560C332BB3869F00F28BDC /* RepromptView.swift in Sources */,
+				99560C332BB3869F00F28BDC /* RetryPromptView.swift in Sources */,
 				99560C312BB3864E00F28BDC /* RemoveChannelPromptView.swift in Sources */,
 				6E9B488B2891962000C905B1 /* PreferenceCenterView.swift in Sources */,
 				6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */,
@@ -6604,6 +6619,7 @@
 				99560C222BAE3D5D00F28BDC /* LabeledButton.swift in Sources */,
 				847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */,
 				6E9B48972891B6BF00C905B1 /* ContactSubscriptionGroupView.swift in Sources */,
+				99CC0D952BC87868001D93D0 /* AddChannelPromptViewModel.swift in Sources */,
 				322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */,
 				99F4FE5B2BC36A6700754F0F /* PreferenceCenterViewStyle.swift in Sources */,
 				322AAB222B5FCB6B00652DAC /* ContactManagementView.swift in Sources */,
@@ -6749,6 +6765,7 @@
 				A6722A9E281A9EDA0033F54D /* TagGroupUpdate.swift in Sources */,
 				6E4325F42B7B1EDA00A9B000 /* SessionEventFactory.swift in Sources */,
 				A6722A9F281A9EDA0033F54D /* TagGroupsEditor.swift in Sources */,
+				99C3CC7B2BCF3FA300B5BED5 /* SMSValidator.swift in Sources */,
 				A6722AA0281A9EDA0033F54D /* TagGroupMutations.swift in Sources */,
 				A6722AA1281A9EDA0033F54D /* AirshipLocalizationUtils.swift in Sources */,
 				A6722AA2281A9EDA0033F54D /* AirshipUtils.swift in Sources */,
@@ -7044,6 +7061,7 @@
 				60E09FDB2B2780DB005A16EA /* JsonMatcherTest.swift in Sources */,
 				6EC755AF2A4FCD8800851ABB /* AudienceHashSelectorTest.swift in Sources */,
 				3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */,
+				99C3CC792BCF3E5B00B5BED5 /* SMSValidatorAPIClientTest.swift in Sources */,
 				A629F7DA295B514C00671647 /* PasteboardActionTest.swift in Sources */,
 				32E339E32A334A2000CD3BE5 /* AddCustomEventActionTest.swift in Sources */,
 				6EFAFB8429561F23008AD187 /* ModifyAttributesActionTest.swift in Sources */,
@@ -7120,6 +7138,7 @@
 				607951222A1CD1A50086578F /* ExperimentManagerTest.swift in Sources */,
 				6E96ED1A2941A0EC0053CC91 /* EventTestUtils.swift in Sources */,
 				60A5CC082B28DC500017EDB2 /* NotificationCategoriesTest.swift in Sources */,
+				99C3CC7E2BCF40B200B5BED5 /* SMSValidatorTest.swift in Sources */,
 				6E739D7F26BAFCB800BC6F6D /* TestChannelBulkUpdateAPIClient.swift in Sources */,
 				6E6C3F8D27A26992007F55C7 /* CachedValueTest.swift in Sources */,
 				6E4007162A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift in Sources */,
@@ -7348,6 +7367,7 @@
 				6E88739B2763D8B200AC248A /* AirshipImageProvider.swift in Sources */,
 				6E952930268BBD7D00398B54 /* RetailEventTemplate.swift in Sources */,
 				6E887CD7272C602B00E83363 /* CheckboxController.swift in Sources */,
+				99C3CC7A2BCF3FA200B5BED5 /* SMSValidator.swift in Sources */,
 				6E91E43E28EF423400B6F25E /* WorkConditionsMonitor.swift in Sources */,
 				6E1892B2268CE8FE00417887 /* AirshipLock.swift in Sources */,
 				6E510C252721DA86006D9126 /* MarginViewModifier.swift in Sources */,
