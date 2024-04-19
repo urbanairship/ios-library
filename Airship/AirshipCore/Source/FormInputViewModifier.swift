@@ -11,7 +11,13 @@ struct FormVisibilityViewModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.airshipOnChangeOf(isVisible) { [weak formState] newValue in
+        content
+            .onAppear {
+                if isVisible {
+                    formState.markVisible()
+                }
+            }
+            .airshipOnChangeOf(isVisible) { [weak formState] newValue in
             if newValue {
                 formState?.markVisible()
             }

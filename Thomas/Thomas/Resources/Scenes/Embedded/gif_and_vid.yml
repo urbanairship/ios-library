@@ -1,0 +1,195 @@
+version: 1
+view:
+  type: pager_controller
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+    - view:
+        items:
+        - size:
+            width: 100%
+            height: 100%
+          view:
+            items:
+            - type: pager_item
+              view:
+                background_color:
+                  default:
+                    type: hex
+                    alpha: 1
+                    hex: "#FFFFFF"
+                  selectors:
+                  - platform: ios
+                    dark_mode: true
+                    color:
+                      hex: "#000000"
+                      alpha: 1
+                      type: hex
+                  - color:
+                      hex: "#000000"
+                      alpha: 1
+                      type: hex
+                    dark_mode: true
+                    platform: android
+                type: container
+                items:
+                - position:
+                    horizontal: center
+                    vertical: center
+                  view:
+                    items:
+                    - size:
+                        width: 100%
+                        height: 100%
+                      view:
+                        items:
+                        - identifier: scroll_container
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: scroll_layout
+                            direction: vertical
+                            view:
+                              type: linear_layout
+                              items:
+                              - margin:
+                                  start: 0
+                                  end: 0
+                                  top: 0
+                                  bottom: 0
+                                size:
+                                  width: 100%
+                                  height: auto
+                                view:
+                                  media_type: image
+                                  url: https://media3.giphy.com/media/tBvPFCFQHSpEI/giphy.gif
+                                  media_fit: center_inside
+                                  type: media
+                              - margin:
+                                  bottom: 0
+                                  end: 0
+                                  top: 0
+                                  start: 0
+                                view:
+                                  media_fit: center_inside
+                                  type: media
+                                  video:
+                                    muted: true
+                                    aspect_ratio: 1.7777777777777777
+                                    autoplay: false
+                                    show_controls: true
+                                    loop: false
+                                  url: https://www.youtube.com/embed/a3ICNMQW7Ok/?autoplay=0&controls=1&loop=0&mute=1
+                                  media_type: youtube
+                                size:
+                                  width: 100%
+                                  height: auto
+                              - size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: linear_layout
+                                  items: []
+                                  direction: horizontal
+                              direction: vertical
+                        type: linear_layout
+                        background_color:
+                          default:
+                            hex: "#FFFFFF"
+                            type: hex
+                            alpha: 1
+                          selectors:
+                          - platform: ios
+                            dark_mode: true
+                            color:
+                              alpha: 1
+                              type: hex
+                              hex: "#000000"
+                          - color:
+                              type: hex
+                              alpha: 1
+                              hex: "#000000"
+                            dark_mode: true
+                            platform: android
+                        direction: vertical
+                      margin:
+                        bottom: 16
+                      position:
+                        horizontal: center
+                        vertical: center
+                    type: container
+                  size:
+                    width: 100%
+                    height: 100%
+              identifier: 294acc65-f80c-4663-9840-0d48bf1972b8
+            type: pager
+            disable_swipe: true
+          ignore_safe_area: false
+          position:
+            horizontal: center
+            vertical: center
+        - size:
+            width: 48
+            height: 48
+          view:
+            identifier: dismiss_button
+            button_click:
+            - dismiss
+            type: image_button
+            image:
+              scale: 0.4
+              icon: close
+              type: icon
+              color:
+                default:
+                  hex: "#000000"
+                  alpha: 1
+                  type: hex
+                selectors:
+                - color:
+                    alpha: 1
+                    type: hex
+                    hex: "#FFFFFF"
+                  platform: ios
+                  dark_mode: true
+                - platform: android
+                  dark_mode: true
+                  color:
+                    alpha: 1
+                    hex: "#FFFFFF"
+                    type: hex
+          position:
+            horizontal: end
+            vertical: top
+        type: container
+      size:
+        width: 100%
+        height: 100%
+  identifier: e1fe3c1a-bcf9-4159-a268-c00239433c91
+presentation:
+  android:
+    disable_back_button: false
+  default_placement:
+    size:
+      min_width: 100%
+      min_height: 100%
+      max_height: 100%
+      height: 100%
+      width: 100%
+      max_width: 100%
+    device:
+      lock_orientation: portrait
+    shade_color:
+      default:
+        type: hex
+        alpha: 0.2
+        hex: "#000000"
+    ignore_safe_area: false
+    position:
+      horizontal: center
+      vertical: top
+  type: embedded
+  embedded_id: "gif_and_vid"
+  dismiss_on_touch_outside: false
