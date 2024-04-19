@@ -412,6 +412,8 @@ fileprivate extension AutomationEngine {
                     await self.startTaskToProcessTriggeredSchedule(
                         scheduleID: data.schedule.identifier
                     )
+                } else {
+                    await self.preparer.cancelled(schedule: data.schedule)
                 }
                 return
 
@@ -423,6 +425,7 @@ fileprivate extension AutomationEngine {
                 try await self.updateState(identifier: scheduleID) { [date] data in
                     data.executionSkipped(date: date.now)
                 }
+                await self.preparer.cancelled(schedule: data.schedule)
                 return
             }
 
