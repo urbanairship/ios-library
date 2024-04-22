@@ -237,7 +237,7 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     // Worker -> one at a time
-    private func perfromNextOperation() async throws -> Bool {
+    private func performNextOperation() async throws -> Bool {
         guard self.isEnabled else {
             AirshipLogger.trace("Contact manager is not enabled, unable to perform operation")
             return true
