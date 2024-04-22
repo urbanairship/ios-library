@@ -102,15 +102,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      */
     @objc
     func registerOpen(_ address: String, options: OpenRegistrationOptions)
-
-    /**
-     * Associates a channel to the contact.
-     * - Parameters:
-     *   - channelID: The channel ID.
-     *   - type: The channel type.
-     */
-    @objc
-    func associateChannel(_ channelID: String, type: ChannelType)
     
     /**
      * Opt out a channel from the contact.
@@ -162,13 +153,22 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// Notifies any edits to the subscription lists.
     var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
 
+    /**
+     * Associates a channel to the contact.
+     * - Parameters:
+     *   - channelID: The channel ID.
+     *   - type: The channel type.
+     *   - options: The channel registration options
+     */
+    func associateChannel(_ channelID: String, type: ChannelType, options: RegistrationOptions)
+    
     /// Fetches subscription lists.
     /// - Returns: Subscriptions lists.
     func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]]
     
-    /// Fetches associated channels list.
+    /// Fetches the associated channels list.
     /// - Returns: associated channels list.
-    func fetchChannelsList() async -> [AssociatedChannelType]?
+    func fetchAssociatedChannelsList() async -> [AssociatedChannel]?
     
     /// Check the channel optin status
     /// - Returns: Returs a list of  AirshipChannelOptinStatus

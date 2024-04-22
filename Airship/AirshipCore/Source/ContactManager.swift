@@ -382,10 +382,11 @@ actor ContactManager: ContactManagerProtocol {
                 options: options
             )
 
-        case .associateChannel(let channelID, let type):
+        case .associateChannel(let channelID, let type, let options):
             return try await performAssociateChannelOperation(
-                channelID: channelID,
-                type: type
+                channelID: channelID, 
+                type: type,
+                options: options
             )
             
         case .optOutChannel(let channelID):
@@ -488,13 +489,14 @@ actor ContactManager: ContactManagerProtocol {
 
     private func performAssociateChannelOperation(
         channelID: String,
-        type: ChannelType
+        type: ChannelType,
+        options: RegistrationOptions
     ) async throws -> Bool {
         let response = try await self.apiClient.associateChannel(
             contactID: try requireContactID(),
             channelID: channelID,
             channelType: type,
-            identifier: channelID
+            options: options
         )
 
         performOptIn(response)
@@ -512,7 +514,7 @@ actor ContactManager: ContactManagerProtocol {
         return response.isOperationComplete
     }
     
-    private func performOptIn(_ response: AirshipHTTPResponse<AssociatedChannelType>) {
+    private func performOptIn(_ response: AirshipHTTPResponse<AssociatedChannel>) {
         if response.isSuccess {
             if let result = response.result {
                 self.channelUpdatesContinuation.yield(.succeed(.optIn(result)))
@@ -884,7 +886,7 @@ actor ContactManager: ContactManagerProtocol {
         tagGroupUpdates: [TagGroupUpdate]? = nil,
         attributeUpdates: [AttributeUpdate]? = nil,
         subscriptionListsUpdates: [ScopedSubscriptionListUpdate]? = nil,
-        channel: AssociatedChannel? = nil
+        channel: BasicAssociatedChannel? = nil
     ) async {
 
         guard let contactInfo = self.lastContactInfo,

@@ -55,7 +55,8 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
         AirshipLogger.trace("Resolving deferred with request \(request) body \(body)")
 
         return try await session.performHTTPRequest(request) { data, response in
-            AirshipLogger.trace("Resolving deferred respoinse \(response)")
+            
+            AirshipLogger.debug("Resolving deferred response finished with response: \(response)")
 
             if (response.statusCode == 200) {
                 return data

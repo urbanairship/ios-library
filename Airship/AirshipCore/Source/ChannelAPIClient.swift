@@ -67,9 +67,8 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
         return try await session.performHTTPRequest(
             request
         ) { data, response in
-            AirshipLogger.debug(
-                "Channel creation finished with response: \(response)"
-            )
+            
+            AirshipLogger.debug("Channel creation finished with response: \(response)")
 
             let status = response.statusCode
             guard status == 200 || status == 201 else {
@@ -120,6 +119,9 @@ class ChannelAPIClient: ChannelAPIClientProtocol {
         )
 
         return try await session.performHTTPRequest(request) { data, response in
+            
+            AirshipLogger.debug("Update channel finished with response: \(response)")
+            
             return ChannelAPIResponse(
                 channelID: channelID,
                 location: url

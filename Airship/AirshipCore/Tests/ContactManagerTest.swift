@@ -834,12 +834,13 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: .email(EmailAssociatedChannel(
-                    channelID: "some channel",
-                    address: address,
-                    commercialOptedIn: Date(),
-                    commercialOptedOut: nil,
-                    transactionalOptedIn: Date())),
+                result: .email(
+                    EmailAssociatedChannel(
+                        channelID: "some channel",
+                        address: address,
+                        transactionalOptedIn: nil,
+                        commercialOptedIn: nil)
+                ),
                 statusCode: 200,
                 headers: [:]
             )
@@ -887,10 +888,7 @@ final class ContactManagerTest: XCTestCase {
             register.fulfill()
             return AirshipHTTPResponse(
                 result: .open(
-                    AssociatedChannel(
-                        channelType: .open,
-                        channelID: "some channel"
-                    )
+                    BasicAssociatedChannel(channelID: "some channel")
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -936,10 +934,7 @@ final class ContactManagerTest: XCTestCase {
             register.fulfill()
             return AirshipHTTPResponse(
                 result: .open(
-                    AssociatedChannel(
-                        channelType: .open,
-                        channelID: "some channel"
-                    )
+                    BasicAssociatedChannel(channelID: "some channel")
                 ),
                 statusCode: 200,
                 headers: [:]
@@ -958,7 +953,11 @@ final class ContactManagerTest: XCTestCase {
 
     func testAssociateChannel() async throws {
         await self.contactManager.addOperation(
-            .associateChannel(channelID: "some channel", channelType: .open)
+            .associateChannel(
+                channelID: "some channel",
+                channelType: .open,
+                options: .open
+            )
         )
 
         // Should resolve contact first
@@ -974,17 +973,15 @@ final class ContactManagerTest: XCTestCase {
 
         // Then register the channel
         let register = XCTestExpectation()
-        self.apiClient.associateChannelCallback = { contactID, address, type in
+        self.apiClient.associateChannelCallback = { contactID, address, type, options in
             XCTAssertEqual(contactID, self.anonIdentifyResponse.contact.contactID)
             XCTAssertEqual(address, "some channel")
             XCTAssertEqual(type, .open)
+            XCTAssertEqual(options, .open)
             register.fulfill()
             return AirshipHTTPResponse(
                 result: .open(
-                    AssociatedChannel(
-                        channelType: .open,
-                        channelID: "some channel"
-                    )
+                    BasicAssociatedChannel(channelID: "some channel")
                 ),
                 statusCode: 200,
                 headers: [:]

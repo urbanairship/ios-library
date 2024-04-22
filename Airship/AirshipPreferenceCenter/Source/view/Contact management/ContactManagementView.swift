@@ -146,7 +146,10 @@ private struct DefaultContactManagementView: View {
     var body: some View {
         ChannelsListView(
             item: configuration.section,
-            state: configuration.state
+            state: configuration.state, 
+            channels: configuration.state.makeBinding(
+                type: configuration.section.platform.channelType
+            )
         )
         .transition(.opacity)
     }

@@ -33,29 +33,29 @@ protocol ContactsAPIClientProtocol: Sendable {
         contactID: String,
         channelID: String,
         channelType: ChannelType,
-        identifier: String
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
+        options: RegistrationOptions
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerEmail(
         contactID: String,
         address: String,
         options: EmailRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerSMS(
         contactID: String,
         msisdn: String,
         options: SMSRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerOpen(
         contactID: String,
         address: String,
         options: OpenRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType>
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
     
     func optOutChannel(
         contactID: String,
@@ -155,8 +155,8 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         contactID: String,
         channelID: String,
         channelType: ChannelType,
-        identifier: String
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
+        options: RegistrationOptions
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         let requestBody = ContactUpdateRequestBody(
             attributes: nil,
             tags: nil,
@@ -174,30 +174,27 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             requestBody: requestBody
         ).map { response in
             if (response.isSuccess) {
-                switch channelType {
-                case .email:
+                switch options {
+                case .email(let address, let options):
                     return .email(
                         EmailAssociatedChannel(
                             channelID: channelID,
-                            address: identifier,
-                            commercialOptedIn: Date(),
-                            commercialOptedOut: nil,
-                            transactionalOptedIn: Date()
+                            address: address,
+                            transactionalOptedIn: options.transactionalOptedIn,
+                            commercialOptedIn: options.commercialOptedIn
                         )
                     )
-                case .sms:
+                case .sms(let msisdn, let options):
                     return .sms(
                         SMSAssociatedChannel(
                             channelID: channelID,
-                            msisdn: identifier,
-                            optIn: true
+                            msisdn: msisdn,
+                            sender: options.senderID,
+                            optIn: false
                         )
                     )
                 case .open:
-                    return .open(AssociatedChannel(
-                        channelType: channelType,
-                        channelID: channelID)
-                    )
+                    return .open(BasicAssociatedChannel(channelID: channelID))
                 }
                 
             } else {
@@ -211,7 +208,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         address: String,
         options: EmailRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         return try await performChannelRegistration(
             contactID: contactID,
             requestBody: EmailChannelRegistrationBody(
@@ -221,7 +218,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
                 timezone: TimeZone.current.identifier
             ),
             channelType: .email,
-            identifier: address
+            options: .email(address, options)
         )
     }
 
@@ -230,7 +227,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         msisdn: String,
         options: SMSRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         return try await performChannelRegistration(
             contactID: contactID,
             requestBody: SMSRegistrationBody(
@@ -240,7 +237,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
                 timezone: TimeZone.current.identifier
             ),
             channelType: .sms,
-            identifier: msisdn
+            options: .sms(msisdn, options)
         )
     }
 
@@ -249,7 +246,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         address: String,
         options: OpenRegistrationOptions,
         locale: Locale
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         return try await performChannelRegistration(
             contactID: contactID,
             requestBody: OpenChannelRegistrationBody(
@@ -259,7 +256,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
                 timezone: TimeZone.current.identifier
             ),
             channelType: .open,
-            identifier: address
+            options: .open
         )
     }
     
@@ -305,8 +302,8 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         contactID: String,
         requestBody: T,
         channelType: ChannelType,
-        identifier: String
-    ) async throws ->  AirshipHTTPResponse<AssociatedChannelType> {
+        options: RegistrationOptions
+    ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         let request = AirshipRequest(
             url: try self.makeChannelCreateURL(channelType: channelType),
             headers: [
@@ -322,9 +319,8 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         let createResponse: AirshipHTTPResponse<ChannelCreateResult> = try await self.session.performHTTPRequest(
             request
         ) { (data, response) in
-            AirshipLogger.debug(
-                "Channel \(channelType) created with response: \(response)"
-            )
+            
+            AirshipLogger.debug("Channel \(channelType) created with response: \(response)")
 
             guard let data = data, response.statusCode == 200 || response.statusCode == 201 else {
                 return nil
@@ -341,7 +337,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             contactID: contactID,
             channelID: channelID,
             channelType: channelType,
-            identifier: identifier
+            options: options
         )
     }
 
@@ -364,6 +360,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
 
         let decoder = self.decoder
         return try await session.performHTTPRequest(request) { (data, response) in
+            
             AirshipLogger.debug("Contact identify request finished with response: \(response)")
 
             guard response.statusCode == 200, let data = data else {
@@ -383,7 +380,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         let request =  AirshipRequest(
             url: try self.makeURL(path: "/api/contacts/\(contactID)"),
             headers: [
-                "Accept":  "application/vnd.urbanairship+json; version=3;",
+                "Accept": "application/vnd.urbanairship+json; version=3;",
                 "Content-Type": "application/json",
                 "X-UA-Appkey": self.config.appKey,
             ],
@@ -393,9 +390,8 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         )
 
         return try await session.performHTTPRequest(request) { (data, response) in
-            AirshipLogger.debug(
-                "Update finished with response: \(response)"
-            )
+            
+            AirshipLogger.debug("Update finished with response: \(response)")
 
             return nil
         }

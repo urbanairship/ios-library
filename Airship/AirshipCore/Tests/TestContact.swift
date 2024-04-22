@@ -23,7 +23,7 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
 
     var channelOptinStatus: [AirshipChannelOptinStatus]? = nil
     
-    func fetchChannelsList() async -> [AssociatedChannelType]? {
+    func fetchAssociatedChannelsList() async -> [AssociatedChannel]? {
         return nil
     }
     
@@ -165,7 +165,7 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         // TODO
     }
 
-    public func associateChannel(_ channelID: String, type: ChannelType) {
+    public func associateChannel(_ channelID: String, type: ChannelType, options: RegistrationOptions) {
         // TODO
     }
 
@@ -187,10 +187,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
 
     public func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
         return [:]
-    }
-    
-    func fetchChannelsList() async -> [AssociatedChannel]? {
-        return []
     }
     
     func optOutChannel(_ channelID: String) {

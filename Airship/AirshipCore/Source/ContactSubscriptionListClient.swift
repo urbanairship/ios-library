@@ -39,7 +39,9 @@ final class ContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientPr
         )
 
         return try await session.performHTTPRequest(request) { data, response in
+            
             AirshipLogger.debug("Fetch subscription lists finished with response: \(response)")
+            
             guard response.statusCode == 200, let data = data else {
                 return nil
             }

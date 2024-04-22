@@ -9,7 +9,7 @@ import AirshipCore
 
 // MARK: Channel list view
 public struct ChannelsListView: View {
-    /// The item's config
+    
     public let item: PreferenceCenterConfig.ContactManagementItem
 
     @ObservedObject
@@ -18,8 +18,7 @@ public struct ChannelsListView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme: PreferenceCenterTheme
     
-    @State
-    private var channels: [AssociatedChannelType] = []
+    private var channels: Binding<[AssociatedChannel]>
     
     @State
     private var hideView: Bool = false
@@ -31,14 +30,16 @@ public struct ChannelsListView: View {
     private var subscriptions: Set<AnyCancellable> = []
     
     @State
-    private var selectedChannel: AssociatedChannelType?
+    private var selectedChannel: AssociatedChannel?
     
     public init(
         item: PreferenceCenterConfig.ContactManagementItem,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        channels: Binding<[AssociatedChannel]>
     ) {
         self.item = item
         self.state = state
+        self.channels = channels
     }
 
     public var body: some View {
@@ -46,7 +47,7 @@ public struct ChannelsListView: View {
             VStack {
                 Section {
                     VStack(alignment: .leading) {
-                        if self.channels.isEmpty {
+                        if self.channels.wrappedValue.isEmpty {
                             EmptySectionLabel(label: item.emptyLabel) {
                                 withAnimation {
                                     self.hideView = true
@@ -56,9 +57,11 @@ public struct ChannelsListView: View {
                             channelListView()
                         }
                         if let model = self.item.addPrompt?.button {
-                            LabeledButton(type: .outlineType,
-                                          item: model,
-                                          theme: self.theme.contactManagement) {
+                            LabeledButton(
+                                type: .outlineType,
+                                item: model,
+                                theme: self.theme.contactManagement
+                            ) {
                                 self.disposable = ChannelsListView.showModalView(
                                     rootView: addChannelPromptView,
                                     theme: self.theme.contactManagement
@@ -66,7 +69,6 @@ public struct ChannelsListView: View {
                             }
                         }
                     }
-
                 } header: {
                     HStack {
                         headerView
@@ -75,11 +77,13 @@ public struct ChannelsListView: View {
                 }
             }
             .onAppear {
+                
                 self.state.channelAssociationPublisher
                     .sink {
-                        updateChannelsList($0)
+                        self.channels.wrappedValue = $0.filter(with: self.item.platform.channelType)
                     }
                     .store(in: &subscriptions)
+                
                 Airship.contact.channelRegistrationEditPublisher
                     .sink { state in
                         switch state {
@@ -100,25 +104,6 @@ public struct ChannelsListView: View {
             .padding(5)
         }
     }
-    
-    private func updateChannelsList(_ channelsList: [AssociatedChannelType]) {
-        switch self.item.registrationOptions {
-        case .sms(_):
-            self.channels = channelsList.filter { channel in
-                if case .sms(_) = channel {
-                    return true
-                }
-                return false
-            }
-        case .email(_):
-            self.channels = channelsList.filter { channel in
-                if case .email(_) = channel {
-                    return true
-                }
-                return false
-            }
-        }
-    }
 
     @ViewBuilder
     private var headerView: some View {
@@ -133,7 +118,7 @@ public struct ChannelsListView: View {
     }
 
     private func channelListView() -> some View {
-        ForEach(self.channels, id: \.self) { channel in
+        ForEach(self.channels.wrappedValue, id: \.self) { channel in
             VStack(alignment: .leading) {
                 Divider()
                 HStack {
@@ -297,6 +282,15 @@ private extension UIWindow {
                 self.removeFromSuperview()
             }
         )
+    }
+}
+
+extension PreferenceCenterConfig.ContactManagementItem.Platform {
+    var channelType: ChannelType {
+        switch self {
+        case .sms: return .sms
+        case .email: return .email
+        }
     }
 }
 

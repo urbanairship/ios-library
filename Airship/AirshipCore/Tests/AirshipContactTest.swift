@@ -374,8 +374,17 @@ class AirshipContactTest: XCTestCase {
     }
 
     func testAssociateChannel() async throws {
-        self.contact.associateChannel("some-channel-id", type: .email)
-        await self.verifyOperations([.associateChannel(channelID: "some-channel-id", channelType: .email)])
+        let options = EmailRegistrationOptions.commercialOptions(transactionalOptedIn: Date(), commercialOptedIn: Date(), properties: nil)
+        self.contact.associateChannel(
+            "some-channel-id",
+            type: .email,
+            options: .email("my address", options)
+        )
+        await self.verifyOperations([.associateChannel(
+            channelID: "some-channel-id",
+            channelType: .email,
+            options: .email("my address", options)
+        )])
     }
 
     func testEdits() async throws {

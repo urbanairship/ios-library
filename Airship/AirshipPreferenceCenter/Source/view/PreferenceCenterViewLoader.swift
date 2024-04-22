@@ -67,7 +67,7 @@ final class PreferenceCenterViewLoader: ObservableObject {
 
         var channelSubscriptions: [String] = []
         var contactSubscriptions: [String: Set<ChannelScope>] = [:]
-        var channelsList: [AssociatedChannelType] = []
+        var channelsList: [AssociatedChannel] = []
 
         if config.containsChannelSubscriptions() {
             channelSubscriptions = try await Airship.channel
@@ -82,7 +82,7 @@ final class PreferenceCenterViewLoader: ObservableObject {
         
         if config.containsContactManagement() {
             channelsList = await Airship.contact
-                .fetchChannelsList() ?? []
+                .fetchAssociatedChannelsList() ?? []
         }
         
         return PreferenceCenterState(

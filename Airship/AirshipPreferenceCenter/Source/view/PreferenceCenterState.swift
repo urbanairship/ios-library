@@ -16,12 +16,12 @@ public class PreferenceCenterState: ObservableObject {
     
     private var contactSubscriptions: [String: Set<ChannelScope>]
     private var channelSubscriptions: Set<String>
-    private var channelsList: Set<AssociatedChannelType>
+    private var channelsList: Set<AssociatedChannel>
     private var subscriptions: Set<AnyCancellable> = []
     private let subscriber: PreferenceSubscriber
 
-    private let channelAssociationSubject = PassthroughSubject<[AssociatedChannelType], Never>()
-    public var channelAssociationPublisher: AnyPublisher<[AssociatedChannelType], Never>
+    private let channelAssociationSubject = PassthroughSubject<[AssociatedChannel], Never>()
+    public var channelAssociationPublisher: AnyPublisher<[AssociatedChannel], Never>
     {
         return channelAssociationSubject.eraseToAnyPublisher()
     }
@@ -36,7 +36,7 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
-        channelsList: Set<AssociatedChannelType> = Set()
+        channelsList: Set<AssociatedChannel> = Set()
     ) {
 
         self.init(
@@ -52,7 +52,7 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
-        channelsList: Set<AssociatedChannelType> = Set(),
+        channelsList: Set<AssociatedChannel> = Set(),
         subscriber: PreferenceSubscriber
     ) {
         self.config = config
@@ -146,6 +146,17 @@ public class PreferenceCenterState: ObservableObject {
         )
     }
 
+    /// Creates an associated channels list binding.
+    /// - Returns: an associated channels list binding
+    public func makeBinding(type: ChannelType) -> Binding<[AssociatedChannel]> {
+        return Binding<[AssociatedChannel]>(
+            get: { Array(self.channelsList).filter(with: type) },
+            set: { lists in
+                self.channelsList = Set(lists)
+            }
+        )
+    }
+    
     /// Creates a contact subscription binding for the list ID and scopes.
     /// - Parameters:
     ///     - contactListID: The subscription list ID
@@ -378,5 +389,25 @@ extension PreferenceCenterState: CustomStringConvertible {
         channelsList.map { associatedChannel in
             "\(associatedChannel)"
         }.joined(separator: "; ")
+    }
+}
+
+extension [AssociatedChannel] {
+    func filter(with type: ChannelType ) -> [AssociatedChannel] {
+        if case .sms = type {
+            return self.filter {
+                if case .sms(_) = $0 {
+                    return true
+                }
+                return false
+            }
+        } else if case .email = type {
+            return self.filter {
+                if case .email(_) = $0 {
+                    return true
+                }
+                return false
+            }
+        } else { return self }
     }
 }

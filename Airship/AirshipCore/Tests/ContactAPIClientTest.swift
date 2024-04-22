@@ -236,8 +236,6 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertTrue(response.isSuccess)
         if case .email(let associatedChannel) = response.result {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
-            XCTAssertEqual(.email, associatedChannel.channelType)
-
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
             XCTAssertEqual(
@@ -318,7 +316,6 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertTrue(response.isSuccess)
         if case .sms(let associatedChannel) = response.result {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
-            XCTAssertEqual(.sms, associatedChannel.channelType)
             
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
@@ -391,7 +388,6 @@ class ContactAPIClientTest: XCTestCase {
         XCTAssertTrue(response.isSuccess)
         if case .open(let associatedChannel) = response.result {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
-            XCTAssertEqual(.open, associatedChannel.channelType)
             
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
@@ -454,17 +450,17 @@ class ContactAPIClientTest: XCTestCase {
     }
 
     func testAssociateChannel() async throws {
+        let options = SMSRegistrationOptions.optIn(senderID: "FR:33")
         let response = try await contactAPIClient.associateChannel(
             contactID: "some-contact-id",
             channelID: "some-channel",
             channelType: .sms,
-            identifier: "1234567"
+            options: .sms("1234567", options)
         )
 
         XCTAssertTrue(response.isSuccess)
         if case .sms(let associatedChannel) = response.result {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
-            XCTAssertEqual(.sms, associatedChannel.channelType)
             
             let request = self.session.lastRequest!
             XCTAssertEqual(

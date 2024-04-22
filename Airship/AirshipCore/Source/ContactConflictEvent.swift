@@ -41,7 +41,7 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
      * Associated channels.
      */
     @objc
-    public let channels: [AssociatedChannel]
+    public let channels: [BasicAssociatedChannel]
 
     /**
      * Default constructor.
@@ -55,7 +55,7 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
    init(
         tags: [String: [String]],
         attributes: [String: AirshipJSON],
-        channels: [AssociatedChannel],
+        channels: [BasicAssociatedChannel],
         subscriptionLists: [String: [ChannelScope]],
         conflictingNamedUserID: String?
     ) {

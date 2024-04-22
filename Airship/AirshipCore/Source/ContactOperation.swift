@@ -15,7 +15,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .registerEmail(_, _): return .registerEmail
         case .registerSMS(_, _): return .registerSMS
         case .registerOpen(_, _): return .registerOpen
-        case .associateChannel(_, _): return .associateChannel
+        case .associateChannel(_, _, _): return .associateChannel
         case .optOutChannel(_): return .optOutChannel
         }
     }
@@ -59,7 +59,8 @@ enum ContactOperation: Codable, Equatable, Sendable {
 
     case associateChannel(
         channelID: String,
-        channelType: ChannelType
+        channelType: ChannelType,
+        options: RegistrationOptions
     )
 
     case optOutChannel(
@@ -84,7 +85,7 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case channelType
         case date
         case required
-        case sender
+        case channelOptions
     }
 
 
@@ -136,10 +137,11 @@ enum ContactOperation: Codable, Equatable, Sendable {
             try payloadContainer.encode(options, forKey: .options)
             try container.encode(OperationType.registerOpen, forKey: .type)
 
-        case .associateChannel(let channelID, let channelType):
+        case .associateChannel(let channelID, let channelType, let options):
             var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
             try payloadContainer.encode(channelID, forKey: .channelID)
             try payloadContainer.encode(channelType, forKey: .channelType)
+            try payloadContainer.encode(options, forKey: .channelOptions)
             try container.encode(OperationType.associateChannel, forKey: .type)
             
         case .optOutChannel(let channelID):
@@ -231,6 +233,10 @@ enum ContactOperation: Codable, Equatable, Sendable {
                 channelType: try payloadContainer.decode(
                     ChannelType.self,
                     forKey: .channelType
+                ), 
+                options: try payloadContainer.decode(
+                    RegistrationOptions.self,
+                    forKey: .channelOptions
                 )
             )
           

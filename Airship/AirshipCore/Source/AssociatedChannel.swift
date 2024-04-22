@@ -2,98 +2,161 @@
 
 import Foundation
 
-public enum AssociatedChannelType: Hashable, Sendable {
-    case sms(SMSAssociatedChannel)
-    case email(EmailAssociatedChannel)
-    case open(AssociatedChannel)
+public enum RegistrationOptions: Sendable, Equatable, Codable {
+    case email(String, EmailRegistrationOptions)
+    case sms(String, SMSRegistrationOptions)
+    case open
 }
 
-/// Associated channel data.
-@objc(UAAssociatedChannel)
-public class AssociatedChannel: NSObject, Codable, @unchecked Sendable {
+enum AssociatedChannelType: String, Codable, Equatable, Sendable {
+    case sms
+    case email
+    case open
+}
+
+public indirect enum AssociatedChannel: Codable, Hashable, Equatable, Sendable {
+    case sms(SMSAssociatedChannel)
+    case email(EmailAssociatedChannel)
+    case open(BasicAssociatedChannel)
+
+    enum CodingKeys: String, CodingKey {
+        case type = "type"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(
+            AssociatedChannelType.self,
+            forKey: .type
+        )
+        let singleValueContainer = try decoder.singleValueContainer()
+
+        switch type {
+        case .sms:
+            self = .sms(
+                try singleValueContainer.decode(SMSAssociatedChannel.self)
+            )
+        case .email:
+            self = .email(
+                try singleValueContainer.decode(EmailAssociatedChannel.self)
+            )
+        case .open:
+            self = .open(
+                try singleValueContainer.decode(BasicAssociatedChannel.self)
+            )
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        let content: Encodable
+        
+        switch self {
+        case .sms(let model):
+            content = model
+        case .email(let model):
+            content = model
+        case .open(let model):
+            content = model
+        }
+        
+        try container.encode(content)
+    }
+}
+
+public protocol AssociatedChannelProtocol: Codable, Equatable, Sendable {
+    var channelID: String { get }
+}
+
+@objc(UABasicAssociatedChannel)
+public class BasicAssociatedChannel: NSObject, AssociatedChannelProtocol, @unchecked Sendable {
 
     /**
-     * Channel type
-     */
-    @objc
-    public let channelType: ChannelType
-
-    /**
-     * channel ID
+     * Channel ID
      */
     @objc
     public let channelID: String
-    
+        
     @objc
     public init(
-        channelType: ChannelType,
         channelID: String
     ) {
-        self.channelType = channelType
         self.channelID = channelID
         super.init()
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case channelID = "channel_id"
     }
 }
 
 @objc(UAEmailAssociatedChannel)
-public final class EmailAssociatedChannel: AssociatedChannel, @unchecked Sendable {
+public class EmailAssociatedChannel: NSObject, AssociatedChannelProtocol, @unchecked Sendable {
+    
+    @objc
+    public var channelID: String
     
     @objc
     public let address: String
-    
-    @objc
-    public let commercialOptedIn: Date?
-
-    @objc
-    public let commercialOptedOut: Date?
-    
-    @objc
+        
     public let transactionalOptedIn: Date?
+    
+    public let commercialOptedIn: Date?
     
     @objc
     public init(
         channelID: String,
         address: String,
-        commercialOptedIn: Date?,
-        commercialOptedOut: Date?,
-        transactionalOptedIn: Date?
+        transactionalOptedIn: Date?,
+        commercialOptedIn: Date?
     ) {
+        self.channelID = channelID
         self.address = address
-        self.commercialOptedIn = commercialOptedIn
-        self.commercialOptedOut = commercialOptedOut
         self.transactionalOptedIn = transactionalOptedIn
-        
-        super.init(channelType: .email, channelID: channelID)
+        self.commercialOptedIn = commercialOptedIn
     }
     
-    required init(from decoder: any Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    enum CodingKeys: String, CodingKey {
+        case channelID = "channel_id"
+        case address = "email_address"
+        case transactionalOptedIn = "transactional_opted_in"
+        case commercialOptedIn = "commercial_opted_in"
     }
 }
 
 @objc(UASMSAssociatedChannel)
-public final class SMSAssociatedChannel: AssociatedChannel, @unchecked Sendable {
+public class SMSAssociatedChannel: NSObject, AssociatedChannelProtocol, @unchecked Sendable {
+    
+    @objc
+    public var channelID: String
+    
+    @objc
+    public var optIn: Bool
     
     @objc
     public let msisdn: String
     
     @objc
-    public let optIn: Bool
+    public let sender: String
     
     @objc
     public init(
         channelID: String,
         msisdn: String,
+        sender: String,
         optIn: Bool
     ) {
+        self.channelID = channelID
         self.msisdn = msisdn
+        self.sender = sender
         self.optIn = optIn
-        
-        super.init(channelType: .sms, channelID: channelID)
     }
     
-    required init(from decoder: any Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    enum CodingKeys: String, CodingKey {
+        case channelID = "channel_id"
+        case optIn = "opt_in"
+        case msisdn = "msisdn"
+        case sender = "sender"
     }
 }
 

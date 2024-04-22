@@ -50,6 +50,9 @@ final class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
         )
 
         return try await session.performHTTPRequest(request) { data, response in
+            
+            AirshipLogger.debug("Fetching subscription list finished with response: \(response)")
+            
             guard response.statusCode == 200 else {
                 return nil
             }

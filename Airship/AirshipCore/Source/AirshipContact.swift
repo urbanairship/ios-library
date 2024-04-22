@@ -36,11 +36,11 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let contactManager: ContactManagerProtocol
     private var smsValidator: SMSValidatorProtocol
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
-    private let cachedChannelsList: CachedValue<(String, [AssociatedChannelType])>
+    private let cachedChannelsList: CachedValue<(String, [AssociatedChannel])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
     private let fetchSubscriptionListQueue: AirshipSerialQueue = AirshipSerialQueue()
-    private let fetchChannelsListQueue: AirshipSerialQueue = AirshipSerialQueue()
+    private let fetchAssociatedChannelsListQueue: AirshipSerialQueue = AirshipSerialQueue()
     private let serialQueue: AirshipAsyncSerialQueue
 
     /// Publishes all edits made to the subscription lists through the  SDK
@@ -503,9 +503,14 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
      * - Parameters:
      *   - channelID: The channel ID.
      *   - type: The channel type.
+     *   - options: The SMS/email channel options
      */
-    @objc
-    public func associateChannel(_ channelID: String, type: ChannelType) {
+    public func associateChannel(
+        _ channelID: String,
+        type: ChannelType,
+        options: RegistrationOptions
+    ) {
+        
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(
                 "Contacts disabled. Enable to associate channel."
@@ -513,7 +518,13 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             return
         }
 
-        self.addOperation(.associateChannel(channelID: channelID, channelType: type))
+        self.addOperation(
+            .associateChannel(
+                channelID: channelID,
+                channelType: type,
+                options: options
+            )
+        )
     }
     
     /**
@@ -534,9 +545,9 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     }
     
     /**
-     * Fetch the channels list.
+     * Fetch the associated channels list.
      */
-    public func fetchChannelsList() async -> [AssociatedChannelType]? {
+    public func fetchAssociatedChannelsList() async -> [AssociatedChannel]? {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(
                 "Contacts disabled. Enable to fetch channels list."
@@ -584,28 +595,42 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     
     private func resolveChannelsList(
         _ contactID: String
-    ) async throws -> [AssociatedChannelType] {
-        return try await self.fetchChannelsListQueue.run {
+    ) async throws -> [AssociatedChannel] {
+        return try await self.fetchAssociatedChannelsListQueue.run {
             if let cached = self.cachedChannelsList.value,
                 cached.0 == contactID {
                 return cached.1
             }
 
-            let response = try await self.channelsListAPIClient.fetchChannelsList(
-                contactID: contactID
+            //TODO: wait for an API to retrieve all the channels list
+            // SMS associated channels list
+            let smsResponse = try await self.channelsListAPIClient.fetchAssociatedChannelsList(
+                contactID: contactID,
+                type: "sms"
+            )
+            
+            guard smsResponse.isSuccess, let smsList = smsResponse.result else {
+                throw AirshipErrors.error("Failed to fetch SMS associated channels list")
+            }
+            
+            // Email associated channels list
+            let emailResponse = try await self.channelsListAPIClient.fetchAssociatedChannelsList(
+                contactID: contactID,
+                type: "email"
             )
 
-            guard response.isSuccess, let lists = response.result else {
-                throw AirshipErrors.error("Failed to fetch channels list")
+            guard emailResponse.isSuccess, let emailList = emailResponse.result else {
+                throw AirshipErrors.error("Failed to fetch Email associated channels list")
             }
-
-            AirshipLogger.debug("Fetching channels list finished with response: \(response)")
+            
+            let list = smsList + emailList
+            
             self.cachedChannelsList.set(
-                value: (contactID, lists),
+                value: (contactID, list),
                 expiresIn: AirshipContact.maxChannelListCacheAge
             )
             
-            return lists
+            return list
         }
     }
     

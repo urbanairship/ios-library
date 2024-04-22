@@ -5,7 +5,7 @@ import Foundation
 struct AnonContactData: Codable, Sendable {
     var tags: [String: [String]]
     var attributes: [String: AirshipJSON]
-    var channels: [AssociatedChannel]
+    var channels: [BasicAssociatedChannel]
     var subscriptionLists: [String: [ChannelScope]]
 
     var isEmpty: Bool {
@@ -15,7 +15,7 @@ struct AnonContactData: Codable, Sendable {
         self.subscriptionLists.isEmpty
     }
 
-    init(tags: [String : [String]], attributes: [String : AirshipJSON], channels: [AssociatedChannel], subscriptionLists: [String : [ChannelScope]]) {
+    init(tags: [String : [String]], attributes: [String : AirshipJSON], channels: [BasicAssociatedChannel], subscriptionLists: [String : [ChannelScope]]) {
         self.tags = tags
         self.attributes = attributes
         self.channels = channels
@@ -25,7 +25,7 @@ struct AnonContactData: Codable, Sendable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.tags = try container.decode([String : [String]].self, forKey: .tags)
-        self.channels = try container.decode([AssociatedChannel].self, forKey: .channels)
+        self.channels = try container.decode([BasicAssociatedChannel].self, forKey: .channels)
         self.subscriptionLists = try container.decode([String : [ChannelScope]].self, forKey: .subscriptionLists)
 
         do {
