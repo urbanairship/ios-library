@@ -604,6 +604,9 @@ final class ContactManagerTest: XCTestCase {
         contactInfo = await self.contactManager.currentContactIDInfo()
         XCTAssertNotNil(contactInfo)
 
+
+        XCTAssertEqual(contactInfo!.contactID.lowercased(), contactInfo!.contactID)
+
         await self.verifyUpdates([
             .contactIDUpdate(
                 ContactIDInfo(
@@ -613,6 +616,13 @@ final class ContactManagerTest: XCTestCase {
                 )
             )
         ])
+    }
+
+    func testGenerateDefaultContactInfoLowercasedID() async {
+        await self.contactManager.generateDefaultContactIDIfNotSet()
+        let contactInfo = await self.contactManager.currentContactIDInfo()
+        XCTAssertNotNil(contactInfo)
+        XCTAssertEqual(contactInfo!.contactID.lowercased(), contactInfo!.contactID)
     }
 
     func testGenerateDefaultContactInfoAlreadySet() async throws {
