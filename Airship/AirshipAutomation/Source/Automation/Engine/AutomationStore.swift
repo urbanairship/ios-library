@@ -149,6 +149,18 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         }
     }
 
+    func getAssociatedData(scheduleID: String) async throws -> Data? {
+        return try await prepareCoreData().performWithResult { context in
+            let predicate = NSPredicate(format: "identifier == %@", scheduleID)
+
+            let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
+            request.includesPropertyValues = true
+            request.predicate = predicate
+
+            return try context.fetch(request).first?.associatedData
+        }
+    }
+
     func getSchedules(group: String) async throws -> [AutomationScheduleData] {
         return try await prepareCoreData().performWithResult { context in
             let predicate = NSPredicate(format: "group == %@", group)
@@ -360,6 +372,8 @@ fileprivate class ScheduleEntity: NSManagedObject {
     @NSManaged var executionCount: Int
     @NSManaged var triggerInfo: Data?
     @NSManaged var preparedScheduleInfo: Data?
+    @NSManaged var triggerSessionID: String?
+    @NSManaged var associatedData: Data?
 
     class func make(context: NSManagedObjectContext) throws -> Self {
         guard let data = NSEntityDescription.insertNewObject(
@@ -379,7 +393,8 @@ fileprivate class ScheduleEntity: NSManagedObject {
         self.scheduleState = data.scheduleState.rawValue
         self.scheduleStateChangeDate = data.scheduleStateChangeDate
         self.executionCount = data.executionCount
-
+        self.triggerSessionID = data.triggerSessionID
+        self.associatedData = data.associatedData
         self.schedule = try AirshipJSON.defaultEncoder.encode(data.schedule)
 
         self.preparedScheduleInfo = if let info = data.preparedScheduleInfo {
@@ -393,6 +408,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
         } else {
             nil
         }
+
     }
 
     func toScheduleData() throws -> AutomationScheduleData {
@@ -419,7 +435,9 @@ fileprivate class ScheduleEntity: NSManagedObject {
             scheduleStateChangeDate: self.scheduleStateChangeDate,
             executionCount: executionCount,
             triggerInfo: triggerInfo,
-            preparedScheduleInfo: preparedScheduleInfo
+            preparedScheduleInfo: preparedScheduleInfo,
+            associatedData: associatedData,
+            triggerSessionID: self.triggerSessionID ?? UUID().uuidString
         )
     }
 }

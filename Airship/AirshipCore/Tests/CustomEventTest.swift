@@ -285,4 +285,46 @@ final class CustomEventTest: XCTestCase {
         
         XCTAssertFalse(event.isValid())
     }
+
+    func testInApp() {
+        let event = CustomEvent(name: "event name")
+
+        // Defined in automation, just make sure it passes it through
+        event.inApp = AirshipJSON.makeObject { builder in
+            builder.set(string: "foo", key: "bar")
+        }
+
+        let result = try! AirshipJSON.wrap(event.data["in_app"])
+
+        XCTAssertEqual(event.inApp, result)
+    }
+
+    func testCodableProperties() {
+        let event = CustomEvent(name: "event name")
+        event.properties = [
+            "some-codable": TestCodable(string: "foo", bool: false)
+        ]
+
+        let properties = event.data["properties"] as! [String: Any]
+        let someCodable = properties["some-codable"] as! [String: Any]
+
+        XCTAssertEqual("foo", someCodable["string"] as! String)
+        XCTAssertEqual(false, someCodable["bool"] as! Bool)
+    }
+
+    func testDateProperties() {
+        let event = CustomEvent(name: "event name")
+        event.properties = [
+            "some-date": Date(timeIntervalSince1970: 10000.0)
+        ]
+
+        let properties = event.data["properties"] as! [String: Any]
+        XCTAssertEqual("1970-01-01T02:46:40", properties["some-date"] as! String)
+    }
+}
+
+
+fileprivate struct TestCodable: Encodable {
+    let string: String
+    let bool: Bool
 }

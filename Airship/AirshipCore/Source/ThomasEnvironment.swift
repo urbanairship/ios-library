@@ -8,8 +8,6 @@ class ThomasEnvironment: ObservableObject {
     private let delegate: ThomasDelegate
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
-
-
     let defaultFormState = FormState(identifier: "",
                                      formType: .form,
                                      formResponseType: "")
@@ -17,7 +15,6 @@ class ThomasEnvironment: ObservableObject {
     let defaultViewState = ViewState()
 
     let defaultPagerState = PagerState(identifier: "")
-
 
 
     @Published
@@ -44,15 +41,14 @@ class ThomasEnvironment: ObservableObject {
         self.imageLoader = AirshipImageLoader(
             imageProvider: extensions?.imageProvider
         )
-
         #if !os(tvOS) && !os(watchOS)
         self.subscribeKeyboard()
         #endif
     }
 
     @MainActor
-    func onAppear() {
-        self.delegate.onAppear()
+    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool) {
+        self.delegate.onVisbilityChanged(isVisible: isVisible, isForegrounded: isForegrounded)
     }
 
     @MainActor
@@ -212,36 +208,32 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func runActions(_ actionsPayload: ActionsPayload?, layoutState: LayoutState)
-    {
-        guard let actionsPayload = actionsPayload else {
+    func runActions(_ actionsPayload: ActionsPayload?, layoutState: LayoutState?) {
+        guard let actionsPayload = actionsPayload?.value else { return }
+        guard let runner = extensions?.actionRunner else {
+            Task {
+                await ActionRunner.run(actionsPayload: actionsPayload, situation: .automation, metadata: [:])
+            }
             return
         }
 
-        let layoutContext = layoutState.toLayoutContext()
+        runner.runAsync(
+            actions: actionsPayload,
+            layoutContext: layoutState?.toLayoutContext()
+        )
+    }
 
-        let permissionReceiver: @Sendable (
-            AirshipPermission,
-            AirshipPermissionStatus,
-            AirshipPermissionStatus
-        ) async -> Void = { [delegate] permission, start, end in
-            await delegate.onPromptPermissionResult(
-                permission: permission,
-                startingStatus: start,
-                endingStatus: end,
-                layoutContext: layoutContext
-            )
+    @MainActor
+    func runAction(_ actionName: String, arguments: ActionArguments, layoutState: LayoutState?) async -> ActionResult {
+        guard let runner = extensions?.actionRunner else {
+            return await ActionRunner.run(actionName: actionName, arguments: arguments)
         }
-        
-        Task {
-            await ActionRunner.run(
-                actionsPayload: actionsPayload.value,
-                situation: .manualInvocation,
-                metadata: [
-                    PromptPermissionAction.resultReceiverMetadataKey: permissionReceiver
-                ]
-            )
-        }
+
+        return await runner.run(
+            actionName: actionName,
+            arguments: arguments,
+            layoutContext: layoutState?.toLayoutContext()
+        )
     }
 
     #if !os(tvOS) && !os(watchOS)
@@ -265,7 +257,9 @@ class ThomasEnvironment: ObservableObject {
                 .map { _ in 0.0 }
         )
         .subscribe(on: DispatchQueue.main)
-        .assign(to: \.self.keyboardHeight, on: self)
+        .sink { [weak self] value in
+            self?.keyboardHeight = value
+        }
         .store(in: &self.subscriptions)
 
         Publishers.Merge3(
@@ -291,7 +285,9 @@ class ThomasEnvironment: ObservableObject {
         )
         .removeDuplicates()
         .subscribe(on: DispatchQueue.main)
-        .assign(to: \.self.keyboardState, on: self)
+        .sink { [weak self] value in
+            self?.keyboardState = value
+        }
         .store(in: &self.subscriptions)
     }
 

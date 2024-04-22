@@ -329,7 +329,8 @@ fileprivate extension UAScheduleData {
                 scheduleID: schedule.identifier,
                 productID: schedule.productID,
                 campaigns: schedule.campaigns,
-                reportingContext: schedule.reportingContext
+                reportingContext: schedule.reportingContext,
+                triggerSessionID: UUID().uuidString
             )
         }
 
@@ -347,7 +348,9 @@ fileprivate extension UAScheduleData {
             scheduleStateChangeDate: self.executionStateChangeDate ?? Date.distantPast,
             executionCount: self.triggeredCount?.intValue ?? 0,
             triggerInfo: triggerInfo,
-            preparedScheduleInfo: preparedInfo
+            preparedScheduleInfo: preparedInfo,
+            associatedData: nil,
+            triggerSessionID: UUID().uuidString
         )
 
         return LegacyScheduleData(

@@ -34,6 +34,11 @@ class InAppEventContextTest: XCTestCase {
                 submitted: true,
                 type: "form type"
             ),
+            display: .init(
+                triggerSessionID: "trigger session id",
+                isFirstDisplay: false,
+                isFirstDisplayTriggerSessionID: true
+            ),
             reportingContext: .string("reporting context"),
             experimentsReportingData: [
                 .string("experiment result 1"),
@@ -62,7 +67,12 @@ class InAppEventContextTest: XCTestCase {
               "experiments":[
                  "experiment result 1",
                  "experiment result 2"
-              ]
+              ],
+              "display":{
+                 "trigger_session_id":"trigger session id",
+                 "is_first_display":false,
+                 "is_first_display_trigger_session":true
+              }
            }
         """
 
@@ -100,10 +110,17 @@ class InAppEventContextTest: XCTestCase {
             buttonInfo: ThomasButtonInfo(identifier: UUID().uuidString)
         )
 
+        let displayContext  = InAppEventContext.Display(
+            triggerSessionID: UUID().uuidString,
+            isFirstDisplay: true,
+            isFirstDisplayTriggerSessionID: false
+        )
+
         let context = InAppEventContext.makeContext(
             reportingContext: reportingMetadata,
             experimentsResult: experimentResult,
-            layoutContext: thomasLayoutContext
+            layoutContext: thomasLayoutContext,
+            displayContext: displayContext
         )
 
         let expected = InAppEventContext(
@@ -124,6 +141,7 @@ class InAppEventContextTest: XCTestCase {
                 responseType: thomasLayoutContext.formInfo!.formResponseType
 
             ),
+            display: displayContext,
             reportingContext: reportingMetadata,
             experimentsReportingData: experimentResult.reportingMetadata
         )
@@ -135,7 +153,8 @@ class InAppEventContextTest: XCTestCase {
         let context = InAppEventContext.makeContext(
             reportingContext: nil,
             experimentsResult: nil,
-            layoutContext: nil
+            layoutContext: nil,
+            displayContext: nil
         )
 
         XCTAssertNil(context)

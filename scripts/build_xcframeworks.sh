@@ -61,7 +61,7 @@ function build_archive {
     -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/mac.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
-    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES | xcbeautify --renderer $XCBEAUTIY_RENDERER
   else
     xcrun xcodebuild archive -quiet \
     -workspace "$ROOT_PATH/Airship.xcworkspace" \
@@ -81,7 +81,7 @@ function build_archive {
     -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/$simulatorSdk.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
-    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES | xcbeautify --renderer $XCBEAUTIY_RENDERER
   fi
 }
 
@@ -104,7 +104,7 @@ build_archive "AirshipNotificationContentExtension" "maccatalyst"
 build_archive "AirshipRelease visionOS" "visionOS"
 
 # Package AirshipBasement
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
@@ -122,7 +122,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipBasement.xcframework"
 
 # Package AirshipCore
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
@@ -155,7 +155,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipAutomation.xcframework"
 
 # Package AirshipMessageCenter
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
@@ -169,7 +169,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipMessageCenter.xcframework"
 
 # Package AirshipPreferenceCenter
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
@@ -183,7 +183,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipPreferenceCenter.xcframework"
 
 # Package AirshipFeatureFlags
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
@@ -197,7 +197,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipFeatureFlags.xcframework"
 
 # Package AirshipNotificationServiceExtension
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/iphoneos.xcarchive/dSYMs/AirshipNotificationServiceExtension.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationServiceExtension.framework" \
@@ -207,7 +207,7 @@ xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
 
 # Package AirshipNotificationContentExtension
-xcodebuild -create-xcframework \
+xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphoneos.xcarchive/dSYMs/AirshipNotificationContentExtension.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \

@@ -4,13 +4,23 @@ import Foundation
 import SwiftUI
 
 extension HexColor {
+    static var tappableClear: Color { Color.white.opacity(0.001) }
+
     func toColor() -> Color {
         guard let uiColor = AirshipColorUtils.color(self.hex) else {
-            return Color.clear
+            return HexColor.tappableClear
         }
 
         let alpha = self.alpha ?? 1
-        return Color(uiColor).opacity(alpha)
+
+        let color = Color(uiColor).opacity(alpha)
+
+        /// Clear needs to be replaced by tappable clear to prevent SwiftUI from passing through tap events
+        if alpha == 0 {
+            return HexColor.tappableClear
+        }
+
+        return color
     }
 
     func toUIColor() -> UIColor {

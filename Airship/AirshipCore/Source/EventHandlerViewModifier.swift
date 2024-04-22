@@ -16,8 +16,9 @@ internal struct FormEventHandlerViewModifier: ViewModifier {
         let types = eventHandlers.map { $0.type }
 
         content.applyIf(types.contains(.tap)) { view in
-            view.addTapGesture {
-                applyStateChanges(type: .tap, formData: self.formState.data)
+            view.addTapGesture { [weak formState] in
+                guard let formState else { return }
+                applyStateChanges(type: .tap, formData: formState.data)
             }
         }
         .applyIf(types.contains(.formInput)) { view in

@@ -11,7 +11,6 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     static let pushMetadata = "com.urbanairship.metadata"
     static let pushSendID = "_"
 
-
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: AirshipChannelProtocol
@@ -155,8 +154,11 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
             object: nil
         )
 
-        Task { @MainActor in
-            for await event in self.sessionTracker.events {
+        Task { @MainActor [weak self, tracker = self.sessionTracker] in
+            for await event in tracker.events {
+                guard let self else {
+                    return
+                }
                 self.recordEvent(
                     sessionEventFactory.make(event: event),
                     date: event.date,

@@ -7,7 +7,9 @@ import XCTest
 final class AirshipMeteredUsageTest: XCTestCase {
     
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private let channel: AirshipChannelProtocol = TestChannel()
+    private let channel: TestChannel = TestChannel()
+    private let contact: TestContact = TestContact()
+
     private var privacyManager: AirshipPrivacyManager!
     private let apiClient: MeteredUsageAPIClientProtocol = MeteredTestApiClient()
     private let storage = MeteredUsageStore(appKey: "test.app.key", inMemory: true)
@@ -32,6 +34,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             config: config,
             dataStore: dataStore,
             channel: channel,
+            contact: contact,
             privacyManager: privacyManager,
             client: apiClient,
             store: storage,
@@ -142,7 +145,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
-            contactId: "test-contact-id"
+            contactID: "test-contact-id"
         )
         
         XCTAssertEqual(0, workManager.workRequests.count)
@@ -175,7 +178,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
-            contactId: "test-contact-id"
+            contactID: "test-contact-id"
         )
 
         try await self.target.addEvent(event)
@@ -197,7 +200,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: Date(),
-            contactId: "test-contact-id"
+            contactID: "test-contact-id"
         )
         
         XCTAssertEqual(0, workManager.workRequests.count)
@@ -218,7 +221,46 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertNotEqual(storedEvent, event)
         XCTAssertEqual(storedEvent, event.withDisabledAnalytics())
     }
-    
+
+    func testContactIDAddedIfNotSet() async throws {
+        self.contact.contactID = "from-contact"
+
+        privacyManager.enableFeatures(.analytics)
+        let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
+        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+
+        try await self.target.addEvent(
+            AirshipMeteredUsageEvent(
+                eventID: "test.id",
+                entityID: "story.id",
+                usageType: .inAppExperienceImpression,
+                product: "Story",
+                reportingContext: try! AirshipJSON.wrap("context"),
+                timestamp: Date(),
+                contactID: "test-contact-id"
+            )
+        )
+
+        var fromStore = try await storage.getEvents().first!
+        XCTAssertEqual(fromStore.contactID, "test-contact-id")
+
+        try await self.target.addEvent(
+            AirshipMeteredUsageEvent(
+                eventID: "test.id",
+                entityID: "story.id",
+                usageType: .inAppExperienceImpression,
+                product: "Story",
+                reportingContext: try! AirshipJSON.wrap("context"),
+                timestamp: Date(),
+                contactID: nil
+            )
+        )
+
+        fromStore = try await storage.getEvents().first!
+        XCTAssertEqual(fromStore.contactID, "from-contact")
+
+    }
+
     func testEventStripDataOnDisabledAnalytics() {
         let timeStamp = Date()
         let event = AirshipMeteredUsageEvent(
@@ -228,7 +270,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             product: "Story",
             reportingContext: try! AirshipJSON.wrap("context"),
             timestamp: timeStamp,
-            contactId: "test-contact-id"
+            contactID: "test-contact-id"
         )
             .withDisabledAnalytics()
         
@@ -238,7 +280,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertNil(event.entityID)
         XCTAssertNil(event.reportingContext)
         XCTAssertNil(event.timestamp)
-        XCTAssertNil(event.contactId)
+        XCTAssertNil(event.contactID)
     }
     
     func testScheduleWorkRespectsConfig() async {

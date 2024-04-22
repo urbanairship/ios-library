@@ -37,6 +37,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     public var body: some View {
         content
             .onAppear {
+                self.isImageVisible = self.isVisible
                 if self.loadedImage != nil {
                     animateIfNeeded()
                 } else {

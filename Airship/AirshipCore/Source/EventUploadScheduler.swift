@@ -43,7 +43,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
             EventUploadScheduler.workID,
             type: .serial
         ) { [weak self] _ in
-            guard let self = self else {
+            guard let self else {
                 return .success
             }
             return try await self.performWork()

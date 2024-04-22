@@ -34,7 +34,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     private let date: AirshipDateProtocol
     private let workManager: AirshipWorkManagerProtocol
     private let appStateTracker: AppStateTrackerProtocol
-    private let updatesSubject = PassthroughSubject<ChannelRegistrationUpdate, Never>()
+    private let updatesSubject = CurrentValueSubject<ChannelRegistrationUpdate?, Never>(nil)
     private var checkAppRestoreTask: Task<Void, Never>?
 
 
@@ -76,7 +76,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     }
 
     var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> {
-        return self.updatesSubject.eraseToAnyPublisher()
+        return self.updatesSubject.compactMap { $0 }.eraseToAnyPublisher()
     }
 
     @MainActor
@@ -94,9 +94,9 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
 
         if self.channelID != nil {
-            checkAppRestoreTask = Task {
-                if await self.dataStore.isAppRestore {
-                    self.clearChannelData()
+            checkAppRestoreTask = Task { [weak self] in
+                if await self?.dataStore.isAppRestore == true {
+                    self?.clearChannelData()
                 }
             }
         }
@@ -152,7 +152,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
 
     private func handleRegistrationWorkRequest(
         _ workRequest: AirshipWorkRequest
-    ) async throws -> AirshipWorkResult  {
+    ) async throws -> AirshipWorkResult {
 
         _ = await self.checkAppRestoreTask?.value
 

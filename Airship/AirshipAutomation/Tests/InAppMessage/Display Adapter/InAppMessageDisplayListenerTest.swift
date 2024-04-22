@@ -31,7 +31,7 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         listener.onAppear()
 
-        verifyEvents([InAppDisplayEvent()])
+        verifyEvents([InAppDisplayEvent(), InAppDisplayEvent()])
         XCTAssertNil(self.result.value)
     }
 

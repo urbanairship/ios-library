@@ -8,7 +8,7 @@ public protocol ThomasDelegate: Sendable {
 
     /// Called whenever the view appears
     @MainActor
-    func onAppear()
+    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool)
 
     /// Called when a form is submitted
     /// - Parameters:
@@ -111,21 +111,6 @@ public protocol ThomasDelegate: Sendable {
     func onPageSwiped(
         from: ThomasPagerInfo,
         to: ThomasPagerInfo,
-        layoutContext: ThomasLayoutContext
-    )
-
-
-    /// Called when actions should be ran.
-    /// - Parameters:
-    ///     - permission: The permission.
-    ///     - startingStatus: The starting status.
-    ///     - endingStatus: The ending status.
-    ///     - layoutContext: The layout context.
-    @MainActor
-    func onPromptPermissionResult(
-        permission: AirshipPermission,
-        startingStatus: AirshipPermissionStatus,
-        endingStatus: AirshipPermissionStatus,
         layoutContext: ThomasLayoutContext
     )
 }

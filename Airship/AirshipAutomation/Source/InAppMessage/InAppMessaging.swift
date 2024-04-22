@@ -27,9 +27,22 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
     ///     - forType: The type
     ///     - factoryBlock: The factory block
     @MainActor
+    @available(*, deprecated, message: "Use setCustomAdapter(forType:factoryBlock:) instead")
     func setAdapterFactoryBlock(
         forType: CustomDisplayAdapterType,
         factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+    )
+
+    /// Sets a factory block for a custom display adapter.
+    /// If the factory block returns a nil adapter, the default adapter will be used.
+    ///
+    /// - Parameters:
+    ///     - forType: The type
+    ///     - factoryBlock: The factory block
+    @MainActor
+    func setCustomAdapter(
+        forType: CustomDisplayAdapterType,
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
     )
 
     /// Notifies In-App messages that the display conditions should be reevaluated.
@@ -72,10 +85,21 @@ final class InAppMessaging: InAppMessagingProtocol {
         }
     }
 
+
     @MainActor
     func setAdapterFactoryBlock(
         forType type: CustomDisplayAdapterType,
         factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+    ) {
+        self.setCustomAdapter(forType: type) { args in
+            factoryBlock(args.message, args.assets)
+        }
+    }
+
+    @MainActor
+    func setCustomAdapter(
+        forType type: CustomDisplayAdapterType,
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
     ) {
         self.preparer.setAdapterFactoryBlock(forType: type, factoryBlock: factoryBlock)
     }

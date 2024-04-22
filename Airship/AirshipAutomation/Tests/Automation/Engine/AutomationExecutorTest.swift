@@ -11,6 +11,8 @@ final class AutomationExecutorTest: XCTestCase {
     private let actionExecutor: TestExecutorDelegate<AirshipJSON> = TestExecutorDelegate()
     private let messageExecutor: TestExecutorDelegate<PreparedInAppMessageData> = TestExecutorDelegate()
     private let remoteDataAccess: TestRemoteDataAccess = TestRemoteDataAccess()
+    private let messageAnalyitics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
+
     private var executor: AutomationExecutor!
 
     private var preparedMessageData: PreparedInAppMessageData!
@@ -23,7 +25,9 @@ final class AutomationExecutorTest: XCTestCase {
                 displayContent: .custom(.string("custom"))
             ),
             displayAdapter: TestDisplayAdapter(),
-            displayCoordinator: TestDisplayCoordinator()
+            displayCoordinator: TestDisplayCoordinator(),
+            analytics: messageAnalyitics,
+            actionRunner: TestInAppActionRunner()
         )
 
         self.executor = AutomationExecutor(
@@ -35,7 +39,7 @@ final class AutomationExecutorTest: XCTestCase {
 
     func testMessageIsReady() async throws {
         let messageSchedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .inAppMessage(self.preparedMessageData),
             frequencyChecker: nil
         )
@@ -59,7 +63,7 @@ final class AutomationExecutorTest: XCTestCase {
 
     func testActionIsReady() async throws {
         let actionSchedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .actions(AirshipJSON.string("neat")),
             frequencyChecker: nil
         )
@@ -82,15 +86,44 @@ final class AutomationExecutorTest: XCTestCase {
         }
     }
 
-    func testFrequencyCheckerCheckFailed() async throws {
+    func testFrequencyChekerNotCheckedIfDelegateNotReady() async throws {
         let frequencyChecker = TestFrequencyChecker()
 
         let schedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .actions(AirshipJSON.string("neat")),
             frequencyChecker: frequencyChecker
         )
 
+        self.actionExecutor.isReadyBlock = { _, _ in
+            return .notReady
+        }
+
+        frequencyChecker.checkAndIncrementBlock = {
+            return false
+        }
+
+        let result = await self.executor.isReady(
+            preparedSchedule: schedule
+        )
+
+        XCTAssertEqual(result, .notReady)
+        XCTAssertFalse(frequencyChecker.checkAndIncrementCalled)
+    }
+
+    func testFrequencyCheckerCheckFailed() async throws {
+        let frequencyChecker = TestFrequencyChecker()
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        self.actionExecutor.isReadyBlock = { _, _ in
+            return .ready
+        }
+        
         frequencyChecker.checkAndIncrementBlock = {
             return false
         }
@@ -107,7 +140,7 @@ final class AutomationExecutorTest: XCTestCase {
         let frequencyChecker = TestFrequencyChecker()
 
         let schedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .actions(AirshipJSON.string("neat")),
             frequencyChecker: frequencyChecker
         )
@@ -163,7 +196,7 @@ final class AutomationExecutorTest: XCTestCase {
 
     func testExecuteActions() async throws {
         let actionSchedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .actions(AirshipJSON.string("neat")),
             frequencyChecker: nil
         )
@@ -182,7 +215,7 @@ final class AutomationExecutorTest: XCTestCase {
 
     func testExecuteMessage() async throws {
         let messageSchedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .inAppMessage(self.preparedMessageData),
             frequencyChecker: nil
         )
@@ -200,7 +233,7 @@ final class AutomationExecutorTest: XCTestCase {
 
     func testExecuteDelegateThrows() async throws {
         let messageSchedule = PreparedSchedule(
-            info: PreparedScheduleInfo(scheduleID: UUID().uuidString),
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString),
             data: .inAppMessage(self.preparedMessageData),
             frequencyChecker: nil
         )
@@ -222,7 +255,7 @@ final class AutomationExecutorTest: XCTestCase {
             data: .actions(AirshipJSON.string("neat"))
         )
 
-        let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some schedule")
+        let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some schedule", triggerSessionID: UUID().uuidString)
 
         self.actionExecutor.interruptedBlock = { info in
             XCTAssertEqual(info, preparedScheduleInfo)
@@ -247,7 +280,7 @@ final class AutomationExecutorTest: XCTestCase {
             )
         )
 
-        let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some schedule")
+        let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some schedule",  triggerSessionID: UUID().uuidString)
 
         self.messageExecutor.interruptedBlock = { info in
             XCTAssertEqual(info, preparedScheduleInfo)
@@ -301,9 +334,6 @@ fileprivate final class TestExecutorDelegate<T: Sendable>: AutomationExecutorDel
     }
 }
 
-
-
-
 extension ScheduleReadyResult {
     static var allResults: [ScheduleReadyResult] {
         return [.ready, .notReady, .invalidate, .skip]
@@ -325,6 +355,34 @@ extension PreparedScheduleData: Equatable {
             default: return false
             }
         }
+    }
+}
+
+final class TestInAppActionRunner: InternalInAppActionRunner, @unchecked Sendable {
+
+    var singleActions: [(String, ActionArguments, ThomasLayoutContext?)] = []
+    var actionPayloads: [(AirshipJSON, ThomasLayoutContext?)] = []
+
+    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?) {
+        actionPayloads.append((actions, layoutContext))
+    }
+
+    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext?) async -> ActionResult {
+        singleActions.append((actionName, arguments, layoutContext))
+        return .error(AirshipErrors.error("not implemented"))
+    }
+
+    func run(actionName: String, arguments: ActionArguments) async -> ActionResult {
+        singleActions.append((actionName, arguments, nil))
+        return .error(AirshipErrors.error("not implemented"))
+    }
+
+    func runAsync(actions: AirshipJSON) {
+        actionPayloads.append((actions, nil))
+    }
+
+    func run(actions: AirshipJSON) async {
+        actionPayloads.append((actions, nil))
     }
 
 }

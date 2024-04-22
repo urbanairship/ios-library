@@ -145,18 +145,19 @@ actor AutomationEngine : AutomationEngineProtocol {
     
     func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws {
         AirshipLogger.debug("Cancelling schedules with type \(type)")
-        
+
         await self.startTask?.value
-        
+
         //we don't store schedule type as a separate field, but it's a part of airship json, so we
         // can't utilize core data to filter out our results
         let ids = try await self.schedules.compactMap { schedule in
             switch schedule.data {
-            case .actions: return schedule.identifier
-            default: return nil
+            case .actions: return type == .actions ? schedule.identifier : nil
+            case .inAppMessage: return type == .inAppMessage ? schedule.identifier : nil
+            case .deferred: return type == .deferred ? schedule.identifier : nil
             }
         }
-        
+
         try await store.deleteSchedules(scheduleIDs: ids)
         await self.triggersProcessor.cancel(scheduleIDs: ids)
     }
@@ -222,6 +223,9 @@ actor AutomationEngine : AutomationEngineProtocol {
                 updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
                     data.executionInterrupted(date: now, retry: behavior == .retry)
                 }
+                if (updated?.scheduleState == .paused) {
+                    handleInterval(updated?.schedule.interval ?? 0.0, scheduleID: data.schedule.identifier)
+                }
             } else {
                 updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
                     data.prepareInterrupted(date: now)
@@ -282,7 +286,7 @@ fileprivate extension AutomationEngine {
 
                 case .execution:
                     try await self.updateState(identifier: result.scheduleID) { data in
-                        data.triggered(triggerContext: result.triggerInfo.context, date: now)
+                        data.triggered(triggerInfo: result.triggerInfo, date: now)
                     }
 
                     await self.startTaskToProcessTriggeredSchedule(
@@ -348,7 +352,8 @@ fileprivate extension AutomationEngine {
 
         let prepareResult = await self.preparer.prepare(
             schedule: data.schedule,
-            triggerContext: data.triggerInfo?.context
+            triggerContext: data.triggerInfo?.context,
+            triggerSessionID: data.triggerSessionID
         )
 
         AirshipLogger.trace("Preparing schedule \(data) result: \(prepareResult)")
@@ -407,6 +412,8 @@ fileprivate extension AutomationEngine {
                     await self.startTaskToProcessTriggeredSchedule(
                         scheduleID: data.schedule.identifier
                     )
+                } else {
+                    await self.preparer.cancelled(schedule: data.schedule)
                 }
                 return
 
@@ -418,6 +425,7 @@ fileprivate extension AutomationEngine {
                 try await self.updateState(identifier: scheduleID) { [date] data in
                     data.executionSkipped(date: date.now)
                 }
+                await self.preparer.cancelled(schedule: data.schedule)
                 return
             }
 
@@ -457,7 +465,9 @@ fileprivate extension AutomationEngine {
             }
         }
 
-        let executeResult = await self.executor.execute(preparedSchedule: preparedSchedule)
+        let executeResult = await self.executor.execute(
+            preparedSchedule: preparedSchedule
+        )
 
         _ = try await updateStateTask.value
 
@@ -552,7 +562,8 @@ fileprivate extension AutomationSchedule {
                 schedule: self,
                 scheduleState: .idle,
                 scheduleStateChangeDate: date,
-                executionCount: 0
+                executionCount: 0,
+                triggerSessionID: UUID().uuidString
             )
         }
 

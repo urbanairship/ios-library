@@ -50,13 +50,13 @@ public class MessageCenterController: NSObject, ObservableObject {
         super.init()
         Publishers
             .CombineLatest($visibleMessageID, $isMessageCenterVisible)
-            .sink {(visibleMessageID, isMessageCenterVisible) in
+            .sink {[updateSubject] (visibleMessageID, isMessageCenterVisible) in
                 if  let messageID = visibleMessageID {
-                    self.updateSubject.send(.visible(messageID: messageID))
+                    updateSubject.send(.visible(messageID: messageID))
                 } else if isMessageCenterVisible {
-                    self.updateSubject.send(.visible(messageID: nil))
+                    updateSubject.send(.visible(messageID: nil))
                 } else {
-                    self.updateSubject.send(.notVisible)
+                    updateSubject.send(.notVisible)
                 }
             }
             .store(in: &subscriptions)

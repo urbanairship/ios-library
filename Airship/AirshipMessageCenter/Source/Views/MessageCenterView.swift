@@ -15,7 +15,8 @@ public struct MessageCenterView: View {
     @ObservedObject
     private var controller: MessageCenterController
 
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     @Environment(\.messageCenterDismissAction)
     private var dismissAction: (() -> Void)?

@@ -24,17 +24,17 @@ class FormState: ObservableObject {
             guard let newParent = self.parentFormState else { return }
             
             parentFormState?.$isFormInputEnabled.sink { [weak self] parentEnabled in
-                guard let strongSelf = self else { return }
-                strongSelf.isFormInputEnabled = strongSelf.isEnabled && parentEnabled
+                guard let self else { return }
+                self.isFormInputEnabled = self.isEnabled && parentEnabled
             }.store(in: &subscriptions)
             
-            self.$data.sink { incoming in
-                newParent.updateFormInput(incoming)
+            self.$data.sink { [weak newParent] incoming in
+                newParent?.updateFormInput(incoming)
             }.store(in: &subscriptions)
 
-            self.$isVisible.sink { incoming in
+            self.$isVisible.sink { [weak newParent] incoming in
                 if incoming {
-                    newParent.markVisible()
+                    newParent?.markVisible()
                 }
             }.store(in: &subscriptions)
             

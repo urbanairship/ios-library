@@ -26,7 +26,7 @@ xcrun xcodebuild \
 -project "${ROOT_PATH}/TestApps/$PROJECT.xcodeproj" \
 -scheme $TARGET \
 -sdk $TARGET_SDK \
--derivedDataPath "$DERIVED_DATA"
+-derivedDataPath "$DERIVED_DATA" | xcbeautify --renderer $XCBEAUTIY_RENDERER
 
 # Clean up
 rm -rf "${ROOT_PATH}/TestApps/$PROJECT.xcodeproj"

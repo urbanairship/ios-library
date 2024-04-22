@@ -146,27 +146,3 @@ final class AutomationEngineTest: XCTestCase {
         XCTAssertNil(schedule)
     }
 }
-
-fileprivate final class TestAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol, @unchecked Sendable {
-      
-    @MainActor
-    var onMake: ((String, String?, String?, InAppMessage, AirshipJSON?, AirshipJSON?) -> InAppMessageAnalyticsProtocol)?
-
-
-    @MainActor
-    func setOnMake(onMake: @escaping @Sendable (String, String?, String?, InAppMessage, AirshipJSON?, AirshipJSON?) -> InAppMessageAnalyticsProtocol) {
-        self.onMake = onMake
-    }
-    @MainActor
-    func makeAnalytics(
-        scheduleID: String,
-        productID: String?,
-        contactID: String?,
-        message: InAppMessage,
-        campaigns: AirshipJSON?,
-        reportingContext: AirshipJSON?,
-        experimentResult: ExperimentResult?
-    ) -> InAppMessageAnalyticsProtocol {
-        return self.onMake!(scheduleID, productID, contactID, message, campaigns, reportingContext)
-    }
-}

@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build-sdk:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     steps:
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v1
@@ -27,7 +27,7 @@ jobs:
         run: make build-xcframeworks
 
   build-docs:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Build Docs

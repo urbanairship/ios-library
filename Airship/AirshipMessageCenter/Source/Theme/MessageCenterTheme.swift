@@ -15,7 +15,7 @@ public enum SeparatorStyle {
 
 /// Model object representing a custom theme to be applied to the default message center.
 ///
-/// To customise the message center theme:
+/// To customize the message center theme:
 ///
 ///     MessageCenterView(
 ///         controller: messageCenterController

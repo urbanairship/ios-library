@@ -39,7 +39,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc
     public let logLevel: AirshipLogLevel
 
-    /// The current default Airship log level.
+    /// The request session used to perform authenticated interactions with the API
     public let requestSession: AirshipRequestSession
 
     /// The production status of this application.
@@ -152,12 +152,25 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// Defaults to FeaturesAll.
     public let enabledFeatures: AirshipFeature
 
+    /// Allows resetting enabled features to match the runtime config defaults on each takeOff
+    ///
+    /// Defaults to `false`.
+    public let resetEnabledFeatures: Bool
+
     /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
     ///
     /// Defaults to `false`.
     @objc
-    public var useUserPreferredLocale = false
-    
+    public var useUserPreferredLocale: Bool
+
+    /// If set to `true`, Message Center will attempt to be restored between reinstalls. If `false`,
+    /// the Message Center user will be reset and the Channel will not be able to use the user
+    /// as an identity hint to recover the past Channel ID.
+    ///
+    /// Defaults to `true`.
+    @objc
+    public var restoreMessageCenterOnReinstall: Bool
+
     private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache
     private let notificationCenter: NotificationCenter
@@ -300,6 +313,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.messageCenterStyleConfig = config.messageCenterStyleConfig
         self.itunesID = config.itunesID
         self.enabledFeatures = config.enabledFeatures
+        self.resetEnabledFeatures = config.resetEnabledFeatures
         self.site = config.site
         self.autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
         self.defaultAnalyticsURL = config.analyticsURL?.normalizeURLString()
@@ -310,6 +324,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
             self.defaultRemoteDataAPIURL = config.remoteDataAPIURL?.normalizeURLString()
         }
         self.useUserPreferredLocale = config.useUserPreferredLocale
+        self.restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
         super.init()

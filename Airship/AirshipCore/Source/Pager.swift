@@ -118,7 +118,8 @@ struct Pager: View {
                 .clipped()
                 .onAppear {
                     size = metrics.size
-                }.airshipOnChangeOf(metrics.size) { newSize in
+                }
+                .airshipOnChangeOf(metrics.size) { newSize in
                     size = newSize
                 }
             }

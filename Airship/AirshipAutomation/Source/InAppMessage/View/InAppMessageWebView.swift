@@ -12,7 +12,7 @@ struct InAppMessageWebView: View {
 
     @State var isWebViewLoading: Bool = false
 
-  let accessibilityLabel: String?
+    let accessibilityLabel: String?
 
     @EnvironmentObject var environment: InAppMessageEnvironment
 
@@ -23,10 +23,15 @@ struct InAppMessageWebView: View {
                 url: self.displayContent.url,
                 nativeBridgeExtension: self.environment.nativeBridgeExtension,
                 isWebViewLoading: self.$isWebViewLoading,
-                accessibilityLabel: accessibilityLabel
-            ) {
-                environment.onUserDismissed()
-            }.zIndex(0)
+                accessibilityLabel: accessibilityLabel,
+                onRunActions: { name, value, _ in
+                    return await environment.runAction(name, arguments: value)
+                },
+                onDismiss: {
+                    environment.onUserDismissed()
+                }
+            )
+            .zIndex(0)
 
             if self.isWebViewLoading {
                 BeveledLoadingView()
@@ -45,7 +50,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
     @Binding var isWebViewLoading: Bool
 
     let accessibilityLabel: String?
-
+    let onRunActions: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
     let onDismiss: () -> Void
 
     func makeUIView(context: Context) -> WKWebView {
@@ -68,7 +73,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self)
+        Coordinator(self, actionRunner: BlockNativeBridgeActionRunner(onRun: onRunActions))
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
@@ -89,9 +94,9 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         private let parent: WKWebViewRepresentable
         let nativeBridge: NativeBridge
 
-        init(_ parent: WKWebViewRepresentable) {
+        init(_ parent: WKWebViewRepresentable, actionRunner: NativeBridgeActionRunner) {
             self.parent = parent
-            self.nativeBridge = NativeBridge()
+            self.nativeBridge = NativeBridge(actionRunner: actionRunner)
             super.init()
             self.nativeBridge.nativeBridgeExtensionDelegate =
             self.parent.nativeBridgeExtension

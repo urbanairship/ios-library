@@ -35,6 +35,28 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         return self.channelRegistrar.channelID
     }
 
+    public var identifierUpdates: AsyncStream<String> {
+        let publisher = self.channelRegistrar.updatesPublisher
+        return AsyncStream { [weak self] continuation in
+            let cancellable = publisher
+                .compactMap { update -> String in
+                    return switch update {
+                    case .created(let channelID, _): channelID
+                    case .updated(channelID: let channelID): channelID
+                    }
+                }
+                .prepend(self?.identifier)
+                .compactMap { $0 }
+                .removeDuplicates()
+                .sink { update in
+                    continuation.yield(update)
+                }
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
+    }
+
     /// The channel tags.
     public var tags: [String] {
         get {
@@ -122,9 +144,9 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
                 self?.processChannelUpdate(update)
             }
 
-        self.channelRegistrar.addChannelRegistrationExtender(
-            extender: self.extendPayload
-        )
+        self.channelRegistrar.addChannelRegistrationExtender { [weak self] payload in
+            return await self?.extendPayload(payload: payload) ?? payload
+        }
 
         self.audienceManager.channelID = self.channelRegistrar.channelID
         self.audienceManager.enabled = true

@@ -15,14 +15,14 @@ public enum AirshipMeteredUsageType: String, Codable, Sendable {
  * :nodoc:
  */
 public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
-    let eventID: String
-    let entityID: String?
-    let usageType: AirshipMeteredUsageType
-    let product: String
-    let reportingContext: AirshipJSON?
-    let timestamp: Date?
-    let contactId: String?
-    
+    var eventID: String
+    var entityID: String?
+    var usageType: AirshipMeteredUsageType
+    var product: String
+    var reportingContext: AirshipJSON?
+    var timestamp: Date?
+    var contactID: String?
+
     public init(
         eventID: String,
         entityID: String?,
@@ -30,7 +30,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
         product: String,
         reportingContext: AirshipJSON?,
         timestamp: Date?,
-        contactId: String?
+        contactID: String?
     ) {
         self.eventID = eventID
         self.entityID = entityID
@@ -38,7 +38,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
         self.product = product
         self.reportingContext = reportingContext
         self.timestamp = timestamp
-        self.contactId = contactId
+        self.contactID = contactID
     }
 
     enum CodingKeys: String, CodingKey {
@@ -48,7 +48,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
         case reportingContext = "reporting_context"
         case timestamp = "occurred"
         case entityID = "entity_id"
-        case contactId = "contact_id"
+        case contactID = "contact_id"
     }
     
     func withDisabledAnalytics() -> AirshipMeteredUsageEvent {
@@ -59,7 +59,7 @@ public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
             product: product,
             reportingContext: nil,
             timestamp: nil,
-            contactId: nil
+            contactID: nil
         )
     }
 }

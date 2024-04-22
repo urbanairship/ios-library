@@ -8,14 +8,14 @@ extension EmbeddedViewMaker {
 
     func makeEmbeddedView<Content: View>(
         id: String, 
-        maxWidth: CGFloat? = nil,
-        maxHeight: CGFloat? = nil,
+        parentWidth: CGFloat? = nil,
+        parentHeight: CGFloat? = nil,
         isShowingPlaceholder: Bool,
         @ViewBuilder placeholder: @escaping () -> Content
     ) -> some View {
         AirshipEmbeddedView(
-            id: isShowingPlaceholder ? "nonexistent view id" : id,
-            embeddedSize: AirshipEmbeddedSize(maxWidth: maxWidth, maxHeight: maxHeight),
+            embeddedID: isShowingPlaceholder ? "nonexistent view id" : id,
+            embeddedSize: AirshipEmbeddedSize(parentWidth: parentWidth, parentHeight: parentHeight),
             placeholder:placeholder
         )
     }
@@ -48,7 +48,7 @@ struct EmbeddedUnboundedHorizontalScrollView: View, EmbeddedViewMaker {
 
                 makeEmbeddedView(
                     id: model.selectedEmbeddedID,
-                    maxWidth: $size.wrappedValue?.width,
+                    parentWidth: $size.wrappedValue?.width,
                     isShowingPlaceholder: model.isShowingPlaceholder
                 ) {
                     Text("Placeholder")
@@ -100,8 +100,8 @@ struct EmbeddedUnboundedVerticalScrollView: View, EmbeddedViewMaker {
                 exampleItem
                 makeEmbeddedView(
                     id: model.selectedEmbeddedID,
-                    maxWidth: size?.width,
-                    maxHeight: size?.height,
+                    parentWidth: size?.width,
+                    parentHeight: size?.height,
                     isShowingPlaceholder: model.isShowingPlaceholder
                 ) {
                     Text("Placeholder")
@@ -153,8 +153,8 @@ struct EmbeddedHorizontalScrollView: View, EmbeddedViewMaker {
                 exampleItem
                 makeEmbeddedView(
                     id: model.selectedEmbeddedID,
-                    maxWidth: size?.width,
-                    maxHeight: size?.height,
+                    parentWidth: size?.width,
+                    parentHeight: size?.height,
                     isShowingPlaceholder: model.isShowingPlaceholder
                 ) {
                     Text("Placeholder")

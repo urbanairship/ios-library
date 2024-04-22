@@ -33,7 +33,7 @@ public protocol AirshipRequestSession: Sendable {
     func performHTTPRequest<T>(
         _ request: AirshipRequest,
         autoCancel: Bool,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T>
 
     /// Performs an HTTP request
@@ -43,7 +43,7 @@ public protocol AirshipRequestSession: Sendable {
     /// - Returns: An AirshipHTTPResponse.
     func performHTTPRequest<T>(
         _ request: AirshipRequest,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T>
 }
 
@@ -123,7 +123,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
 
     func performHTTPRequest<T>(
         _ request: AirshipRequest,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T> {
         return try await self.performHTTPRequest(
             request,
@@ -135,7 +135,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     func performHTTPRequest<T>(
         _ request: AirshipRequest,
         autoCancel: Bool = false,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> AirshipHTTPResponse<T> {
         let result = try await self.doPerformHTTPRequest(
             request,
@@ -157,7 +157,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     private func doPerformHTTPRequest<T>(
         _ request: AirshipRequest,
         autoCancel: Bool = false,
-        responseParser: ((Data?, HTTPURLResponse) throws -> T?)?
+        responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> (shouldRetry: Bool, response: AirshipHTTPResponse<T>) {
         let cancellable = CancellableValueHolder<AirshipCancellable>() { cancellable in
             cancellable.cancel()
@@ -469,6 +469,7 @@ extension URLSession: URLRequestSessionProtocol {
     )
         -> AirshipCancellable
     {
+
         let task = self.dataTask(
             with: request,
             completionHandler: completionHandler

@@ -252,7 +252,7 @@ class ChannelRegistrarTest: XCTestCase {
         }
 
         let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.sink { update in
+        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
             guard case let .updated(channelID) = update else {
                 XCTFail("Unexpected update")
                 return
@@ -401,7 +401,7 @@ class ChannelRegistrarTest: XCTestCase {
         }
 
         let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.sink { update in
+        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
             guard case let .updated(channelID) = update else {
                 XCTFail("Unexpected update")
                 return
@@ -451,7 +451,7 @@ class ChannelRegistrarTest: XCTestCase {
         }
 
         let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.sink { update in
+        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
             guard case let .updated(channelID) = update else {
                 XCTFail("Unexpected update")
                 return
@@ -503,7 +503,7 @@ class ChannelRegistrarTest: XCTestCase {
         }
 
         let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.sink { update in
+        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
             guard case let .updated(channelID) = update else {
                 XCTFail("Unexpected update")
                 return

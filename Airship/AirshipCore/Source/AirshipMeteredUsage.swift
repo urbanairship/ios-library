@@ -21,6 +21,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
 
     private let dataStore: PreferenceDataStore
     private let channel: AirshipChannelProtocol
+    private let contact: InternalAirshipContactProtocol
     private let client: MeteredUsageAPIClientProtocol
     private let workManager: AirshipWorkManagerProtocol
     private let store: MeteredUsageStore
@@ -31,12 +32,14 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: AirshipChannelProtocol,
+        contact: InternalAirshipContactProtocol,
         privacyManager: AirshipPrivacyManager
     ) {
         self.init(
             config: config,
             dataStore: dataStore,
             channel: channel,
+            contact: contact,
             privacyManager: privacyManager,
             client: MeteredUsageAPIClient(config: config),
             store: MeteredUsageStore(appKey: config.appKey)
@@ -48,6 +51,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         channel: AirshipChannelProtocol,
+        contact: InternalAirshipContactProtocol,
         privacyManager: AirshipPrivacyManager,
         client: MeteredUsageAPIClientProtocol,
         store: MeteredUsageStore,
@@ -57,6 +61,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         self.config = config
         self.dataStore = dataStore
         self.channel = channel
+        self.contact = contact
         self.privacyManager = privacyManager
         self.client = client
         self.store = store
@@ -66,7 +71,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
             AirshipMeteredUsage.workID,
             type: .serial
         ) { [weak self] _ in
-            guard let self = self else {
+            guard let self else {
                 return .success
             }
             return try await self.performWork()
@@ -132,7 +137,14 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     public func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
         guard self.isEnabled else { return }
 
-        let eventToStore = privacyManager.isEnabled(.analytics) ? event : event.withDisabledAnalytics()
+        var eventToStore = event
+        if (privacyManager.isEnabled(.analytics)) {
+            if eventToStore.contactID == nil {
+                eventToStore.contactID = await contact.contactID
+            }
+        } else {
+            eventToStore = event.withDisabledAnalytics()
+        }
         try await self.store.saveEvent(eventToStore)
         scheduleWork()
     }

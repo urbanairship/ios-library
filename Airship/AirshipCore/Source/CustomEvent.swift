@@ -11,7 +11,7 @@ public class CustomEvent: NSObject {
     private static let interactionMCRAP = "ua_mcrap"
 
     /**
-     * The max number of properties.
+     * The max properties size in bytes.
      */
     @objc
     public static let maxPropertiesSize = 65536
@@ -29,6 +29,8 @@ public class CustomEvent: NSObject {
     public static let eventInteractionIDKey = "interaction_id"
     @objc
     public static let eventInteractionTypeKey = "interaction_type"
+
+    static let eventInAppKey = "in_app"
 
     // Private data keys
     static let eventConversionMetadataKey = "conversion_metadata"
@@ -59,6 +61,17 @@ public class CustomEvent: NSObject {
 
     private var _eventValue: NSDecimalNumber?
 
+    public static let defaultEncoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }()
+
+
+    /// The in-app message context for custom event attribution
+    /// NOTE: For internal use only. :nodoc:
+    var inApp: AirshipJSON?
+    
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
@@ -209,89 +222,24 @@ public class CustomEvent: NSObject {
      */
     @objc(eventWithName:value:)
     public class func event(name: String, value: NSNumber?) -> CustomEvent {
-        if value == nil {
+        guard let value else {
             return CustomEvent(name: name)
-        } else if let decimal = value as? NSDecimalNumber {
+        }
+
+         if let decimal = value as? NSDecimalNumber {
             return CustomEvent(name: name, value: decimal)
         } else {
-            let converted = NSDecimalNumber.init(decimal: value!.decimalValue)
+            let converted = NSDecimalNumber(decimal: value.decimalValue)
             return CustomEvent(name: name, value: converted)
         }
     }
 
     @objc
     public func isValid() -> Bool {
-        var isValid = true
-        isValid =
-            self.isValid(
-                string: self.eventName,
-                name: "eventName",
-                required: true
-            )
-            && isValid
-        isValid =
-            self.isValid(
-                string: self.interactionType,
-                name: "interactionType",
-                required: false
-            ) && isValid
-        isValid =
-            self.isValid(
-                string: self.interactionID,
-                name: "interactionID",
-                required: false
-            ) && isValid
-        isValid =
-            self.isValid(
-                string: self.transactionID,
-                name: "transactionID",
-                required: false
-            ) && isValid
-        isValid =
-            self.isValid(
-                string: self.templateType,
-                name: "templateType",
-                required: false
-            ) && isValid
-
-        if let eventValue = self._eventValue {
-            if eventValue == NSDecimalNumber.notANumber {
-                AirshipLogger.error("Event value is not a number.")
-                isValid = false
-            } else if eventValue.compare(NSNumber(value: Int32.max)).rawValue
-                > 0
-            {
-                AirshipLogger.error(
-                    "Event value \(eventValue) is larger than 2^31-1."
-                )
-                isValid = false
-            } else if eventValue.compare(NSNumber(value: Int32.min)).rawValue
-                < 0
-            {
-                AirshipLogger.error(
-                    "Event value \(eventValue) is smaller than -2^31."
-                )
-                isValid = false
-            }
-        }
-
-        do {
-            let propertyData = try JSONSerialization.data(
-                withJSONObject: properties,
-                options: []
-            )
-            if propertyData.count > CustomEvent.maxPropertiesSize {
-                AirshipLogger.error(
-                    "Event properties (%lu bytes) are larger than the maximum size of \(CustomEvent.maxPropertiesSize) bytes."
-                )
-                isValid = false
-            }
-        } catch {
-            AirshipLogger.error("Event properties serialization error \(error)")
-            isValid = false
-        }
-
-        return isValid
+        let areFieldsValid = validateFields()
+        let isValueValid = validateValue()
+        let areProperitiesValid = validateProperties()
+        return areFieldsValid && isValueValid && areProperitiesValid
     }
 
     /**
@@ -312,7 +260,7 @@ public class CustomEvent: NSObject {
         var wrappedProperities: AirshipJSON? = nil
 
         do {
-            wrappedProperities = try AirshipJSON.wrap(properties)
+            wrappedProperities = try AirshipJSON.wrap(properties, encoder: Self.defaultEncoder)
         } catch {
             AirshipLogger.error("Failed to wrap properites \(properties): \(error)")
         }
@@ -326,6 +274,7 @@ public class CustomEvent: NSObject {
             object.set(string: transactionID, key: CustomEvent.eventTransactionIDKey)
             object.set(string: templateType, key: CustomEvent.eventTemplateTypeKey)
             object.set(json: wrappedProperities, key: CustomEvent.eventPropertiesKey)
+            object.set(json: inApp, key: CustomEvent.eventInAppKey)
 
             if formatValue {
                 let number = (self._eventValue ?? 1.0).multiplying(byPowerOf10: 6)
@@ -336,7 +285,6 @@ public class CustomEvent: NSObject {
         }
     }
 
-
     /**
      * Adds the event to analytics.
      */
@@ -345,26 +293,79 @@ public class CustomEvent: NSObject {
         self.analytics.recordCustomEvent(self)
     }
 
-    private func isValid(
-        string: String?,
-        name: String,
-        required: Bool = false
-    ) -> Bool {
-        guard let string = string else {
-            guard required else {
-                return true
+    public override var debugDescription: String {
+        "CustomEvent(data: \(self.eventBody(sendID: nil, metadata: nil, formatValue: false)))"
+    }
+    
+    private func validateValue() -> Bool {
+        if let eventValue = self._eventValue {
+            if eventValue == NSDecimalNumber.notANumber {
+                AirshipLogger.error("Event value is not a number.")
+                return false
             }
-            AirshipLogger.error("Missing required field \(name)")
-            return false
-        }
 
-        guard (!required || string.count > 0) && string.count <= 255 else {
-            AirshipLogger.error(
-                "Field \(name) must be between \(required ? 1 : 0) and 255 characters."
-            )
-            return false
+            if eventValue.compare(NSNumber(value: Int32.max)).rawValue > 0 {
+                AirshipLogger.error(
+                    "Event value \(eventValue) is larger than 2^31-1."
+                )
+                return false
+            }
+
+            if eventValue.compare(NSNumber(value: Int32.min)).rawValue < 0 {
+                AirshipLogger.error(
+                    "Event value \(eventValue) is smaller than -2^31."
+                )
+                return false
+            }
         }
 
         return true
+    }
+
+    private func validateProperties() -> Bool {
+        do {
+            let encodedProperties = try AirshipJSON.wrap(properties, encoder: Self.defaultEncoder).toData()
+            if encodedProperties.count > CustomEvent.maxPropertiesSize {
+                AirshipLogger.error(
+                    "Event properties (%lu bytes) are larger than the maximum size of \(CustomEvent.maxPropertiesSize) bytes."
+                )
+                return false
+            }
+        } catch {
+            AirshipLogger.error("Event properties serialization error \(error)")
+            return false
+        }
+        return true
+    }
+
+    private func validateFields() -> Bool {
+        let fields: [(name: String, value: String?, required: Bool)] =  [
+            (name: "eventName", value: self.eventName, required: true),
+            (name: "interactionType", value: self.interactionType, required: false),
+            (name: "interactionID", value: self.interactionID, required: false),
+            (name: "transactionID", value: self.transactionID, required: false),
+            (name: "templateType", value: self.templateType, required: false),
+            (name: "transactionID", value: self.templateType, required: false)
+        ]
+
+        let mapped = fields.map { field in
+            if field.required, (field.value?.count ?? 0) == 0 {
+                AirshipLogger.error("Missing required field \(field.name)")
+                return false
+            }
+
+            if let value = field.value {
+                if value.count > 255 {
+                    AirshipLogger.error(
+                        "Field \(field.name) must be between 0 and 255 characters."
+                    )
+                    return false
+                }
+            }
+
+            return true
+        }
+
+        return !mapped.contains(false)
     }
 }

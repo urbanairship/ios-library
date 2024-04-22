@@ -9,6 +9,9 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     private let displayCoordinatorManager: TestDisplayCoordinatorManager = TestDisplayCoordinatorManager()
     private let displayAdapterFactory: TestDisplayAdapterFactory = TestDisplayAdapterFactory()
     private let assetManager: TestAssetManager = TestAssetManager()
+    private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
+    private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
+    private let actionRunnerFactory: TestInAppActionRunnerFactory = TestInAppActionRunnerFactory()
 
     private var preparer: InAppMessageAutomationPreparer!
     private let message: InAppMessage = InAppMessage(
@@ -20,18 +23,29 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         scheduleID: UUID().uuidString,
         campaigns: .string("campigns"),
         contactID: UUID().uuidString,
-        experimentResult: nil
+        experimentResult: nil,
+        triggerSessionID: UUID().uuidString
     )
 
     override func setUp() async throws {
+        await analyticsFactory.setOnMake { [analytics] _, _ in
+            return analytics
+        }
         self.preparer = InAppMessageAutomationPreparer(
             assetManager: assetManager,
             displayCoordinatorManager: displayCoordinatorManager,
-            displayAdapterFactory: displayAdapterFactory
+            displayAdapterFactory: displayAdapterFactory,
+            analyticsFactory: analyticsFactory,
+            actionRunnerFactory: actionRunnerFactory
         )
+
+        actionRunnerFactory.onMake = { _, _ in return TestInAppActionRunner() }
     }
 
     func testPrepare() async throws {
+        let runner = TestInAppActionRunner()
+        actionRunnerFactory.onMake = { _, _ in return runner }
+
         let cachedAssets = TestCachedAssets()
         await self.assetManager.setOnCache { [preparedScheduleInfo] identifier, assets in
             XCTAssertEqual(identifier, preparedScheduleInfo.scheduleID)
@@ -46,9 +60,9 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         }
 
         let displayAdapter = TestDisplayAdapter()
-        self.displayAdapterFactory.onMake = { [message] incomingMessage, incomingAssets in
-            XCTAssertEqual(message, incomingMessage)
-            let incomingAssets = incomingAssets as? TestCachedAssets
+        self.displayAdapterFactory.onMake = { [message] args in
+            XCTAssertEqual(message, args.message)
+            let incomingAssets = args.assets as? TestCachedAssets
             XCTAssertTrue(incomingAssets === cachedAssets)
             return displayAdapter
         }
@@ -58,6 +72,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         XCTAssertEqual(self.message, results.message)
         XCTAssertTrue(displayCoordinator === results.displayCoordinator)
         XCTAssertTrue(displayAdapter === (results.displayAdapter as? TestDisplayAdapter))
+        XCTAssertTrue(runner === (results.actionRunner as? TestInAppActionRunner))
     }
 
     func testPrepareFailedAssets() async throws {
@@ -66,7 +81,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             return displayCoordinator
         }
 
-        self.displayAdapterFactory.onMake = { _, _ in
+        self.displayAdapterFactory.onMake = { _ in
             return TestDisplayAdapter()
         }
 
@@ -86,7 +101,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             return displayCoordinator
         }
 
-        self.displayAdapterFactory.onMake = { _, _ in
+        self.displayAdapterFactory.onMake = { _ in
             throw AirshipErrors.error("failed")
         }
 
@@ -119,12 +134,25 @@ fileprivate final class TestDisplayCoordinatorManager: DisplayCoordinatorManager
 }
 
 fileprivate final class TestDisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sendable {
-    func setAdapterFactoryBlock(forType: CustomDisplayAdapterType, factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?) {
+    var onMake: ((DisplayAdapterArgs) throws -> DisplayAdapter)?
+
+    func setAdapterFactoryBlock(forType: CustomDisplayAdapterType, factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?) {
 
     }
-    var onMake: ((InAppMessage, AirshipCachedAssetsProtocol) throws -> DisplayAdapter)?
-    func makeAdapter(message: InAppMessage, assets: AirshipCachedAssetsProtocol) throws -> DisplayAdapter {
-        return try self.onMake!(message, assets)
+    
+    func makeAdapter(args: DisplayAdapterArgs) throws -> any DisplayAdapter {
+        return try self.onMake!(args)
+    }
+}
+
+
+
+final class TestInAppActionRunnerFactory: InAppActionRunnerFactoryProtocol, @unchecked Sendable {
+    var onMake: ((InAppMessage, InAppMessageAnalyticsProtocol) -> InternalInAppActionRunner)?
+
+
+    func makeRunner(message: InAppMessage, analytics: any InAppMessageAnalyticsProtocol) -> any InternalInAppActionRunner {
+        return self.onMake!(message, analytics)
     }
 }
 

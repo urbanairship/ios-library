@@ -334,14 +334,17 @@ class PushTest: XCTestCase {
         )
         XCTAssertEqual(
             "12:30",
-            self.push.quietTime![AirshipPush.quietTimeStartKey] as! String
+            self.push.quietTime?.startString
         )
         XCTAssertEqual(
             "14:58",
-            self.push.quietTime![AirshipPush.quietTimeEndKey] as! String
+            self.push.quietTime?.endString
         )
         XCTAssertTrue(self.channel.updateRegistrationCalled)
+        let expected = try QuietTimeSettings(startHour: 12, startMinute: 30, endHour: 14, endMinute: 58)
+        XCTAssertEqual(expected, self.push.quietTime)
     }
+    
 
     func testSetQuietTimeInvalid() throws {
         XCTAssertNil(self.push.quietTime)

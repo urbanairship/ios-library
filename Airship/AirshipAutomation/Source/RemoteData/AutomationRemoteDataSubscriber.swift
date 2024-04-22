@@ -57,14 +57,14 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         }
 
         let stream = self.updateStream
-        self.processTask = Task.detached {
+        self.processTask = Task { [weak self] in
             for await update in stream {
                 guard !Task.isCancelled else {
                     return
                 }
 
-                await self.processConstraints(update)
-                await self.processAutomations(update)
+                await self?.processConstraints(update)
+                await self?.processAutomations(update)
             }
         }
     }

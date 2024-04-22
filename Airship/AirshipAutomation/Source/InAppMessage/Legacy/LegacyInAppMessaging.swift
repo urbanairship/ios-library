@@ -7,8 +7,8 @@ import AirshipCore
 #endif
 
 public typealias MessageConvertor = @Sendable (LegacyInAppMessage) -> AutomationSchedule?
-public typealias MessageExtender = @Sendable (InAppMessage) -> InAppMessage
-public typealias ScheduleExtender = @Sendable (AutomationSchedule) -> AutomationSchedule
+public typealias MessageExtender = @Sendable (inout InAppMessage) -> Void
+public typealias ScheduleExtender = @Sendable (inout AutomationSchedule) -> Void
 
 /// Legacy in-app messaging protocol 
 public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
@@ -151,24 +151,24 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             actions: message.onClick
         )
         
-        let inAppMessage = InAppMessage(
+        var inAppMessage = InAppMessage(
             name: message.alert,
             displayContent: .banner(displayContent),
             source: .legacyPush,
             extras: message.extra
         )
         
-        let finalMessage = self.messageExtender?(inAppMessage) ?? inAppMessage
-        
+        self.messageExtender?(&inAppMessage)
+
         // In terms of the scheduled message model, displayASAP means using an active session trigger.
         // Otherwise the closest analog to the v1 behavior is the foreground trigger.
         let trigger = self.displayASAPEnabled ?
             AutomationTrigger.activeSession(count: 1) :
             AutomationTrigger.foreground(count: 1)
         
-        let schedule = AutomationSchedule(
+        var schedule = AutomationSchedule(
             identifier: message.identifier,
-            data: .inAppMessage(finalMessage),
+            data: .inAppMessage(inAppMessage),
             triggers: [trigger],
             created: date.now,
             lastUpdated: date.now,
@@ -176,8 +176,8 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             campaigns: message.campaigns,
             messageType: message.messageType
         )
-        
-        return self.scheduleExtender?(schedule) ?? schedule
+        self.scheduleExtender?(&schedule)
+        return schedule
     }
 }
 

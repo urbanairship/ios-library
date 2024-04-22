@@ -29,3 +29,48 @@ public extension View {
         }
     }
 }
+
+#if !os(watchOS)
+/// NOTE: For internal use only. :nodoc:
+public extension UIWindow {
+    static func airshipMakeModalReadyWindow(
+        scene: UIWindowScene
+    ) -> UIWindow {
+        let window: UIWindow = UIWindow(windowScene: scene)
+        window.accessibilityViewIsModal = true
+        window.alpha = 0
+        window.makeKeyAndVisible()
+        window.isUserInteractionEnabled = false
+
+        return window
+    }
+
+    func airshipAnimateIn() {
+        self.makeKeyAndVisible()
+        self.isUserInteractionEnabled = true
+
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.alpha = 1
+            },
+            completion: { _ in
+            }
+        )
+    }
+
+    func airshipAnimateOut() {
+        UIView.animate(
+            withDuration: 0.3,
+            animations: {
+                self.alpha = 0
+            },
+            completion: { _ in
+                self.isHidden = true
+                self.isUserInteractionEnabled = false
+                self.removeFromSuperview()
+            }
+        )
+    }
+}
+#endif

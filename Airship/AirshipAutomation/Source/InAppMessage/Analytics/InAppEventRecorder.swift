@@ -16,13 +16,16 @@ struct InAppEventData {
 
 protocol InAppEventRecorderProtocol: Sendable {
     func recordEvent(inAppEventData: InAppEventData)
+    func recordImpressionEvent(_ event: AirshipMeteredUsageEvent)
 }
 
 struct InAppEventRecorder: InAppEventRecorderProtocol {
     private let airshipAnalytics: InternalAnalyticsProtocol
+    private let meteredUsage: AirshipMeteredUsageProtocol
 
-    init(airshipAnalytics: InternalAnalyticsProtocol) {
+    init(airshipAnalytics: InternalAnalyticsProtocol, meteredUsage: AirshipMeteredUsageProtocol) {
         self.airshipAnalytics = airshipAnalytics
+        self.meteredUsage = meteredUsage
     }
 
     func recordEvent(inAppEventData: InAppEventData) {
@@ -45,6 +48,16 @@ struct InAppEventRecorder: InAppEventRecorderProtocol {
             )
         } catch {
             AirshipLogger.error("Failed to add event \(inAppEventData) error \(error)")
+        }
+    }
+
+    func recordImpressionEvent(_ event: AirshipMeteredUsageEvent) {
+        Task { [meteredUsage] in
+            do {
+                try await meteredUsage.addEvent(event)
+            } catch {
+                AirshipLogger.error("Failed to record impression: \(error)")
+            }
         }
     }
 }

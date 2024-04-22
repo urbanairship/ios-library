@@ -10,7 +10,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-public final class AirshipDebugManager {
+public final class AirshipDebugManager: @unchecked Sendable {
 
     public static var shared: AirshipDebugManager {
         return Airship.requireComponent(ofType: DebugComponent.self).debugManager

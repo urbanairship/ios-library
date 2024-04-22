@@ -455,7 +455,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await MainActor.run { [messaging = self.subject!] in
             messaging.messageExtender = { input in
-                return InAppMessage(name: extendedMessageName, displayContent: input.displayContent)
+                input.name = extendedMessageName
             }
         }
         
@@ -487,12 +487,11 @@ final class LegacyInAppMessagingTest: XCTestCase {
                 "alert": "test alert"
             ]
         ]
-        
-        let extendedScheduleId = "extended schedule id"
+
         
         await MainActor.run { [messaging = self.subject!] in
             messaging.scheduleExtender = { input in
-                return AutomationSchedule(identifier: extendedScheduleId, triggers: input.triggers, data: input.data)
+                input.limit = 10
             }
         }
         
@@ -505,7 +504,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await fulfillment(of: [expection], timeout: 5)
 
         let schedule = try await requireFirstSchedule()
-        XCTAssertEqual(extendedScheduleId, schedule.identifier)
+        XCTAssertEqual(10, schedule.limit)
     }
     
     func testReceiveRemoteIgnoresNonlegacyMessages() async throws {

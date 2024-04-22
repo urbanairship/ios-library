@@ -57,7 +57,6 @@ public final class InAppAutomation: Sendable {
         }
     }
 
-
     /// Paused state of in-app automation.
     @MainActor
     public var isPaused: Bool {
@@ -69,7 +68,6 @@ public final class InAppAutomation: Sendable {
             self.engine.setExecutionPaused(newValue)
         }
     }
-
 
     /// Creates the provided schedules or updates them if they already exist.
     /// - Parameter schedules: The schedules to create or update.

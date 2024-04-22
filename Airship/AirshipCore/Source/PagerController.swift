@@ -6,14 +6,14 @@ import SwiftUI
 struct PagerController: View {
     let model: PagerControllerModel
     let constraints: ViewConstraints
-    @State var pagerState: PagerState
+    @StateObject var pagerState: PagerState
     @Environment(\.layoutState) var layoutState
 
     @MainActor
     init(model: PagerControllerModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
-        self.pagerState = PagerState(identifier: model.identifier)
+        self._pagerState = StateObject(wrappedValue: PagerState(identifier: model.identifier))
     }
 
     var body: some View {

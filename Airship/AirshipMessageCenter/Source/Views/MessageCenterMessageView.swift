@@ -284,6 +284,9 @@ private struct MessageCenterMessageContentView: View {
     @Environment(\.presentationMode)
     private var presentationMode: Binding<PresentationMode>
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @Environment(\.airshipMessageCenterTheme)
     private var theme
     
@@ -395,7 +398,7 @@ private struct MessageCenterMessageContentView: View {
             .animation(.easeInOut(duration: 0.5), value: self.opacity)
 
             if case .loading = self.webViewPhase {
-                ProgressView()
+                ProgressView().appearanceTint()
             } else if case .error(let error) = self.webViewPhase {
                 if let error = error as? MessageCenterMessageError,
                     error == .messageGone
@@ -421,21 +424,44 @@ private struct MessageCenterMessageContentView: View {
         .navigationTitle(
             Text(title ?? self.message?.title ?? "")
         )
+        .navigationBarBackButtonHidden(true) // Hide the default back button
         .toolbar {
-            if theme.hideDeleteButton != true {
-                Button("ua_delete_message".messageCenterlocalizedString) {
-                    Task {
-                        await MessageCenter.shared.inbox.delete(
-                            messageIDs: [self.messageID]
-                        )
-                    }
-                    dismiss()
-                }
+            ToolbarItem(placement: .navigationBarLeading) {
+                backButton
             }
+        }
+        .toolbar {
+            deleteButton
         }
         .navigationBarTitleDisplayMode(.inline)
     }
-    
+
+    @ViewBuilder
+    private var deleteButton: some View {
+        if theme.hideDeleteButton != true {
+            Button("ua_delete_message".messageCenterlocalizedString) {
+                Task {
+                    await MessageCenter.shared.inbox.delete(
+                        messageIDs: [self.messageID]
+                    )
+                }
+                dismiss()
+            }.foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
+        }
+    }
+
+    @ViewBuilder
+    private var backButton: some View {
+        Button(action: {
+            self.dismiss()
+        }) {
+            Image(systemName: "chevron.backward")
+                .scaleEffect(0.68)
+                .font(Font.title.weight(.medium))
+                .foregroundColor(theme.backButtonColor?.adaptiveColor(for: colorScheme, darkVariation: theme.backButtonColorDark))
+        }
+    }
+
     private func dismiss() {
         if let dismissAction = self.dismissAction {
             dismissAction()

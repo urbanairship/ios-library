@@ -16,4 +16,23 @@ public protocol NativeBridgeActionRunner {
     func runAction(actionName: String, arguments: ActionArguments, webView: WKWebView) async -> ActionResult
 }
 
+
+/// Action runner used in the `NativeBridge` that calls through to a block.
+public struct BlockNativeBridgeActionRunner: NativeBridgeActionRunner {
+    private let onRun: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
+
+
+    /// Default initialiizer.
+    ///  - Parameters:
+    ///     - onRun: The action block.
+    public init(onRun: @escaping @MainActor (String, ActionArguments, WKWebView) async -> ActionResult) {
+        self.onRun = onRun
+    }
+
+    @MainActor
+    public func runAction(actionName: String, arguments: ActionArguments, webView: WKWebView) async -> ActionResult {
+        return await self.onRun(actionName, arguments, webView)
+    }
+}
+
 #endif

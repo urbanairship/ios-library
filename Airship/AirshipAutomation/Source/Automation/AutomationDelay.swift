@@ -36,7 +36,7 @@ public struct AutomationDelay: Sendable, Codable, Equatable {
         case seconds
         case screens = "screen"
         case regionID = "region"
-        case appState = "app_State"
+        case appState = "app_state"
         case cancellationTriggers = "cancellation_triggers"
     }
 }

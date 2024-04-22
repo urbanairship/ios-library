@@ -196,4 +196,37 @@ fileprivate class AirshipBackgroundTask {
     }
 }
 
+@available(iOS 16.1, *)
+extension Activity where Attributes : ActivityAttributes {
+
+    /// Calls `checkActivity` on every active activity on the first call and on each `pushToStartTokenUpdates` update.
+    /// - Parameters:
+    ///     - activityBlock: Block that is called with the activity
+    public class func airshipWatchActivities(activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void) {
+        let checkHelper: @Sendable () -> Void = {
+            self.activities.filter { activity in
+                if #available(iOS 16.2, *) {
+                    return activity.activityState == .active || activity.activityState == .stale
+                } else {
+                    return activity.activityState == .active
+                }
+            }.forEach { activity in
+                activityBlock(activity)
+            }
+        }
+
+        Task {
+            checkHelper()
+            if #available(iOS 17.2, *) {
+                for await _ in Activity<Attributes>.pushToStartTokenUpdates {
+                    checkHelper()
+                }
+            }
+        }
+    }
+}
+
+
 #endif
+
+

@@ -83,32 +83,32 @@ public final class UACoreData: @unchecked Sendable {
     ) async throws {
         return try await withCheckedThrowingContinuation { continuation in
             context.perform({ [weak self] in
-                guard let strongSelf = self else {
+                guard let self else {
                     continuation.resume()
                     return
                 }
 
-                guard !strongSelf.isFinished else {
+                guard !self.isFinished else {
                     continuation.resume()
                     return
                 }
 
                 if (skipIfStoreNotCreated) {
-                    guard strongSelf.inMemory || strongSelf.storesExistOnDisk() else {
+                    guard self.inMemory || self.storesExistOnDisk() else {
                         continuation.resume()
                         return
                     }
                 }
 
-                strongSelf.shouldCreateStore = true
-                strongSelf.createPendingStores()
+                self.shouldCreateStore = true
+                self.createPendingStores()
 
-                if (strongSelf.context.persistentStoreCoordinator?
+                if (self.context.persistentStoreCoordinator?
                     .persistentStores
                     .count ?? 0) != 0
                 {
                     do {
-                        try block(strongSelf.context)
+                        try block(self.context)
                         continuation.resume()
                     } catch {
                         continuation.resume(throwing: error)
@@ -131,31 +131,31 @@ public final class UACoreData: @unchecked Sendable {
     ) async throws -> T? {
         return try await withCheckedThrowingContinuation { continuation in
             context.perform { [weak self] in
-                guard let strongSelf = self else {
+                guard let self else {
                     return
                 }
 
-                guard !strongSelf.isFinished else {
+                guard !self.isFinished else {
                     continuation.resume(throwing: AirshipErrors.error("Finished"))
                     return
                 }
 
                 if (skipIfStoreNotCreated) {
-                    guard strongSelf.inMemory || strongSelf.storesExistOnDisk() else {
+                    guard self.inMemory || self.storesExistOnDisk() else {
                         continuation.resume(returning: nil)
                         return
                     }
                 }
 
-                strongSelf.shouldCreateStore = true
-                strongSelf.createPendingStores()
+                self.shouldCreateStore = true
+                self.createPendingStores()
 
-                if (strongSelf.context.persistentStoreCoordinator?
+                if (self.context.persistentStoreCoordinator?
                     .persistentStores
                     .count ?? 0) != 0
                 {
                     do {
-                        continuation.resume(returning: try block(strongSelf.context))
+                        continuation.resume(returning: try block(self.context))
                     } catch {
                         continuation.resume(throwing: error)
                     }
@@ -175,24 +175,24 @@ public final class UACoreData: @unchecked Sendable {
     ) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
             context.perform { [weak self] in
-                guard let strongSelf = self else {
+                guard let self else {
                     return
                 }
 
-                guard !strongSelf.isFinished else {
+                guard !self.isFinished else {
                     continuation.resume(throwing: AirshipErrors.error("Finished"))
                     return
                 }
 
-                strongSelf.shouldCreateStore = true
-                strongSelf.createPendingStores()
+                self.shouldCreateStore = true
+                self.createPendingStores()
 
-                if (strongSelf.context.persistentStoreCoordinator?
+                if (self.context.persistentStoreCoordinator?
                     .persistentStores
                     .count ?? 0) != 0
                 {
                     do {
-                        continuation.resume(returning: try block(strongSelf.context))
+                        continuation.resume(returning: try block(self.context))
                     } catch {
                         continuation.resume(throwing: error)
                     }
@@ -251,12 +251,12 @@ public final class UACoreData: @unchecked Sendable {
     @objc
     func protectedDataAvailable() {
         context.perform({ [weak self] in
-            guard let strongSelf = self else {
+            guard let self else {
                 return
             }
 
-            if strongSelf.shouldCreateStore {
-                strongSelf.createPendingStores()
+            if self.shouldCreateStore {
+                self.createPendingStores()
             }
         })
     }

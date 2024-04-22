@@ -34,14 +34,23 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: dataStore)
         let frequencyLimits = FrequencyLimitManager(config: config)
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
-        let eventRecorder = InAppEventRecorder(airshipAnalytics: airshipAnalytics)
+        let eventRecorder = InAppEventRecorder(airshipAnalytics: airshipAnalytics, meteredUsage: meteredUsage)
         let metrics = ApplicationMetrics(dataStore: dataStore, privacyManager: privacyManager)
+
+        let automationStore = AutomationStore(config: config)
+
+        let analyticsFactory = InAppMessageAnalyticsFactory(
+            eventRecorder: eventRecorder,
+            displayHistoryStore: MessageDisplayHistoryStore(store: automationStore),
+            displayImpressionRuleProvider: DefaultInAppDisplayImpressionRuleProvider()
+        )
 
         /// Preperation
         let actionPreparer = ActionAutomationPreparer()
         let messagePreparer = InAppMessageAutomationPreparer(
             assetManager: assetManager,
-            displayCoordinatorManager: displayCoordinatorManager
+            displayCoordinatorManager: displayCoordinatorManager,
+            analyticsFactory: analyticsFactory
         )
         let automationPreparer = AutomationPreparer(
             actionPreparer: actionPreparer,
@@ -53,12 +62,13 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             config: config
         )
 
+
         // Execution
         let actionExecutor = ActionAutomationExecutor()
         let messageExecutor = InAppMessageAutomationExecutor(
             sceneManager: messageSceneManager,
             assetManager: assetManager,
-            analyticsFactory: InAppMessageAnalyticsFactory(eventRecorder: eventRecorder, meteredUsage: meteredUsage),
+            analyticsFactory: analyticsFactory,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
         )
         
@@ -76,7 +86,6 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         feed.attach()
 
         // Engine
-        let automationStore = AutomationStore(config: config)
         let engine = AutomationEngine(
             store: automationStore,
             executor: automationExecutor,

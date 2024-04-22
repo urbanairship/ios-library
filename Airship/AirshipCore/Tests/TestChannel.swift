@@ -5,6 +5,10 @@ import ActivityKit
 import Combine
 
 class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecked Sendable {
+    var identifierUpdates: AsyncStream<String> {
+        return AsyncStream { _ in }
+    }
+
     private let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
 
     public var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []

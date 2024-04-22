@@ -50,6 +50,11 @@ public class AirshipConfig: NSObject, NSCopying {
     /// Defaults to `all`.
     public var enabledFeatures: AirshipFeature = .all
 
+    /// Allows resetting enabled features to match the runtime config defaults on each takeOff
+    /// Defaults to `false`
+    @objc
+    public var resetEnabledFeatures: Bool = false
+
     /// :nodoc:
     @objc(enabledFeatures)
     public var _objc_enabledFeatures: _UAFeatures {
@@ -296,7 +301,15 @@ public class AirshipConfig: NSObject, NSCopying {
     /// Defaults to `false`.
     @objc
     public var useUserPreferredLocale = false
-    
+
+    /// If set to `true`, Message Center will attempt to be restored between reinstalls. If `false`,
+    /// the Message Center user will be reset and the Channel will not be able to use the user
+    /// as an identity hint to recover the past Channel ID.
+    ///
+    /// Defaults to `true`.
+    @objc
+    public var restoreMessageCenterOnReinstall = true
+
     /// Returns the resolved app key.
     /// - Returns: The resolved app key or an empty string.
     @objc
@@ -413,6 +426,7 @@ public class AirshipConfig: NSObject, NSCopying {
         developmentLogLevel = config.developmentLogLevel
         productionLogLevel = config.productionLogLevel
         enabledFeatures = config.enabledFeatures
+        resetEnabledFeatures = config.resetEnabledFeatures
         requestAuthorizationToUseNotifications =
             config.requestAuthorizationToUseNotifications
         requireInitialRemoteConfigEnabled =
@@ -438,6 +452,7 @@ public class AirshipConfig: NSObject, NSCopying {
         _inProduction = config._inProduction
         autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
         useUserPreferredLocale = config.useUserPreferredLocale
+        restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -480,8 +495,10 @@ public class AirshipConfig: NSObject, NSCopying {
                 Default Message Center Style Config File: %@\n\
                 Use iTunes ID: %@\n\
                 Site:  %ld\n\
-                Enabled features  %ld\n
-                Use user preferred locale: %d\n
+                Enabled features:  %ld\n\
+                Reset enabled features:  %ld\n\
+                Use user preferred locale: %d\n\
+                Restore Message Center on reinstall: %d\n
                 """,
             inProduction,
             inProduction,
@@ -517,7 +534,9 @@ public class AirshipConfig: NSObject, NSCopying {
             itunesID ?? "",
             site.rawValue,
             enabledFeatures.rawValue,
-            useUserPreferredLocale
+            resetEnabledFeatures ? "YES" : "NO",
+            useUserPreferredLocale,
+            restoreMessageCenterOnReinstall ? "YES" : "NO"
         )
     }
     

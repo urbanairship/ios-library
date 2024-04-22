@@ -85,6 +85,12 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
     var user: MessageCenterUser? { get async }
     /// The number of messages that are currently unread.
     var unreadCount: Int { get async }
+
+    /// Refreshes the list of messages in the inbox.
+    /// - Returns: `true` if the messages was refreshed, otherwise `false`.
+    @discardableResult
+    func refreshMessages(timeout: TimeInterval) async throws -> Bool
+
 }
 
 /// Airship Message Center inbox.
@@ -96,18 +102,16 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         case refreshFailed
     }
 
-    private let updateSubject = PassthroughSubject<UpdateType, Never>()
-
     private let updateWorkID = "Airship.MessageCenterInbox#update"
 
     private let store: MessageCenterStore
     private let channel: InternalAirshipChannelProtocol
-    private let client: MessageCenterAPIClient
+    private let client: MessageCenterAPIClientProtocol
     private let config: RuntimeConfig
     private let notificationCenter: NotificationCenter
     private let date: AirshipDateProtocol
     private let workManager: AirshipWorkManagerProtocol
-    
+    private let startUpTask: Task<Void, Never>?
     private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
     var enabled: Bool {
         get {
@@ -138,26 +142,46 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     }
 
     public var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> {
-        return self.updateSubject
-            .filter { update in
-                update != .refreshFailed
+        let messagesSubject = CurrentValueSubject<[MessageCenterMessage]?, Never>(nil)
+
+        Task { [weak messagesSubject, weak self] in
+            guard let stream = await self?.updateChannel.makeStream(bufferPolicy: .bufferingNewest(1)) else {
+                return
             }
-            .flatMap { _ in
-                self.messagesFuture
+
+            messagesSubject?.send(await self?.messages)
+
+            for await update in stream {
+                guard let self, let messagesSubject else { return }
+                if (update != .refreshFailed) {
+                    messagesSubject.send(await self.messages)
+                }
             }
-            .prepend(self.messagesFuture.eraseToAnyPublisher())
-            .eraseToAnyPublisher()
+        }
+
+        return messagesSubject.compactMap { $0 }.eraseToAnyPublisher()
     }
 
     public var unreadCountPublisher: AnyPublisher<Int, Never> {
-        return self.updateSubject
-            .filter { update in
-                update != .refreshFailed
+        let unreadCountSubject = CurrentValueSubject<Int?, Never>(nil)
+
+        Task { [weak unreadCountSubject, weak self] in
+            guard let stream = await self?.updateChannel.makeStream(bufferPolicy: .bufferingNewest(1)) else {
+                return
             }
-            .flatMap { _ in
-                self.unreadCountFuture
+
+            unreadCountSubject?.send(await self?.unreadCount)
+
+            for await update in stream {
+                guard let self, let unreadCountSubject else { return }
+                if (update != .refreshFailed) {
+                    unreadCountSubject.send(await self.unreadCount)
+                }
             }
-            .prepend(self.unreadCountFuture.eraseToAnyPublisher())
+        }
+
+        return unreadCountSubject
+            .compactMap { $0 }
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
@@ -180,11 +204,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
     }
     
-    private let subscriptions: AirshipUnsafeSendableWrapper<Set<AnyCancellable>> = AirshipUnsafeSendableWrapper(Set())
-
     init(
         channel: InternalAirshipChannelProtocol,
-        client: MessageCenterAPIClient,
+        client: MessageCenterAPIClientProtocol,
         config: RuntimeConfig,
         store: MessageCenterStore,
         notificationCenter: NotificationCenter = NotificationCenter.default,
@@ -198,6 +220,14 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         self.notificationCenter = notificationCenter
         self.date = date
         self.workManager = workManager
+
+        self.startUpTask = if channel.identifier == nil, !config.restoreMessageCenterOnReinstall {
+            Task { [weak store] in
+                await store?.resetUser()
+            }
+        } else {
+            nil
+        }
 
         super.init()
 
@@ -229,24 +259,24 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             object: nil,
             queue: nil
         ) { [weak self] _ in
-            self?
-                .dispatchUpdateWorkRequest(
-                    conflictPolicy: .replace
-                )
+            self?.dispatchUpdateWorkRequest(
+                conflictPolicy: .replace
+            )
         }
 
-        self.updateSubject
-            .filter { update in update != .refreshFailed }
-            .receive(on: RunLoop.main)
-            .sink { _ in
+        Task { @MainActor [weak self] in
+            guard let stream = await self?.updateChannel.makeStream() else { return }
+            for await update in stream {
+                guard update != .refreshFailed else { continue }
                 notificationCenter.post(
                     name: AirshipNotifications.MessageCenterListUpdated.name,
                     object: nil
                 )
             }
-            .store(in: &self.subscriptions.value)
+        }
 
         self.channel.addRegistrationExtender { [weak self] payload in
+            await self?.startUpTask?.value
             guard self?.enabled == true,
                   let user = await self?.store.user
             else {
@@ -265,6 +295,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 
             return payload
         }
+
+
+
     }
 
     convenience init(
@@ -288,6 +321,10 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         )
     }
 
+    private func sendUpdate(_ update: UpdateType) async {
+        await self.updateChannel.send(update)
+    }
+
     public func _getMessages() async -> [MessageCenterMessage] {
         guard self.enabled else {
             AirshipLogger.error("Message center is disabled")
@@ -302,6 +339,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             return nil
         }
 
+        await self.startUpTask?.value
         return await self.store.user
     }
 
@@ -314,6 +352,8 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         return await self.store.unreadCount
     }
 
+    private let updateChannel: AirshipAsyncChannel<UpdateType> = AirshipAsyncChannel()
+
     @objc
     @discardableResult
     public func refreshMessages() async -> Bool {
@@ -322,24 +362,42 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             return false
         }
 
-        var cancellable: AnyCancellable?
-        let result = await withCheckedContinuation { continuation in
-            cancellable = self.updateSubject
-                .filter { update in
-                    update == .refreshFailed || update == .refreshSucess
-                }
-                .first()
-                .sink { result in
-                    let success = result == .refreshSucess
-                    continuation.resume(returning: success)
-                }
+        let stream = await updateChannel.makeStream()
 
-            self.dispatchUpdateWorkRequest(
-                conflictPolicy: .replace
-            )
+        dispatchUpdateWorkRequest(
+            conflictPolicy: .replace,
+            requireNetwork: false
+        )
+
+        for await update in stream {
+            guard !Task.isCancelled else { break }
+            guard update == .refreshSucess || update == .refreshFailed else {
+                continue
+            }
+            return update == .refreshSucess
         }
-        cancellable?.cancel()
-        return result
+        return false
+    }
+
+    func refreshMessages(timeout: TimeInterval) async throws -> Bool {
+        return try await withThrowingTaskGroup(of: Bool.self) { [weak self] group in
+
+            group.addTask { [weak self] in
+                return await self?.refreshMessages() ?? false
+            }
+
+            group.addTask {
+                try await _Concurrency.Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                throw AirshipErrors.error("Timed out")
+            }
+
+            guard let success = try await group.next() else {
+                group.cancelAll()
+                throw CancellationError()
+            }
+            group.cancelAll()
+            return success
+        }
     }
 
     @objc
@@ -354,7 +412,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         do {
             try await self.store.markRead(messageIDs: messageIDs, level: .local)
             self.dispatchUpdateWorkRequest()
-            self.updateSubject.send(.local)
+            await self.sendUpdate(.local)
         } catch {
             AirshipLogger.error("Failed to mark messages read: \(error)")
         }
@@ -372,7 +430,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         do {
             try await self.store.markDeleted(messageIDs: messageIDs)
             self.dispatchUpdateWorkRequest()
-            self.updateSubject.send(.local)
+            await self.sendUpdate(.local)
         } catch {
             AirshipLogger.error("Failed to delete messages: \(error)")
         }
@@ -417,6 +475,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
                 guard let user = response.result else {
                     return nil
                 }
+                await self.store.setUserRequireUpdate(false)
                 await self.store.saveUser(user, channelID: channelID)
                 return user
             } catch {
@@ -433,6 +492,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         guard requireUpdate || channelMismatch else {
             return user
         }
+
         do {
             AirshipLogger.debug("Updating Message Center user")
             let response = try await self.client.updateUser(
@@ -447,7 +507,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             guard response.isSuccess else {
                 return nil
             }
-            await self.store.setUserRequireUpdate(true)
+
+            await self.store.setUserRegisteredChannelID(channelID)
+            await self.store.setUserRequireUpdate(false)
             return user
         } catch {
             AirshipLogger.info("Failed to update Message Center user: \(error)")
@@ -456,14 +518,19 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     }
 
     private func updateInbox() async throws -> AirshipWorkResult {
-        guard let channelID = channel.identifier else { return .success }
+        await self.startUpTask?.value
+
+        guard let channelID = channel.identifier else {
+            await self.sendUpdate(.refreshFailed)
+            return .success
+        }
 
         guard
             let user = await getOrCreateUser(
                 forChannelID: channelID
             )
         else {
-            self.updateSubject.send(.refreshFailed)
+            await self.sendUpdate(.refreshFailed)
             return .failure
         }
 
@@ -483,9 +550,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         )
 
         if syncedList {
-            self.updateSubject.send(.refreshSucess)
+            await self.sendUpdate(.refreshSucess)
         } else {
-            self.updateSubject.send(.refreshFailed)
+            await self.sendUpdate(.refreshFailed)
         }
 
         guard syncedRead && synedDeleted && syncedList else {
@@ -497,12 +564,13 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     // MARK: Enqueue tasks
 
     private func dispatchUpdateWorkRequest(
-        conflictPolicy: AirshipWorkRequestConflictPolicy = .keepIfNotStarted
+        conflictPolicy: AirshipWorkRequestConflictPolicy = .keepIfNotStarted,
+        requireNetwork: Bool = true
     ) {
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
                 workID: self.updateWorkID,
-                requiresNetwork: true,
+                requiresNetwork: requireNetwork,
                 conflictPolicy: conflictPolicy
             )
         )

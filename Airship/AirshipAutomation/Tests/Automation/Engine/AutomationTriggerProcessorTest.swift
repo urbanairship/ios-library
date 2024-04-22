@@ -181,7 +181,8 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
             ),
             scheduleState: .idle,
             scheduleStateChangeDate: self.date.now,
-            executionCount: 0
+            executionCount: 0,
+            triggerSessionID: UUID().uuidString
         )
     }
     

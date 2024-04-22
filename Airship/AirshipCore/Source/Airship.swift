@@ -137,19 +137,19 @@ public class Airship: NSObject {
     }
 
     @objc(contact)
-    static var _contact: AirshipBaseContactProtocol {
+    public static var _contact: AirshipBaseContactProtocol {
         return requireComponent(ofType: AirshipBaseContactProtocol.self)
-    }
-
-    /// Shared Analytics instance.
-    @objc(analytics)
-    static var _analytics: AirshipBaseAnalyticsProtocol {
-        return requireComponent(ofType: AirshipBaseAnalyticsProtocol.self)
     }
 
     /// Shared Analytics instance.
     public static var analytics: AirshipAnalyticsProtocol {
         return requireComponent(ofType: AirshipAnalyticsProtocol.self)
+    }
+
+    /// Shared Analytics instance.
+    @objc(analytics)
+    public static var _analytics: AirshipBaseAnalyticsProtocol {
+        return requireComponent(ofType: AirshipBaseAnalyticsProtocol.self)
     }
 
     /// Shared Channel instance.

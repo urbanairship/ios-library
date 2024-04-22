@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Message Center API client protocol
-protocol MessageCenterAPIClientProtocol {
+protocol MessageCenterAPIClientProtocol: Sendable {
 
     /// Retrieves the full message list from the server.
     /// - Parameters:

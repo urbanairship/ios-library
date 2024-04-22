@@ -79,14 +79,14 @@ actor ContactManager: ContactManagerProtocol {
     }
     
     private var possiblyOrphanedContactID: String? {
-           guard let lastContactInfo = self.lastContactInfo,
-                 lastContactInfo.isAnonymous,
-                 (anonData?.channels.isEmpty ?? true)
-           else {
-               return nil
-           }
+        guard let lastContactInfo = self.lastContactInfo,
+              lastContactInfo.isAnonymous,
+              (anonData?.channels.isEmpty ?? true)
+        else {
+            return nil
+        }
 
-           return lastContactInfo.contactID
+        return lastContactInfo.contactID
     }
 
     init(
@@ -162,7 +162,7 @@ actor ContactManager: ContactManagerProtocol {
         }
 
         self.lastContactInfo = InternalContactInfo(
-            contactID: UUID().uuidString,
+            contactID: UUID().uuidString.lowercased(),
             isAnonymous: true,
             namedUserID: nil,
             channelAssociatedDate: self.date.now,
@@ -237,10 +237,14 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     // Worker -> one at a time
-    private func performNextOperation() async throws -> Bool {
-        guard self.isEnabled else { return true }
+    private func perfromNextOperation() async throws -> Bool {
+        guard self.isEnabled else {
+            AirshipLogger.trace("Contact manager is not enabled, unable to perform operation")
+            return true
+        }
 
         guard !self.operationEntries.isEmpty else {
+            AirshipLogger.trace("Operations are empty")
             return true
         }
 
@@ -263,6 +267,7 @@ actor ContactManager: ContactManagerProtocol {
         yieldContactUpdates()
 
         guard let operationGroup = prepareNextOperationGroup() else {
+            AirshipLogger.trace("Next operation group is nil")
             return true
         }
 
@@ -294,10 +299,13 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func enqueueTask() {
-        guard
-            self.channel.identifier != nil,
-            self.isEnabled
-        else {
+        guard self.isEnabled else {
+            AirshipLogger.trace("Contact manager is not enabled, unable to enqueue task")
+            return
+        }
+
+        guard self.channel.identifier != nil else {
+            AirshipLogger.trace("Channel not created, unable to enqueue task")
             return
         }
 
@@ -330,7 +338,9 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func performOperation(_ operation: ContactOperation) async throws -> Bool {
+        AirshipLogger.trace("Performing operation \(operation.type)")
         guard !self.isSkippable(operation: operation) else {
+            AirshipLogger.trace("Operation skippable, finished operation \(operation.type)")
             return true
         }
 
@@ -417,7 +427,7 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         if let result = response.result, response.isSuccess {
-            await updateContactInfo(result: result, operationType: .resolve)
+            await updateContactInfo(result: result, operationType: .reset)
         }
 
         return response.isOperationComplete
@@ -435,7 +445,7 @@ actor ContactManager: ContactManagerProtocol {
             await updateContactInfo(
                 result: result,
                 namedUserID: identifier,
-                operationType: .resolve
+                operationType: .identify
             )
         }
 
@@ -791,8 +801,12 @@ actor ContactManager: ContactManagerProtocol {
             expiration: expiration
         )
 
+
+        // Doing a lowercased check so if backend normalizes the contact ID we wont lose data.
+        let isNewContactID = lastContactInfo?.contactID.lowercased() != result.contact.contactID.lowercased()
+
         var resolvedNamedUser = namedUserID
-        if resolvedNamedUser == nil, lastContactInfo?.contactID == result.contact.contactID {
+        if !isNewContactID, resolvedNamedUser == nil {
             resolvedNamedUser = lastContactInfo?.namedUserID
         }
 
@@ -805,7 +819,7 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         // Conflict events
-        if newContactInfo.contactID != self.lastContactInfo?.contactID,
+        if isNewContactID,
            self.lastContactInfo?.isAnonymous == true,
            let anonData = self.anonData,
            !anonData.isEmpty
@@ -832,12 +846,14 @@ actor ContactManager: ContactManagerProtocol {
         // If we have a resolve that returns a new contactID then it means
         // it was changed server side. Clear any pending operations that are
         // older than the resolve date.
-        if self.lastContactInfo != nil,
-           lastContactInfo?.contactID != newContactInfo.contactID,
-           operationType == .resolve {
-
+        if self.lastContactInfo != nil, isNewContactID, operationType == .resolve {
             self.operationEntries = self.operationEntries.filter { entry in
-                result.contact.channelAssociatedDate < entry.date
+                if (result.contact.channelAssociatedDate < entry.date) {
+                    return true
+                } else {
+                    AirshipLogger.trace("Dropping operation \(entry.operation.type) due to channel association date")
+                    return false
+                }
             }
         }
 
@@ -889,8 +905,7 @@ actor ContactManager: ContactManagerProtocol {
         channel: BasicAssociatedChannel? = nil
     ) async {
 
-        guard let contactInfo = self.lastContactInfo,
-              contactInfo.contactID == contactID else {
+        guard let contactInfo = self.lastContactInfo, contactInfo.contactID == contactID else {
             return
         }
 

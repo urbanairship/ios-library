@@ -108,6 +108,10 @@ import ActivityKit
 
 /// Airship Channel protocol.
 public protocol AirshipChannelProtocol: AirshipBaseChannelProtocol {
+
+    /// Async stream of channel ID updates.
+    var identifierUpdates: AsyncStream<String> { get }
+
     /// Publishes edits made to the subscription lists through the SDK
     var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
 

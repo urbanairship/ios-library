@@ -13,39 +13,39 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     private var viewModel: EmbeddedViewModel
 
     private let placeholder: () -> PlaceHolder
-    private let id: String
+    private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
 
     /// Creates a new AirshipEmbeddedView.
     ///
     /// - Parameters:
-    ///   - id: The embedded ID.
+    ///   - embeddedID: The embedded ID.
     ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - placeholder: The place holder block.
     public init(
-        id: String,
+        embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
         @ViewBuilder placeholder: @escaping () -> PlaceHolder = { EmptyView()}
     ) {
-        self.id = id
+        self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
         self.placeholder = placeholder
-        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(id: id))
+        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
     }
 
     /// Creates a new AirshipEmbeddedView.
     ///
     /// - Parameters:
-    ///   - id: The embedded ID.
+    ///   - embeddedID: The embedded ID.
     ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     public init(
-        id: String,
+        embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil
     ) where PlaceHolder == EmptyView {
-        self.id = id
+        self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
         self.placeholder = { EmptyView() }
-        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(id: id))
+        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
     }
 
     public var body: some View {
@@ -82,10 +82,10 @@ private class EmbeddedViewModel: ObservableObject {
     private var timer: AnyCancellable?
     private var viewManager: AirshipEmbeddedViewManager
     
-    init(id: String, manager: AirshipEmbeddedViewManager = AirshipEmbeddedViewManager.shared) {
+    init(embeddedID: String, manager: AirshipEmbeddedViewManager = AirshipEmbeddedViewManager.shared) {
         self.viewManager = manager
         cancellable = viewManager
-            .publisher(embeddedViewID: id)
+            .publisher(embeddedViewID: embeddedID)
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: onNewViewReceived)
     }

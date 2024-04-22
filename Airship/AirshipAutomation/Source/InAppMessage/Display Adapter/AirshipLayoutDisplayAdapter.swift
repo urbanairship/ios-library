@@ -11,15 +11,18 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     private let message: InAppMessage
     private let assets: AirshipCachedAssetsProtocol
+    private let actionRunner: InternalInAppActionRunner?
     private let networkChecker: AirshipNetworkCheckerProtocol
 
     init(
         message: InAppMessage,
         assets: AirshipCachedAssetsProtocol,
-        networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
+        actionRunner: InternalInAppActionRunner? = nil,
+        networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
     ) throws {
         self.message = message
         self.assets = assets
+        self.actionRunner = actionRunner
         self.networkChecker = networkChecker
 
         if case .custom(_) = message.displayContent {
@@ -125,6 +128,16 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 #endif
     }
 
+    private func makeInAppExtensions() -> InAppMessageExtensions {
+        InAppMessageExtensions(
+            nativeBridgeExtension: InAppMessageNativeBridgeExtension(
+                message: message
+            ),
+            imageProvider: AssetCacheImageProvider(assets: assets),
+            actionRunner: actionRunner
+        )
+    }
+
     @MainActor
     private func displayBanner(
         _ banner: InAppMessageDisplayContent.Banner,
@@ -141,11 +154,14 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 )
                 return
             }
-            
+
             var viewController: InAppMessageBannerViewController?
+            let holder = AirshipWeakValueHolder<UIViewController>()
             let dismissViewController = {
-                viewController?.view.removeFromSuperview()
-                viewController = nil
+                holder.value?.willMove(toParent: nil)
+                holder.value?.view.removeFromSuperview()
+                holder.value?.removeFromParent()
+                holder.value = nil
             }
             
             let listener = InAppMessageDisplayListener(
@@ -158,23 +174,26 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.banner(BannerTheme()),
-                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let bannerConstraints = InAppMessageBannerConstraints(
                 size: Self.windowSize(window)
             )
 
-            let rootView = InAppMessageBannerView(environment: environment, 
-                                                  displayContent: banner,
-                                                  bannerConstraints: bannerConstraints,
-                                                  onDismiss: dismissViewController)
+            let rootView = InAppMessageBannerView(
+                environment: environment,
+                displayContent: banner,
+                bannerConstraints: bannerConstraints,
+                onDismiss: dismissViewController
+            )
 
             viewController = InAppMessageBannerViewController(
                 rootView: rootView,
                 placement: banner.placement,
                 bannerConstraints: bannerConstraints
             )
+            holder.value = viewController
 
             window.addRootController(viewController)
         }
@@ -187,19 +206,19 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.animateOut()
+                window.airshipAnimateOut()
                 continuation.resume(returning: result)
             }
 
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.modal(ModalTheme()),
-                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
@@ -210,7 +229,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
 
-            window.animateIn()
+            window.airshipAnimateIn()
         }
     }
 
@@ -221,19 +240,19 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.animateOut()
+                window.airshipAnimateOut()
                 continuation.resume(returning: result)
             }
 
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.fullScreen(FullScreenTheme()),
-                extensions: InAppMessageExtensions(imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
@@ -244,7 +263,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
 
-            window.animateIn()
+            window.airshipAnimateIn()
         }
     }
 
@@ -255,21 +274,19 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
-            let window = UIWindow.makeModalReadyWindow(scene: scene)
+            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.animateOut()
+                window.airshipAnimateOut()
                 continuation.resume(returning: result)
             }
 
             let environment = InAppMessageEnvironment(
                 delegate: listener,
                 theme: Theme.html(HTMLTheme()),
-                extensions: InAppMessageExtensions(nativeBridgeExtension: InAppMessageNativeBridgeExtension(
-                    message: message
-                ), imageProvider: AssetCacheImageProvider(assets: assets))
+                extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
@@ -280,7 +297,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
             window.rootViewController = viewController
 
-            window.animateIn()
+            window.airshipAnimateIn()
         }
     }
 
@@ -299,7 +316,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 nativeBridgeExtension: InAppMessageNativeBridgeExtension(
                     message: message
                 ),
-                imageProvider: AssetCacheImageProvider(assets: assets)
+                imageProvider: AssetCacheImageProvider(assets: assets),
+                actionRunner: actionRunner
             )
 
             do {
@@ -337,19 +355,6 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
 }
 
 private extension UIWindow {
-
-    static func makeModalReadyWindow(
-        scene: UIWindowScene
-    ) -> UIWindow {
-        let window: UIWindow = UIWindow(windowScene: scene)
-        window.accessibilityViewIsModal = false
-        window.alpha = 0
-        window.makeKeyAndVisible()
-        window.isUserInteractionEnabled = false
-        
-        return window
-    }
-    
     func addRootController<T: UIViewController>(
         _ viewController: T?
     ) {
@@ -365,33 +370,5 @@ private extension UIWindow {
         }
         
         self.isUserInteractionEnabled = true
-    }
-    
-    func animateIn() {
-        self.makeKeyAndVisible()
-        self.isUserInteractionEnabled = true
-
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.alpha = 1
-            },
-            completion: { _ in
-            }
-        )
-    }
-
-    func animateOut() {
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.alpha = 0
-            },
-            completion: { _ in
-                self.isHidden = true
-                self.isUserInteractionEnabled = false
-                self.removeFromSuperview()
-            }
-        )
     }
 }

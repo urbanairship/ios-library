@@ -6,12 +6,11 @@ import AirshipCore
 
 @MainActor
 final class ThomasDisplayListener: ThomasDelegate {
-
     private let analytics: InAppMessageAnalyticsProtocol
+    
     private let timer: ActiveTimerProtocol
     private let tracker: ThomasPagerTracker
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
-    private var isFirstDisplay: Bool = true
 
     init(
         analytics: InAppMessageAnalyticsProtocol,
@@ -22,23 +21,18 @@ final class ThomasDisplayListener: ThomasDelegate {
         self.analytics = analytics
         self.tracker = tracker ?? ThomasPagerTracker()
         self.onDismiss = onDismiss
-        self.timer = timer ?? ActiveTimer()
+        self.timer = timer ?? ManualActiveTimer()
     }
 
-    func onAppear() {
-        guard self.isFirstDisplay else {
-            return
+    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool) {
+        if isVisible, isForegrounded {
+            analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
+            timer.start()
+        } else {
+            timer.stop()
         }
-
-        self.isFirstDisplay = false
-
-        Task {
-            await analytics.recordImpression()
-        }
-
-        timer.start()
-        analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
     }
+
 
     func onFormSubmitted(
         formResult: ThomasFormResult,
@@ -174,22 +168,6 @@ final class ThomasDisplayListener: ThomasDelegate {
             layoutContext: layoutContext
         )
     }
-    
-    func onPromptPermissionResult(
-        permission: AirshipPermission,
-        startingStatus: AirshipPermissionStatus,
-        endingStatus: AirshipPermissionStatus,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppPermissionResultEvent(
-                permission: permission,
-                startingStatus: startingStatus,
-                endingStatus: endingStatus
-            ),
-            layoutContext: layoutContext
-        )
-    }
 
     private func tryDismiss(
         layoutContext: ThomasLayoutContext? = nil,
@@ -216,5 +194,6 @@ final class ThomasDisplayListener: ThomasDelegate {
 
         let result = dismissBlock(self.timer.time)
         onDismiss(result)
+        self.onDismiss = nil
     }
 }

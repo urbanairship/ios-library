@@ -45,3 +45,4 @@ enum ContactUpdate: Equatable, Sendable {
     case namedUserUpdate(String?)
     case conflict(ContactConflictEvent)
 }
+

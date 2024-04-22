@@ -79,6 +79,17 @@ class AirshipPrivacyManagerTest: XCTestCase {
         XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled())
     }
 
+    func testNoneEnabled() {
+        self.privacyManager.enabledFeatures = []
+        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled())
+
+        self.privacyManager.enableFeatures([.push, .tagsAndAttributes])
+        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled())
+
+        self.privacyManager.enabledFeatures = []
+        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled())
+    }
+
     func testSetEnabled() {
         self.privacyManager.enabledFeatures = .contacts
 

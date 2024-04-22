@@ -22,6 +22,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var contactID: String?
     var experimentResult: ExperimentResult?
     var reportingContext: AirshipJSON?
+    var triggerSessionID: String
 
     init(
         scheduleID: String,
@@ -29,7 +30,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         campaigns: AirshipJSON? = nil,
         contactID: String? = nil,
         experimentResult: ExperimentResult? = nil,
-        reportingContext: AirshipJSON? = nil
+        reportingContext: AirshipJSON? = nil,
+        triggerSessionID: String
     ) {
         self.scheduleID = scheduleID
         self.productID = productID
@@ -37,6 +39,18 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.contactID = contactID
         self.experimentResult = experimentResult
         self.reportingContext = reportingContext
+        self.triggerSessionID = triggerSessionID
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.scheduleID = try container.decode(String.self, forKey: .scheduleID)
+        self.productID = try container.decodeIfPresent(String.self, forKey: .productID)
+        self.campaigns = try container.decodeIfPresent(AirshipJSON.self, forKey: .campaigns)
+        self.contactID = try container.decodeIfPresent(String.self, forKey: .contactID)
+        self.experimentResult = try container.decodeIfPresent(ExperimentResult.self, forKey: .experimentResult)
+        self.reportingContext = try container.decodeIfPresent(AirshipJSON.self, forKey: .reportingContext)
+        self.triggerSessionID = try container.decodeIfPresent(String.self, forKey: .triggerSessionID) ?? UUID().uuidString
     }
 }
 

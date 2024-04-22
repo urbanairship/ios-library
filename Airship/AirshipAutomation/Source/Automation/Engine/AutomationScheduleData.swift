@@ -13,7 +13,9 @@ struct AutomationScheduleData: Sendable, Equatable, CustomDebugStringConvertible
     var executionCount: Int
     var triggerInfo: TriggeringInfo?
     var preparedScheduleInfo: PreparedScheduleInfo?
-    
+    var associatedData: Data?
+    var triggerSessionID: String
+
     var debugDescription: String {
         return "AutomationSchedule(id: \(schedule.identifier), state: \(scheduleState))"
     }
@@ -218,7 +220,7 @@ extension AutomationScheduleData {
     }
 
     mutating func triggered(
-        triggerContext: AirshipTriggerContext?,
+        triggerInfo: TriggeringInfo,
         date: Date
     ) {
         guard self.scheduleState == .idle else {
@@ -230,8 +232,9 @@ extension AutomationScheduleData {
             return
         }
 
+        self.triggerSessionID = UUID().uuidString
         self.preparedScheduleInfo = nil
-        self.triggerInfo = TriggeringInfo(context: triggerContext, date: date)
+        self.triggerInfo = triggerInfo
         setState(.triggered, date: date)
     }
 }

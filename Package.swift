@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.9
 
 // Copyright Airship and Contributors
 
@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "Airship",
     defaultLocalization: "en",
-    platforms: [.macOS(.v10_15), .iOS(.v14), .tvOS(.v14)],
+    platforms: [.macOS(.v10_15), .iOS(.v14), .tvOS(.v14), .visionOS(.v1)],
     products: [
         .library(
             name: "AirshipCore",
@@ -65,7 +65,7 @@ let package = Package(
                 .linkedFramework("SystemConfiguration"),
                 .linkedFramework("UIKit"),
                 .linkedFramework("CoreData"),
-                .linkedFramework("WebKit", .when(platforms: [.iOS])),
+                .linkedFramework("WebKit", .when(platforms: [.iOS, .visionOS])),
                 .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
                 //Libraries
                 .linkedLibrary("z"),
@@ -94,9 +94,9 @@ let package = Package(
                 .linkedFramework("SystemConfiguration"),
                 .linkedFramework("UIKit"),
                 .linkedFramework("CoreData"),
-                .linkedFramework("WebKit", .when(platforms: [.iOS])),
+                .linkedFramework("WebKit", .when(platforms: [.iOS, .visionOS])),
                 .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
-                .linkedFramework("StoreKit", .when(platforms: [.iOS])),
+                .linkedFramework("StoreKit", .when(platforms: [.iOS, .visionOS])),
                 //Libraries
                 .linkedLibrary("sqlite3"),
             ]

@@ -15,7 +15,7 @@ final class AutomationScheduleDataTest: XCTestCase {
         date: Date()
     )
 
-    private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: UUID().uuidString)
+    private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString)
 
     private var data: AutomationScheduleData!
 
@@ -28,7 +28,8 @@ final class AutomationScheduleDataTest: XCTestCase {
             ),
             scheduleState: .idle,
             scheduleStateChangeDate: self.date,
-            executionCount: 0
+            executionCount: 0,
+            triggerSessionID: UUID().uuidString
         )
     }
 
@@ -538,13 +539,16 @@ final class AutomationScheduleDataTest: XCTestCase {
     }
 
     func testTriggered() {
+        let previousTriggerSessionID = self.data.triggerSessionID
+
         let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: .string("event"))
         
-        self.data.triggered(triggerContext: context, date: self.date + 100)
+        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
         XCTAssertEqual(self.data.triggerInfo?.context, context)
-        XCTAssertEqual(self.data.triggerInfo?.date, self.date + 100)
+        XCTAssertEqual(self.data.triggerInfo?.date, self.date)
         XCTAssertEqual(self.data.scheduleState, .triggered)
         XCTAssertEqual(self.data.scheduleStateChangeDate, self.date + 100)
+        XCTAssertNotEqual(self.data.triggerSessionID, previousTriggerSessionID)
     }
 
     func testTriggeredOverLimit() {
@@ -552,7 +556,7 @@ final class AutomationScheduleDataTest: XCTestCase {
         self.data.executionCount = 1
 
         let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: .string("event"))
-        self.data.triggered(triggerContext: context, date: self.date + 100)
+        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
 
         XCTAssertNil(self.data.triggerInfo)
         XCTAssertEqual(self.data.scheduleState, .finished)
@@ -565,7 +569,7 @@ final class AutomationScheduleDataTest: XCTestCase {
         self.data.schedule.end = self.date
 
         let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: .string("event"))
-        self.data.triggered(triggerContext: context, date: self.date + 100)
+        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
 
         XCTAssertNil(self.data.triggerInfo)
         XCTAssertEqual(self.data.scheduleState, .finished)

@@ -58,7 +58,7 @@ struct TextInput: View {
                 isEditing: $isEditing
             )
             .constraints(constraints, alignment: .topLeading)
-            .airshipOnChangeOf( self.isEditing) { newValue in
+            .airshipOnChangeOf(self.isEditing) { newValue in
                 let focusedID = newValue ? self.model.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
             }

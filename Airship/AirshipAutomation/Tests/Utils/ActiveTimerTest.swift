@@ -4,7 +4,6 @@ import XCTest
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-@MainActor
 final class ActiveTimerTest: XCTestCase {
     var subject: ActiveTimer!
     
@@ -12,6 +11,7 @@ final class ActiveTimerTest: XCTestCase {
     private let notificationCenter = NotificationCenter()
     private let stateTracker = TestAppStateTracker()
     
+    @MainActor
     private func createSubject(state: AirshipCore.ApplicationState = .active) {
         stateTracker.currentState = state
         
@@ -21,7 +21,8 @@ final class ActiveTimerTest: XCTestCase {
             date: date
         )
     }
-    
+
+    @MainActor
     func testManualStartStopWorks() {
         createSubject()
         
@@ -35,6 +36,7 @@ final class ActiveTimerTest: XCTestCase {
         XCTAssertEqual(3, subject.time)
     }
     
+    @MainActor
     func testMultipleSessions() {
         createSubject()
         subject.start()
@@ -53,6 +55,7 @@ final class ActiveTimerTest: XCTestCase {
         XCTAssertEqual(3, subject.time)
     }
     
+    @MainActor
     func testStartDoesntWorkIfAppInBackground() {
         createSubject(state: .background)
         subject.start()
@@ -61,6 +64,7 @@ final class ActiveTimerTest: XCTestCase {
         XCTAssertEqual(0, subject.time)
     }
     
+    @MainActor
     func testDoubleStartDoesntRestCounter() {
         createSubject()
         
@@ -74,6 +78,7 @@ final class ActiveTimerTest: XCTestCase {
         XCTAssertEqual(2, subject.time)
     }
     
+    @MainActor
     func testDoubleStopDoesntDoubleCounter() {
         createSubject()
         subject.start()
@@ -88,6 +93,7 @@ final class ActiveTimerTest: XCTestCase {
         XCTAssertEqual(3, subject.time)
     }
     
+    @MainActor
     func testHandlingAppState() {
         createSubject(state: .background)
         
@@ -103,6 +109,7 @@ final class ActiveTimerTest: XCTestCase {
         XCTAssertEqual(3, subject.time)
     }
     
+    @MainActor
     func testActiveNotificationDoesNothingOnDisabledTimer() {
         createSubject(state: .background)
         XCTAssertEqual(0, subject.time)
@@ -113,6 +120,7 @@ final class ActiveTimerTest: XCTestCase {
         
     }
     
+    @MainActor
     func testTimerStopsOnEnteringBackground() {
         createSubject()
         subject.start()

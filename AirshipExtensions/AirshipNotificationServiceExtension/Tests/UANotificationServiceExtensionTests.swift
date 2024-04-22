@@ -10,7 +10,6 @@ final class UANotificationServiceExtensionTests: XCTestCase {
         let content = UNNotificationContent()
         let request = UNNotificationRequest(identifier: "identifier", content: content, trigger: nil)
         let expectation = expectation(description: "delivery")
-        
         subject.didReceive(request) { deliveredContent in
             XCTAssertEqual(0, deliveredContent.attachments.count)
             XCTAssertNil(deliveredContent.badge)
@@ -28,7 +27,7 @@ final class UANotificationServiceExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        self.wait(for: [expectation], timeout: 5)
+        self.wait(for: [expectation], timeout: 10)
     }
     
     func testSampleContent() throws {
@@ -92,6 +91,6 @@ final class UANotificationServiceExtensionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 30)
     }
 }

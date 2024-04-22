@@ -31,16 +31,16 @@ class MessageCenterListViewModel: ObservableObject {
         self.messageCenter?.inbox.messagePublisher
             .receive(on: RunLoop.main)
             .sink { [weak self] incoming in
-                guard let strongSelf = self else { return }
-                strongSelf.objectWillChange.send()
+                guard let self else { return }
+                self.objectWillChange.send()
 
-                strongSelf.messagesLoaded = true
+                self.messagesLoaded = true
 
                 var incomings: [MessageCenterMessage] = []
                 incoming.forEach { message in
                     incomings.append(message)
-                    if strongSelf.messageItems[message.id] == nil {
-                        strongSelf.messageItems[message.id] =
+                    if self.messageItems[message.id] == nil {
+                        self.messageItems[message.id] =
                         MessageCenterListItemViewModel(
                             message: message
                         )
@@ -48,12 +48,12 @@ class MessageCenterListViewModel: ObservableObject {
                 }
 
                 let incomingIDs = incomings.map { $0.id }
-                Set(strongSelf.messageItems.keys)
+                Set(self.messageItems.keys)
                     .subtracting(incomingIDs)
                     .forEach {
-                        strongSelf.messageItems.removeValue(forKey: $0)
+                        self.messageItems.removeValue(forKey: $0)
                     }
-                strongSelf.messages = incomings
+                self.messages = incomings
             }
             .store(in: &self.updates)
 

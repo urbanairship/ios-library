@@ -5,7 +5,7 @@ import Combine
 
 /// NOTE: For internal use only. :nodoc:
 @MainActor
-public final class AirshipEmbeddedViewModel : ObservableObject {
+public final class AirshipEmbeddedObserver : ObservableObject {
     /// An array of embedded infos
     @Published
     public var embeddedInfos: [AirshipEmbeddedInfo] = []

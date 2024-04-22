@@ -68,7 +68,8 @@ final class AutomationStoreTest: XCTestCase {
                 contactID: "some contact",
                 isMatch: true,
                 reportingMetadata: [AirshipJSON.string("reporing")]
-            )
+            ),
+            triggerSessionID: "some trigger session id"
         )
 
         let date = Date()
@@ -108,7 +109,8 @@ final class AutomationStoreTest: XCTestCase {
                 contactID: "some contact",
                 isMatch: true,
                 reportingMetadata: [AirshipJSON.string("reporing")]
-            )
+            ),
+            triggerSessionID: "some trigger session id"
         )
 
         let batchUpsertResult = try await self.store.upsertSchedules(scheduleIDs: ["full"]) { [schedule] identifier, existing in
@@ -203,6 +205,37 @@ final class AutomationStoreTest: XCTestCase {
         XCTAssertEqual([original["bar"]], remaining)
     }
 
+    func testAssociatedData() async throws {
+        let associatedData = try AirshipJSON.string("some data").toData()
+        var schedule = self.makeSchedule(identifer: "bar")
+        schedule.associatedData = associatedData
+
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["bar"]) { [schedule] identifier, existing in
+            return schedule
+        }
+
+        let fromStore = try await self.store.getAssociatedData(scheduleID: "bar")
+
+        XCTAssertEqual(fromStore, associatedData)
+    }
+
+    func testAssociatedDataNull() async throws {
+        let schedule = self.makeSchedule(identifer: "bar")
+
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["bar"]) { [schedule] identifier, existing in
+            return schedule
+        }
+
+        let fromStore = try await self.store.getAssociatedData(scheduleID: "bar")
+
+        XCTAssertNil(fromStore)
+    }
+
+    func testAssociatedNoSchedule() async throws {
+        let fromStore = try await self.store.getAssociatedData(scheduleID: "bar")
+        XCTAssertNil(fromStore)
+    }
+
     private func makeSchedule(identifer: String, group: String? = nil) -> AutomationScheduleData {
         let schedule = AutomationSchedule(
             identifier: identifer,
@@ -221,7 +254,8 @@ final class AutomationStoreTest: XCTestCase {
             schedule: schedule,
             scheduleState: .idle,
             scheduleStateChangeDate: Date.distantPast,
-            executionCount: 0
+            executionCount: 0,
+            triggerSessionID: UUID().uuidString
         )
     }
 }

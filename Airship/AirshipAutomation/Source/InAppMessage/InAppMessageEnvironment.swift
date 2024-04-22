@@ -15,6 +15,7 @@ class InAppMessageEnvironment: ObservableObject {
 
     @Published var imageLoader: AirshipImageLoader?
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    let actionRunner: InAppActionRunner?
 
     @Published var isDismissed = false
 
@@ -34,6 +35,7 @@ class InAppMessageEnvironment: ObservableObject {
         }
 
         self.nativeBridgeExtension = extensions?.nativeBridgeExtension
+        self.actionRunner = extensions?.actionRunner
     }
 
     private func tryDismiss(callback: @escaping () -> Void) {
@@ -66,6 +68,38 @@ class InAppMessageEnvironment: ObservableObject {
         Task {
             await ActionRunner.run(actionsPayload: actions, situation: .automation, metadata: [:])
         }
+    }
+
+
+    @MainActor
+    func runActions(_ actions: AirshipJSON?) {
+        guard let actions = actions else { return }
+
+        guard let runner = actionRunner else {
+            Task {
+                await ActionRunner.run(
+                    actionsPayload: actions,
+                    situation: .automation,
+                    metadata: [:]
+                )
+            }
+
+            return
+        }
+
+        runner.runAsync(actions: actions)
+    }
+
+    @MainActor
+    func runAction(_ actionName: String, arguments: ActionArguments) async -> ActionResult {
+        guard let runner = actionRunner else {
+            return await ActionRunner.run(actionName: actionName, arguments: arguments)
+        }
+
+        return await runner.run(
+            actionName: actionName,
+            arguments: arguments
+        )
     }
 
     /// Called when a message dismisses after the set timeout period

@@ -238,6 +238,15 @@ extension InAppMessage {
 
         return data.isEmbedded
     }
+
+
+    var isAirshipLayout: Bool {
+        guard case .airshipLayout(_) = self.displayContent else {
+            return false
+        }
+
+        return true
+    }
 }
 
 fileprivate struct AirshipLayoutWrapper: Codable {
