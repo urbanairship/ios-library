@@ -76,14 +76,14 @@ actor ContactManager: ContactManagerProtocol {
     }
     
     private var possiblyOrphanedContactID: String? {
-           guard let lastContactInfo = self.lastContactInfo,
-                 lastContactInfo.isAnonymous,
-                 (anonData?.channels.isEmpty ?? true)
-           else {
-               return nil
-           }
+        guard let lastContactInfo = self.lastContactInfo,
+              lastContactInfo.isAnonymous,
+              (anonData?.channels.isEmpty ?? true)
+        else {
+            return nil
+        }
 
-           return lastContactInfo.contactID
+        return lastContactInfo.contactID
     }
 
     init(
@@ -154,7 +154,7 @@ actor ContactManager: ContactManagerProtocol {
         }
 
         self.lastContactInfo = InternalContactInfo(
-            contactID: UUID().uuidString,
+            contactID: UUID().uuidString.lowercased(),
             isAnonymous: true,
             namedUserID: nil,
             channelAssociatedDate: self.date.now,
@@ -742,8 +742,12 @@ actor ContactManager: ContactManagerProtocol {
             expiration: expiration
         )
 
+
+        // Doing a lowercased check so if backend normalizes the contact ID we wont lose data.
+        let isNewContactID = lastContactInfo?.contactID.lowercased() != result.contact.contactID.lowercased()
+
         var resolvedNamedUser = namedUserID
-        if resolvedNamedUser == nil, lastContactInfo?.contactID == result.contact.contactID {
+        if !isNewContactID, resolvedNamedUser == nil {
             resolvedNamedUser = lastContactInfo?.namedUserID
         }
 
@@ -756,7 +760,7 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         // Conflict events
-        if newContactInfo.contactID != self.lastContactInfo?.contactID,
+        if isNewContactID,
            self.lastContactInfo?.isAnonymous == true,
            let anonData = self.anonData,
            !anonData.isEmpty
@@ -783,10 +787,7 @@ actor ContactManager: ContactManagerProtocol {
         // If we have a resolve that returns a new contactID then it means
         // it was changed server side. Clear any pending operations that are
         // older than the resolve date.
-        if self.lastContactInfo != nil,
-           lastContactInfo?.contactID != newContactInfo.contactID,
-           operationType == .resolve {
-
+        if self.lastContactInfo != nil, isNewContactID, operationType == .resolve {
             self.operationEntries = self.operationEntries.filter { entry in
                 if (result.contact.channelAssociatedDate < entry.date) {
                     return true
