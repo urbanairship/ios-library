@@ -3,6 +3,19 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.1.1, April 23, 2024
+Patch release with a bug fix for contact operations.
+
+### Changes
+- Fixed a typo in the dutch translation of the notification action button "Vertel Mij Meer".
+- Fixed obj-c bindings not being public.
+
+## Version 17.10.1, April 23, 2024
+Patch release with a bug fix for contact operations.
+
+### Changes
+- Fixed a typo in the dutch translation of the notification action button "Vertel Mij Meer".
+
 ## Version 18.1.0 April 16, 2024
 
 Minor release with several minor API additions.
