@@ -3,6 +3,7 @@
 import Foundation
 import CoreData
 
+@objc(UARemoteDataMapping)
 class UARemoteDataMapping: NSEntityMigrationPolicy {
     
     override func createDestinationInstances(

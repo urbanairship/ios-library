@@ -53,7 +53,7 @@
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z103"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z103">
-        <attribute name="migrationpolicyclassname" type="string">AirshipMessageCenter.UAInboxDataMapping</attribute>
+        <attribute name="migrationpolicyclassname" type="string">UAInboxDataMapping</attribute>
         <attribute name="sourcename" type="string">UAInboxMessage</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">1</attribute>

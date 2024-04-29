@@ -7,6 +7,7 @@ import CoreData
 import AirshipCore
 #endif  
 
+@objc(UAInboxDataMapping)
 class UAInboxDataMapping: NSEntityMigrationPolicy {
     
     override func createDestinationInstances(
