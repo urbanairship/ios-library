@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.1.2, April 29, 2024
+Patch release with a bug fix for data migration. Apps migrating from an older version of the SDK to 18.x using cocoapods should update to this version.
+
+### Changes
+- Exposes mapping classes UARemoteDataMapping and UAInboxDataMapping to obj-c and removes module-specific prefixes from mapping files.
+
 ## Version 18.1.1, April 23, 2024
 Patch release with a bug fix for contact operations.
 
