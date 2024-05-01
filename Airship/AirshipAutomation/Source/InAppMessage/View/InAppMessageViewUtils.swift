@@ -40,18 +40,21 @@ extension View {
     }
 
     @ViewBuilder
-    func addSwipeDismiss(placement: InAppMessageDisplayContent.Banner.Placement,
+    func addTapAndSwipeDismiss(placement: InAppMessageDisplayContent.Banner.Placement,
+                         isPressed: Binding<Bool>,
+                         tapAction: (() -> ())? = nil,
                          swipeOffset: Binding<CGFloat>,
                          onDismiss: @escaping () -> Void) -> some View {
         self.offset(x: 0, y: swipeOffset.wrappedValue)
             .gesture(
-                DragGesture()
+                DragGesture(minimumDistance: 0)
                     .onChanged { gesture in
                         withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
-                            let swipeOffest = gesture.translation.height
+                            isPressed.wrappedValue = true
+                            let offset = gesture.translation.height
 
-                            let upwardSwipeTopPlacement = (placement == .top && swipeOffest < 0)
-                            let downwardSwipeBottomPlacement = (placement == .bottom && swipeOffest > 0)
+                            let upwardSwipeTopPlacement = (placement == .top && offset < 0)
+                            let downwardSwipeBottomPlacement = (placement == .bottom && offset > 0)
 
                             if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
                                 swipeOffset.wrappedValue = gesture.translation.height
@@ -60,15 +63,20 @@ extension View {
                     }
                     .onEnded { gesture in
                         withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
-                            let swipeOffest = gesture.translation.height
-                            swipeOffset.wrappedValue = swipeOffest
+                            isPressed.wrappedValue = false
+                            let offset = gesture.translation.height
+                            swipeOffset.wrappedValue = offset
 
-                            let upwardSwipeTopPlacement = (placement == .top && swipeOffest < 0)
-                            let downwardSwipeBottomPlacement = (placement == .bottom && swipeOffest > 0)
+                            let upwardSwipeTopPlacement = (placement == .top && offset < 0)
+                            let downwardSwipeBottomPlacement = (placement == .bottom && offset > 0)
 
                             if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
                                 onDismiss()
+                            } else if let action = tapAction, offset.magnitude <= 0.1 {
+                                /// If drag ends on message count it as a tap
+                                action()
                             } else {
+                                /// Return to origin and do nothing
                                 swipeOffset.wrappedValue = 0
                             }
                         }

@@ -16,7 +16,7 @@
 	<key>maxWidth</key>
 	<integer>26</integer>
 	<key>tapOpacity</key>
-	<integer>27</integer>
+	<real>0.11</real>
 	<key>headerStyle</key>
 	<dict>
 		<key>letterSpacing</key>
@@ -86,13 +86,13 @@
 	<key>shadowStyle</key>
 	<dict>
 		<key>colorHex</key>
-		<string>003100</string>
+		<string>009900</string>
 		<key>radius</key>
-		<integer>28</integer>
+		<integer>10</integer>
 		<key>xOffset</key>
-		<integer>29</integer>
+		<integer>10</integer>
 		<key>yOffset</key>
-		<integer>30</integer>
+		<integer>10</integer>
 	</dict>
 </dict>
 </plist>

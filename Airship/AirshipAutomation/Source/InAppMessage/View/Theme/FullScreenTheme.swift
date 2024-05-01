@@ -35,26 +35,26 @@ struct FullScreenTheme: Equatable {
     init(themeOverride:FullScreenThemeOverride? = FullScreenThemeOverride(plistName: Self.defaultPlistName, bundle: Bundle.main), defaultValues:FullScreenTheme = Self.defaultValues) {
         self.additionalPadding = themeOverride?.additionalPadding
             .map { EdgeInsets(themeOverride: $0, defaults: defaultValues.additionalPadding) }
-        ?? Self.defaultValues.additionalPadding
+        ?? defaultValues.additionalPadding
 
         self.headerTheme = themeOverride?.headerTheme
             .map { TextTheme(themeOverride: $0, defaults: defaultValues.headerTheme) }
-        ?? Self.defaultValues.headerTheme
+        ?? defaultValues.headerTheme
 
         self.bodyTheme = themeOverride?.bodyTheme
             .map { TextTheme(themeOverride: $0, defaults: defaultValues.bodyTheme) }
-        ?? Self.defaultValues.bodyTheme
+        ?? defaultValues.bodyTheme
 
         self.mediaTheme = themeOverride?.mediaTheme
             .map { MediaTheme(themeOverride: $0, defaults: defaultValues.mediaTheme) }
-        ?? Self.defaultValues.mediaTheme
+        ?? defaultValues.mediaTheme
 
         self.buttonTheme = themeOverride?.buttonTheme
             .map { ButtonTheme(themeOverride: $0, defaults: Self.defaultValues.buttonTheme) }
-        ?? Self.defaultValues.buttonTheme
+        ?? defaultValues.buttonTheme
 
         self.dismissIconResource = themeOverride?.dismissIconResource
-        ?? Self.defaultValues.dismissIconResource
+        ?? defaultValues.dismissIconResource
 
     }
 }

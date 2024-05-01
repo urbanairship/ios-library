@@ -400,7 +400,7 @@ actor ContactManager: ContactManagerProtocol {
             possiblyOrphanedContactID: possiblyOrphanedContactID
         )
 
-        if let result = response.result, response.isSuccess{
+        if let result = response.result, response.isSuccess {
             await updateContactInfo(result: result, operationType: .resolve)
         }
 

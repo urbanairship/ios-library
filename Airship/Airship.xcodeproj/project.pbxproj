@@ -1260,6 +1260,7 @@
 		9919EE432B2263B300A46BFE /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
 		9919EE442B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
 		9919EE452B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
+		993969B92BD8353F0011D73A /* ShadowTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993969B82BD8353F0011D73A /* ShadowTheme.swift */; };
 		998572BF2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */; };
 		998572C12B3CF97B0091E9C9 /* DefaultAssetFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */; };
 		999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999DC85D2B5B721D0048C6AF /* HTMLView.swift */; };
@@ -2718,6 +2719,7 @@
 		990A09582B5C677C00244D90 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageExtensions.swift; sourceTree = "<group>"; };
 		990A09AE2B5DBD0400244D90 /* InAppMessageViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageViewUtils.swift; sourceTree = "<group>"; };
+		993969B82BD8353F0011D73A /* ShadowTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowTheme.swift; sourceTree = "<group>"; };
 		998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetDownloader.swift; sourceTree = "<group>"; };
 		998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetFileManager.swift; sourceTree = "<group>"; };
 		999DC85D2B5B721D0048C6AF /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
@@ -4706,6 +4708,7 @@
 			children = (
 				99E8D7D42B55B0300099B6F3 /* EdgeInsets.swift */,
 				99E8D7D72B55B0440099B6F3 /* ButtonTheme.swift */,
+				993969B82BD8353F0011D73A /* ShadowTheme.swift */,
 				99E8D7DB2B55C4C20099B6F3 /* MediaTheme.swift */,
 				99E8D7D92B55B05D0099B6F3 /* TextTheme.swift */,
 			);
@@ -6302,6 +6305,7 @@
 				3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */,
 				6E1CBE2D2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodeld in Sources */,
 				99CF46182B3217C300B6FD9B /* AirshipCachedAssets.swift in Sources */,
+				993969B92BD8353F0011D73A /* ShadowTheme.swift in Sources */,
 				999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */,
 				99CF461A2B3217DE00B6FD9B /* AssetCacheManager.swift in Sources */,
 				6E1A9BF72B606CF200A6489B /* AutomationDelayProcessor.swift in Sources */,

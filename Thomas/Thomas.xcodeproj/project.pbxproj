@@ -28,6 +28,7 @@
 		991BE0D22B05684A006109EE /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0D12B05684A006109EE /* CameraView.swift */; };
 		991BE0F32B05C37C006109EE /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F22B05C37C006109EE /* WeatherViewModel.swift */; };
 		991BE0F52B05C387006109EE /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F42B05C387006109EE /* WeatherView.swift */; };
+		993969B72BD800030011D73A /* UAInAppMessageBannerStyle.plist in Resources */ = {isa = PBXBuildFile; fileRef = 993969A52BD800030011D73A /* UAInAppMessageBannerStyle.plist */; };
 		993FB2CE2B4B423800790877 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; };
 		993FB2CF2B4B423800790877 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9948E61A2B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6182B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift */; };
@@ -210,6 +211,7 @@
 		991BE0D12B05684A006109EE /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		991BE0F22B05C37C006109EE /* WeatherViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
 		991BE0F42B05C387006109EE /* WeatherView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
+		993969A52BD800030011D73A /* UAInAppMessageBannerStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UAInAppMessageBannerStyle.plist; sourceTree = "<group>"; };
 		9948E6152B464F1B00C1F21E /* EmbeddedPlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlaygroundView.swift; sourceTree = "<group>"; };
 		9948E6162B464F1B00C1F21E /* KeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		9948E6172B464F1B00C1F21E /* PlaceholderToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderToggleView.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				99F662CC2B61DB4600696098 /* JurassicPark.otf */,
 				9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */,
 				6E938DCD2AC3DA0600F691D9 /* AirshipConfig.plist */,
+				993969A52BD800030011D73A /* UAInAppMessageBannerStyle.plist */,
 				3244492D2721667D00D108B5 /* Thomas */,
 				3244492C2721667D00D108B5 /* Products */,
 				3244495C2721A63400D108B5 /* Frameworks */,
@@ -570,6 +573,7 @@
 				6E6802AD2B867B0900F4591F /* Scenes in Resources */,
 				6E6802AC2B867B0900F4591F /* Messages in Resources */,
 				99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */,
+				993969B72BD800030011D73A /* UAInAppMessageBannerStyle.plist in Resources */,
 				6E938DCE2AC3DA0600F691D9 /* AirshipConfig.plist in Resources */,
 				324449362721668100D108B5 /* Preview Assets.xcassets in Resources */,
 				324449332721668100D108B5 /* Assets.xcassets in Resources */,

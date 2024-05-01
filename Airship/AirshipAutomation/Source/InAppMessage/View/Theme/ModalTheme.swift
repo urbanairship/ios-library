@@ -44,28 +44,28 @@ struct ModalTheme: Equatable {
 
         self.headerTheme = themeOverride?.headerTheme
             .map { TextTheme(themeOverride: $0, defaults: defaultValues.headerTheme) }
-        ?? Self.defaultValues.headerTheme
+        ?? defaultValues.headerTheme
 
         self.bodyTheme = themeOverride?.bodyTheme
             .map { TextTheme(themeOverride: $0, defaults: defaultValues.bodyTheme) }
-        ?? Self.defaultValues.bodyTheme
+        ?? defaultValues.bodyTheme
 
         self.mediaTheme = themeOverride?.mediaTheme
             .map { MediaTheme(themeOverride: $0, defaults: defaultValues.mediaTheme) }
-        ?? Self.defaultValues.mediaTheme
+        ?? defaultValues.mediaTheme
 
         self.buttonTheme = themeOverride?.buttonTheme
             .map { ButtonTheme(themeOverride: $0, defaults: defaultValues.buttonTheme) }
-        ?? Self.defaultValues.buttonTheme
+        ?? defaultValues.buttonTheme
 
         self.dismissIconResource = themeOverride?.dismissIconResource
-        ?? Self.defaultValues.dismissIconResource
+        ?? defaultValues.dismissIconResource
 
         self.maxWidth = themeOverride?.maxWidth
-        ?? Self.defaultValues.maxWidth
+        ?? defaultValues.maxWidth
 
         self.maxHeight = themeOverride?.maxHeight
-        ?? Self.defaultValues.maxHeight
+        ?? defaultValues.maxHeight
     }
 }
 

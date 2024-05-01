@@ -17,6 +17,7 @@ struct InAppMessageBannerView: View {
     @State private var lastSize: CGSize?
 
     @State var isShowing: Bool = false
+    @State var isPressed: Bool = false /// Tracks state of current touch down
     @State var messageBodyOpacity: CGFloat = 1
     @State var swipeOffset: CGFloat = 0
 
@@ -24,6 +25,14 @@ struct InAppMessageBannerView: View {
 
     private var padding: EdgeInsets {
         environment.theme.bannerTheme.additionalPadding
+    }
+
+    private var tapOpacity: CGFloat {
+        environment.theme.bannerTheme.tapOpacity
+    }
+
+    private var shadowTheme: ShadowTheme {
+        environment.theme.bannerTheme.shadowTheme
     }
 
     private let displayContent: InAppMessageDisplayContent.Banner
@@ -171,16 +180,22 @@ struct InAppMessageBannerView: View {
         })
     }
 
+    private func bannerOnTapAction() {
+        if let actions = displayContent.actions {
+            environment.onUserDismissed()
+            environment.runActions(actions: actions)
+        }
+    }
+
     private var banner: some View {
         messageBody
-            .opacity(messageBodyOpacity)
             .showing(isShowing: isShowing)
             .frame(maxWidth: messageMaxWidth)
             .background(
                 (displayContent.backgroundColor?.color ?? Color.white)
                     .cornerRadius(displayContent.borderRadius ?? 0)
                     .edgesIgnoringSafeArea(displayContent.placement == .top ? .top : .bottom)
-                    .shadow(radius: 5)
+                    .shadow(color: shadowTheme.color, radius: shadowTheme.radius, x: shadowTheme.xOffset, y: shadowTheme.yOffset)
             )
             .background(
                 GeometryReader(content: { contentMetrics -> Color in
@@ -196,15 +211,11 @@ struct InAppMessageBannerView: View {
             )
             .padding(padding)
             .applyTransitioningPlacement(placement: displayContent.placement ?? .top)
-            .addSwipeDismiss(placement: displayContent.placement ?? .top,
+            .addTapAndSwipeDismiss(placement: displayContent.placement ?? .top,
+                             isPressed: $isPressed,
+                             tapAction: bannerOnTapAction,
                              swipeOffset: $swipeOffset,
                              onDismiss: environment.onUserDismissed)
-            .applyIf(displayContent.actions != nil, transform: { view in
-                view.gesture(TapGesture().onEnded { value in
-                    environment.onUserDismissed()
-                    environment.runActions(actions: displayContent.actions)
-                })
-            })
             .onAppear {
                 setShowing(state: true)
             }
@@ -225,6 +236,6 @@ struct InAppMessageBannerView: View {
             #else
             banner.frame(width: min(UIScreen.main.bounds.size.width, messageMaxWidth))
             #endif
-        }
+        }.opacity(isPressed && displayContent.actions != nil ? tapOpacity : 1)
     }
 }

@@ -3,9 +3,13 @@
 import Foundation
 import SwiftUI
 
+
+
 struct BannerTheme: Equatable {
     var additionalPadding: EdgeInsets
     var maxWidth: Int
+    var tapOpacity: CGFloat
+    var shadowTheme: ShadowTheme
     var headerTheme: TextTheme
     var bodyTheme: TextTheme
     var mediaTheme: MediaTheme
@@ -20,12 +24,16 @@ struct BannerTheme: Equatable {
 
     init(additionalPadding: EdgeInsets,
          maxWidth: Int,
+         tapOpacity: CGFloat,
+         shadowTheme: ShadowTheme,
          headerTheme: TextTheme,
          bodyTheme: TextTheme,
          mediaTheme: MediaTheme,
          buttonTheme: ButtonTheme) {
         self.additionalPadding = additionalPadding
         self.maxWidth = maxWidth
+        self.tapOpacity = tapOpacity
+        self.shadowTheme = shadowTheme
         self.headerTheme = headerTheme
         self.bodyTheme = bodyTheme
         self.mediaTheme = mediaTheme
@@ -39,7 +47,14 @@ struct BannerTheme: Equatable {
         ?? defaultValues.additionalPadding
 
         self.maxWidth = themeOverride?.maxWidth
-        ?? BannerTheme.defaultValues.maxWidth
+        ?? defaultValues.maxWidth
+
+        self.tapOpacity = themeOverride?.tapOpacity
+        ?? defaultValues.tapOpacity
+
+        self.shadowTheme = themeOverride?.shadowTheme
+            .map { ShadowTheme(themeOverride: $0, defaults: defaultValues.shadowTheme) }
+        ?? defaultValues.shadowTheme
 
         self.headerTheme = themeOverride?.headerTheme
             .map { TextTheme(themeOverride: $0, defaults: defaultValues.headerTheme) }
@@ -62,6 +77,8 @@ struct BannerTheme: Equatable {
 struct BannerThemeOverride: Decodable, PlistLoadable {
     var additionalPadding: EdgeInsetsThemeOverride?
     var maxWidth: Int?
+    var tapOpacity: CGFloat?
+    var shadowTheme: ShadowThemeOverride?
     var headerTheme: TextThemeOverride?
     var bodyTheme: TextThemeOverride?
     var mediaTheme: MediaThemeOverride?
@@ -69,6 +86,8 @@ struct BannerThemeOverride: Decodable, PlistLoadable {
 
     init(additionalPadding: EdgeInsetsThemeOverride? = nil,
          maxWidth: Int? = nil,
+         tapOpacity: CGFloat? = nil,
+         shadowTheme: ShadowThemeOverride? = nil,
          headerTheme: TextThemeOverride? = nil,
          bodyTheme: TextThemeOverride? = nil,
          mediaTheme: MediaThemeOverride? = nil,
@@ -88,6 +107,8 @@ struct BannerThemeOverride: Decodable, PlistLoadable {
     enum CodingKeys: String, CodingKey {
         case additionalPadding = "additionalPadding"
         case maxWidth = "maxWidth"
+        case tapOpacity = "tapOpacity"
+        case shadowTheme = "shadowStyle"
         case headerTheme = "headerStyle"
         case bodyTheme = "bodyStyle"
         case mediaTheme = "mediaStyle"
@@ -102,5 +123,7 @@ struct BannerThemeOverride: Decodable, PlistLoadable {
         mediaTheme = try container.decodeIfPresent(MediaThemeOverride.self, forKey: .mediaTheme)
         buttonTheme = try container.decodeIfPresent(ButtonThemeOverride.self, forKey: .buttonTheme)
         maxWidth = try container.decodeIfPresent(Int.self, forKey: .maxWidth)
+        tapOpacity = try container.decodeIfPresent(CGFloat.self, forKey: .tapOpacity)
+        shadowTheme = try container.decodeIfPresent(ShadowThemeOverride.self, forKey: .shadowTheme)
     }
 }
