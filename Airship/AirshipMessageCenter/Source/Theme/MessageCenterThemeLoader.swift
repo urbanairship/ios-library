@@ -131,35 +131,6 @@ struct MessageCenterThemeLoader {
     }
 }
 
-extension String {
-    internal func toColor(_ bundle:Bundle = Bundle.main) -> Color {
-        let colorString = self.trimmingCharacters(in: .whitespaces)
-
-        // Regular expression pattern for hex color strings
-        /// Optional # with 6-8 hexadecimal characters case insensitive
-        let hexPattern = "^#?([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$"
-
-        /// If named color doesn't exist (parses to clear) and string follows hex pattern - assume it's a hex color
-        if let _ = colorString.range(of: hexPattern, options: .regularExpression) {
-            if let uiColor = AirshipColorUtils.color(colorString) {
-                return Color(uiColor)
-            }
-        }
-
-        // The color string is not in hex format or named color exists for this string
-        return Color(colorString, bundle: bundle)
-    }
-
-    internal func toSeparatorStyle() -> SeparatorStyle {
-        let separatorStyle = self.trimmingCharacters(in: .whitespaces)
-        if separatorStyle == MessageCenterThemeLoader.cellSeparatorStyleNoneKey
-        {
-            return .none
-        }
-        return .singleLine
-    }
-}
-
 extension Color {
     var isClear: Bool {
         var red: CGFloat = 0
@@ -198,48 +169,59 @@ extension MessageCenterThemeLoader.FontConfig {
 extension MessageCenterThemeLoader.Config {
     internal func toMessageCenterTheme(bundle: Bundle = Bundle.main) throws -> MessageCenterTheme {
         var theme = MessageCenterTheme()
-        theme.refreshTintColor = self.refreshTintColor?.toColor(bundle)
-        theme.refreshTintColorDark = self.refreshTintColorDark?.toColor(bundle)
+        theme.refreshTintColor = self.refreshTintColor?.airshipToColor(bundle)
+        theme.refreshTintColorDark = self.refreshTintColorDark?.airshipToColor(bundle)
         theme.iconsEnabled = self.iconsEnabled ?? false
         if let placeholderIcon = self.placeholderIcon {
             theme.placeholderIcon = Image(placeholderIcon)
         }
         theme.cellTitleFont = try? self.cellTitleFont?.toFont()
         theme.cellDateFont = try? self.cellDateFont?.toFont()
-        theme.cellColor = self.cellColor?.toColor(bundle)
-        theme.cellColorDark = self.cellColorDark?.toColor(bundle)
-        theme.cellTitleColor = self.cellTitleColor?.toColor(bundle)
-        theme.cellTitleColorDark = self.cellTitleColorDark?.toColor(bundle)
-        theme.cellDateColor = self.cellDateColor?.toColor(bundle)
-        theme.cellDateColorDark = self.cellDateColorDark?.toColor(bundle)
+        theme.cellColor = self.cellColor?.airshipToColor(bundle)
+        theme.cellColorDark = self.cellColorDark?.airshipToColor(bundle)
+        theme.cellTitleColor = self.cellTitleColor?.airshipToColor(bundle)
+        theme.cellTitleColorDark = self.cellTitleColorDark?.airshipToColor(bundle)
+        theme.cellDateColor = self.cellDateColor?.airshipToColor(bundle)
+        theme.cellDateColorDark = self.cellDateColorDark?.airshipToColor(bundle)
         theme.cellSeparatorStyle = self.cellSeparatorStyle?.toSeparatorStyle()
-        theme.cellSeparatorColor = self.cellSeparatorColor?.toColor(bundle)
-        theme.cellSeparatorColorDark = self.cellSeparatorColorDark?.toColor(bundle)
-        theme.cellTintColor = self.cellTintColor?.toColor(bundle)
-        theme.cellTintColorDark = self.cellTintColorDark?.toColor(bundle)
-        theme.unreadIndicatorColor = self.unreadIndicatorColor?.toColor(bundle)
-        theme.unreadIndicatorColorDark = self.unreadIndicatorColorDark?.toColor(bundle)
+        theme.cellSeparatorColor = self.cellSeparatorColor?.airshipToColor(bundle)
+        theme.cellSeparatorColorDark = self.cellSeparatorColorDark?.airshipToColor(bundle)
+        theme.cellTintColor = self.cellTintColor?.airshipToColor(bundle)
+        theme.cellTintColorDark = self.cellTintColorDark?.airshipToColor(bundle)
+        theme.unreadIndicatorColor = self.unreadIndicatorColor?.airshipToColor(bundle)
+        theme.unreadIndicatorColorDark = self.unreadIndicatorColorDark?.airshipToColor(bundle)
         theme.selectAllButtonTitleColor = self.selectAllButtonTitleColor?
-            .toColor(bundle)
+            .airshipToColor(bundle)
         theme.selectAllButtonTitleColorDark = self.selectAllButtonTitleColorDark?
-            .toColor(bundle)
-        theme.deleteButtonTitleColor = self.deleteButtonTitleColor?.toColor(bundle)
+            .airshipToColor(bundle)
+        theme.deleteButtonTitleColor = self.deleteButtonTitleColor?.airshipToColor(bundle)
         theme.deleteButtonTitleColorDark = self.deleteButtonTitleColorDark?
-            .toColor(bundle)
+            .airshipToColor(bundle)
         theme.markAsReadButtonTitleColor = self.markAsReadButtonTitleColor?
-            .toColor(bundle)
+            .airshipToColor(bundle)
         theme.markAsReadButtonTitleColorDark = self
-            .markAsReadButtonTitleColorDark?.toColor(bundle)
+            .markAsReadButtonTitleColorDark?.airshipToColor(bundle)
         theme.hideDeleteButton = self.hideDeleteButton ?? false
-        theme.editButtonTitleColor = self.editButtonTitleColor?.toColor(bundle)
+        theme.editButtonTitleColor = self.editButtonTitleColor?.airshipToColor(bundle)
         theme.editButtonTitleColorDark = self.editButtonTitleColorDark?
-            .toColor(bundle)
-        theme.cancelButtonTitleColor = self.cancelButtonTitleColor?.toColor(bundle)
+            .airshipToColor(bundle)
+        theme.cancelButtonTitleColor = self.cancelButtonTitleColor?.airshipToColor(bundle)
         theme.cancelButtonTitleColorDark = self.cancelButtonTitleColorDark?
-            .toColor(bundle)
-        theme.backButtonColor = self.backButtonColor?.toColor(bundle)
-        theme.backButtonColorDark = self.backButtonColorDark?.toColor(bundle)
+            .airshipToColor(bundle)
+        theme.backButtonColor = self.backButtonColor?.airshipToColor(bundle)
+        theme.backButtonColorDark = self.backButtonColorDark?.airshipToColor(bundle)
         theme.navigationBarTitle = self.navigationBarTitle
         return theme
+    }
+}
+
+fileprivate extension String {
+    func toSeparatorStyle() -> SeparatorStyle {
+        let separatorStyle = self.trimmingCharacters(in: .whitespaces)
+        if separatorStyle == MessageCenterThemeLoader.cellSeparatorStyleNoneKey
+        {
+            return .none
+        }
+        return .singleLine
     }
 }

@@ -46,7 +46,7 @@ enum Theme {
 }
 
 extension BannerTheme: ThemeDefaultable {
-    static let defaultPlistName: String = "UAInAppMessageBannerStyle.plist"
+    static let defaultPlistName: String = "UAInAppMessageBannerStyle"
 
     static var defaultValues: BannerTheme {
         let defaultPadding = EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
@@ -54,10 +54,11 @@ extension BannerTheme: ThemeDefaultable {
         let defaultBodyPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         let defaultMediaPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         let defaultButtonPadding = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-
         return BannerTheme(
             additionalPadding: defaultPadding,
             maxWidth: 0,
+            tapOpacity: 0.7,
+            shadowTheme: ShadowTheme(radius: 5, xOffset: 0, yOffset: 0, color: Color.black.opacity(0.33)),
             headerTheme: TextTheme(letterSpacing: 0,
                                    lineSpacing: 0,
                                    additionalPadding: defaultHeaderPadding),
@@ -74,7 +75,7 @@ extension BannerTheme: ThemeDefaultable {
 }
 
 extension ModalTheme: ThemeDefaultable {
-    static let defaultPlistName: String = "UAInAppMessageModalStyle.plist"
+    static let defaultPlistName: String = "UAInAppMessageModalStyle"
 
     static var defaultValues: ModalTheme {
         let defaultPadding = EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)
@@ -104,7 +105,7 @@ extension ModalTheme: ThemeDefaultable {
 }
 
 extension FullScreenTheme: ThemeDefaultable {
-    static let defaultPlistName: String = "UAInAppMessageFullScreenStyle.plist"
+    static let defaultPlistName: String = "UAInAppMessageFullScreenStyle"
 
     static var defaultValues: FullScreenTheme {
         let defaultPadding = EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)
@@ -132,7 +133,7 @@ extension FullScreenTheme: ThemeDefaultable {
 }
 
 extension HTMLTheme: ThemeDefaultable {
-    static let defaultPlistName: String = "UAInAppMessageHTMLStyle.plist"
+    static let defaultPlistName: String = "UAInAppMessageHTMLStyle"
 
     static var defaultValues: HTMLTheme {
         let defaultPadding = EdgeInsets(top: 24, leading: 24, bottom: 24, trailing: 24)

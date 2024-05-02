@@ -4,6 +4,10 @@ import XCTest
 
 @testable import AirshipAutomation
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 final class InAppMessageThemeTest: XCTestCase {
 
     private var testBundle: Bundle!
@@ -41,6 +45,11 @@ final class InAppMessageThemeTest: XCTestCase {
         XCTAssertEqual(24, bannerTheme.buttonTheme.additionalPadding.leading)
         XCTAssertEqual(25, bannerTheme.buttonTheme.additionalPadding.trailing)
         XCTAssertEqual(26, bannerTheme.maxWidth)
+        XCTAssertEqual(27, bannerTheme.tapOpacity)
+        XCTAssertEqual(28, bannerTheme.shadowTheme.radius)
+        XCTAssertEqual(29, bannerTheme.shadowTheme.xOffset)
+        XCTAssertEqual(30, bannerTheme.shadowTheme.yOffset)
+        XCTAssertEqual("003100".airshipToColor() , bannerTheme.shadowTheme.color)
     }
 
     func testModalParsing() {

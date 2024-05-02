@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import SwiftUI
+
 /// - Note: For internal use only. :nodoc:
 public final class AirshipColorUtils {
     private class func normalizeColorString(_ hexString: String) -> String {
@@ -65,5 +67,26 @@ public final class AirshipColorUtils {
         let a = Int(255.0 * alpha)
 
         return String(format: "#%02x%02x%02x%02x", a, r, g, b)
+    }
+}
+
+/// - Note: For internal use only. :nodoc:
+public extension String {
+    func airshipToColor(_ bundle:Bundle = Bundle.main) -> Color {
+        let colorString = self.trimmingCharacters(in: .whitespaces)
+
+        // Regular expression pattern for hex color strings
+        /// Optional # with 6-8 hexadecimal characters case insensitive
+        let hexPattern = "^#?([A-Fa-f0-9]{8}|[A-Fa-f0-9]{6})$"
+
+        /// If named color doesn't exist (parses to clear) and string follows hex pattern - assume it's a hex color
+        if let _ = colorString.range(of: hexPattern, options: .regularExpression) {
+            if let uiColor = AirshipColorUtils.color(colorString) {
+                return Color(uiColor)
+            }
+        }
+
+        // The color string is not in hex format or named color exists for this string
+        return Color(colorString, bundle: bundle)
     }
 }
