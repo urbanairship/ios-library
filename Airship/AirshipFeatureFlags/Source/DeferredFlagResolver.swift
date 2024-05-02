@@ -9,7 +9,7 @@ protocol FeatureFlagDeferredResolverProtocol: AnyActor {
     func resolve(
         request: DeferredRequest,
         flagInfo: FeatureFlagInfo
-    ) async throws -> FeatureFlag
+    ) async throws -> DeferredFlagResponse
 }
 
 actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
@@ -23,7 +23,7 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
     private let date: AirshipDateProtocol
     private let taskSleeper: AirshipTaskSleeper
 
-    private var pendingTasks: [String: Task<FeatureFlag, Error>] = [:]
+    private var pendingTasks: [String: Task<DeferredFlagResponse, Error>] = [:]
     private var backOffDates: [String: Date] = [:]
 
     init(
@@ -41,7 +41,7 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
     func resolve(
         request: DeferredRequest,
         flagInfo: FeatureFlagInfo
-    ) async throws -> FeatureFlag {
+    ) async throws -> DeferredFlagResponse {
 
         let requestID = [
             flagInfo.name,
@@ -54,11 +54,11 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
         _ = try? await pendingTasks[requestID]?.value
 
         let task = Task {
-            if let cached: FeatureFlag = await self.cache.getCachedValue(key: requestID) {
+            if let cached: DeferredFlagResponse = await self.cache.getCachedValue(key: requestID) {
                 return cached
             }
 
-            let flag = try await self.fetchFlag(
+            let result = try await self.fetchFlag(
                 request: request,
                 requestID: requestID,
                 flagInfo: flagInfo,
@@ -71,8 +71,8 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
                 ttl = max(ttl, ttlSeconds)
             }
 
-            await self.cache.setCachedValue(flag, key: requestID, ttl: ttl)
-            return flag
+            await self.cache.setCachedValue(result, key: requestID, ttl: ttl)
+            return result
         }
 
         pendingTasks[requestID] = task
@@ -84,41 +84,24 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
         requestID: String,
         flagInfo: FeatureFlagInfo,
         allowRetry: Bool
-    ) async throws -> FeatureFlag {
+    ) async throws -> DeferredFlagResponse {
         let now = self.date.now
         if let backOffDate = backOffDates[requestID], backOffDate > now {
             try await self.taskSleeper.sleep(
                 timeInterval: backOffDate.timeIntervalSince(now)
             )
         }
-
+        
         let result = await deferredResolver.resolve(request: request) { data in
-            return try AirshipJSON.defaultDecoder.decode(DeferredFlagResult.self, from: data)
+            return try AirshipJSON.defaultDecoder.decode(DeferredFlag.self, from: data)
         }
 
         switch(result) {
-        case .success(let body):
-            return FeatureFlag(
-                name: flagInfo.name,
-                isEligible: body.isEligible,
-                exists: true,
-                variables: body.variables,
-                reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: body.reportingMetadata,
-                    contactID: request.contactID,
-                    channelID: request.channelID
-                )
-            )
-
+        case .success(let flag):
+            return .found(flag)
 
         case .notFound:
-            return FeatureFlag(
-                name: flagInfo.name,
-                isEligible: false,
-                exists: false,
-                variables: nil,
-                reportingInfo: nil
-            )
+            return .notFound
 
         case .retriableError(let retryAfter):
             let backoff = retryAfter ?? FeatureFlagDeferredResolver.defaultBackoff
@@ -148,9 +131,14 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
     }
 }
 
-fileprivate struct DeferredFlagResult : Codable, Equatable {
+enum DeferredFlagResponse: Codable, Equatable {
+    case notFound
+    case found(DeferredFlag)
+}
+
+struct DeferredFlag: Codable, Equatable {
     let isEligible: Bool
-    let variables: AirshipJSON?
+    let variables: FeatureFlagVariables?
     let reportingMetadata: AirshipJSON
     enum CodingKeys: String, CodingKey {
         case isEligible = "is_eligible"

@@ -140,13 +140,7 @@ public final class FeatureFlagManager: Sendable {
         let deviceInfoProvider = deviceInfoProviderFactory()
 
         guard !flagInfos.isEmpty else {
-            return FeatureFlag(
-                name: name,
-                isEligible: false,
-                exists: false,
-                variables: nil,
-                reportingInfo: nil
-            )
+            return FeatureFlag.makeNotFound(name: name)
         }
 
         for flagInfo in flagInfos {
@@ -164,46 +158,103 @@ public final class FeatureFlagManager: Sendable {
 
             switch (flagInfo.flagPayload) {
             case .deferredPayload(let deferredInfo):
-                let request = DeferredRequest(
-                    url: deferredInfo.deferred.url,
-                    channelID: deviceInfoProvider.channelID!,
-                    contactID: await deviceInfoProvider.stableContactID,
-                    locale: deviceInfoProvider.locale,
-                    notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
-                )
-                
-                return try await deferredResolver.resolve(request: request, flagInfo: flagInfo)
-
-            case .staticPayload(let staticInfo):
-                let variables = await evaluateVariables(
-                    staticInfo.variables, 
+                return try await evaluateDeferred(
                     flagInfo: flagInfo,
+                    deferredInfo: deferredInfo,
                     deviceInfoProvider: deviceInfoProvider
                 )
-                return FeatureFlag(
-                    name: name,
-                    isEligible: true,
-                    exists: true,
-                    variables: variables?.data,
-                    reportingInfo: FeatureFlag.ReportingInfo(
-                        reportingMetadata: variables?.reportingMetadata ?? flagInfo.reportingMetadata,
-                        contactID: await deviceInfoProvider.stableContactID,
-                        channelID: deviceInfoProvider.channelID
-                    )
+
+
+            case .staticPayload(let staticInfo):
+                return await evaluateStatic(
+                    flagInfo: flagInfo,
+                    isElegible: true,
+                    staticInfo: staticInfo,
+                    deviceInfoProvider: deviceInfoProvider
                 )
             }
         }
 
-        return FeatureFlag(
-            name: name,
-            isEligible: false,
-            exists: true,
-            variables: nil,
-            reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: flagInfos.last?.reportingMetadata ?? .null,
-                contactID: await deviceInfoProvider.stableContactID,
-                channelID: deviceInfoProvider.channelID
+        let lastFlagInfo = flagInfos.last
+        return if let lastFlagInfo, case let .staticPayload(staticInfo) = lastFlagInfo.flagPayload {
+            await evaluateStatic(
+                flagInfo: lastFlagInfo,
+                isElegible: false,
+                staticInfo: staticInfo,
+                deviceInfoProvider: deviceInfoProvider
             )
+        } else {
+            FeatureFlag(
+                name: name,
+                isEligible: false,
+                exists: true,
+                variables: nil,
+                reportingInfo: FeatureFlag.ReportingInfo(
+                    reportingMetadata: lastFlagInfo?.reportingMetadata ?? .null,
+                    contactID: await deviceInfoProvider.stableContactID,
+                    channelID: deviceInfoProvider.channelID
+                )
+            )
+        }
+    }
+    
+    private func evaluateDeferred(
+        flagInfo: FeatureFlagInfo,
+        deferredInfo: FeatureFlagPayload.DeferredInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> FeatureFlag {
+        let request = DeferredRequest(
+            url: deferredInfo.deferred.url,
+            channelID: deviceInfoProvider.channelID!,
+            contactID: await deviceInfoProvider.stableContactID,
+            locale: deviceInfoProvider.locale,
+            notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
+        )
+
+        let deferredFlagResult = try await deferredResolver.resolve(
+            request: request,
+            flagInfo: flagInfo
+        )
+
+        switch(deferredFlagResult) {
+        case .notFound:
+            return FeatureFlag.makeNotFound(name: flagInfo.name)
+
+        case .found(let deferredFlag):
+            let variables = await evaluateVariables(
+                deferredFlag.variables,
+                flagInfo: flagInfo,
+                deviceInfoProvider: deviceInfoProvider
+            )
+
+            return await FeatureFlag.makeFound(
+                name: flagInfo.name,
+                isElegible: deferredFlag.isEligible,
+                deviceInfoProvider: deviceInfoProvider,
+                reportingMetadata: deferredFlag.reportingMetadata,
+                variables: variables
+            )
+        }
+    }
+
+    private func evaluateStatic(
+        flagInfo: FeatureFlagInfo,
+        isElegible: Bool,
+        staticInfo: FeatureFlagPayload.StaticInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async -> FeatureFlag {
+        let variables = await evaluateVariables(
+            staticInfo.variables,
+            flagInfo: flagInfo,
+            deviceInfoProvider: deviceInfoProvider
+        )
+
+        return await FeatureFlag.makeFound(
+            name: flagInfo.name,
+            isElegible: isElegible,
+            deviceInfoProvider: deviceInfoProvider,
+            reportingMetadata: flagInfo.reportingMetadata,
+            variables: variables
         )
     }
 
@@ -243,8 +294,43 @@ public final class FeatureFlagManager: Sendable {
         }
     }
 
-    struct VariableResult {
-        let data: AirshipJSON?
-        let reportingMetadata: AirshipJSON?
+
+}
+
+
+fileprivate struct VariableResult {
+    let data: AirshipJSON?
+    let reportingMetadata: AirshipJSON?
+}
+
+fileprivate extension FeatureFlag {
+    static func makeNotFound(name: String) -> FeatureFlag {
+        return FeatureFlag(
+            name: name,
+            isEligible: false,
+            exists: false,
+            variables: nil,
+            reportingInfo: nil
+        )
+    }
+
+    static func makeFound(
+        name: String,
+        isElegible: Bool,
+        deviceInfoProvider: AudienceDeviceInfoProvider,
+        reportingMetadata: AirshipJSON,
+        variables: VariableResult?
+    ) async -> FeatureFlag {
+        return FeatureFlag(
+            name: name,
+            isEligible: isElegible,
+            exists: true,
+            variables: variables?.data,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: variables?.reportingMetadata ?? reportingMetadata,
+                contactID: await deviceInfoProvider.stableContactID,
+                channelID: deviceInfoProvider.channelID
+            )
+        )
     }
 }

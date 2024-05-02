@@ -185,12 +185,12 @@ enum FeatureFlagPayload: Decodable, Equatable {
     }
 }
 
-enum FeatureFlagVariables: Decodable, Equatable {
+enum FeatureFlagVariables: Codable, Equatable {
     case fixed(AirshipJSON?)
-    case variant( [VariablesVariant])
+    case variant([VariablesVariant])
 
 
-    struct VariablesVariant: Decodable, Equatable {
+    struct VariablesVariant: Codable, Equatable {
         let id: String
         let audienceSelector: DeviceAudienceSelector?
         let reportingMetadata: AirshipJSON
@@ -204,7 +204,7 @@ enum FeatureFlagVariables: Decodable, Equatable {
         }
     }
 
-    private enum FeatureFlagVariableType: String, Decodable {
+    private enum FeatureFlagVariableType: String, Codable {
         case fixed
         case variant
     }
@@ -228,6 +228,19 @@ enum FeatureFlagVariables: Decodable, Equatable {
             self = .variant(
                 try container.decode([VariablesVariant].self, forKey: .variants)
             )
+        }
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        switch self {
+        case .fixed(let data):
+            try container.encode(FeatureFlagVariableType.fixed, forKey: .type)
+            try container.encodeIfPresent(data, forKey: .data)
+        case .variant(let variants):
+            try container.encode(FeatureFlagVariableType.variant, forKey: .type)
+            try container.encode(variants, forKey: .variants)
         }
     }
 }

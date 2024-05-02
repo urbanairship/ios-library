@@ -204,6 +204,104 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         XCTAssertEqual(expected, flag)
     }
 
+    func testAudienceMissLastInfoStatic() async throws {
+        self.remoteDataAccess.status = .upToDate
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting 1"),
+                audienceSelector: DeviceAudienceSelector(newUser: true),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(variables: nil)
+                )
+            ),
+            FeatureFlagInfo(
+                id: "some other ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting 2"),
+                audienceSelector: DeviceAudienceSelector(newUser: true),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(.string("some variables"))
+                    )
+                )
+            ),
+
+        ]
+
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return false
+        }
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+        let expected = FeatureFlag(
+            name: "foo",
+            isEligible: false,
+            exists: true,
+            variables: .string("some variables"),
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reporting 2"),
+                contactID: self.deviceInfoProvider.stableContactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+        XCTAssertEqual(expected, flag)
+    }
+
+    func testAudienceMissLastInfoDeferred() async throws {
+        self.remoteDataAccess.status = .upToDate
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting 1"),
+                audienceSelector: DeviceAudienceSelector(newUser: true),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(variables: nil)
+                )
+            ),
+            FeatureFlagInfo(
+                id: "some other ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting 2"),
+                audienceSelector: DeviceAudienceSelector(newUser: true),
+                flagPayload: .deferredPayload(
+                    FeatureFlagPayload.DeferredInfo(
+                        deferred: .init(url: URL(string: "some-url://")!)
+                    )
+                )
+            ),
+
+        ]
+
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return false
+        }
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+        let expected = FeatureFlag(
+            name: "foo",
+            isEligible: false,
+            exists: true,
+            variables: nil,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reporting 2"),
+                contactID: self.deviceInfoProvider.stableContactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+        XCTAssertEqual(expected, flag)
+    }
+
     func testMultipleFlags() async throws {
         let flagInfo1 = FeatureFlagInfo(
             id: "some ID",
@@ -316,6 +414,74 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
         XCTAssertEqual(expected, flag)
     }
+    
+    func testVariantVariablesDeferred() async throws {
+        let variables: [FeatureFlagVariables.VariablesVariant] = [
+            FeatureFlagVariables.VariablesVariant(
+                id: "variant 1",
+                audienceSelector: DeviceAudienceSelector(tagSelector: .tag("1")),
+                reportingMetadata: AirshipJSON.string("Variant reporting"),
+                data: AirshipJSON.string("variant1 variables")
+            ),
+            FeatureFlagVariables.VariablesVariant(
+                id: "variant 2",
+                audienceSelector: DeviceAudienceSelector(tagSelector: .tag("2")),
+                reportingMetadata: AirshipJSON.string("Variant reporting"),
+                data: AirshipJSON.string("variant2 variables")
+            ),
+            FeatureFlagVariables.VariablesVariant(
+                id: "variant 3",
+                audienceSelector: DeviceAudienceSelector(tagSelector: .tag("3")),
+                reportingMetadata: AirshipJSON.string("Variant reporting"),
+                data: AirshipJSON.string("variant3 variables")
+            )
+        ]
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting"),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        let deferredResponse = DeferredFlagResponse.found(
+            DeferredFlag(isEligible: false, variables: .variant(variables), reportingMetadata: .string("reporting two"))
+        )
+
+        let expectedFlag = FeatureFlag(
+            name: "foo",
+            isEligible: false,
+            exists: true,
+            variables: variables[1].data,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("Variant reporting"),
+                contactID: self.deviceInfoProvider.stableContactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, _, _ in
+            // match second variant
+            return selector == variables[1].audienceSelector
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            return deferredResponse
+        }
+
+        let result = try await featureFlagManager.flag(name: "foo")
+        XCTAssertEqual(result, expectedFlag)
+    }
+
 
     func testVariantVariablesNoMatch() async throws {
         let variables: [FeatureFlagVariables.VariablesVariant] = [
@@ -652,10 +818,14 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        let flag = FeatureFlag(
+        let deferredResponse = DeferredFlagResponse.found(
+            DeferredFlag(isEligible: false, variables: nil, reportingMetadata: .string("reporting two"))
+        )
+
+        let expectedFlag = FeatureFlag(
             name: "foo",
             isEligible: false,
-            exists: false,
+            exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting two"),
@@ -679,11 +849,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             XCTAssertEqual(request.locale, deviceInfoProvider.locale)
             XCTAssertEqual(request.notificationOptIn, deviceInfoProvider.isUserOptedInPushNotifications)
             XCTAssertEqual(flagInfo, info)
-            return flag
+            return deferredResponse
         }
 
         let result = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(result, flag)
+        XCTAssertEqual(result, expectedFlag)
     }
 
     func testDeferredLocalAudience() async throws {
@@ -911,12 +1081,12 @@ final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Senda
 
 final actor TestFeatureFlagResolver: FeatureFlagDeferredResolverProtocol {
 
-    var onResolve: ((DeferredRequest, FeatureFlagInfo) async throws -> FeatureFlag)?
+    var onResolve: ((DeferredRequest, FeatureFlagInfo) async throws -> DeferredFlagResponse)?
 
-    func setOnResolve(onResolve: @escaping @Sendable (DeferredRequest, FeatureFlagInfo) async throws -> FeatureFlag) {
+    func setOnResolve(onResolve: @escaping @Sendable (DeferredRequest, FeatureFlagInfo) async throws -> DeferredFlagResponse) {
         self.onResolve = onResolve
     }
-    func resolve(request: DeferredRequest, flagInfo: FeatureFlagInfo) async throws -> FeatureFlag {
+    func resolve(request: DeferredRequest, flagInfo: FeatureFlagInfo) async throws -> DeferredFlagResponse {
         try await self.onResolve!(request, flagInfo)
     }
 }
