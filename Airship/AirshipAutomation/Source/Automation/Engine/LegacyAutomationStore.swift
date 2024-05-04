@@ -18,10 +18,10 @@ actor LegacyAutomationStore {
 
         self.coreData = if let modelURL = modelURL {
             UACoreData(
+                name: "UAAutomation",
                 modelURL: modelURL,
                 inMemory: inMemory,
-                stores: ["Automation-\(appKey).sqlite", "In-app-automation-\(appKey).sqlite"],
-                mergePolicy: .mergeByPropertyObjectTrump
+                stores: ["Automation-\(appKey).sqlite", "In-app-automation-\(appKey).sqlite"]
             )
         } else {
             nil
@@ -47,8 +47,8 @@ actor LegacyAutomationStore {
         }
     }
 
-    func deleteAll() throws {
-        try self.requireCoreData().deleteStoresOnDisk()
+    func deleteAll() async throws {
+        try await self.requireCoreData().deleteStoresOnDisk()
     }
 
     private func requireCoreData() throws -> UACoreData {
