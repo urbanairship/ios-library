@@ -17,7 +17,6 @@ final class PushDataManager: Sendable {
     public init(appKey: String) {
         self.appKey = appKey
         self.coreData = UACoreData(
-            name: "AirshipDebugPushData",
             modelURL: DebugResources.bundle()
                 .url(
                     forResource: "AirshipDebugPushData",
@@ -37,24 +36,29 @@ final class PushDataManager: Sendable {
         let storageDaysInterval = Date()
             .addingTimeInterval(-self.maxAge)
             .timeIntervalSince1970
+        
+        await coreData.performBlockIfStoresExist { isSafe, context in
+            guard isSafe else { return }
 
-        do {
-            try await coreData.perform(skipIfStoreNotCreated: true) { context in
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = PushData.fetchRequest()
-                fetchRequest.predicate = NSPredicate(format: "time < %f", storageDaysInterval)
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = PushData.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "time < %f", storageDaysInterval)
+            
+            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
-                let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                try context.execute(batchDeleteRequest)
+            do {
+                _ = try context.execute(batchDeleteRequest)
+            } catch {
+                print("Failed to execute request: \(error)")
             }
-        } catch {
-            print("Failed to execute request: \(error)")
         }
-
     }
 
     public func savePushNotification(_ push: PushNotification) async {
-        try? await coreData.perform { context in
-            guard !self.pushExists(id: push.pushID, context: context) else {
+        await coreData.safePerform { isSafe, context in
+            guard
+                isSafe,
+                !self.pushExists(id: push.pushID, context: context)
+            else {
                 return
             }
 
@@ -66,6 +70,7 @@ final class PushDataManager: Sendable {
             persistedPush.alert = push.alert
             persistedPush.data = push.description
             persistedPush.time = push.time
+            UACoreData.safeSave(context)
         }
     }
 
@@ -83,19 +88,30 @@ final class PushDataManager: Sendable {
     }
 
     func pushNotifications() async -> [PushNotification] {
-        let result = try? await coreData.performWithResult { (context) -> [PushNotification] in
+        return await coreData.safePerform { (isSafe, context) -> [PushNotification] in
+            guard isSafe else {
+                return []
+            }
+            
             let fetchRequest: NSFetchRequest = PushData.fetchRequest()
             fetchRequest.sortDescriptors = [
                 NSSortDescriptor(key: "time", ascending: false)
             ]
             
-            let result = try context.fetch(fetchRequest)
-            let notifications = result.map {
-                PushNotification(pushData: $0)
+            do {
+                let result = try context.fetch(fetchRequest)
+                let notifications = result.map {
+                    PushNotification(pushData: $0)
+                }
+                return notifications
+            } catch {
+                if let error = error as NSError? {
+                    print(
+                        "ERROR: error fetching push payload list - \(error), \(error.userInfo)"
+                    )
+                }
+                return []
             }
-            return notifications
-        } 
-
-        return result ?? []
+        } ?? []
     }
 }

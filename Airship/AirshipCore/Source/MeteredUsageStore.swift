@@ -22,7 +22,6 @@ final class MeteredUsageStore: Sendable {
             withExtension: "momd"
         )
         self.coreData = UACoreData(
-            name: Self.eventDataEntityName,
             modelURL: modelURL!,
             inMemory: inMemory,
             stores: [storeName]
@@ -42,6 +41,8 @@ final class MeteredUsageStore: Sendable {
 
             eventData.identifier = event.eventID
             eventData.data = try AirshipJSON.defaultEncoder.encode(event)
+
+            UACoreData.safeSave(context)
         }
     }
 
@@ -51,15 +52,20 @@ final class MeteredUsageStore: Sendable {
                 entityName: MeteredUsageStore.eventDataEntityName
             )
 
-            if self.inMemory {
-                request.includesPropertyValues = false
-                let events = try context.fetch(request) as? [NSManagedObject]
-                events?.forEach { event in
-                    context.delete(event)
+            do {
+                if self.inMemory {
+                    request.includesPropertyValues = false
+                    let events = try context.fetch(request) as? [NSManagedObject]
+                    events?.forEach { event in
+                        context.delete(event)
+                    }
+                } else {
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+                    try context.execute(deleteRequest)
                 }
-            } else {
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
-                try context.execute(deleteRequest)
+                UACoreData.safeSave(context)
+            } catch {
+                AirshipLogger.error("Error deleting usage events: \(error)")
             }
         }
     }
@@ -86,6 +92,8 @@ final class MeteredUsageStore: Sendable {
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
                 try context.execute(deleteRequest)
             }
+
+            UACoreData.safeSave(context)
         }
     }
 
@@ -112,6 +120,8 @@ final class MeteredUsageStore: Sendable {
                     return nil
                 }
             }
+
+            UACoreData.safeSave(context)
             return events
         }
     }

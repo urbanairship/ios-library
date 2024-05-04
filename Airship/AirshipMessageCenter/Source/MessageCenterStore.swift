@@ -115,7 +115,6 @@ actor MessageCenterStore {
                 config.appKey
             )
             self.coreData = UACoreData(
-                name: "UAInbox",
                 modelURL: modelURL,
                 inMemory: false,
                 stores: [storeName]
@@ -210,6 +209,7 @@ actor MessageCenterStore {
 
             request.resultType = .updatedObjectsCountResultType
             try context.execute(request)
+            UACoreData.safeSave(context)
         }
     }
 
@@ -229,6 +229,7 @@ actor MessageCenterStore {
                 useBatch: !self.inMemory,
                 context: context
             )
+            UACoreData.safeSave(context)
         }
     }
 
@@ -248,6 +249,7 @@ actor MessageCenterStore {
             request.propertiesToUpdate = ["deletedClient": true]
             request.resultType = .updatedObjectsCountResultType
             try context.execute(request)
+            UACoreData.safeSave(context)
         }
     }
 
@@ -439,6 +441,8 @@ actor MessageCenterStore {
                 useBatch: !self.inMemory,
                 context: context
             )
+
+            UACoreData.safeSave(context)
         }
         
         self.setLastMessageListModifiedTime(lastModifiedTime)

@@ -18,7 +18,6 @@ actor EventStore {
             withExtension: "momd"
         )
         self.coreData = UACoreData(
-            name: Self.eventDataEntityName,
             modelURL: modelURL!,
             inMemory: inMemory,
             stores: ["Events-\(appKey).sqlite"]
@@ -30,6 +29,7 @@ actor EventStore {
     ) async throws {
         try await self.coreData.perform { context in
             try self.saveEvent(event: event, context: context)
+            UACoreData.safeSave(context)
         }
     }
 
@@ -65,6 +65,8 @@ actor EventStore {
                     context.delete(eventData)
                 }
             }
+
+            UACoreData.safeSave(context)
             return events
         }
     }
@@ -100,6 +102,7 @@ actor EventStore {
                     let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
                     try context.execute(deleteRequest)
                 }
+                UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error deleting analytics events: \(error)")
             }
@@ -123,6 +126,7 @@ actor EventStore {
                     let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
                     try context.execute(deleteRequest)
                 }
+                UACoreData.safeSave(context)
             } catch {
                 AirshipLogger.error("Error deleting analytics events: \(error)")
             }
@@ -139,6 +143,8 @@ actor EventStore {
                     return
                 }
             }
+
+            UACoreData.safeSave(context)
         }
     }
 
@@ -158,6 +164,7 @@ actor EventStore {
         } catch {
             AirshipLogger.error("Error deleting session: \(sessionID)")
             return false
+
         }
     }
 
@@ -304,4 +311,3 @@ fileprivate class EventData: NSManagedObject {
     @objc
     @NSManaged public dynamic var storeDate: Date?
 }
-

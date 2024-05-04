@@ -16,7 +16,6 @@ final class RemoteDataStore: Sendable {
             withExtension: "momd"
         )
         self.coreData = UACoreData(
-            name:  "UARemoteData",
             modelURL: modelURL!,
             inMemory: inMemory,
             stores: [storeName]
@@ -88,6 +87,7 @@ final class RemoteDataStore: Sendable {
     public func clear() async throws {
         try await self.coreData.perform({ context in
             try self.deleteAll(context: context)
+            UACoreData.safeSave(context)
         })
     }
 
@@ -97,9 +97,11 @@ final class RemoteDataStore: Sendable {
         
         try await self.coreData.perform({ context in
             try self.deleteAll(context: context)
+            UACoreData.safeSave(context)
             payloads.forEach {
                 self.addPayload($0, context: context)
             }
+            UACoreData.safeSave(context)
         })
         
     }

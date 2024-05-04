@@ -22,7 +22,6 @@ actor CoreDataAirshipCache: AirshipCache {
 
         if let modelURL = modelURL {
             return UACoreData(
-                name: "UAirshipCache",
                 modelURL: modelURL,
                 inMemory: false,
                 stores: ["AirshipCache-\(appKey).sqlite"]
@@ -84,7 +83,7 @@ actor CoreDataAirshipCache: AirshipCache {
     ) async -> T? where T : Decodable, T : Encodable, T : Sendable {
         await self.cleanUpTask.value
         do {
-            let result: T? = try await requireCoreData().performWithResult { context in
+            let result: T? = try await requireCoreData().performWithNullableResult { context in
                 let entity = try context.getAirshipCacheEntity(key: key)
 
                 guard let data = entity?.data,
@@ -131,6 +130,7 @@ actor CoreDataAirshipCache: AirshipCache {
                 entity.appVersion = self.appVersion
                 entity.expiry = self.date.now + ttl
                 entity.data = try AirshipJSON.defaultEncoder.encode(value)
+                UACoreData.safeSave(context)
             }
         } catch {
             AirshipLogger.error("Failed to cache value for key \(key) \(error)")

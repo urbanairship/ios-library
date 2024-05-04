@@ -52,7 +52,6 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
 
         self.coreData = if let modelURL = modelURL {
            UACoreData(
-            name: "AirshipAutomation",
                 modelURL: modelURL,
                 inMemory: inMemory,
                 stores: ["AirshipAutomation-\(appKey).sqlite"]
@@ -92,6 +91,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             var data = try entity.toScheduleData()
             try block(&data)
             try entity.update(data: data)
+            try UACoreData.save(context)
             return data
         }
     }
@@ -123,6 +123,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
                 try entity.update(data: data)
                 result.append(data)
             }
+            try UACoreData.save(context)
             return result
         }
     }
@@ -206,6 +207,8 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
                     try entity.update(data: trigger)
                 }
             }
+
+            try UACoreData.save(context)
         }
     }
 
@@ -245,6 +248,8 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             try context.execute(deleteRequest)
         }
+
+        try UACoreData.save(context)
     }
 
     private nonisolated func fetchSchedules(
@@ -279,6 +284,8 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             try context.execute(deleteRequest)
         }
+
+        try UACoreData.save(context)
     }
 
     private func migrateData() async throws {
@@ -322,6 +329,8 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
                     context.rollback()
                     throw error
                 }
+
+                try UACoreData.save(context)
             }
 
             do {
