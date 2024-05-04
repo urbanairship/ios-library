@@ -4,6 +4,7 @@ import UserNotifications
 import UniformTypeIdentifiers
 
 #if !TARGET_OS_TV
+@objc
 open class UANotificationServiceExtension: UNNotificationServiceExtension {
     private enum Const {
         static let AirshipMediaAttachment = "com.urbanairship.media_attachment"
