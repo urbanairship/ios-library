@@ -89,6 +89,7 @@ struct InAppMessageBannerView: View {
                 .frame(maxWidth: mediaMaxWidth,
                        minHeight: mediaMinHeight,
                        maxHeight: mediaMaxHeight)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

@@ -51,11 +51,15 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     private let bannerConstraints: InAppMessageBannerConstraints
     private let placement: InAppMessageDisplayContent.Banner.Placement?
 
-    init(rootView: InAppMessageBannerView,
+    private weak var window: UIWindow?
+
+    init(window: UIWindow,
+         rootView: InAppMessageBannerView,
          placement: InAppMessageDisplayContent.Banner.Placement?,
          bannerConstraints: InAppMessageBannerConstraints) {
         self.bannerConstraints = bannerConstraints
         self.placement = placement
+        self.window = window
         super.init(rootView: rootView)
     }
 
@@ -76,11 +80,11 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        if let rootController = self.parent {
+        if let window = self.window {
 
-            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: rootController.view.centerXAnchor)
-            topConstraint = self.view.topAnchor.constraint(equalTo: rootController.view.topAnchor)
-            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: rootController.view.bottomAnchor)
+            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
+            topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
+            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
 
             heightConstraint = self.view.heightAnchor.constraint(equalToConstant: self.bannerConstraints.size.height)
             widthConstraint = self.view.widthAnchor.constraint(equalToConstant: self.bannerConstraints.size.width)
