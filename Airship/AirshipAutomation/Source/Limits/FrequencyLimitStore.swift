@@ -23,6 +23,7 @@ actor FrequencyLimitStore {
         let bundle = AutomationResources.bundle
         if let modelURL = bundle.url(forResource: "UAFrequencyLimits", withExtension:"momd") {
             self.coreData = UACoreData(
+                name: "UAFrequencyLimits",
                 modelURL: modelURL,
                 inMemory: inMemory,
                 stores: ["Frequency-limits-\(appKey).sqlite"]
@@ -92,7 +93,6 @@ actor FrequencyLimitStore {
             constraints.forEach { constraint in
                 context.delete(constraint)
             }
-            UACoreData.safeSave(context)
         }
     }
 
@@ -125,8 +125,6 @@ actor FrequencyLimitStore {
                     }
                 }
             }
-            
-            UACoreData.safeSave(context)
         }
         
     }
@@ -153,7 +151,6 @@ actor FrequencyLimitStore {
             data.identifier = constraint.identifier
             data.count = constraint.count
             data.range = constraint.range
-            UACoreData.safeSave(context)
         }
     }
 

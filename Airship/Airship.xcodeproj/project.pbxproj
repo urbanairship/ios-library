@@ -90,10 +90,10 @@
 		329DFCD02B7E4DDA0039C8C0 /* UARemoteDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */; };
 		329DFCD12B7E4DDA0039C8C0 /* UARemoteDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */; };
 		329DFCD52B7E59700039C8C0 /* UAInboxDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */; };
-		329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */; };
-		329DFCFD2B7FB1690039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
-		329DFCFF2B7FB8810039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
-		329DFD002B7FB8E40039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
+		329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCD22B7E59440039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel */; };
+		329DFCFD2B7FB1690039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
+		329DFCFF2B7FB8810039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
+		329DFD002B7FB8E40039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
 		32B513562B9F53A500BBE780 /* MessageCenterPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B513552B9F53A500BBE780 /* MessageCenterPredicate.swift */; };
 		32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */; };
 		32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */; };
@@ -363,6 +363,13 @@
 		6E1D8AD826CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
 		6E1D8AD926CC66BE0049DACB /* RemoteConfigCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */; };
 		6E1D90022B2D1AB4004BA130 /* RetryingQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1D90012B2D1AB4004BA130 /* RetryingQueueTests.swift */; };
+		6E1F6E842BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */; };
+		6E1F6E852BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */; };
+		6E1F6E862BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */; };
+		6E1F6E882BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */; };
+		6E1F6E892BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */; };
+		6E1F6E8A2BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */; };
+		6E1F6E8C2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E8B2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel */; };
 		6E213B182BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */; };
 		6E213B192BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */; };
 		6E213B1A2BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */; };
@@ -1935,9 +1942,9 @@
 		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
 		3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBaseTest.swift; sourceTree = "<group>"; };
 		3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataStoreTest.swift; sourceTree = "<group>"; };
-		329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMapping.xcmappingmodel; sourceTree = "<group>"; };
+		329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV3toV4.xcmappingmodel; sourceTree = "<group>"; };
 		329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARemoteDataMapping.swift; sourceTree = "<group>"; };
-		329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMapping.xcmappingmodel; sourceTree = "<group>"; };
+		329DFCD22B7E59440039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV2toV3.xcmappingmodel; sourceTree = "<group>"; };
 		329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAInboxDataMapping.swift; sourceTree = "<group>"; };
 		32B513552B9F53A500BBE780 /* MessageCenterPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterPredicate.swift; sourceTree = "<group>"; };
 		32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemView.swift; sourceTree = "<group>"; };
@@ -2159,6 +2166,9 @@
 		6E1D8AB226CC5D490049DACB /* RemoteConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfig.swift; sourceTree = "<group>"; };
 		6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigCache.swift; sourceTree = "<group>"; };
 		6E1D90012B2D1AB4004BA130 /* RetryingQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryingQueueTests.swift; sourceTree = "<group>"; };
+		6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV2toV4.xcmappingmodel; sourceTree = "<group>"; };
+		6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV1toV4.xcmappingmodel; sourceTree = "<group>"; };
+		6E1F6E8B2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV1toV3.xcmappingmodel; sourceTree = "<group>"; };
 		6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWeakValueHolder.swift; sourceTree = "<group>"; };
 		6E213B1D2BC7054500BF24AE /* InAppActionRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppActionRunner.swift; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
@@ -3147,7 +3157,8 @@
 			isa = PBXGroup;
 			children = (
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
-				329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */,
+				329DFCD22B7E59440039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel */,
+				6E1F6E8B2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel */,
 				99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */,
 			);
 			path = Resources;
@@ -5026,7 +5037,9 @@
 			children = (
 				6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */,
 				6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */,
-				329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */,
+				329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */,
+				6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */,
+				6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */,
 				6E411C742538C60900FEE4E8 /* UrbanAirship.strings */,
 				6E411B6C2538C4E500FEE4E8 /* UANativeBridge */,
 				6E411B6D2538C4E600FEE4E8 /* UANotificationCategories.plist */,
@@ -5685,7 +5698,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMapping.xcmappingmodel in Resources */,
+				329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel in Resources */,
+				6E1F6E8C2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel in Resources */,
 				3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5694,7 +5708,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFCFF2B7FB8810039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */,
+				329DFCFF2B7FB8810039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */,
+				6E1F6E882BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */,
+				6E1F6E842BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */,
 				6E411C782538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B782538C4E600FEE4E8 /* UANativeBridge in Resources */,
 				6EFE7E3F2A97ED660064AC31 /* PrivacyInfo.xcprivacy in Resources */,
@@ -5783,7 +5799,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFD002B7FB8E40039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */,
+				329DFD002B7FB8E40039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */,
+				6E1F6E862BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */,
+				6E1F6E8A2BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */,
 				A67229C0281A9E330033F54D /* UrbanAirship.strings in Resources */,
 				A67229C3281A9E330033F54D /* UANativeBridge in Resources */,
 				6EFE7E412A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */,
@@ -5819,7 +5837,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFCFD2B7FB1690039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */,
+				329DFCFD2B7FB1690039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */,
+				6E1F6E892BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */,
+				6E1F6E852BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */,
 				6E411C792538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B792538C4E600FEE4E8 /* UANativeBridge in Resources */,
 				6EFE7E402A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */,

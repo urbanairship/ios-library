@@ -10,7 +10,7 @@
             <plist version="1.0">
                 <dict>
                     <key>NSPersistenceFrameworkVersion</key>
-                    <integer>1340</integer>
+                    <integer>1344</integer>
                     <key>NSStoreModelVersionChecksumKey</key>
                     <string>bMpud663vz0bXQE24C6Rh4MvJ5jVnzsD2sI3njZkKbc=</string>
                     <key>NSStoreModelVersionHashes</key>
@@ -53,14 +53,14 @@
         <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z103"></relationship>
     </object>
     <object type="XDDEVENTITYMAPPING" id="z103">
-        <attribute name="migrationpolicyclassname" type="string">UAInboxDataMapping</attribute>
+        <attribute name="migrationpolicyclassname" type="string">UAInboxDataMappingV2toV3</attribute>
         <attribute name="sourcename" type="string">UAInboxMessage</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">1</attribute>
         <attribute name="destinationname" type="string">UAInboxMessage</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z104"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z106 z113 z115 z108 z112 z110 z111 z109 z102 z107 z114 z105"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z113 z108 z109 z111 z106 z112 z105 z114 z115 z102 z110 z107"></relationship>
         <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING"></relationship>
     </object>
     <object type="XDDEVMAPPINGMODEL" id="z104">
