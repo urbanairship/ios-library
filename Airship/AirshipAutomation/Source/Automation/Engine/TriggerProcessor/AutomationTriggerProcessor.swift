@@ -225,25 +225,35 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     func updateScheduleState(scheduleID: String, state: AutomationScheduleState) async {
         switch state {
         case .idle:
-            await self.activateTriggers(for: scheduleID, type: .execution)
+            await self.updateActiveTriggerType(for: scheduleID, type: .execution)
         case .triggered, .prepared:
-            await self.activateTriggers(for: scheduleID, type: .delayCancellation)
+            await self.updateActiveTriggerType(for: scheduleID, type: .delayCancellation)
         case .paused, .finished:
-            self.disableTriggers(for: scheduleID)
+            await self.updateActiveTriggerType(for: scheduleID, type: nil)
         default: break
         }
     }
     
-    private func activateTriggers(for scheduleID: String, type: TriggerExecutionType) async {
-        self.preparedTriggers[scheduleID]?.forEach { trigger in
-            trigger.activate()
+    private func updateActiveTriggerType(for scheduleID: String, type: TriggerExecutionType?) async {
+        guard let triggers = self.preparedTriggers[scheduleID] else { return }
+        guard let type = type else {
+            self.preparedTriggers[scheduleID]?.forEach { $0.disable() }
+            return
+        }
+
+        triggers.forEach {
+            if (type == $0.executionType) {
+                $0.activate()
+            } else {
+                $0.disable()
+            }
         }
 
         guard let state = self.appSessionState else { return }
 
-        let results = self.preparedTriggers[scheduleID]?.compactMap { trigger in
+        let results = triggers.compactMap { trigger in
             trigger.process(event: .stateChanged(state: state))
-        } ?? []
+        }
 
         results.forEach { result in
             if let triggerResult = result.triggerResult {
@@ -257,12 +267,6 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
             try await self.store.upsertTriggers(triggerDatas)
         } catch {
             AirshipLogger.error("Failed to save trigger data \(triggerDatas) \(error)")
-        }
-    }
-    
-    private func disableTriggers(for scheduleID: String) {
-        self.preparedTriggers[scheduleID]?.forEach { trigger in
-            trigger.disable()
         }
     }
 
