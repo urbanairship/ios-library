@@ -151,6 +151,13 @@ struct Pager: View {
                     handlePagerProgress(automatedActions, index: index)
                 }
             }
+            .onReceive(pagerState.$isMediaReady) { isMediaReady in
+                if (isMediaReady) {
+                    pagerState.resume()
+                } else {
+                    pagerState.pause()
+                }
+            }
 #if !os(tvOS)
             .applyIf(true) { view in
                 view.onTouch { isPressed in

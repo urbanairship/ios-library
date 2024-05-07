@@ -37,7 +37,9 @@ class PagerState: ObservableObject {
     @Published var completed: Bool = false
     
     /// Used to pause/resume a story
-    var inProgress: Bool = true
+    @Published var inProgress: Bool = true
+    @Published var isMediaReady: Bool = false
+    
     var currentPage: PageState {
         get { pages[pageIndex] }
         set { pages[pageIndex] = newValue }

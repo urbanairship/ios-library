@@ -17,6 +17,7 @@ struct MediaWebView: UIViewRepresentable {
     let video: Video?
     @Environment(\.isVisible) var isVisible
     @State private var isLoaded: Bool = false
+    @EnvironmentObject var pagerState: PagerState
 
     @MainActor
     func makeUIView(context: Context) -> WKWebView {
@@ -25,20 +26,28 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func updateUIView(_ uiView: WKWebView, context: Context) {
-        switch (isVisible, isLoaded) {
-        case (true, true):
-            handleAutoplayingVideos(uiView: uiView)
-        case (false, true):
-            resetMedias(uiView: uiView)
-            pauseMedias(uiView: uiView)
-        default:
+        if (pagerState.inProgress) {
+            switch (isVisible, isLoaded) {
+            case (true, true):
+                handleAutoplayingVideos(uiView: uiView)
+            case (false, true):
+                resetMedias(uiView: uiView)
+                pauseMedias(uiView: uiView)
+            default:
+                pauseMedias(uiView: uiView)
+            }
+        } else {
             pauseMedias(uiView: uiView)
         }
     }
 
     @MainActor
     func createWebView(context: Context) -> WKWebView {
+        let contentController = WKUserContentController()
+          contentController.add(makeCoordinator(), name: "callback")
+        
         let config = WKWebViewConfiguration()
+        config.userContentController = contentController
         config.allowsInlineMediaPlayback = true
         config.allowsPictureInPictureMediaPlayback = true
 
@@ -57,6 +66,10 @@ struct MediaWebView: UIViewRepresentable {
                         
                         <script>
                             let videoElement = document.getElementById("video");
+                                        
+                            videoElement.addEventListener("canplay", (event) => {
+                                webkit.messageHandlers.callback.postMessage('mediaReady');
+                            });
                         </script>
                     </body>
                     """,
@@ -99,12 +112,15 @@ struct MediaWebView: UIViewRepresentable {
                                 'autoplay': %@,
                                 'mute': %@,
                                 'loop': %@
+                              },
+                              events: {
+                                'onReady': onPlayerReady
                               }
                             });
                           }
                     
                           function onPlayerReady(event) {
-                            event.target.playVideo();
+                            webkit.messageHandlers.callback.postMessage('mediaReady');
                           }
                         </script>
                     </body>
@@ -166,10 +182,12 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func resetMedias(uiView: WKWebView) {
-        if type == .video {
-            uiView.evaluateJavaScript("videoElement.currentTime = 0;")
-        } else if type == .youtube {
-            uiView.evaluateJavaScript("player.seekTo(0);")
+        if video?.autoplay ?? false {
+            if type == .video {
+                uiView.evaluateJavaScript("videoElement.currentTime = 0;")
+            } else if type == .youtube {
+                uiView.evaluateJavaScript("player.seekTo(0);")
+            }
         }
     }
 
@@ -187,7 +205,7 @@ struct MediaWebView: UIViewRepresentable {
         Coordinator(self, isLoaded: $isLoaded)
     }
         
-    class Coordinator: NSObject, WKNavigationDelegate {
+    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         var parent: MediaWebView
         var isLoaded: Binding<Bool>
 
@@ -198,6 +216,17 @@ struct MediaWebView: UIViewRepresentable {
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             isLoaded.wrappedValue = true
+        }
+        
+        @MainActor
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard let response = message.body as? String else {
+                return
+            }
+            
+            if (response == "mediaReady") {
+                parent.pagerState.isMediaReady = true
+            }
         }
     }
 }
