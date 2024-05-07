@@ -160,6 +160,11 @@ struct MessageCenterWebView: UIViewRepresentable {
         )
         webView.allowsLinkPreview = false
         webView.navigationDelegate = context.coordinator.nativeBridge
+
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+        }
+
         return webView
     }
 

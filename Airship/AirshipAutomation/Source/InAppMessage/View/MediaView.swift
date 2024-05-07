@@ -52,6 +52,11 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.scrollView.isScrollEnabled = false
+
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+        }
+
         return webView
     }
 

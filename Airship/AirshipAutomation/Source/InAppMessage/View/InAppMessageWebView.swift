@@ -58,11 +58,13 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
-
         webView.navigationDelegate = context.coordinator.nativeBridge
-
         webView.isAccessibilityElement = true
         webView.accessibilityLabel = accessibilityLabel
+
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+        }
 
         if let url = URL(string: self.url) {
             updateLoading(true)

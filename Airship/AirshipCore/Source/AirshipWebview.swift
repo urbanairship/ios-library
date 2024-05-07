@@ -59,6 +59,10 @@ struct WebViewView: UIViewRepresentable {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator.nativeBridge
 
+        if #available(iOS 16.4, *) {
+            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+        }
+
         if let url = URL(string: self.url) {
             updateLoading(true)
             webView.load(URLRequest(url: url))

@@ -17,6 +17,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
         let config = AirshipConfig.default()
+        config.isWebViewInspectionEnabled = true
 
         if config.validate() != true {
             showInvalidConfigAlert()
@@ -32,7 +33,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // etc.
 
         // Call takeOff (which creates the UAirship singleton)
-        Airship.takeOff(launchOptions: launchOptions)
+        Airship.takeOff(config, launchOptions: launchOptions)
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")
