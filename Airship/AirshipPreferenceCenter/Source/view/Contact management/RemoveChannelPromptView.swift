@@ -11,7 +11,7 @@ struct RemoveChannelPromptView: View {
     var theme: PreferenceCenterTheme.ContactManagement?
 
     var onCancel: ()->()
-    var optOutAction: (()->())?
+    var optOutAction: ()->()
 
     private func dismiss() {
         onCancel()
@@ -19,7 +19,7 @@ struct RemoveChannelPromptView: View {
 
     @ViewBuilder
     private var promptViewContent: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             titleText.padding(.trailing, 16) // Pad out to prevent aliasing with the close button
             bodyText
             button

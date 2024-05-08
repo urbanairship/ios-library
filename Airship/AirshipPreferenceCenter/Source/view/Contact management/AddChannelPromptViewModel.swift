@@ -20,20 +20,24 @@ internal class AddChannelPromptViewModel: ObservableObject {
     internal let item: PreferenceCenterConfig.ContactManagementItem.AddChannelPrompt
     internal let registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?
     internal let onCancel: () -> Void
-    internal let onSubmit: () -> Void
+    internal let onRegisterSMS: (_ msisdn: String, _ senderID: String) -> Void
+    internal let onRegisterEmail: (_ email: String) -> Void
 
     internal init(
         item: PreferenceCenterConfig.ContactManagementItem.AddChannelPrompt,
         theme: PreferenceCenterTheme.ContactManagement?,
         registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?,
         onCancel: @escaping () -> Void,
-        onSubmit: @escaping () -> Void
+        onRegisterSMS: @escaping (_ msisdn: String, _ senderID: String) -> Void,
+        onRegisterEmail: @escaping (_ email: String) -> Void
+
     ) {
         self.item = item
         self.theme = theme
         self.registrationOptions = registrationOptions
         self.onCancel = onCancel
-        self.onSubmit = onSubmit
+        self.onRegisterSMS = onRegisterSMS
+        self.onRegisterEmail = onRegisterEmail
         self.selectedSender = .none
     }
 
@@ -78,6 +82,19 @@ internal class AddChannelPromptViewModel: ObservableObject {
         onValidationError()
     }
 
+    internal func onSubmit() {
+        if let registrationOptions = registrationOptions {
+            switch registrationOptions {
+            case .sms(_):
+                let formattedNumber = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
+                onRegisterSMS(formattedNumber, selectedSender.senderId)
+            case .email(_):
+                let formattedEmail = formattedEmail(email: inputText)
+                onRegisterEmail(formattedEmail)
+            }
+        }
+    }
+
     @MainActor
     internal func onStartLoading() {
         withAnimation {
@@ -90,7 +107,6 @@ internal class AddChannelPromptViewModel: ObservableObject {
         withAnimation {
             self.state = .succeeded
         }
-        registerChannel()
     }
 
     @MainActor
@@ -113,7 +129,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
 extension AddChannelPromptViewModel {
     @MainActor
     private func validateSMS(msisdn: String, sender: String) async throws -> Bool {
-        if let delegate = Airship.contact.SMSValidatorDelegate {
+        if let delegate = Airship.contact.smsValidatorDelegate {
             let result = try await delegate.validateSMS(msisdn: msisdn, sender: sender)
             AirshipLogger.trace("Validating phone number through delegate")
             return result
@@ -121,31 +137,6 @@ extension AddChannelPromptViewModel {
             let result = try await Airship.contact.validateSMS(msisdn, sender: sender)
             AirshipLogger.trace("Using default phone number validator")
             return result
-        }
-    }
-
-    private func registerChannel() {
-        if let registrationOptions = registrationOptions {
-            switch registrationOptions {
-            case .sms(_):
-                let formattedNumber = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
-                let options = SMSRegistrationOptions.optIn(
-                    senderID: selectedSender.senderId
-                )
-                Airship.contact.registerSMS(formattedNumber, options: options)
-            case .email(_):
-                let date = Date()
-                let options = EmailRegistrationOptions.commercialOptions(
-                    transactionalOptedIn: date,
-                    commercialOptedIn: date,
-                    properties: nil
-                )
-
-                Airship.contact.registerEmail(
-                    formattedEmail(email: inputText),
-                    options: options
-                )
-            }
         }
     }
 }

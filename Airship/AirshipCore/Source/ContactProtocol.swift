@@ -86,15 +86,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
     func registerSMS(_ msisdn: String, options: SMSRegistrationOptions)
 
     /**
-     * Validates MSISDN
-     * - Parameters:
-     *   - msisdn: The mobile phone number to validate.
-     *   - sender: The identifier given to the sender of the SMS message.
-     */
-    @objc
-    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
-
-    /**
      * Associates an Open channel to the contact.
      * - Parameters:
      *   - address: The open channel address.
@@ -102,14 +93,15 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      */
     @objc
     func registerOpen(_ address: String, options: OpenRegistrationOptions)
-    
+
     /**
-     * Opt out a channel from the contact.
+     * Associates a channel to the contact.
      * - Parameters:
      *   - channelID: The channel ID.
+     *   - type: The channel type.
      */
     @objc
-    func optOutChannel(_ channelID: String)
+    func associateChannel(_ channelID: String, type: ChannelType)
 
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
@@ -138,46 +130,46 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// The named user ID current value publisher.
     var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
 
-    /// Channels list publisher
-    var channelRegistrationEditPublisher: AnyPublisher<ChannelRegistrationState, Never> { get }
-                
-    /// Notification status updates
-    var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> { get }
-
-    /// Gets the current channel status
-    var channelOptinStatus: [AirshipChannelOptinStatus]? { get }
-    
     /// Conflict event publisher
     var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
 
     /// Notifies any edits to the subscription lists.
     var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
 
-    /**
-     * Associates a channel to the contact.
-     * - Parameters:
-     *   - channelID: The channel ID.
-     *   - type: The channel type.
-     *   - options: The channel registration options
-     */
-    func associateChannel(_ channelID: String, type: ChannelType, options: RegistrationOptions)
-    
     /// Fetches subscription lists.
     /// - Returns: Subscriptions lists.
     func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]]
-    
-    /// Fetches the associated channels list.
-    /// - Returns: associated channels list.
-    func fetchAssociatedChannelsList() async -> [AssociatedChannel]?
-    
-    /// Check the channel optin status
-    /// - Returns: Returs a list of  AirshipChannelOptinStatus
-    func checkOptinStatus() async -> [AirshipChannelOptinStatus]?
 
     /// SMS validator delegate to allow overriding the default SMS validation
     /// - Returns: Bool indicating if SMS is valid.
-    var SMSValidatorDelegate: SMSValidatorDelegate? { get set }
+    var smsValidatorDelegate: SMSValidatorDelegate? { get set }
+
+    /**
+     * Validates MSISDN
+     * - Parameters:
+     *   - msisdn: The mobile phone number to validate.
+     *   - sender: The identifier given to the sender of the SMS message.
+     */
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
+
+    /**
+     * Re-sends the double opt in prompt via the channel
+     * - Parameters:
+     *   - channel: The channel to resend the double opt-in prompt to
+     */
+    func resend(_ channel: ContactChannel)
+
+    /**
+     * Opts out and disassociates channel
+     * - Parameters:
+     *   - channel: The channel to opt-out and disassociate
+     */
+    func disassociateChannel(_ channel: ContactChannel)
+
+    var contactChannelUpdates: AsyncStream<[ContactChannel]> { get async throws }
+    var contactChannelPublisher: AnyPublisher<[ContactChannel], Never> { get async throws }
 }
+
 
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {
     var contactID: String? { get async }
@@ -188,4 +180,3 @@ protocol InternalAirshipContactProtocol: AirshipContactProtocol {
     var contactIDInfo: ContactIDInfo? { get async }
     var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> { get }
 }
-

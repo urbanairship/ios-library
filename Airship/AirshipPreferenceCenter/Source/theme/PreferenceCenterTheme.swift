@@ -176,7 +176,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         public var backgroundColor: Color? = nil
 
         public init(
-            titleAppearance: TextAppearance? = nil, 
+            titleAppearance: TextAppearance? = nil,
             backgroundColor: Color? = nil
         ) {
             self.titleAppearance = titleAppearance
@@ -210,22 +210,28 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
             self.buttonBackgroundColor = buttonBackgroundColor
         }
     }
-    
+
     /// Contact management item theme
     public struct ContactManagement: Equatable, Sendable {
-        
+
         /// Background color
         public var backgroundColor: Color? = nil
-        
+
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
 
         /// Subtitle appearance
         public var subtitleAppearance: TextAppearance? = nil
 
+        /// List title appearance
+        public var listTitleAppearance: TextAppearance? = nil
+
+        /// List subtitle appearance
+        public var listSubtitleAppearance: TextAppearance? = nil
+
         /// Error appearance
         public var errorAppearance: TextAppearance? = nil
-        
+
         /// Button label  appearance
         public var buttonLabelAppearance: TextAppearance? = nil
 
@@ -252,7 +258,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
             self.buttonDestructiveBackgroundColor = buttonDestructiveBackgroundColor
         }
     }
-    
+
     /// Channel subscription item theme
     public struct ChannelSubscription: Equatable, Sendable {
         /// Title appearance
@@ -321,7 +327,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
             self.chip = chip
         }
     }
-    
+
     public init(
         viewController: PreferenceCenterTheme.ViewController? = nil,
         preferenceCenter: PreferenceCenterTheme.PreferenceCenter? = nil,

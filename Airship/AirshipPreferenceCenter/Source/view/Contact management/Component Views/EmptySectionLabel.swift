@@ -19,7 +19,7 @@ struct EmptySectionLabel: View {
                 HStack(spacing:12) {
                     Image(systemName: "info.circle")
                         .font(.system(size: 16))
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(.primary.opacity(0.5))
                     /// Message
                     Text(label)
                         .textAppearance(

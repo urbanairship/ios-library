@@ -22,7 +22,6 @@ public struct ChannelTextField: View {
     @State
     private var placeholder: String = ""
 
-
     private let fieldCornerRadius: CGFloat = 4
 
     /// The preference center theme
@@ -42,6 +41,7 @@ public struct ChannelTextField: View {
         _inputText = inputText
 
         self.theme = theme
+
         if let registrationOptions = self.registrationOptions {
             switch registrationOptions {
             case .sms(let options):
@@ -52,29 +52,23 @@ public struct ChannelTextField: View {
             }
         }
 
+        self.placeholder = makePlaceholder()
     }
 
     public var body: some View {
-        countrySelector
+        countryPicker
         VStack {
-            HStack {
+            HStack(spacing:2) {
                 textFieldLabel
                 textField
             }
             .padding(10)
             .background(backgroundView)
-            .airshipOnChangeOf(self.selectedSenderID, { newVal in
-                if let sender = senders?.first(where: { $0.senderId == newVal }) {
-                    selectedSender = sender
-                    /// Update placeholder with selection
-                    placeholder = makePlaceholder()
-                }
-            })
         }
     }
 
     @ViewBuilder
-    private var countrySelector: some View {
+    private var countryPicker: some View {
         if let senders = self.senders, (senders.count >= 1) {
             HStack(spacing:10) {
                 if let smsOptions = smsOptions {
@@ -83,9 +77,18 @@ public struct ChannelTextField: View {
                 Spacer()
                 Picker("senders", selection: $selectedSenderID) {
                     ForEach(senders, id: \.self) {
-                        Text($0.countryCode).tag($0.senderId)
+                        Text($0.countryCode.countryFlag() + "  " + $0.countryCode + "  ").tag($0.senderId)
                     }
-                }.onAppear {
+                }
+                .accentColor(DefaultColors.primaryText)
+                .airshipOnChangeOf(self.selectedSenderID, { newVal in
+                    if let sender = senders.first(where: { $0.senderId == newVal }) {
+                        selectedSender = sender
+                        /// Update placeholder with selection
+                        placeholder = makePlaceholder()
+                    }
+                })
+                .onAppear {
                     /// Ensure initial value is set
                     if let sender = self.senders?.first {
                         self.selectedSenderID = sender.senderId
@@ -98,7 +101,7 @@ public struct ChannelTextField: View {
     }
 
     private var textField: some View {
-        TextField(placeholder, text: $inputText)
+        TextField(makePlaceholder(), text: $inputText)
             .padding(self.placeHolderPadding)
             .keyboardType(keyboardType)
     }

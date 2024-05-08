@@ -22,7 +22,6 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
             session: config.requestSession
         )
     }
-    
 
     private func makeURL(path: String) throws -> URL {
         guard let deviceAPIURL = self.config.deviceAPIURL else {

@@ -24,6 +24,17 @@ struct AddChannelPromptView: View, @unchecked Sendable {
         )
     }
 
+    private var errorMessage: String? {
+        switch self.viewModel.state {
+        case .failedInvalid:
+            return self.viewModel.item.errorMessages?.invalidMessage
+        case .failedDefault:
+            return self.viewModel.item.errorMessages?.defaultMessage
+        default:
+            return nil
+        }
+    }
+
     @ViewBuilder
     var foregroundContent: some View {
         switch self.viewModel.state {
@@ -33,7 +44,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                 item: self.viewModel.item.onSuccess,
                 theme: viewModel.theme
             ) {
-                viewModel.onSubmit()
+                viewModel.onSubmit() 
             }
             .transition(.opacity)
         case .ready, .loading, .failedInvalid, .failedDefault:
@@ -67,17 +78,6 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                     viewModel.theme?.subtitleAppearance,
                     base: DefaultContactManagementSectionStyle.subtitleAppearance
                 )
-        }
-    }
-
-    private var errorMessage: String? {
-        switch self.viewModel.state {
-        case .failedInvalid:
-            return self.viewModel.item.errorMessages?.invalidMessage
-        case .failedDefault:
-            return self.viewModel.item.errorMessages?.defaultMessage
-        default:
-            return nil
         }
     }
 
@@ -122,8 +122,6 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     private var footer: some View {
         /// Footer
         if let footer = self.viewModel.item.display.footer {
-            Spacer()
-                .frame(height: 20)
             Text(LocalizedStringKey(footer)) /// Markdown parsing in iOS15+
                 .textAppearance(
                     viewModel.theme?.subtitleAppearance,
@@ -136,7 +134,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
 
     @ViewBuilder
     private var promptViewContent: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 12) {
             titleText.padding(.trailing, 16) // Pad out to prevent aliasing with the close button
             bodyText
 

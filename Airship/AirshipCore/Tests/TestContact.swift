@@ -4,16 +4,36 @@ import Combine
 @testable import AirshipCore
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
+    init() {}
 
+    func registerEmail(_ address: String, options: AirshipCore.EmailRegistrationOptions) {
 
-    private let channelsListSubject = PassthroughSubject<ChannelRegistrationState, Never>()
-    public var channelsListPublisher: AnyPublisher<ChannelRegistrationState, Never> {
-        channelsListSubject.eraseToAnyPublisher()
+    }
+    
+    func registerSMS(_ msisdn: String, options: AirshipCore.SMSRegistrationOptions) {
+
+    }
+    
+    func registerOpen(_ address: String, options: AirshipCore.OpenRegistrationOptions) {
+
+    }
+    
+    var smsValidatorDelegate: (any AirshipCore.SMSValidatorDelegate)?
+    
+    func resend(_ channel: AirshipCore.ContactChannel) {
+
+    }
+    
+    func disassociateChannel(_ channel: AirshipCore.ContactChannel) {
+
     }
 
-    let channelOptinStatusSubject = PassthroughSubject<[AirshipChannelOptinStatus], Never>()
-    var channelOptinStatusPublisher: AnyPublisher<[AirshipChannelOptinStatus], Never> {
-        channelOptinStatusSubject.eraseToAnyPublisher()
+    var contactChannelUpdates: AsyncStream<[ContactChannel]> = AsyncStream<[ContactChannel]>.init { _ in }
+    
+    var contactChannelPublisher: AnyPublisher<[AirshipCore.ContactChannel], Never> = Just([]).eraseToAnyPublisher()
+
+    func associateChannel(_ channelID: String, type: AirshipCore.ChannelType) {
+
     }
 
     var SMSValidatorDelegate: SMSValidatorDelegate?
@@ -21,23 +41,11 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         true
     }
 
-    var channelOptinStatus: [AirshipChannelOptinStatus]? = nil
-    
     func fetchAssociatedChannelsList() async -> [AssociatedChannel]? {
         return nil
     }
-    
-    func checkOptinStatus() async -> [AirshipChannelOptinStatus]? {
-        return nil
-    }
-    
-    private let channelRegistrationEditSubject = PassthroughSubject<ChannelRegistrationState, Never>()
-    var channelRegistrationEditPublisher: AnyPublisher<ChannelRegistrationState, Never> {
-        channelRegistrationEditSubject.eraseToAnyPublisher()
-    }
 
     func notifyRemoteLogin() {
-
     }
 
     var contactIDInfo: AirshipCore.ContactIDInfo? = nil
@@ -73,7 +81,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
         conflictEventSubject.eraseToAnyPublisher()
     }
-    
 
     private let namedUserUpdatesSubject = PassthroughSubject<String?, Never>()
     public var namedUserIDPublisher: AnyPublisher<String?, Never> {
@@ -91,7 +98,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     public func _getNamedUserID() async -> String? {
         return self.namedUserID
     }
-
 
     public var isComponentEnabled: Bool = true
 
@@ -137,38 +143,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         editor.apply()
     }
 
-    public func registerEmail(
-        _ address: String,
-        options: EmailRegistrationOptions
-    ) {
-        // TODO
-    }
-
-    public func registerSMS(
-        _ msisdn: String,
-        options: SMSRegistrationOptions
-    ) {
-        // TODO
-    }
-
-    func validateSMS(
-        _ msisdn: String,
-        sender: String
-    ) {
-        // TODO
-    }
-    
-    public func registerOpen(
-        _ address: String,
-        options: OpenRegistrationOptions
-    ) {
-        // TODO
-    }
-
-    public func associateChannel(_ channelID: String, type: ChannelType, options: RegistrationOptions) {
-        // TODO
-    }
-
     public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
         return subscriptionListEditor!
     }
@@ -187,9 +161,5 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
 
     public func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
         return [:]
-    }
-    
-    func optOutChannel(_ channelID: String) {
-        //
     }
 }

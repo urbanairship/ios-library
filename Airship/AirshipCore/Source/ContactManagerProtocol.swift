@@ -3,8 +3,6 @@ import Foundation
 protocol ContactManagerProtocol: Actor, AuthTokenProvider {
 
     var contactUpdates: AsyncStream<ContactUpdate> { get }
-
-    var channelUpdates: AsyncStream<ChannelRegistrationState> { get }
     
     func onAudienceUpdated(onAudienceUpdatedCallback: (@Sendable (ContactAudienceUpdate) async -> Void)?)
 
@@ -26,6 +24,7 @@ struct ContactAudienceUpdate: Equatable, Sendable {
     let tags: [TagGroupUpdate]?
     let attributes: [AttributeUpdate]?
     let subscriptionLists: [ScopedSubscriptionListUpdate]?
+    let contactChannels: [ContactChannelUpdate]?
 }
 
 struct ContactIDInfo: Equatable, Sendable {

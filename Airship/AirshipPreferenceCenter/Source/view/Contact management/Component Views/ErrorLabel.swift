@@ -22,7 +22,7 @@ public struct ErrorLabel: View {
                 Text(errorMessage)
                     .textAppearance(
                         theme?.errorAppearance,
-                        base: DefaultContactManagementSectionStyle.defaultErrorAppearance
+                        base: DefaultContactManagementSectionStyle.errorAppearance
                     )
                     .lineLimit(2)
             }

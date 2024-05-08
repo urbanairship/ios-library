@@ -65,14 +65,14 @@ extension PreferenceCenterDecoder {
           "empty_label": "No email added",
           "display": {
             "name": "Email Addresses",
-            "description": "Addresses associated with your account."
+            "description": "Email address lorem ipsum dolor sit amet, consectetur adipiscing elit."
           },
           "registration_options": {
             "type": "email",
-            "placeholder_text": "Email address",
+            "placeholder_text": "example@domain.com",
             "address_label": "Email address",
             "resend": {
-              "interval": 1000,
+              "interval": 5,
               "message": "Pending verification",
               "button": {
                 "text": "Resend",
@@ -101,7 +101,7 @@ extension PreferenceCenterDecoder {
                 "footer": "Does anyone read our [Terms and Conditions](https://example.com) and [Privacy Policy](https://example.com)?"
               },
               "submit_button": {
-                "text": "Send",
+                "text": "Add",
                 "content_description": "Send a message to this email address"
               },
               "cancel_button": {
@@ -129,7 +129,7 @@ extension PreferenceCenterDecoder {
               "type": "prompt",
               "display": {
                 "title": "Are you sure?",
-                "body": "Detailed delete confirmation message text goes here..."
+                "body": "Detailed delete confirmation message about email goes here."
               },
               "submit_button": {
                 "text": "Yes",
@@ -157,44 +157,52 @@ extension PreferenceCenterDecoder {
           "empty_label": "No SMS added",
           "display": {
             "name": "Mobile Numbers",
-            "description": "Mobile numbers associated with your account."
+            "description": "Mobile number lorem ipsum dolor sit amet, consectetur adipiscing elit."
           },
           "registration_options": {
             "type": "sms",
             "country_label": "Country",
             "msisdn_label": "Phone number",
             "resend": {
-              "interval": 1000,
+              "interval": 5,
               "message": "Pending verification",
               "button": {
                 "text": "Resend",
                 "content_description": "Resend a verification message to this phone number"
+              },
+              "on_success": {
+                "name": "Verification resent",
+                "description": "Check your messaging app for a new confirmation message.",
+                "button": {
+                  "text": "Ok",
+                  "content_description": "Close prompt"
+                }
               }
             },
             "senders": [
               {
                 "country_code": "+1",
                 "display_name": "United States",
-                "placeholder_text": "18222111000",
-                "sender_id": "14222111000"
+                "placeholder_text": "18013623379",
+                "sender_id": "18338647429"
               },
               {
                 "country_code": "+44",
                 "display_name": "United Kingdom",
                 "placeholder_text": "2222 22222",
-                "sender_id": "2222"
+                "sender_id": "18338647429"
               },
               {
                 "country_code": "+33",
                 "display_name": "France",
                 "placeholder_text": "3333 33333",
-                "sender_id": "3333"
+                "sender_id": "18338647429"
               },
               {
                 "country_code": "+55",
                 "display_name": "Brazil",
                 "placeholder_text": "4444 44444",
-                "sender_id": "4444"
+                "sender_id": "18338647429"
               }
             ]
           },
@@ -204,10 +212,10 @@ extension PreferenceCenterDecoder {
               "display": {
                 "title": "Add a phone number",
                 "body": "You will receive a text message with further details.",
-                "footer": "By opting in you give us the OK to hound you forever."
+                "footer": "By opting in you give us the OK to [hound you forever](https://example.com)."
               },
               "submit_button": {
-                "text": "Send",
+                "text": "Add",
                 "content_description": "Send a message to this phone number"
               },
               "cancel_button": {
@@ -238,8 +246,8 @@ extension PreferenceCenterDecoder {
             "view": {
               "type": "prompt",
               "display": {
-                "title": "Remove phone number?",
-                "body": "Your phone will buzz less."
+                "title": "Are you sure?",
+                "body": "Detailed delete confirmation message about SMS goes here."
               },
               "submit_button": {
                 "text": "Yes",

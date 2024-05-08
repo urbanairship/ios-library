@@ -3,35 +3,35 @@ import Foundation
 @testable import AirshipCore
 
 class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
-
     var resolveCallback:
-        ((String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+    ((String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
 
     var identifyCallback:
-        ((String, String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+    ((String, String, String?, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
 
     var resetCallback:
-        ((String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+    ((String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
+
+    var resendCallback:
+    ((AirshipCore.ResendOptions) async throws -> AirshipHTTPResponse<Bool>)?
 
     var updateCallback:
-        ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
+    ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
 
     var associateChannelCallback:
-        ((String, String, ChannelType, RegistrationOptions) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    ((String, String, ChannelType) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
 
     var registerEmailCallback:
-        ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
 
     var registerSMSCallback:
-        ((String, String, SMSRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-
-    var validateSMSCallback:
-        ((String, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+    ((String, String, SMSRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
 
     var registerOpenCallback:
-        ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-    
-    var optOutChannelCallback: ((String, String) async throws -> AirshipHTTPResponse<Bool>)?
+    ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+
+    var disassociateCallback:
+    ((String) async throws -> AirshipHTTPResponse<Bool>)?
 
     init() {}
 
@@ -68,13 +68,11 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         return try await updateCallback!(contactID, tagGroupUpdates, attributeUpdates, subscriptionListUpdates)
     }
 
-    public func associateChannel(
-        contactID: String,
-        channelID: String,
-        channelType: ChannelType,
-        options: RegistrationOptions
-    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
-        return try await associateChannelCallback!(contactID, channelID, channelType, options)
+    func associateChannel(contactID: String,
+                          channelID: String,
+                          channelType: AirshipCore.ChannelType
+    ) async throws -> AirshipCore.AirshipHTTPResponse<AirshipCore.AssociatedChannel> {
+        return try await associateChannelCallback!(contactID, channelID, channelType)
     }
 
     public func registerEmail(
@@ -94,14 +92,6 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
         return try await registerSMSCallback!(contactID, msisdn, options, locale)
     }
-
-    func validateSMS(
-        contactID: String,
-        msisdn: String,
-        sender: String
-    ) async throws -> AirshipHTTPResponse<Bool> {
-        return try await validateSMSCallback!(contactID, msisdn, sender)
-    }
     
     public func registerOpen(
         contactID: String,
@@ -111,8 +101,13 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
         return try await registerOpenCallback!(contactID, address, options, locale)
     }
-    
-    func optOutChannel(contactID: String, channelID: String) async throws -> AirshipHTTPResponse<Bool> {
-        return try await optOutChannelCallback!(contactID, channelID)
+
+
+    func disassociateChannel(contactID: String, channelID: String, type: AirshipCore.ChannelType) async throws -> AirshipCore.AirshipHTTPResponse<Bool> {
+        return try await disassociateCallback!(channelID)
+    }
+
+    func resend(resendOptions: AirshipCore.ResendOptions) async throws -> AirshipCore.AirshipHTTPResponse<Bool> {
+        return try await resendCallback!(resendOptions)
     }
 }

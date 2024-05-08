@@ -1,6 +1,10 @@
 /* Copyright Airship and Contributors */
 import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 enum LabeledButtonType {
     case defaultType
     case destructiveType
@@ -15,10 +19,10 @@ struct LabeledButton: View {
     var isLoading: Bool
 
     var theme: PreferenceCenterTheme.ContactManagement?
-    var action: (()->())?
+    var action: ()->()
 
     private let cornerRadius: CGFloat = 8
-    private let disabledOpacity: CGFloat = 0.2
+    private let disabledOpacity: CGFloat = 0.5
     private let buttonPadding: EdgeInsets = EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
     private let outlineWidth: CGFloat = 1
 
@@ -30,7 +34,7 @@ struct LabeledButton: View {
         isEnabled: Bool = true,
         isLoading: Bool = false,
         theme: PreferenceCenterTheme.ContactManagement?,
-        action: (() -> ())?
+        action: @escaping () -> ()
     ) {
         self.item = item
         self.isEnabled = isEnabled
@@ -50,28 +54,31 @@ struct LabeledButton: View {
 
     @ViewBuilder
     private var buttonLabel: some View {
-        /// Outline types don't usually show progress - but want this to be right in case we ever do. Default fallback should be light color on dark background.
-        let fallbackColor = type == .defaultType ? Color.primary.inverted() : Color.primary
-
         Text(self.item.text)
             .textAppearance(
                 theme?.buttonLabelAppearance,
                 base: typedAppearance
             )
-            .opacity(1)
+            .opacity((isEnabled ? 1 : disabledOpacity))
             .airshipApplyIf(isLoading) {
                 $0
                     .opacity(0) /// Hide the text underneath the loader
                     .overlay(
                         ProgressView()
-                            .airshipSetTint(color: theme?.buttonLabelAppearance?.color ?? fallbackColor)
+                            .airshipSetTint(color: typedAppearance.color ?? DefaultColors.primaryInvertedText)
                     )
             }
     }
 
     private var typedAppearance: PreferenceCenterTheme.TextAppearance {
-        /// Light on dark for outlined and destructive types
-        type == .outlineType ?  DefaultContactManagementSectionStyle.buttonLabelOutlineAppearance : DefaultContactManagementSectionStyle.buttonLabelAppearance
+        switch type {
+        case .defaultType:
+            return DefaultContactManagementSectionStyle.buttonLabelAppearance
+        case .destructiveType:
+            return DefaultContactManagementSectionStyle.buttonLabelDestructiveAppearance
+        case .outlineType:
+            return DefaultContactManagementSectionStyle.buttonLabelOutlineAppearance
+        }
     }
 
     private var typedBackgroundColor: Color {
@@ -86,14 +93,10 @@ struct LabeledButton: View {
     }
 
     var body: some View {
-        VStack {
-            Button {
-                if let action = action {
-                    action()
-                }
-            } label: {
-                buttonLabel
-            }
+        Button {
+            action()
+        } label: {
+            buttonLabel
         }
         .frame(minWidth: minButtonWidth)
         .padding(buttonPadding)
@@ -101,8 +104,9 @@ struct LabeledButton: View {
         .cornerRadius(cornerRadius)
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(type == .outlineType ? Color.primary : Color.clear, lineWidth: type == .outlineType ? outlineWidth : 0)
+                .stroke(type == .outlineType ? DefaultColors.primaryText : Color.clear, lineWidth: type == .outlineType ? outlineWidth : 0)
         )
+        .accessibilityLabel(item.contentDescription ?? "")
         .disabled(!isEnabled)
         .optAccessibilityLabel(
             string: self.item.contentDescription

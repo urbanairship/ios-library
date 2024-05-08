@@ -222,7 +222,7 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
         let date = Date()
-        let response = try await contactAPIClient.registerEmail(
+        let response: AirshipHTTPResponse<AssociatedChannel> = try await contactAPIClient.registerEmail(
             contactID: "some-contact-id",
             address: "ua@airship.com",
             options: EmailRegistrationOptions.options(
@@ -234,7 +234,7 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        if case .email(let associatedChannel) = response.result {
+        if let associatedChannel = response.result, case .email = associatedChannel.channelType {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
@@ -314,7 +314,8 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        if case .sms(let associatedChannel) = response.result {
+
+        if let associatedChannel = response.result, case .sms = associatedChannel.channelType {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
             
             let previousRequest = self.session.previousRequest!
@@ -386,7 +387,7 @@ class ContactAPIClientTest: XCTestCase {
         )
 
         XCTAssertTrue(response.isSuccess)
-        if case .open(let associatedChannel) = response.result {
+        if let associatedChannel = response.result, case .open = associatedChannel.channelType {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
             
             let previousRequest = self.session.previousRequest!
@@ -454,12 +455,12 @@ class ContactAPIClientTest: XCTestCase {
         let response = try await contactAPIClient.associateChannel(
             contactID: "some-contact-id",
             channelID: "some-channel",
-            channelType: .sms,
-            options: .sms("1234567", options)
+            channelType: .sms
         )
 
         XCTAssertTrue(response.isSuccess)
-        if case .sms(let associatedChannel) = response.result {
+
+        if let associatedChannel = response.result, case .sms = associatedChannel.channelType {
             XCTAssertEqual("some-channel", associatedChannel.channelID)
             
             let request = self.session.lastRequest!

@@ -3,6 +3,7 @@
 import Foundation
 
 
+
 /// NOTE: For internal use only. :nodoc:
 enum ContactOperation: Codable, Equatable, Sendable {
     var type: OperationType {
@@ -15,8 +16,9 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case .registerEmail(_, _): return .registerEmail
         case .registerSMS(_, _): return .registerSMS
         case .registerOpen(_, _): return .registerOpen
-        case .associateChannel(_, _, _): return .associateChannel
-        case .optOutChannel(_): return .optOutChannel
+        case .associateChannel(_, _): return .associateChannel
+        case .disassociateChannel(_): return .disassociateChannel
+        case .resend(_): return .resend
         }
     }
 
@@ -30,7 +32,8 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case registerSMS
         case registerOpen
         case associateChannel
-        case optOutChannel
+        case disassociateChannel
+        case resend
     }
 
     case update(
@@ -59,14 +62,17 @@ enum ContactOperation: Codable, Equatable, Sendable {
 
     case associateChannel(
         channelID: String,
-        channelType: ChannelType,
-        options: RegistrationOptions
+        channelType: ChannelType
     )
 
-    case optOutChannel(
-        channelID: String
+    case disassociateChannel(
+        channel: ContactChannel
     )
-    
+
+    case resend(
+        channel: ContactChannel
+    )
+
     enum CodingKeys: String, CodingKey {
         case payload
         case type
@@ -86,8 +92,9 @@ enum ContactOperation: Codable, Equatable, Sendable {
         case date
         case required
         case channelOptions
+        case dissociateChannelInfo
+        case resendInfo
     }
-
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -137,17 +144,21 @@ enum ContactOperation: Codable, Equatable, Sendable {
             try payloadContainer.encode(options, forKey: .options)
             try container.encode(OperationType.registerOpen, forKey: .type)
 
-        case .associateChannel(let channelID, let channelType, let options):
+        case .associateChannel(let channelID, let channelType):
             var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
             try payloadContainer.encode(channelID, forKey: .channelID)
             try payloadContainer.encode(channelType, forKey: .channelType)
-            try payloadContainer.encode(options, forKey: .channelOptions)
             try container.encode(OperationType.associateChannel, forKey: .type)
-            
-        case .optOutChannel(let channelID):
+
+        case .disassociateChannel(let info):
             var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
-            try payloadContainer.encode(channelID, forKey: .channelID)
-            try container.encode(OperationType.optOutChannel, forKey: .type)
+            try payloadContainer.encode(info, forKey: .dissociateChannelInfo)
+            try container.encode(OperationType.disassociateChannel, forKey: .type)
+
+        case .resend(let info):
+            var payloadContainer = container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            try payloadContainer.encode(info, forKey: .resendInfo)
+            try container.encode(OperationType.resend, forKey: .type)
         }
     }
 
@@ -233,22 +244,27 @@ enum ContactOperation: Codable, Equatable, Sendable {
                 channelType: try payloadContainer.decode(
                     ChannelType.self,
                     forKey: .channelType
-                ), 
-                options: try payloadContainer.decode(
-                    RegistrationOptions.self,
-                    forKey: .channelOptions
                 )
             )
           
-        case .optOutChannel:
+        case .disassociateChannel:
             let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
-            self = .optOutChannel(
-                channelID: try payloadContainer.decode(
-                    String.self,
-                    forKey: .channelID
+            self = .disassociateChannel(
+                channel: try payloadContainer.decode(
+                    ContactChannel.self,
+                    forKey: .dissociateChannelInfo
                 )
             )
-            
+
+        case .resend:
+            let payloadContainer = try container.nestedContainer(keyedBy: PayloadCodingKeys.self, forKey: .payload)
+            self = .resend (
+                channel: try payloadContainer.decode(
+                    ContactChannel.self,
+                    forKey: .resendInfo
+                )
+            )
+
         case .resolve:
             self = .resolve
 

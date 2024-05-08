@@ -67,7 +67,6 @@ final class PreferenceCenterViewLoader: ObservableObject {
 
         var channelSubscriptions: [String] = []
         var contactSubscriptions: [String: Set<ChannelScope>] = [:]
-        var channelsList: [AssociatedChannel] = []
 
         if config.containsChannelSubscriptions() {
             channelSubscriptions = try await Airship.channel
@@ -80,16 +79,21 @@ final class PreferenceCenterViewLoader: ObservableObject {
                 .mapValues { Set($0) }
         }
         
+        var channelUpdates: AsyncStream<[ContactChannel]>? = nil
+
         if config.containsContactManagement() {
-            channelsList = await Airship.contact
-                .fetchAssociatedChannelsList() ?? []
+            do {
+                channelUpdates = try await Airship.contact.contactChannelUpdates
+            } catch {
+                AirshipLogger.error(error.localizedDescription)
+            }
         }
-        
+
         return PreferenceCenterState(
             config: config,
             contactSubscriptions: contactSubscriptions,
             channelSubscriptions: Set(channelSubscriptions),
-            channelsList: Set(channelsList)
+            channelUpdates: channelUpdates
         )
     }
 }

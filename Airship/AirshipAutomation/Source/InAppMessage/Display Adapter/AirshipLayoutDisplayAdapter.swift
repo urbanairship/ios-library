@@ -195,7 +195,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             )
             holder.value = viewController
 
-            window.addRootController(viewController)
+            window.airshipAddRootController(viewController)
         }
     }
 
@@ -351,24 +351,5 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
         }
 
         return imageData
-    }
-}
-
-private extension UIWindow {
-    func addRootController<T: UIViewController>(
-        _ viewController: T?
-    ) {
-        viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
-        viewController?.view.isUserInteractionEnabled = true
-        
-        if let viewController = viewController,
-           let rootController = self.rootViewController
-        {
-            rootController.addChild(viewController)
-            viewController.didMove(toParent: rootController)
-            rootController.view.addSubview(viewController.view)
-        }
-        
-        self.isUserInteractionEnabled = true
     }
 }

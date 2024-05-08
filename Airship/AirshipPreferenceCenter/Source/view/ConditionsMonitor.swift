@@ -50,25 +50,7 @@ class ConditionsMonitor: ObservableObject {
                 status.isUserOptedIn
             }
             .eraseToAnyPublisher()
-        case .smsOptIn(_):
-            return Airship.contact.channelOptinStatusPublisher.map { status in
-                guard let smsOptinStatus = status.filter({ $0.type == .sms }).first else {
-                    return false
-                }
-                return smsOptinStatus.status == .optIn
-            }
-            .eraseToAnyPublisher()
-            
-        case .emailOptIn(_):
-            return Airship.contact.channelOptinStatusPublisher.map { status in
-                guard let emailOptinStatus = status.filter({ $0.type == .email }).first else {
-                    return false
-                }
-                return emailOptinStatus.status == .optIn
-            }
-            .eraseToAnyPublisher()
         }
-
     }
 
     @MainActor
@@ -93,29 +75,6 @@ class ConditionsMonitor: ObservableObject {
             case .optedOut:
                 return !Airship.push.isPushNotificationsOptedIn
             }
-        case .smsOptIn(let condition):
-            return isOptin(type: .sms, condition: condition)
-        case .emailOptIn(let condition):
-            return isOptin(type: .email, condition: condition)
-        }
-    }
-    
-    private func isOptin(
-        type: ChannelType,
-        condition: PreferenceCenterConfig.OptInCondition
-    ) -> Bool {
-        
-        guard let channelOptinStatus = Airship.contact.channelOptinStatus else {
-            return false
-        }
-        
-        guard let optinStatus = channelOptinStatus.filter({ $0.type == type }).first else {
-            return false
-        }
-        
-        switch condition.optInStatus {
-        case .optedIn: return optinStatus.status == .optIn
-        case .optedOut: return optinStatus.status == .optOut
         }
     }
 }

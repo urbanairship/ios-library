@@ -11,7 +11,7 @@ public struct ResultPromptView: View {
     /// The preference center theme
     var theme: PreferenceCenterTheme.ContactManagement?
 
-    var onDismiss: (()->())?
+    var onDismiss: () -> Void
 
     private var alertInternalPadding: CGFloat = 16
     private var alertExternalPadding: CGFloat = 16
@@ -31,7 +31,7 @@ public struct ResultPromptView: View {
 
     public var body: some View {
         if let item = self.item {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 8) {
 
                 /// Title
                 Text(item.title)

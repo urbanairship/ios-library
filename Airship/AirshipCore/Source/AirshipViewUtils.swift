@@ -33,6 +33,23 @@ public extension View {
 #if !os(watchOS)
 /// NOTE: For internal use only. :nodoc:
 public extension UIWindow {
+    func airshipAddRootController<T: UIViewController>(
+        _ viewController: T?
+    ) {
+        viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
+        viewController?.view.isUserInteractionEnabled = true
+
+        if let viewController = viewController,
+           let rootController = self.rootViewController
+        {
+            rootController.addChild(viewController)
+            viewController.didMove(toParent: rootController)
+            rootController.view.addSubview(viewController.view)
+        }
+
+        self.isUserInteractionEnabled = true
+    }
+
     static func airshipMakeModalReadyWindow(
         scene: UIWindowScene
     ) -> UIWindow {

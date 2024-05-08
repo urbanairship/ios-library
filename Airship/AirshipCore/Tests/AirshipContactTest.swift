@@ -7,6 +7,7 @@ import XCTest
 class AirshipContactTest: XCTestCase {
     private let channel: TestChannel = TestChannel()
     private let apiClient: TestContactSubscriptionListAPIClient = TestContactSubscriptionListAPIClient()
+    private let contactChannelsProvider: TestContactChannelsProvider = TestContactChannelsProvider()
     private let apiChannel: TestChannelsListAPIClient = TestChannelsListAPIClient()
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
@@ -45,7 +46,7 @@ class AirshipContactTest: XCTestCase {
             channel: self.channel,
             privacyManager: self.privacyManager,
             subscriptionListAPIClient: self.apiClient, 
-            channelsListAPIClient: self.apiChannel,
+            contactChannelsProvider: self.contactChannelsProvider,
             date: self.date,
             notificationCenter: self.notificationCenter,
             audienceOverridesProvider: self.audienceOverridesProvider,
@@ -377,13 +378,11 @@ class AirshipContactTest: XCTestCase {
         let options = EmailRegistrationOptions.commercialOptions(transactionalOptedIn: Date(), commercialOptedIn: Date(), properties: nil)
         self.contact.associateChannel(
             "some-channel-id",
-            type: .email,
-            options: .email("my address", options)
+            type: .email
         )
         await self.verifyOperations([.associateChannel(
             channelID: "some-channel-id",
-            channelType: .email,
-            options: .email("my address", options)
+            channelType: .email
         )])
     }
 
@@ -613,7 +612,7 @@ class AirshipContactTest: XCTestCase {
             attributes: nil,
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "neat", type: .unsubscribe, scope: .web, date: self.date.now)
-            ]
+            ], channels: []
         )
 
         // Pending
@@ -660,7 +659,7 @@ class AirshipContactTest: XCTestCase {
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some list", type: .unsubscribe, scope: .app, date: self.date.now)
-            ]
+            ], contactChannels: []
         )
 
         let pending = ContactAudienceOverrides(
@@ -695,7 +694,7 @@ class AirshipContactTest: XCTestCase {
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some list", type: .unsubscribe, scope: .app, date: self.date.now)
-            ]
+            ], contactChannels: []
         )
 
         let updateBar = ContactAudienceUpdate(
@@ -708,7 +707,7 @@ class AirshipContactTest: XCTestCase {
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some other list", type: .unsubscribe, scope: .app, date: self.date.now)
-            ]
+            ], contactChannels: []
         )
 
         await self.contactManager.dispatchAudienceUpdate(updateFoo)
@@ -822,7 +821,7 @@ class AirshipContactTest: XCTestCase {
 
 }
 
-fileprivate class TestSMSValidator: SMSValidatorProtocol {
+fileprivate class TestSMSValidator: SMSValidatorProtocol, @unchecked Sendable {
     var delegate: SMSValidatorDelegate? = nil
 
     func validateSMS(msisdn: String, sender: String) async throws -> Bool {
@@ -839,8 +838,8 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
 
     let contactUpdates: AsyncStream<ContactUpdate>
     let contactUpdatesContinuation: AsyncStream<ContactUpdate>.Continuation
-    let channelUpdates: AsyncStream<ChannelRegistrationState>
-    let channelUpdatesContinuation: AsyncStream<ChannelRegistrationState>.Continuation
+    let channelUpdates: AsyncStream<[ContactChannel]>
+    let channelUpdatesContinuation: AsyncStream<[ContactChannel]>.Continuation
 
     func validateSMS(_ msisdn: String, sender: String) async throws -> Bool {
         return true
@@ -857,7 +856,7 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
         (
             self.channelUpdates,
             self.channelUpdatesContinuation
-        ) = AsyncStream<ChannelRegistrationState>.airshipMakeStreamWithContinuation()
+        ) = AsyncStream<[ContactChannel]>.airshipMakeStreamWithContinuation()
     }
 
     func onAudienceUpdated(

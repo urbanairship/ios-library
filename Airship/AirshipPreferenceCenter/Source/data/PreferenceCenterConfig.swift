@@ -193,9 +193,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
      */
     public enum Condition: Decodable, Equatable, Sendable {
         case notificationOptIn(OptInCondition)
-        case smsOptIn(OptInCondition)
-        case emailOptIn(OptInCondition)
-        
+
         enum CodingKeys: String, CodingKey {
             case type = "type"
         }
@@ -210,18 +208,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             switch type {
             case .notificationOptIn:
                 self = .notificationOptIn(
-                    try singleValueContainer.decode(
-                        OptInCondition.self
-                    )
-                )
-            case .smsOptIn:
-                self = .smsOptIn(
-                    try singleValueContainer.decode(
-                        OptInCondition.self
-                    )
-                )
-            case .emailOptIn:
-                self = .emailOptIn(
                     try singleValueContainer.decode(
                         OptInCondition.self
                     )
@@ -864,7 +850,41 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 return stringValue
             }
         }
-        
+
+        @objc(PreferenceCenterPendingLabel)
+        public class PendingLabel: NSObject, Decodable {
+
+            /// The interval in seconds to wait before resend button appears
+            @objc
+            public let intervalInSeconds: Int
+
+            /// The message that displays when a channel is pending
+            @objc
+            public let message: String
+
+            /// Resend button that appears after the given interval
+            @objc
+            public let button: LabeledButton
+
+            /// Resend button that appears after the given interval
+            @objc
+            public let resendSuccessPrompt: ActionableMessage
+
+            enum CodingKeys: String, CodingKey {
+                case intervalInSeconds = "interval"
+                case message = "message"
+                case button = "button"
+                case resendSuccessPrompt = "on_success"
+            }
+
+            public init(intervalInSeconds: Int, message: String, button: LabeledButton, resendSuccessPrompt: ActionableMessage) {
+                self.intervalInSeconds = intervalInSeconds
+                self.message = message
+                self.button = button
+                self.resendSuccessPrompt = resendSuccessPrompt
+            }
+        }
+
         @objc(PreferenceCenterEmailRegistrationOption)
         public class EmailRegistrationOption: NSObject, Decodable {
             
@@ -875,16 +895,22 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             public var addressLabel: String
 
             public var properties: AirshipJSON?
-            
+
+            /// Label with resend button
+            @objc
+            public var pendingLabel: PendingLabel
+
             enum CodingKeys: String, CodingKey {
                 case placeholder = "placeholder_text"
                 case properties = "properties"
                 case addressLabel = "address_label"
+                case pendingLabel = "resend"
             }
             
-            public init(placeholder: String, addressLabel: String, properties: AirshipJSON? = nil) {
+            public init(placeholder: String, addressLabel: String, pendingLabel: PendingLabel, properties: AirshipJSON? = nil) {
                 self.placeholder = placeholder
                 self.addressLabel = addressLabel
+                self.pendingLabel = pendingLabel
                 self.properties = properties
             }
         }
@@ -901,19 +927,24 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             @objc
             public var msisdnLabel: String
 
+            /// Label with resend button
+            @objc
+            public var pendingLabel: PendingLabel
+
             enum CodingKeys: String, CodingKey {
                 case senders = "senders"
                 case countryLabel = "country_label"
                 case msisdnLabel = "msisdn_label"
+                case pendingLabel = "resend"
             }
             
-            public init(senders: [SmsSenderInfo], countryLabel: String, msisdnLabel: String) {
+            public init(senders: [SmsSenderInfo], countryLabel: String, msisdnLabel: String, pendingLabel: PendingLabel) {
                 self.senders = senders
                 self.countryLabel = countryLabel
                 self.msisdnLabel = msisdnLabel
+                self.pendingLabel = pendingLabel
             }
         }
-        
         /// Item types.
         @objc(UAPreferenceCenterConfigRegistrationOptionsType)
         public enum RegistrationOptionsType: Int, CustomStringConvertible,
@@ -1254,7 +1285,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         @objc
-        public class RetryPromptOptions: NSObject, Decodable {
+        public class RePromptOptions: NSObject, Decodable {
 
             var interval: Int
             var message: String
@@ -1374,21 +1405,12 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
 
     /// Notification opt-in condition.
     case notificationOptIn
-    
-    /// SMS opt-in condition.
-    case smsOptIn
-    
-    /// Email opt-in condition.
-    case emailOptIn
+
 
     var stringValue: String {
         switch self {
         case .notificationOptIn:
             return "notification_opt_in"
-        case .smsOptIn:
-            return "sms_opt_in"
-        case .emailOptIn:
-            return "email_opt_in"
         }
     }
 
@@ -1398,10 +1420,6 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
         switch value {
         case "notification_opt_in":
             return .notificationOptIn
-        case "sms_opt_in":
-            return .smsOptIn
-        case "email_opt_in":
-            return .emailOptIn
         default:
             throw AirshipErrors.error("invalid condition \(value)")
         }
@@ -1562,8 +1580,6 @@ extension PreferenceCenterConfig.Condition {
     var info: PreferenceConfigCondition {
         switch self {
         case .notificationOptIn(let info): return info
-        case .smsOptIn(let info): return info
-        case .emailOptIn(let info): return info
         }
     }
 }

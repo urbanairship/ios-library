@@ -32,8 +32,7 @@ protocol ContactsAPIClientProtocol: Sendable {
     func associateChannel(
         contactID: String,
         channelID: String,
-        channelType: ChannelType,
-        options: RegistrationOptions
+        channelType: ChannelType
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
 
     func registerEmail(
@@ -56,15 +55,21 @@ protocol ContactsAPIClientProtocol: Sendable {
         options: OpenRegistrationOptions,
         locale: Locale
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel>
-    
-    func optOutChannel(
+
+    func disassociateChannel(
         contactID: String,
-        channelID: String
+        channelID: String,
+        type: ChannelType
+    ) async throws ->  AirshipHTTPResponse<Bool>
+
+    func resend(
+        resendOptions: ResendOptions
     ) async throws ->  AirshipHTTPResponse<Bool>
 }
 
 /// NOTE: For internal use only. :nodoc:
 final class ContactAPIClient: ContactsAPIClientProtocol {
+
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
 
@@ -101,7 +106,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
     convenience init(config: RuntimeConfig) {
         self.init(config: config, session: config.requestSession)
     }
-    
+
     func resolve(
         channelID: String,
         contactID: String?,
@@ -150,12 +155,11 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
 
         return try await performUpdate(contactID: contactID, requestBody: requestBody)
     }
-    
+
     func associateChannel(
         contactID: String,
         channelID: String,
-        channelType: ChannelType,
-        options: RegistrationOptions
+        channelType: ChannelType
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         let requestBody = ContactUpdateRequestBody(
             attributes: nil,
@@ -174,29 +178,15 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             requestBody: requestBody
         ).map { response in
             if (response.isSuccess) {
-                switch options {
-                case .email(let address, let options):
-                    return .email(
-                        EmailAssociatedChannel(
-                            channelID: channelID,
-                            address: address,
-                            transactionalOptedIn: options.transactionalOptedIn,
-                            commercialOptedIn: options.commercialOptedIn
-                        )
-                    )
-                case .sms(let msisdn, let options):
-                    return .sms(
-                        SMSAssociatedChannel(
-                            channelID: channelID,
-                            msisdn: msisdn,
-                            sender: options.senderID,
-                            optIn: false
-                        )
-                    )
+                switch channelType {
+                case .email:
+                    return AssociatedChannel(channelType: .email, channelID: channelID)
+                case .sms:
+                    return AssociatedChannel(channelType: .sms, channelID: channelID)
                 case .open:
-                    return .open(BasicAssociatedChannel(channelID: channelID))
+                    return AssociatedChannel(channelType: .open, channelID: channelID)
                 }
-                
+
             } else {
                 return nil
             }
@@ -217,8 +207,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
                 locale: locale,
                 timezone: TimeZone.current.identifier
             ),
-            channelType: .email,
-            options: .email(address, options)
+            channelType: .email
         )
     }
 
@@ -236,8 +225,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
                 locale: locale,
                 timezone: TimeZone.current.identifier
             ),
-            channelType: .sms,
-            options: .sms(msisdn, options)
+            channelType: .sms
         )
     }
 
@@ -255,23 +243,30 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
                 locale: locale,
                 timezone: TimeZone.current.identifier
             ),
-            channelType: .open,
-            options: .open
+            channelType: .open
         )
     }
-    
-    func optOutChannel(
-        contactID: String,
-        channelID: String
-    ) async throws ->  AirshipHTTPResponse<Bool> {
-        // TODO: add API call
-        return AirshipHTTPResponse(
-            result: true,
-            statusCode: 200,
-            headers: [:]
+
+
+    func disassociateChannel(contactID: String,
+                             channelID: String,
+                             type: ChannelType) async throws -> AirshipHTTPResponse<Bool> {
+
+        let requestBody = DisassociateBody(
+            channelID: channelID,
+            channelType: type.stringValue,
+            optOut: true
+        )
+
+        return try await performDisassociate(
+            contactID: contactID,
+            requestBody: requestBody
         )
     }
-    
+
+    func resend(resendOptions: ResendOptions) async throws -> AirshipHTTPResponse<Bool> {
+        return try await performResend(resendOptions: resendOptions)
+    }
 
     private func makeURL(path: String) throws -> URL {
         guard let deviceAPIURL = self.config.deviceAPIURL else {
@@ -301,8 +296,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
     private func performChannelRegistration<T: Encodable>(
         contactID: String,
         requestBody: T,
-        channelType: ChannelType,
-        options: RegistrationOptions
+        channelType: ChannelType
     ) async throws ->  AirshipHTTPResponse<AssociatedChannel> {
         let request = AirshipRequest(
             url: try self.makeChannelCreateURL(channelType: channelType),
@@ -319,7 +313,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         let createResponse: AirshipHTTPResponse<ChannelCreateResult> = try await self.session.performHTTPRequest(
             request
         ) { (data, response) in
-            
+
             AirshipLogger.debug("Channel \(channelType) created with response: \(response)")
 
             guard let data = data, response.statusCode == 200 || response.statusCode == 201 else {
@@ -336,8 +330,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         return try await associateChannel(
             contactID: contactID,
             channelID: channelID,
-            channelType: channelType,
-            options: options
+            channelType: channelType
         )
     }
 
@@ -360,7 +353,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
 
         let decoder = self.decoder
         return try await session.performHTTPRequest(request) { (data, response) in
-            
+
             AirshipLogger.debug("Contact identify request finished with response: \(response)")
 
             guard response.statusCode == 200, let data = data else {
@@ -368,6 +361,69 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             }
 
             return try decoder.decode(ContactIdentifyResult.self, from: data)
+        }
+    }
+
+    private func performDisassociate(
+        contactID: String,
+        requestBody: DisassociateBody
+    ) async throws -> AirshipHTTPResponse<Bool> {
+        AirshipLogger.debug("Disassociating with \(requestBody)")
+
+        let request =  AirshipRequest(
+            url: try self.makeURL(path: "/api/contacts/disassociate/\(contactID)"),
+            headers: [
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "Content-Type": "application/json"
+            ],
+            method: "POST",
+            auth: .basicAppAuth,
+            body: try self.encoder.encode(requestBody)
+        )
+
+        return try await session.performHTTPRequest(request) { (data, response) in
+            AirshipLogger.debug("Update finished with response: \(response)")
+
+            return nil
+        }
+    }
+
+    private func performResend(
+        resendOptions: ResendOptions
+    ) async throws -> AirshipHTTPResponse<Bool> {
+        let requestBodyData: Data?
+
+        switch resendOptions {
+        case .channel(let channel):
+            requestBodyData = try self.encoder.encode(channel)
+        case .email(let email):
+            requestBodyData = try self.encoder.encode(email)
+        case .sms(let sms):
+            requestBodyData = try self.encoder.encode(sms)
+        }
+
+        guard let requestBodyData = requestBodyData else {
+            throw AirshipErrors.error("Unable to encode resend operation data.")
+        }
+
+        AirshipLogger.debug("Re-sending double opt-in message")
+
+        let request =  AirshipRequest(
+            url: try self.makeURL(path: "/api/channels/resend"),
+            headers: [
+                "Accept": "application/vnd.urbanairship+json; version=3;",
+                "Content-Type": "application/json"
+            ],
+            method: "POST",
+            auth: .generatedAppToken,
+            body: requestBodyData
+        )
+
+        return try await session.performHTTPRequest(request) { (data, response) in
+
+            AirshipLogger.debug("Update finished with response: \(response)")
+
+            return nil
         }
     }
 
@@ -390,7 +446,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         )
 
         return try await session.performHTTPRequest(request) { (data, response) in
-            
+
             AirshipLogger.debug("Update finished with response: \(response)")
 
             return nil
@@ -418,6 +474,68 @@ struct ContactIdentifyResult: Decodable, Equatable {
             case channelAssociatedDate = "channel_association_timestamp"
             case contactID = "contact_id"
             case isAnonymous = "is_anonymous"
+        }
+    }
+}
+
+fileprivate struct DisassociateBody: Encodable {
+    let channelID: String
+    let channelType: String
+    let optOut: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case channelID = "channel_id"
+        case channelType = "channel_type"
+        case optOut = "opt_out"
+    }
+}
+
+enum ResendOptions: Sendable, Equatable, Codable, Hashable {
+    case channel(Channel)
+    case email(Email)
+    case sms(SMS)
+
+    init(channelID: String, channelType: ChannelType) {
+        self = .channel(Channel(channelType: channelType.stringValue, channelID: channelID))
+    }
+
+    init(address: String) {
+        self = .email(Email(address: address))
+    }
+
+    init(msisdn: String, senderID: String) {
+        self = .sms(SMS(msisdn: msisdn, senderID: senderID))
+    }
+
+    struct Channel: Sendable, Equatable, Codable, Hashable {
+        let channelType: String
+        let channelID: String
+
+        enum CodingKeys: String, CodingKey {
+            case channelType = "channel_type"
+            case channelID = "channel_id"
+        }
+    }
+
+    struct Email: Sendable, Equatable, Codable, Hashable {
+        let channelType: String = "email"
+        let address: String
+
+        enum CodingKeys: String, CodingKey {
+            case address = "email_address"
+            case channelType = "channel_type"
+        }
+    }
+
+    struct SMS: Sendable, Equatable, Codable, Hashable {
+        let channelType: String = "sms"
+        let msisdn: String
+        let senderID: String
+
+        enum CodingKeys: String, CodingKey {
+            case channelType = "channel_type"
+            case msisdn = "msisdn"
+            case senderID = "sender"
         }
     }
 }
@@ -544,24 +662,6 @@ fileprivate struct ContactIdentifyRequestBody: Encodable {
     }
 }
 
-fileprivate struct SMSValidationBody: Encodable {
-    let sender: String
-    let msisdn: String
-
-    init(
-        sender: String,
-        msisdn: String
-    ) {
-        self.sender = sender
-        self.msisdn = msisdn
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case sender = "sender"
-        case msisdn = "msisdn"
-    }
-}
-
 fileprivate struct OpenChannelRegistrationBody: Encodable {
     let channel: ChannelPayload
 
@@ -571,7 +671,7 @@ fileprivate struct OpenChannelRegistrationBody: Encodable {
         locale: Locale,
         timezone: String
     ) {
-        
+
         self.channel = ChannelPayload(
             address: address,
             timezone: timezone,
@@ -613,6 +713,26 @@ fileprivate struct OpenChannelRegistrationBody: Encodable {
             case identifiers
         }
     }
+}
+
+fileprivate struct EmailChannelUpdateBody: Encodable {
+    let channel: ChannelPartialPayload
+
+    let optInMode: String = "double"
+
+    enum CodingKeys: String, CodingKey {
+        case channel
+        case optInMode = "opt_in_mode"
+    }
+
+    internal struct ChannelPartialPayload: Encodable {
+        let type: String
+
+        enum CodingKeys: String, CodingKey {
+            case type
+        }
+    }
+
 }
 
 fileprivate struct EmailChannelRegistrationBody: Encodable {

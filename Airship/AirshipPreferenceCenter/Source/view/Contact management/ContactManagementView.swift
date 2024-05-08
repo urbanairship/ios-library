@@ -96,39 +96,88 @@ where Self == DefaultContactManagementSectionStyle {
     }
 }
 
-// MARK: DEFAULT Contact Management View
-/// Default  contact management section style. Also styles alert views.
-public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyle {
+internal struct DefaultColors {
+    static let primaryText: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return traitCollection.userInterfaceStyle == .dark ? UIColor.white : AirshipColorUtils.color("#333333") ?? UIColor.label
+    })
 
-    static let backgroundColor = Color(.secondarySystemBackground)
+    static let primaryInvertedText: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#333333") : UIColor.white) ?? UIColor.systemBackground
+    })
+
+    static let secondaryText: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? UIColor.white : AirshipColorUtils.color("#666666")) ?? UIColor.secondaryLabel
+    })
+
+    static let secondaryBackground: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : UIColor.secondarySystemBackground) ?? UIColor.secondarySystemBackground
+    })
+
+    static let linkBlue: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#619AFF") : AirshipColorUtils.color("#316BF2")) ?? UIColor.secondaryLabel
+    })
+
+    static let alertRed: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#FF677F") : AirshipColorUtils.color("#E6193B")) ?? UIColor.red
+    })
+
+    static let destructiveRed: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#B20D25") : AirshipColorUtils.color("#B9142B")) ?? UIColor.red
+    })
+}
+
+// MARK: - DEFAULT Contact Management View
+/// Default contact management section style. Also styles alert views.
+public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyle {
+    static let backgroundColor = DefaultColors.secondaryBackground
 
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .title.weight(.medium),
-        color: .primary
+        color: DefaultColors.primaryText
     )
 
     static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .body,
-        color: .primary
+        color: DefaultColors.primaryText
     )
 
-    static let defaultErrorAppearance = PreferenceCenterTheme.TextAppearance(
+    static let resendButtonTitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .caption.weight(.bold),
+        color: DefaultColors.linkBlue
+    )
+
+    static let listTitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .callout.weight(.regular),
+        color: DefaultColors.secondaryText
+    )
+
+    static let listSubtitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .caption.weight(.regular),
+        color: DefaultColors.secondaryText
+    )
+
+    static let errorAppearance = PreferenceCenterTheme.TextAppearance(
         font: .footnote.weight(.medium),
-        color: .red
+        color: DefaultColors.alertRed
     )
 
     static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline.weight(.bold),
-        color: .primary.inverted() /// Don't use white because it doesn't properly shift for darkmode
+        color: DefaultColors.primaryInvertedText
+    )
+
+    static let buttonLabelDestructiveAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline.weight(.bold),
+        color: .white
     )
 
     static let buttonLabelOutlineAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline.weight(.bold),
-        color: .primary
+        color: DefaultColors.primaryText
     )
 
-    static let buttonBackgroundColor = Color.blue
-    static let buttonDestructiveBackgroundColor = Color(AirshipColorUtils.color("#B9142B") ?? .red)
+    static let buttonBackgroundColor = DefaultColors.primaryText
+    static let buttonDestructiveBackgroundColor = DefaultColors.destructiveRed
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
@@ -144,12 +193,9 @@ private struct DefaultContactManagementView: View {
     public let configuration: ContactManagementSectionStyleConfiguration
 
     var body: some View {
-        ChannelsListView(
+        ChannelListView(
             item: configuration.section,
-            state: configuration.state, 
-            channels: configuration.state.makeBinding(
-                type: configuration.section.platform.channelType
-            )
+            state: configuration.state
         )
         .transition(.opacity)
     }
