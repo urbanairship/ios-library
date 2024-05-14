@@ -3,6 +3,13 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.2.1, May 14, 2024
+Patch release that makes IAA name property is optional and defaults to an empty string.
+
+### Changes
+- Fixed InAppMessage parsing to handle the optional name property
+- Ignore invalid schedules on parsing
+
 ## Version 18.2.0, May 7, 2024
 Minor release with updates for in-app message customization, video playback improvements in scenes, web view inspection configuration and several bug fixes. Apps that require obj-c support or are migrating from an older version of the SDK to 18.x should update to this version.
 

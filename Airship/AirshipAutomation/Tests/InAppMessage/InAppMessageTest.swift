@@ -442,6 +442,28 @@ final class InAppMessageTest: XCTestCase {
                 
         try verify(json: json, expected: expected)
     }
+    
+    func testNamePropertyDefaultsToEmptyString() throws {
+        let json = """
+           {
+              "source": "app-defined",
+              "display" : {
+                 "cool": "story"
+              },
+              "display_type" : "custom",
+           }
+         """
+        
+        let expected = InAppMessage(
+            name: "",
+            displayContent: .custom(
+                AirshipJSON.object(["cool": .string("story")])
+            ),
+            source: .appDefined
+        )
+        
+        try verify(json: json, expected: expected)
+    }
 
     func verify(json: String, expected: InAppMessage) throws {
         let decoder = JSONDecoder()

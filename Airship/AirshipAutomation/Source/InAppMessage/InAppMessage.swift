@@ -113,7 +113,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        let name = try container.decode(String.self, forKey: .name)
+        let name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         let source = try container.decodeIfPresent(InAppMessageSource.self, forKey: .source)
         let extras = try container.decodeIfPresent(AirshipJSON.self, forKey: .extras)
         let actions = try container.decodeIfPresent(AirshipJSON.self, forKey: .actions)

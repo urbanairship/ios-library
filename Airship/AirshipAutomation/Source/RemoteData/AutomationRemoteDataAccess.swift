@@ -188,6 +188,29 @@ struct InAppRemoteData: Sendable {
             case schedules = "in_app_messages"
             case constraints = "frequency_constraints"
         }
+        
+        init(schedules: [AutomationSchedule], constraints: [FrequencyConstraint]? ) {
+            self.schedules = schedules
+            self.constraints = constraints
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            
+            let decodedSchedules = try container
+                .decode([ScheduleOrError].self, forKey: .schedules)
+                .compactMap { parsed in
+                    switch(parsed) {
+                    case .succeed(let result): return result
+                    case .failed(let error):
+                        AirshipLogger.warn("Failed to parse schedule \(error)")
+                        return nil
+                    }
+                }
+            
+            self.schedules = decodedSchedules
+            self.constraints = try container.decodeIfPresent([FrequencyConstraint].self, forKey: .constraints)
+        }
     }
 
     struct Payload {
@@ -254,5 +277,20 @@ struct InAppRemoteData: Sendable {
             parsed[payload.remoteDataInfo?.source ?? .app] = parsePayload(payload)
         }
         return InAppRemoteData(payloads: parsed)
+    }
+}
+
+fileprivate enum ScheduleOrError: Decodable {
+
+    case succeed(AutomationSchedule)
+    case failed(Error)
+
+    init(from decoder: any Decoder) throws {
+        do {
+            let schedule = try AutomationSchedule(from: decoder)
+            self = .succeed(schedule)
+        } catch {
+            self = .failed(error)
+        }
     }
 }
