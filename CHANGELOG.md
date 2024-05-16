@@ -3,12 +3,20 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.2.2, May 15, 2024
+Patch release includes a fix for submission issues when building with XCFrameworks, a bug fix for emitting pager events from in-app pager views, and a bug fix for the in-app banner's default title and body alignment to match the dashboard preview. Apps using XCFrameworks should update.
+
+### Changes
+- Fixed pager event emission from in-app pager views.
+- Fixed submission issue when building with XCFrameworks.
+- Fixed in-app banner title and body default alignment.
+
 ## Version 18.2.1, May 14, 2024
 Patch release that makes IAA name property is optional and defaults to an empty string.
 
 ### Changes
-- Fixed InAppMessage parsing to handle the optional name property
-- Ignore invalid schedules on parsing
+- Fixed InAppMessage parsing to handle the optional name property.
+- Ignore invalid schedules on parsing.
 
 ## Version 18.2.0, May 7, 2024
 Minor release with updates for in-app message customization, video playback improvements in scenes, web view inspection configuration and several bug fixes. Apps that require obj-c support or are migrating from an older version of the SDK to 18.x should update to this version.
