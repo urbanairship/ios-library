@@ -68,7 +68,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
         cleanUpOldData()
     }
 
-    var pendingMessageId: String? {
+    var pendingMessageID: String? {
         get {
             return dataStore.string(forKey: Keys.CurrentStorage.pendingMessageIds.rawValue)
         }
@@ -98,22 +98,20 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             return
         }
         
-        if let pending = self.pendingMessageId {
-            do {
-                try await self.automationEngine.cancelSchedules(identifiers: [pending])
-            } catch {
-                AirshipLogger.debug("Failed to cancel \(pending), \(error)")
+        if let pending = self.pendingMessageID {
+            if await self.scheduleExists(identifier: pending) {
+                AirshipLogger.debug("Pending in-app message replaced")
+                self.analytics.recordReplacedEvent(
+                    scheduleID: pending,
+                    replacementID: schedule.identifier
+                )
             }
 
-            AirshipLogger.debug("Pending in-app message replaced")
-            self.analytics.recordReplacedEvent(
-                scheduleID: pending,
-                replacementID: schedule.identifier
-            )
+            await self.cancelSchedule(identifier: pending)
         }
         
-        self.pendingMessageId = schedule.identifier
-        
+        self.pendingMessageID = schedule.identifier
+
         do {
             try await self.automationEngine.upsertSchedules([schedule])
             AirshipLogger.debug("LegacyInAppMessageManager - schedule is saved \(schedule)")
@@ -121,7 +119,24 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             AirshipLogger.error("Failed to schedule \(schedule)")
         }
     }
-    
+
+    private func scheduleExists(identifier: String) async -> Bool {
+        do {
+            return try await automationEngine.getSchedule(identifier: identifier) != nil
+        } catch {
+            AirshipLogger.debug("Failed to query schedule \(identifier), \(error)")
+            return true
+        }
+    }
+
+    private func cancelSchedule(identifier: String) async {
+        do {
+            return try await automationEngine.cancelSchedules(identifiers: [identifier])
+        } catch {
+            AirshipLogger.debug("Failed to cancel schedule \(identifier), \(error)")
+        }
+    }
+
     @MainActor
     private func generateScheduleFor(message: LegacyInAppMessage) -> AutomationSchedule? {
         let primaryColor = InAppMessageColor(hexColorString: message.primaryColor ?? Defaults.primaryColor)
@@ -133,10 +148,15 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             .map({ action in
                 return InAppMessageButtonInfo(
                     identifier: action.identifier,
-                    label: InAppMessageTextInfo(text: action.title, color: primaryColor, alignment: .center),
+                    label: InAppMessageTextInfo(
+                        text: action.title,
+                        color: primaryColor,
+                        alignment: .left
+                    ),
                     actions: message.buttonActions?[action.identifier],
                     backgroundColor: secondaryColor,
-                    borderRadius: Defaults.borderRadius)
+                    borderRadius: Defaults.borderRadius
+                )
             })
         
         let displayContent = InAppMessageDisplayContent.Banner(
@@ -188,28 +208,24 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
         
         guard
             userInfo.keys.contains(Keys.incomingMessageKey.rawValue),
-            let messageId = userInfo["_"] as? String,
-            messageId == self.pendingMessageId
+            let messageID = userInfo["_"] as? String,
+            messageID == self.pendingMessageID
         else {
             completionHandler()
             return
         }
         
-        self.pendingMessageId = nil
-        
+        self.pendingMessageID = nil
+
         Task {
-            do {
-                try await self.automationEngine.cancelSchedules(identifiers: [messageId])
-            } catch {
-                AirshipLogger.debug("LegacyInAppMessageManager: failed to cancel \(messageId), \(error)")
+            if await self.scheduleExists(identifier: messageID) {
+                AirshipLogger.debug("Pending in-app message replaced")
+                self.analytics.recordDirectOpenEvent(scheduleID: messageID)
             }
 
-            AirshipLogger.debug("Pending in-app message replaced")
-            self.analytics.recordDirectOpenEvent(scheduleID: messageId)
+            await self.cancelSchedule(identifier: messageID)
             completionHandler()
         }
-        
-
     }
     
     func receivedRemoteNotification(_ notification: [AnyHashable : Any], 

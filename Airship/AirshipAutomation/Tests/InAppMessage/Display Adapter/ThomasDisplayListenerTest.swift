@@ -293,6 +293,73 @@ class ThomasDisplayListenerTest: XCTestCase {
     }
 
     @MainActor
+    func testPagerCompleted() {
+
+        let pagerInfos = [
+            makePagerInfo(
+               pager: "foo",
+               page: 0,
+               pageCount: 1,
+               completed: false
+           ),
+
+            makePagerInfo(
+                pager: "foo",
+                page: 1,
+                pageCount: 1,
+                completed: true
+            ),
+
+            makePagerInfo(
+                pager: "foo",
+                page: 0,
+                pageCount: 1,
+                completed: true
+            ),
+
+            makePagerInfo(
+                pager: "foo",
+                page: 1,
+                pageCount: 1,
+                completed: true
+            )
+        ]
+
+        pagerInfos.forEach { info in
+            listener.onPageViewed(
+                pagerInfo: info,
+                layoutContext: self.layoutContext
+            )
+        }
+
+
+        verifyEvents(
+            [
+                (
+                    InAppPageViewEvent(pagerInfo: pagerInfos[0], viewCount: 1),
+                    self.layoutContext
+                ),
+                (
+                    InAppPageViewEvent(pagerInfo: pagerInfos[1], viewCount: 1),
+                    self.layoutContext
+                ),
+                (
+                    InAppPagerCompletedEvent(pagerInfo: pagerInfos[1]),
+                    self.layoutContext
+                ),
+                (
+                    InAppPageViewEvent(pagerInfo: pagerInfos[2], viewCount: 2),
+                    self.layoutContext
+                ),
+                (
+                    InAppPageViewEvent(pagerInfo: pagerInfos[3], viewCount: 2),
+                    self.layoutContext
+                )
+            ]
+        )
+    }
+
+    @MainActor
     func testPageGesture() {
         self.timer.start()
 
@@ -436,13 +503,18 @@ class ThomasDisplayListenerTest: XCTestCase {
         }
     }
 
-    private func makePagerInfo(pager: String, page: Int) -> ThomasPagerInfo {
+    private func makePagerInfo(
+        pager: String,
+        page: Int,
+        pageCount: Int = 100,
+        completed: Bool = false
+    ) -> ThomasPagerInfo {
         return ThomasPagerInfo(
            identifier: pager,
            pageIndex: page,
            pageIdentifier: "page-\(page)",
-           pageCount: 100,
-           completed: false
+           pageCount: pageCount,
+           completed: completed
        )
     }
 }
