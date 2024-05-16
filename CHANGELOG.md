@@ -3,6 +3,33 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.2.2, May 15, 2024
+Patch release includes a fix for submission issues when building with XCFrameworks, a bug fix for emitting pager events from in-app pager views, and a bug fix for the in-app banner's default title and body alignment to match the dashboard preview. Apps using XCFrameworks should update.
+
+### Changes
+- Fixed pager event emission from in-app pager views.
+- Fixed submission issue when building with XCFrameworks.
+- Fixed in-app banner title and body default alignment.
+
+## Version 18.2.1, May 14, 2024
+Patch release that makes IAA name property is optional and defaults to an empty string.
+
+### Changes
+- Fixed InAppMessage parsing to handle the optional name property.
+- Ignore invalid schedules on parsing.
+
+## Version 18.2.0, May 7, 2024
+Minor release with updates for in-app message customization, video playback improvements in scenes, web view inspection configuration and several bug fixes. Apps that require obj-c support or are migrating from an older version of the SDK to 18.x should update to this version.
+
+### Changes
+- Added in-app message tap opacity and shadow customization via new plist keys tapOpacity and shadowTheme.
+- Added isWebViewInspectionEnabled key to AirshipConfig that allows enabling or disabling web view inspection on Airship created web views. Applied only to iOS 16.4+.
+- Added improvements for video playback in scenes.
+- Fixed CoreData migration errors from SDK 16 and SDK 17 to SDK 18.
+- Fixed in-app message banner display issues within navigation controllers.
+- Exposed push singelton to Objective-C
+- Exposed UAnotificationServiceExtension to Objective-C.
+
 ## Version 18.1.2, April 29, 2024
 Patch release with a bug fix for data migration. Apps migrating from an older version of the SDK to 18.x using cocoapods should update to this version.
 

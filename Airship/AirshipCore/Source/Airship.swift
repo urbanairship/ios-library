@@ -127,7 +127,7 @@ public class Airship: NSObject {
 
     /// Shared Push instance.
     @objc(push)
-    static var _push: AirshipBasePushProtocol {
+    public static var _push: AirshipBasePushProtocol {
         return requireComponent(ofType: AirshipBasePushProtocol.self)
     }
 

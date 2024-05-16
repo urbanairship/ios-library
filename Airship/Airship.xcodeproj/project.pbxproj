@@ -95,10 +95,10 @@
 		329DFCD02B7E4DDA0039C8C0 /* UARemoteDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */; };
 		329DFCD12B7E4DDA0039C8C0 /* UARemoteDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */; };
 		329DFCD52B7E59700039C8C0 /* UAInboxDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */; };
-		329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */; };
-		329DFCFD2B7FB1690039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
-		329DFCFF2B7FB8810039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
-		329DFD002B7FB8E40039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */; };
+		329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCD22B7E59440039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel */; };
+		329DFCFD2B7FB1690039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
+		329DFCFF2B7FB8810039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
+		329DFD002B7FB8E40039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
 		32B513562B9F53A500BBE780 /* MessageCenterPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B513552B9F53A500BBE780 /* MessageCenterPredicate.swift */; };
 		32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */; };
 		32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */; };
@@ -231,7 +231,6 @@
 		6E0B8732294A9C130064B7BD /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0B872A294A9C120064B7BD /* AirshipAutomation.framework */; };
 		6E0B8738294A9C130064B7BD /* AirshipAutomation.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E0B872C294A9C130064B7BD /* AirshipAutomation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E0B8744294A9C950064B7BD /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		6E0B8745294A9C950064B7BD /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E0B8760294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B875F294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift */; };
 		6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
 		6E0B8763294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
@@ -372,9 +371,13 @@
 		6E1EEE902BD81AF300B45A87 /* ContactChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1EEE8F2BD81AF300B45A87 /* ContactChannel.swift */; };
 		6E1EEE912BD81AF300B45A87 /* ContactChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1EEE8F2BD81AF300B45A87 /* ContactChannel.swift */; };
 		6E1EEE922BD81AF300B45A87 /* ContactChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1EEE8F2BD81AF300B45A87 /* ContactChannel.swift */; };
-		6E1EEE942BD8203400B45A87 /* ContactChannelsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1EEE932BD8203400B45A87 /* ContactChannelsProvider.swift */; };
-		6E1EEE952BD8203400B45A87 /* ContactChannelsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1EEE932BD8203400B45A87 /* ContactChannelsProvider.swift */; };
-		6E1EEE962BD8203400B45A87 /* ContactChannelsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1EEE932BD8203400B45A87 /* ContactChannelsProvider.swift */; };
+		6E1F6E842BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */; };
+		6E1F6E852BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */; };
+		6E1F6E862BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */; };
+		6E1F6E882BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */; };
+		6E1F6E892BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */; };
+		6E1F6E8A2BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */; };
+		6E1F6E8C2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 6E1F6E8B2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel */; };
 		6E213B182BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */; };
 		6E213B192BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */; };
 		6E213B1A2BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */; };
@@ -1270,6 +1273,9 @@
 		990A09592B5C677C00244D90 /* InAppMessageWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A09582B5C677C00244D90 /* InAppMessageWebView.swift */; };
 		990A09942B5CA5B700244D90 /* InAppMessageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */; };
 		990A09AF2B5DBD0400244D90 /* InAppMessageViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A09AE2B5DBD0400244D90 /* InAppMessageViewUtils.swift */; };
+		990EB3B12BF59A1500315EAC /* ContactChannelsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990EB3B02BF59A1500315EAC /* ContactChannelsProvider.swift */; };
+		990EB3B22BF59A6C00315EAC /* ContactChannelsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990EB3B02BF59A1500315EAC /* ContactChannelsProvider.swift */; };
+		990EB3B32BF59A7200315EAC /* ContactChannelsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990EB3B02BF59A1500315EAC /* ContactChannelsProvider.swift */; };
 		99104DF32BA6689A0040C0FD /* PreferenceCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99104DF22BA6689A0040C0FD /* PreferenceCloseButton.swift */; };
 		9919EE422B2263B300A46BFE /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
 		9919EE432B2263B300A46BFE /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
@@ -1332,7 +1338,6 @@
 		A61517C526B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
 		A61F3A752A5DA58500EE94CC /* FeatureFlagManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */; };
 		A61F3A782A5DBA1800EE94CC /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		A61F3A792A5DBA1800EE94CC /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A62058712A5841330041FBF9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A62058692A5841330041FBF9 /* AirshipFeatureFlags.framework */; };
 		A62058772A5841340041FBF9 /* AirshipFeatureFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = A620586B2A5841330041FBF9 /* AirshipFeatureFlags.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */; };
@@ -1901,31 +1906,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		6E0B8748294A9C950064B7BD /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				6E0B8745294A9C950064B7BD /* AirshipCore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A61F3A7C2A5DBA1800EE94CC /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A61F3A792A5DBA1800EE94CC /* AirshipCore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		03525B87280DE48100320AA9 /* af */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = af; path = af.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		03525B88280DE49B00320AA9 /* am */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = am; path = am.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
@@ -1969,9 +1949,9 @@
 		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
 		3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBaseTest.swift; sourceTree = "<group>"; };
 		3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataStoreTest.swift; sourceTree = "<group>"; };
-		329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMapping.xcmappingmodel; sourceTree = "<group>"; };
+		329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV3toV4.xcmappingmodel; sourceTree = "<group>"; };
 		329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARemoteDataMapping.swift; sourceTree = "<group>"; };
-		329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMapping.xcmappingmodel; sourceTree = "<group>"; };
+		329DFCD22B7E59440039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV2toV3.xcmappingmodel; sourceTree = "<group>"; };
 		329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAInboxDataMapping.swift; sourceTree = "<group>"; };
 		32B513552B9F53A500BBE780 /* MessageCenterPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterPredicate.swift; sourceTree = "<group>"; };
 		32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterListItemView.swift; sourceTree = "<group>"; };
@@ -2196,7 +2176,9 @@
 		6E1D8AD726CC66BE0049DACB /* RemoteConfigCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteConfigCache.swift; sourceTree = "<group>"; };
 		6E1D90012B2D1AB4004BA130 /* RetryingQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryingQueueTests.swift; sourceTree = "<group>"; };
 		6E1EEE8F2BD81AF300B45A87 /* ContactChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactChannel.swift; sourceTree = "<group>"; };
-		6E1EEE932BD8203400B45A87 /* ContactChannelsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactChannelsProvider.swift; sourceTree = "<group>"; };
+		6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV2toV4.xcmappingmodel; sourceTree = "<group>"; };
+		6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV1toV4.xcmappingmodel; sourceTree = "<group>"; };
+		6E1F6E8B2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV1toV3.xcmappingmodel; sourceTree = "<group>"; };
 		6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWeakValueHolder.swift; sourceTree = "<group>"; };
 		6E213B1D2BC7054500BF24AE /* InAppActionRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppActionRunner.swift; sourceTree = "<group>"; };
 		6E21852A237D32B30084933A /* EventData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventData.swift; sourceTree = "<group>"; };
@@ -2758,6 +2740,7 @@
 		990A09582B5C677C00244D90 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageExtensions.swift; sourceTree = "<group>"; };
 		990A09AE2B5DBD0400244D90 /* InAppMessageViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageViewUtils.swift; sourceTree = "<group>"; };
+		990EB3B02BF59A1500315EAC /* ContactChannelsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactChannelsProvider.swift; sourceTree = "<group>"; };
 		99104DF22BA6689A0040C0FD /* PreferenceCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCloseButton.swift; sourceTree = "<group>"; };
 		99303B052BD97F89002174CA /* ChannelListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewCell.swift; sourceTree = "<group>"; };
 		993969B82BD8353F0011D73A /* ShadowTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowTheme.swift; sourceTree = "<group>"; };
@@ -3218,7 +3201,8 @@
 			isa = PBXGroup;
 			children = (
 				3CA0E304237E396100EE76CF /* UAInbox.xcdatamodeld */,
-				329DFCD22B7E59440039C8C0 /* UAInboxDataMapping.xcmappingmodel */,
+				329DFCD22B7E59440039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel */,
+				6E1F6E8B2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel */,
 				99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */,
 			);
 			path = Resources;
@@ -3915,7 +3899,7 @@
 				32BBFB3F2B274C8600C6A998 /* ContactChannelsAPIClient.swift */,
 				6E60EF6929DF542B003F7A8D /* AnonContactData.swift */,
 				6E1EEE8F2BD81AF300B45A87 /* ContactChannel.swift */,
-				6E1EEE932BD8203400B45A87 /* ContactChannelsProvider.swift */,
+				990EB3B02BF59A1500315EAC /* ContactChannelsProvider.swift */,
 			);
 			name = Contacts;
 			sourceTree = "<group>";
@@ -5120,7 +5104,9 @@
 			children = (
 				6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */,
 				6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */,
-				329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMapping.xcmappingmodel */,
+				329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */,
+				6E1F6E832BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel */,
+				6E1F6E872BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel */,
 				6E411C742538C60900FEE4E8 /* UrbanAirship.strings */,
 				6E411B6C2538C4E500FEE4E8 /* UANativeBridge */,
 				6E411B6D2538C4E600FEE4E8 /* UANotificationCategories.plist */,
@@ -5371,7 +5357,6 @@
 				6E0B8726294A9C120064B7BD /* Sources */,
 				6E0B8727294A9C120064B7BD /* Frameworks */,
 				6E0B8728294A9C120064B7BD /* Resources */,
-				6E0B8748294A9C950064B7BD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5502,7 +5487,6 @@
 				A62058652A5841330041FBF9 /* Sources */,
 				A62058662A5841330041FBF9 /* Frameworks */,
 				A62058672A5841330041FBF9 /* Resources */,
-				A61F3A7C2A5DBA1800EE94CC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5779,7 +5763,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMapping.xcmappingmodel in Resources */,
+				329DFCFB2B7FB0F40039C8C0 /* UAInboxDataMappingV2toV3.xcmappingmodel in Resources */,
+				6E1F6E8C2BE684D700CFC7A7 /* UAInboxDataMappingV1toV3.xcmappingmodel in Resources */,
 				3CA0E479237E4E3000EE76CF /* UAInbox.xcdatamodeld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5788,7 +5773,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFCFF2B7FB8810039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */,
+				329DFCFF2B7FB8810039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */,
+				6E1F6E882BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */,
+				6E1F6E842BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */,
 				6E411C782538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B782538C4E600FEE4E8 /* UANativeBridge in Resources */,
 				6EFE7E3F2A97ED660064AC31 /* PrivacyInfo.xcprivacy in Resources */,
@@ -5877,7 +5864,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFD002B7FB8E40039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */,
+				329DFD002B7FB8E40039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */,
+				6E1F6E862BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */,
+				6E1F6E8A2BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */,
 				A67229C0281A9E330033F54D /* UrbanAirship.strings in Resources */,
 				A67229C3281A9E330033F54D /* UANativeBridge in Resources */,
 				6EFE7E412A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */,
@@ -5913,7 +5902,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				329DFCFD2B7FB1690039C8C0 /* UARemoteDataMapping.xcmappingmodel in Resources */,
+				329DFCFD2B7FB1690039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */,
+				6E1F6E892BE683E600CFC7A7 /* UARemoteDataMappingV1toV4.xcmappingmodel in Resources */,
+				6E1F6E852BE6835400CFC7A7 /* UARemoteDataMappingV2toV4.xcmappingmodel in Resources */,
 				6E411C792538C60900FEE4E8 /* UrbanAirship.strings in Resources */,
 				6E411B792538C4E600FEE4E8 /* UANativeBridge in Resources */,
 				6EFE7E402A97ED670064AC31 /* PrivacyInfo.xcprivacy in Resources */,
@@ -6042,11 +6033,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */,
+				990EB3B12BF59A1500315EAC /* ContactChannelsProvider.swift in Sources */,
 				6E7112A12880DACB004942E4 /* EnableBehaviorModifiers.swift in Sources */,
 				6E12539129A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */,
 				6E6C3F7F27A20C3C007F55C7 /* ChannelScope.swift in Sources */,
 				6E4E2E2829CEB222002E7682 /* ContactManagerProtocol.swift in Sources */,
-				6E1EEE942BD8203400B45A87 /* ContactChannelsProvider.swift in Sources */,
 				6E6ED15F2683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
 				6E87BE0126E283850005D20D /* Airship.swift in Sources */,
 				6E6363E229DCD0CF009C358A /* ContactSubscriptionListClient.swift in Sources */,
@@ -6973,6 +6964,7 @@
 				A6722A1F281A9E830033F54D /* EnableFeatureAction.swift in Sources */,
 				A6722A21281A9E830033F54D /* FetchDeviceInfoAction.swift in Sources */,
 				A67229C5281A9E630033F54D /* AirshipImageLoader.swift in Sources */,
+				990EB3B32BF59A7200315EAC /* ContactChannelsProvider.swift in Sources */,
 				6E1CBD832BA3A30300519D9C /* AirshipEmbeddedInfo.swift in Sources */,
 				6E2F5A8C2A66088100CABD3D /* AudienceDeviceInfoProvider.swift in Sources */,
 				A67229C6281A9E630033F54D /* AirshipImageProvider.swift in Sources */,
@@ -7010,7 +7002,6 @@
 				A67229DF281A9E640033F54D /* Checkbox.swift in Sources */,
 				A67229E0281A9E640033F54D /* CheckboxController.swift in Sources */,
 				6E6363E429DCD0CF009C358A /* ContactSubscriptionListClient.swift in Sources */,
-				6E1EEE962BD8203400B45A87 /* ContactChannelsProvider.swift in Sources */,
 				A67229E1281A9E640033F54D /* AirshipToggle.swift in Sources */,
 				A67229E2281A9E640033F54D /* AirshipCheckboxToggleStyle.swift in Sources */,
 				A67229E3281A9E640033F54D /* AirshipSwitchToggleStyle.swift in Sources */,
@@ -7225,11 +7216,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E7112A22880DACB004942E4 /* EnableBehaviorModifiers.swift in Sources */,
+				990EB3B22BF59A6C00315EAC /* ContactChannelsProvider.swift in Sources */,
 				6E12539229A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */,
 				C0EE8CE526C1B3410006F003 /* ChannelCapture.swift in Sources */,
 				6E4E2E2929CEB222002E7682 /* ContactManagerProtocol.swift in Sources */,
 				A6A8078226C171F900CB266E /* AirshipColorUtils.swift in Sources */,
-				6E1EEE952BD8203400B45A87 /* ContactChannelsProvider.swift in Sources */,
 				6E87BE0226E283850005D20D /* Airship.swift in Sources */,
 				6E6363E329DCD0CF009C358A /* ContactSubscriptionListClient.swift in Sources */,
 				6E3B32CD27559D8B00B89C7B /* FormInputViewModifier.swift in Sources */,

@@ -222,6 +222,73 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         XCTAssertEqual(self.remoteData.notifiedOutdatedInfos, [info])
     }
     
+    func testRemoteDataInfoIgnoresInvalidSchedules() throws {
+             let validSchedule = """
+                {
+                    "id": "test_schedule",
+                    "triggers": [
+                        {
+                            "type": "custom_event_count",
+                            "goal": 1,
+                            "id": "json-id"
+                        }
+                    ],
+                    "group": "test_group",
+                    "priority": 2,
+                    "limit": 5,
+                    "start": "2023-12-20T00:00:00Z",
+                    "end": "2023-12-21T00:00:00Z",
+                    "audience": {},
+                    "delay": {},
+                    "interval": 3600,
+                    "type": "actions",
+                    "actions": {
+                        "foo": "bar",
+                    },
+                    "bypass_holdout_groups": true,
+                    "edit_grace_period": 7,
+                    "metadata": {},
+                    "frequency_constraint_ids": ["constraint1", "constraint2"],
+                    "message_type": "test_type",
+                    "last_updated": "2023-12-20T12:30:00Z",
+                    "created": "2023-12-20T12:00:00Z"
+                }
+                """
+             let invalidSchedule = """
+                {
+                    "priority": 2,
+                    "limit": 5,
+                    "start": "2023-12-20T00:00:00Z",
+                    "end": "2023-12-21T00:00:00Z",
+                    "audience": {},
+                    "delay": {},
+                    "interval": 3600,
+                    "type": "actions",
+                    "actions": {
+                        "foo": "bar",
+                    },
+                    "bypass_holdout_groups": true,
+                    "edit_grace_period": 7,
+                    "metadata": {},
+                    "frequency_constraint_ids": ["constraint1", "constraint2"],
+                    "message_type": "test_type",
+                    "last_updated": "2023-12-20T12:30:00Z",
+                    "created": "2023-12-20T12:00:00Z"
+                }
+                """
+
+             let dataJson = try AirshipJSON.from(json: "{\"in_app_messages\": [\(validSchedule), \(invalidSchedule)]}")
+             let payload = RemoteDataPayload(
+                 type: "schedule_test",
+                 timestamp: Date(),
+                 data: dataJson,
+                 remoteDataInfo: nil)
+
+             let decoded: InAppRemoteData.Data = try payload.data.decode()
+             XCTAssertEqual(1, decoded.schedules.count)
+             XCTAssertEqual("test_schedule", decoded.schedules.first?.identifier)
+         }
+    
     private func makeSchedule(remoteDataInfo: RemoteDataInfo?) -> AutomationSchedule {
         return AutomationSchedule(
             identifier: UUID().uuidString,

@@ -146,8 +146,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
     
-            guard let window = AirshipUtils.mainWindow(scene: scene),
-                  window.rootViewController != nil
+            guard let window = AirshipUtils.mainWindow(scene: scene)
             else {
                 continuation.resume(
                     throwing: AirshipErrors.error("Failed to find window to display in-app banner")
@@ -155,15 +154,15 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 return
             }
 
-            var viewController: InAppMessageBannerViewController?
-            let holder = AirshipWeakValueHolder<UIViewController>()
+            let holder = AirshipStrongValueHolder<UIViewController>()
             let dismissViewController = {
-                holder.value?.willMove(toParent: nil)
                 holder.value?.view.removeFromSuperview()
                 holder.value?.removeFromParent()
                 holder.value = nil
             }
             
+            var viewController: InAppMessageBannerViewController?
+
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
@@ -189,13 +188,19 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             )
 
             viewController = InAppMessageBannerViewController(
+                window: window,
                 rootView: rootView,
                 placement: banner.placement,
                 bannerConstraints: bannerConstraints
             )
+
             holder.value = viewController
 
-            window.airshipAddRootController(viewController)
+            if let view = viewController?.view {
+                view.willMove(toWindow: window)
+                window.addSubview(view)
+                view.didMoveToWindow()
+            }
         }
     }
 

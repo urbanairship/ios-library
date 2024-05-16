@@ -89,6 +89,7 @@ struct InAppMessageBannerView: View {
                 .frame(maxWidth: mediaMaxWidth,
                        minHeight: mediaMinHeight,
                        maxHeight: mediaMaxHeight)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -126,15 +127,15 @@ struct InAppMessageBannerView: View {
             HStack(alignment: .top, spacing: 16) {
                 mediaView
                 VStack(alignment: .center, spacing: 16) {
-                    headerView.applyAlignment(placement: displayContent.heading?.alignment ?? .center)
-                    bodyView.applyAlignment(placement: displayContent.body?.alignment ?? .center)
+                    headerView.applyAlignment(placement: displayContent.heading?.alignment ?? .left)
+                    bodyView.applyAlignment(placement: displayContent.body?.alignment ?? .left)
                 }
             }
         case .mediaRight:
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .center, spacing: 16) {
-                    headerView.applyAlignment(placement: displayContent.heading?.alignment ?? .center)
-                    bodyView.applyAlignment(placement: displayContent.body?.alignment ?? .center)
+                    headerView.applyAlignment(placement: displayContent.heading?.alignment ?? .left)
+                    bodyView.applyAlignment(placement: displayContent.body?.alignment ?? .left)
                 }
                 mediaView
             }

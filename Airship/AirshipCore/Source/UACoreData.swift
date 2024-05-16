@@ -1,320 +1,239 @@
 /* Copyright Airship and Contributors */
 
+@preconcurrency
 import CoreData
 
-/// - Note: For internal use only. :nodoc:
-public protocol CoreDataDelegate: AnyObject {
-    func persistentStoreCreated(
-        _ store: NSPersistentStore,
-        name: String,
-        context: NSManagedObjectContext
-    )
-}
-
 
 /// - Note: For internal use only. :nodoc:
-public final class UACoreData: @unchecked Sendable {
+public actor UACoreData {
+    private static let managedContextStoreDirectory = "com.urbanairship.no-backup"
 
-    public enum MergePolicy: Sendable {
-        case mergeByPropertyObjectTrump
+    private let name: String
+    private let modelURL: URL
+    private let storeNames: [String]
+    public nonisolated let inMemory: Bool
+
+
+    private var shouldPrepareCoreData = false
+    private var coreDataPrepared: Bool = false
+    private var prepareCoreDataTask: Task<Void, Error>?
+
+    private var _container: NSPersistentContainer?
+    private var container: NSPersistentContainer {
+        get async throws {
+            try await prepareCoreData()
+            guard let container = _container  else {
+                throw AirshipErrors.error("Failed to get container")
+            }
+            return container
+        }
     }
 
-    private let UAManagedContextStoreDirectory = "com.urbanairship.no-backup"
+    private var _context: NSManagedObjectContext?
+    private var context: NSManagedObjectContext {
+        get async throws {
+            if let context = _context {
+                return context
+            }
 
-    private let context: NSManagedObjectContext
-    private let storeNames: [String]
-
-    public let inMemory: Bool
-
-    private var shouldCreateStore = false
-    private var pendingStores: [String]
-    private var isFinished = false
-
-    public weak var delegate: CoreDataDelegate?
-
+            let context = try await container.newBackgroundContext()
+            _context = context
+            return context
+        }
+    }
 
     public init(
+        name: String,
         modelURL: URL,
         inMemory: Bool = false,
-        stores: [String],
-        mergePolicy: MergePolicy? = nil
+        stores: [String]
     ) {
-        let moc = NSManagedObjectContext(
-            concurrencyType: .privateQueueConcurrencyType
-        )
-        let mom = NSManagedObjectModel(contentsOf: modelURL)
-        if let mom = mom {
-            let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
-            moc.persistentStoreCoordinator = psc
-        }
-
-        if let mergePolicy = mergePolicy {
-            switch(mergePolicy) {
-            case .mergeByPropertyObjectTrump:
-                moc.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-            }
-        }
-
-        self.context = moc
-        self.pendingStores = stores
-        self.storeNames = stores
+        self.name = name
+        self.modelURL = modelURL
         self.inMemory = inMemory
+        self.storeNames = stores
 
         #if !os(watchOS)
-        Task { @MainActor in
+        Task { @MainActor [weak self] in
             if (UIApplication.shared.isProtectedDataAvailable) {
-                protectedDataAvailable()
+                await self?.protectedDataAvailable()
             } else {
-                NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(protectedDataAvailable),
-                    name: UIApplication.protectedDataDidBecomeAvailableNotification,
-                    object: nil
-                )
+                guard let self else { return }
+                NotificationCenter.default.addObserver(forName: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil, queue: nil, using: { _ in
+                    Task { [weak self] in
+                        await self?.protectedDataAvailable()
+                    }
+                })
             }
         }
-
         #endif
     }
+
 
     public func perform(
         skipIfStoreNotCreated: Bool = false,
         _ block: @Sendable @escaping (NSManagedObjectContext) throws -> Void
     ) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            context.perform({ [weak self] in
-                guard let self else {
+        if (skipIfStoreNotCreated) {
+            guard self.inMemory || self.storesExistOnDisk() else {
+                return
+            }
+        }
+
+        let context = try await self.context
+        try await withCheckedThrowingContinuation { continuation in
+            context.perform {
+                do {
+                    try block(context)
+                    try context.saveIfChanged()
                     continuation.resume()
-                    return
+                } catch {
+                    continuation.resume(throwing: error)
                 }
-
-                guard !self.isFinished else {
-                    continuation.resume()
-                    return
-                }
-
-                if (skipIfStoreNotCreated) {
-                    guard self.inMemory || self.storesExistOnDisk() else {
-                        continuation.resume()
-                        return
-                    }
-                }
-
-                self.shouldCreateStore = true
-                self.createPendingStores()
-
-                if (self.context.persistentStoreCoordinator?
-                    .persistentStores
-                    .count ?? 0) != 0
-                {
-                    do {
-                        try block(self.context)
-                        continuation.resume()
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-
-                } else {
-                    continuation.resume(
-                        throwing: AirshipErrors.error(
-                            "Persistent store unable to be created"
-                        )
-                    )
-                }
-            })
+            }
         }
     }
 
     public func performWithNullableResult<T: Sendable>(
         skipIfStoreNotCreated: Bool = false,
-        _ block: @Sendable @escaping (NSManagedObjectContext) throws -> T?
+        _ block: @Sendable @escaping (NSManagedObjectContext) throws -> T
     ) async throws -> T? {
-        return try await withCheckedThrowingContinuation { continuation in
-            context.perform { [weak self] in
-                guard let self else {
-                    return
-                }
-
-                guard !self.isFinished else {
-                    continuation.resume(throwing: AirshipErrors.error("Finished"))
-                    return
-                }
-
-                if (skipIfStoreNotCreated) {
-                    guard self.inMemory || self.storesExistOnDisk() else {
-                        continuation.resume(returning: nil)
-                        return
-                    }
-                }
-
-                self.shouldCreateStore = true
-                self.createPendingStores()
-
-                if (self.context.persistentStoreCoordinator?
-                    .persistentStores
-                    .count ?? 0) != 0
-                {
-                    do {
-                        continuation.resume(returning: try block(self.context))
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                } else {
-                    continuation.resume(
-                        throwing: AirshipErrors.error(
-                            "Persistent store unable to be created"
-                        )
-                    )
-                }
+        if (skipIfStoreNotCreated) {
+            guard self.inMemory || self.storesExistOnDisk() else {
+                return nil
             }
         }
+
+        return try await performWithResult(block)
     }
 
     public func performWithResult<T: Sendable>(
         _ block: @Sendable @escaping (NSManagedObjectContext) throws -> T
     ) async throws -> T {
+        let context = try await self.context
+
         return try await withCheckedThrowingContinuation { continuation in
-            context.perform { [weak self] in
-                guard let self else {
-                    return
-                }
-
-                guard !self.isFinished else {
-                    continuation.resume(throwing: AirshipErrors.error("Finished"))
-                    return
-                }
-
-                self.shouldCreateStore = true
-                self.createPendingStores()
-
-                if (self.context.persistentStoreCoordinator?
-                    .persistentStores
-                    .count ?? 0) != 0
-                {
-                    do {
-                        continuation.resume(returning: try block(self.context))
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                } else {
-                    continuation.resume(
-                        throwing: AirshipErrors.error(
-                            "Persistent store unable to be created"
-                        )
-                    )
+            context.perform {
+                do {
+                    let result = try block(context)
+                    try context.saveIfChanged()
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
                 }
             }
         }
     }
 
-    
-    @discardableResult
-    public func safePerform<T: Sendable>(
-        _ block: @escaping @Sendable (Bool, NSManagedObjectContext) -> T
-    ) async -> T? {
-        
-        do {
-            return try await performWithResult { context in
-                return block(true, context)
+    public func deleteStoresOnDisk() throws {
+        for name in self.storeNames {
+            guard let storeURL = self.storeURL(name) else {
+                continue
             }
-        } catch {
-            if context.persistentStoreCoordinator?.persistentStores.count == 0 {
-                return block(false, context)
-            } else {
-                AirshipLogger.error("Failed to perform block: \(error)")
-                return nil
+
+            if FileManager.default.fileExists(atPath: storeURL.path) {
+                try FileManager.default.removeItem(atPath: storeURL.path)
             }
         }
     }
 
-    public func performBlockIfStoresExist(
-        _ block: @escaping @Sendable (Bool, NSManagedObjectContext) -> Void
-    ) async {
-        
-        do {
-            try await perform(skipIfStoreNotCreated: true) { context in
-                block(true, context)
-            }
-        } catch {
-            if context.persistentStoreCoordinator?.persistentStores.count == 0 {
-                block(false, context)
-            } else {
-                AirshipLogger.error("Failed to perform block: \(error)")
+    private func protectedDataAvailable() {
+        Task {
+            if self.shouldPrepareCoreData {
+                _ = try? await self.prepareCoreData()
             }
         }
     }
 
-    public func waitForIdle() {
-        context.performAndWait({})
-    }
-
-    @objc
-    func protectedDataAvailable() {
-        context.perform({ [weak self] in
-            guard let self else {
-                return
-            }
-
-            if self.shouldCreateStore {
-                self.createPendingStores()
-            }
-        })
-    }
-
-    func createPendingStores() {
-        guard !self.isFinished else {
+    private func prepareCoreData() async throws {
+        if (coreDataPrepared) {
             return
         }
 
-        for name in pendingStores {
-            var created = false
-            if inMemory {
-                created = createInMemoryStore(storeName: name)
-            } else {
-                created = createSqlStore(storeName: name)
-            }
+        try? await prepareCoreDataTask?.value
 
-            if created {
-                pendingStores.removeAll { $0 == name }
+        let task = Task {
+            let container = try (_container ?? makeContainer())
+            if (_container == nil) {
+                _container = container
+            } 
+
+            if !coreDataPrepared {
+                try await prepareStore()
+                try await loadStores(container: container)
+                coreDataPrepared = true
             }
         }
+
+        prepareCoreDataTask = task
+        try await task.value
     }
 
-    func createInMemoryStore(storeName: String) -> Bool {
-        let options = [
-            NSMigratePersistentStoresAutomaticallyOption: NSNumber(value: true),
-            NSInferMappingModelAutomaticallyOption: NSNumber(value: true),
-        ]
+    private func prepareStore() async throws {
+        if !inMemory {
+            guard let storeDirectory = self.storeSQLDirectory() else {
+                throw AirshipErrors.error("Unable to get store directory.")
+            }
 
-        do {
-            let result = try context.persistentStoreCoordinator?
-                .addPersistentStore(
-                    ofType: NSInMemoryStoreType,
-                    configurationName: nil,
-                    at: nil,
-                    options: options
-                )
-
-            if let result = result {
-                AirshipLogger.debug("Created store: \(storeName)")
-                self.delegate?
-                    .persistentStoreCreated(
-                        result,
-                        name: storeName,
-                        context: context
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: storeDirectory.path) {
+                do {
+                    try fileManager.createDirectory(
+                        at: storeDirectory,
+                        withIntermediateDirectories: true,
+                        attributes: nil
                     )
-                return true
-            } else {
-                AirshipLogger.error("Failed to create store \(storeName)")
+                } catch {
+                    throw AirshipErrors.error(
+                        "Failed to create airship SQL directory. \(error)"
+                    )
+                }
             }
-        } catch {
-            AirshipLogger.error("Failed to create store \(storeName): \(error)")
-        }
 
-        return false
+            for name in self.storeNames {
+                if let storeURL = self.storeURL(name) {
+                    correctFilePermissions(url: storeURL)
+                }
+            }
+        }
     }
 
-    func storeSQLDirectory() -> URL? {
+    private func loadStores(container: NSPersistentContainer) async throws {
+        let remaining = AirshipAtomicValue(container.persistentStoreDescriptions.count)
+        let errorMessage = AirshipAtomicValue<String?>(nil)
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
+            container.loadPersistentStores { description, error in
+                if let error {
+                    AirshipLogger.error(
+                        "Failed to create store \(description): \(error)"
+                    )
+
+                    errorMessage.update { msg in
+                        if let msg {
+                            return "\(msg), \(error.localizedDescription)"
+                        } else {
+                            return error.localizedDescription
+                        }
+                    }
+                }
+
+                remaining.update { current in
+                    current - 1
+                }
+
+                if (remaining.value == 0) {
+                    if let msg = errorMessage.value {
+                        continuation.resume(throwing: AirshipErrors.error(msg))
+                    } else {
+                        continuation.resume()
+                    }
+                }
+            }
+        }
+    }
+
+    private func storeSQLDirectory() -> URL? {
         let fileManager = FileManager.default
 
         #if os(tvOS)
@@ -333,15 +252,16 @@ public final class UACoreData: @unchecked Sendable {
             .last
         #endif
 
-        return baseDirectory?
-            .appendingPathComponent(UAManagedContextStoreDirectory)
+        return baseDirectory?.appendingPathComponent(
+            Self.managedContextStoreDirectory
+        )
     }
 
-    func storeURL(_ storeName: String?) -> URL? {
+    private func storeURL(_ storeName: String?) -> URL? {
         return storeSQLDirectory()?.appendingPathComponent(storeName ?? "")
     }
 
-    func storesExistOnDisk() -> Bool {
+    private func storesExistOnDisk() -> Bool {
         for name in self.storeNames {
             let storeURL = self.storeURL(name)
             if storeURL != nil
@@ -354,118 +274,52 @@ public final class UACoreData: @unchecked Sendable {
         return false
     }
 
-    public func deleteStoresOnDisk() throws {
-        for name in self.storeNames {
-            guard let storeURL = self.storeURL(name) else {
-                continue
-            }
+    private func makeContainer() throws -> NSPersistentContainer {
+        guard let mom = NSManagedObjectModel(contentsOf: self.modelURL) else {
+            throw AirshipErrors.error("Failed to create managed object model \(self.modelURL)")
+        }
 
-            if FileManager.default.fileExists(atPath: storeURL.path) {
-                try FileManager.default.removeItem(atPath: storeURL.path)
+        let container = NSPersistentContainer(name: self.name, managedObjectModel: mom)
+
+        if inMemory {
+            let description = NSPersistentStoreDescription(url: URL(fileURLWithPath: "/dev/null"))
+            description.type = NSInMemoryStoreType
+            container.persistentStoreDescriptions = [description]
+        } else {
+            container.persistentStoreDescriptions =  self.storeNames.compactMap { store in
+                guard let storeURL = self.storeURL(store) else {
+                    return nil
+                }
+
+                let description = NSPersistentStoreDescription(url: storeURL)
+                description.type = NSSQLiteStoreType
+                description.shouldAddStoreAsynchronously = true
+                description.shouldMigrateStoreAutomatically = true
+                description.shouldInferMappingModelAutomatically = true
+                return description
             }
         }
+        return container
     }
 
-    func createSqlStore(storeName: String) -> Bool {
-        guard let storeURL = self.storeURL(storeName) else {
-            return false
-        }
-
-        guard let storeDirectory = storeSQLDirectory() else {
-            return false
-        }
-
-        let fileManager = FileManager.default
-
-        if !fileManager.fileExists(atPath: storeDirectory.path) {
-            do {
-                try fileManager.createDirectory(
-                    at: storeDirectory,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-            } catch {
-                AirshipLogger.debug(
-                    "Failed to create airship SQL directory. \(error)"
-                )
-                return false
-            }
-        }
-
-        // Make sure it does not already exist
-        for store in context.persistentStoreCoordinator?.persistentStores ?? []
-        {
-            if (store.url == storeURL) && (store.type == NSSQLiteStoreType) {
-                return true
-            }
-        }
-
-        let options = [
-            NSMigratePersistentStoresAutomaticallyOption: NSNumber(value: true),
-            NSInferMappingModelAutomaticallyOption: NSNumber(value: true),
-        ]
-
-        do {
-            let result = try context.persistentStoreCoordinator?
-                .addPersistentStore(
-                    ofType: NSSQLiteStoreType,
-                    configurationName: nil,
-                    at: storeURL,
-                    options: options
-                )
-
-            if let result = result {
-                correctFilePermissions(url: storeURL)
-                AirshipLogger.debug(
-                    "Created store: \(storeName) url: \(storeURL)"
-                )
-                self.delegate?
-                    .persistentStoreCreated(
-                        result,
-                        name: storeName,
-                        context: context
-                    )
-                return true
-            } else {
-                AirshipLogger.error("Failed to create store \(storeName)")
-            }
-        } catch {
-            AirshipLogger.error("Failed to create store \(storeName): \(error)")
-        }
-        return false
-    }
-    
     private func correctFilePermissions(url: URL) {
         do {
+            guard (FileManager.default.fileExists(atPath: url.path)) else {
+                return
+            }
             let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
             try FileManager.default.setAttributes(attributes, ofItemAtPath: url.path)
         } catch(let exception) {
             AirshipLogger.error("Failed to set file attribute \(exception)")
         }
     }
+}
 
-    public class func save(_ context: NSManagedObjectContext) throws {
-        guard context.persistentStoreCoordinator?.persistentStores.isEmpty == false else {
-            throw AirshipErrors.error("Unable to save context. Missing persistent store.")
+
+fileprivate extension NSManagedObjectContext {
+    func saveIfChanged() throws {
+        if hasChanges {
+            try save()
         }
-
-        try context.save()
-    }
-
-    @discardableResult
-    public class func safeSave(_ context: NSManagedObjectContext?) -> Bool {
-        guard let context = context else {
-            AirshipLogger.error("Unable to save, context nil.")
-            return false
-        }
-
-        do {
-            try save(context)
-        } catch {
-            AirshipLogger.error("Error saving context \(error)")
-            return false
-        }
-
-        return true
     }
 }

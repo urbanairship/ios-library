@@ -3,31 +3,98 @@
 import Foundation
 import CoreData
 
-@objc(UARemoteDataMapping)
-class UARemoteDataMapping: NSEntityMigrationPolicy {
-    
+@objc(UARemoteDataMappingV3toV4)
+class UARemoteDataMappingV3toV4: NSEntityMigrationPolicy {
+
     override func createDestinationInstances(
-        forSource sInstance: NSManagedObject,
+        forSource source: NSManagedObject,
         in mapping: NSEntityMapping,
         manager: NSMigrationManager
     ) throws {
-        
-        if sInstance.entity.name == RemoteDataStore.remoteDataEntity {
-            
-            let type = sInstance.value(forKey: "type") as? String
-            let timestamp = sInstance.value(forKey: "timestamp") as? Date
-            let data = sInstance.value(forKey: "data") as? [AnyHashable: Any]
-            let remoteDataInfo = sInstance.value(forKey: "remoteDataInfo") as? Data
-            
-            let newRemoteDataEntity = NSEntityDescription.insertNewObject(
-                forEntityName: RemoteDataStore.remoteDataEntity,
-                into: manager.destinationContext
-            )
-            
-            newRemoteDataEntity.setValue(type, forKey: "type")
-            newRemoteDataEntity.setValue(timestamp, forKey: "timestamp")
-            newRemoteDataEntity.setValue(AirshipJSONUtils.toData(data), forKey: "data")
-            newRemoteDataEntity.setValue(remoteDataInfo, forKey: "remoteDataInfo")
+
+        // data -> JSON data
+
+        guard source.entity.name == RemoteDataStore.remoteDataEntity else {
+            return
         }
+
+        let type = source.value(forKey: "type") as? String
+        let timestamp = source.value(forKey: "timestamp") as? Date
+        let data = source.value(forKey: "data") as? [AnyHashable: Any]
+        let remoteDataInfo = source.value(forKey: "remoteDataInfo") as? Data
+
+        let newRemoteDataEntity = NSEntityDescription.insertNewObject(
+            forEntityName: RemoteDataStore.remoteDataEntity,
+            into: manager.destinationContext
+        )
+
+        newRemoteDataEntity.setValue(type, forKey: "type")
+        newRemoteDataEntity.setValue(timestamp, forKey: "timestamp")
+        newRemoteDataEntity.setValue(AirshipJSONUtils.toData(data), forKey: "data")
+        newRemoteDataEntity.setValue(remoteDataInfo, forKey: "remoteDataInfo")
+    }
+}
+
+
+@objc(UARemoteDataMappingV2toV4)
+class UARemoteDataMappingV2toV4: NSEntityMigrationPolicy {
+
+    override func createDestinationInstances(
+        forSource source: NSManagedObject,
+        in mapping: NSEntityMapping,
+        manager: NSMigrationManager
+    ) throws {
+
+        // data -> JSON data
+        // metadata -> drop
+
+        guard source.entity.name == RemoteDataStore.remoteDataEntity else {
+            return
+        }
+
+        let type = source.value(forKey: "type") as? String
+        let timestamp = source.value(forKey: "timestamp") as? Date
+        let data = source.value(forKey: "data") as? [AnyHashable: Any]
+
+        let newRemoteDataEntity = NSEntityDescription.insertNewObject(
+            forEntityName: RemoteDataStore.remoteDataEntity,
+            into: manager.destinationContext
+        )
+
+        newRemoteDataEntity.setValue(type, forKey: "type")
+        newRemoteDataEntity.setValue(timestamp, forKey: "timestamp")
+        newRemoteDataEntity.setValue(AirshipJSONUtils.toData(data), forKey: "data")
+    }
+}
+
+
+
+@objc(UARemoteDataMappingV1toV4)
+class UARemoteDataMappingV1toV4: NSEntityMigrationPolicy {
+
+    override func createDestinationInstances(
+        forSource source: NSManagedObject,
+        in mapping: NSEntityMapping,
+        manager: NSMigrationManager
+    ) throws {
+
+        // data -> JSON data
+
+        guard source.entity.name == RemoteDataStore.remoteDataEntity else {
+            return
+        }
+
+        let type = source.value(forKey: "type") as? String
+        let timestamp = source.value(forKey: "timestamp") as? Date
+        let data = source.value(forKey: "data") as? [AnyHashable: Any]
+
+        let newRemoteDataEntity = NSEntityDescription.insertNewObject(
+            forEntityName: RemoteDataStore.remoteDataEntity,
+            into: manager.destinationContext
+        )
+
+        newRemoteDataEntity.setValue(type, forKey: "type")
+        newRemoteDataEntity.setValue(timestamp, forKey: "timestamp")
+        newRemoteDataEntity.setValue(AirshipJSONUtils.toData(data), forKey: "data")
     }
 }

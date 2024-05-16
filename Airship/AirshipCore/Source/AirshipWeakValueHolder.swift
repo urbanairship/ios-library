@@ -10,3 +10,11 @@ public class AirshipWeakValueHolder<T: AnyObject> {
         self.value = value
     }
 }
+
+public class AirshipStrongValueHolder<T: AnyObject> {
+    public var value: T?
+
+    public init(value: T? = nil) {
+        self.value = value
+    }
+}

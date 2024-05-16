@@ -18,6 +18,7 @@ class EventDataManager {
     public init(appKey: String) {
         self.appKey = appKey
         self.coreData = UACoreData(
+            name: "AirshipDebugEventData",
             modelURL: DebugResources.bundle()
                 .url(
                     forResource: "AirshipDebugEventData",
@@ -36,72 +37,66 @@ class EventDataManager {
         
         let cutOffDate = Date().addingTimeInterval(-self.maxAge)
         
-        await coreData.performBlockIfStoresExist { isSafe, context in
-            guard isSafe else { return }
+        do {
+            try await coreData.perform(skipIfStoreNotCreated: true) { context in
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = EventData.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "eventDate < %@", cutOffDate as NSDate)
 
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = EventData.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "eventDate < %@", cutOffDate as NSDate)
-            
-            let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-            do {
-                _ = try context.execute(batchDeleteRequest)
-            } catch {
-                print("Failed to execute request: \(error)")
+                let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                try context.execute(batchDeleteRequest)
             }
+        } catch {
+            print("Failed to execute request: \(error)")
         }
     }
 
     func saveEvent(_ event: AirshipEvent) async {
         
-        await self.coreData.safePerform { isSafe, context in
-            guard isSafe else { return }
+        do {
+            try await self.coreData.perform { context in
+                let persistedEvent = EventData(
+                    entity: EventData.entity(),
+                    insertInto: context
+                )
 
-            let persistedEvent = EventData(
-                entity: EventData.entity(),
-                insertInto: context
-            )
+                persistedEvent.eventBody = event.body
+                persistedEvent.eventType = event.type
+                persistedEvent.eventDate = event.date
+                persistedEvent.eventID = event.identifier
+            }
+        } catch {
+            print("Failed to save event: \(error)")
 
-            persistedEvent.eventBody = event.body
-            persistedEvent.eventType = event.type
-            persistedEvent.eventDate = event.date
-            persistedEvent.eventID = event.identifier
-
-            UACoreData.safeSave(context)
         }
     }
 
     func events(searchString: String? = nil) async -> [AirshipEvent] {
-        return await coreData.safePerform { isSafe, context in
-            guard isSafe else {
-                return []
-            }
+        do {
+            return try await coreData.performWithResult { context in
+                let fetchRequest: NSFetchRequest = EventData.fetchRequest()
+                fetchRequest.fetchLimit = 200
+                fetchRequest.sortDescriptors = [
+                    NSSortDescriptor(
+                        key: #keyPath(EventData.eventDate),
+                        ascending: false
+                    )
+                ]
 
-            let fetchRequest: NSFetchRequest = EventData.fetchRequest()
-            fetchRequest.fetchLimit = 200
-            fetchRequest.sortDescriptors = [
-                NSSortDescriptor(
-                    key: #keyPath(EventData.eventDate),
-                    ascending: false
-                )
-            ]
+                if let searchString = searchString, !searchString.isEmpty {
+                    fetchRequest.predicate = NSPredicate(
+                        format:
+                            "eventID CONTAINS[cd] %@ OR eventType CONTAINS[cd] %@",
+                        searchString,
+                        searchString
+                    )
+                }
 
-            if let searchString = searchString, !searchString.isEmpty {
-                fetchRequest.predicate = NSPredicate(
-                    format:
-                        "eventID CONTAINS[cd] %@ OR eventType CONTAINS[cd] %@",
-                    searchString,
-                    searchString
-                )
-            }
-
-            do {
                 let result = try context.fetch(fetchRequest)
                 let events = result.compactMap { data -> AirshipEvent? in
                     if let eventType = data.eventType,
-                        let eventBody = data.eventBody,
-                        let eventDate = data.eventDate,
-                        let eventID = data.eventID
+                       let eventBody = data.eventBody,
+                       let eventDate = data.eventDate,
+                       let eventID = data.eventID
                     {
                         return AirshipEvent(
                             identifier: eventID,
@@ -114,14 +109,13 @@ class EventDataManager {
                 }
 
                 return events
-            } catch {
-                if let error = error as NSError? {
-                    print(
-                        "ERROR: error fetching events list - \(error), \(error.userInfo)"
-                    )
-                }
-                return []
             }
-        } ?? []
+
+        } catch {
+            print(
+                "ERROR: error fetching events list - \(error)"
+            )
+            return []
+        }
     }
 }

@@ -11,6 +11,7 @@ final class ThomasDisplayListener: ThomasDelegate {
     private let timer: ActiveTimerProtocol
     private let tracker: ThomasPagerTracker
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
+    private var completedPagers: Set<String> = Set()
 
     init(
         analytics: InAppMessageAnalyticsProtocol,
@@ -125,6 +126,16 @@ final class ThomasDisplayListener: ThomasDelegate {
             ),
             layoutContext: layoutContext
         )
+
+        if pagerInfo.completed, !completedPagers.contains(pagerInfo.identifier) {
+            completedPagers.insert(pagerInfo.identifier)
+            analytics.recordEvent(
+                InAppPagerCompletedEvent(
+                    pagerInfo: pagerInfo
+                ),
+                layoutContext: layoutContext
+            )
+        }
     }
     
     func onPageGesture(

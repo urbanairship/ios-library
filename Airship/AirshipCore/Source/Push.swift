@@ -399,9 +399,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     #if !os(tvOS)
     /// Custom notification categories. Airship default notification
     /// categories will be unaffected by this field.
-    ///
-    /// Changes to this value will not take effect until the next time the app registers
-    /// with updateRegistration.
     @objc
     @MainActor
     public var customCategories: Set<UNNotificationCategory> = Set() {

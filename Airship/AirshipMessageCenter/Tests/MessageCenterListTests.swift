@@ -26,6 +26,7 @@ final class MessageCenterListTest: XCTestCase {
                 self.config.appKey
             )
             let coreData = UACoreData(
+                name: "UAInbox",
                 modelURL: modelURL,
                 inMemory: true,
                 stores: [storeName]

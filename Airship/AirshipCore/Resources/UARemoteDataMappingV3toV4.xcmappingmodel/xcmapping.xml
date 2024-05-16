@@ -10,7 +10,7 @@
             <plist version="1.0">
                 <dict>
                     <key>NSPersistenceFrameworkVersion</key>
-                    <integer>1340</integer>
+                    <integer>1344</integer>
                     <key>NSStoreModelVersionChecksumKey</key>
                     <string>bMpud663vz0bXQE24C6Rh4MvJ5jVnzsD2sI3njZkKbc=</string>
                     <key>NSStoreModelVersionHashes</key>
@@ -49,14 +49,14 @@
         </metadata>
     </databaseInfo>
     <object type="XDDEVENTITYMAPPING" id="z102">
-        <attribute name="migrationpolicyclassname" type="string">UARemoteDataMapping</attribute>
+        <attribute name="migrationpolicyclassname" type="string">UARemoteDataMappingV3toV4</attribute>
         <attribute name="sourcename" type="string">UARemoteDataStorePayload</attribute>
         <attribute name="mappingtypename" type="string">Undefined</attribute>
         <attribute name="mappingnumber" type="int16">1</attribute>
         <attribute name="destinationname" type="string">UARemoteDataStorePayload</attribute>
         <attribute name="autogenerateexpression" type="bool">1</attribute>
         <relationship name="mappingmodel" type="1/1" destination="XDDEVMAPPINGMODEL" idrefs="z105"></relationship>
-        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z106 z103 z104 z107"></relationship>
+        <relationship name="attributemappings" type="0/0" destination="XDDEVATTRIBUTEMAPPING" idrefs="z104 z103 z107"></relationship>
         <relationship name="relationshipmappings" type="0/0" destination="XDDEVRELATIONSHIPMAPPING"></relationship>
     </object>
     <object type="XDDEVATTRIBUTEMAPPING" id="z103">
@@ -80,7 +80,7 @@ cxIAAYagXxAPTlNLZXllZEFyY2hpdmVy0QAIAAlUcm9vdIABrxCxAAsADAAZADUANgA3AD8AQABbAFwA
     </object>
     <object type="XDDEVATTRIBUTEMAPPING" id="z106">
         <attribute name="name" type="string">remoteDataInfo</attribute>
-        <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING" idrefs="z102"></relationship>
+        <relationship name="entitymapping" type="1/1" destination="XDDEVENTITYMAPPING"></relationship>
     </object>
     <object type="XDDEVATTRIBUTEMAPPING" id="z107">
         <attribute name="name" type="string">data</attribute>

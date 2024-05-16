@@ -42,6 +42,11 @@ public class AirshipConfig: NSObject, NSCopying {
     @objc
     public var autoPauseInAppAutomationOnLaunch: Bool = false
 
+    /// Flag to enable or disable web view inspection on Airship created  web views. Applies only to iOS 16.4+.
+    /// Defaults to `false`
+    @objc
+    public var isWebViewInspectionEnabled: Bool = false
+
     /// The airship cloud site. Defaults to `us`.
     @objc
     public var site: CloudSite = .us
@@ -453,6 +458,7 @@ public class AirshipConfig: NSObject, NSCopying {
         autoPauseInAppAutomationOnLaunch = config.autoPauseInAppAutomationOnLaunch
         useUserPreferredLocale = config.useUserPreferredLocale
         restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
+        isWebViewInspectionEnabled = config.isWebViewInspectionEnabled
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -498,7 +504,8 @@ public class AirshipConfig: NSObject, NSCopying {
                 Enabled features:  %ld\n\
                 Reset enabled features:  %ld\n\
                 Use user preferred locale: %d\n\
-                Restore Message Center on reinstall: %d\n
+                Restore Message Center on reinstall:  %d\n\
+                Web view insepection enabled:  %d\n
                 """,
             inProduction,
             inProduction,
@@ -536,7 +543,8 @@ public class AirshipConfig: NSObject, NSCopying {
             enabledFeatures.rawValue,
             resetEnabledFeatures ? "YES" : "NO",
             useUserPreferredLocale,
-            restoreMessageCenterOnReinstall ? "YES" : "NO"
+            restoreMessageCenterOnReinstall ? "YES" : "NO",
+            isWebViewInspectionEnabled ? "YES" : "NO"
         )
     }
     

@@ -171,6 +171,11 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc
     public var restoreMessageCenterOnReinstall: Bool
 
+    /// Flag to enable or disable web view inspection on Airship created  web views. Applies only to iOS 16.4+.
+    /// Defaults to `false`.
+    @objc
+    public var isWebViewInspectionEnabled: Bool
+
     private let site: CloudSite
     private let remoteConfigCache: RemoteConfigCache
     private let notificationCenter: NotificationCenter
@@ -327,6 +332,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
+        self.isWebViewInspectionEnabled = config.isWebViewInspectionEnabled
         super.init()
     }
 
