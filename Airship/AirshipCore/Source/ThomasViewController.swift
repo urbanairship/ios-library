@@ -80,9 +80,11 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var widthConstraint: NSLayoutConstraint?
 
     private let thomasBannerConstraints: ThomasBannerConstraints
+    private weak var window: UIWindow?
 
-    init(rootView: BannerView, options: ThomasViewControllerOptions, constraints: ThomasBannerConstraints) {
+    init(window: UIWindow, rootView: BannerView, options: ThomasViewControllerOptions, constraints: ThomasBannerConstraints) {
         self.thomasBannerConstraints = constraints
+        self.window = window
         super.init(rootView: rootView, options: options)
     }
     
@@ -107,10 +109,10 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     
     func createBannerConstraints () {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        if let rootController = self.parent {
-            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: rootController.view.centerXAnchor)
-            topConstraint = self.view.topAnchor.constraint(equalTo: rootController.view.topAnchor)
-            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: rootController.view.bottomAnchor)
+        if let window = self.window {
+            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
+            topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
+            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
             heightConstraint = self.view.heightAnchor.constraint(equalToConstant: self.options.bannerSize?.height ?? 0.0)
             widthConstraint = self.view.widthAnchor.constraint(equalToConstant: self.options.bannerSize?.width ?? 0.0)
         }
