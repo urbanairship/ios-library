@@ -29,12 +29,9 @@ struct FullScreenView: View, Sendable {
 
     @ViewBuilder
     private var headerView: some View {
-        let theme = environment.theme.fullScreenTheme
-
         if let heading = displayContent.heading {
             TextView(textInfo: heading, textTheme:headerTheme)
-                .padding(theme.headerTheme.additionalPadding)
-                .padding(headerTheme.additionalPadding)
+                .applyAlignment(placement: displayContent.heading?.alignment ?? .left)
         }
     }
 
@@ -42,8 +39,7 @@ struct FullScreenView: View, Sendable {
     private var bodyView: some View {
         if let body = displayContent.body {
             TextView(textInfo: body, textTheme:bodyTheme)
-                .applyTextTheme(headerTheme)
-                .padding(bodyTheme.additionalPadding)
+                .applyAlignment(placement: displayContent.body?.alignment ?? .left)
         }
     }
 
@@ -51,14 +47,14 @@ struct FullScreenView: View, Sendable {
     private var mediaView: some View {
         if let media = displayContent.media {
             MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
-                .padding(.horizontal, -mediaTheme.additionalPadding.leading).padding(mediaTheme.additionalPadding)
+                .padding(.horizontal, -mediaTheme.additionalPadding.leading)
         }
     }
 
     @ViewBuilder
     private var buttonsView: some View {
-        if let buttons = displayContent.buttons, let layout = displayContent.buttonLayoutType, !buttons.isEmpty {
-            ButtonGroup(layout: layout,
+        if let buttons = displayContent.buttons, !buttons.isEmpty {
+            ButtonGroup(layout: displayContent.buttonLayoutType ?? .stacked,
                         buttons: buttons)
             .environmentObject(environment)
         }
