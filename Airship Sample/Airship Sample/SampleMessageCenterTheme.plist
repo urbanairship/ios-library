@@ -76,5 +76,13 @@
 	<string>#001F9E</string>
 	<key>navigationBarTitle</key>
 	<string>Message Center</string>
+	<key>messageListBackgroundColor</key>
+	<string>#990099</string>
+	<key>messageListBackgroundColorDark</key>
+	<string>#999999</string>
+	<key>messageListContainerBackgroundColor</key>
+	<string>#990000</string>
+	<key>messageListContainerBackgroundColorDark</key>
+	<string>#990099</string>
 </dict>
 </plist>

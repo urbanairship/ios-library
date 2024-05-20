@@ -123,6 +123,18 @@ public struct MessageCenterTheme {
     /// The navigation bar title
     public var navigationBarTitle: String? = nil
 
+    /// The background of the message list.
+    public var messageListBackgroundColor: Color? = nil
+
+    /// The dark mode background of the message list.
+    public var messageListBackgroundColorDark: Color? = nil
+
+    /// The background of the message list container.
+    public var messageListContainerBackgroundColor: Color? = nil
+
+    /// The dark mode background of the message list container.
+    public var messageListContainerBackgroundColorDark: Color? = nil
+
     public init(
         refreshTintColor: Color? = nil,
         refreshTintColorDark: Color? = nil,
@@ -156,7 +168,11 @@ public struct MessageCenterTheme {
         cancelButtonTitleColorDark: Color? = nil,
         backButtonColor: Color? = nil,
         backButtonColorDark: Color? = nil,
-        navigationBarTitle: String? = nil
+        navigationBarTitle: String? = nil,
+        messageListBackgroundColor: Color? = nil,
+        messageListBackgroundColorDark: Color? = nil,
+        messageListContainerBackgroundColor: Color? = nil,
+        messageListContainerBackgroundColorDark: Color? = nil
     ) {
         self.refreshTintColor = refreshTintColor
         self.refreshTintColorDark = refreshTintColorDark
@@ -191,6 +207,10 @@ public struct MessageCenterTheme {
         self.backButtonColor = backButtonColor
         self.backButtonColorDark = backButtonColorDark
         self.navigationBarTitle = navigationBarTitle
+        self.messageListBackgroundColor = messageListBackgroundColor
+        self.messageListBackgroundColorDark = messageListBackgroundColorDark
+        self.messageListContainerBackgroundColor = messageListContainerBackgroundColor
+        self.messageListContainerBackgroundColorDark = messageListContainerBackgroundColorDark
     }
 }
 

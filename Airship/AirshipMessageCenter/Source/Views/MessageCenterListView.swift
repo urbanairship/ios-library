@@ -96,6 +96,18 @@ public struct MessageCenterListView: View {
         }
     }
 
+    struct ListBackgroundModifier: ViewModifier {
+        @ViewBuilder
+        func body(content: Content) -> some View {
+            if #available(iOS 16.0, *) {
+                content
+                    .scrollContentBackground(.hidden)
+            } else {
+                content
+            }
+        }
+    }
+
     @ViewBuilder
     private func makeList() -> some View {
         let list = List(selection: $selection) {
@@ -142,8 +154,17 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeContent() -> some View {
+        let listBackgroundColor = theme
+            .messageListBackgroundColor?
+            .adaptiveColor(
+                for: colorScheme,
+                darkVariation: theme.messageListBackgroundColorDark
+            )
+
         let content = ZStack {
             makeList()
+                .modifier(ListBackgroundModifier())
+                .background(listBackgroundColor)
                 .opacity(self.listOpacity)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
                 .onChange(of: self.messageIDs) { ids in
