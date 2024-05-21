@@ -81,7 +81,7 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
         guard let loadedImage = self.loadedImage else { return }
         
         guard loadedImage.isAnimated else {
-            self.currentImage = loadedImage.loadFrames().first?.image
+            self.currentImage = await loadedImage.loadFrames().first?.image
             return
         }
         

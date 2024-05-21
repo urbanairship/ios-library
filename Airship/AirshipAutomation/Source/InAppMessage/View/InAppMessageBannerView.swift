@@ -60,12 +60,8 @@ struct InAppMessageBannerView: View {
 
     @ViewBuilder
     private var headerView: some View {
-        let theme = environment.theme.bannerTheme
-
         if let heading = displayContent.heading {
             TextView(textInfo: heading, textTheme: headerTheme)
-                .padding(theme.headerTheme.additionalPadding)
-                .padding(headerTheme.additionalPadding)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -74,8 +70,6 @@ struct InAppMessageBannerView: View {
     private var bodyView: some View {
         if let body = displayContent.body {
             TextView(textInfo: body, textTheme:bodyTheme)
-                .applyTextTheme(headerTheme)
-                .padding(bodyTheme.additionalPadding)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -85,7 +79,6 @@ struct InAppMessageBannerView: View {
         if let media = displayContent.media {
             MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
                 .padding(.horizontal, -mediaTheme.additionalPadding.leading)
-                .padding(mediaTheme.additionalPadding)
                 .frame(maxWidth: mediaMaxWidth,
                        minHeight: mediaMinHeight,
                        maxHeight: mediaMaxHeight)
@@ -95,8 +88,8 @@ struct InAppMessageBannerView: View {
 
     @ViewBuilder
     private var buttonsView: some View {
-        if let buttons = displayContent.buttons, let layout = displayContent.buttonLayoutType, !buttons.isEmpty {
-            ButtonGroup(layout: layout,
+        if let buttons = displayContent.buttons, !buttons.isEmpty {
+            ButtonGroup(layout: displayContent.buttonLayoutType ?? .stacked,
                         buttons: buttons)
             .environmentObject(environment)
         }

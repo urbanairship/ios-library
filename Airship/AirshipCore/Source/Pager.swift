@@ -87,7 +87,7 @@ struct Pager: View {
                 )
 
                 VStack {
-                    LazyHStack(spacing: 0) {
+                    HStack(spacing: 0) {
                         ForEach(0..<self.model.items.count, id: \.self) { i in
                             VStack {
                                 ViewFactory.createView(

@@ -4,7 +4,7 @@ import Foundation
 import ImageIO
 
 /// - Note: for internal use only.  :nodoc:
-public final class AirshipImageData {
+public final class AirshipImageData: @unchecked Sendable {
     // Image frame
     struct Frame {
         let image: UIImage
@@ -39,11 +39,18 @@ public final class AirshipImageData {
 
         try self.init(source)
     }
-    
-    func loadFrames() -> [Frame] {
-        return Self.frames(from: source)
+
+    func loadFrames() async -> [Frame] {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let frames = Self.frames(from: self.source)
+                DispatchQueue.main.async {
+                    continuation.resume(returning: frames)
+                }
+            }
+        }
     }
-    
+
     func getActor() -> AirshipImageDataFrameActor {
         return self.imageActor
     }

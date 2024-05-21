@@ -60,10 +60,9 @@ public final class Thomas {
         }
 
         var viewController: ThomasBannerViewController?
-        let holder = AirshipWeakValueHolder<UIViewController>()
+        let holder = AirshipStrongValueHolder<UIViewController>()
 
         let dismissController = {
-            holder.value?.willMove(toParent: nil)
             holder.value?.view.removeFromSuperview()
             holder.value?.removeFromParent()
             holder.value = nil
@@ -89,19 +88,20 @@ public final class Thomas {
         )
 
         viewController = ThomasBannerViewController(
+            window: window,
             rootView: rootView,
             options: options,
             constraints: bannerConstraints
         )
+
         holder.value = viewController
         
-        if let viewController = viewController,
-            let rootController = window.rootViewController
-        {
-            rootController.addChild(viewController)
-            viewController.didMove(toParent: rootController)
-            rootController.view.addSubview(viewController.view)
+        if let view = viewController?.view {
+            view.willMove(toWindow: window)
+            window.addSubview(view)
+            view.didMoveToWindow()
         }
+
         return AirshipMainActorCancellableBlock { [weak environment] in
             environment?.dismiss()
         }

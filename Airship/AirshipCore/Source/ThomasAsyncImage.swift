@@ -100,7 +100,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
         guard let loadedImage = self.loadedImage, self.currentImage == nil else { return }
 
         guard loadedImage.isAnimated else {
-            self.currentImage = loadedImage.loadFrames().first?.image
+            self.currentImage = await loadedImage.loadFrames().first?.image
             return
         }
 
@@ -115,7 +115,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
         guard let loadedImage = self.loadedImage else { return }
 
         guard loadedImage.isAnimated else {
-            self.currentImage = loadedImage.loadFrames().first?.image
+            self.currentImage = await loadedImage.loadFrames().first?.image
             return
         }
 

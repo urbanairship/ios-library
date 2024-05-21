@@ -48,6 +48,8 @@ public struct MessageCenterView: View {
 
     @ViewBuilder
     public var body: some View {
+        let containerBackgroundColor: Color? = theme.messageListContainerBackgroundColor?.adaptiveColor(for: colorScheme, darkVariation: theme.messageListContainerBackgroundColorDark) ?? Color.red
+
         let content = MessageCenterListView(
             controller: self.controller
         )
@@ -65,7 +67,9 @@ public struct MessageCenterView: View {
 
         if #available(iOS 16.0, *) {
             NavigationStack {
-                content
+                content.applyIf(containerBackgroundColor != nil, transform: { view in
+                    view.background(containerBackgroundColor!)
+                })
             }
             .onAppear {
                 self.controller.isMessageCenterVisible = true
@@ -75,7 +79,9 @@ public struct MessageCenterView: View {
             }
         } else {
             NavigationView {
-                content
+                content.applyIf(containerBackgroundColor != nil, transform: { view in
+                    view.background(containerBackgroundColor!)
+                })
             }
             .navigationViewStyle(.stack)
             .onAppear {

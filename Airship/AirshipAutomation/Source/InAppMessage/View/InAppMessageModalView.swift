@@ -46,12 +46,9 @@ struct InAppMessageModalView: View {
 
     @ViewBuilder
     private var headerView: some View {
-        let theme = environment.theme.fullScreenTheme
-
         if let heading = displayContent.heading {
             TextView(textInfo: heading, textTheme:headerTheme)
-                .padding(theme.headerTheme.additionalPadding)
-                .padding(headerTheme.additionalPadding)
+                .applyAlignment(placement: displayContent.heading?.alignment ?? .left)
         }
     }
 
@@ -59,8 +56,7 @@ struct InAppMessageModalView: View {
     private var bodyView: some View {
         if let body = displayContent.body {
             TextView(textInfo: body, textTheme:bodyTheme)
-                .applyTextTheme(headerTheme)
-                .padding(bodyTheme.additionalPadding)
+                .applyAlignment(placement: displayContent.body?.alignment ?? .left)
         }
     }
 
@@ -68,14 +64,15 @@ struct InAppMessageModalView: View {
     private var mediaView: some View {
         if let media = displayContent.media {
             MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
+                .applyMediaTheme(mediaTheme)
                 .padding(.horizontal, -mediaTheme.additionalPadding.leading).padding(mediaTheme.additionalPadding)
         }
     }
 
     @ViewBuilder
     private var buttonsView: some View {
-        if let buttons = displayContent.buttons, let layout = displayContent.buttonLayoutType, !buttons.isEmpty {
-            ButtonGroup(layout: layout,
+        if let buttons = displayContent.buttons, !buttons.isEmpty {
+            ButtonGroup(layout: displayContent.buttonLayoutType ?? .stacked,
                         buttons: buttons)
             .environmentObject(environment)
         }
@@ -125,7 +122,13 @@ struct InAppMessageModalView: View {
                 .background(
                     GeometryReader { geo -> Color in
                         DispatchQueue.main.async {
-                            scrollViewContentSize = geo.size
+                            if scrollViewContentSize != geo.size {
+                                if case .mediaHeaderBody = displayContent.template {
+                                    scrollViewContentSize = CGSize(width: geo.size.width, height: geo.size.height - padding.top)
+                                } else {
+                                    scrollViewContentSize = geo.size
+                                }
+                            }
                         }
                         return Color.clear
                     }

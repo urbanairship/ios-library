@@ -19,6 +19,7 @@ struct Container: View {
         ZStack {
             ForEach(0..<self.model.items.count, id: \.self) { index in
                 childItem(index, item: self.model.items[index])
+                    .zIndex(Double(index))
             }
         }
         .constraints(constraints)
@@ -57,13 +58,11 @@ struct Container: View {
             safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore
         )
 
-        ZStack {
-            ViewFactory.createView(
-                model: item.view,
-                constraints: childConstraints
-            )
-            .margin(item.margin)
-        }
+        ViewFactory.createView(
+            model: item.view,
+            constraints: childConstraints
+        )
+        .margin(item.margin)
         .applyIf(consumeSafeAreaInsets) {
             $0.padding(self.constraints.safeAreaInsets)
         }
