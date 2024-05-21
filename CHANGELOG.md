@@ -3,6 +3,14 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.3.0, May 20, 2024
+Minor release with updates to message center customization, a bug fix for story pager transition animation and a bug fix for in-app banner button rendering.
+
+### Changes
+- Fixed in-app message banner button rendering.
+- Fixed story pager transition animation.
+- Added message center list and list container background color customization via new plist keys `messageListBackgroundColor`, `messageListBackgroundColorDark`, `messageListContainerBackgroundColor` and `messageListContainerBackgroundColorDark`
+
 ## Version 18.2.2, May 15, 2024
 Patch release includes a fix for submission issues when building with XCFrameworks, a bug fix for emitting pager events from in-app pager views, and a bug fix for the in-app banner's default title and body alignment to match the dashboard preview. Apps using XCFrameworks should update.
 
@@ -22,7 +30,7 @@ Patch release that makes IAA name property is optional and defaults to an empty 
 Minor release with updates for in-app message customization, video playback improvements in scenes, web view inspection configuration and several bug fixes. Apps that require obj-c support or are migrating from an older version of the SDK to 18.x should update to this version.
 
 ### Changes
-- Added in-app message tap opacity and shadow customization via new plist keys tapOpacity and shadowTheme.
+- Added in-app message tap opacity and shadow customization via new plist keys `tapOpacity` and `shadowTheme`.
 - Added isWebViewInspectionEnabled key to AirshipConfig that allows enabling or disabling web view inspection on Airship created web views. Applied only to iOS 16.4+.
 - Added improvements for video playback in scenes.
 - Fixed CoreData migration errors from SDK 16 and SDK 17 to SDK 18.
