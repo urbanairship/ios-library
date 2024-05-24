@@ -263,14 +263,10 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         config: RemoteConfig.AdditionalAudienceCheckConfig?
     ) {
         resolver = AdditionalAudienceCheckerResolver(
-            config: .init(
-                config: AirshipConfig(),
-                dataStore: dataStore
-            ),
             cache: cache,
-            audienceCheckConfig: config,
             apiClient: apiClient,
-            date: date
+            date: date,
+            configProvider: { config }
         )
     }
     

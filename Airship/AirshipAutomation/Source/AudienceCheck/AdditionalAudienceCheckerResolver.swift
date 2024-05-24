@@ -15,33 +15,41 @@ protocol AdditionalAudienceCheckerResolverProtocol: AnyActor {
 actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtocol {
     private let cache: AirshipCache
     private let apiClient: AdditionalAudienceCheckerAPIClientProtocol
-    private let additionalAudienceConfig: RemoteConfig.AdditionalAudienceCheckConfig?
+
     private let date: AirshipDateProtocol
     private var inProgress: Task<Bool, Error>?
+    private let configProvider: () -> RemoteConfig.AdditionalAudienceCheckConfig?
+
+    private var additionalAudienceConfig: RemoteConfig.AdditionalAudienceCheckConfig? {
+        get {
+            configProvider()
+        }
+    }
 
     init(
         config: RuntimeConfig,
         cache: AirshipCache,
-        apiClient: AdditionalAudienceCheckerAPIClientProtocol? = nil,
         date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.cache = cache
-        self.apiClient = apiClient ?? AdditionalAudienceCheckerAPIClient(config: config)
-        self.additionalAudienceConfig = config.remoteConfig.iaaConfig?.additionalAudienceConfig
+        self.apiClient = AdditionalAudienceCheckerAPIClient(config: config)
         self.date = date
+        self.configProvider = {
+            config.remoteConfig.iaaConfig?.additionalAudienceConfig
+        }
     }
     
+    /// Testing
     init(
-        config: RuntimeConfig,
         cache: AirshipCache,
-        audienceCheckConfig: RemoteConfig.AdditionalAudienceCheckConfig? = nil,
-        apiClient: AdditionalAudienceCheckerAPIClientProtocol? = nil,
-        date: AirshipDateProtocol = AirshipDate.shared
+        apiClient: AdditionalAudienceCheckerAPIClientProtocol,
+        date: AirshipDateProtocol,
+        configProvider: @escaping () -> RemoteConfig.AdditionalAudienceCheckConfig?
     ) {
         self.cache = cache
-        self.apiClient = apiClient ?? AdditionalAudienceCheckerAPIClient(config: config)
-        self.additionalAudienceConfig = audienceCheckConfig
+        self.apiClient = apiClient
         self.date = date
+        self.configProvider = configProvider
     }
     
     func resolve(
