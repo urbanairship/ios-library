@@ -964,6 +964,184 @@ final class ContactManagerTest: XCTestCase {
         await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
     }
 
+    func testResendEmail() async throws {
+        let expectedAddress: String = "example@email.com"
+        let expectedChannelType: ChannelType = ChannelType.email
+
+        let expectedResendOptions = ResendOptions(address: expectedAddress)
+
+        // Should resolve contact first after checking the token
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let pendingChannel = makePendingEmailContactChannel(address: expectedAddress)
+
+        await self.contactManager.addOperation(
+            .resend(channel: pendingChannel)
+        )
+
+        let resend = XCTestExpectation()
+        self.apiClient.resendCallback = { resendOptions in
+            XCTAssertEqual(resendOptions, expectedResendOptions)
+            resend.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+    }
+
+    func testResendSMS() async throws {
+        let expectedMSISDN: String = "12345"
+        let expectedSenderID: String = "1111"
+        let expectedChannelType: ChannelType = ChannelType.sms
+
+        let expectedResendOptions = ResendOptions(msisdn: expectedMSISDN, senderID: expectedSenderID)
+
+        // Should resolve contact first after checking the token
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let pendingChannel = makePendingSMSContactChannel(msisdn: expectedMSISDN, sender: expectedSenderID)
+
+        await self.contactManager.addOperation(
+            .resend(channel: pendingChannel)
+        )
+
+        let resend = XCTestExpectation()
+        self.apiClient.resendCallback = { resendOptions in
+            XCTAssertEqual(resendOptions, expectedResendOptions)
+            resend.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+    }
+
+    func testResendChannel() async throws {
+        let expectedChannelID = "12345"
+        let expectedChannelType: ChannelType = ChannelType.email
+
+        let expectedResendOptions = ResendOptions(channelID: expectedChannelID, channelType: expectedChannelType)
+
+        // Should resolve contact first after checking the token
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let registeredChannel = makeRegisteredContactChannel(from: expectedChannelID)
+
+        await self.contactManager.addOperation(
+            .resend(channel: registeredChannel)
+        )
+
+        let resend = XCTestExpectation()
+        self.apiClient.resendCallback = { resendOptions in
+            XCTAssertEqual(resendOptions, expectedResendOptions)
+            resend.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+    }
+
+    func testDisassociate() async throws {
+        let expectedChannelID = "12345"
+        let registeredChannel = makeRegisteredContactChannel(from: expectedChannelID)
+
+        await self.contactManager.addOperation(
+            .disassociateChannel(channel: registeredChannel)
+        )
+
+        // Should resolve contact first
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        // Then disassociate the channel
+        let register = XCTestExpectation()
+        self.apiClient.disassociateChannelCallback = { contactID, channelID, type in
+            XCTAssertEqual(channelID, expectedChannelID)
+            XCTAssertEqual(type, .email)
+            register.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+    }
+
     func testAssociateChannel() async throws {
         await self.contactManager.addOperation(
             .associateChannel(
@@ -1167,6 +1345,89 @@ final class ContactManagerTest: XCTestCase {
         }
 
         return collected
+    }
+
+
+    private func makePendingEmailContactChannel(address: String) -> ContactChannel {
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.dateDecodingStrategy = .iso8601
+
+        let registeredChannelData =
+    """
+    {
+        "pending": {
+            "_0": {
+                "address": "\(address)",
+                "pendingRegistrationInfo": {
+                    "email": {
+                        "_0": {}
+                    }
+                },
+                "deIdentifiedAddress": "u***r@example.com"
+            }
+        }
+    }
+    """.data(using: .utf8)!
+
+        let registeredChannel = try! jsonDecoder.decode(ContactChannel.self, from: registeredChannelData)
+        return registeredChannel
+    }
+
+    private func makePendingSMSContactChannel(msisdn: String, sender: String) -> ContactChannel {
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.dateDecodingStrategy = .iso8601
+
+        let registeredChannelData =
+    """
+    {
+        "pending": {
+            "_0": {
+                "address": "\(msisdn)",
+                "pendingRegistrationInfo": {
+                    "sms": {
+                        "_0": {
+                            "senderID": "\(sender)"
+                        }
+                    }
+                },
+                "deIdentifiedAddress": "XXX-XXX-7890"
+            }
+        }
+    }
+    """.data(using: .utf8)!
+
+        let registeredChannel = try! jsonDecoder.decode(ContactChannel.self, from: registeredChannelData)
+        return registeredChannel
+    }
+
+    private func makeRegisteredContactChannel(from channelID: String) -> ContactChannel {
+        let jsonDecoder = JSONDecoder()
+        jsonDecoder.dateDecodingStrategy = .iso8601
+
+        let registeredChannelData =
+    """
+    {
+        "registered": {
+            "_0": {
+                "channelID": "\(channelID)",
+                "deIdentifiedAddress": "XID123",
+                "registrationInfo": {
+                    "email": {
+                        "_0": {
+                            "transactionalOptedIn": "2024-04-30T12:00:00Z",
+                            "transactionalOptedOut": "2024-04-30T12:00:00Z",
+                            "commercialOptedIn": "2024-04-30T12:00:00Z",
+                            "commercialOptedOut": "2024-04-30T12:00:00Z"
+                        }
+                    }
+                }
+            }
+        }
+    }
+    """.data(using: .utf8)!
+
+        let registeredChannel = try! jsonDecoder.decode(ContactChannel.self, from: registeredChannelData)
+        return registeredChannel
     }
 
     private func verifyUpdates(_ expected: [ContactUpdate], file: StaticString = #filePath, line: UInt = #line) async {

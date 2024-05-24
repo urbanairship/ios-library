@@ -377,7 +377,6 @@ class AirshipContactTest: XCTestCase {
     }
 
     func testAssociateChannel() async throws {
-        let options = EmailRegistrationOptions.commercialOptions(transactionalOptedIn: Date(), commercialOptedIn: Date(), properties: nil)
         self.contact.associateChannel(
             "some-channel-id",
             type: .email

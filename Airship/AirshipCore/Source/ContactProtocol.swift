@@ -130,7 +130,7 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// The named user ID current value publisher.
     var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
 
-    /// Conflict event publisher
+    /// Conflict event publisher.
     var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
 
     /// Notifies any edits to the subscription lists.
@@ -153,9 +153,9 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
 
     /**
-     * Re-sends the double opt in prompt via the channel
+     * Re-sends the double opt in prompt via the pending or registered channel.
      * - Parameters:
-     *   - channel: The channel to resend the double opt-in prompt to
+     *   - channel: The pending or registered channel to resend the double opt-in prompt to.
      */
     func resend(_ channel: ContactChannel)
 
@@ -166,7 +166,10 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
      */
     func disassociateChannel(_ channel: ContactChannel)
 
+    /// Contact channel updates stream.
     var contactChannelUpdates: AsyncStream<[ContactChannel]> { get async throws }
+
+    /// Contact channel updates publisher.
     var contactChannelPublisher: AnyPublisher<[ContactChannel], Never> { get async throws }
 }
 

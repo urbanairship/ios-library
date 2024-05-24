@@ -13,13 +13,16 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     ((String, String?) async throws -> AirshipHTTPResponse<ContactIdentifyResult>)?
 
     var resendCallback:
-    ((AirshipCore.ResendOptions) async throws -> AirshipHTTPResponse<Bool>)?
+    ((ResendOptions) async throws -> AirshipHTTPResponse<Bool>)?
 
     var updateCallback:
     ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
 
     var associateChannelCallback:
     ((String, String, ChannelType) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+
+    var disassociateChannelCallback:
+    ((String, String, ChannelType) async throws -> AirshipHTTPResponse<Bool>)?
 
     var registerEmailCallback:
     ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
@@ -29,9 +32,6 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
 
     var registerOpenCallback:
     ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
-
-    var disassociateCallback:
-    ((String) async throws -> AirshipHTTPResponse<Bool>)?
 
     init() {}
 
@@ -70,8 +70,8 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
 
     func associateChannel(contactID: String,
                           channelID: String,
-                          channelType: AirshipCore.ChannelType
-    ) async throws -> AirshipCore.AirshipHTTPResponse<AirshipCore.AssociatedChannel> {
+                          channelType: ChannelType
+    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
         return try await associateChannelCallback!(contactID, channelID, channelType)
     }
 
@@ -102,12 +102,14 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         return try await registerOpenCallback!(contactID, address, options, locale)
     }
 
-
-    func disassociateChannel(contactID: String, channelID: String, type: AirshipCore.ChannelType) async throws -> AirshipCore.AirshipHTTPResponse<Bool> {
-        return try await disassociateCallback!(channelID)
+    func resend(resendOptions: ResendOptions) async throws -> AirshipHTTPResponse<Bool> {
+        return try await resendCallback!(resendOptions)
     }
 
-    func resend(resendOptions: AirshipCore.ResendOptions) async throws -> AirshipCore.AirshipHTTPResponse<Bool> {
-        return try await resendCallback!(resendOptions)
+    func disassociateChannel(contactID: String,
+                             channelID: String,
+                             type: ChannelType
+    ) async throws -> AirshipHTTPResponse<Bool> {
+        return try await disassociateChannelCallback!(channelID, channelID, type)
     }
 }

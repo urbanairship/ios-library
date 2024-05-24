@@ -487,6 +487,119 @@ class ContactAPIClientTest: XCTestCase {
         }
     }
 
+    func testDisassociate() async throws {
+        let expectedChannelType: ChannelType = .email
+        let expectedChannelID: String = "some channel"
+        let expectedContactID: String = "contact"
+
+        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, channelID: expectedChannelID, type: expectedChannelType)
+        XCTAssertTrue(response.isSuccess)
+
+        let request = self.session.lastRequest!
+        XCTAssertEqual(
+            "https://example.com/api/contacts/disassociate/\(expectedContactID)",
+            request.url!.absoluteString
+        )
+
+        let body = try JSONSerialization.jsonObject(
+            with: request.body!,
+            options: []
+        ) as! [String: Any]
+
+        let expectedBody = [
+            "channel_type": expectedChannelType.stringValue,
+            "channel_id": expectedChannelID,
+            "opt_out": true
+        ] as [String : Any]
+
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+    }
+
+    func testResendEmail() async throws {
+        let expectedChannelType: ChannelType = .email
+        let expectedEmail: String = "test@email.com"
+
+        let expectedResendOptions = ResendOptions(address: expectedEmail)
+
+        let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
+        XCTAssertTrue(response.isSuccess)
+
+        let request = self.session.lastRequest!
+        XCTAssertEqual(
+            "https://example.com/api/channels/resend",
+            request.url!.absoluteString
+        )
+
+        let body = try JSONSerialization.jsonObject(
+            with: request.body!,
+            options: []
+        ) as! [String: Any]
+
+        let expectedBody = [
+            "channel_type": expectedChannelType.stringValue,
+            "email_address": expectedEmail
+        ] as [String : Any]
+
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+    }
+
+    func testResendSMS() async throws {
+        let expectedChannelType: ChannelType = .sms
+        let expectedMSISDN: String = "1234"
+        let expectedSenderID: String = "1234"
+
+        let expectedResendOptions = ResendOptions(msisdn: expectedMSISDN, senderID: expectedSenderID)
+
+        let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
+        XCTAssertTrue(response.isSuccess)
+
+        let request = self.session.lastRequest!
+        XCTAssertEqual(
+            "https://example.com/api/channels/resend",
+            request.url!.absoluteString
+        )
+
+        let body = try JSONSerialization.jsonObject(
+            with: request.body!,
+            options: []
+        ) as! [String: Any]
+
+        let expectedBody = [
+            "channel_type": expectedChannelType.stringValue,
+            "sender": expectedSenderID,
+            "msisdn": expectedMSISDN
+        ] as [String : Any]
+
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+    }
+
+    func testResendChannel() async throws {
+        let expectedChannelType: ChannelType = .email
+        let expectedChannelID: String = "some channel"
+        let expectedResendOptions = ResendOptions(channelID: expectedChannelID, channelType: expectedChannelType)
+
+        let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
+        XCTAssertTrue(response.isSuccess)
+
+        let request = self.session.lastRequest!
+        XCTAssertEqual(
+            "https://example.com/api/channels/resend",
+            request.url!.absoluteString
+        )
+
+        let body = try JSONSerialization.jsonObject(
+            with: request.body!,
+            options: []
+        ) as! [String: Any]
+
+        let expectedBody = [
+            "channel_type": expectedChannelType.stringValue,
+            "channel_id": expectedChannelID
+        ] as [String : Any]
+
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+    }
+
     func testUpdate() async throws {
         let tagUpdates = [
             TagGroupUpdate(group: "tag-set", tags: [], type: .set),

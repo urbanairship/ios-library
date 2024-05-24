@@ -559,6 +559,13 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         )
     }
 
+    /**
+     * Resends an opt-in message
+     * - Parameters:
+     *   - channelID: The channel ID.
+     *   - type: The channel type.
+     *   - options: The SMS/email channel options
+     */
     public func resend(_ channel: ContactChannel) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(

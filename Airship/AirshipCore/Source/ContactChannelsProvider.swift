@@ -2,16 +2,21 @@
 
 import Foundation
 
+/**
+ * Contact channels provider protocol for receiving contact updates.
+ * @note For internal use only. :nodoc:
+ */
 protocol ContactChannelsProviderProtocol: AnyActor {
     func contactUpdates(contactID: String) async throws -> AsyncStream<[ContactChannel]>
 }
 
+/// Provides a stream of contact updates at a regular interval
 final actor ContactChannelsProvider: ContactChannelsProviderProtocol {
     private let audienceOverrides: AudienceOverridesProvider
     private let apiClient: ContactChannelsAPIClientProtocol
     private let cachedChannelsList: CachedValue<(String, [ContactChannel])>
     private let fetchQueue: AirshipSerialQueue = AirshipSerialQueue()
-    private static let maxChannelListCacheAge: TimeInterval = 600
+    private let maxChannelListCacheAge: TimeInterval
 
     private let taskSleeper: AirshipTaskSleeper
 
@@ -19,15 +24,18 @@ final actor ContactChannelsProvider: ContactChannelsProviderProtocol {
         audienceOverrides: AudienceOverridesProvider,
         apiClient: ContactChannelsAPIClientProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared
+        taskSleeper: AirshipTaskSleeper = .shared,
+        maxChannelListCacheAgeSeconds: TimeInterval = 600
     ) {
         self.audienceOverrides = audienceOverrides
         self.apiClient = apiClient
         self.cachedChannelsList = CachedValue(date: date)
         self.taskSleeper = taskSleeper
+        self.maxChannelListCacheAge = maxChannelListCacheAgeSeconds
     }
 
     func contactUpdates(contactID: String) async throws -> AsyncStream<[ContactChannel]> {
+        /// Fetch the initial channels list and apply overrides
         let overrideUpdates = await self.audienceOverrides.contactOverrideUpdates(contactID: contactID)
         let fetched = try await self.resolveChannelsList(contactID)
         let initialHistory = await self.audienceOverrides.contactOverrides(contactID: contactID)
@@ -56,7 +64,7 @@ final actor ContactChannelsProvider: ContactChannelsProviderProtocol {
                         }
                     }
 
-                    try await self.taskSleeper.sleep(timeInterval: Self.maxChannelListCacheAge)
+                    try await self.taskSleeper.sleep(timeInterval: self.maxChannelListCacheAge)
 
                     overrideUpdates = await self.audienceOverrides.contactOverrideUpdates(contactID: contactID)
 
@@ -94,7 +102,7 @@ final actor ContactChannelsProvider: ContactChannelsProviderProtocol {
 
             self.cachedChannelsList.set(
                 value: (contactID, list),
-                expiresIn: Self.maxChannelListCacheAge
+                expiresIn: self.maxChannelListCacheAge
             )
 
             return list
@@ -127,6 +135,26 @@ extension Array where Element == ContactChannel {
                 }
 
             case .associated(let contact, let registeredChannelID):
+                let alreadyAssociated = mutated.contains {
+                    let channelID = $0.channelID
+                    let canonicalAddress = $0.canonicalAddress
+
+                    if let canonicalAddress, contact.canonicalAddress == canonicalAddress {
+                        return true
+                    }
+
+                    if let channelID, registeredChannelID == channelID {
+                        return true
+                    }
+
+                    return false
+                }
+
+                /// If we've already associated this address/channel, bail early with no-op
+                if alreadyAssociated {
+                    break
+                }
+
                 mutated.removeAll {
                     let channelID = $0.channelID
                     let canonicalAddress = $0.canonicalAddress
