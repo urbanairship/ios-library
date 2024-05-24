@@ -57,7 +57,8 @@ final class AutomationEngineTest: XCTestCase {
             audienceChecker: audienceChecker,
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
-            config: self.runtimeConfig!
+            config: self.runtimeConfig!,
+            additionalAudienceResolver: TestAdditionalAudienceResolver()
         )
         
         let actionExecutor = ActionAutomationExecutor()
@@ -144,5 +145,33 @@ final class AutomationEngineTest: XCTestCase {
         try await self.engine.cancelSchedules(identifiers: ["test"])
         let schedule = try await self.engine.getSchedule(identifier: "test")
         XCTAssertNil(schedule)
+    }
+}
+
+actor TestAdditionalAudienceResolver:  AdditionalAudienceCheckerResolverProtocol {
+    struct ResolveRequest {
+        let channelID: String
+        let contactID: String?
+        let options: AudienceCheckOverrides?
+    }
+    
+    var recordedReqeusts: [ResolveRequest] = []
+    public func setResult(_ result: Bool) {
+        returnResult = result
+    }
+    private var returnResult = true
+
+    func resolve(
+        deviceInfoProvider: AudienceDeviceInfoProvider,
+        audienceCheckOptions: AudienceCheckOverrides?
+    ) async throws -> Bool {
+        recordedReqeusts.append(
+            ResolveRequest(
+                channelID: try await deviceInfoProvider.channelID,
+                contactID: await deviceInfoProvider.stableContactInfo.contactID,
+                options: audienceCheckOptions
+            )
+        )
+        return returnResult
     }
 }

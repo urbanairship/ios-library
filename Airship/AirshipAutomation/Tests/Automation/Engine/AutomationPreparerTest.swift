@@ -16,6 +16,8 @@ final class AutomationPreparerTest: XCTestCase {
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
     private var preparer: AutomationPreparer!
+    private let deviceInfoProvider = TestDeviceInfoProvider()
+    private let audienceAdditionalResolver = TestAdditionalAudienceResolver()
 
     private let triggerContext = AirshipTriggerContext(type: "some type", goal: 10, event: .null)
 
@@ -51,9 +53,12 @@ final class AutomationPreparerTest: XCTestCase {
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
             config: self.runtimeConfig!,
-            deviceInfoProviderFactory: { contactID in
-            TestDeviceInfoProvider(contactID: contactID)
-        })
+            deviceInfoProviderFactory: { [provider = self.deviceInfoProvider] contactID in
+                provider.stableContactInfo = StableContactInfo(contactID: contactID ?? UUID().uuidString)
+                return provider
+            },
+            additionalAudienceResolver: audienceAdditionalResolver
+        )
     
     }
 
@@ -227,6 +232,7 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertTrue(prepareResult.isPenalize)
     }
 
+
     func testAudienceMismatchCancel() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -291,7 +297,7 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { _, _, provider in
-            let contactID = await provider.stableContactID
+            let contactID = await provider.stableContactInfo.contactID
             XCTAssertEqual("contact ID", contactID)
             return false
         }
@@ -371,6 +377,56 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertEqual(triggerSessionID, prepared.info.triggerSessionID)
 
         XCTAssertNotNil(prepared.frequencyChecker)
+    }
+
+    func testAdditionalAudienceMiss() async throws {
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            triggers: [],
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            ),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: .skip
+            )
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in
+            return nil
+        }
+
+        self.remoteDataAccess.requiresUpdateBlock = { _ in
+            return false
+        }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in
+            return true
+        }
+
+        self.audienceChecker.onEvaluate = { audience, created, provider in
+            return true
+        }
+
+        await self.audienceAdditionalResolver.setResult(false)
+
+        let preparedData = self.preparedMessageData!
+
+        self.messagePreparer.prepareBlock = { message, info in
+            XCTAssertFalse(info.additionalAudienceCheckResult)
+            return preparedData
+        }
+
+        let prepareResult = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = prepareResult else {
+            XCTFail()
+            return
+        }
+        XCTAssertFalse(prepared.info.additionalAudienceCheckResult)
     }
 
     func testPrepareInvalidMessage() async throws {
@@ -824,7 +880,7 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         self.experiments.onEvaluate = { info, provider in
-            let contactID = await provider.stableContactID
+            let contactID = await provider.stableContactInfo.contactID
             XCTAssertEqual(
                 info,
                 MessageInfo(
@@ -897,7 +953,7 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         self.experiments.onEvaluate = { info, provider in
-            let contactID = await provider.stableContactID
+            let contactID = await provider.stableContactInfo.contactID
             XCTAssertEqual(
                 info,
                 MessageInfo(
@@ -1111,7 +1167,7 @@ extension SchedulePrepareResult {
 }
 
 
-fileprivate final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
+final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
     var sdkVersion: String = "1.0.0"
 
 
@@ -1119,7 +1175,9 @@ fileprivate final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unc
 
     var tags: Set<String> = Set()
 
-    var channelID: String? = UUID().uuidString
+    var isChannelCreated: Bool = true
+
+    var channelID: String = UUID().uuidString
 
     var locale: Locale = Locale.current
 
@@ -1133,10 +1191,11 @@ fileprivate final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unc
 
     var installDate: Date = Date()
 
-    var stableContactID: String
+    var stableContactInfo: StableContactInfo
 
-    init(contactID: String?) {
-        self.stableContactID = contactID ?? UUID().uuidString
+    init(contactID: String = UUID().uuidString) {
+        self.stableContactInfo = StableContactInfo(contactID: contactID)
     }
+
 }
 

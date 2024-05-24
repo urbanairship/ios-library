@@ -83,6 +83,15 @@ struct InAppResolutionEvent: InAppEvent {
         )
     }
 
+    static func audienceExcluded() -> InAppResolutionEvent {
+        return InAppResolutionEvent(
+            data: ResolutionData(
+                resolutionType: .audienceCheckExcluded,
+                displayTime: 0.0
+            )
+        )
+    }
+
     private struct DeviceInfo: Encodable, Sendable {
         var channel: String?
         var contact: String?
@@ -102,6 +111,7 @@ struct InAppResolutionEvent: InAppEvent {
             case timedOut
             case interrupted
             case control
+            case audienceCheckExcluded
         }
 
         let resolutionType: ResolutionType
@@ -147,6 +157,8 @@ struct InAppResolutionEvent: InAppEvent {
                 try resolution.encode("interrupted", forKey: .resolutionType)
             case .control:
                 try resolution.encode("control", forKey: .resolutionType)
+            case .audienceCheckExcluded:
+                try resolution.encode("audience_check_excluded", forKey: .resolutionType)
             }
         }
     }

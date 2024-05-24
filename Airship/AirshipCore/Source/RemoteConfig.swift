@@ -98,9 +98,11 @@ public struct RemoteConfig: Codable, Equatable, Sendable {
     
     public struct IAAConfig: Codable, Equatable, Sendable {
         public let retryingQueue: RetryingQueueConfig?
+        public let additionalAudienceConfig: AdditionalAudienceCheckConfig?
 
         enum CodingKeys: String, CodingKey {
             case retryingQueue = "queue"
+            case additionalAudienceConfig = "additional_audience_check"
         }
     }
     
@@ -115,6 +117,31 @@ public struct RemoteConfig: Codable, Equatable, Sendable {
             case maxPendingResults = "max_pending_results"
             case initialBackoff = "initial_back_off_seconds"
             case maxBackOff = "max_back_off_seconds"
+        }
+    }
+    
+    public struct AdditionalAudienceCheckConfig: Codable, Equatable, Sendable {
+        public let isEnabled: Bool
+        public let context: AirshipJSON?
+        public let url: String?
+        
+        enum CodingKeys: String, CodingKey {
+            case isEnabled = "enabled"
+            case context
+            case url
+        }
+        
+        public init(isEnabled: Bool, context: AirshipJSON?, url: String?) {
+            self.isEnabled = isEnabled
+            self.context = context
+            self.url = url
+        }
+        
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            isEnabled = try container.decodeIfPresent(Bool.self, forKey: .isEnabled) ?? false
+            context = try container.decodeIfPresent(AirshipJSON.self, forKey: .context)
+            url = try container.decodeIfPresent(String.self, forKey: .url)
         }
     }
 }

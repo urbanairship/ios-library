@@ -659,6 +659,13 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             update.isStable
         }.contactID
     }
+    
+    public func getStableContactInfo() async -> StableContactInfo {
+        let info = await waitForContactIDInfo(filter: { $0.isStable })
+        return StableContactInfo(
+            contactID: info.contactID,
+            namedUserID: info.namedUserID)
+    }
 
     private func getStableVerifiedContactID() async -> String {
         let now = self.date.now

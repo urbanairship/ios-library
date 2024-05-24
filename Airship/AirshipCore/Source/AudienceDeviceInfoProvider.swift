@@ -6,7 +6,7 @@ import Foundation
 public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
     var isAirshipReady: Bool { get }
     var tags: Set<String> { get }
-    var channelID: String? { get }
+    var channelID: String { get async throws }
     var locale:  Locale { get }
     var appVersion: String? { get }
     var sdkVersion: String { get }
@@ -14,7 +14,8 @@ public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
     var isUserOptedInPushNotifications: Bool { get async }
     var analyticsEnabled: Bool { get }
     var installDate: Date { get }
-    var stableContactID: String { get async }
+    var stableContactInfo: StableContactInfo { get async }
+    var isChannelCreated: Bool { get }
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -23,11 +24,12 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
     private let cachedTags: OneTimeValue<Set<String>>
     private let cachedLocale: OneTimeValue<Locale>
-    private let cachedContactID: OneTimeAsyncValue<String>
-    private let cachedChannelID: OneTimeValue<String?>
+    private let cachedStableContactInfo: OneTimeAsyncValue<StableContactInfo>
+    private let cachedChannelID: ThrowingOneTimeAsyncValue<String>
     private let cachedPermissions: OneTimeAsyncValue<[AirshipPermission : AirshipPermissionStatus]>
     private let cachedIsUserOptedInPushNotifications: OneTimeAsyncValue<Bool>
     private let cachedAnalyticsEnabled: OneTimeValue<Bool>
+    private let cachedIsChannelCreated: OneTimeValue<Bool>
 
     public convenience init(contactID: String?) {
         self.init(deviceInfoProvider: DefaultAudienceDeviceInfoProvider(contactID: contactID))
@@ -44,8 +46,8 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
             return deviceInfoProvider.locale
         }
 
-        self.cachedContactID = OneTimeAsyncValue {
-            return await deviceInfoProvider.stableContactID
+        self.cachedStableContactInfo = OneTimeAsyncValue {
+            return await deviceInfoProvider.stableContactInfo
         }
 
         self.cachedPermissions = OneTimeAsyncValue {
@@ -60,8 +62,12 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
             return deviceInfoProvider.analyticsEnabled
         }
 
-        self.cachedChannelID = OneTimeValue {
-            return deviceInfoProvider.channelID
+        self.cachedIsChannelCreated = OneTimeValue {
+            return deviceInfoProvider.isChannelCreated
+        }
+
+        self.cachedChannelID = ThrowingOneTimeAsyncValue {
+            return try await deviceInfoProvider.channelID
         }
     }
 
@@ -69,9 +75,9 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         deviceInfoProvider.installDate
     }
 
-    public var stableContactID: String {
+    public var stableContactInfo: StableContactInfo {
         get async {
-            return await cachedContactID.value
+            return await cachedStableContactInfo.getValue()
         }
     }
 
@@ -91,9 +97,17 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         return cachedTags.value
     }
 
-    public var channelID: String? {
-        return cachedChannelID.value
+    public var channelID: String {
+        get async throws {
+            return try await cachedChannelID.getValue()
+        }
     }
+
+
+    public var isChannelCreated: Bool {
+        return cachedIsChannelCreated.value
+    }
+
 
     public var locale: Locale {
         return cachedLocale.value
@@ -101,13 +115,13 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
     public var permissions: [AirshipPermission : AirshipPermissionStatus] {
         get async {
-            await cachedPermissions.value
+            await cachedPermissions.getValue()
         }
     }
 
     public var isUserOptedInPushNotifications: Bool {
         get async {
-            return await cachedIsUserOptedInPushNotifications.value
+            return await cachedIsUserOptedInPushNotifications.getValue()
         }
     }
 
@@ -120,9 +134,9 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
 /// NOTE: For internal use only. :nodoc:
 public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider {
+    
 
     private let contactID: String?
-
     public init(contactID: String? = nil) {
         self.contactID = contactID
     }
@@ -135,14 +149,20 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         AirshipVersion.version
     }
 
-    public var stableContactID: String {
+    public var stableContactInfo: StableContactInfo {
         get async {
-            if let contactID = self.contactID {
-                return contactID
-            }
-            return await Airship.requireComponent(
+            let stableInfo = await Airship.requireComponent(
                 ofType: InternalAirshipContactProtocol.self
-            ).getStableContactID()
+            ).getStableContactInfo()
+
+            if let contactID {
+                if (stableInfo.contactID == contactID) {
+                    return stableInfo
+                }
+                return StableContactInfo(contactID: contactID, namedUserID: nil)
+            }
+            
+            return stableInfo
         }
     }
 
@@ -158,8 +178,20 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         return Set(Airship.channel.tags)
     }
 
-    public var channelID: String? {
-        return Airship.channel.identifier
+    public var isChannelCreated: Bool {
+        return Airship.channel.identifier != nil
+    }
+
+    public var channelID: String {
+        get async {
+            if let channelID = Airship.channel.identifier {
+                return channelID
+            }
+            for await update in Airship.channel.identifierUpdates {
+                return update
+            }
+            return ""
+        }
     }
 
     public var locale: Locale {
@@ -219,32 +251,44 @@ fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendab
     }
 }
 
-fileprivate final class OneTimeAsyncValue<T: Equatable & Sendable>: @unchecked Sendable {
-    private let queue: AirshipSerialQueue = AirshipSerialQueue()
-    private var atomicValue: AirshipAtomicValue<T?> = AirshipAtomicValue(nil)
+fileprivate actor OneTimeAsyncValue<T: Equatable & Sendable> {
     private var provider: @Sendable () async -> T
-
-    var cachedValue: T? {
-        get {
-            return atomicValue.value
-        }
-    }
+    private var task: Task<T, Never>?
 
     init(provider: @Sendable @escaping () async -> T) {
         self.provider = provider
     }
 
-    var value: T {
-        get async {
-            return await queue.runSafe {
-                if let cached = self.atomicValue.value {
-                    return cached
-                } else {
-                    let newValue = await self.provider()
-                    self.atomicValue.value = newValue
-                    return newValue
-                }
-            }
+    func getValue() async -> T {
+        if let task {
+            return await task.value
         }
+        let newTask = Task {
+            return await provider()
+        }
+        task = newTask
+        return await newTask.value
+    }
+}
+
+fileprivate actor ThrowingOneTimeAsyncValue<T: Equatable & Sendable> {
+    private var provider: @Sendable () async throws -> T
+    private var task: Task<T, Error>?
+    private var value: T?
+
+    init(provider: @Sendable @escaping () async throws -> T) {
+        self.provider = provider
+    }
+
+    func getValue() async throws -> T {
+        if let task, let value = try? await task.value {
+            return value
+        }
+
+        let newTask = Task {
+            return try await provider()
+        }
+        task = newTask
+        return try await newTask.value
     }
 }

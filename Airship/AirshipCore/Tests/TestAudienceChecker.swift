@@ -18,13 +18,20 @@ final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
 }
 
 final class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
+    var channelID: String = UUID().uuidString
+
+    var stableContactInfo: StableContactInfo = StableContactInfo(
+        contactID: "stable",
+        namedUserID: nil
+    )
+
+    var isChannelCreated: Bool = true
+
     var sdkVersion: String = AirshipVersion.version
     
     var isAirshipReady: Bool = true
 
     var tags: Set<String> = Set()
-
-    var channelID: String? = nil
 
     var locale: Locale = Locale.current
 
@@ -38,5 +45,4 @@ final class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @uncheck
 
     var installDate: Date = Date()
 
-    var stableContactID: String = "stable"
 }

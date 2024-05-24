@@ -70,7 +70,7 @@ final class RemoteDataTest: AirshipBaseTest {
     func testContactUpdateEnqueuesRefresh() {
         XCTAssertEqual(0, testWorkManager.workRequests.count)
         self.testContact.contactIDUpdatesSubject.send(
-            ContactIDInfo(contactID: "some id", isStable: true)
+            ContactIDInfo(contactID: "some id", isStable: true, namedUserID: nil)
         )
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }

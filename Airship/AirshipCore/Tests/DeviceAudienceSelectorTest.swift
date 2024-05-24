@@ -291,12 +291,12 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
 
         self.testDeviceInfo.channelID = "not a match"
 
-        self.testDeviceInfo.stableContactID = "not a match"
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
         try await assertFalse {
             try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
         }
 
-        self.testDeviceInfo.stableContactID = "match"
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
         try await assertTrue {
             try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
         }
@@ -320,7 +320,7 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
         )
 
         self.testDeviceInfo.channelID = "not a match"
-        self.testDeviceInfo.stableContactID = "not a match"
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
         try await assertFalse {
             try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
         }

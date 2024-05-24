@@ -55,7 +55,8 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     ) async throws -> PreparedInAppMessageData {
         let assets = try await self.prepareAssets(
             message: data,
-            scheduleID: preparedScheduleInfo.scheduleID
+            scheduleID: preparedScheduleInfo.scheduleID,
+            skip: preparedScheduleInfo.additionalAudienceCheckResult == false || preparedScheduleInfo.experimentResult?.isMatch == true
         )
 
         let displayCoordinator = self.displayCoordinatorManager.displayCoordinator(message: data)
@@ -85,15 +86,19 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         await self.assetManager.clearCache(identifier: scheduleID)
     }
 
-    private func prepareAssets(message: InAppMessage, scheduleID: String) async throws -> AirshipCachedAssetsProtocol {
+    private func prepareAssets(message: InAppMessage, scheduleID: String, skip: Bool) async throws -> AirshipCachedAssetsProtocol {
         // - prepare assets
-        let imageURLs: [String] = message.urlInfos
-            .compactMap { info in
-                guard case .image(let url, let prefetch) = info, prefetch else {
-                    return nil
+        let imageURLs: [String] = if skip {
+            []
+        } else {
+            message.urlInfos
+                .compactMap { info in
+                    guard case .image(let url, let prefetch) = info, prefetch else {
+                        return nil
+                    }
+                    return url
                 }
-                return url
-            }
+        }
 
         AirshipLogger.trace("Preparing assets \(scheduleID): \(imageURLs)")
 

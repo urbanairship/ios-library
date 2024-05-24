@@ -23,18 +23,17 @@ final class ExperimentManager: ExperimentDataProvider {
         self.date = date
     }
     
-    public func evaluateExperiments(info: MessageInfo, deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> ExperimentResult? {
+    public func evaluateExperiments(
+        info: MessageInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> ExperimentResult? {
         let experiments = await getExperiments(info: info)
         guard !experiments.isEmpty else {
             return nil
         }
 
-        let contactID = await deviceInfoProvider.stableContactID
-        guard let channelID = deviceInfoProvider.channelID else {
-            // Since we pull this after a stable contact ID this should never happen. Ideally we have
-            // a way to wait for it like we do the contact ID.
-            throw AirshipErrors.error("Channel ID missing, unable to evaluate hold out groups.")
-        }
+        let contactID = await deviceInfoProvider.stableContactInfo.contactID
+        let channelID = try await deviceInfoProvider.channelID
 
         var evaluatedMetadata: [AirshipJSON] = []
         var isMatch: Bool = false

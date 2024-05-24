@@ -223,6 +223,7 @@ actor ContactManager: ContactManagerProtocol {
         return ContactIDInfo(
             contactID: lastContactInfo.contactID,
             isStable: self.isContactIDStable(),
+            namedUserID: lastContactInfo.namedUserID,
             resolveDate: lastContactInfo.resolveDate ?? .distantPast
         )
     }

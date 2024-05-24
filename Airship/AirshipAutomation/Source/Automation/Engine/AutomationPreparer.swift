@@ -39,6 +39,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private let remoteDataAccess: AutomationRemoteDataAccessProtocol
     private let queues: Queues
     private let config: RuntimeConfig
+    private let additionalAudienceResolver: AdditionalAudienceCheckerResolverProtocol
 
     private static let deferredResultKey: String = "AirshipAutomation#deferredResult"
     private static let defaultMessageType: String = "transactional"
@@ -56,7 +57,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         config: RuntimeConfig,
         deviceInfoProviderFactory: @escaping @Sendable (String?) -> AudienceDeviceInfoProvider = { contactID in
             CachingAudienceDeviceInfoProvider(contactID: contactID)
-        }
+        },
+        additionalAudienceResolver: AdditionalAudienceCheckerResolverProtocol
     ) {
         self.actionPreparer = actionPreparer
         self.messagePreparer = messagePreparer
@@ -68,6 +70,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
         self.config = config
         self.queues = Queues(config: config)
+        self.additionalAudienceResolver = additionalAudienceResolver
     }
 
     func cancelled(schedule: AutomationSchedule) async {
@@ -148,52 +151,66 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 nil
             }
 
-            let scheduleInfo = PreparedScheduleInfo(
-                scheduleID: schedule.identifier,
-                productID: schedule.productID,
-                campaigns: schedule.campaigns,
-                contactID: await deviceInfoProvider.stableContactID,
-                experimentResult: experimentResult,
-                reportingContext: schedule.reportingContext,
-                triggerSessionID: triggerSessionID
-            )
-
             AirshipLogger.trace("Preparing data \(schedule.identifier)")
 
             return try await self.prepareData(
                 data: schedule.data,
-                triggerContext: triggerContext,
-                deviceInfoProvider: deviceInfoProvider,
-                scheduleInfo: scheduleInfo,
-                frequencyChecker: frequencyChecker,
                 schedule: schedule,
-                retryState: retryState
+                retryState: retryState,
+                deferredRequest: { url in
+                    DeferredRequest(
+                        url: url,
+                        channelID: try await deviceInfoProvider.channelID,
+                        triggerContext: triggerContext,
+                        locale: deviceInfoProvider.locale,
+                        notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
+                    )
+                },
+                prepareScheduleInfo: {
+                    let result = try await additionalAudienceResolver.resolve(
+                        deviceInfoProvider: deviceInfoProvider,
+                        audienceCheckOptions: schedule.audienceCheckOverrides
+                    )
+
+                    return PreparedScheduleInfo(
+                        scheduleID: schedule.identifier,
+                        productID: schedule.productID,
+                        campaigns: schedule.campaigns,
+                        contactID: await deviceInfoProvider.stableContactInfo.contactID,
+                        experimentResult: experimentResult,
+                        reportingContext: schedule.reportingContext,
+                        triggerSessionID: triggerSessionID,
+                        additionalAudienceCheckResult: result
+                    )
+                },
+                prepareSchedule: { [frequencyChecker] scheduleInfo, data in
+                    return PreparedSchedule(
+                        info: scheduleInfo,
+                        data: data,
+                        frequencyChecker: frequencyChecker
+                    )
+                }
             )
         }
     }
 
     private func prepareData(
         data: AutomationSchedule.ScheduleData,
-        triggerContext: AirshipTriggerContext?,
-        deviceInfoProvider: AudienceDeviceInfoProvider,
-        scheduleInfo: PreparedScheduleInfo,
-        frequencyChecker: FrequencyCheckerProtocol?,
         schedule: AutomationSchedule,
-        retryState: RetryingQueue<SchedulePrepareResult>.State
+        retryState: RetryingQueue<SchedulePrepareResult>.State,
+        deferredRequest:  @escaping @Sendable (URL) async throws -> DeferredRequest,
+        prepareScheduleInfo:  @escaping @Sendable () async throws -> PreparedScheduleInfo,
+        prepareSchedule:  @escaping @Sendable (PreparedScheduleInfo, PreparedScheduleData) -> PreparedSchedule
     ) async throws -> RetryingQueue<SchedulePrepareResult>.Result {
         switch (data) {
         case .actions(let data):
+            let preparedInfo = try await prepareScheduleInfo()
             let result = try await self.actionPreparer.prepare(
                 data: data,
-                preparedScheduleInfo: scheduleInfo
+                preparedScheduleInfo: preparedInfo
             )
 
-            let preparedSchedule = PreparedSchedule(
-                info: scheduleInfo,
-                data: .actions(result),
-                frequencyChecker: frequencyChecker
-            )
-
+            let preparedSchedule = prepareSchedule(preparedInfo, .actions(result))
             return .success(result: .prepared(preparedSchedule))
 
         case .inAppMessage(let data):
@@ -202,64 +219,46 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .skip)
             }
 
+            let preparedInfo = try await prepareScheduleInfo()
             let result = try await self.messagePreparer.prepare(
                 data: data,
-                preparedScheduleInfo: scheduleInfo
+                preparedScheduleInfo: preparedInfo
             )
 
-            let preparedSchedule = PreparedSchedule(
-                info: scheduleInfo,
-                data: .inAppMessage(result),
-                frequencyChecker: frequencyChecker
-            )
+            let preparedSchedule = prepareSchedule(preparedInfo, .inAppMessage(result))
             return .success(result: .prepared(preparedSchedule))
 
         case .deferred(let deferred):
             return try await self.prepareDeferred(
                 deferred: deferred,
-                triggerContext: triggerContext,
-                deviceInfoProvider: deviceInfoProvider,
                 schedule: schedule,
-                frequencyChecker: frequencyChecker,
-                retryState: retryState
+                retryState: retryState,
+                deferredRequest: deferredRequest
             ) { data in
                 try await self.prepareData(
                     data: data,
-                    triggerContext: triggerContext,
-                    deviceInfoProvider: deviceInfoProvider,
-                    scheduleInfo: scheduleInfo,
-                    frequencyChecker: frequencyChecker,
                     schedule: schedule,
-                    retryState: retryState
+                    retryState: retryState,
+                    deferredRequest: deferredRequest,
+                    prepareScheduleInfo: prepareScheduleInfo,
+                    prepareSchedule: prepareSchedule
                 )
             }
         }
     }
 
+
     private func prepareDeferred(
         deferred: DeferredAutomationData,
-        triggerContext: AirshipTriggerContext?,
-        deviceInfoProvider: AudienceDeviceInfoProvider,
         schedule: AutomationSchedule,
-        frequencyChecker: FrequencyCheckerProtocol?,
         retryState: RetryingQueue<SchedulePrepareResult>.State,
+        deferredRequest:  @escaping @Sendable (URL) async throws -> DeferredRequest,
         onResult: @escaping @Sendable (AutomationSchedule.ScheduleData) async throws -> RetryingQueue<SchedulePrepareResult>.Result
     ) async throws -> RetryingQueue<SchedulePrepareResult>.Result {
 
         AirshipLogger.trace("Resolving deferred \(schedule.identifier)")
 
-        guard let channelID = deviceInfoProvider.channelID else {
-            AirshipLogger.info("Unable to resolve deferred until channel is created")
-            return .retry
-        }
-
-        let request = DeferredRequest(
-            url: deferred.url,
-            channelID: channelID,
-            triggerContext: triggerContext,
-            locale: deviceInfoProvider.locale,
-            notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
-        )
+        let request = try await deferredRequest(deferred.url)
 
         if let cached: AutomationSchedule.ScheduleData = await retryState.value(key: Self.deferredResultKey) {
             AirshipLogger.trace("Deferred resolved from cache \(schedule.identifier)")

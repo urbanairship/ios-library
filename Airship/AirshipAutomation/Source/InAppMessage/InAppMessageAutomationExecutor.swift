@@ -88,6 +88,14 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         data: PreparedInAppMessageData,
         preparedScheduleInfo: PreparedScheduleInfo
     ) async throws -> ScheduleExecuteResult {
+        guard preparedScheduleInfo.additionalAudienceCheckResult else {
+            data.analytics.recordEvent(
+                InAppResolutionEvent.audienceExcluded(),
+                layoutContext: nil
+            )
+            return .finished
+        }
+
         let scene = try self.sceneManager.scene(forMessage: data.message)
 
         // Display

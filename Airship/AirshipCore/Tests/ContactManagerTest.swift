@@ -142,6 +142,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: self.anonIdentifyResponse.contact.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -199,6 +200,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: self.anonIdentifyResponse.contact.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -236,6 +238,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: true,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 ),
@@ -243,6 +246,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: false,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 )
@@ -336,6 +340,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: false,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 ),
@@ -343,6 +348,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.nonAnonIdentifyResponse.contact.contactID,
                         isStable: true,
+                        namedUserID: "some named user",
                         resolveDate: self.date.now
                     )
                 ),
@@ -454,6 +460,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.nonAnonIdentifyResponse.contact.contactID,
                         isStable: false,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 ),
@@ -461,6 +468,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: true,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 )
@@ -492,6 +500,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: self.anonIdentifyResponse.contact.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -612,6 +621,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo!.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -657,6 +667,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -669,6 +680,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: false,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -684,6 +696,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -696,6 +709,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: false,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )

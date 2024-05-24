@@ -166,7 +166,7 @@ public final class FeatureFlagManager: Sendable {
 
 
             case .staticPayload(let staticInfo):
-                return await evaluateStatic(
+                return try await evaluateStatic(
                     flagInfo: flagInfo,
                     isElegible: true,
                     staticInfo: staticInfo,
@@ -177,7 +177,7 @@ public final class FeatureFlagManager: Sendable {
 
         let lastFlagInfo = flagInfos.last
         return if let lastFlagInfo, case let .staticPayload(staticInfo) = lastFlagInfo.flagPayload {
-            await evaluateStatic(
+            try await evaluateStatic(
                 flagInfo: lastFlagInfo,
                 isElegible: false,
                 staticInfo: staticInfo,
@@ -191,8 +191,8 @@ public final class FeatureFlagManager: Sendable {
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
                     reportingMetadata: lastFlagInfo?.reportingMetadata ?? .null,
-                    contactID: await deviceInfoProvider.stableContactID,
-                    channelID: deviceInfoProvider.channelID
+                    contactID: await deviceInfoProvider.stableContactInfo.contactID,
+                    channelID: try await deviceInfoProvider.channelID
                 )
             )
         }
@@ -205,8 +205,8 @@ public final class FeatureFlagManager: Sendable {
     ) async throws -> FeatureFlag {
         let request = DeferredRequest(
             url: deferredInfo.deferred.url,
-            channelID: deviceInfoProvider.channelID!,
-            contactID: await deviceInfoProvider.stableContactID,
+            channelID: try await deviceInfoProvider.channelID,
+            contactID: await deviceInfoProvider.stableContactInfo.contactID,
             locale: deviceInfoProvider.locale,
             notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
         )
@@ -227,7 +227,7 @@ public final class FeatureFlagManager: Sendable {
                 deviceInfoProvider: deviceInfoProvider
             )
 
-            return await FeatureFlag.makeFound(
+            return try await FeatureFlag.makeFound(
                 name: flagInfo.name,
                 isElegible: deferredFlag.isEligible,
                 deviceInfoProvider: deviceInfoProvider,
@@ -242,14 +242,14 @@ public final class FeatureFlagManager: Sendable {
         isElegible: Bool,
         staticInfo: FeatureFlagPayload.StaticInfo,
         deviceInfoProvider: AudienceDeviceInfoProvider
-    ) async -> FeatureFlag {
+    ) async throws -> FeatureFlag {
         let variables = await evaluateVariables(
             staticInfo.variables,
             flagInfo: flagInfo,
             deviceInfoProvider: deviceInfoProvider
         )
 
-        return await FeatureFlag.makeFound(
+        return try await FeatureFlag.makeFound(
             name: flagInfo.name,
             isElegible: isElegible,
             deviceInfoProvider: deviceInfoProvider,
@@ -320,7 +320,7 @@ fileprivate extension FeatureFlag {
         deviceInfoProvider: AudienceDeviceInfoProvider,
         reportingMetadata: AirshipJSON,
         variables: VariableResult?
-    ) async -> FeatureFlag {
+    ) async throws -> FeatureFlag {
         return FeatureFlag(
             name: name,
             isEligible: isElegible,
@@ -328,8 +328,8 @@ fileprivate extension FeatureFlag {
             variables: variables?.data,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: variables?.reportingMetadata ?? reportingMetadata,
-                contactID: await deviceInfoProvider.stableContactID,
-                channelID: deviceInfoProvider.channelID
+                contactID: await deviceInfoProvider.stableContactInfo.contactID,
+                channelID: try await deviceInfoProvider.channelID
             )
         )
     }

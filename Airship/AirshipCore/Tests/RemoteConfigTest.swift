@@ -37,7 +37,14 @@ final class RemoteConfigTest: XCTestCase {
                   "foreground_resolve_interval_ms":400
                },
                "fetch_contact_remote_data":true,
-               "disabled_features": ["push", "analytics"]
+               "disabled_features": ["push", "analytics"],
+               "in_app_config": {
+                   "additional_audience_check": {
+                       "enabled": true,
+                       "context": "json-value",
+                       "url": "https://test.url"
+                   }
+               }
             }
         """
 
@@ -58,7 +65,10 @@ final class RemoteConfigTest: XCTestCase {
                 foregroundIntervalMilliseconds: 400,
                 channelRegistrationMaxResolveAgeMilliseconds: 300
             ),
-            disabledFeatures: [.push, .analytics]
+            disabledFeatures: [.push, .analytics],
+            iaaConfig: .init(
+                retryingQueue: nil,
+                additionalAudienceConfig: .init(isEnabled: true, context: .string("json-value"), url: "https://test.url"))
         )
 
         let config = try self.decoder.decode(RemoteConfig.self, from: json.data(using: .utf8)!)

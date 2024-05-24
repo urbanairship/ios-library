@@ -37,10 +37,14 @@ class AutomationScheduleTests: XCTestCase {
                "frequency_constraint_ids": ["constraint1", "constraint2"],
                "message_type": "test_type",
                "last_updated": "2023-12-20T12:30:00Z",
-               "created": "2023-12-20T12:00:00Z"
+               "created": "2023-12-20T12:00:00Z",
+               "audience_check_overrides": {
+                   "bypass": true,
+                   "context": "json-context",
+                   "url": "https://result.url"
+               }
            }
            """
-
 
         let expectedSchedule = AutomationSchedule(
             identifier: "test_schedule",
@@ -60,7 +64,8 @@ class AutomationScheduleTests: XCTestCase {
             editGracePeriodDays: 7,
             metadata: .object([:]),
             frequencyConstraintIDs: ["constraint1", "constraint2"],
-            messageType: "test_type"
+            messageType: "test_type",
+            audienceCheckOverrides: .init(bypass: true, context: .string("json-context"), url: "https://result.url")
         )
 
         try verify(json: jsonString, expected: expectedSchedule)

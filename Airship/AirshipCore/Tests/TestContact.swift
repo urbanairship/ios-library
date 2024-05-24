@@ -4,6 +4,10 @@ import Combine
 @testable import AirshipCore
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
+    func getStableContactInfo() async -> StableContactInfo {
+        return StableContactInfo(contactID: await getStableContactID(), namedUserID: namedUserID)
+    }
+    
     init() {}
 
     func registerEmail(_ address: String, options: AirshipCore.EmailRegistrationOptions) {

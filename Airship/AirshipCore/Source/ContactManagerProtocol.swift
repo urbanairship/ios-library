@@ -29,13 +29,15 @@ struct ContactAudienceUpdate: Equatable, Sendable {
 
 struct ContactIDInfo: Equatable, Sendable {
     let contactID: String
+    let namedUserID: String?
     let isStable: Bool
     let resolveDate: Date
 
-    init(contactID: String, isStable: Bool, resolveDate: Date = Date.distantPast) {
+    init(contactID: String, isStable: Bool, namedUserID: String?, resolveDate: Date = Date.distantPast) {
         self.contactID = contactID
         self.isStable = isStable
         self.resolveDate = resolveDate
+        self.namedUserID = namedUserID
     }
 }
 
@@ -43,5 +45,16 @@ enum ContactUpdate: Equatable, Sendable {
     case contactIDUpdate(ContactIDInfo)
     case namedUserUpdate(String?)
     case conflict(ContactConflictEvent)
+}
+
+/// NOTE: For internal use only. :nodoc:
+public struct StableContactInfo: Sendable, Equatable {
+    public let contactID: String
+    public let namedUserID: String?
+    
+    public init(contactID: String, namedUserID: String? = nil) {
+        self.contactID = contactID
+        self.namedUserID = namedUserID
+    }
 }
 

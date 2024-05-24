@@ -27,6 +27,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
         let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
         let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! AirshipMeteredUsageProtocol
+        let cache = dependencies[SDKDependencyKeys.cache] as! AirshipCache
 
         /// Utils
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)
@@ -59,7 +60,11 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             frequencyLimits: frequencyLimits,
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
-            config: config
+            config: config,
+            additionalAudienceResolver: AdditionalAudienceCheckerResolver(
+                config: config,
+                cache: cache
+            )
         )
 
 

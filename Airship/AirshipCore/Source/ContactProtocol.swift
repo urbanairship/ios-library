@@ -179,4 +179,7 @@ protocol InternalAirshipContactProtocol: AirshipContactProtocol {
 
     var contactIDInfo: ContactIDInfo? { get async }
     var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> { get }
+
+    func getStableContactInfo() async -> StableContactInfo
+
 }

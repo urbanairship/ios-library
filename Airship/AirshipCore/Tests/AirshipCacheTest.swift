@@ -95,3 +95,13 @@ final class AirshipCacheTest: XCTestCase {
     }
 }
 
+public enum TestAirshipCoreDataCache {
+    static func makeCache(date: AirshipDateProtocol) -> AirshipCache {
+        return CoreDataAirshipCache(
+            coreData: CoreDataAirshipCache.makeCoreData(appKey: UUID().uuidString)!,
+            appVersion: "version",
+            sdkVersion: "sdk",
+            date: date
+        )
+    }
+}

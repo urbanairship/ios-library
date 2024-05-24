@@ -121,7 +121,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -160,7 +160,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -197,7 +197,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -246,7 +246,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: .string("some variables"),
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting 2"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -295,7 +295,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting 2"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -347,7 +347,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: AirshipJSON.string("flagInfo2 variables"),
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -407,7 +407,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: variables[1].data,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: variables[1].reportingMetadata,
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -460,7 +460,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: variables[1].data,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("Variant reporting"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -523,7 +523,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: flagInfo.reportingMetadata,
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -558,7 +558,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
                     reportingMetadata: .string("reporting"),
-                    contactID: self.deviceInfoProvider.stableContactID,
+                    contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
             )
@@ -593,7 +593,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
                     reportingMetadata: .string("reporting"),
-                    contactID: self.deviceInfoProvider.stableContactID,
+                    contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
             )
@@ -728,7 +728,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
                     reportingMetadata: .string("reporting two"),
-                    contactID: self.deviceInfoProvider.stableContactID,
+                    contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
             )
@@ -779,7 +779,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
                     reportingMetadata: .string("reporting two"),
-                    contactID: self.deviceInfoProvider.stableContactID,
+                    contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
             )
@@ -794,7 +794,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting two"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -829,7 +829,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting two"),
-                contactID: self.deviceInfoProvider.stableContactID,
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
         )
@@ -844,7 +844,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
         await self.deferredResolver.setOnResolve { [deviceInfoProvider] request, info in
             XCTAssertEqual(request.url, URL(string: "some-url://"))
-            XCTAssertEqual(request.contactID, deviceInfoProvider.stableContactID)
+            XCTAssertEqual(request.contactID, deviceInfoProvider.stableContactInfo.contactID)
             XCTAssertEqual(request.channelID, deviceInfoProvider.channelID)
             XCTAssertEqual(request.locale, deviceInfoProvider.locale)
             XCTAssertEqual(request.notificationOptIn, deviceInfoProvider.isUserOptedInPushNotifications)
@@ -1060,7 +1060,9 @@ final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Senda
 
     var tags: Set<String> = Set()
 
-    var channelID: String? = UUID().uuidString
+    var isChannelCreated: Bool = true
+
+    var channelID: String = UUID().uuidString
 
     var locale: Locale = Locale.current
 
@@ -1074,7 +1076,7 @@ final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Senda
 
     var installDate: Date = Date()
 
-    var stableContactID: String = UUID().uuidString
+    var stableContactInfo: StableContactInfo = StableContactInfo(contactID: UUID().uuidString)
 
 }
 

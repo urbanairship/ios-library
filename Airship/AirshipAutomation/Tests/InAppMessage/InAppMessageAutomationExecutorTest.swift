@@ -234,6 +234,25 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     }
 
     @MainActor
+    func testAdditionalAudienceCheckMiss() async throws  {
+        self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
+            throw AirshipErrors.error("Failed")
+        }
+        var preparedInfo = preparedInfo
+        preparedInfo.additionalAudienceCheckResult = false
+
+        let result =  try await self.executor.execute(
+            data: preparedData,
+            preparedScheduleInfo: preparedInfo
+        )
+
+        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.audienceExcluded().name)
+        XCTAssertFalse(self.displayAdapter.displayed)
+        XCTAssertEqual(result, .finished)
+        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
+    }
+
+    @MainActor
     func testExecuteNoScene() async throws  {
         self.sceneManager.onScene = { _ in
             throw AirshipErrors.error("Fail")

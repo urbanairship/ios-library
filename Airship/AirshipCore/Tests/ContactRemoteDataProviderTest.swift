@@ -31,7 +31,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
     }
 
     func testIsRemoteDataInfoUpToDate() async throws {
-        contact.contactIDInfo = ContactIDInfo(contactID: "some-contact-id", isStable: true)
+        contact.contactIDInfo = ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
 
         let locale = Locale(identifier: "br")
         let randomValue = 1003
@@ -72,7 +72,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
         XCTAssertFalse(isUpToDate)
 
         // Different contact ID
-        contact.contactIDInfo = ContactIDInfo(contactID: "some-other-contact-id", isStable: true)
+        contact.contactIDInfo = ContactIDInfo(contactID: "some-other-contact-id", isStable: true, namedUserID: nil)
         isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
             remoteDatInfo,
             locale: locale,
@@ -81,7 +81,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
         XCTAssertFalse(isUpToDate)
 
         // Unstable contact ID
-        contact.contactIDInfo = ContactIDInfo(contactID: "some-contact-id", isStable: false)
+        contact.contactIDInfo = ContactIDInfo(contactID: "some-contact-id", isStable: false, namedUserID: nil)
         isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
             remoteDatInfo,
             locale: locale,
