@@ -59,19 +59,21 @@ struct ButtonGroup: View {
             .environmentObject(environment)
             .background(
                 GeometryReader {
-                    Color.airshipTappableClear.preference(key: ViewHeightKey.self,
-                                                   value: $0.frame(in: .global).size.height) }
-                    .onPreferenceChange(ViewHeightKey.self) { value in
-                        DispatchQueue.main.async {
-                            let buttonHeight = round(value)
-                            /// Prevent cycling by storing the last button height
-                            if self.lastButtonHeight ?? 0 != buttonHeight {
-                                /// Minium button height is the height of the largest button in the group
-                                self.buttonMinHeight = max(buttonMinHeight, buttonHeight)
-                                self.lastButtonHeight = buttonHeight
-                            }
+                    Color.airshipTappableClear.preference(
+                        key: ViewHeightKey.self,
+                        value: $0.frame(in: .global).size.height
+                    )
+                }.onPreferenceChange(ViewHeightKey.self) { value in
+                    DispatchQueue.main.async {
+                        let buttonHeight = round(value)
+                        /// Prevent cycling by storing the last button height
+                        if self.lastButtonHeight ?? 0 != buttonHeight {
+                            /// Minium button height is the height of the largest button in the group
+                            self.buttonMinHeight = max(buttonMinHeight, buttonHeight)
+                            self.lastButtonHeight = buttonHeight
                         }
                     }
+                }
             )
     }
 

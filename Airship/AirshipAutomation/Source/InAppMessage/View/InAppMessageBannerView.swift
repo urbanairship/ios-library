@@ -158,10 +158,13 @@ struct InAppMessageBannerView: View {
             }
 
             buttonsView
-        }.padding([.top, .horizontal], itemSpacing)
-            .addNub(placement: displayContent.placement,
-                    nub: AnyView(nub),
-                    itemSpacing: itemSpacing)
+        }
+        .padding([.top, .horizontal], itemSpacing)
+        .addNub(
+            placement: displayContent.placement ?? .top,
+            nub: AnyView(nub),
+            itemSpacing: itemSpacing
+        )
     }
 
     private func setShowing(state:Bool, completion: (() -> Void)? = nil) {
@@ -205,11 +208,13 @@ struct InAppMessageBannerView: View {
             )
             .padding(padding)
             .applyTransitioningPlacement(placement: displayContent.placement ?? .top)
-            .addTapAndSwipeDismiss(placement: displayContent.placement ?? .top,
-                             isPressed: $isPressed,
-                             tapAction: bannerOnTapAction,
-                             swipeOffset: $swipeOffset,
-                             onDismiss: environment.onUserDismissed)
+            .addTapAndSwipeDismiss(
+                placement: displayContent.placement ?? .top,
+                isPressed: $isPressed,
+                tapAction: bannerOnTapAction,
+                swipeOffset: $swipeOffset,
+                onDismiss: environment.onUserDismissed
+            )
             .onAppear {
                 setShowing(state: true)
             }

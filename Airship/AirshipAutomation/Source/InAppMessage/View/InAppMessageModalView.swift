@@ -112,7 +112,7 @@ struct InAppMessageModalView: View {
                         headerView
                         bodyView
                         mediaView
-                    case .mediaHeaderBody, .none: /// None should never be hit
+                    case .mediaHeaderBody, .none:
                         mediaView.padding(.top, -padding.top) /// Remove top padding when media is on top
                         headerView
                         bodyView
