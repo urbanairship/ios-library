@@ -48,7 +48,7 @@ public struct MessageCenterView: View {
 
     @ViewBuilder
     public var body: some View {
-        let containerBackgroundColor: Color? = theme.messageListContainerBackgroundColor?.adaptiveColor(for: colorScheme, darkVariation: theme.messageListContainerBackgroundColorDark) ?? Color.red
+        let containerBackgroundColor: Color? = theme.messageListContainerBackgroundColor?.adaptiveColor(for: colorScheme, darkVariation: theme.messageListContainerBackgroundColorDark)
 
         let content = MessageCenterListView(
             controller: self.controller
