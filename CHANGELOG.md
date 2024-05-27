@@ -3,6 +3,12 @@
 
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 
+## Version 18.3.1, May 27, 2024
+Patch release with bug fix for message center customization. Apps that use the message center should update to this version.
+
+### Changes
+- Fixed background color application in message center.
+
 ## Version 18.3.0, May 20, 2024
 Minor release with updates to message center customization, a bug fix for story pager transition animation and a bug fix for in-app banner button rendering.
 
