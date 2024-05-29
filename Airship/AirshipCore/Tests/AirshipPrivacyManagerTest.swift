@@ -51,7 +51,7 @@ class AirshipPrivacyManagerTest: XCTestCase {
         XCTAssertNotEqual(self.privacyManager.enabledFeatures, .all)
 
         self.privacyManager.disableFeatures([.analytics, .messageCenter, .tagsAndAttributes])
-        XCTAssertEqual(self.privacyManager.enabledFeatures, [.inAppAutomation, .contacts])
+        XCTAssertEqual(self.privacyManager.enabledFeatures, [.inAppAutomation, .contacts, .featureFlags])
     }
 
     func testIsEnabled() {

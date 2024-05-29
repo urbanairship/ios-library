@@ -33,25 +33,36 @@ public final class FeatureFlagManager: Sendable {
     private let analytics: FeatureFlagAnalyticsProtocol
     private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
     private let deferredResolver: FeatureFlagDeferredResolverProtocol
+    private let privacyManager: AirshipPrivacyManager
 
+    private var enabled: Bool {
+        return self.privacyManager.isEnabled(.featureFlags)
+    }
+    
     init(
         dataStore: PreferenceDataStore,
         remoteDataAccess: FeatureFlagRemoteDataAccessProtocol,
         analytics: FeatureFlagAnalyticsProtocol,
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
-        deferredResolver: FeatureFlagDeferredResolverProtocol
+        deferredResolver: FeatureFlagDeferredResolverProtocol,
+        privacyManager: AirshipPrivacyManager
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
         self.analytics = analytics
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
         self.deferredResolver = deferredResolver
+        self.privacyManager = privacyManager
     }
 
     /// Tracks a feature flag interaction event.
     /// - Parameter flag: The flag.
     public func trackInteraction(flag: FeatureFlag) {
+        guard self.enabled else {
+            AirshipLogger.warn("Feature flags disabled.")
+            return
+        }
         analytics.trackInteraction(flag: flag)
     }
 
@@ -60,6 +71,9 @@ public final class FeatureFlagManager: Sendable {
     /// - Returns: The feature flag.
     /// - Throws: Throws `FeatureFlagError`
     public func flag(name: String) async throws -> FeatureFlag {
+        guard self.enabled else {
+            throw AirshipErrors.error("Feature flags disabled.")
+        }
         return try await flag(name: name, allowRefresh: true)
     }
 

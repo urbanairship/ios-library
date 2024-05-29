@@ -41,6 +41,10 @@ public struct PrivacyManagerDebugView: View {
                     "Message Center",
                     self.$viewModel.messageCenterEnabled
                 )
+                makeFeatureToggle(
+                    "Feature Flags",
+                    self.$viewModel.featureFlagEnabled
+                )
             }
 
         }
@@ -60,6 +64,13 @@ public struct PrivacyManagerDebugView: View {
         public var messageCenterEnabled: Bool {
             didSet {
                 update(.messageCenter, enable: self.messageCenterEnabled)
+            }
+        }
+        
+        @Published
+        public var featureFlagEnabled: Bool {
+            didSet {
+                update(.featureFlags, enable: self.featureFlagEnabled)
             }
         }
 
@@ -105,8 +116,8 @@ public struct PrivacyManagerDebugView: View {
                 self.analyticsEnabled = privacyManager.isEnabled(.analytics)
                 self.contactsEnabled = privacyManager.isEnabled(.contacts)
                 self.tagsAndAttributesEnabled = privacyManager.isEnabled(
-                    .tagsAndAttributes
-                )
+                    .tagsAndAttributes)
+                self.featureFlagEnabled = privacyManager.isEnabled(.featureFlags)
             } else {
                 self.iaaEnabled = false
                 self.messageCenterEnabled = false
@@ -114,6 +125,7 @@ public struct PrivacyManagerDebugView: View {
                 self.analyticsEnabled = false
                 self.contactsEnabled = false
                 self.tagsAndAttributesEnabled = false
+                self.featureFlagEnabled = false
             }
         }
 
