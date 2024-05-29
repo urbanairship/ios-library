@@ -41,7 +41,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
             guard let fromStore = self.dataStore.unsignedInteger(forKey: AirshipPrivacyManager.enabledFeaturesKey) else {
                 return self.defaultEnabledFeatures
             }
-
+            
             return AirshipFeature(
                 rawValue:(fromStore & AirshipFeature.all.rawValue)
             )
@@ -275,8 +275,11 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
     // In addition to the default data collection, contacts will collect:
     // External ids (named user)
     public static let contacts = AirshipFeature(rawValue: _UAFeatures.contacts.rawValue)
+    
+    // Enables feature flags.
+    public static let featureFlags = AirshipFeature(rawValue: _UAFeatures.featureFlags.rawValue)
 
-    public static let all: AirshipFeature = [inAppAutomation, messageCenter, push, analytics, tagsAndAttributes, contacts]
+    public static let all: AirshipFeature = [inAppAutomation, messageCenter, push, analytics, tagsAndAttributes, contacts, featureFlags]
 
     public init(rawValue: UInt) {
         self.rawValue = rawValue
@@ -301,6 +304,9 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
         }
         if self.contains(.contacts) {
             descriptions.append("Contacts")
+        }
+        if self.contains(.featureFlags) {
+            descriptions.append("Feature flags")
         }
 
         // add prefix indicating that these are enabled features
@@ -330,6 +336,7 @@ extension AirshipFeature: Codable {
         "analytics": .analytics,
         "tags_and_attributes": .tagsAndAttributes,
         "in_app_automation": .inAppAutomation,
+        "feature_flags": .featureFlags,
         "all": .all,
         "none": []
     ]

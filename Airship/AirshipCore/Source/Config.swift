@@ -983,6 +983,7 @@ private enum FeatureNames: String {
     case analytics
     case tagsAndAttributes = "tags_and_attributes"
     case inAppAutomation = "in_app_automation"
+    case featureFlags = "feature_flags"
     case none
     case all
 
@@ -994,6 +995,7 @@ private enum FeatureNames: String {
         case .analytics: return .analytics
         case .tagsAndAttributes: return .tagsAndAttributes
         case .inAppAutomation: return .inAppAutomation
+        case .featureFlags: return .featureFlags
         case .none: return []
         case .all: return .all
         }

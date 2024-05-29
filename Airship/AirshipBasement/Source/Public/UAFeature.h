@@ -50,11 +50,14 @@ typedef NS_OPTIONS(NSUInteger, UAFeatures) {
     // In addition to the default data collection, contacts will collect:
     // External ids (named user)
     UAFeaturesContacts = (1 << 6),
-
-   // Do not use: UAFeaturesLocation = (1 << 7),
+    
+    // Do not use: UAFeaturesLocation = (1 << 7),
+    
+    // Enables feature flags.
+    UAFeaturesFeatureFlags = (1 << 8),
     
     // Sets enabled features to all.
-    UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts)
+    UAFeaturesAll = (UAFeaturesInAppAutomation | UAFeaturesMessageCenter | UAFeaturesPush | UAFeaturesAnalytics | UAFeaturesTagsAndAttributes | UAFeaturesContacts | UAFeaturesFeatureFlags)
 } NS_SWIFT_NAME(_UAFeatures);
 
 // Sets enabled features to none.

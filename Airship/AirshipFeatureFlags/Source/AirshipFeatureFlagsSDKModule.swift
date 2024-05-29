@@ -24,7 +24,9 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         let airshipAnalytcs = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
         let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! AirshipDeferredResolverProtocol
         let cache = dependencies[SDKDependencyKeys.cache] as! AirshipCache
-
+        let privacyManager =
+            dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
+        
         let manager = FeatureFlagManager(
             dataStore: dataStore,
             remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: remoteData),
@@ -32,11 +34,12 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
             deferredResolver: FeatureFlagDeferredResolver(
                 cache: cache,
                 deferredResolver: deferredResolver
-            )
+            ), 
+            privacyManager: privacyManager
         )
 
-        let compoenent = FeatureFlagComponent(featureFlagManager: manager)
-        return AirshipFeatureFlagsSDKModule(components: [compoenent])
+        let component = FeatureFlagComponent(featureFlagManager: manager)
+        return AirshipFeatureFlagsSDKModule(components: [component])
     }
 
     init(components: [AirshipComponent]) {
