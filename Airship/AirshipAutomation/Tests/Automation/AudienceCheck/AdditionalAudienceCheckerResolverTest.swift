@@ -51,10 +51,11 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
-                url: nil)
+                url: nil
+            )
         )
 
         cached = await cache.getCachedValue(key: cacheKey)
@@ -68,7 +69,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         var result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
                 url: nil
@@ -80,7 +81,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         makeResolver(config: .init(isEnabled: false, context: .null, url: "test"))
         result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
                 url: nil
@@ -102,7 +103,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         var result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
                 url: nil))
@@ -113,7 +114,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         makeResolver(config: .init(isEnabled: true, context: .null, url: nil))
         result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
                 url: "https://test.url"))
@@ -124,7 +125,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         do {
             result = try await resolver.resolve(
                 deviceInfoProvider: deviceInfoProvider,
-                audienceCheckOptions: .init(
+                additionalAudienceCheckOverrides: .init(
                     bypass: false,
                     context: .string("default context"),
                     url: nil))
@@ -142,7 +143,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: true,
                 context: .null,
                 url: nil))
@@ -164,7 +165,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: true,
                 context: nil,
                 url: nil
@@ -193,7 +194,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
                 url: nil
@@ -223,7 +224,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
-            audienceCheckOptions: .init(
+            additionalAudienceCheckOverrides: .init(
                 bypass: false,
                 context: .string("default context"),
                 url: nil
@@ -249,7 +250,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         do {
             _ = try await resolver.resolve(
                 deviceInfoProvider: deviceInfoProvider,
-                audienceCheckOptions: .init(
+                additionalAudienceCheckOverrides: .init(
                     bypass: false,
                     context: .string("default context"),
                     url: nil

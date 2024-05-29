@@ -38,7 +38,7 @@ class AutomationScheduleTests: XCTestCase {
                "message_type": "test_type",
                "last_updated": "2023-12-20T12:30:00Z",
                "created": "2023-12-20T12:00:00Z",
-               "audience_check_overrides": {
+               "additional_audience_check_overrides": {
                    "bypass": true,
                    "context": "json-context",
                    "url": "https://result.url"
@@ -65,7 +65,7 @@ class AutomationScheduleTests: XCTestCase {
             metadata: .object([:]),
             frequencyConstraintIDs: ["constraint1", "constraint2"],
             messageType: "test_type",
-            audienceCheckOverrides: .init(bypass: true, context: .string("json-context"), url: "https://result.url")
+            additionalAudienceCheckOverrides: .init(bypass: true, context: .string("json-context"), url: "https://result.url")
         )
 
         try verify(json: jsonString, expected: expectedSchedule)

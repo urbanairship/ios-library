@@ -8,7 +8,7 @@ import AirshipCore
 protocol AdditionalAudienceCheckerResolverProtocol: AnyActor {
     func resolve(
         deviceInfoProvider: AudienceDeviceInfoProvider,
-        audienceCheckOptions: AudienceCheckOverrides?
+        additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     ) async throws -> Bool
 }
 
@@ -54,7 +54,7 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
     
     func resolve(
         deviceInfoProvider: AudienceDeviceInfoProvider,
-        audienceCheckOptions: AudienceCheckOverrides?
+        additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     ) async throws -> Bool {
         
         guard
@@ -65,20 +65,20 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
         }
 
         guard
-            let urlString = audienceCheckOptions?.url ?? config.url,
+            let urlString = additionalAudienceCheckOverrides?.url ?? config.url,
             let url = URL(string: urlString)
         else {
             AirshipLogger.warn("Failed to parse additional audience check url " +
-                               String(describing: audienceCheckOptions) + ", " +
+                               String(describing: additionalAudienceCheckOverrides) + ", " +
                                String(describing: config) + ")")
             throw AirshipErrors.error("Missing additional audience check url")
         }
         
-        guard audienceCheckOptions?.bypass != true else {
+        guard additionalAudienceCheckOverrides?.bypass != true else {
             AirshipLogger.trace("Additional audience check is bypassed")
             return true
         }
-        let context = audienceCheckOptions?.context ?? config.context
+        let context = additionalAudienceCheckOverrides?.context ?? config.context
 
         _ = try? await inProgress?.value
         let task = Task {

@@ -152,7 +152,7 @@ actor TestAdditionalAudienceResolver:  AdditionalAudienceCheckerResolverProtocol
     struct ResolveRequest {
         let channelID: String
         let contactID: String?
-        let options: AudienceCheckOverrides?
+        let overrides: AdditionalAudienceCheckOverrides?
     }
     
     var recordedReqeusts: [ResolveRequest] = []
@@ -163,13 +163,13 @@ actor TestAdditionalAudienceResolver:  AdditionalAudienceCheckerResolverProtocol
 
     func resolve(
         deviceInfoProvider: AudienceDeviceInfoProvider,
-        audienceCheckOptions: AudienceCheckOverrides?
+        additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     ) async throws -> Bool {
         recordedReqeusts.append(
             ResolveRequest(
                 channelID: try await deviceInfoProvider.channelID,
                 contactID: await deviceInfoProvider.stableContactInfo.contactID,
-                options: audienceCheckOptions
+                overrides: additionalAudienceCheckOverrides
             )
         )
         return returnResult

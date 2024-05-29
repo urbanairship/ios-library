@@ -169,7 +169,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 prepareScheduleInfo: {
                     let result = try await additionalAudienceResolver.resolve(
                         deviceInfoProvider: deviceInfoProvider,
-                        audienceCheckOptions: schedule.audienceCheckOverrides
+                        additionalAudienceCheckOverrides: schedule.additionalAudienceCheckOverrides
                     )
 
                     return PreparedScheduleInfo(

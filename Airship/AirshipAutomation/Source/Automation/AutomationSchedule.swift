@@ -66,7 +66,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     public var editGracePeriodDays: UInt?
 
     /// internal
-    let audienceCheckOverrides: AudienceCheckOverrides?
+    let additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     var metadata: AirshipJSON?
     var frequencyConstraintIDs: [String]?
     var messageType: String?
@@ -104,7 +104,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case message
         case minSDKVersion = "min_sdk_version"
         case queue
-        case audienceCheckOverrides = "audience_check_overrides"
+        case additionalAudienceCheckOverrides = "additional_audience_check_overrides"
     }
 
     enum ScheduleType: String, Codable {
@@ -166,7 +166,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.reportingContext = nil
         self.productID = nil
         self.queue = nil
-        self.audienceCheckOverrides = nil
+        self.additionalAudienceCheckOverrides = nil
     }
 
     init(
@@ -193,7 +193,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         messageType: String? = nil,
         minSDKVersion: String? = nil,
         queue: String? = nil,
-        audienceCheckOverrides: AudienceCheckOverrides? = nil
+        additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides? = nil
     ) {
         self.identifier = identifier
         self.triggers = triggers
@@ -217,7 +217,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.created = created
         self.minSDKVersion = minSDKVersion
         self.queue = queue
-        self.audienceCheckOverrides = audienceCheckOverrides
+        self.additionalAudienceCheckOverrides = additionalAudienceCheckOverrides
     }
 
     public init(from decoder: Decoder) throws {
@@ -243,7 +243,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.messageType = try container.decodeIfPresent(String.self, forKey: .messageType)
         self.minSDKVersion = try container.decodeIfPresent(String.self, forKey: .minSDKVersion)
         self.queue = try container.decodeIfPresent(String.self, forKey: .queue)
-        self.audienceCheckOverrides = try container.decodeIfPresent(AudienceCheckOverrides.self, forKey: .audienceCheckOverrides)
+        self.additionalAudienceCheckOverrides = try container.decodeIfPresent(AdditionalAudienceCheckOverrides.self, forKey: .additionalAudienceCheckOverrides)
 
         let scheduleType = try container.decode(ScheduleType.self, forKey: .scheduleType)
         switch(scheduleType) {
@@ -298,7 +298,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.messageType, forKey: .messageType)
         try container.encodeIfPresent(self.minSDKVersion, forKey: .minSDKVersion)
         try container.encodeIfPresent(self.queue, forKey: .queue)
-        try container.encodeIfPresent(self.audienceCheckOverrides, forKey: .audienceCheckOverrides)
+        try container.encodeIfPresent(self.additionalAudienceCheckOverrides, forKey: .additionalAudienceCheckOverrides)
 
         switch(self.data) {
         case .actions(let actions):

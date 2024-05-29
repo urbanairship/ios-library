@@ -50,7 +50,7 @@ public struct AutomationAudience: Codable, Sendable, Equatable {
     }
 }
 
-struct AudienceCheckOverrides: Codable, Sendable, Equatable {
+struct AdditionalAudienceCheckOverrides: Codable, Sendable, Equatable {
     let bypass: Bool?
     let context: AirshipJSON?
     let url: String?
