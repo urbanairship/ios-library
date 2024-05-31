@@ -23,7 +23,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
     public var alert: Alert? = nil
     
     /// Contact management theme
-    public var  contactManagement: ContactManagement? = nil
+    public var contactManagement: ContactManagement? = nil
 
     /// Channel subscription item theme
     public var channelSubscription: ChannelSubscription? = nil

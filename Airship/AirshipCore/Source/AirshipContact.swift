@@ -577,6 +577,11 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.addOperation(.resend(channel: channel))
     }
 
+    /**
+     * Disassociates a channel
+     * - Parameters:
+     *   - channel: The channel to disassociate.
+     */
     public func disassociateChannel(_ channel: ContactChannel) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(

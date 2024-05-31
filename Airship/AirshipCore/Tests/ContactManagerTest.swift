@@ -966,7 +966,6 @@ final class ContactManagerTest: XCTestCase {
 
     func testResendEmail() async throws {
         let expectedAddress: String = "example@email.com"
-        let expectedChannelType: ChannelType = ChannelType.email
 
         let expectedResendOptions = ResendOptions(address: expectedAddress)
 
@@ -1012,7 +1011,6 @@ final class ContactManagerTest: XCTestCase {
     func testResendSMS() async throws {
         let expectedMSISDN: String = "12345"
         let expectedSenderID: String = "1111"
-        let expectedChannelType: ChannelType = ChannelType.sms
 
         let expectedResendOptions = ResendOptions(msisdn: expectedMSISDN, senderID: expectedSenderID)
 
@@ -1123,7 +1121,7 @@ final class ContactManagerTest: XCTestCase {
         let register = XCTestExpectation()
         self.apiClient.disassociateChannelCallback = { contactID, channelID, type in
             XCTAssertEqual(channelID, expectedChannelID)
-            XCTAssertEqual(type, .email)
+            XCTAssertEqual(type, ChannelType.email.stringValue)
             register.fulfill()
             return AirshipHTTPResponse(
                 result: true,

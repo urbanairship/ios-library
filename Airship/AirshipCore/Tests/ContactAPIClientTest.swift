@@ -451,7 +451,6 @@ class ContactAPIClientTest: XCTestCase {
     }
 
     func testAssociateChannel() async throws {
-        let options = SMSRegistrationOptions.optIn(senderID: "FR:33")
         let response = try await contactAPIClient.associateChannel(
             contactID: "some-contact-id",
             channelID: "some-channel",
@@ -487,12 +486,12 @@ class ContactAPIClientTest: XCTestCase {
         }
     }
 
-    func testDisassociate() async throws {
+    func testDisassociateRegistered() async throws {
         let expectedChannelType: ChannelType = .email
         let expectedChannelID: String = "some channel"
         let expectedContactID: String = "contact"
 
-        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, channelID: expectedChannelID, type: expectedChannelType)
+        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, disassociateOptions: DisassociateOptions(channelID: expectedChannelID, optOut: true, channelType: expectedChannelType.stringValue))
         XCTAssertTrue(response.isSuccess)
 
         let request = self.session.lastRequest!
@@ -510,6 +509,67 @@ class ContactAPIClientTest: XCTestCase {
             "channel_type": expectedChannelType.stringValue,
             "channel_id": expectedChannelID,
             "opt_out": true
+        ] as [String : Any]
+
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+    }
+
+    func testDisassociatePendingEmail() async throws {
+        let expectedChannelType: ChannelType = .email
+        let expectedEmailAddress: String = "some@email.com"
+        let expectedContactID: String = "contact"
+
+        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, disassociateOptions: DisassociateOptions(address: expectedEmailAddress, optOut: false))
+
+        XCTAssertTrue(response.isSuccess)
+
+        let request = self.session.lastRequest!
+        XCTAssertEqual(
+            "https://example.com/api/contacts/disassociate/\(expectedContactID)",
+            request.url!.absoluteString
+        )
+
+        let body = try JSONSerialization.jsonObject(
+            with: request.body!,
+            options: []
+        ) as! [String: Any]
+
+        let expectedBody = [
+            "channel_type": expectedChannelType.stringValue,
+            "email_address": expectedEmailAddress,
+            "opt_out": false
+        ] as [String : Any]
+
+        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+    }
+
+    func testDisassociatePendingSMS() async throws {
+        let expectedChannelType: ChannelType = .sms
+        let expectedMSISDN: String = "12345"
+        let expectedSender: String = "56789"
+
+        let expectedContactID: String = "contact"
+
+        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, disassociateOptions: DisassociateOptions(msisdn: expectedMSISDN, senderID: expectedSender, optOut: false))
+
+        XCTAssertTrue(response.isSuccess)
+
+        let request = self.session.lastRequest!
+        XCTAssertEqual(
+            "https://example.com/api/contacts/disassociate/\(expectedContactID)",
+            request.url!.absoluteString
+        )
+
+        let body = try JSONSerialization.jsonObject(
+            with: request.body!,
+            options: []
+        ) as! [String: Any]
+
+        let expectedBody = [
+            "channel_type": expectedChannelType.stringValue,
+            "msisdn": expectedMSISDN,
+            "sender": expectedSender,
+            "opt_out": false
         ] as [String : Any]
 
         XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)

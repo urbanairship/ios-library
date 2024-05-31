@@ -47,210 +47,336 @@ extension PreferenceCenterDecoder {
     }
 
     private static let latestMockPrefCenter = """
-{
-  "display" : {
-    "description" : "Preferences but they're cool",
-    "name" : "Cool Prefs"
+
+     {
+  "id": "cool-prefs",
+  "display": {
+    "name": "Preference Center",
+    "description": "Manage preferences and communications received from Southwest Airlines"
   },
-  "id" : "cool-prefs",
-  "sections" : [
+  "sections": [
     {
-      "items" : [
+      "id": "e2450430-728f-4cb3-8b29-b6b774573557",
+      "type": "section",
+      "items": [
         {
-          "id" : "email-opt-in",
-          "display" : {
-            "description" : "Email address lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            "name" : "Email Addresses"
+          "id": "dcaa0861-ac2a-4863-89e7-38daf07e6502",
+          "type": "alert",
+          "display": {
+            "description": "You will not receive any notifications from Southwest Airlines.",
+            "icon": "https://hangar-dl.urbanairship.com/binary/public/VWDwdOFjRTKLRxCeXTVP6g/f4b5d20a-f1fc-446e-8093-8d2d1a33bb67",
+            "name": "Notifications are off"
           },
-          "remove" : {
-            "button" : {
-              "text" : "Opt out",
-              "content_description" : "Opt out and remove this email address"
+          "button": {
+            "actions": {
+              "enable_feature": "user_notifications"
             },
-            "view" : {
-              "display" : {
-                "error_message" : "error message",
-                "body" : "Detailed delete confirmation message about email goes here.",
-                "title" : "Are you sure?"
-              },
-              "submit_button" : {
-                "content_description" : "Confirm opt out",
-                "text" : "Yes"
-              }
-            }
-          },
-          "empty_label" : "No email added",
-          "conditions" : [
-
-          ],
-          "add" : {
-            "view" : {
-              "submit_button" : {
-                "text" : "Add",
-                "content_description" : "Send a message to this email address"
-              },
-              "error_messages" : {
-                "invalid" : "Please enter a valid email address.",
-                "default" : "Uh oh, something went wrong."
-              },
-              "on_success" : {
-                "name" : "Oh no, it worked.",
-                "description" : "Hope you like emails.",
-                "button" : {
-                  "text" : "Ok, dang"
-                }
-              },
-              "display" : {
-                "error_message" : "error message",
-                "title" : "Add an email address",
-                "footer" : "Does anyone read our [Terms and Conditions](https://example.com) and [Privacy Policy](https://example.com)?",
-                "body" : "You will receive a confirmation email to verify your address."
-              },
-              "cancel_button" : {
-                "text" : "Cancel"
-              }
-            },
-            "button" : {
-              "content_description" : "Add a new email address",
-              "text" : "Add email"
-            }
-          },
-          "platform" : "email",
-          "registration_options" : {
-            "placeholder_text" : "example@domain.com",
-            "address_label" : "Email address",
-            "type" : "email",
-            "resend" : {
-              "button" : {
-                "content_description" : "Resend a verification message to this email address",
-                "text" : "Resend"
-              },
-              "message" : "Pending verification",
-              "on_success" : {
-                "name" : "Verification resent",
-                "description" : "Check your inbox for a new confirmation email.",
-                "button" : {
-                  "text" : "Ok",
-                  "content_description" : "Close prompt"
-                }
-              },
-              "interval" : 5
-            }
-          },
-          "type" : "contact_management"
-        },
-        {
-          "registration_options" : {
-            "resend" : {
-              "button" : {
-                "text" : "Resend",
-                "content_description" : "Resend a verification message to this phone number"
-              },
-              "on_success" : {
-                "name" : "Verification resent",
-                "description" : "Check your messaging app for a new confirmation message.",
-                "button" : {
-                  "text" : "Ok",
-                  "content_description" : "Close prompt"
-                }
-              },
-              "interval" : 5,
-              "message" : "Pending verification"
-            },
-            "senders" : [
-              {
-                "placeholder_text" : "18013623379",
-                "country_code" : "+1",
-                "sender_id" : "14243696000",
-                "display_name" : "United States"
-              },
-              {
-                "sender_id" : "2222",
-                "country_code" : "+44",
-                "display_name" : "United Kingdom",
-                "placeholder_text" : "2222 22222"
-              },
-              {
-                "placeholder_text" : "3333 33333",
-                "display_name" : "France",
-                "country_code" : "+33",
-                "sender_id" : "3333"
-              },
-              {
-                "sender_id" : "4444",
-                "placeholder_text" : "4444 44444",
-                "display_name" : "Brazil",
-                "country_code" : "+55"
-              }
-            ],
-            "country_label" : "Country",
-            "msisdn_label" : "Phone number",
-            "type" : "sms"
-          },
-          "display" : {
-            "description" : "Mobile number lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            "name" : "Mobile Numbers"
-          },
-          "type" : "contact_management",
-          "platform" : "sms",
-          "add" : {
-            "view" : {
-              "cancel_button" : {
-                "text" : "Cancel"
-              },
-              "submit_button" : {
-                "content_description" : "Send a message to this phone number",
-                "text" : "Add"
-              },
-              "display" : {
-                "error_message" : "error message",
-                "footer" : "By opting in you give us the OK to [hound you forever](https://example.com).",
-                "title" : "Add a phone number",
-                "body" : "You will receive a text message with further details."
-              },
-              "on_success" : {
-                "name" : "Oh no, it worked.",
-                "description" : "Hope you like text messages.",
-                "button" : {
-                  "text" : "Ok, dang"
-                }
-              },
-              "error_messages" : {
-                "invalid" : "Please enter a valid phone number.",
-                "default" : "Uh oh, something went wrong."
-              }
-            },
-            "button" : {
-              "text" : "Add SMS",
-              "content_description" : "Add a new phone number"
-            }
-          },
-          "empty_label" : "No SMS added",
-          "conditions" : [
-
-          ],
-          "id" : "sms-opt-in",
-          "remove" : {
-            "view" : {
-              "display" : {
-                "body" : "Detailed delete confirmation message about SMS goes here.",
-                "error_message" : "error message",
-                "title" : "Are you sure?"
-              },
-              "submit_button" : {
-                "text" : "Yes",
-                "content_description" : "Confirm opt out"
-              }
-            },
-            "button" : {
-              "text" : "Opt out",
-              "content_description" : "Opt out and remove this phone number"
-            }
+            "text": "Enable notifications",
+            "content_description": "Opens the settings for your app."
           }
         }
       ],
-      "id" : "opt-in",
-      "type" : "section"
+      "conditions": [
+        {
+          "when_status": "opt_out",
+          "type": "notification_opt_in"
+        }
+      ]
+    },
+    {
+      "id": "opt-in",
+      "type": "section",
+      "items": [
+        {
+          "id": "dcaa0861-ac2a-4863-89e7-38daf07e6505",
+          "type": "contact_management",
+          "platform": "email",
+          "empty_label": "No email added",
+          "display": {
+            "name": "Add Email Address",
+            "description": "Enter your email address to opt in to receiving email messages from our team."
+          },
+          "registration_options": {
+            "type": "email",
+            "placeholder_text": "example@domain.com",
+            "address_label": "Email address",
+            "resend": {
+              "interval": 5,
+              "message": "Pending verification",
+              "button": {
+                "text": "Resend",
+                "content_description": "Resend a verification message to this email address"
+              },
+              "on_success": {
+                "name": "Verification resent",
+                "description": "Check your inbox for a new confirmation email.",
+                "button": {
+                  "text": "Ok",
+                  "content_description": "Close prompt"
+                }
+              }
+            }
+          },
+          "add": {
+            "button": {
+              "text": "Add email",
+              "content_description": "Add a new email address"
+            },
+            "view": {
+              "type": "prompt",
+              "display": {
+                "title": "Add an email address",
+                "body": "You will receive a confirmation email to verify your address.",
+                "footer": "Does anyone read our [Terms and Conditions](https://example.com) and [Privacy Policy](https://example.com)?"
+              },
+              "submit_button": {
+                "text": "Add",
+                "content_description": "Send a message to this email address"
+              },
+              "cancel_button": {
+                "text": "Cancel"
+              },
+              "on_success": {
+                "name": "Check your inbox!",
+                "description": "To opt-in tap confirm in the email we just sent to your inbox.",
+                "button": {
+                  "text": "Close"
+                }
+              },
+              "error_messages": {
+                "invalid": "Please enter a valid email address.",
+                "default": "Uh oh, something went wrong."
+              }
+            }
+          },
+          "remove": {
+            "button": {
+              "text": "Opt out",
+              "content_description": "Opt out and remove this email address"
+            },
+            "view": {
+              "type": "prompt",
+              "display": {
+                "title": "Are you sure?",
+                "body": "Detailed delete confirmation message about email goes here."
+              },
+              "submit_button": {
+                "text": "Yes",
+                "content_description": "Confirm opt out"
+              },
+              "cancel_button": {
+                "text": "No",
+                "content_description": "Cancel opt out"
+              },
+              "on_success": {
+                "name": "Success",
+                "description": "Bye!",
+                "button": {
+                  "text": "Ok",
+                  "content_description": "Close prompt"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "dcaa0861-ac2a-4863-89e7-38daf07e6506",
+          "type": "contact_management",
+          "platform": "sms",
+          "empty_label": "No SMS added",
+          "display": {
+            "name": "Add Phone Number",
+            "description": "A list of phone numbers associated with your account."
+          },
+          "registration_options": {
+            "type": "sms",
+            "country_label": "Country",
+            "msisdn_label": "Phone number",
+            "resend": {
+              "interval": 5,
+              "message": "Pending verification",
+              "button": {
+                "text": "Resend",
+                "content_description": "Resend a verification message to this phone number"
+              },
+              "on_success": {
+                "name": "Verification resent",
+                "description": "Check your messaging app for a new confirmation message.",
+                "button": {
+                  "text": "Close",
+                  "content_description": "Close prompt"
+                }
+              }
+            },
+            "senders": [
+              {
+                "country_code": "+1",
+                "display_name": "United States",
+                "placeholder_text": "18013623379",
+                "sender_id": "18338647429"
+              },
+              {
+                "country_code": "+44",
+                "display_name": "United Kingdom",
+                "placeholder_text": "2222 22222",
+                "sender_id": "183386474291"
+              },
+              {
+                "country_code": "+33",
+                "display_name": "France",
+                "placeholder_text": "3333 33333",
+                "sender_id": "183386474292"
+              },
+              {
+                "country_code": "+55",
+                "display_name": "Brazil",
+                "placeholder_text": "4444 44444",
+                "sender_id": "183386474293"
+              }
+            ]
+          },
+          "add": {
+            "view": {
+              "type": "prompt",
+              "display": {
+                "title": "Add a phone number",
+                "body": "You will receive a text message with further details.",
+                "footer": "By opting in you give us the OK to reach you: [privacy policy](https://example.com)."
+              },
+              "submit_button": {
+                "text": "Add",
+                "content_description": "Send a message to this phone number"
+              },
+              "cancel_button": {
+                "text": "Cancel"
+              },
+              "on_success": {
+                "name": "Check your message app!",
+                "description": "To opt-in reply Y to the message we just texted you.",
+                "button": {
+                  "text": "OK"
+                }
+              },
+              "error_messages": {
+                "invalid": "Please enter a valid phone number.",
+                "default": "Uh oh, something went wrong."
+              }
+            },
+            "button": {
+              "text": "Add SMS",
+              "content_description": "Add a new phone number"
+            }
+          },
+          "remove": {
+            "button": {
+              "text": "Opt out",
+              "content_description": "Opt out and remove this phone number"
+            },
+            "view": {
+              "type": "prompt",
+              "display": {
+                "title": "Are you sure?",
+                "body": "Detailed delete confirmation message about SMS goes here."
+              },
+              "submit_button": {
+                "text": "Yes",
+                "content_description": "Confirm opt out"
+              },
+              "cancel_button": {
+                "text": "No",
+                "content_description": "Cancel opt out"
+              },
+              "on_success": {
+                "name": "Success",
+                "description": "Bye!",
+                "button": {
+                  "text": "Ok",
+                  "content_description": "Close prompt"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "151e8b8c-ff56-48d0-b8bc-52d26b9baf6b",
+      "type": "section",
+      "items": [
+        {
+          "id": "bbe8479a-b79a-423e-a323-b8f3cd33ddeb",
+          "type": "contact_subscription_group",
+          "subscription_id": "cows",
+          "components": [
+            {
+              "display": {
+                "name": "Email"
+              },
+              "scopes": [
+                "email"
+              ]
+            }
+          ],
+          "display": {
+            "description": "Take advantage of our featured offers. When you book with Southwest, you'll save and earn Rapid Rewards® points when you travel.",
+            "name": "Featured Offers"
+          }
+        },
+        {
+          "id": "e908d3c7-3382-45c5-87ff-54f042e43193",
+          "type": "contact_subscription_group",
+          "subscription_id": "my_list",
+          "components": [
+            {
+              "scopes": [
+                "app"
+              ],
+              "display": {
+                "name": "App"
+              }
+            },
+            {
+              "display": {
+                "name": "Email"
+              },
+              "scopes": [
+                "email"
+              ]
+            },
+            {
+              "display": {
+                "name": "SMS"
+              },
+              "scopes": [
+                "sms"
+              ]
+            }
+          ],
+          "display": {
+            "name": "Hotel Updates",
+            "description": "Find hotels at Southwest Airlines. Get information on your stay including check-in time via Push, SMS or Email."
+          }
+        },
+        {
+          "id": "b7fb8812-fc05-4863-a1b4-e65ada83a6e1",
+          "type": "contact_subscription_group",
+          "subscription_id": "goats",
+          "components": [
+            {
+              "display": {
+                "name": "Email"
+              },
+              "scopes": [
+                "email"
+              ]
+            }
+          ],
+          "display": {
+            "description": "Find cheap flights and flight deals at Southwest Airlines. Learn about sale fares and sign up for emails to receive the latest news and promotions.",
+            "name": "Special Offers and Deals on Flights"
+          }
+        }
+      ]
     }
   ]
 }

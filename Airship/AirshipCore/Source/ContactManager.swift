@@ -544,29 +544,42 @@ actor ContactManager: ContactManagerProtocol {
     ) async throws -> Bool {
         let contactID = try requireContactID()
 
-        /// TODO: once API can handle address remove this
-        guard case .registered(let registered) = channel else {
-            await self.contactUpdated(
-                contactID: contactID,
-                contactChannels: [.disassociated(channel)]
-            )
-            return true
+        var options:DisassociateOptions?
+
+        switch channel {
+        case .pending(let pending):
+            switch pending.pendingRegistrationInfo {
+            case .sms(let pendingInfo):
+                options = DisassociateOptions(msisdn: pending.address, senderID: pendingInfo.senderID, optOut: false)
+            case .email(_):
+                options = DisassociateOptions(address: pending.address, optOut: false)
+            }
+        case .registered(let registration):
+            switch registration.registrationInfo {
+            case .email(_):
+                options = DisassociateOptions(channelID: registration.channelID, optOut: true, channelType: ChannelType.email.stringValue)
+            case .sms(_):
+                options = DisassociateOptions(channelID: registration.channelID, optOut: true, channelType: ChannelType.sms.stringValue)
+            }
         }
 
-        let response = try await self.apiClient.disassociateChannel(
-            contactID: contactID,
-            channelID: registered.channelID,
-            type: channel.channelType
-        )
-
-        if response.isSuccess {
-            await self.contactUpdated(
-                contactID: contactID,
-                contactChannels: [.disassociated(channel)]
+        if let options = options {
+            let response = try await self.apiClient.disassociateChannel(
+                contactID: contactID, 
+                disassociateOptions: options
             )
+
+            if response.isSuccess {
+                await self.contactUpdated(
+                    contactID: contactID,
+                    contactChannels: [.disassociated(channel)]
+                )
+            }
+
+            return response.isOperationComplete
         }
 
-        return response.isOperationComplete
+        return false
     }
     
     private func performResend(

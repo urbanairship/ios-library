@@ -132,12 +132,12 @@ public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyl
     static let backgroundColor = DefaultColors.secondaryBackground
 
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .title.weight(.medium),
+        font: .headline,
         color: DefaultColors.primaryText
     )
 
     static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .body,
+        font: .subheadline,
         color: DefaultColors.primaryText
     )
 

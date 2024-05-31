@@ -172,7 +172,6 @@ struct ChannelListViewCell: View {
 
     @ViewBuilder
     private func makeErrorLabel(labelText: String) -> some View {
-        EmptyView()
         ErrorLabel(message: labelText, theme: self.theme.contactManagement)
     }
 

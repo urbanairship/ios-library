@@ -176,6 +176,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                 item: item,
                 state: state
             )
+            Divider()
         }
     }
 }

@@ -58,10 +58,8 @@ protocol ContactsAPIClientProtocol: Sendable {
 
     func disassociateChannel(
         contactID: String,
-        channelID: String,
-        type: ChannelType
-    ) async throws ->  AirshipHTTPResponse<Bool>
-
+        disassociateOptions:DisassociateOptions
+    ) async throws -> AirshipHTTPResponse<Bool>
     func resend(
         resendOptions: ResendOptions
     ) async throws ->  AirshipHTTPResponse<Bool>
@@ -248,19 +246,14 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
     }
 
 
-    func disassociateChannel(contactID: String,
-                             channelID: String,
-                             type: ChannelType) async throws -> AirshipHTTPResponse<Bool> {
-
-        let requestBody = DisassociateBody(
-            channelID: channelID,
-            channelType: type.stringValue,
-            optOut: true
-        )
+    func disassociateChannel(
+        contactID: String,
+        disassociateOptions:DisassociateOptions
+    ) async throws -> AirshipHTTPResponse<Bool> {
 
         return try await performDisassociate(
             contactID: contactID,
-            requestBody: requestBody
+            requestBody: disassociateOptions
         )
     }
 
@@ -364,29 +357,33 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         }
     }
 
-    private func performDisassociate(
-        contactID: String,
-        requestBody: DisassociateBody
-    ) async throws -> AirshipHTTPResponse<Bool> {
-        AirshipLogger.debug("Disassociating with \(requestBody)")
+private func performDisassociate(
+    contactID: String,
+    requestBody: DisassociateOptions
+) async throws -> AirshipHTTPResponse<Bool> {
+    AirshipLogger.debug("Disassociating with \(requestBody)")
 
-        let request =  AirshipRequest(
-            url: try self.makeURL(path: "/api/contacts/disassociate/\(contactID)"),
-            headers: [
-                "Accept": "application/vnd.urbanairship+json; version=3;",
-                "Content-Type": "application/json"
-            ],
-            method: "POST",
-            auth: .basicAppAuth,
-            body: try self.encoder.encode(requestBody)
-        )
+    let encodedRequestBody = try self.encoder.encode(requestBody)
+    let requestBodyString = String(data: encodedRequestBody, encoding: .utf8)
+    AirshipLogger.debug("Encoded request body: \(requestBodyString ?? "Unable to convert data to string")")
 
-        return try await session.performHTTPRequest(request) { (data, response) in
-            AirshipLogger.debug("Update finished with response: \(response)")
+    let request =  AirshipRequest(
+        url: try self.makeURL(path: "/api/contacts/disassociate/\(contactID)"),
+        headers: [
+            "Accept": "application/vnd.urbanairship+json; version=3;",
+            "Content-Type": "application/json"
+        ],
+        method: "POST",
+        auth: .basicAppAuth,
+        body: encodedRequestBody
+    )
 
-            return nil
-        }
+    return try await session.performHTTPRequest(request) { (data, response) in
+        AirshipLogger.debug("Update finished with response: \(response)")
+
+        return nil
     }
+}
 
     private func performResend(
         resendOptions: ResendOptions
@@ -478,15 +475,90 @@ struct ContactIdentifyResult: Decodable, Equatable {
     }
 }
 
-fileprivate struct DisassociateBody: Encodable {
-    let channelID: String
-    let channelType: String
-    let optOut: Bool
+enum DisassociateOptions: Sendable, Equatable, Codable, Hashable {
+    case channel(Channel)
+    case email(Email)
+    case sms(SMS)
+
+    init(channelID: String, optOut: Bool, channelType: String) {
+        self = .channel(Channel(channelID: channelID, optOut: optOut, channelType: channelType))
+    }
+
+    init(address: String, optOut: Bool) {
+        self = .email(Email(address: address, optOut: optOut))
+    }
+
+    init(msisdn: String, senderID: String, optOut: Bool) {
+        self = .sms(SMS(msisdn: msisdn, senderID: senderID, optOut: optOut))
+    }
+
+    struct Channel: Sendable, Equatable, Codable, Hashable {
+        let channelID: String
+        let optOut: Bool
+        let channelType: String
+
+        enum CodingKeys: String, CodingKey {
+            case channelID = "channel_id"
+            case optOut = "opt_out"
+            case channelType = "channel_type"
+        }
+    }
+
+    struct Email: Sendable, Equatable, Codable, Hashable {
+        let channelType: String = "email"
+        let address: String
+        let optOut: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case address = "email_address"
+            case optOut = "opt_out"
+            case channelType = "channel_type"
+        }
+    }
+
+    struct SMS: Sendable, Equatable, Codable, Hashable {
+        let channelType: String = "sms"
+        let msisdn: String
+        let senderID: String
+        let optOut: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case msisdn = "msisdn"
+            case senderID = "sender"
+            case optOut = "opt_out"
+            case channelType = "channel_type"
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
-        case channelID = "channel_id"
-        case channelType = "channel_type"
-        case optOut = "opt_out"
+        case channel
+        case email
+        case sms
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .channel(let channel):
+            try container.encode(channel)
+        case .email(let email):
+            try container.encode(email)
+        case .sms(let sms):
+            try container.encode(sms)
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let channel = try? container.decode(Channel.self) {
+            self = .channel(channel)
+        } else if let email = try? container.decode(Email.self) {
+            self = .email(email)
+        } else if let sms = try? container.decode(SMS.self) {
+            self = .sms(sms)
+        } else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid data for DisassociateOptions")
+        }
     }
 }
 

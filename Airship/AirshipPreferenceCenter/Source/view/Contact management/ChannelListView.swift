@@ -172,11 +172,7 @@ struct ChannelListView: View {
                     headerView
                 }
             }
-            .padding(5).background(
-                Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-                    return (traitCollection.userInterfaceStyle == .dark ? UIColor.secondarySystemBackground : UIColor.clear)
-                }).padding(-11) // Total of 16 points padding from content
-            )
+            .padding(.bottom, 8)
         }
     }
 }

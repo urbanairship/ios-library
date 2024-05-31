@@ -22,7 +22,13 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     ((String, String, ChannelType) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
 
     var disassociateChannelCallback:
-    ((String, String, ChannelType) async throws -> AirshipHTTPResponse<Bool>)?
+    ((Bool, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+
+    var disassociateEmailCallback:
+    ((Bool, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+
+    var disassociateSMSCallback:
+    ((Bool, String, String, String) async throws -> AirshipHTTPResponse<Bool>)?
 
     var registerEmailCallback:
     ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
@@ -106,10 +112,17 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         return try await resendCallback!(resendOptions)
     }
 
-    func disassociateChannel(contactID: String,
-                             channelID: String,
-                             type: ChannelType
-    ) async throws -> AirshipHTTPResponse<Bool> {
-        return try await disassociateChannelCallback!(channelID, channelID, type)
+    func disassociateChannel(
+        contactID: String,
+        disassociateOptions: AirshipCore.DisassociateOptions
+    ) async throws -> AirshipCore.AirshipHTTPResponse<Bool> {
+        switch disassociateOptions {
+        case .channel(let channel):
+            return try await disassociateChannelCallback!(true, channel.channelID, channel.channelType)
+        case .email(let email):
+            return try await disassociateEmailCallback!(false, email.address, email.channelType)
+        case .sms(let sms):
+            return try await disassociateSMSCallback!(false, sms.msisdn, sms.senderID, sms.channelType)
+        }
     }
 }
