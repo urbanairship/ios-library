@@ -391,21 +391,16 @@ public struct PreferenceCenterView: View {
     public init(preferenceCenterID: String) {
         self.preferenceCenterID = preferenceCenterID
     }
-    
+
     @ViewBuilder
-    private func makeBackButton(_ theme: PreferenceCenterTheme) -> some View {
+    private func makeBackButton() -> some View {
         Button(action: {
             self.dismissAction?()
         }) {
-            let backImage = Image(systemName: "chevron.backward")
+            Image(systemName: "chevron.backward")
                 .scaleEffect(0.68)
                 .font(Font.title.weight(.medium))
-            if let backgroundColor = theme.viewController?.navigationBar?.backgroundColor {
-                backImage
-                    .foregroundColor(Color(backgroundColor))
-            } else {
-                backImage
-            }
+                .foregroundColor(Color(UINavigationBar.appearance().tintColor ?? UIColor.systemBlue))
         }
     }
 
@@ -416,7 +411,7 @@ public struct PreferenceCenterView: View {
             .airshipApplyIf(self.dismissAction != nil) { view in
                 view.toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        makeBackButton(theme)
+                        makeBackButton()
                     }
                 }
             }
