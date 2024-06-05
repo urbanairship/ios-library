@@ -34,10 +34,18 @@ public class AirshipConfig: NSObject, NSCopying {
     @objc
     public var developmentLogLevel: AirshipLogLevel = .debug
 
+    /// The log privacy level used for development apps. Allows logging to public console. Defaults to `private`.
+    @objc
+    public var developmentLogPrivacyLevel: AirshipLogPrivacyLevel = .private
+
     /// The log level used for production apps. Defaults to `error`.
     @objc
     public var productionLogLevel: AirshipLogLevel = .error
-    
+
+    /// The log privacy level used for production apps. Allows logging to public console. Defaults to `private`.
+    @objc
+    public var productionLogPrivacyLevel: AirshipLogPrivacyLevel = .private
+
     /// Auto pause InAppAutomation on launch. Defaults to `false`
     @objc
     public var autoPauseInAppAutomationOnLaunch: Bool = false
@@ -338,6 +346,12 @@ public class AirshipConfig: NSObject, NSCopying {
         return inProduction ? productionLogLevel : developmentLogLevel
     }
 
+    /// Returns the resolved log privacy level.
+    /// - Returns: The resolved log privacy level.
+    public var logPrivacyLevel: AirshipLogPrivacyLevel {
+        return inProduction ? productionLogPrivacyLevel : developmentLogPrivacyLevel
+    }
+
     private var isSimulator: Bool {
         #if targetEnvironment(simulator)
         return true
@@ -429,7 +443,9 @@ public class AirshipConfig: NSObject, NSCopying {
         analyticsURL = config.analyticsURL
         site = config.site
         developmentLogLevel = config.developmentLogLevel
+        developmentLogPrivacyLevel = config.developmentLogPrivacyLevel
         productionLogLevel = config.productionLogLevel
+        productionLogPrivacyLevel = config.productionLogPrivacyLevel
         enabledFeatures = config.enabledFeatures
         resetEnabledFeatures = config.resetEnabledFeatures
         requestAuthorizationToUseNotifications =
@@ -478,9 +494,11 @@ public class AirshipConfig: NSObject, NSCopying {
                 Development App Key: %@\n\
                 Development App Secret: %@\n\
                 Development Log Level: %ld\n\
+                Development Log Privacy Level: %ld\n\
                 Production App Key: %@\n\
                 Production App Secret: %@\n\
                 Production Log Level: %ld\n\
+                Production Log Privacy Level: %ld\n\
                 Detect Provisioning Mode: %d\n\
                 Request Authorization To Use Notifications: %@\n\
                 Require initial remote config: %@\n\
@@ -517,9 +535,11 @@ public class AirshipConfig: NSObject, NSCopying {
             developmentAppKey ?? "",
             developmentAppSecret ?? "",
             developmentLogLevel.rawValue,
+            developmentLogPrivacyLevel.rawValue,
             productionAppKey ?? "",
             productionAppSecret ?? "",
             productionLogLevel.rawValue,
+            productionLogPrivacyLevel.rawValue,
             detectProvisioningMode,
             requestAuthorizationToUseNotifications ? "YES" : "NO",
             requireInitialRemoteConfigEnabled ? "YES" : "NO",
@@ -699,6 +719,10 @@ public class AirshipConfig: NSObject, NSCopying {
                 {
                     // we do all the work to parse it to a log level, but setValue(forKey:) does not work for enums
                     normalizedValue = AirshipConfig.coerceLogLevel(value)?.rawValue
+                } else if propertyType == AirshipLogPrivacyLevel.self
+                        || propertyType == AirshipLogPrivacyLevel?.self
+                {
+                    normalizedValue = AirshipConfig.coerceLogPrivacyLevel(value)?.rawValue
                 } else if propertyType == AirshipFeature.self
                     || propertyType == AirshipFeature?.self
                 {
@@ -725,6 +749,8 @@ public class AirshipConfig: NSObject, NSCopying {
             } else {
                 AirshipLogger.error("Unknown config \(key)")
             }
+
+
         }
     }
 
@@ -809,6 +835,35 @@ public class AirshipConfig: NSObject, NSCopying {
                 )?.toLogLevel()
             }
             return AirshipLogLevel(rawValue: int)
+        }
+
+        return nil
+    }
+
+    private class func coerceLogPrivacyLevel(_ value: Any) -> AirshipLogPrivacyLevel? {
+        if let logPrivacyLevel = value as? AirshipLogPrivacyLevel {
+            return logPrivacyLevel
+        }
+
+        if let rawValue = value as? Int {
+            return AirshipLogPrivacyLevel(rawValue: rawValue)
+        }
+
+        if let rawValue = value as? UInt {
+            return AirshipLogPrivacyLevel(rawValue: Int(rawValue))
+        }
+
+        if let number = value as? NSNumber {
+            return AirshipLogPrivacyLevel(rawValue: number.intValue)
+        }
+
+        if let string = value as? String {
+            guard let int = Int(string) else {
+                return LogPrivacyLevelNames(
+                    rawValue: string.lowercased()
+                )?.toLogPrivacyLevel()
+            }
+            return AirshipLogPrivacyLevel(rawValue: int)
         }
 
         return nil
@@ -941,6 +996,20 @@ public class AirshipConfig: NSObject, NSCopying {
         }
 
         AirshipLogger.debug("Ignoring invalid Config key: \(key)")
+    }
+}
+
+private enum LogPrivacyLevelNames: String {
+    case `private`
+    case `public`
+
+    func toLogPrivacyLevel() -> AirshipLogPrivacyLevel {
+        switch self {
+        case .private:
+            return AirshipLogPrivacyLevel.private
+        case .public:
+            return AirshipLogPrivacyLevel.public
+        }
     }
 }
 

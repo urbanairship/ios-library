@@ -39,6 +39,8 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     @objc
     public let logLevel: AirshipLogLevel
 
+    public let logPrivacyLevel: AirshipLogPrivacyLevel
+
     /// The request session used to perform authenticated interactions with the API
     public let requestSession: AirshipRequestSession
 
@@ -294,6 +296,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     ) {
         self.requestSession = requestSession
         self.logLevel = config.logLevel
+        self.logPrivacyLevel = config.logPrivacyLevel
         self.appKey = config.appKey
         self.appSecret = config.appSecret
         self.inProduction = config.inProduction

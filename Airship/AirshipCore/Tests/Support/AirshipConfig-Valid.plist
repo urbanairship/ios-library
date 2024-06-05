@@ -16,12 +16,16 @@
 	<string>        0A00000000000000000000        </string>
 	<key>developmentLogLevel</key>
 	<string>1</string>
+	<key>developmentLogPrivacyLevel</key>
+	<string>public</string>
 	<key>productionAppKey</key>
 	<string>  0A00000000000000000000      </string>
 	<key>productionAppSecret</key>
 	<string>    0A00000000000000000000     </string>
 	<key>productionLogLevel</key>
 	<string>5</string>
+	<key>productionLogPrivacyLevel</key>
+	<string>private</string>
 	<key>detectProvisioningMode</key>
 	<true/>
 	<key>customConfig</key>

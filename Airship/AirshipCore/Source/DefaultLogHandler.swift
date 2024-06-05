@@ -13,20 +13,28 @@ class DefaultLogHandler: AirshipLogHandler {
 
     func log(
         logLevel: AirshipLogLevel,
+        logPrivacyLevel: AirshipLogPrivacyLevel,
         message: String,
         fileID: String,
         line: UInt,
         function: String
     ) {
+        let logMessage = "[\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
+
         if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-            DefaultLogHandler.logger.log(
-                level: logLevel.logType,
-                "[\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
-            )
+            switch logPrivacyLevel {
+            case .private:
+                DefaultLogHandler.logger.log(
+                    level: logLevel.logType,
+                    "\(logMessage, privacy: .private)"
+                )
+            case .public:
+                DefaultLogHandler.logger.notice(
+                    "\(logMessage, privacy: .public)"
+                )
+            }
         } else {
-            print(
-                "[\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
-            )
+            print(logMessage)
         }
     }
 }
