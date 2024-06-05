@@ -40,7 +40,7 @@ public class RetailEventTemplate: NSObject {
     public var eventDescription: String?
 
     /**
-     * The brand..
+     * The brand.
      */
     @objc
     public var brand: String?
@@ -57,6 +57,12 @@ public class RetailEventTemplate: NSObject {
             self._isNewItem = newValue
         }
     }
+
+    /**
+     * The currency.
+     */
+    @objc
+    public var currency: String?
 
     private var _isNewItem: Bool?
     private let eventName: String
@@ -382,6 +388,7 @@ public class RetailEventTemplate: NSObject {
         propertyDictionary["wishlist_name"] = self.wishlistName
         propertyDictionary["wishlist_id"] = self.wishlistID
         propertyDictionary["description"] = self.eventDescription
+        propertyDictionary["currency"] = self.currency
 
         let event = CustomEvent(name: self.eventName)
         event.templateType = "retail"
