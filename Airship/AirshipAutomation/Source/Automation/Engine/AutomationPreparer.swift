@@ -132,6 +132,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 )
 
                 if (!match) {
+                    AirshipLogger.trace("Local audience miss \(schedule.identifier)")
                     return .success(
                         result: schedule.missedAudiencePrepareResult,
                         ignoreReturnOrder: true

@@ -203,7 +203,7 @@ struct InAppRemoteData: Sendable {
                     switch(parsed) {
                     case .succeed(let result): return result
                     case .failed(let error):
-                        AirshipLogger.warn("Failed to parse schedule \(error)")
+                        AirshipLogger.error("Failed to parse schedule \(error)")
                         return nil
                     }
                 }

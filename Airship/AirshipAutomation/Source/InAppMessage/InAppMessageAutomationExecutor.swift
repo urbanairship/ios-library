@@ -89,6 +89,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         preparedScheduleInfo: PreparedScheduleInfo
     ) async throws -> ScheduleExecuteResult {
         guard preparedScheduleInfo.additionalAudienceCheckResult else {
+            AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) missed additional audience check")
             data.analytics.recordEvent(
                 InAppResolutionEvent.audienceExcluded(),
                 layoutContext: nil
@@ -109,6 +110,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         
         let experimentResult = preparedScheduleInfo.experimentResult
         if let experimentResult = experimentResult, experimentResult.isMatch {
+            AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) part of experiment")
             data.analytics.recordEvent(
                 InAppResolutionEvent.control(experimentResult: experimentResult),
                 layoutContext: nil
