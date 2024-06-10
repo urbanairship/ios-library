@@ -12,8 +12,6 @@ protocol FeatureFlagAnalyticsProtocol: Sendable {
 }
 
 final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
-    private static let interactionEventType: String  = "feature_flag_interaction"
-
     private let airshipAnalytics: InternalAnalyticsProtocol
 
     private enum FlagKeys {
@@ -58,12 +56,11 @@ final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
         }
 
         let airshipEvent = AirshipEvent(
-            eventType: Self.interactionEventType,
+            eventType: .featureFlagInteraction,
             eventData: eventBody
         )
 
         airshipAnalytics.recordEvent(airshipEvent)
-        airshipAnalytics.eventFeed.notifyEvent(.featureFlagInteraction(body: eventBody))
     }
 }
 

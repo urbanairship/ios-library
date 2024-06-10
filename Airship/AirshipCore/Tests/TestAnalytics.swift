@@ -28,6 +28,10 @@ public class TestAnalytics: InternalAnalyticsProtocol, AirshipComponent, @unchec
     
     public func recordEvent(_ event: AirshipEvent) {
         self.events.append(event)
+        
+        Task {
+            await eventFeed.notifyEvent(.analytics(eventType: event.eventType, body: event.eventData))
+        }
     }
 
     private let screen = AirshipMainActorValue<String?>(nil)

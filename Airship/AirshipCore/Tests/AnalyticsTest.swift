@@ -76,7 +76,7 @@ class AnalyticsTest: XCTestCase {
             )
         }
 
-        XCTAssertEqual("screen_tracking", events[0].type)
+        XCTAssertEqual("screen_tracking", events[0].type.reportingName)
     }
 
     func testScreenTrackingTerminate() async throws {
@@ -94,7 +94,7 @@ class AnalyticsTest: XCTestCase {
             notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
         }
 
-        XCTAssertEqual("screen_tracking", events[0].type)
+        XCTAssertEqual("screen_tracking", events[0].type.reportingName)
     }
 
     func testScreenTracking() async throws {
@@ -111,7 +111,7 @@ class AnalyticsTest: XCTestCase {
 
         let body: AirshipJSON = events[0].body
 
-        XCTAssertEqual("screen_tracking", events[0].type)
+        XCTAssertEqual("screen_tracking", events[0].type.reportingName)
         XCTAssertEqual("test_screen", body.object?["screen"]?.string)
         XCTAssertEqual("3.000", body.object?["duration"]?.string)
 
@@ -263,11 +263,11 @@ class AnalyticsTest: XCTestCase {
     func testAddEvent() throws {
         let expectation = XCTestExpectation()
         self.eventManager.addEventCallabck = { event in
-            XCTAssertEqual("valid", event.type)
+            XCTAssertEqual("app_background", event.type.reportingName)
             expectation.fulfill()
         }
 
-        self.analytics.recordEvent(AirshipEvent(priority: .normal, eventType: "valid", eventData: .string("body")))
+        self.analytics.recordEvent(AirshipEvent(priority: .normal, eventType: .appBackground, eventData: .string("body")))
 
         wait(for: [expectation], timeout: 5.0)
     }
@@ -283,7 +283,7 @@ class AnalyticsTest: XCTestCase {
             "neat": "id",
         ]
 
-        XCTAssertEqual("associate_identifiers", events[0].type)
+        XCTAssertEqual("associate_identifiers", events[0].type.reportingName)
         XCTAssertEqual(
             try AirshipJSON.wrap(expectedData),
             events[0].body
@@ -334,11 +334,11 @@ class AnalyticsTest: XCTestCase {
     }
 
     func testScreenEventFeed() async throws {
-        var feed = self.analytics.eventFeed.updates.makeAsyncIterator()
+        var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
         await self.analytics.trackScreen("some screen")
 
         let next = await feed.next()
-        XCTAssertEqual(next, .screenChange(screen: "some screen"))
+        XCTAssertEqual(next, .screen(screen: "some screen"))
     }
 
     func testRegionEventEventFeed() async throws {
@@ -348,21 +348,53 @@ class AnalyticsTest: XCTestCase {
             boundaryEvent: .enter
         )!
 
-        var feed = self.analytics.eventFeed.updates.makeAsyncIterator()
+        var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
         self.analytics.recordRegionEvent(event)
 
         let next = await feed.next()
-        XCTAssertEqual(next, .regionEnter(body: try event.eventBody(stringifyFields: false)))
+        XCTAssertEqual(next, .analytics(eventType: .regionEnter, body: try event.eventBody(stringifyFields: false), value: nil))
     }
 
     func testForwardCustomEvents() async throws {
-        let event = CustomEvent(name: "foo")
+        let event = CustomEvent(name: "foo", value: 10.0)
 
-        var feed = self.analytics.eventFeed.updates.makeAsyncIterator()
+        var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
         self.analytics.recordCustomEvent(event)
 
         let next = await feed.next()
-        XCTAssertEqual(next, .customEvent(body: event.eventBody(sendID: nil, metadata: nil, formatValue: false), value: 1.0))
+        XCTAssertEqual(
+            next,
+            .analytics(
+                eventType: .customEvent,
+                body: event.eventBody(
+                    sendID: nil,
+                    metadata: nil,
+                    formatValue: false
+                ),
+                value: 10.0
+            )
+        )
+    }
+
+    func testForwardCustomEventNoValue() async throws {
+        let event = CustomEvent(name: "foo")
+
+        var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
+        self.analytics.recordCustomEvent(event)
+
+        let next = await feed.next()
+        XCTAssertEqual(
+            next,
+            .analytics(
+                eventType: .customEvent,
+                body: event.eventBody(
+                    sendID: nil,
+                    metadata: nil,
+                    formatValue: false
+                ),
+                value: nil
+            )
+        )
     }
 
     func testSDKExtensions() async throws {
@@ -497,7 +529,25 @@ class AnalyticsTest: XCTestCase {
                 SessionEvent(type: .backgroundInit, date: date, sessionState: SessionState())
             )
         }
-        XCTAssertEqual(["app_background", "app_foreground", "app_foreground_init", "app_background_init"], events.map { $0.type })
+
+        XCTAssertEqual(
+            [
+                EventType.appBackground.reportingName,
+                EventType.appForeground.reportingName,
+                EventType.appInit.reportingName,
+                EventType.appInit.reportingName
+            ],
+            events.map { $0.type.reportingName }
+        )
+        XCTAssertEqual(
+            [
+                .string("app_background"),
+                .string("app_foreground"),
+                .string("app_foreground_init"),
+                .string("app_background_init")
+            ],
+            events.map { $0.body }
+        )
         XCTAssertEqual([date, date, date, date], events.map { $0.date })
     }
 }
@@ -548,18 +598,20 @@ final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
 
 final class TestSessionEventFactory: SessionEventFactoryProtocol, @unchecked Sendable {
     func make(event: SessionEvent) -> AirshipEvent {
-        let name: String = switch(event.type) {
-        case .backgroundInit:
-            "app_background_init"
-        case .foregroundInit:
-            "app_foreground_init"
-        case .background:
-            "app_background"
-        case .foreground:
-            "app_foreground"
+        let eventType: EventType = switch(event.type) {
+        case .backgroundInit, .foregroundInit: .appInit
+        case .background: .appBackground
+        case .foreground: .appForeground
         }
 
-        return AirshipEvent(eventType: name, eventData: AirshipJSON.null)
+        let name: String = switch(event.type) {
+        case .backgroundInit: "app_background_init"
+        case .foregroundInit: "app_foreground_init"
+        case .background: "app_background"
+        case .foreground: "app_foreground"
+        }
+
+        return AirshipEvent(eventType: eventType, eventData: AirshipJSON.string(name))
     }
 }
 

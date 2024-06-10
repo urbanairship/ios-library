@@ -1,8 +1,11 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
 struct InAppDisplayEvent: InAppEvent {
-    let name: String = "in_app_display"
+    let name = EventType.inAppDisplay
     let data: (Sendable&Encodable)? = nil
 }

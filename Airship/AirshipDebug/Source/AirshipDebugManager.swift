@@ -111,7 +111,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
                 let airshipEvent = AirshipEvent(
                     identifier: incoming.id,
-                    type: incoming.type,
+                    type: incoming.type.reportingName,
                     date: incoming.date,
                     body: body
                 )

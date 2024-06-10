@@ -613,6 +613,9 @@
 		6E510C262721DA86006D9126 /* ForegroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */; };
 		6E510C272721DA86006D9126 /* BackgroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */; };
 		6E510C282721DA88006D9126 /* ThomasViewModelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0A271657BB001A74A1 /* ThomasViewModelExtensions.swift */; };
+		6E524C732C126F5F002CA094 /* AirshipEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524C722C126F5F002CA094 /* AirshipEventType.swift */; };
+		6E524C742C126F5F002CA094 /* AirshipEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524C722C126F5F002CA094 /* AirshipEventType.swift */; };
+		6E524C752C126F5F002CA094 /* AirshipEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524C722C126F5F002CA094 /* AirshipEventType.swift */; };
 		6E57CE3228DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
 		6E57CE3328DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
 		6E57CE3428DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
@@ -2347,6 +2350,7 @@
 		6E4E2E2729CEB222002E7682 /* ContactManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagerProtocol.swift; sourceTree = "<group>"; };
 		6E4E5B3926E7F91600198175 /* AirshipLocalizationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLocalizationUtils.swift; sourceTree = "<group>"; };
 		6E4E5B3A26E7F91600198175 /* Attributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
+		6E524C722C126F5F002CA094 /* AirshipEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEventType.swift; sourceTree = "<group>"; };
 		6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdate.swift; sourceTree = "<group>"; };
 		6E57CE3628DBBD9A00287601 /* LiveActivityRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistry.swift; sourceTree = "<group>"; };
 		6E590E6D29A94CA90036DFAB /* AppStateTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTrackerTest.swift; sourceTree = "<group>"; };
@@ -4126,6 +4130,7 @@
 				6E4325E82B7AEB1F00A9B000 /* AirshipEvent.swift */,
 				6E96ECF1293EB7900053CC91 /* AirshipEventData.swift */,
 				6E4326002B7C327C00A9B000 /* AirshipEvents.swift */,
+				6E524C722C126F5F002CA094 /* AirshipEventType.swift */,
 				6E4325F02B7AEC9700A9B000 /* Region */,
 				6E4325EC2B7AEC2E00A9B000 /* Custom Events */,
 			);
@@ -6286,6 +6291,7 @@
 				3CA84AB826DE257200A59685 /* Analytics.swift in Sources */,
 				6E94760F29BA8FA30025F364 /* ContactManager.swift in Sources */,
 				6E49D7B428401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
+				6E524C732C126F5F002CA094 /* AirshipEventType.swift in Sources */,
 				6E71129B2880DACB004942E4 /* ViewState.swift in Sources */,
 				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
 				6E91E44028EF423400B6F25E /* Worker.swift in Sources */,
@@ -6780,6 +6786,7 @@
 				6E6BD26F2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */,
 				A68C749A285CAFB300EEA2F4 /* PromptPermissionAction.swift in Sources */,
 				A68C7499285CAFAB00EEA2F4 /* DefaultLogHandler.swift in Sources */,
+				6E524C752C126F5F002CA094 /* AirshipEventType.swift in Sources */,
 				A68C7498285CAF8C00EEA2F4 /* CachedList.swift in Sources */,
 				A68C7497285CAF8600EEA2F4 /* AirshipLogHandler.swift in Sources */,
 				6EC755AB2A4F8FBC00851ABB /* AudienceHashSelector.swift in Sources */,
@@ -7475,6 +7482,7 @@
 				6E4086912B8D125A00435E2C /* AirshipViewSizeReader.swift in Sources */,
 				6E91E45328EF423400B6F25E /* AirshipWorkManager.swift in Sources */,
 				6E4325EA2B7AEB1F00A9B000 /* AirshipEvent.swift in Sources */,
+				6E524C742C126F5F002CA094 /* AirshipEventType.swift in Sources */,
 				6E49D7B928401D2E00C7BB9D /* Atomic.swift in Sources */,
 				A6D6D4A22A02BB180072A5CA /* AirshipAction.swift in Sources */,
 				3CA84AB926DE257200A59685 /* Analytics.swift in Sources */,

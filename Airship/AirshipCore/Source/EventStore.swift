@@ -222,7 +222,7 @@ actor EventStore {
             into: context
         ) as? EventData {
             eventData.sessionID = event.sessionID
-            eventData.type = event.type
+            eventData.type = event.type.reportingName
             eventData.identifier = event.id
             eventData.data = try event.body.toData()
             eventData.storeDate = event.date
@@ -258,6 +258,7 @@ actor EventStore {
         guard let sessionID = internalEventData.sessionID,
               let id = internalEventData.identifier,
               let type = internalEventData.type,
+              let convertedType = EventType.allCases.first(where: { $0.reportingName == type }),
               let date = date(internalEventData: internalEventData)
         else {
             throw AirshipErrors.error("Invalid event data")
@@ -268,7 +269,7 @@ actor EventStore {
             id: id,
             date: date,
             sessionID: sessionID,
-            type: type
+            type: convertedType 
         )
     }
 }

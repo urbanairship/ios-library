@@ -16,30 +16,13 @@ struct TriggerableState: Equatable, Codable {
 }
 
 enum AutomationEvent: Sendable, Equatable {
-    case foreground
-    case background
-    case screenView(name: String?)
-    case appInit
     case stateChanged(state: TriggerableState)
-    case regionEnter(data: AirshipJSON)
-    case regionExit(data: AirshipJSON)
-    case customEvent(data: AirshipJSON, value: Double?)
-    case featureFlagInterracted(data: AirshipJSON)
+    case event(type: EventAutomationTriggerType, data: AirshipJSON? = nil, value: Double = 1.0)
     
-    func reportPayload() -> AirshipJSON? {
+    var eventData: AirshipJSON? {
         switch self {
-        case .foreground, .background, .appInit, .stateChanged:
-            return nil
-        case .screenView(let name):
-            return try? AirshipJSON.wrap(name)
-        case .regionEnter(let data):
-            return data
-        case .regionExit(let data):
-            return data
-        case .customEvent(let data, _):
-            return data
-        case .featureFlagInterracted(let data):
-            return data
+        case .event(_, let data, _): return data
+        default: return nil
         }
     }
 }
@@ -59,11 +42,6 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
 
     private var appSessionState = TriggerableState()
     private var regions: Set<String> = Set()
-
-    fileprivate enum AnalyticEventFilter: String {
-        case featureFlagInteraction = "feature_flag_interaction"
-        case customEvent = "enhanced_custom_event"
-    }
 
     let feed: Stream
 
@@ -86,7 +64,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
         if !isFirstAttach {
             isFirstAttach = true
 
-            self.continuation.yield(.appInit)
+            self.continuation.yield(.event(type: .appInit))
 
             if
                 applicationMetrics.isAppVersionUpdated,
@@ -125,46 +103,27 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
                         guard !Task.isCancelled else { return }
 
                         if (state == .active) {
-                            await onEvent(.foreground)
+                            await onEvent(.event(type: .foreground))
                         }
 
                         if (state == .background) {
-                            await onEvent(.background)
+                            await onEvent(.event(type: .background))
                         }
                     }
                 }
 
                 group.addTask {
-                    for await event in analyticsFeed.updates {
+                    for await event in await analyticsFeed.updates {
                         guard !Task.isCancelled else { return }
-                        if let event = await Self.parseEvent(event: event) {
-                            await onEvent(event)
+                        guard let converted = event.toAutomationEvent() else { return }
+                        
+                        for item in converted {
+                            await onEvent(item)
                         }
                     }
                 }
             }
         }
-    }
-
-
-    private class func parseEvent(event: AirshipAnalyticsFeed.Event) -> AutomationEvent? {
-        switch(event) {
-        case .customEvent(body: let body, value: let value):
-            return .customEvent(data: body, value: value)
-        case .regionEnter(body: let body):
-            return .regionEnter(data: body)
-        case .regionExit(body: let body):
-            return .regionExit(data: body)
-        case .featureFlagInteraction(body: let body):
-            return .featureFlagInterracted(data: body)
-        case .screenChange(screen: let screen):
-            return .screenView(name: screen)
-#if canImport(AirshipCore)
-        @unknown default:
-            return nil
-#endif
-        }
-
     }
     
     private func setAppSessionID(_ id: String?) {
@@ -177,12 +136,65 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
         self.continuation.yield(event)
         
         switch event {
-        case .foreground:
-            self.setAppSessionID(UUID().uuidString)
-        case .background:
-            self.setAppSessionID(nil)
+        case .event(let type, _, _):
+            switch type {
+            case .foreground:
+                self.setAppSessionID(UUID().uuidString)
+            case .background:
+                self.setAppSessionID(nil)
+            default: break
+            }
         default: break
         }
     }
+}
 
+private extension AirshipAnalyticsFeed.Event {
+    
+    func toAutomationEvent() -> [AutomationEvent]? {
+        switch self {
+        case .screen(let screen):
+            return [.event(type: .screen, data: try? AirshipJSON.wrap(screen))]
+        case .analytics(let eventType, let body, let value):
+            switch eventType {
+            case .regionEnter:
+                return [.event(type: .regionEnter, data: body)]
+            case .regionExit:
+                return [.event(type: .regionExit, data: body)]
+            case .customEvent:
+                return [
+                    .event(type: .customEventCount, data: body),
+                    .event(type: .customEventValue, data: body, value: value ?? 1.0)
+                ]
+            case .featureFlagInteraction:
+                return [.event(type: .featureFlagInteraction, data: body)]
+            case .inAppDisplay:
+                return [.event(type: .inAppDisplay, data: body)]
+            case .inAppResolution:
+                return [.event(type: .inAppResolution, data: body)]
+            case .inAppButtonTap:
+                return [.event(type: .inAppButtonTap, data: body)]
+            case .inAppPermissionResult:
+                return [.event(type: .inAppPermissionResult, data: body)]
+            case .inAppFormDisplay:
+                return [.event(type: .inAppFormDisplay, data: body)]
+            case .inAppFormResult:
+                return [.event(type: .inAppFormResult, data: body)]
+            case .inAppGesture:
+                return [.event(type: .inAppGesture, data: body)]
+            case .inAppPagerCompleted:
+                return [.event(type: .inAppPagerCompleted, data: body)]
+            case .inAppPagerSummary:
+                return [.event(type: .inAppPagerSummary, data: body)]
+            case .inAppPageSwipe:
+                return [.event(type: .inAppPageSwipe, data: body)]
+            case .inAppPageView:
+                return [.event(type: .inAppPageView, data: body)]
+            case .inAppPageAction:
+                return [.event(type: .inAppPageAction, data: body)]
+            default:
+                return nil
+            }
+        }
+    }
 }

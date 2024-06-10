@@ -12,12 +12,12 @@ public enum AirshipEventPriority: Sendable {
 /// - Note: For Internal use only :nodoc:
 public struct AirshipEvent: Sendable {
     public var priority: AirshipEventPriority
-    public var eventType: String
+    public var eventType: EventType
     public var eventData: AirshipJSON
 
     public init(
         priority: AirshipEventPriority = .normal,
-        eventType: String,
+        eventType: EventType,
         eventData: AirshipJSON
     ) {
         self.priority = priority

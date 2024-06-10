@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppResolutionEvent: InAppEvent {
 
-    let name: String = "in_app_resolution"
+    let name = EventType.inAppResolution
     let data: (Sendable&Encodable)?
 
     private init(data: Sendable&Encodable) {

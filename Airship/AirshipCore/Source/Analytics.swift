@@ -275,29 +275,26 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
             return
         }
 
-        /// Upload
-        let eventBody = event.eventBody(
-            sendID: self.conversionSendID,
-            metadata: self.conversionPushMetadata,
-            formatValue: true
-        )
-
         recordEvent(
-            AirshipEvent(eventType: CustomEvent.eventType, eventData: eventBody)
-        )
-
-        /// Feed
-        let feedBody = event.eventBody(
-            sendID: self.conversionSendID,
-            metadata: self.conversionPushMetadata,
-            formatValue: false
-        )
-
-        self.eventFeed.notifyEvent(
-            .customEvent(
-                body: feedBody,
-                value: event.eventValue?.doubleValue ?? 1.0
-            )
+            AirshipEvent(
+                eventType: .customEvent,
+                eventData: event.eventBody(
+                    sendID: self.conversionSendID,
+                    metadata: self.conversionPushMetadata,
+                    formatValue: true
+                )
+            ),
+            feedEvent: .analytics(
+                eventType: .customEvent,
+                body: event.eventBody(
+                    sendID: self.conversionSendID,
+                    metadata: self.conversionPushMetadata,
+                    formatValue: false
+                ),
+                value: event.eventValue?.doubleValue
+            ),
+            date: self.date.now,
+            sessionID: self.sessionTracker.sessionState.sessionID
         )
     }
 
@@ -324,25 +321,16 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
         /// Upload
         do {
+            let eventType: EventType = switch(event.boundaryEvent) {
+            case .enter: .regionEnter
+            case .exit: .regionExit
+            }
             recordEvent(
                 AirshipEvent(
-                    eventType: RegionEvent.eventType,
+                    eventType: eventType,
                     eventData: try event.eventBody(stringifyFields: true)
                 )
             )
-        } catch {
-            AirshipLogger.error("Failed to generate event body \(error)")
-        }
-
-        /// Feed
-        do {
-            let body = try event.eventBody(stringifyFields: false)
-
-            if (event.boundaryEvent == .enter) {
-                eventFeed.notifyEvent(.regionEnter(body: body))
-            } else {
-                eventFeed.notifyEvent(.regionExit(body: body))
-            }
         } catch {
             AirshipLogger.error("Failed to generate event body \(error)")
         }
@@ -361,10 +349,38 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     }
 
     public func recordEvent(_ event: AirshipEvent) {
-        self.recordEvent(event, date: self.date.now, sessionID: self.sessionTracker.sessionState.sessionID)
+        self.recordEvent(
+            event,
+            date: self.date.now,
+            sessionID: self.sessionTracker.sessionState.sessionID
+        )
     }
 
-    private func recordEvent(_ event: AirshipEvent, date: Date, sessionID: String) {
+    private func recordEvent(
+        _ event: AirshipEvent,
+        date: Date,
+        sessionID: String
+    ) {
+        self.recordEvent(
+            event,
+            feedEvent: AirshipAnalyticsFeed.Event.analytics(
+                eventType: event.eventType,
+                body: event.eventData,
+                value: nil
+            ),
+            date: date,
+            sessionID: sessionID
+        )
+    }
+
+    
+
+    private func recordEvent(
+        _ event: AirshipEvent,
+        feedEvent: AirshipAnalyticsFeed.Event,
+        date: Date,
+        sessionID: String
+    ) {
         self.serialQueue.enqueue {
             guard self.isAnalyticsEnabled else {
                 AirshipLogger.trace(
@@ -372,6 +388,8 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
                 )
                 return
             }
+
+            await self.eventFeed.notifyEvent(feedEvent)
 
             let eventData = AirshipEventData(
                 body: event.eventData,
@@ -462,7 +480,9 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
             return
         }
 
-        self.eventFeed.notifyEvent(.screenChange(screen: screen))
+        Task {
+            await self.eventFeed.notifyEvent(.screen(screen: screen))
+        }
 
         let currentScreen = self.screenState.value.current
         let screenStartDate = self.screenState.value.startDate

@@ -41,7 +41,7 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
 }
 
 struct LegacyResolutionEvent : InAppEvent {
-    let name: String = "in_app_resolution"
+    let name = EventType.inAppResolution
 
     let data: (Encodable & Sendable)?
 

@@ -36,7 +36,7 @@ class InAppEventRecorderTest: XCTestCase {
 
     func testEventData() async throws {
         let inAppEvent = TestInAppEvent(
-            name: "some-name",
+            name: .appInit,
             data: TestData(field: "something", anotherField: "something something")
         )
 
@@ -86,7 +86,7 @@ class InAppEventRecorderTest: XCTestCase {
 
     func testConversionIDs() async throws {
         let inAppEvent = TestInAppEvent(
-            name: "some-name",
+            name: .featureFlagInteraction,
             data: TestData(field: "something", anotherField: "something something")
         )
 
@@ -142,7 +142,7 @@ class InAppEventRecorderTest: XCTestCase {
 
     func testEventDataError() async throws {
         let inAppEvent = TestInAppEvent(
-            name: "some-name",
+            name: .appForeground,
             data: ErrorData(field: "something", anotherField: "something something")
         )
 

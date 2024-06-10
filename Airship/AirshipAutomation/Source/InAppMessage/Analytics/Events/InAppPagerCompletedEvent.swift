@@ -8,7 +8,7 @@ import AirshipCore
 #endif
 
 struct InAppPagerCompletedEvent: InAppEvent {
-    let name: String = "in_app_pager_completed"
+    let name = EventType.inAppPagerCompleted
     let data: (Sendable&Encodable)?
 
     init(pagerInfo: ThomasPagerInfo) {

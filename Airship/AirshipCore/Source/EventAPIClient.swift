@@ -80,7 +80,7 @@ final class EventAPIClient: EventAPIClientProtocol {
                 format: "%f",
                 eventData.date.timeIntervalSince1970
             )
-            eventBody["type"] = eventData.type
+            eventBody["type"] = eventData.type.reportingName
             
         
             guard

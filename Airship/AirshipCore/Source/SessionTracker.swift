@@ -106,7 +106,7 @@ final class SessionTracker: SessionTrackerProtocol {
     }
 
     @MainActor
-    private func addEvent(_ type: SessionEvent.EventType, date: Date? = nil) {
+    private func addEvent(_ type: SessionEvent.SessionEventType, date: Date? = nil) {
         AirshipLogger.debug("Added session event \(type) state: \(self.sessionState)")
 
         self.eventsContinuation.yield(

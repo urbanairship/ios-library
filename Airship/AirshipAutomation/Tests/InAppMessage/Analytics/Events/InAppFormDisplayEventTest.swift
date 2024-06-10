@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppFormDisplayEventTest: XCTestCase {
 
@@ -23,7 +22,7 @@ final class InAppFormDisplayEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_form_display")
+        XCTAssertEqual(event.name.reportingName, "in_app_form_display")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 

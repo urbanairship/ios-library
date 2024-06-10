@@ -64,11 +64,11 @@ final class PreparedTriggerTest: XCTestCase {
         
         XCTAssertEqual(0, instance.triggerData.count)
 
-        var result = instance.process(event: .appInit)
+        var result = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(1, result?.triggerData.count)
         XCTAssertNil(result?.triggerResult)
 
-        result = instance.process(event: .appInit)
+        result = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(0, result?.triggerData.count)
 
         let report = try XCTUnwrap(result?.triggerResult)
@@ -83,7 +83,7 @@ final class PreparedTriggerTest: XCTestCase {
 
         let instance = makeTrigger(trigger: .event(trigger))
 
-        XCTAssertNil(instance.process(event: .appInit))
+        XCTAssertNil(instance.process(event: .event(type: .appInit)))
         
         instance.activate()
         instance.update(
@@ -93,7 +93,7 @@ final class PreparedTriggerTest: XCTestCase {
             priority: 0
         )
 
-        XCTAssertNil(instance.process(event: .appInit))
+        XCTAssertNil(instance.process(event: .event(type: .appInit)))
 
         instance.update(
             trigger: .event(trigger),
@@ -102,7 +102,7 @@ final class PreparedTriggerTest: XCTestCase {
             priority: 0
         )
         
-        XCTAssertNotNil(instance.process(event: .appInit))
+        XCTAssertNotNil(instance.process(event: .event(type: .appInit)))
     }
     
     func testProcessEventDoesNothingForInvalidEventType() {
@@ -110,8 +110,8 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: .event(trigger))
         instance.activate()
         
-        XCTAssertNil(instance.process(event: .foreground))
-        XCTAssertNotNil(instance.process(event: .background))
+        XCTAssertNil(instance.process(event: .event(type: .foreground)))
+        XCTAssertNotNil(instance.process(event: .event(type: .background)))
     }
     
     func testEventProcessingTypes() {
@@ -123,25 +123,16 @@ final class PreparedTriggerTest: XCTestCase {
             return result?.triggerData
         }
         
-        XCTAssertEqual(1, check(.foreground, .foreground)?.count)
-        XCTAssertEqual(1, check(.background, .background)?.count)
-        XCTAssertEqual(1, check(.appInit, .appInit)?.count)
-        XCTAssertEqual(1, check(.screen, .screenView(name: nil))?.count)
-        XCTAssertEqual(1, check(.regionEnter, .regionEnter(data: .string("regionid")))?.count)
-        XCTAssertEqual(1, check(.regionExit, .regionExit(data: .string("regionid")))?.count)
-        XCTAssertEqual(1, check(.featureFlagInteraction, .featureFlagInterracted(data: .null))?.count)
-        XCTAssertEqual(2, check(.customEventValue, .customEvent(data: .null, value: 2))?.count)
-        XCTAssertEqual(1, check(.customEventCount, .customEvent(data: .null, value: 2))?.count)
+        for eventType in EventAutomationTriggerType.allCases {
+            let event = AutomationEvent.event(type: eventType, data: .null)
+            XCTAssertEqual(1, check(eventType, event)?.count)
+        }
         
-        XCTAssertNil(check(.version, .stateChanged(state: TriggerableState())))
-        XCTAssertEqual(1, check(.version, .stateChanged(state: TriggerableState(versionUpdated: "1.2.3")))?.count)
-        
-        XCTAssertNil(check(.activeSession, .stateChanged(state: TriggerableState())))
-        XCTAssertEqual(1, check(.activeSession, .stateChanged(state: TriggerableState(appSessionID: "session-id")))?.count)
+        XCTAssertEqual(2, check(.customEventValue, .event(type: .customEventValue, data: .null, value: 2))?.count)
+        XCTAssertEqual(2, check(.customEventCount, .event(type: .customEventCount, data: .null, value: 2))?.count)
         
         let instance = makeTrigger()
         instance.activate()
-        
 
         let state = TriggerableState(appSessionID: "session-id", versionUpdated: "123")
         let _ = instance.process(event: .stateChanged(state: state))
@@ -164,10 +155,10 @@ final class PreparedTriggerTest: XCTestCase {
         
         instance.activate()
         
-        var state = instance.process(event: .background)
+        var state = instance.process(event: .event(type: .background))
         XCTAssertNil(state?.triggerResult)
 
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         
@@ -177,7 +168,7 @@ final class PreparedTriggerTest: XCTestCase {
         var appinit = try XCTUnwrap(state?.triggerData.children["init"])
         XCTAssertEqual(0, appinit.count)
 
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         
@@ -187,10 +178,10 @@ final class PreparedTriggerTest: XCTestCase {
         appinit = try XCTUnwrap(state?.triggerData.children["init"])
         XCTAssertEqual(0, appinit.count)
 
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
 
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNotNil(state?.triggerResult)
     }
     
@@ -211,10 +202,10 @@ final class PreparedTriggerTest: XCTestCase {
         
         instance.activate()
         
-        var state = instance.process(event: .background)
+        var state = instance.process(event: .event(type: .background))
         XCTAssertNil(state?.triggerResult)
 
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         
@@ -224,7 +215,7 @@ final class PreparedTriggerTest: XCTestCase {
         var appinit = try XCTUnwrap(state?.triggerData.children["init"])
         XCTAssertEqual(0, appinit.count)
 
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         
@@ -234,8 +225,8 @@ final class PreparedTriggerTest: XCTestCase {
         appinit = try XCTUnwrap(state?.triggerData.children["init"])
         XCTAssertEqual(0, appinit.count)
 
-        _ = instance.process(event: .appInit)
-        state = instance.process(event: .foreground)
+        _ = instance.process(event: .event(type: .appInit))
+        state = instance.process(event: .event(type: .foreground))
         
         XCTAssertNotNil(state?.triggerResult)
     }
@@ -254,32 +245,32 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: trigger)
         instance.activate()
         
-        var state = instance.process(event: .foreground)
+        var state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(0, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(1, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertEqual(1, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertEqual(0, state?.triggerData.count)
         XCTAssertNotNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
@@ -302,37 +293,37 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: trigger)
         instance.activate()
         
-        var state = instance.process(event: .foreground)
+        var state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(0, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(1, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
 
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertEqual(1, state?.triggerData.count)
         XCTAssertNil(state?.triggerResult)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
 
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
 
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNotNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
@@ -352,45 +343,45 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: trigger)
         instance.activate()
         
-        var state = instance.process(event: .foreground)
+        var state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertNil(state?.triggerData)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertNil(state?.triggerData.count)
         
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
 
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
 
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNotNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
@@ -413,7 +404,7 @@ final class PreparedTriggerTest: XCTestCase {
         var state = instance.process(event: .stateChanged(state: TriggerableState(appSessionID: "test")))
         XCTAssertNil(state?.triggerResult)
         
-        state = instance.process(event: .customEvent(data: .null, value: 1))
+        state = instance.process(event: .event(type: .customEventValue, data: .null, value: 1))
         XCTAssertNotNil(state?.triggerResult)
     }
     
@@ -430,57 +421,57 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: trigger)
         instance.activate()
         
-        var state = instance.process(event: .foreground)
+        var state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertNil(state?.triggerData)
         
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertNil(state?.triggerData)
         
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 1)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .foreground)
+        state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 0)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(1, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 2)
         assertChildDataCount(parent: state?.triggerData, triggerID: "init", count: 1)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNotNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         assertChildDataCount(parent: state?.triggerData, triggerID: "foreground", count: 0)
@@ -519,19 +510,19 @@ final class PreparedTriggerTest: XCTestCase {
         let instance = makeTrigger(trigger: trigger)
         instance.activate()
         
-        var state = instance.process(event: .foreground)
+        var state = instance.process(event: .event(type: .foreground))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         
-        state = instance.process(event: .screenView(name: nil))
+        state = instance.process(event: .event(type: .screen))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         
-        state = instance.process(event: .appInit)
+        state = instance.process(event: .event(type: .appInit))
         XCTAssertNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
         
-        state = instance.process(event: .background)
+        state = instance.process(event: .event(type: .background))
         XCTAssertNotNil(state?.triggerResult)
         XCTAssertEqual(0, state?.triggerData.count)
     }

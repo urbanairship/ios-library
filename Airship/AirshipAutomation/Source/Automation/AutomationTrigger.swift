@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Automation trigger types
-public enum EventAutomationTriggerType: String, Sendable, Codable, Equatable {
+public enum EventAutomationTriggerType: String, Sendable, Codable, Equatable, CaseIterable {
     /// Foreground
     case foreground
 
@@ -40,6 +40,42 @@ public enum EventAutomationTriggerType: String, Sendable, Codable, Equatable {
 
     /// Active session
     case activeSession = "active_session"
+    
+    /// IAX display
+    case inAppDisplay = "in_app_display"
+    
+    /// IAX resolution
+    case inAppResolution = "in_app_resolution"
+    
+    /// IAX button tap
+    case inAppButtonTap = "in_app_button_tap"
+    
+    /// IAX permission result
+    case inAppPermissionResult = "in_app_permission_result"
+    
+    /// IAX form display
+    case inAppFormDisplay = "in_app_form_display"
+    
+    /// IAX form result
+    case inAppFormResult = "in_app_form_result"
+    
+    /// IAX gesture
+    case inAppGesture = "in_app_gesture"
+    
+    /// IAX pager completed
+    case inAppPagerCompleted = "in_app_pager_completed"
+    
+    /// IAX pager summary
+    case inAppPagerSummary = "in_app_pager_summary"
+    
+    /// IAX page swipe
+    case inAppPageSwipe = "in_app_page_swipe"
+    
+    /// IAX page view
+    case inAppPageView = "in_app_page_view"
+    
+    /// IAX page action
+    case inAppPageAction = "in_app_page_action"
 }
 
 public enum CompoundAutomationTriggerType: String, Sendable, Codable, Equatable {
