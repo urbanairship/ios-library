@@ -227,8 +227,6 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         )
     }
 
-    
-
     func contactOverrides() async -> ContactAudienceOverrides {
         return await contactOverrides(contactID: nil)
     }

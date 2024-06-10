@@ -39,7 +39,8 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
-        channelUpdates: AsyncStream<[ContactChannel]>? = nil
+        channelsList: [ContactChannel] = [],
+        channelUpdates: AsyncStream<ContactChannelsResult>? = nil
     ) {
 
         self.init(
@@ -55,7 +56,7 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
-        channelUpdates: AsyncStream<[ContactChannel]>? = nil,
+        channelUpdates: AsyncStream<ContactChannelsResult>? = nil,
         subscriber: PreferenceSubscriber
     ) {
         self.config = config
@@ -68,8 +69,11 @@ public class PreferenceCenterState: ObservableObject {
         if let channelUpdates {
             Task { @MainActor [weak self] in
                 for await update in channelUpdates {
-                    self?.channelsList = update
-                    AirshipLogger.info("Preference center channel updated")
+                    if case .success(let channels) = update {
+                        self?.channelsList = channels
+                        AirshipLogger.info("Preference center channel updated")
+                    }
+
                 }
             }
         }

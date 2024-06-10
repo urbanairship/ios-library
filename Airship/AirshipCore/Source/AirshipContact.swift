@@ -9,25 +9,18 @@ import Foundation
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContact)
 public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked Sendable {
-    public var contactChannelUpdates: AsyncStream<[ContactChannel]> {
-        get async throws {
-            guard self.privacyManager.isEnabled(.contacts) else {
-                throw AirshipErrors.error(
-                    "Contacts disabled. Enable to fetch channels list."
-                )
-            }
-
-            let contactID = await getStableContactID()
-            return try await self.contactChannelsProvider.contactUpdates(
-                contactID: contactID
+    public var contactChannelUpdates: AsyncStream<ContactChannelsResult> {
+        get {
+            return self.contactChannelsProvider.contactChannels(
+                stableContactIDUpdates: self.stableContactIDUpdates
             )
         }
     }
 
-    public var contactChannelPublisher: AnyPublisher<[ContactChannel], Never> {
-        get async throws {
-            let updates = try await self.contactChannelUpdates
-            let subject = CurrentValueSubject<[ContactChannel]?, Never>(nil)
+    public var contactChannelPublisher: AnyPublisher<ContactChannelsResult, Never> {
+        get {
+            let updates = self.contactChannelUpdates
+            let subject = CurrentValueSubject<ContactChannelsResult?, Never>(nil)
 
             Task { [weak subject] in
                 for await update in updates {
@@ -36,6 +29,22 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             }
 
             return subject.compactMap { $0 }.eraseToAnyPublisher()
+        }
+    }
+
+    private var stableContactIDUpdates: AsyncStream<String> {
+        AsyncStream { [contactIDUpdates] continuation in
+            let cancellable: AnyCancellable = contactIDUpdates
+                .filter { $0.isStable }
+                .map { $0.contactID }
+                .removeDuplicates()
+                .sink { value in
+                    continuation.yield(value)
+                }
+
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
         }
     }
 
@@ -324,7 +333,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             subscriptionListAPIClient: ContactSubscriptionListAPIClient(config: config), 
             contactChannelsProvider: ContactChannelsProvider(
                 audienceOverrides: audienceOverridesProvider,
-                apiClient: ContactChannelsAPIClient(config: config)
+                apiClient: ContactChannelsAPIClient(config: config),
+                privacyManager: privacyManager
             ),
             audienceOverridesProvider: audienceOverridesProvider,
             contactManager: ContactManager(

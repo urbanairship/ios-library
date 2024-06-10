@@ -17,8 +17,12 @@ class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProt
 }
 
 actor TestContactChannelsProvider: ContactChannelsProviderProtocol, @unchecked Sendable {
-    func contactUpdates(contactID: String) async throws -> AsyncStream<[AirshipCore.ContactChannel]> {
-        return AsyncStream<[AirshipCore.ContactChannel]> { _ in }
+    nonisolated func contactChannels(stableContactIDUpdates: AsyncStream<String>) -> AsyncStream<ContactChannelsResult> {
+        return AsyncStream<ContactChannelsResult> { _ in }
+    }
+    
+    func contactUpdates(contactID: String) async throws -> AsyncStream<[ContactChannel]> {
+        return AsyncStream<[ContactChannel]> { _ in }
     }
 
     init() {}

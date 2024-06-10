@@ -167,10 +167,10 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     func disassociateChannel(_ channel: ContactChannel)
 
     /// Contact channel updates stream.
-    var contactChannelUpdates: AsyncStream<[ContactChannel]> { get async throws }
+    var contactChannelUpdates: AsyncStream<ContactChannelsResult> { get }
 
     /// Contact channel updates publisher.
-    var contactChannelPublisher: AnyPublisher<[ContactChannel], Never> { get async throws }
+    var contactChannelPublisher: AnyPublisher<ContactChannelsResult, Never> { get }
 }
 
 

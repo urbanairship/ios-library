@@ -4,6 +4,10 @@ import Combine
 @testable import AirshipCore
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
+    var contactChannelUpdates: AsyncStream<AirshipCore.ContactChannelsResult> = AsyncStream<ContactChannelsResult>.init { _ in }
+
+    var contactChannelPublisher: AnyPublisher<AirshipCore.ContactChannelsResult, Never> = Just(.success([])).eraseToAnyPublisher()
+
     func getStableContactInfo() async -> StableContactInfo {
         return StableContactInfo(contactID: await getStableContactID(), namedUserID: namedUserID)
     }
@@ -31,10 +35,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     func disassociateChannel(_ channel: AirshipCore.ContactChannel) {
 
     }
-
-    var contactChannelUpdates: AsyncStream<[ContactChannel]> = AsyncStream<[ContactChannel]>.init { _ in }
-    
-    var contactChannelPublisher: AnyPublisher<[AirshipCore.ContactChannel], Never> = Just([]).eraseToAnyPublisher()
 
     func associateChannel(_ channelID: String, type: AirshipCore.ChannelType) {
 

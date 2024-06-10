@@ -79,14 +79,10 @@ final class PreferenceCenterViewLoader: ObservableObject {
                 .mapValues { Set($0) }
         }
         
-        var channelUpdates: AsyncStream<[ContactChannel]>? = nil
+        var channelUpdates: AsyncStream<ContactChannelsResult>? = nil
 
         if config.containsContactManagement() {
-            do {
-                channelUpdates = try await Airship.contact.contactChannelUpdates
-            } catch {
-                AirshipLogger.error(error.localizedDescription)
-            }
+            channelUpdates = Airship.contact.contactChannelUpdates
         }
 
         return PreferenceCenterState(
