@@ -298,10 +298,12 @@ public class Airship: NSObject {
         let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
 
         self.logLevel = resolvedConfig.logLevel
+        self.logPrivacyLevel = resolvedConfig.logPrivacyLevel
 
         UALegacyLoggingBridge.logger = { logLevel, function, line, message in
             AirshipLogger.log(
                 logLevel: AirshipLogLevel(rawValue: logLevel) ?? .none,
+                logPrivacyLevel: AirshipLogPrivacyLevel(rawValue: logPrivacyLevel.rawValue) ?? .private,
                 message: message(),
                 fileID: "",
                 line: line,
@@ -368,7 +370,7 @@ public class Airship: NSObject {
         }
     }
 
-    /// Airship log level. The log level defaults to `.debug` in developer mode,
+    /// Airship log level.
     /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
     /// and `.error` in production. Values set before `takeOff` will be overridden by
     /// the value from the AirshipConfig.
@@ -379,6 +381,19 @@ public class Airship: NSObject {
         }
         set {
             AirshipLogger.logLevel = newValue
+        }
+    }
+
+    /// Airship log privacy.
+    /// All logs have privacy settings that default to `.private`,
+    /// and in both developer mode and  production. Values set before `takeOff` will be overridden by
+    /// the value from the AirshipConfig.
+    public static var logPrivacyLevel: AirshipLogPrivacyLevel {
+        get {
+            return AirshipLogger.logPrivacyLevel
+        }
+        set {
+            AirshipLogger.logPrivacyLevel = newValue
         }
     }
 

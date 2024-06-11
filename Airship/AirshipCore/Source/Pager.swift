@@ -221,7 +221,7 @@ struct Pager: View {
                 }
                 let xVelocity = value.predictedEndLocation.x - value.location.x
                 let yVelocity = value.predictedEndLocation.y - value.location.y
-                let widhtOffset = value.translation.width / size.width
+                let widthOffset = value.translation.width / size.width
                 let heightOffset = value.translation.height / size.height
 
                 var swipeDirection: SwipeDirection? = nil
@@ -232,8 +232,8 @@ struct Pager: View {
                         } else {
                             swipeDirection = (layoutDirection == .leftToRight) ? .end : .start
                         }
-                    } else if abs(widhtOffset) >= Pager.offsetPercent {
-                        if (widhtOffset > 0) {
+                    } else if abs(widthOffset) >= Pager.offsetPercent {
+                        if (widthOffset > 0) {
                             swipeDirection = (layoutDirection == .leftToRight) ? .start : .end
                         } else {
                             swipeDirection = (layoutDirection == .leftToRight) ? .end : .start
@@ -250,21 +250,22 @@ struct Pager: View {
                 guard let swipeDirection = swipeDirection else {
                     return
                 }
-                print("swipe: \(swipeDirection)")
 
                 switch(swipeDirection) {
                 case .up:
                     handleSwipe(direction: .up, index: index)
-
                 case .down:
                     handleSwipe(direction: .down, index: index)
-
                 case .start:
                     if (self.model.isDefaultSwipeEnabled) {
+                        handleEvents(.defaultSwipe, index: index, pageIndex: getPreviousPageIndex())
+                        /// Call order matters because goToPreviousPage method decrements index
                         goToPreviousPage(index, transition: .defaultSwipe)
                     }
                 case .end:
                     if (self.model.isDefaultSwipeEnabled) {
+                        handleEvents(.defaultSwipe, index: index, pageIndex: getNextPageIndex())
+                        /// Call order matters because goToNextPage method increments index
                         goToNextPage(index, transition: .defaultSwipe)
                     }
                 }
@@ -281,7 +282,7 @@ struct Pager: View {
                     return
                 }
 
-                let pagerGestureEplorer = PagerGestureMapExplorer(
+                let pagerGestureExplorer = PagerGestureMapExplorer(
                     CGRect(
                         x: 0,
                         y: 0,
@@ -290,9 +291,8 @@ struct Pager: View {
                     )
                 )
 
-                print("tap: \(event.location)")
                 handleTap(
-                    locations: pagerGestureEplorer.location(
+                    locations: pagerGestureExplorer.location(
                         layoutDirection: layoutDirection,
                         forPoint: event.location
                     ),
@@ -370,6 +370,7 @@ struct Pager: View {
             index: index
         )
         handleActions(gestureBehavior.actions)
+        handleEvents(transition, index: index, pageIndex: pagerState.pageIndex)
     }
     
     // MARK: Handle automated actions
@@ -411,16 +412,24 @@ struct Pager: View {
     }
     
     // MARK: Utils methods
-    
+
+    private func getNextPageIndex() -> Int {
+        return min(
+            pagerState.pageIndex + 1,
+            pagerState.pages.count - 1)
+    }
+
+    private func getPreviousPageIndex() -> Int {
+        return max(pagerState.pageIndex - 1, 0)
+    }
+
     private func goToNextPage(
         _ index: Binding<Int>,
         transition: PageTransition,
         loop: Bool = false,
         dismiss: Bool = false
     ) {
-        
         if pagerState.isLastPage() {
-            
             if loop == true {
                 goToPage(
                     index,
@@ -428,19 +437,15 @@ struct Pager: View {
                     pageIndex: 0
                 )
             }
+
             if dismiss { thomasEnvironment.dismiss() }
             
         } else {
-            
-            let nextIndex =  min(
-                pagerState.pageIndex + 1,
-                pagerState.pages.count - 1)
             goToPage(
                 index,
                 transition: transition,
-                pageIndex: nextIndex
+                pageIndex: getNextPageIndex()
             )
-            
         }
     }
     
@@ -448,11 +453,10 @@ struct Pager: View {
         _ index: Binding<Int>,
         transition: PageTransition
     ) {
-        let nextIndex = max(pagerState.pageIndex - 1, 0)
         goToPage(
             index,
             transition: transition,
-            pageIndex: nextIndex
+            pageIndex:  getPreviousPageIndex()
         )
     }
     
@@ -467,23 +471,18 @@ struct Pager: View {
         guard pageIndex >= 0 else { return }
         guard pageIndex != index.wrappedValue || self.pagerState.pages.count == 1 else { return }
         guard pageIndex < self.pagerState.pages.count else { return }
-        
-        handlePagerTransition(
-            transition,
-            index: index,
-            pageIndex: pageIndex
-        )
-        
+
         index.wrappedValue = pageIndex
     }
     
-    private func handlePagerTransition(
+    private func handleEvents(
         _ transition: PageTransition,
         index: Binding<Int>,
         pageIndex: Int
     ) {
         switch transition {
         case .defaultSwipe:
+            AirshipLogger.debug("Transition type: Default Swipe from index \(index.wrappedValue) to \(pageIndex)")
             thomasEnvironment.pageSwiped(
                 self.pagerState,
                 fromIndex: index.wrappedValue,
@@ -491,12 +490,14 @@ struct Pager: View {
                 layoutState: layoutState
             )
         case .gesture(let identifier, let reportingMetadata):
+            AirshipLogger.debug("Transition type: Gesture with identifier \(identifier)")
             thomasEnvironment.pageGesture(
                 identifier: identifier,
                 reportingMetatda: reportingMetadata,
                 layoutState: layoutState
             )
         case .automated(let identifier, let reportingMetadata):
+            AirshipLogger.debug("Transition type: Automated with identifier \(identifier)")
             thomasEnvironment.pageAutomated(
                 identifier: identifier,
                 reportingMetatda: reportingMetadata,

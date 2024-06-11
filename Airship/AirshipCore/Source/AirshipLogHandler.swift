@@ -10,6 +10,7 @@ public protocol AirshipLogHandler {
     /// Called to log a message.
     /// - Parameters:
     ///     - logLevel: The Airship log level.
+    ///     - logPrivacyLevel: The Airship log privacy level.
     ///     - message: The log message.
     ///     - fileID: The file ID.
     ///     - line: The line number.
@@ -17,6 +18,7 @@ public protocol AirshipLogHandler {
     @objc
     func log(
         logLevel: AirshipLogLevel,
+        logPrivacyLevel: AirshipLogPrivacyLevel,
         message: String,
         fileID: String,
         line: UInt,

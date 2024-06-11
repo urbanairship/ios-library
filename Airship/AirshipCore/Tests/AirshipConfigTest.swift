@@ -91,18 +91,21 @@ final class AirshipConfigTest: XCTestCase {
         XCTAssertEqual(config.appKey, config.productionAppKey, "Incorrect app key resolution.")
         XCTAssertEqual(config.appSecret, config.productionAppSecret, "Incorrect app secret resolution.")
         XCTAssertEqual(config.logLevel, config.productionLogLevel, "Incorrect log level resolution.")
+        XCTAssertEqual(config.logPrivacyLevel, config.productionLogPrivacyLevel, "Incorrect log privacy level resolution.")
 
         config.inProduction = false
         XCTAssertFalse(config.detectProvisioningMode, "detectProvisioningMode defaults to NO.")
         XCTAssertEqual(config.appKey, config.developmentAppKey, "Incorrect app key resolution.")
         XCTAssertEqual(config.appSecret, config.developmentAppSecret, "Incorrect app secret resolution.")
         XCTAssertEqual(config.logLevel, config.developmentLogLevel, "Incorrect log level resolution.")
+        XCTAssertEqual(config.logPrivacyLevel, config.developmentLogPrivacyLevel, "Incorrect log privacy level resolution.")
 
         config.inProduction = true
         XCTAssertFalse(config.detectProvisioningMode, "detectProvisioningMode defaults to NO.")
         XCTAssertEqual(config.appKey, config.productionAppKey, "Incorrect app key resolution.")
         XCTAssertEqual(config.appSecret, config.productionAppSecret, "Incorrect app secret resolution.")
         XCTAssertEqual(config.logLevel, config.productionLogLevel, "Incorrect log level resolution.")
+        XCTAssertEqual(config.logPrivacyLevel, config.productionLogPrivacyLevel, "Incorrect log privacy level resolution.")
 
         config.detectProvisioningMode = true
         XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode defaults to YES.")
@@ -269,7 +272,9 @@ final class AirshipConfigTest: XCTestCase {
         XCTAssertTrue(copy.remoteDataAPIURL == config.remoteDataAPIURL)
         XCTAssertTrue(copy.analyticsURL == config.analyticsURL)
         XCTAssertTrue(copy.developmentLogLevel == config.developmentLogLevel)
+        XCTAssertTrue(copy.developmentLogPrivacyLevel == config.developmentLogPrivacyLevel)
         XCTAssertTrue(copy.productionLogLevel == config.productionLogLevel)
+        XCTAssertTrue(copy.productionLogPrivacyLevel == config.productionLogPrivacyLevel)
         XCTAssertTrue(copy.inProduction == config.inProduction)
         XCTAssertTrue(copy.detectProvisioningMode == config.detectProvisioningMode)
         XCTAssertTrue(copy.profilePath == config.profilePath)
@@ -299,7 +304,9 @@ final class AirshipConfigTest: XCTestCase {
         XCTAssertNil(config.remoteDataAPIURL)
         XCTAssertNil(config.analyticsURL)
         XCTAssertEqual(config.developmentLogLevel, .debug)
+        XCTAssertEqual(config.developmentLogPrivacyLevel, .private)
         XCTAssertEqual(config.productionLogLevel, .error)
+        XCTAssertEqual(config.productionLogPrivacyLevel, .private)
         XCTAssertFalse(config.inProduction)
         XCTAssertTrue(config.detectProvisioningMode)
         XCTAssertTrue(config.isAutomaticSetupEnabled)
