@@ -23,12 +23,6 @@ public class PreferenceCenterState: ObservableObject {
     private var subscriptions: Set<AnyCancellable> = []
     private let subscriber: PreferenceSubscriber
 
-    private let channelAssociationSubject = PassthroughSubject<[AssociatedChannel], Never>()
-    public var channelAssociationPublisher: AnyPublisher<[AssociatedChannel], Never>
-    {
-        return channelAssociationSubject.eraseToAnyPublisher()
-    }
-
     /// Default constructor.
     /// - Parameters:
     ///     - config: The preference config

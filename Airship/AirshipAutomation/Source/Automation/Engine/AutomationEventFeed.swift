@@ -195,6 +195,10 @@ private extension AirshipAnalyticsFeed.Event {
             default:
                 return nil
             }
+#if canImport(AirshipCore)
+        @unknown default:
+            return nil
+#endif
         }
     }
 }

@@ -172,30 +172,26 @@ fileprivate extension ContactChannelsResponseBody.Channel {
     var contactChannel: ContactChannel? {
         switch(self) {
         case .email(let email):
-            return .registered(
-                ContactChannel.Registered(
-                    channelID: email.channelID,
-                    deIdentifiedAddress: email.deIdentifiedAddress,
-                    registrationInfo: .email(
-                        .init(
-                            transactionalOptedIn: email.transactionalOptedIn,
-                            transactionalOptedOut: email.transactionalOptedOut,
-                            commercialOptedIn: email.commericalOptedIn,
-                            commercialOptedOut: email.commericalOptedOut
-                        )
+            return .email(
+                .registered(
+                    ContactChannel.Email.Registered(
+                        channelID: email.channelID,
+                        maskedAddress: email.deIdentifiedAddress,
+                        transactionalOptedIn: email.transactionalOptedIn,
+                        transactionalOptedOut: email.transactionalOptedOut,
+                        commercialOptedIn: email.commericalOptedIn,
+                        commercialOptedOut: email.commericalOptedOut
                     )
                 )
             )
         case .sms(let sms):
-            return .registered(
-                ContactChannel.Registered(
-                    channelID: sms.channelID,
-                    deIdentifiedAddress: sms.deIdentifiedAddress,
-                    registrationInfo: .sms(
-                        .init(
-                            isOptIn: sms.isOptIn,
-                            senderID: sms.sender
-                        )
+            return .sms(
+                .registered(
+                    ContactChannel.Sms.Registered(
+                        channelID: sms.channelID,
+                        maskedAddress: sms.deIdentifiedAddress,
+                        isOptIn: sms.isOptIn,
+                        senderID: sms.sender
                     )
                 )
             )

@@ -761,7 +761,7 @@ class AirshipContactTest: XCTestCase {
         let event = ContactConflictEvent(
             tags: [:],
             attributes: [:],
-            channels: [],
+            associatedChannels: [],
             subscriptionLists: [:],
             conflictingNamedUserID: "neat"
         )
@@ -782,7 +782,7 @@ class AirshipContactTest: XCTestCase {
         let event = ContactConflictEvent(
             tags: [:],
             attributes: [:],
-            channels: [],
+            associatedChannels: [],
             subscriptionLists: [:],
             conflictingNamedUserID: "neat"
         )

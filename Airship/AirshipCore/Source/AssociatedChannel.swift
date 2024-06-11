@@ -4,6 +4,7 @@ import Foundation
 
 /// Associated channel data.
 @objc(UAAssociatedChannel)
+@available(*, deprecated, message: "Use ContactConflictEvent.ChannelInfo instead")
 public final class AssociatedChannel: NSObject, Codable, Sendable {
 
     /**

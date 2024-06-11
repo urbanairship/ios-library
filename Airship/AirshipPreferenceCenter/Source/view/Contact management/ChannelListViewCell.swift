@@ -46,7 +46,7 @@ class ChannelListCellViewModel: ObservableObject {
 
         /// If we are initializing the cell as a pending cell, assume it's recent
         /// hide the resend button for the interval set on the pending label model
-        if case .pending(_) = channel {
+        if !channel.isRegistered {
             temporarilyHideResend()
         } else {
             isResendShowing = true
@@ -89,18 +89,6 @@ class ChannelListCellViewModel: ObservableObject {
             withAnimation {
                 self.isResendShowing = true
             }
-        }
-    }
-
-    func isOptedIn(registrationInfo: ContactChannel.RegistrationInfo) -> Bool {
-        switch registrationInfo {
-        case .sms(let sms):
-            return sms.isOptIn
-        case .email(let email):
-            guard let optedOut = email.commercialOptedOut else {
-                return email.commercialOptedIn != nil
-            }
-            return email.commercialOptedIn?.compare(optedOut) == .orderedDescending /// Make sure optedIn date is after opt out date if both exist
         }
     }
 }
@@ -177,24 +165,23 @@ struct ChannelListViewCell: View {
 
     @ViewBuilder
     private func makePendingLabel(channel: ContactChannel) -> some View {
-        switch channel {
-        case .pending(_):
-            if viewModel.isPendingLabelShowing {
-                pendingLabelView
-            }
-        case .registered(let registered):
-            let isOptedIn = viewModel.isOptedIn(registrationInfo: registered.registrationInfo)
-
+        if (channel.isRegistered) {
+            let isOptedIn = channel.isOptedIn
             if viewModel.isPendingLabelShowing, !isOptedIn {
                 pendingLabelView
             }
+        } else {
+            if viewModel.isPendingLabelShowing {
+                pendingLabelView
+            }
         }
+
     }
 
     @ViewBuilder
     private func makeCell(channel: ContactChannel) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            let cellText = channel.deIdentifiedAddress.replacingAsterisksWithBullets()
+            let cellText = channel.maskedAddress.replacingAsterisksWithBullets()
             if channel.channelType == .email {
                 makeCellLabel(iconSystemName: "envelope", labelText: cellText)
             } else {
@@ -219,5 +206,39 @@ struct ChannelListViewCell: View {
 
     var body: some View {
         cellBody
+    }
+}
+
+
+extension ContactChannel {
+    var isOptedIn: Bool {
+        switch (self) {
+        case .email(let email):
+            switch(email) {
+            case .pending(_): return false
+            case .registered(let info):
+                guard let optedOut = info.commercialOptedOut else {
+                    return info.commercialOptedIn != nil
+                }
+                return info.commercialOptedIn?.compare(optedOut) == .orderedDescending /// Make sure optedIn date is after opt out date if both exist
+#if canImport(AirshipCore)
+            @unknown default:
+                return false
+#endif
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .pending(_): return false
+            case .registered(let info): return info.isOptIn
+#if canImport(AirshipCore)
+            @unknown default:
+                return false
+#endif
+            }
+#if canImport(AirshipCore)
+        @unknown default:
+            return false
+#endif
+        }
     }
 }

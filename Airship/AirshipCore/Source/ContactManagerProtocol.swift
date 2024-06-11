@@ -25,6 +25,14 @@ struct ContactAudienceUpdate: Equatable, Sendable {
     let attributes: [AttributeUpdate]?
     let subscriptionLists: [ScopedSubscriptionListUpdate]?
     let contactChannels: [ContactChannelUpdate]?
+
+    init(contactID: String, tags: [TagGroupUpdate]? = nil, attributes: [AttributeUpdate]? = nil, subscriptionLists: [ScopedSubscriptionListUpdate]? = nil, contactChannels: [ContactChannelUpdate]? = nil) {
+        self.contactID = contactID
+        self.tags = tags
+        self.attributes = attributes
+        self.subscriptionLists = subscriptionLists
+        self.contactChannels = contactChannels
+    }
 }
 
 struct ContactIDInfo: Equatable, Sendable {

@@ -5,163 +5,147 @@ import Foundation
 
 /// Representation of a channel and its registration state after being associated to a contact
 public enum ContactChannel: Sendable, Equatable, Codable, Hashable {
-    case registered(Registered)
-    case pending(PendingRegistration)
+    case sms(Sms)
+    case email(Email)
 
-    /// Registered state indicates a channel that has registered and received a channel ID
-    public struct Registered: Sendable, Equatable, Codable, Hashable {
-        var channelID: String
-        var deIdentifiedAddress: String
-        public var registrationInfo: RegistrationInfo
+    /// Channel type
+    public var channelType: ChannelType {
+        switch (self) {
+        case .email(_): return .email
+        case .sms(_): return .sms
+        }
     }
-
-    /// Pending registration state indicates a channel registration that has yet to receive a channel ID
-    public struct PendingRegistration: Sendable, Equatable, Codable, Hashable {
-        var address: String /// Generic address can be address or msisdn
-        var pendingRegistrationInfo: PendingRegistrationInfo
-
-        var deIdentifiedAddress: String {
-            switch pendingRegistrationInfo {
-            case .email(_):
-                return address.maskEmail
-            case .sms(_):
-                return address.maskPhoneNumber
+    
+    /// Masked address
+    public var maskedAddress: String {
+        switch (self) {
+        case .email(let email):
+            switch(email) {
+            case .pending(let pending): return pending.address.maskEmail
+            case .registered(let registered): return registered.maskedAddress
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .pending(let pending): return pending.address.maskPhoneNumber
+            case .registered(let registered): return registered.maskedAddress
             }
         }
     }
 
-    /// Obfuscated visual representation of the original address used to register the channel
-    public var deIdentifiedAddress: String {
+    /// Checks if its registered or not.
+    public var isRegistered: Bool {
         switch (self) {
-        case .pending(let pending): return pending.deIdentifiedAddress
-        case .registered(let registered): return registered.deIdentifiedAddress
+        case .email(let email):
+            switch(email) {
+            case .pending(_): return false
+            case .registered(_): return false
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .pending(_): return false
+            case .registered(_): return false
+            }
         }
     }
 
-    /**
-     * Channel registration info
-     */
-    public enum RegistrationInfo: Sendable, Equatable, Codable, Hashable {
-        case email(Email)
-        case sms(SMS)
+    /// SMS channel info
+    public enum Sms: Sendable, Equatable, Codable, Hashable {
+        /// Registered channel
+        case registered(Registered)
 
-        /**
-         * Email registration info
-         */
-        public struct Email: Sendable, Equatable, Codable, Hashable {
-            /**
-             * Transactional opted-in value
-             */
+        /// Pending registration
+        case pending(Pending)
+
+        /// Registered info
+        public struct Registered: Sendable, Equatable, Codable, Hashable {
+            /// Channel ID
+            public let channelID: String
+
+            /// Masked MSISDN address.
+            public let maskedAddress: String
+
+            /// Opt-in status
+            public let isOptIn: Bool
+
+            /// Identifier from which the SMS opt-in message is received
+            public let senderID: String
+        }
+
+        /// Pending info
+        public struct Pending: Sendable, Equatable, Codable, Hashable {
+            /// The MSISDN.
+            public let address: String
+
+            /// Registration options.
+            public let registrationOptions: SMSRegistrationOptions
+        }
+    }
+
+    /// Email channel info
+    public enum Email: Sendable, Equatable, Codable, Hashable {
+        /// Registered channel
+        case registered(Registered)
+
+        /// Pending registration
+        case pending(Pending)
+
+        /// Registered info
+        public struct Registered:  Sendable, Equatable, Codable, Hashable {
+            /// Channel ID
+            public let channelID: String
+
+            /// Masked email address
+            public let maskedAddress: String
+
+            /// Transactional opted-in value
             public let transactionalOptedIn: Date?
 
-            /**
-             * Transactional opted-out value
-             */
+            /// Transactional opted-out value
             public let transactionalOptedOut: Date?
 
-            /**
-             * Commercial opted-in value - used to determine the email opted-in state
-             */
+            /// Commercial opted-in value - used to determine the email opted-in state
             public let commercialOptedIn: Date?
 
-            /**
-             * Commercial opted-out value
-             */
+            /// Commercial opted-out value
             public let commercialOptedOut: Date?
 
-
-            public init(
-                transactionalOptedIn: Date? = nil,
-                transactionalOptedOut: Date? = nil,
-                commercialOptedIn: Date? = nil,
-                commercialOptedOut: Date? = nil
+            init(channelID: String,
+                 maskedAddress: String,
+                 transactionalOptedIn: Date? = nil,
+                 transactionalOptedOut: Date? = nil,
+                 commercialOptedIn: Date? = nil,
+                 commercialOptedOut: Date? = nil
             ) {
+                self.channelID = channelID
+                self.maskedAddress = maskedAddress
                 self.transactionalOptedIn = transactionalOptedIn
                 self.transactionalOptedOut = transactionalOptedOut
                 self.commercialOptedIn = commercialOptedIn
                 self.commercialOptedOut = commercialOptedOut
             }
+
         }
 
-        /**
-         * SMS registration info
-         */
-        public struct SMS: Sendable, Equatable, Codable, Hashable {
-            /**
-             * Used to determine the SMS opted-in state
-             */
-            public let isOptIn: Bool
+        /// Pending info
+        public struct Pending: Sendable, Equatable, Codable, Hashable {
+            /// The email address.
+            public let address: String
 
-            /**
-             * Identifier from which the SMS opt-in message is received
-             */
-            public let senderID: String
-        }
-
-    }
-
-    /**
-     * Pending registration info
-     */
-    public enum PendingRegistrationInfo: Sendable, Equatable, Codable, Hashable {
-        case email(Email)
-        case sms(SMS)
-
-        /**
-         * Pending Email registration info
-         */
-        public struct Email: Sendable, Equatable, Codable, Hashable {}
-
-
-        /**
-         * Pending SMS registration info
-         */
-        public struct SMS: Sendable, Equatable, Codable, Hashable {
-
-            /**
-             * Identifier from which the SMS opt-in message is received
-             */
-            public let senderID: String
+            /// Registration options.
+            public let registrationOptions: EmailRegistrationOptions
         }
     }
-
-}
-
-/**
- * Registration options
- */
-public enum RegistrationOptions: Sendable, Equatable, Codable, Hashable {
-    case email(EmailRegistrationOptions)
-    case sms(SMSRegistrationOptions)
 }
 
 /**
  * An associative or dissociative update operation
  */
 public enum ContactChannelUpdate: Sendable, Equatable, Hashable {
-    case disassociated(ContactChannel)
+    case disassociated(ContactChannel, channelID: String? = nil)
     case associated(ContactChannel, channelID: String? = nil)
+    case associatedAnonChannel(channelType: ChannelType, channelID: String)
 }
 
-/**
- * Utility variable for determining the underlying type of a contact channel
- */
-public extension ContactChannel {
-    var channelType: ChannelType {
-        switch (self) {
-        case .registered(let registered):
-            switch(registered.registrationInfo) {
-            case .email(_): return .email
-            case .sms(_): return .sms
-            }
-        case .pending(let pending):
-            switch(pending.pendingRegistrationInfo) {
-            case .email(_): return .email
-            case .sms(_): return .sms
-            }
-        }
-    }
-}
 
 
 

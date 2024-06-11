@@ -858,7 +858,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(channelType: .email, channelID: "some channel"),
+                result: .init(channelType: .email, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -905,7 +905,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(channelType: .open, channelID: "some channel"),
+                result: .init(channelType: .open, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -948,7 +948,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(channelType: .sms, channelID: "some channel"),
+                result: .init(channelType: .sms, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -967,7 +967,7 @@ final class ContactManagerTest: XCTestCase {
     func testResendEmail() async throws {
         let expectedAddress: String = "example@email.com"
 
-        let expectedResendOptions = ResendOptions(address: expectedAddress)
+        let expectedResendOptions = ResendOptions(emailAddress: expectedAddress)
 
         // Should resolve contact first after checking the token
         let resolve = XCTestExpectation()
@@ -1124,7 +1124,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(type, ChannelType.email.stringValue)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: true,
+                result: ContactDisassociateChannelResult(channelID: channelID),
                 statusCode: 200,
                 headers: [:]
             )
@@ -1167,7 +1167,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(type, .open)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(channelType: type, channelID: "some channel"),
+                result: .init(channelType: type, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -1322,7 +1322,7 @@ final class ContactManagerTest: XCTestCase {
         let expctedConflictEvent =  ContactConflictEvent(
             tags: ["some group": ["tag"]],
             attributes: ["some attribute": .string("cool")],
-            channels: [],
+            associatedChannels: [],
             subscriptionLists: ["some list": [.app]],
             conflictingNamedUserID: "some named user"
         )
@@ -1347,85 +1347,36 @@ final class ContactManagerTest: XCTestCase {
 
 
     private func makePendingEmailContactChannel(address: String) -> ContactChannel {
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
-
-        let registeredChannelData =
-    """
-    {
-        "pending": {
-            "_0": {
-                "address": "\(address)",
-                "pendingRegistrationInfo": {
-                    "email": {
-                        "_0": {}
-                    }
-                },
-                "deIdentifiedAddress": "u***r@example.com"
-            }
-        }
-    }
-    """.data(using: .utf8)!
-
-        let registeredChannel = try! jsonDecoder.decode(ContactChannel.self, from: registeredChannelData)
-        return registeredChannel
+        return .email(
+            .pending(
+                ContactChannel.Email.Pending(
+                    address: address,
+                    registrationOptions: .options(properties: nil, doubleOptIn: true)
+                )
+            )
+        )
     }
 
     private func makePendingSMSContactChannel(msisdn: String, sender: String) -> ContactChannel {
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
-
-        let registeredChannelData =
-    """
-    {
-        "pending": {
-            "_0": {
-                "address": "\(msisdn)",
-                "pendingRegistrationInfo": {
-                    "sms": {
-                        "_0": {
-                            "senderID": "\(sender)"
-                        }
-                    }
-                },
-                "deIdentifiedAddress": "XXX-XXX-7890"
-            }
-        }
-    }
-    """.data(using: .utf8)!
-
-        let registeredChannel = try! jsonDecoder.decode(ContactChannel.self, from: registeredChannelData)
-        return registeredChannel
+        return .sms(
+            .pending(
+                ContactChannel.Sms.Pending(
+                    address: msisdn,
+                    registrationOptions: .optIn(senderID: sender)
+                )
+            )
+        )
     }
 
     private func makeRegisteredContactChannel(from channelID: String) -> ContactChannel {
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
-
-        let registeredChannelData =
-    """
-    {
-        "registered": {
-            "_0": {
-                "channelID": "\(channelID)",
-                "deIdentifiedAddress": "XID123",
-                "registrationInfo": {
-                    "email": {
-                        "_0": {
-                            "transactionalOptedIn": "2024-04-30T12:00:00Z",
-                            "transactionalOptedOut": "2024-04-30T12:00:00Z",
-                            "commercialOptedIn": "2024-04-30T12:00:00Z",
-                            "commercialOptedOut": "2024-04-30T12:00:00Z"
-                        }
-                    }
-                }
-            }
-        }
-    }
-    """.data(using: .utf8)!
-
-        let registeredChannel = try! jsonDecoder.decode(ContactChannel.self, from: registeredChannelData)
-        return registeredChannel
+        return .email(
+            .registered(
+                ContactChannel.Email.Registered(
+                    channelID: channelID,
+                    maskedAddress: "****@email.com"
+                )
+            )
+        )
     }
 
     private func verifyUpdates(_ expected: [ContactUpdate], file: StaticString = #filePath, line: UInt = #line) async {

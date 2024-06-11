@@ -19,25 +19,25 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     ((String, [TagGroupUpdate]?, [AttributeUpdate]?, [ScopedSubscriptionListUpdate]?) async throws -> AirshipHTTPResponse<Void>)?
 
     var associateChannelCallback:
-    ((String, String, ChannelType) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    ((String, String, ChannelType) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult>)?
 
     var disassociateChannelCallback:
-    ((Bool, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+    ((Bool, String, String) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult>)?
 
     var disassociateEmailCallback:
-    ((Bool, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+    ((Bool, String, String) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult>)?
 
     var disassociateSMSCallback:
-    ((Bool, String, String, String) async throws -> AirshipHTTPResponse<Bool>)?
+    ((Bool, String, String, String) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult>)?
 
     var registerEmailCallback:
-    ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    ((String, String, EmailRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult>)?
 
     var registerSMSCallback:
-    ((String, String, SMSRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    ((String, String, SMSRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult>)?
 
     var registerOpenCallback:
-    ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<AssociatedChannel>)?
+    ((String, String, OpenRegistrationOptions, Locale) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult>)?
 
     init() {}
 
@@ -77,7 +77,7 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     func associateChannel(contactID: String,
                           channelID: String,
                           channelType: ChannelType
-    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult> {
         return try await associateChannelCallback!(contactID, channelID, channelType)
     }
 
@@ -86,7 +86,7 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         address: String,
         options: EmailRegistrationOptions,
         locale: Locale
-    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult> {
         return try await registerEmailCallback!(contactID, address, options, locale)
     }
 
@@ -95,7 +95,7 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         msisdn: String,
         options: SMSRegistrationOptions,
         locale: Locale
-    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult> {
         return try await registerSMSCallback!(contactID, msisdn, options, locale)
     }
     
@@ -104,7 +104,7 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
         address: String,
         options: OpenRegistrationOptions,
         locale: Locale
-    ) async throws -> AirshipHTTPResponse<AssociatedChannel> {
+    ) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult> {
         return try await registerOpenCallback!(contactID, address, options, locale)
     }
 
@@ -114,8 +114,8 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
 
     func disassociateChannel(
         contactID: String,
-        disassociateOptions: AirshipCore.DisassociateOptions
-    ) async throws -> AirshipCore.AirshipHTTPResponse<Bool> {
+        disassociateOptions: DisassociateOptions
+    ) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult> {
         switch disassociateOptions {
         case .channel(let channel):
             return try await disassociateChannelCallback!(true, channel.channelID, channel.channelType)

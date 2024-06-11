@@ -281,27 +281,29 @@ fileprivate actor OverridesApplier {
         var mutated = channels
 
         overrides.channels.forEach { update in
-            if case .associated(let contactChannel, let channelID) = update {
-                if let address = contactChannel.canonicalAddress, let channelID {
-                    addressToChannelIDMap[address] = channelID
+            switch(update) {
+            case .associated(let channel, let channelID):
+                if let address = channel.canonicalAddress, let channelID {
+                    self.addressToChannelIDMap[address] = channelID
                 }
+            case .disassociated(let channel, let channelID):
+                if let address = channel.canonicalAddress, let channelID {
+                    self.addressToChannelIDMap[address] = channelID
+                }
+            case .associatedAnonChannel(_, _):
+                // no-op
+                break
             }
         }
 
         for update in overrides.channels {
-            switch (update) {
-            case .disassociated(let channel):
-                mutated.removeAll {
-                    isMatch(channel: $0, otherChannel: channel)
-                }
-
-            case .associated(let channel, let registeredChannelID):
+            switch(update) {
+            case .associated(let channel, _):
                 let found = mutated.contains(
                     where: {
                         isMatch(
                             channel: $0,
-                            otherChannel: channel,
-                            otherChannelID: registeredChannelID
+                            update: update
                         )
                     }
                 )
@@ -309,6 +311,18 @@ fileprivate actor OverridesApplier {
                 if (!found) {
                     mutated.append(channel)
                 }
+
+
+            case .disassociated(_, _):
+                mutated.removeAll {
+                    isMatch(
+                        channel: $0,
+                        update: update
+                    )
+                }
+            case .associatedAnonChannel(_, _):
+                // no-op
+                break
             }
         }
 
@@ -317,28 +331,36 @@ fileprivate actor OverridesApplier {
 
     private func isMatch(
         channel: ContactChannel,
-        otherChannel: ContactChannel,
-        otherChannelID: String? = nil
+        update: ContactChannelUpdate
     ) -> Bool {
         let canonicalAddress = channel.canonicalAddress
-        let resolvedChannelID = resolveChannelID(contactChannel: channel, canonicalAddress: canonicalAddress)
+        let resolvedChannelID = resolveChannelID(
+            channelID: channel.channelID,
+            canonicalAddress: canonicalAddress
+        )
 
-        let otherCanonicalAddress = otherChannel.canonicalAddress
-        let otherResolvedChannelID = otherChannelID ?? resolveChannelID(contactChannel: otherChannel, canonicalAddress: otherCanonicalAddress)
+        let updateCanonicalAddress = update.canonicalAddress
+        let updateChannelID = resolveChannelID(
+            channelID: update.channelID,
+            canonicalAddress: updateCanonicalAddress
+        )
 
-        if let resolvedChannelID, resolvedChannelID == otherResolvedChannelID {
+        if let resolvedChannelID, resolvedChannelID == updateChannelID {
             return true
         }
 
-        if let canonicalAddress, canonicalAddress == otherCanonicalAddress {
+        if let canonicalAddress, canonicalAddress == updateCanonicalAddress {
             return true
         }
 
         return false
     }
 
-    private func resolveChannelID(contactChannel: ContactChannel, canonicalAddress: String?) -> String? {
-        if let channelID = contactChannel.channelID {
+    private func resolveChannelID(
+        channelID: String?,
+        canonicalAddress: String?
+    ) -> String? {
+        if let channelID {
             return channelID
         }
 
@@ -351,35 +373,52 @@ fileprivate actor OverridesApplier {
 }
 
 
-
-fileprivate extension ContactChannel.PendingRegistration {
-    var canonicalAddress: String {
-        if case let .sms(options) = self.pendingRegistrationInfo {
-            return self.address + ":" + options.senderID
+extension ContactChannelUpdate {
+    var canonicalAddress: String? {
+        switch (self) {
+        case .associated(let channel, _): return channel.canonicalAddress
+        case .disassociated(let channel, _): return channel.canonicalAddress
+        case .associatedAnonChannel(_, _): return nil
         }
-        return self.address
+    }
+
+    var channelID: String? {
+        switch (self) {
+        case .associated(let channel, let channelID): return channelID ?? channel.channelID
+        case .disassociated(let channel, let channelID): return channelID ?? channel.channelID
+        case .associatedAnonChannel(_, let channelID): return channelID
+        }
     }
 }
 
-internal extension ContactChannel {
+extension ContactChannel {
     var channelID: String? {
         switch (self) {
-        case .pending(_): return nil
-        case .registered(let registered): return registered.channelID
+        case .email(let email):
+            switch(email) {
+            case .pending(_): return nil
+            case .registered(let info): return info.channelID
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .pending(_): return nil
+            case .registered(let info): return info.channelID
+            }
         }
     }
 
     var canonicalAddress: String? {
         switch (self) {
-        case .pending(let pending): return pending.canonicalAddress
-        case .registered(_): return nil
-        }
-    }
-
-    var isPending: Bool {
-        switch (self) {
-        case .pending(_): return true
-        case .registered(_): return false
+        case .email(let email):
+            switch(email) {
+            case .pending(let info): return info.address
+            case .registered(_): return nil
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .pending(let info): return "(\(info.address):\(info.registrationOptions.senderID)"
+            case .registered(_): return nil
+            }
         }
     }
 }

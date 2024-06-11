@@ -13,6 +13,60 @@ class ContactChannelsProviderTest: XCTestCase {
     private var taskSleeper: TestSleeper!
     private var date: UATestDate = UATestDate(dateOverride: Date())
 
+    private let testChannels1: [ContactChannel] = [
+        .email(
+            .registered(
+                ContactChannel.Email.Registered(
+                    channelID: UUID().uuidString,
+                    maskedAddress: "****@email.com"
+                )
+            )
+        ),
+        .sms(
+            .registered(
+                ContactChannel.Sms.Registered(
+                    channelID: UUID().uuidString,
+                    maskedAddress: "****@email.com",
+                    isOptIn: true,
+                    senderID: "123"
+                )
+            )
+        )
+    ]
+
+
+    private let testChannels2: [ContactChannel] = [
+        .email(
+            .registered(
+                ContactChannel.Email.Registered(
+                    channelID: UUID().uuidString,
+                    maskedAddress: "****@email.com"
+                )
+            )
+        ),
+        .email(
+            .registered(
+                ContactChannel.Email.Registered(
+                    channelID: UUID().uuidString,
+                    maskedAddress: "****@email.com"
+                )
+            )
+        )
+    ]
+
+    private let testChannels3: [ContactChannel] = [
+        .sms(
+            .registered(
+                ContactChannel.Sms.Registered(
+                    channelID: UUID().uuidString,
+                    maskedAddress: "****@email.com",
+                    isOptIn: false,
+                    senderID: "123"
+                )
+            )
+        )
+    ]
+
     override func setUp() async throws {
         try await super.setUp()
 
@@ -165,120 +219,6 @@ class ContactChannelsProviderTest: XCTestCase {
     }
 }
 
-// MARK: Utilities
-
-extension ContactChannelsProviderTest {
-
-
-    static let registeredJSON = [
-    """
-    {
-        "registered": {
-            "_0": {
-                "channelID": "01234",
-                "deIdentifiedAddress": "u*****r@example.com",
-                "registrationInfo": {
-                    "email": {
-                        "_0": {
-                            "transactionalOptedIn": "2024-04-30T12:00:00Z",
-                            "transactionalOptedOut": "2024-04-30T12:00:00Z",
-                            "commercialOptedIn": "2024-04-30T12:00:00Z",
-                            "commercialOptedOut": "2024-04-30T12:00:00Z"
-                        }
-                    }
-                }
-            }
-        }
-    }
-    """.data(using: .utf8)!,
-    """
-    {
-        "registered": {
-            "_0": {
-                "channelID": "56789",
-                "deIdentifiedAddress": "u*****r@example.com",
-                "registrationInfo": {
-                    "email": {
-                        "_0": {
-                            "transactionalOptedIn": "2024-04-30T12:00:00Z",
-                            "transactionalOptedOut": "2024-04-30T12:00:00Z",
-                            "commercialOptedIn": "2024-04-30T12:00:00Z",
-                            "commercialOptedOut": "2024-04-30T12:00:00Z"
-                        }
-                    }
-                }
-            }
-        }
-    }
-    """.data(using: .utf8)!
-    ]
-
-    static let pendingJSON = [
-    """
-    {
-        "pending": {
-            "_0": {
-                "address": "5038675309",
-                "pendingRegistrationInfo": {
-                    "sms": {
-                        "_0": {
-                            "senderID": "12345"
-                        }
-                    }
-                },
-                "deIdentifiedAddress": "XXX-XXX-7890"
-            }
-        }
-    }
-    """.data(using: .utf8)!,
-    """
-    {
-        "pending": {
-            "_0": {
-                "address": "coolbeats@music.net",
-                "pendingRegistrationInfo": {
-                    "email": {
-                        "_0": {}
-                    }
-                },
-                "deIdentifiedAddress": "u*****r@example.com"
-            }
-        }
-    }
-    """.data(using: .utf8)!
-    ]
-
-    private var decodedRegistered: [ContactChannel] {
-        (try? decodeContactChannels(from: Self.registeredJSON)) ?? []
-    }
-
-    private var decodedPending: [ContactChannel] {
-        (try? decodeContactChannels(from: Self.pendingJSON)) ?? []
-    }
-
-    var testChannels1: [ContactChannel] {
-        [decodedPending[0], decodedPending[1], decodedRegistered[0]]
-    }
-
-    var testChannels2: [ContactChannel] {
-        [decodedRegistered[0], decodedRegistered[1]]
-    }
-
-    var testChannels3: [ContactChannel] {
-        [decodedRegistered[0], decodedRegistered[1]]
-    }
-
-
-    private func decodeContactChannels(from data: [Data]) throws -> [ContactChannel] {
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
-
-
-        return data.compactMap { datum in
-            return try! jsonDecoder.decode(ContactChannel.self, from: datum)
-        }
-    }
-}
 
 class TestContactChannelsAPIClient: ContactChannelsAPIClientProtocol, @unchecked Sendable {
     internal init(

@@ -222,7 +222,7 @@ class ContactAPIClientTest: XCTestCase {
             """
             .data(using: .utf8)
         let date = Date()
-        let response: AirshipHTTPResponse<AssociatedChannel> = try await contactAPIClient.registerEmail(
+        let response  = try await contactAPIClient.registerEmail(
             contactID: "some-contact-id",
             address: "ua@airship.com",
             options: EmailRegistrationOptions.options(
@@ -491,7 +491,14 @@ class ContactAPIClientTest: XCTestCase {
         let expectedChannelID: String = "some channel"
         let expectedContactID: String = "contact"
 
-        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, disassociateOptions: DisassociateOptions(channelID: expectedChannelID, optOut: true, channelType: expectedChannelType.stringValue))
+        let response = try await contactAPIClient.disassociateChannel(
+            contactID: expectedContactID,
+            disassociateOptions: DisassociateOptions(
+                channelID: expectedChannelID,
+                channelType: expectedChannelType,
+                optOut: true
+            )
+        )
         XCTAssertTrue(response.isSuccess)
 
         let request = self.session.lastRequest!
@@ -519,7 +526,13 @@ class ContactAPIClientTest: XCTestCase {
         let expectedEmailAddress: String = "some@email.com"
         let expectedContactID: String = "contact"
 
-        let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, disassociateOptions: DisassociateOptions(address: expectedEmailAddress, optOut: false))
+        let response = try await contactAPIClient.disassociateChannel(
+            contactID: expectedContactID,
+            disassociateOptions: DisassociateOptions(
+                emailAddress: expectedEmailAddress,
+                optOut: false
+            )
+        )
 
         XCTAssertTrue(response.isSuccess)
 
@@ -579,7 +592,7 @@ class ContactAPIClientTest: XCTestCase {
         let expectedChannelType: ChannelType = .email
         let expectedEmail: String = "test@email.com"
 
-        let expectedResendOptions = ResendOptions(address: expectedEmail)
+        let expectedResendOptions = ResendOptions(emailAddress: expectedEmail)
 
         let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
         XCTAssertTrue(response.isSuccess)

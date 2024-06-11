@@ -45,10 +45,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         true
     }
 
-    func fetchAssociatedChannelsList() async -> [AssociatedChannel]? {
-        return nil
-    }
-
     func notifyRemoteLogin() {
     }
 

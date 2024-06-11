@@ -461,12 +461,14 @@ actor ContactManager: ContactManagerProtocol {
         if response.isSuccess, let result = response.result {
             await self.contactUpdated(
                 contactID: contactID,
-                contactChannels: [
+                channelUpdates: [
                     .associated(
-                        .pending(
-                            ContactChannel.PendingRegistration(
-                                address: address,
-                                pendingRegistrationInfo: .email(.init())
+                        .email(
+                            .pending(
+                                ContactChannel.Email.Pending(
+                                    address: address,
+                                    registrationOptions: options
+                                )
                             )
                         ),
                         channelID: result.channelID
@@ -494,13 +496,13 @@ actor ContactManager: ContactManagerProtocol {
         if response.isSuccess, let result = response.result {
             await self.contactUpdated(
                 contactID: contactID,
-                contactChannels: [
+                channelUpdates: [
                     .associated(
-                        .pending(
-                            ContactChannel.PendingRegistration(
-                                address: msisdn,
-                                pendingRegistrationInfo: .sms(
-                                    .init(senderID: options.senderID)
+                        .sms(
+                            .pending(
+                                ContactChannel.Sms.Pending(
+                                    address: msisdn,
+                                    registrationOptions: options
                                 )
                             )
                         ),
@@ -513,13 +515,27 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     private func performRegisterOpenChannelOperation(address: String, options: OpenRegistrationOptions) async throws -> Bool {
-        /// TODO: Backend does not support open channels for ContactChannel yet
+        let contactID = try requireContactID()
+
         let response = try await self.apiClient.registerOpen(
-            contactID: try requireContactID(),
+            contactID: contactID,
             address: address,
             options: options,
             locale: self.localeManager.currentLocale
         )
+
+        if response.isSuccess, let result = response.result {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [
+                    /// TODO: Backend does not support open channels for ContactChannel yet
+                    .associatedAnonChannel(
+                        channelType: .open,
+                        channelID: result.channelID
+                    )
+                ]
+            )
+        }
 
         return response.isOperationComplete
     }
@@ -528,14 +544,21 @@ actor ContactManager: ContactManagerProtocol {
         channelID: String,
         type: ChannelType
     ) async throws -> Bool {
-        /// TODO - see if we can bridge this to ContactChannel
-
+        let contactID = try requireContactID()
         let response = try await self.apiClient.associateChannel(
-            contactID: try requireContactID(),
+            contactID: contactID,
             channelID: channelID,
             channelType: type
         )
 
+        if response.isSuccess {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [
+                    .associatedAnonChannel(channelType: type, channelID: channelID)
+                ]
+            )
+        }
         return response.isOperationComplete
     }
     
@@ -544,64 +567,72 @@ actor ContactManager: ContactManagerProtocol {
     ) async throws -> Bool {
         let contactID = try requireContactID()
 
-        var options:DisassociateOptions?
 
-        switch channel {
-        case .pending(let pending):
-            switch pending.pendingRegistrationInfo {
-            case .sms(let pendingInfo):
-                options = DisassociateOptions(msisdn: pending.address, senderID: pendingInfo.senderID, optOut: false)
-            case .email(_):
-                options = DisassociateOptions(address: pending.address, optOut: false)
-            }
-        case .registered(let registration):
-            switch registration.registrationInfo {
-            case .email(_):
-                options = DisassociateOptions(channelID: registration.channelID, optOut: true, channelType: ChannelType.email.stringValue)
-            case .sms(_):
-                options = DisassociateOptions(channelID: registration.channelID, optOut: true, channelType: ChannelType.sms.stringValue)
-            }
-        }
-
-        if let options = options {
-            let response = try await self.apiClient.disassociateChannel(
-                contactID: contactID, 
-                disassociateOptions: options
-            )
-
-            if response.isSuccess {
-                await self.contactUpdated(
-                    contactID: contactID,
-                    contactChannels: [.disassociated(channel)]
+        let options: DisassociateOptions = switch(channel) {
+        case .email(let email):
+            switch(email) {
+            case .registered(let info):
+                DisassociateOptions(
+                    channelID: info.channelID,
+                    channelType: .email,
+                    optOut: false
+                )
+            case .pending(let info):
+                DisassociateOptions(
+                    emailAddress: info.address,
+                    optOut: false
                 )
             }
-
-            return response.isOperationComplete
+        case .sms(let sms):
+            switch(sms) {
+            case .registered(let info):
+                DisassociateOptions(
+                    channelID: info.channelID,
+                    channelType: .sms,
+                    optOut: false
+                )
+            case .pending(let info):
+                DisassociateOptions(
+                    msisdn: info.address, 
+                    senderID: info.registrationOptions.senderID,
+                    optOut: false
+                )
+            }
         }
 
-        return false
+        let response = try await self.apiClient.disassociateChannel(
+            contactID: contactID,
+            disassociateOptions: options
+        )
+
+        if response.isSuccess, let result = response.result {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [.disassociated(channel, channelID: result.channelID)]
+            )
+        }
+
+        return response.isOperationComplete
     }
     
     private func performResend(
         channel: ContactChannel
     ) async throws -> Bool {
-        let resendOptions:ResendOptions?
-
-        switch channel {
-        case .registered(let registered):
-            resendOptions = ResendOptions(channelID: registered.channelID, channelType: channel.channelType)
-            break
-        case .pending(let pending):
-            if case .sms(let sms) = pending.pendingRegistrationInfo {
-                resendOptions = ResendOptions(msisdn: pending.address, senderID: sms.senderID)
-            } else {
-                resendOptions = ResendOptions(address: pending.address)
+        let resendOptions:ResendOptions = switch(channel) {
+        case .email(let email):
+            switch(email) {
+            case .registered(let info):
+                ResendOptions(channelID: info.channelID, channelType: .email)
+            case .pending(let info):
+                ResendOptions(emailAddress: info.address)
             }
-            break
-        }
-
-        guard let resendOptions = resendOptions else {
-            throw AirshipErrors.error("Unable to resend to a pending channel, no valid resend options available.")
+        case .sms(let sms):
+            switch(sms) {
+            case .registered(let info):
+                ResendOptions(channelID: info.channelID, channelType: channel.channelType)
+            case .pending(let info):
+                ResendOptions(msisdn: info.address, senderID: info.registrationOptions.senderID)
+            }
         }
 
         let response = try await self.apiClient.resend(
@@ -633,8 +664,7 @@ actor ContactManager: ContactManagerProtocol {
                 contactID: contactInfo.contactID,
                 tagGroupUpdates: tagGroupUpdates,
                 attributeUpdates: attributeUpdates,
-                subscriptionListsUpdates: subscriptionListsUpdates,
-                contactChannels: nil
+                subscriptionListsUpdates: subscriptionListsUpdates
             )
         }
 
@@ -694,11 +724,11 @@ actor ContactManager: ContactManagerProtocol {
             if case .registerSMS(let address, let options) = operation {
                 channels.append(
                     .associated(
-                        .pending(
-                            ContactChannel.PendingRegistration(
-                                address: address,
-                                pendingRegistrationInfo: .sms(
-                                    .init(senderID: options.senderID)
+                        .sms(
+                            .pending(
+                                ContactChannel.Sms.Pending(
+                                    address: address,
+                                    registrationOptions: options
                                 )
                             )
                         )
@@ -707,14 +737,14 @@ actor ContactManager: ContactManagerProtocol {
                 continue
             }
 
-            if case .registerEmail(let address, _) = operation {
+            if case .registerEmail(let address, let options) = operation {
                 channels.append(
                     .associated(
-                        .pending(
-                            ContactChannel.PendingRegistration(
-                                address: address,
-                                pendingRegistrationInfo: .email(
-                                    .init()
+                        .email(
+                            .pending(
+                                ContactChannel.Email.Pending(
+                                    address: address,
+                                    registrationOptions: options
                                 )
                             )
                         )
@@ -726,6 +756,16 @@ actor ContactManager: ContactManagerProtocol {
             if case .disassociateChannel(let channel) = operation {
                 channels.append(
                     .disassociated(channel)
+                )
+                continue
+            }
+
+            if case .associateChannel(let channelID, let channelType) = operation {
+                channels.append(
+                    .associatedAnonChannel(
+                        channelType: channelType,
+                        channelID: channelID
+                    )
                 )
                 continue
             }
@@ -937,7 +977,7 @@ actor ContactManager: ContactManagerProtocol {
                     ContactConflictEvent(
                         tags: anonData.tags,
                         attributes: anonData.attributes,
-                        channels: anonData.channels,
+                        associatedChannels: anonData.channels.map { .init(channelType: $0.channelType, channelID: $0.channelID) },
                         subscriptionLists: anonData.subscriptionLists,
                         conflictingNamedUserID: namedUserID
                     )
@@ -1010,22 +1050,21 @@ actor ContactManager: ContactManagerProtocol {
         tagGroupUpdates: [TagGroupUpdate]? = nil,
         attributeUpdates: [AttributeUpdate]? = nil,
         subscriptionListsUpdates: [ScopedSubscriptionListUpdate]? = nil,
-        channel: AssociatedChannel? = nil,
-        contactChannels: [ContactChannelUpdate]? = nil
+        channelUpdates: [ContactChannelUpdate]? = nil
     ) async {
 
         guard let contactInfo = self.lastContactInfo, contactInfo.contactID == contactID else {
             return
         }
 
-        if tagGroupUpdates?.isEmpty == false || attributeUpdates?.isEmpty == false || subscriptionListsUpdates?.isEmpty == false || contactChannels?.isEmpty == false {
+        if tagGroupUpdates?.isEmpty == false || attributeUpdates?.isEmpty == false || subscriptionListsUpdates?.isEmpty == false || channelUpdates?.isEmpty == false {
            await self.onAudienceUpdatedCallback?(
                 ContactAudienceUpdate(
                     contactID: contactID,
                     tags: tagGroupUpdates,
                     attributes: attributeUpdates,
                     subscriptionLists: subscriptionListsUpdates,
-                    contactChannels: contactChannels
+                    contactChannels: channelUpdates
                 )
             )
         }
@@ -1034,7 +1073,7 @@ actor ContactManager: ContactManagerProtocol {
             let data = self.anonData
             var tags = data?.tags ?? [:]
             var attributes = data?.attributes ?? [:]
-            var channels = data?.channels ?? []
+            var channels = Set(data?.channels ?? [])
             var subscriptionLists = data?.subscriptionLists ?? [:]
 
             tags = AudienceUtils.applyTagUpdates(
@@ -1052,14 +1091,26 @@ actor ContactManager: ContactManagerProtocol {
                 updates: subscriptionListsUpdates
             )
 
-            if let channel = channel {
-                channels.append(channel)
+            channelUpdates?.forEach { channelUpdate in
+                switch(channelUpdate) {
+                case .disassociated(let contactChannel, let channelID):
+                    if let channelID = channelID ?? contactChannel.channelID {
+                        channels.remove(.init(channelType: contactChannel.channelType, channelID: channelID))
+                    }
+                case .associated(let contactChannel, let channelID):
+                    if let channelID = channelID ?? contactChannel.channelID {
+                        channels.insert(.init(channelType: contactChannel.channelType, channelID: channelID))
+                    }
+                case .associatedAnonChannel(let channelType, let channelID):
+                    channels.insert(.init(channelType: channelType, channelID: channelID))
+                }
             }
+
 
             self.anonData = AnonContactData(
                 tags: tags,
                 attributes: attributes,
-                channels: channels,
+                channels: Array(channels),
                 subscriptionLists: subscriptionLists
             )
         }

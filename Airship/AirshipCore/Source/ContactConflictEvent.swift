@@ -39,9 +39,21 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
 
     /**
      * Associated channels.
+     * @deprecated
      */
     @objc
-    public let channels: [AssociatedChannel]
+    @available(*, deprecated, message: "Use associatedChannels instead")
+    public var channels: [AssociatedChannel] {
+        associatedChannels.map { info in
+            AssociatedChannel(channelType: info.channelType, channelID: info.channelID)
+        }
+    }
+
+    /**
+     * Associated channels.
+     */
+    @objc
+    public let associatedChannels: [ChannelInfo]
 
     /**
      * Default constructor.
@@ -55,13 +67,13 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
    init(
         tags: [String: [String]],
         attributes: [String: AirshipJSON],
-        channels: [AssociatedChannel],
+        associatedChannels: [ChannelInfo],
         subscriptionLists: [String: [ChannelScope]],
         conflictingNamedUserID: String?
     ) {
 
         self.tags = tags
-        self.channels = channels
+        self.associatedChannels = associatedChannels
         self.subscriptionLists = subscriptionLists
         self.conflictingNamedUserID = conflictingNamedUserID
         self.attributes = attributes.compactMapValues { $0.unWrap() }
@@ -76,7 +88,7 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
         self.attributes == other.attributes &&
         self.subscriptionLists == other.subscriptionLists &&
         self.conflictingNamedUserID == other.conflictingNamedUserID &&
-        self.channels == other.channels
+        self.associatedChannels == other.associatedChannels
     }
 
     public override var hash: Int {
@@ -85,9 +97,34 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
         result = 31 * result + attributes.hashValue
         result = 31 * result + subscriptionLists.hashValue
         result = 31 * result + conflictingNamedUserID.hashValue
-        result = 31 * result + channels.hashValue
+        result = 31 * result + associatedChannels.hashValue
         return result
+    }
 
+    @objc(UAContactConflictEventChannelInfo)
+    public final class ChannelInfo: NSObject, Codable, Sendable {
+
+        /**
+         * Channel type
+         */
+        @objc
+        public let channelType: ChannelType
+
+        /**
+         * channel ID
+         */
+        @objc
+        public let channelID: String
+
+
+        @objc
+        public init(channelType: ChannelType, channelID: String) {
+            self.channelType = channelType
+            self.channelID = channelID
+            super.init()
+        }
     }
 
 }
+
+
