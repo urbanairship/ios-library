@@ -13,6 +13,12 @@ struct RemoveChannelPromptView: View {
     var onCancel: ()->()
     var optOutAction: ()->()
 
+    /// The minimum alert width - as defined by Apple
+    private let promptMinWidth = 270.0
+
+    /// The maximum alert width
+    private let promptMaxWidth = 420.0
+
     private func dismiss() {
         onCancel()
     }
@@ -96,6 +102,6 @@ struct RemoveChannelPromptView: View {
     }
 
     var body: some View {
-        promptView.frame(minWidth: min(UIScreen.main.bounds.width - 32, 420), maxWidth: 420)
+        promptView.frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
     }
 }

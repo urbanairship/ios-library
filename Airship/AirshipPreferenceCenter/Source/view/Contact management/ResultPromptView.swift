@@ -16,6 +16,9 @@ public struct ResultPromptView: View {
     private var alertInternalPadding: CGFloat = 16
     private var alertExternalPadding: CGFloat = 16
 
+    /// The minimum alert width - as defined by Apple
+    private let promptMinWidth = 270.0
+
     /// The maximum alert width
     private let promptMaxWidth = 420.0
 
@@ -64,7 +67,7 @@ public struct ResultPromptView: View {
                 )
             )
             .padding(alertExternalPadding)
-            .frame(maxWidth: promptMaxWidth)
+            .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
         }
     }
 }

@@ -15,6 +15,9 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     @StateObject
     private var viewModel: AddChannelPromptViewModel
 
+    /// The minimum alert width - as defined by Apple
+    private let promptMinWidth = 270.0
+
     /// The maximum alert width
     private let promptMaxWidth = 420.0
 
@@ -57,7 +60,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
         foregroundContent.backgroundWithCloseAction {
             self.viewModel.onCancel()
         }
-        .frame(maxWidth:promptMaxWidth)
+        .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
     }
 
     // MARK: Prompt view
