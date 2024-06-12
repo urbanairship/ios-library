@@ -13,7 +13,6 @@ class DefaultLogHandler: AirshipLogHandler {
 
     func log(
         logLevel: AirshipLogLevel,
-        logPrivacyLevel: AirshipLogPrivacyLevel,
         message: String,
         fileID: String,
         line: UInt,
@@ -22,7 +21,7 @@ class DefaultLogHandler: AirshipLogHandler {
         let logMessage = "[\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
 
         if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-            switch logPrivacyLevel {
+            switch Airship.logPrivacyLevel {
             case .private:
                 DefaultLogHandler.logger.log(
                     level: logLevel.logType,

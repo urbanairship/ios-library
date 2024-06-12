@@ -10,7 +10,6 @@ import os
 public class AirshipLogger {
 
     static var logLevel: AirshipLogLevel = .error
-    static var logPrivacyLevel: AirshipLogPrivacyLevel = .private
 
     static var logHandler: AirshipLogHandler = DefaultLogHandler()
 
@@ -23,7 +22,6 @@ public class AirshipLogger {
 
         log(
             logLevel: AirshipLogLevel.verbose,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: message(),
             fileID: fileID,
             line: line,
@@ -40,7 +38,6 @@ public class AirshipLogger {
 
         log(
             logLevel: AirshipLogLevel.debug,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: message(),
             fileID: fileID,
             line: line,
@@ -56,7 +53,6 @@ public class AirshipLogger {
     ) {
         log(
             logLevel: AirshipLogLevel.info,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: message(),
             fileID: fileID,
             line: line,
@@ -72,7 +68,6 @@ public class AirshipLogger {
     ) {
         log(
             logLevel: AirshipLogLevel.info,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: message,
             fileID: fileID,
             line: line,
@@ -89,7 +84,6 @@ public class AirshipLogger {
     ) {
         log(
             logLevel: AirshipLogLevel.warn,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: message(),
             fileID: fileID,
             line: line,
@@ -103,10 +97,8 @@ public class AirshipLogger {
         line: UInt = #line,
         function: String = #function
     ) {
-
         log(
             logLevel: AirshipLogLevel.error,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: message(),
             fileID: fileID,
             line: line,
@@ -120,10 +112,8 @@ public class AirshipLogger {
         line: UInt = #line,
         function: String = #function
     ) {
-
         log(
             logLevel: AirshipLogLevel.error,
-            logPrivacyLevel: AirshipLogger.logPrivacyLevel,
             message: "🚨Airship Implementation Error🚨: \(message())",
             fileID: fileID,
             line: line,
@@ -133,7 +123,6 @@ public class AirshipLogger {
 
     static func log(
         logLevel: AirshipLogLevel,
-        logPrivacyLevel: AirshipLogPrivacyLevel,
         message: @autoclosure () -> String,
         fileID: String,
         line: UInt,
@@ -148,7 +137,6 @@ public class AirshipLogger {
         if skipLogLevelCheck || self.logLevel.rawValue >= logLevel.rawValue {
             logHandler.log(
                 logLevel: logLevel,
-                logPrivacyLevel: logPrivacyLevel,
                 message: message(),
                 fileID: fileID,
                 line: line,
