@@ -11,8 +11,12 @@ struct Media: View {
 
     let model: MediaModel
     let constraints: ViewConstraints
-
+    @State
+    private var mediaID: UUID = UUID()
     private let defaultAspectRatio = 16.0 / 9.0
+    @EnvironmentObject var pagerState: PagerState
+    @Environment(\.pageIndex) var pageIndex
+ 
 
     var body: some View {
         switch model.mediaType {
@@ -42,7 +46,12 @@ struct Media: View {
                 type: model.mediaType,
                 accessibilityLabel: model.contentDescription,
                 video: model.video
-            )
+            ) {
+                pagerState.setMediaReady(pageIndex: pageIndex, id: mediaID, isReady: true)
+            }
+            .onAppear {
+                pagerState.registerMedia(pageIndex: pageIndex, id: mediaID)
+            }
             .applyIf(self.constraints.width != nil || self.constraints.height != nil) {
                 $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: .fill)
             }

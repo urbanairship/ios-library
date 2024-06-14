@@ -15,8 +15,10 @@ struct MediaWebView: UIViewRepresentable {
     let type: MediaType
     let accessibilityLabel: String?
     let video: Video?
+    let onMediaReady: @MainActor () -> Void
     @Environment(\.isVisible) var isVisible
     @State private var isLoaded: Bool = false
+    @State private var isMediaReady: Bool = false
     @EnvironmentObject var pagerState: PagerState
 
     @MainActor
@@ -207,16 +209,18 @@ struct MediaWebView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(self, isLoaded: $isLoaded)
+        Coordinator(self, isLoaded: $isLoaded, onMediaReady: onMediaReady)
     }
         
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         var parent: MediaWebView
         var isLoaded: Binding<Bool>
+        var onMediaReady: @MainActor () -> Void
 
-        init(_ parent: MediaWebView, isLoaded: Binding<Bool>) {
+        init(_ parent: MediaWebView, isLoaded: Binding<Bool>, onMediaReady: @escaping @MainActor () -> Void) {
             self.parent = parent
             self.isLoaded = isLoaded
+            self.onMediaReady = onMediaReady
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -230,7 +234,7 @@ struct MediaWebView: UIViewRepresentable {
             }
             
             if (response == "mediaReady") {
-                parent.pagerState.isMediaReady = true
+                onMediaReady()
             }
         }
     }

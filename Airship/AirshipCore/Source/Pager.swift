@@ -98,6 +98,7 @@ struct Pager: View {
                                     \.isVisible,
                                      self.isVisible && i == index.wrappedValue
                                 )
+                                .environment(\.pageIndex, i)
                                 .accessibilityHidden(!(self.isVisible && i == index.wrappedValue))
                             }
                             .frame(
@@ -135,6 +136,7 @@ struct Pager: View {
 
         makePager(index: index)
             .onReceive(pagerState.$pageIndex) { value in
+
                 pagerState.pages = self.model.items.map {
                     PageState(
                         identifier: $0.identifier,
@@ -149,13 +151,6 @@ struct Pager: View {
             .onReceive(self.timer) { timer in
                 if let automatedActions = self.model.items[self.pagerState.pageIndex].automatedActions {
                     handlePagerProgress(automatedActions, index: index)
-                }
-            }
-            .onReceive(pagerState.$isMediaReady) { isMediaReady in
-                if (isMediaReady) {
-                    pagerState.resume()
-                } else {
-                    pagerState.pause()
                 }
             }
 #if !os(tvOS)
@@ -466,8 +461,8 @@ struct Pager: View {
         pageIndex: Int
     ) {
         
-        self.pagerState.resetProgress()
-        
+        self.pagerState.preparePageChange()
+
         guard pageIndex >= 0 else { return }
         guard pageIndex != index.wrappedValue || self.pagerState.pages.count == 1 else { return }
         guard pageIndex < self.pagerState.pages.count else { return }
