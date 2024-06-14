@@ -19,68 +19,49 @@ struct ViewHeightKey: PreferenceKey {
 }
 
 struct ButtonGroup: View {
-    @EnvironmentObject var environment: InAppMessageEnvironment
-    let layout:InAppMessageButtonLayoutType
-    let buttons:[InAppMessageButtonInfo]
-
     /// Prevent cycling onPreferenceChange to set rest of the buttons' minHeight to the largest button's height
     @State private var buttonMinHeight: CGFloat = 33
     @State private var lastButtonHeight: CGFloat?
+    @EnvironmentObject var environment: InAppMessageEnvironment
 
-    var stackedButtonSpacing: CGFloat {
-        switch environment.theme {
-        case .banner(let theme):
-            return theme.buttonTheme.stackedButtonSpacing
-        case .modal(let theme):
-            return theme.buttonTheme.stackedButtonSpacing
-        case .fullScreen(let theme):
-            return theme.buttonTheme.stackedButtonSpacing
-        case .html(_):
-            return 0 /// HTML views do not currently support stacked buttons
-        }
-    }
+    let layout: InAppMessageButtonLayoutType
+    let buttons: [InAppMessageButtonInfo]
+    let theme: InAppMessageTheme.Button
 
-    var separateButtonSpacing: CGFloat {
-        switch environment.theme {
-        case .banner(let theme):
-            return theme.buttonTheme.separatedButtonSpacing
-        case .modal(let theme):
-            return theme.buttonTheme.separatedButtonSpacing
-        case .fullScreen(let theme):
-            return theme.buttonTheme.separatedButtonSpacing
-        case .html(_):
-            return 0 /// HTML views do not currently support separate buttons
-        }
-    }
 
     private func makeButtonView(buttonInfo: InAppMessageButtonInfo, roundedEdge: RoundedEdge = .all) -> some View {
-        return ButtonView(buttonInfo: buttonInfo, roundedEdge: roundedEdge, relativeMinHeight: $buttonMinHeight)
-            .frame(minHeight:buttonMinHeight)
-            .environmentObject(environment)
-            .background(
-                GeometryReader {
-                    Color.airshipTappableClear.preference(
-                        key: ViewHeightKey.self,
-                        value: $0.frame(in: .global).size.height
-                    )
-                }.onPreferenceChange(ViewHeightKey.self) { value in
-                    DispatchQueue.main.async {
-                        let buttonHeight = round(value)
-                        /// Prevent cycling by storing the last button height
-                        if self.lastButtonHeight ?? 0 != buttonHeight {
-                            /// Minium button height is the height of the largest button in the group
-                            self.buttonMinHeight = max(buttonMinHeight, buttonHeight)
-                            self.lastButtonHeight = buttonHeight
-                        }
+        return ButtonView(
+            buttonInfo: buttonInfo,
+            roundedEdge: roundedEdge,
+            relativeMinHeight: $buttonMinHeight,
+            minHeight: theme.height
+        )
+        .frame(minHeight:buttonMinHeight)
+        .environmentObject(environment)
+        .background(
+            GeometryReader {
+                Color.airshipTappableClear.preference(
+                    key: ViewHeightKey.self,
+                    value: $0.frame(in: .global).size.height
+                )
+            }.onPreferenceChange(ViewHeightKey.self) { value in
+                DispatchQueue.main.async {
+                    let buttonHeight = round(value)
+                    /// Prevent cycling by storing the last button height
+                    if self.lastButtonHeight ?? 0 != buttonHeight {
+                        /// Minium button height is the height of the largest button in the group
+                        self.buttonMinHeight = max(buttonMinHeight, buttonHeight)
+                        self.lastButtonHeight = buttonHeight
                     }
                 }
-            )
+            }
+        )
     }
 
     var body: some View {
         switch layout {
         case .stacked:
-            VStack(spacing: stackedButtonSpacing) {
+            VStack(spacing: theme.stackedSpacing) {
                 ForEach(buttons, id: \.identifier)  { button in
                     makeButtonView(buttonInfo: button)
                 }
@@ -108,7 +89,7 @@ struct ButtonGroup: View {
                 }
             }.fixedSize(horizontal: false, vertical: true) /// Hug children in horizontal axis and veritcal axis
         case .separate:
-            HStack(spacing: separateButtonSpacing) {
+            HStack(spacing: theme.separatedSpacing) {
                 ForEach(buttons, id: \.identifier)  { button in
                     makeButtonView(buttonInfo: button)
                 }
@@ -119,56 +100,49 @@ struct ButtonGroup: View {
 
 struct ButtonView: View {
     @EnvironmentObject var environment: InAppMessageEnvironment
+    @ScaledMetric var scaledPadding: CGFloat = 12
+    @State private var isPressed = false
+    private let pressedOpacity: Double = 0.7
 
     let buttonInfo: InAppMessageButtonInfo
     let roundedEdge: RoundedEdge
-
-    @ScaledMetric var scaledPadding: CGFloat = 12
-
-    @State private var isPressed = false
-    private let pressedOpacity: Double = 0.7
+    let minHeight: CGFloat
 
     /// Min height of the button that can be dynamically set to size to the largest button in the group
     /// This is so buttons normalize in height to match the button with the largest font size
     @Binding private var relativeMinHeight:CGFloat
 
-    internal init(buttonInfo: InAppMessageButtonInfo,
-                  roundedEdge:RoundedEdge = .all,
-                  relativeMinHeight: Binding<CGFloat>? = nil) {
+    internal init(
+        buttonInfo: InAppMessageButtonInfo,
+        roundedEdge:RoundedEdge = .all,
+        relativeMinHeight: Binding<CGFloat>? = nil,
+        minHeight: CGFloat = 33
+    ) {
         self.buttonInfo = buttonInfo
         self.roundedEdge = roundedEdge
-
         _relativeMinHeight = relativeMinHeight ?? Binding.constant(CGFloat(0))
+        self.minHeight = minHeight
     }
 
-    private var buttonHeight: CGFloat {
-        switch environment.theme {
-        case .banner(let theme):
-            return theme.buttonTheme.buttonHeight
-        case .fullScreen(let theme):
-            return theme.buttonTheme.buttonHeight
-        case .html(_):
-            return 0 /// HTML views do not currently support button views
-        case .modal(let theme):
-            return theme.buttonTheme.buttonHeight
-        }
-    }
 
     @ViewBuilder
     var buttonLabel: some View {
-        TextView(textInfo: buttonInfo.label,
-                 textTheme: TextTheme(letterSpacing: 0,
-                                      lineSpacing: 0,
-                                      additionalPadding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)))
+        TextView(
+            textInfo: buttonInfo.label,
+            textTheme: InAppMessageTheme.Text(
+               letterSpacing: 0,
+               lineSpacing: 0,
+               padding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+            )
+        )
         .opacity(isPressed ? pressedOpacity : 1.0)
-
     }
 
     var body: some View {
         Button(action:onTap) {
             buttonLabel
                 .padding(scaledPadding)
-                .frame(maxWidth: .infinity, minHeight: max(relativeMinHeight, buttonHeight))
+                .frame(maxWidth: .infinity, minHeight: max(relativeMinHeight, minHeight))
                 .background(buttonInfo.backgroundColor?.color)
                 .roundEdge(radius: buttonInfo.borderRadius ?? 0,
                            edge: roundedEdge,

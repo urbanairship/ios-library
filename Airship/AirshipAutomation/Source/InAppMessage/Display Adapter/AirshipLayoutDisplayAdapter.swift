@@ -14,6 +14,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private let actionRunner: InternalInAppActionRunner?
     private let networkChecker: AirshipNetworkCheckerProtocol
 
+    @MainActor
+    var themeManager: InAppAutomationThemeManager {
+        return InAppAutomation.shared.inAppMessaging.themeManager
+    }
+
+
     init(
         message: InAppMessage,
         assets: AirshipCachedAssetsProtocol,
@@ -170,9 +176,10 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 continuation.resume(returning: result)
             }
 
+            let theme = self.themeManager.makeBannerTheme(message: self.message)
+
             let environment = InAppMessageEnvironment(
                 delegate: listener,
-                theme: Theme.banner(BannerTheme()),
                 extensions: makeInAppExtensions()
             )
 
@@ -184,6 +191,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 environment: environment,
                 displayContent: banner,
                 bannerConstraints: bannerConstraints,
+                theme: theme,
                 onDismiss: dismissViewController
             )
 
@@ -204,6 +212,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         }
     }
 
+
     @MainActor
     private func displayModal(
         _ modal: InAppMessageDisplayContent.Modal,
@@ -220,14 +229,15 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 continuation.resume(returning: result)
             }
 
+            let theme = self.themeManager.makeModalTheme(message: self.message)
+
             let environment = InAppMessageEnvironment(
                 delegate: listener,
-                theme: Theme.modal(ModalTheme()),
                 extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
-                InAppMessageModalView(displayContent: modal)
+                InAppMessageModalView(displayContent: modal, theme: theme)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)
@@ -254,14 +264,15 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 continuation.resume(returning: result)
             }
 
+            let theme = self.themeManager.makeFullscreenTheme(message: self.message)
+
             let environment = InAppMessageEnvironment(
                 delegate: listener,
-                theme: Theme.fullScreen(FullScreenTheme()),
                 extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
-                FullScreenView(displayContent: fullscreen)
+                FullscreenView(displayContent: fullscreen, theme: theme)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)
@@ -288,14 +299,15 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 continuation.resume(returning: result)
             }
 
+            let theme = self.themeManager.makeHTMLTheme(message: self.message)
+
             let environment = InAppMessageEnvironment(
                 delegate: listener,
-                theme: Theme.html(HTMLTheme()),
                 extensions: makeInAppExtensions()
             )
 
             let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
-                HTMLView(displayContent: html)
+                HTMLView(displayContent: html, theme: theme)
             }
 
             let viewController = InAppMessageHostingController(rootView: rootView)

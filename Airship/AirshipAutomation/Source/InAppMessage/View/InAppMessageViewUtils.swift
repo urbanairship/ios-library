@@ -195,8 +195,8 @@ struct CenteredGeometryReader<Content: View>: View {
 
 /// Attempt to resize to specified size and clamp any size axis that exceeds parent size axis to said axis.
 struct AspectResize: ViewModifier {
-    var width:Double?
-    var height:Double?
+    var width: Double?
+    var height: Double?
 
     func body(content: Content) -> some View {
         CenteredGeometryReader { size in

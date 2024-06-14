@@ -9,7 +9,7 @@ import AirshipCore
 
 struct MediaView: View {
     var mediaInfo: InAppMessageMediaInfo
-    var mediaTheme: MediaTheme
+    var mediaTheme: InAppMessageTheme.Media
     var imageLoader: AirshipImageLoader? /// Ideally this would be an associated value on the media info enum
 
     var body: some View {
@@ -36,13 +36,13 @@ struct MediaView: View {
                     ProgressView()
                 }
             )
-            .padding(mediaTheme.additionalPadding)
+            .padding(mediaTheme.padding)
         }
     }
 
     private var webView: some View {
         InAppMessageMediaWebView(mediaInfo: mediaInfo)
-            .padding(mediaTheme.additionalPadding)
+            .padding(mediaTheme.padding)
     }
 }
 

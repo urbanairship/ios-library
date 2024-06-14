@@ -185,6 +185,9 @@ final class CancelSchedulesActionTest: XCTestCase {
 }
 
 final class TestInAppMessaging: InAppMessagingProtocol, @unchecked Sendable {
+    @MainActor
+    var themeManager: InAppAutomationThemeManager = InAppAutomationThemeManager()
+
     var displayInterval: TimeInterval = 0.0
     
     var displayDelegate: InAppMessageDisplayDelegate?

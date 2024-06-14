@@ -7,34 +7,16 @@ import Combine
 import AirshipCore
 #endif
 
-struct FullScreenView: View, Sendable {
+struct FullscreenView: View, Sendable {
     @EnvironmentObject var environment: InAppMessageEnvironment
     let displayContent: InAppMessageDisplayContent.Fullscreen
+    let theme: InAppMessageTheme.Fullscreen
 
-    private var padding: EdgeInsets {
-        environment.theme.fullScreenTheme.additionalPadding
-    }
-
-    private var headerTheme: TextTheme {
-        environment.theme.fullScreenTheme.headerTheme
-    }
-
-    private var bodyTheme: TextTheme {
-        environment.theme.fullScreenTheme.bodyTheme
-    }
-
-    private var mediaTheme: MediaTheme {
-        environment.theme.fullScreenTheme.mediaTheme
-    }
-
-    private var dismissIconResource: String {
-        environment.theme.fullScreenTheme.dismissIconResource
-    }
 
     @ViewBuilder
     private var headerView: some View {
         if let heading = displayContent.heading {
-            TextView(textInfo: heading, textTheme:headerTheme)
+            TextView(textInfo: heading, textTheme: self.theme.header)
                 .applyAlignment(placement: displayContent.heading?.alignment ?? .left)
         }
     }
@@ -42,7 +24,7 @@ struct FullScreenView: View, Sendable {
     @ViewBuilder
     private var bodyView: some View {
         if let body = displayContent.body {
-            TextView(textInfo: body, textTheme:bodyTheme)
+            TextView(textInfo: body, textTheme: self.theme.body)
                 .applyAlignment(placement: displayContent.body?.alignment ?? .left)
         }
     }
@@ -50,17 +32,18 @@ struct FullScreenView: View, Sendable {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
-                .padding(.horizontal, -mediaTheme.additionalPadding.leading)
+            MediaView(mediaInfo: media, mediaTheme: self.theme.media, imageLoader: environment.imageLoader)
         }
     }
 
     @ViewBuilder
     private var buttonsView: some View {
         if let buttons = displayContent.buttons, !buttons.isEmpty {
-            ButtonGroup(layout: displayContent.buttonLayoutType ?? .stacked,
-                        buttons: buttons)
-            .environmentObject(environment)
+            ButtonGroup(
+                layout: displayContent.buttonLayoutType ?? .stacked,
+                buttons: buttons,
+                theme: theme.buttons
+            )
         }
     }
 
@@ -68,8 +51,6 @@ struct FullScreenView: View, Sendable {
     private var footerButton: some View {
         if let footer = displayContent.footer {
             ButtonView(buttonInfo: footer)
-                .frame(height:Theme.defaultFooterHeight)
-                .environmentObject(environment)
         }
     }
 
@@ -86,19 +67,19 @@ struct FullScreenView: View, Sendable {
                         bodyView
                         mediaView
                     case .mediaHeaderBody, .none:
-                        mediaView.padding(.top, -padding.top) /// Remove top padding when media is on top
+                        mediaView.padding(.top, -theme.padding.top) /// Remove top padding when media is on top
                         headerView
                         bodyView
                     }
                     buttonsView
                     footerButton
                 }
-                .padding(padding)
+                .padding(theme.padding)
                 .background(Color.airshipTappableClear)
             }
             .addCloseButton(
                 dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
-                dismissIconResource: dismissIconResource,
+                dismissIconResource: theme.dismissIconResource,
                 onUserDismissed: {
                     environment.onUserDismissed()
                 }
@@ -118,5 +99,5 @@ struct FullScreenView: View, Sendable {
 
     let displayContent = InAppMessageDisplayContent.Fullscreen(heading: headingText, body:bodyText, buttons: [], template: .headerMediaBody)
 
-    return FullScreenView(displayContent: displayContent)
+    return FullscreenView(displayContent: displayContent, theme: InAppMessageTheme.Fullscreen.defaultTheme)
 }

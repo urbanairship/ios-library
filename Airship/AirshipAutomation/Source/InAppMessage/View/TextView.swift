@@ -4,7 +4,7 @@ import SwiftUI
 
 struct TextView: View {
     let textInfo: InAppMessageTextInfo
-    let textTheme: TextTheme
+    let textTheme: InAppMessageTheme.Text
 
     var body: some View {
         Text(textInfo.text)

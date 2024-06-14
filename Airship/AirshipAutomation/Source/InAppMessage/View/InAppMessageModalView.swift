@@ -8,46 +8,23 @@ import AirshipCore
 
 struct InAppMessageModalView: View {
     @EnvironmentObject var environment: InAppMessageEnvironment
-    let displayContent: InAppMessageDisplayContent.Modal
-
     @Environment(\.orientation) var orientation
+
+#if !os(tvOS) && !os(watchOS)
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+    
+    let displayContent: InAppMessageDisplayContent.Modal
+    let theme: InAppMessageTheme.Modal
 
     @State
     private var scrollViewContentSize: CGSize = .zero
 
-
-    private var padding: EdgeInsets {
-        environment.theme.modalTheme.additionalPadding
-    }
-
-    private var headerTheme: TextTheme {
-        environment.theme.modalTheme.headerTheme
-    }
-
-    private var bodyTheme: TextTheme {
-        environment.theme.modalTheme.bodyTheme
-    }
-
-    private var mediaTheme: MediaTheme {
-        environment.theme.modalTheme.mediaTheme
-    }
-
-    private var dismissIconResource: String {
-        environment.theme.modalTheme.dismissIconResource
-    }
-
-    private var maxHeight: CGFloat {
-        CGFloat(environment.theme.modalTheme.maxHeight)
-    }
-
-    private var maxWidth: CGFloat {
-        CGFloat(environment.theme.modalTheme.maxWidth)
-    }
-
     @ViewBuilder
     private var headerView: some View {
         if let heading = displayContent.heading {
-            TextView(textInfo: heading, textTheme:headerTheme)
+            TextView(textInfo: heading, textTheme: theme.header)
                 .applyAlignment(placement: displayContent.heading?.alignment ?? .left)
         }
     }
@@ -55,7 +32,7 @@ struct InAppMessageModalView: View {
     @ViewBuilder
     private var bodyView: some View {
         if let body = displayContent.body {
-            TextView(textInfo: body, textTheme:bodyTheme)
+            TextView(textInfo: body, textTheme: theme.body)
                 .applyAlignment(placement: displayContent.body?.alignment ?? .left)
         }
     }
@@ -63,18 +40,18 @@ struct InAppMessageModalView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
-                .applyMediaTheme(mediaTheme)
-                .padding(.horizontal, -mediaTheme.additionalPadding.leading).padding(mediaTheme.additionalPadding)
+            MediaView(mediaInfo: media, mediaTheme: theme.media, imageLoader: environment.imageLoader)
         }
     }
 
     @ViewBuilder
     private var buttonsView: some View {
         if let buttons = displayContent.buttons, !buttons.isEmpty {
-            ButtonGroup(layout: displayContent.buttonLayoutType ?? .stacked,
-                        buttons: buttons)
-            .environmentObject(environment)
+            ButtonGroup(
+                layout: displayContent.buttonLayoutType ?? .stacked,
+                buttons: buttons,
+                theme: theme.buttons
+            )
         }
     }
 
@@ -82,8 +59,6 @@ struct InAppMessageModalView: View {
     private var footerButton: some View {
         if let footer = displayContent.footer {
             ButtonView(buttonInfo: footer)
-                .frame(height:Theme.defaultFooterHeight)
-                .environmentObject(environment)
         }
     }
 
@@ -94,13 +69,14 @@ struct InAppMessageModalView: View {
         .autoconnect()
     #endif
 
-    init(displayContent: InAppMessageDisplayContent.Modal) {
+    init(displayContent: InAppMessageDisplayContent.Modal, theme: InAppMessageTheme.Modal) {
         self.displayContent = displayContent
+        self.theme = theme
     }
 
     @ViewBuilder
     private var content: some View {
-        VStack(spacing:0) {
+        VStack(spacing:24) {
             ScrollView {
                 VStack(spacing:24) {
                     switch displayContent.template {
@@ -113,18 +89,20 @@ struct InAppMessageModalView: View {
                         bodyView
                         mediaView
                     case .mediaHeaderBody, .none:
-                        mediaView.padding(.top, -padding.top) /// Remove top padding when media is on top
+                        mediaView.padding(.top, -theme.padding.top) /// Remove top padding when media is on top
                         headerView
                         bodyView
                     }
                 }
-                .padding(padding)
+                .padding(.leading, theme.padding.leading)
+                .padding(.trailing, theme.padding.trailing)
+                .padding(.top, theme.padding.top)
                 .background(
                     GeometryReader { geo -> Color in
                         DispatchQueue.main.async {
                             if scrollViewContentSize != geo.size {
                                 if case .mediaHeaderBody = displayContent.template {
-                                    scrollViewContentSize = CGSize(width: geo.size.width, height: geo.size.height - padding.top)
+                                    scrollViewContentSize = CGSize(width: geo.size.width, height: geo.size.height - theme.padding.top)
                                 } else {
                                     scrollViewContentSize = geo.size
                                 }
@@ -134,13 +112,16 @@ struct InAppMessageModalView: View {
                     }
                 )
             }
-            .frame(maxHeight: scrollViewContentSize.height)
-
+            .applyIf(isModal) {
+                $0.frame(maxHeight: scrollViewContentSize.height)
+            }
             VStack(spacing:24) {
                 buttonsView
                 footerButton
             }
-            .padding(padding)
+            .padding(.leading, theme.padding.leading)
+            .padding(.trailing, theme.padding.trailing)
+            .padding(.bottom, theme.padding.bottom)
         }
     }
 
@@ -148,17 +129,36 @@ struct InAppMessageModalView: View {
         content
         .addCloseButton(
             dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
-            dismissIconResource: dismissIconResource,
+            dismissIconResource: theme.dismissIconResource,
             circleColor: .airshipTappableClear, /// Probably should just do this everywhere and remove circleColor entirely
             onUserDismissed: { environment.onUserDismissed() }
         )
         .background(displayContent.backgroundColor?.color ?? Color.black)
-        .cornerRadius(displayContent.borderRadius ?? 0)
-        .parentClampingResize(maxWidth: maxWidth, maxHeight: maxHeight)
-        .padding(padding)
-        .addBackground(color: .airshipShadowColor)
+        .applyIf(isModal) {
+            $0.cornerRadius(displayContent.borderRadius ?? 0)
+            .parentClampingResize(maxWidth: theme.maxWidth, maxHeight: theme.maxHeight)
+            .padding(theme.padding)
+            .addBackground(color: .airshipShadowColor)
+        }
+        .applyIf(!isModal) {
+            $0.frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
         .onAppear {
             self.environment.onAppear()
         }
+    }
+
+    var isModal: Bool {
+        guard displayContent.allowFullscreenDisplay == true else {
+            return true
+        }
+
+        #if os(tvOS)
+        return true
+        #elseif os(watchOS)
+        return false
+        #else
+        return verticalSizeClass == .regular && horizontalSizeClass == .regular
+        #endif
     }
 }

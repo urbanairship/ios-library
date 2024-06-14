@@ -619,6 +619,8 @@
 		6E524CC32C180A39002CA094 /* AirshipLogPrivacyLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524CC22C180A39002CA094 /* AirshipLogPrivacyLevel.swift */; };
 		6E524CC42C180A39002CA094 /* AirshipLogPrivacyLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524CC22C180A39002CA094 /* AirshipLogPrivacyLevel.swift */; };
 		6E524CC52C180A39002CA094 /* AirshipLogPrivacyLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524CC22C180A39002CA094 /* AirshipLogPrivacyLevel.swift */; };
+		6E524D022C1A2CAE002CA094 /* InAppMessageThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524D012C1A2CAE002CA094 /* InAppMessageThemeManager.swift */; };
+		6E524D042C1A454E002CA094 /* InAppMessageThemeShadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524D032C1A454E002CA094 /* InAppMessageThemeShadow.swift */; };
 		6E57CE3228DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
 		6E57CE3328DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
 		6E57CE3428DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */; };
@@ -1294,7 +1296,6 @@
 		9919EE442B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
 		9919EE452B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
 		99303B062BD97F89002174CA /* ChannelListViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99303B052BD97F89002174CA /* ChannelListViewCell.swift */; };
-		993969B92BD8353F0011D73A /* ShadowTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993969B82BD8353F0011D73A /* ShadowTheme.swift */; };
 		99560C1E2BAE2FFA00F28BDC /* ChannelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C1D2BAE2FFA00F28BDC /* ChannelTextField.swift */; };
 		99560C222BAE3D5D00F28BDC /* LabeledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C212BAE3D5D00F28BDC /* LabeledButton.swift */; };
 		99560C282BB3843600F28BDC /* PreferenceCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C272BB3843600F28BDC /* PreferenceCenterUtils.swift */; };
@@ -1317,27 +1318,27 @@
 		99CF46182B3217C300B6FD9B /* AirshipCachedAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF46172B3217C300B6FD9B /* AirshipCachedAssets.swift */; };
 		99CF461A2B3217DE00B6FD9B /* AssetCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99CF46192B3217DE00B6FD9B /* AssetCacheManager.swift */; };
 		99D1B3282B44F08900447840 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
-		99E0BD0D2B4DD4AB00465B37 /* FullScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */; };
+		99E0BD0D2B4DD4AB00465B37 /* FullscreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0C2B4DD4AB00465B37 /* FullscreenView.swift */; };
 		99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */; };
 		99E6EF6A2B8E36BA0006326A /* InAppMessageValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */; };
 		99E6EF6D2B8E3C250006326A /* InAppMessageContentValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */; };
 		99E6F0702B97EA8F0006326A /* ValidTestMessageCenterTheme.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */; };
 		99E8D7972B4F17260099B6F3 /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7962B4F17260099B6F3 /* CloseButton.swift */; };
 		99E8D7992B4F19BA0099B6F3 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7982B4F19BA0099B6F3 /* TextView.swift */; };
-		99E8D79B2B4F2FCE0099B6F3 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */; };
+		99E8D79B2B4F2FCE0099B6F3 /* InAppMessageTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D79A2B4F2FCE0099B6F3 /* InAppMessageTheme.swift */; };
 		99E8D7BB2B50A7C20099B6F3 /* InAppMessageViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7BA2B50A7C20099B6F3 /* InAppMessageViewDelegate.swift */; };
 		99E8D7BD2B50AA060099B6F3 /* InAppMessageEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7BC2B50AA060099B6F3 /* InAppMessageEnvironment.swift */; };
 		99E8D7BF2B50C2C10099B6F3 /* ButtonGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7BE2B50C2C10099B6F3 /* ButtonGroup.swift */; };
 		99E8D7C12B50E5F40099B6F3 /* InAppMessageRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7C02B50E5F40099B6F3 /* InAppMessageRootView.swift */; };
 		99E8D7C52B5192D40099B6F3 /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7C42B5192D40099B6F3 /* MediaView.swift */; };
-		99E8D7C92B54A5CB0099B6F3 /* ModalTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7C82B54A5CB0099B6F3 /* ModalTheme.swift */; };
-		99E8D7CB2B54A6340099B6F3 /* FullScreenTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7CA2B54A6340099B6F3 /* FullScreenTheme.swift */; };
-		99E8D7CE2B54A66E0099B6F3 /* BannerTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7CD2B54A66E0099B6F3 /* BannerTheme.swift */; };
-		99E8D7D02B54A68F0099B6F3 /* HTMLTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7CF2B54A68F0099B6F3 /* HTMLTheme.swift */; };
-		99E8D7D52B55B0300099B6F3 /* EdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D42B55B0300099B6F3 /* EdgeInsets.swift */; };
-		99E8D7D82B55B0440099B6F3 /* ButtonTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D72B55B0440099B6F3 /* ButtonTheme.swift */; };
-		99E8D7DA2B55B05D0099B6F3 /* TextTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D92B55B05D0099B6F3 /* TextTheme.swift */; };
-		99E8D7DC2B55C4C20099B6F3 /* MediaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DB2B55C4C20099B6F3 /* MediaTheme.swift */; };
+		99E8D7C92B54A5CB0099B6F3 /* InAppMessageThemeModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7C82B54A5CB0099B6F3 /* InAppMessageThemeModal.swift */; };
+		99E8D7CB2B54A6340099B6F3 /* InAppMessageThemeFullscreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7CA2B54A6340099B6F3 /* InAppMessageThemeFullscreen.swift */; };
+		99E8D7CE2B54A66E0099B6F3 /* InAppMessageThemeBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7CD2B54A66E0099B6F3 /* InAppMessageThemeBanner.swift */; };
+		99E8D7D02B54A68F0099B6F3 /* InAppMessageThemeHTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7CF2B54A68F0099B6F3 /* InAppMessageThemeHTML.swift */; };
+		99E8D7D52B55B0300099B6F3 /* InAppMessageThemeAdditionalPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D42B55B0300099B6F3 /* InAppMessageThemeAdditionalPadding.swift */; };
+		99E8D7D82B55B0440099B6F3 /* InAppMessageThemeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D72B55B0440099B6F3 /* InAppMessageThemeButton.swift */; };
+		99E8D7DA2B55B05D0099B6F3 /* InAppMessageThemeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D92B55B05D0099B6F3 /* InAppMessageThemeText.swift */; };
+		99E8D7DC2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DB2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift */; };
 		99E8D7DE2B55C73B0099B6F3 /* ThemeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */; };
 		99F4FE5B2BC36A6700754F0F /* PreferenceCenterViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F4FE5A2BC36A6700754F0F /* PreferenceCenterViewStyle.swift */; };
 		99F662B02B5DDC2900696098 /* BeveledLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */; };
@@ -2356,6 +2357,8 @@
 		6E4E5B3A26E7F91600198175 /* Attributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attributes.swift; sourceTree = "<group>"; };
 		6E524C722C126F5F002CA094 /* AirshipEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEventType.swift; sourceTree = "<group>"; };
 		6E524CC22C180A39002CA094 /* AirshipLogPrivacyLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLogPrivacyLevel.swift; sourceTree = "<group>"; };
+		6E524D012C1A2CAE002CA094 /* InAppMessageThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeManager.swift; sourceTree = "<group>"; };
+		6E524D032C1A454E002CA094 /* InAppMessageThemeShadow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeShadow.swift; sourceTree = "<group>"; };
 		6E57CE3128DB8BDA00287601 /* LiveActivityUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityUpdate.swift; sourceTree = "<group>"; };
 		6E57CE3628DBBD9A00287601 /* LiveActivityRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistry.swift; sourceTree = "<group>"; };
 		6E590E6D29A94CA90036DFAB /* AppStateTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTrackerTest.swift; sourceTree = "<group>"; };
@@ -2762,7 +2765,6 @@
 		990EB3B02BF59A1500315EAC /* ContactChannelsProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactChannelsProvider.swift; sourceTree = "<group>"; };
 		99104DF22BA6689A0040C0FD /* PreferenceCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCloseButton.swift; sourceTree = "<group>"; };
 		99303B052BD97F89002174CA /* ChannelListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewCell.swift; sourceTree = "<group>"; };
-		993969B82BD8353F0011D73A /* ShadowTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowTheme.swift; sourceTree = "<group>"; };
 		99560C1D2BAE2FFA00F28BDC /* ChannelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTextField.swift; sourceTree = "<group>"; };
 		99560C212BAE3D5D00F28BDC /* LabeledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledButton.swift; sourceTree = "<group>"; };
 		99560C272BB3843600F28BDC /* PreferenceCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterUtils.swift; sourceTree = "<group>"; };
@@ -2783,28 +2785,28 @@
 		99CF46172B3217C300B6FD9B /* AirshipCachedAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCachedAssets.swift; sourceTree = "<group>"; };
 		99CF46192B3217DE00B6FD9B /* AssetCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCacheManager.swift; sourceTree = "<group>"; };
 		99D1B3272B44F08900447840 /* AirshipSceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneManager.swift; sourceTree = "<group>"; };
-		99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenView.swift; sourceTree = "<group>"; };
+		99E0BD0C2B4DD4AB00465B37 /* FullscreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenView.swift; sourceTree = "<group>"; };
 		99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageHostingController.swift; sourceTree = "<group>"; };
 		99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageValidation.swift; sourceTree = "<group>"; };
 		99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageContentValidationTest.swift; sourceTree = "<group>"; };
 		99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ValidTestMessageCenterTheme.plist; sourceTree = "<group>"; };
 		99E8D7962B4F17260099B6F3 /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
 		99E8D7982B4F19BA0099B6F3 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
-		99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		99E8D79A2B4F2FCE0099B6F3 /* InAppMessageTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageTheme.swift; sourceTree = "<group>"; };
 		99E8D79C2B4F9E830099B6F3 /* InAppMessageThemeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeTest.swift; sourceTree = "<group>"; };
 		99E8D7BA2B50A7C20099B6F3 /* InAppMessageViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageViewDelegate.swift; sourceTree = "<group>"; };
 		99E8D7BC2B50AA060099B6F3 /* InAppMessageEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageEnvironment.swift; sourceTree = "<group>"; };
 		99E8D7BE2B50C2C10099B6F3 /* ButtonGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonGroup.swift; sourceTree = "<group>"; };
 		99E8D7C02B50E5F40099B6F3 /* InAppMessageRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageRootView.swift; sourceTree = "<group>"; };
 		99E8D7C42B5192D40099B6F3 /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
-		99E8D7C82B54A5CB0099B6F3 /* ModalTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTheme.swift; sourceTree = "<group>"; };
-		99E8D7CA2B54A6340099B6F3 /* FullScreenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenTheme.swift; sourceTree = "<group>"; };
-		99E8D7CD2B54A66E0099B6F3 /* BannerTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerTheme.swift; sourceTree = "<group>"; };
-		99E8D7CF2B54A68F0099B6F3 /* HTMLTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTheme.swift; sourceTree = "<group>"; };
-		99E8D7D42B55B0300099B6F3 /* EdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsets.swift; sourceTree = "<group>"; };
-		99E8D7D72B55B0440099B6F3 /* ButtonTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTheme.swift; sourceTree = "<group>"; };
-		99E8D7D92B55B05D0099B6F3 /* TextTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextTheme.swift; sourceTree = "<group>"; };
-		99E8D7DB2B55C4C20099B6F3 /* MediaTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTheme.swift; sourceTree = "<group>"; };
+		99E8D7C82B54A5CB0099B6F3 /* InAppMessageThemeModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeModal.swift; sourceTree = "<group>"; };
+		99E8D7CA2B54A6340099B6F3 /* InAppMessageThemeFullscreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeFullscreen.swift; sourceTree = "<group>"; };
+		99E8D7CD2B54A66E0099B6F3 /* InAppMessageThemeBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeBanner.swift; sourceTree = "<group>"; };
+		99E8D7CF2B54A68F0099B6F3 /* InAppMessageThemeHTML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeHTML.swift; sourceTree = "<group>"; };
+		99E8D7D42B55B0300099B6F3 /* InAppMessageThemeAdditionalPadding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeAdditionalPadding.swift; sourceTree = "<group>"; };
+		99E8D7D72B55B0440099B6F3 /* InAppMessageThemeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeButton.swift; sourceTree = "<group>"; };
+		99E8D7D92B55B05D0099B6F3 /* InAppMessageThemeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeText.swift; sourceTree = "<group>"; };
+		99E8D7DB2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeMedia.swift; sourceTree = "<group>"; };
 		99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeExtensions.swift; sourceTree = "<group>"; };
 		99F4FE5A2BC36A6700754F0F /* PreferenceCenterViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewStyle.swift; sourceTree = "<group>"; };
 		99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeveledLoadingView.swift; sourceTree = "<group>"; };
@@ -3736,9 +3738,9 @@
 		6E2E3CA02B3271BC00B8515B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				99E0BD0C2B4DD4AB00465B37 /* FullScreenView.swift */,
-				999DC85D2B5B721D0048C6AF /* HTMLView.swift */,
+				99E0BD0C2B4DD4AB00465B37 /* FullscreenView.swift */,
 				99F662B12B60425E00696098 /* InAppMessageModalView.swift */,
+				999DC85D2B5B721D0048C6AF /* HTMLView.swift */,
 				99F662D12B63047300696098 /* InAppMessageBannerView.swift */,
 				99E8D7962B4F17260099B6F3 /* CloseButton.swift */,
 				990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */,
@@ -4808,27 +4810,20 @@
 		99E8D7CC2B54A6470099B6F3 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
-				99E8D79A2B4F2FCE0099B6F3 /* Theme.swift */,
+				99E8D7D42B55B0300099B6F3 /* InAppMessageThemeAdditionalPadding.swift */,
+				6E524D012C1A2CAE002CA094 /* InAppMessageThemeManager.swift */,
 				99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */,
-				99E8D7CD2B54A66E0099B6F3 /* BannerTheme.swift */,
-				99E8D7C82B54A5CB0099B6F3 /* ModalTheme.swift */,
-				99E8D7CA2B54A6340099B6F3 /* FullScreenTheme.swift */,
-				99E8D7CF2B54A68F0099B6F3 /* HTMLTheme.swift */,
-				99E8D7D32B55AF8D0099B6F3 /* Components */,
+				99E8D79A2B4F2FCE0099B6F3 /* InAppMessageTheme.swift */,
+				6E524D032C1A454E002CA094 /* InAppMessageThemeShadow.swift */,
+				99E8D7D72B55B0440099B6F3 /* InAppMessageThemeButton.swift */,
+				99E8D7DB2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift */,
+				99E8D7D92B55B05D0099B6F3 /* InAppMessageThemeText.swift */,
+				99E8D7CD2B54A66E0099B6F3 /* InAppMessageThemeBanner.swift */,
+				99E8D7C82B54A5CB0099B6F3 /* InAppMessageThemeModal.swift */,
+				99E8D7CA2B54A6340099B6F3 /* InAppMessageThemeFullscreen.swift */,
+				99E8D7CF2B54A68F0099B6F3 /* InAppMessageThemeHTML.swift */,
 			);
 			path = Theme;
-			sourceTree = "<group>";
-		};
-		99E8D7D32B55AF8D0099B6F3 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				99E8D7D42B55B0300099B6F3 /* EdgeInsets.swift */,
-				99E8D7D72B55B0440099B6F3 /* ButtonTheme.swift */,
-				993969B82BD8353F0011D73A /* ShadowTheme.swift */,
-				99E8D7DB2B55C4C20099B6F3 /* MediaTheme.swift */,
-				99E8D7D92B55B05D0099B6F3 /* TextTheme.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		A61517AD26A97419008A41C4 /* Subscription Lists */ = {
@@ -6410,17 +6405,17 @@
 				998572BF2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift in Sources */,
 				6E1B7B132B714FFC00695561 /* LandingPageAction.swift in Sources */,
 				6068E03B2B2CBCF200349E82 /* ActiveTimer.swift in Sources */,
-				99E8D7CE2B54A66E0099B6F3 /* BannerTheme.swift in Sources */,
+				99E8D7CE2B54A66E0099B6F3 /* InAppMessageThemeBanner.swift in Sources */,
 				3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */,
 				6E1528202B4DC59C00DF1377 /* InAppMessageSceneDelegate.swift in Sources */,
-				99E8D7D52B55B0300099B6F3 /* EdgeInsets.swift in Sources */,
-				99E8D79B2B4F2FCE0099B6F3 /* Theme.swift in Sources */,
+				99E8D7D52B55B0300099B6F3 /* InAppMessageThemeAdditionalPadding.swift in Sources */,
+				99E8D79B2B4F2FCE0099B6F3 /* InAppMessageTheme.swift in Sources */,
 				99E6EF6A2B8E36BA0006326A /* InAppMessageValidation.swift in Sources */,
 				99E8D7DE2B55C73B0099B6F3 /* ThemeExtensions.swift in Sources */,
 				6EDF1D982B2A25C800E23BC4 /* InAppMessageMediaInfo.swift in Sources */,
-				99E8D7DA2B55B05D0099B6F3 /* TextTheme.swift in Sources */,
+				99E8D7DA2B55B05D0099B6F3 /* InAppMessageThemeText.swift in Sources */,
 				6EDF1DA62B2A300100E23BC4 /* InAppMessage.swift in Sources */,
-				99E8D7D02B54A68F0099B6F3 /* HTMLTheme.swift in Sources */,
+				99E8D7D02B54A68F0099B6F3 /* InAppMessageThemeHTML.swift in Sources */,
 				6EDF1D962B2A25B400E23BC4 /* InAppMessageButtonInfo.swift in Sources */,
 				6EE6AAC92B58A947002FEA75 /* InAppEventRecorder.swift in Sources */,
 				6EDF1DB82B2BB2B800E23BC4 /* RetryingQueue.swift in Sources */,
@@ -6439,7 +6434,6 @@
 				3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */,
 				6E1CBE2D2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodeld in Sources */,
 				99CF46182B3217C300B6FD9B /* AirshipCachedAssets.swift in Sources */,
-				993969B92BD8353F0011D73A /* ShadowTheme.swift in Sources */,
 				999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */,
 				99CF461A2B3217DE00B6FD9B /* AssetCacheManager.swift in Sources */,
 				6E1A9BF72B606CF200A6489B /* AutomationDelayProcessor.swift in Sources */,
@@ -6466,7 +6460,7 @@
 				6EC0CA532B48A2C300333A87 /* AutomationAudience.swift in Sources */,
 				6E1A9BC92B5EE34600A6489B /* AutomationEventFeed.swift in Sources */,
 				99E8D7C12B50E5F40099B6F3 /* InAppMessageRootView.swift in Sources */,
-				99E8D7CB2B54A6340099B6F3 /* FullScreenTheme.swift in Sources */,
+				99E8D7CB2B54A6340099B6F3 /* InAppMessageThemeFullscreen.swift in Sources */,
 				603269552BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift in Sources */,
 				6EE6AACA2B58A947002FEA75 /* InAppPermissionResultEvent.swift in Sources */,
 				6EE6AAD22B58A947002FEA75 /* InAppFormResultEvent.swift in Sources */,
@@ -6476,6 +6470,7 @@
 				6EE6AA2C2B51DB1E002FEA75 /* AutomationSourceInfoStore.swift in Sources */,
 				99E8D7992B4F19BA0099B6F3 /* TextView.swift in Sources */,
 				6EE6AAFF2B58AB66002FEA75 /* LegacyInAppAnalytics.swift in Sources */,
+				6E524D022C1A2CAE002CA094 /* InAppMessageThemeManager.swift in Sources */,
 				6EE6AB132B59DD37002FEA75 /* ThomasPagerTracker.swift in Sources */,
 				6EE6AACB2B58A947002FEA75 /* InAppPagerCompletedEvent.swift in Sources */,
 				6EE6AACF2B58A947002FEA75 /* InAppFormDisplayEvent.swift in Sources */,
@@ -6497,11 +6492,12 @@
 				6E15281D2B4DC43100DF1377 /* ActionAutomationPreparer.swift in Sources */,
 				6EE6AAC52B58A947002FEA75 /* InAppEventMessageID.swift in Sources */,
 				6E986EFB2B44D48C00FBE6A0 /* InAppMessaging.swift in Sources */,
-				99E8D7DC2B55C4C20099B6F3 /* MediaTheme.swift in Sources */,
+				99E8D7DC2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift in Sources */,
 				99E8D7C52B5192D40099B6F3 /* MediaView.swift in Sources */,
+				6E524D042C1A454E002CA094 /* InAppMessageThemeShadow.swift in Sources */,
 				603269532BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift in Sources */,
 				6E4AEEBC2B6D6380008AEAC1 /* TriggerData.swift in Sources */,
-				99E8D7D82B55B0440099B6F3 /* ButtonTheme.swift in Sources */,
+				99E8D7D82B55B0440099B6F3 /* InAppMessageThemeButton.swift in Sources */,
 				6E0F4BE52B32645600673CA4 /* AutomationTrigger.swift in Sources */,
 				6E1A9BAB2B5AE38A00A6489B /* InAppMessageDisplayListener.swift in Sources */,
 				6EE6AAC82B58A947002FEA75 /* InAppGestureEvent.swift in Sources */,
@@ -6513,7 +6509,7 @@
 				6E1A9BD52B5EE97000A6489B /* TriggeringInfo.swift in Sources */,
 				6E68028B2B850DDE00F4591F /* ApplicationMetrics.swift in Sources */,
 				6E15282C2B4DE81E00DF1377 /* AutomationSDKModule.swift in Sources */,
-				99E0BD0D2B4DD4AB00465B37 /* FullScreenView.swift in Sources */,
+				99E0BD0D2B4DD4AB00465B37 /* FullscreenView.swift in Sources */,
 				6E6802902B8671E700F4591F /* InAppAutomationComponent.swift in Sources */,
 				6E1528262B4DC64B00DF1377 /* DisplayAdapterFactory.swift in Sources */,
 				6EE6AAC42B58A947002FEA75 /* InAppResolutionEvent.swift in Sources */,
@@ -6535,7 +6531,7 @@
 				6E1528312B4DED8900DF1377 /* InAppMessageAnalyticsFactory.swift in Sources */,
 				6E1528242B4DC60200DF1377 /* DisplayCoordinatorManager.swift in Sources */,
 				99E8D7972B4F17260099B6F3 /* CloseButton.swift in Sources */,
-				99E8D7C92B54A5CB0099B6F3 /* ModalTheme.swift in Sources */,
+				99E8D7C92B54A5CB0099B6F3 /* InAppMessageThemeModal.swift in Sources */,
 				6E4AEE652B6B44EA008AEAC1 /* AutomationStore.swift in Sources */,
 				60F8E7602B8FAF5400460EDF /* ScheduleAction.swift in Sources */,
 				60F8E75C2B8F3D4B00460EDF /* CancelSchedulesAction.swift in Sources */,

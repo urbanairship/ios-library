@@ -21,23 +21,12 @@ struct InAppMessageBannerView: View {
     @State var messageBodyOpacity: CGFloat = 1
     @State var swipeOffset: CGFloat = 0
 
+    var theme: InAppMessageTheme.Banner
+
     var onDismiss: () -> Void
 
-    private var padding: EdgeInsets {
-        environment.theme.bannerTheme.additionalPadding
-    }
-
-    private var tapOpacity: CGFloat {
-        environment.theme.bannerTheme.tapOpacity
-    }
-
-    private var shadowTheme: ShadowTheme {
-        environment.theme.bannerTheme.shadowTheme
-    }
 
     private let displayContent: InAppMessageDisplayContent.Banner
-
-    private var messageMaxWidth: CGFloat = 480
 
     private var mediaMaxWidth: CGFloat = 120
 
@@ -46,22 +35,10 @@ struct InAppMessageBannerView: View {
 
     private let animationInOutDuration = 0.2
 
-    private var headerTheme: TextTheme {
-        environment.theme.bannerTheme.headerTheme
-    }
-
-    private var bodyTheme: TextTheme {
-        environment.theme.bannerTheme.bodyTheme
-    }
-
-    private var mediaTheme: MediaTheme {
-        environment.theme.bannerTheme.mediaTheme
-    }
-
     @ViewBuilder
     private var headerView: some View {
         if let heading = displayContent.heading {
-            TextView(textInfo: heading, textTheme: headerTheme)
+            TextView(textInfo: heading, textTheme: self.theme.header)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -69,7 +46,7 @@ struct InAppMessageBannerView: View {
     @ViewBuilder
     private var bodyView: some View {
         if let body = displayContent.body {
-            TextView(textInfo: body, textTheme:bodyTheme)
+            TextView(textInfo: body, textTheme: self.theme.body)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -77,11 +54,13 @@ struct InAppMessageBannerView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: mediaTheme, imageLoader: environment.imageLoader)
-                .padding(.horizontal, -mediaTheme.additionalPadding.leading)
-                .frame(maxWidth: mediaMaxWidth,
-                       minHeight: mediaMinHeight,
-                       maxHeight: mediaMaxHeight)
+            MediaView(mediaInfo: media, mediaTheme: self.theme.media, imageLoader: environment.imageLoader)
+                .padding(.horizontal, -theme.media.padding.leading)
+                .frame(
+                    maxWidth: mediaMaxWidth,
+                    minHeight: mediaMinHeight,
+                    maxHeight: mediaMaxHeight
+                )
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -89,9 +68,11 @@ struct InAppMessageBannerView: View {
     @ViewBuilder
     private var buttonsView: some View {
         if let buttons = displayContent.buttons, !buttons.isEmpty {
-            ButtonGroup(layout: displayContent.buttonLayoutType ?? .stacked,
-                        buttons: buttons)
-            .environmentObject(environment)
+            ButtonGroup(
+                layout: displayContent.buttonLayoutType ?? .stacked,
+                buttons: buttons,
+                theme: self.theme.buttons
+            )
         }
     }
 
@@ -105,11 +86,13 @@ struct InAppMessageBannerView: View {
     init(environment:InAppMessageEnvironment,
          displayContent: InAppMessageDisplayContent.Banner,
          bannerConstraints: InAppMessageBannerConstraints,
+         theme: InAppMessageTheme.Banner,
          onDismiss: @escaping () -> Void
     ) {
         self.displayContent = displayContent
         self.environment = environment
         self.bannerConstraints = bannerConstraints
+        self.theme = theme
         self.onDismiss = onDismiss
     }
 
@@ -187,12 +170,17 @@ struct InAppMessageBannerView: View {
     private var banner: some View {
         messageBody
             .showing(isShowing: isShowing)
-            .frame(maxWidth: messageMaxWidth)
+            .frame(maxWidth: theme.maxWidth)
             .background(
                 (displayContent.backgroundColor?.color ?? Color.white)
                     .cornerRadius(displayContent.borderRadius ?? 0)
                     .edgesIgnoringSafeArea(displayContent.placement == .top ? .top : .bottom)
-                    .shadow(color: shadowTheme.color, radius: shadowTheme.radius, x: shadowTheme.xOffset, y: shadowTheme.yOffset)
+                    .shadow(
+                        color: theme.shadow.color,
+                        radius: theme.shadow.radius,
+                        x: theme.shadow.xOffset,
+                        y: theme.shadow.yOffset
+                    )
             )
             .background(
                 GeometryReader(content: { contentMetrics -> Color in
@@ -206,7 +194,7 @@ struct InAppMessageBannerView: View {
                     return Color.airshipTappableClear
                 })
             )
-            .padding(padding)
+            .padding(theme.padding)
             .applyTransitioningPlacement(placement: displayContent.placement ?? .top)
             .addTapAndSwipeDismiss(
                 placement: displayContent.placement ?? .top,
@@ -219,9 +207,9 @@ struct InAppMessageBannerView: View {
                 setShowing(state: true)
             }
             .airshipOnChangeOf(environment.isDismissed) { _ in
-                setShowing(state:false, completion: {
+                setShowing(state: false) {
                     onDismiss()
-                })
+                }
             }
             .onAppear {
                 self.environment.onAppear()
@@ -231,10 +219,10 @@ struct InAppMessageBannerView: View {
     var body: some View {
         InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
             #if os(visionOS)
-            banner.frame(width: min(1280, messageMaxWidth))
+            banner.frame(width: min(1280, theme.maxWidth))
             #else
-            banner.frame(width: min(UIScreen.main.bounds.size.width, messageMaxWidth))
+            banner.frame(width: min(UIScreen.main.bounds.size.width, theme.maxWidth))
             #endif
-        }.opacity(isPressed && displayContent.actions != nil ? tapOpacity : 1)
+        }.opacity(isPressed && displayContent.actions != nil ? theme.tapOpacity : 1)
     }
 }

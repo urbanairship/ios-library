@@ -13,8 +13,6 @@
 		<key>trailing</key>
 		<integer>4</integer>
 	</dict>
-	<key>maxWidth</key>
-	<integer>26</integer>
 	<key>tapOpacity</key>
 	<real>0.11</real>
 	<key>headerStyle</key>

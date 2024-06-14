@@ -11,7 +11,6 @@ import AirshipCore
 
 class InAppMessageEnvironment: ObservableObject {
     private let delegate: InAppMessageViewDelegate
-    var theme: Theme
 
     @Published var imageLoader: AirshipImageLoader?
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
@@ -22,11 +21,9 @@ class InAppMessageEnvironment: ObservableObject {
     @MainActor
     init(
         delegate: InAppMessageViewDelegate,
-        theme: Theme,
         extensions: InAppMessageExtensions? = nil
     ) {
         self.delegate = delegate
-        self.theme = theme
 
         self.imageLoader = if let provider = extensions?.imageProvider {
             AirshipImageLoader(imageProvider: provider)
