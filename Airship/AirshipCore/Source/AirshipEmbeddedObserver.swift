@@ -3,7 +3,7 @@
 import SwiftUI
 import Combine
 
-/// NOTE: For internal use only. :nodoc:
+/// Observable model for Airship embedded views
 @MainActor
 public final class AirshipEmbeddedObserver : ObservableObject {
     /// An array of embedded infos
