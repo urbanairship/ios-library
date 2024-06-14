@@ -17,6 +17,7 @@
 		1BFF18D0238551FD00013FB9 /* UACarousel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18CC238551FD00013FB9 /* UACarousel.m */; };
 		1BFF18D42385520500013FB9 /* UAContentExtensionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BFF18D12385520500013FB9 /* UAContentExtensionViewController.m */; };
 		5872C23EAB3330171E1EBDC3 /* Pods_AirshipNotificationServiceExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32B945B8885FAC3BD0955B04 /* Pods_AirshipNotificationServiceExtensionTests.framework */; };
+		6014AD692C1CB6360072DCF0 /* ChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD682C1CB6360072DCF0 /* ChallengeResolver.swift */; };
 		60F8E7522B88AF8D00460EDF /* MediaAttachmentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */; };
 		60F8E7542B89272300460EDF /* UANotificationServiceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */; };
 		60F8E7562B8D11B300460EDF /* MediaAttachmentPayloadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7552B8D11B300460EDF /* MediaAttachmentPayloadTest.swift */; };
@@ -62,6 +63,7 @@
 		49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipNotificationServiceExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		49AA01001D65158C0081989A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49AA010C1D65158C0081989A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6014AD682C1CB6360072DCF0 /* ChallengeResolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChallengeResolver.swift; sourceTree = "<group>"; };
 		60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAttachmentPayload.swift; sourceTree = "<group>"; };
 		60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANotificationServiceExtension.swift; sourceTree = "<group>"; };
 		60F8E7552B8D11B300460EDF /* MediaAttachmentPayloadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaAttachmentPayloadTest.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 		6E21736A237CCEDA0084933A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6014AD682C1CB6360072DCF0 /* ChallengeResolver.swift */,
 				60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */,
 				60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */,
 				60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */,
@@ -493,6 +496,7 @@
 			files = (
 				60F8E7522B88AF8D00460EDF /* MediaAttachmentPayload.swift in Sources */,
 				60F8E7542B89272300460EDF /* UANotificationServiceExtension.swift in Sources */,
+				6014AD692C1CB6360072DCF0 /* ChallengeResolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

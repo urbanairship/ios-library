@@ -296,6 +296,8 @@ public class Airship: NSObject {
     private class func commonTakeOff(_ config: AirshipConfig?, onReady: (() -> Void)? = nil) {
 
         let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
+        
+        ChallengeResolver.shared.resolver = resolvedConfig.customChallengeResolver
 
         self.logLevel = resolvedConfig.logLevel
         self.logPrivacyLevel = resolvedConfig.logPrivacyLevel
