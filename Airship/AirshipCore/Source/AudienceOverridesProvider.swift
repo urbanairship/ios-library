@@ -17,15 +17,16 @@ protocol AudienceOverridesProvider: Actor {
         contactID: String,
         tags: [TagGroupUpdate]?,
         attributes: [AttributeUpdate]?,
-        subscriptionLists: [ScopedSubscriptionListUpdate]?
-    )
+        subscriptionLists: [ScopedSubscriptionListUpdate]?,
+        channels: [ContactChannelUpdate]?
+    ) async
 
     func channelUpdated(
         channelID: String,
         tags: [TagGroupUpdate]?,
         attributes: [AttributeUpdate]?,
         subscriptionLists: [SubscriptionListUpdate]?
-    )
+    ) async
 
     func channelOverrides(
         channelID: String,
@@ -41,14 +42,21 @@ protocol AudienceOverridesProvider: Actor {
     ) async -> ContactAudienceOverrides
 
     func contactOverrides() async -> ContactAudienceOverrides
+
+    func notifyPendingChanged() async
+
+    func contactOverrideUpdates(
+        contactID: String?
+    ) async -> AsyncStream<ContactAudienceOverrides>
 }
 
 actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
+    
     private let updates: CachedList<UpdateRecord>
     private var pendingChannelOverridesProvider: (@Sendable (String) async -> ChannelAudienceOverrides?)? = nil
     private var pendingContactOverridesProvider: (@Sendable (String) async -> ContactAudienceOverrides?)? = nil
     private var stableContactIDProvider: (@Sendable () async -> String)? = nil
-
+    private let overridesUpdates: AirshipAsyncChannel<Bool> = AirshipAsyncChannel()
 
     private static let maxRecordAge: TimeInterval = 600 // 10 minutes
 
@@ -86,18 +94,22 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         contactID: String,
         tags: [TagGroupUpdate]?,
         attributes: [AttributeUpdate]?,
-        subscriptionLists: [ScopedSubscriptionListUpdate]?
-    ) {
+        subscriptionLists: [ScopedSubscriptionListUpdate]?,
+        channels: [ContactChannelUpdate]?
+    ) async {
         self.updates.append(
             UpdateRecord(
                 recordType: .contact(contactID),
                 tags: tags,
                 attributes: attributes,
                 subscriptionLists: nil,
-                scopedSubscriptionLists: subscriptionLists
+                scopedSubscriptionLists: subscriptionLists,
+                channels: channels
             ),
             expiresIn: DefaultAudienceOverridesProvider.maxRecordAge
         )
+
+        await self.notifyPendingChanged()
     }
 
     func channelUpdated(
@@ -105,17 +117,20 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         tags: [TagGroupUpdate]?,
         attributes: [AttributeUpdate]?,
         subscriptionLists: [SubscriptionListUpdate]?
-    ) {
+    ) async {
         self.updates.append(
             UpdateRecord(
                 recordType: .channel(channelID),
                 tags: tags,
                 attributes: attributes,
                 subscriptionLists: subscriptionLists,
-                scopedSubscriptionLists: nil
+                scopedSubscriptionLists: nil,
+                channels: nil
             ),
             expiresIn: DefaultAudienceOverridesProvider.maxRecordAge
         )
+
+        await self.notifyPendingChanged()
     }
 
     func convertAppScopes(scoped: [ScopedSubscriptionListUpdate]) -> [SubscriptionListUpdate] {
@@ -212,7 +227,6 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         )
     }
 
-
     func contactOverrides() async -> ContactAudienceOverrides {
         return await contactOverrides(contactID: nil)
     }
@@ -229,6 +243,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         var tags: [TagGroupUpdate]  = []
         var attributes: [AttributeUpdate] = []
         var scopedSubscriptionLists: [ScopedSubscriptionListUpdate] = []
+        var channels: [ContactChannelUpdate] = []
 
         // Contact updates
         self.updates.values.forEach { update in
@@ -244,6 +259,10 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
                 if let updateScopedSubscriptionLists = update.scopedSubscriptionLists {
                     scopedSubscriptionLists += updateScopedSubscriptionLists
                 }
+
+                if let updateChannel = update.channels {
+                    channels += updateChannel
+                }
             }
         }
 
@@ -252,13 +271,48 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
             tags += pendingContactOverrides.tags
             attributes += pendingContactOverrides.attributes
             scopedSubscriptionLists += pendingContactOverrides.subscriptionLists
+            channels += pendingContactOverrides.channels
         }
 
         return ContactAudienceOverrides(
             tags: tags,
             attributes: attributes,
-            subscriptionLists: scopedSubscriptionLists
+            subscriptionLists: scopedSubscriptionLists,
+            channels: channels
         )
+    }
+
+    func contactOverrideUpdates(
+        contactID: String?
+    ) async -> AsyncStream<ContactAudienceOverrides> {
+        let updates = await self.overridesUpdates.makeStream(
+            bufferPolicy: .bufferingNewest(1)
+        )
+
+        let initial: ContactAudienceOverrides = await self.contactOverrides(contactID: contactID)
+
+        return AsyncStream { [weak self] continuation in
+            continuation.yield(initial)
+
+            let task = Task { [weak self] in
+                for await _ in updates {
+                    let overrides = await self?.contactOverrides(contactID: contactID)
+                    guard !Task.isCancelled, let overrides else {
+                        return
+                    }
+                    continuation.yield(overrides)
+                }
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
+
+
+    func notifyPendingChanged() async {
+        await self.overridesUpdates.send(true)
     }
 
     private func resolveContactID(contactID: String?) async -> String? {
@@ -279,6 +333,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         let attributes: [AttributeUpdate]?
         let subscriptionLists: [SubscriptionListUpdate]?
         let scopedSubscriptionLists: [ScopedSubscriptionListUpdate]?
+        let channels: [ContactChannelUpdate]?
     }
 
     fileprivate struct ContactRecord: Sendable {
@@ -286,6 +341,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         let tags: [TagGroupUpdate]
         let attributes: [AttributeUpdate]
         let subscriptionLists: [ScopedSubscriptionListUpdate]
+        let channels: [ContactChannelUpdate]
     }
 }
 
@@ -294,11 +350,13 @@ struct ContactAudienceOverrides: Sendable {
     let tags: [TagGroupUpdate]
     let attributes: [AttributeUpdate]
     let subscriptionLists: [ScopedSubscriptionListUpdate]
+    let channels: [ContactChannelUpdate]
 
-    init(tags: [TagGroupUpdate] = [], attributes: [AttributeUpdate] = [], subscriptionLists: [ScopedSubscriptionListUpdate] = []) {
+    init(tags: [TagGroupUpdate] = [], attributes: [AttributeUpdate] = [], subscriptionLists: [ScopedSubscriptionListUpdate] = [], channels: [ContactChannelUpdate] = []) {
         self.tags = tags
         self.attributes = attributes
         self.subscriptionLists = subscriptionLists
+        self.channels = channels
     }
 }
 

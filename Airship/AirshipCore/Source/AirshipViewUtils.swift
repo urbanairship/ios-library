@@ -5,6 +5,12 @@ import Foundation
 import SwiftUI
 
 /// NOTE: For internal use only. :nodoc:
+public extension Color {
+    static var airshipTappableClear: Color { Color.white.opacity(0.001) }
+    static var airshipShadowColor: Color { Color.black.opacity(0.33) }
+}
+
+/// NOTE: For internal use only. :nodoc:
 public extension View {
     /// Wrapper to prevent linter warnings for deprecated onChange method
     /// - Parameters:
@@ -27,6 +33,23 @@ public extension View {
 #if !os(watchOS)
 /// NOTE: For internal use only. :nodoc:
 public extension UIWindow {
+    func airshipAddRootController<T: UIViewController>(
+        _ viewController: T?
+    ) {
+        viewController?.modalPresentationStyle = UIModalPresentationStyle.automatic
+        viewController?.view.isUserInteractionEnabled = true
+
+        if let viewController = viewController,
+           let rootController = self.rootViewController
+        {
+            rootController.addChild(viewController)
+            viewController.didMove(toParent: rootController)
+            rootController.view.addSubview(viewController.view)
+        }
+
+        self.isUserInteractionEnabled = true
+    }
+
     static func airshipMakeModalReadyWindow(
         scene: UIWindowScene
     ) -> UIWindow {

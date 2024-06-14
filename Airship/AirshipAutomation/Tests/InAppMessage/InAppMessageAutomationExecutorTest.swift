@@ -121,9 +121,6 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             data: .inAppMessage(preparedData.message)
         )
 
-
-
-
         _ = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
         let cleared = await self.assetManager.cleared
         XCTAssertEqual([self.preparedInfo.scheduleID], cleared)
@@ -230,6 +227,25 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         XCTAssertTrue(self.displayAdapter.displayed)
         XCTAssertEqual(result, .retry)
+        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
+    }
+
+    @MainActor
+    func testAdditionalAudienceCheckMiss() async throws  {
+        self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
+            throw AirshipErrors.error("Failed")
+        }
+        var preparedInfo = preparedInfo
+        preparedInfo.additionalAudienceCheckResult = false
+
+        let result =  try await self.executor.execute(
+            data: preparedData,
+            preparedScheduleInfo: preparedInfo
+        )
+
+        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.audienceExcluded().name)
+        XCTAssertFalse(self.displayAdapter.displayed)
+        XCTAssertEqual(result, .finished)
         XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
     }
 

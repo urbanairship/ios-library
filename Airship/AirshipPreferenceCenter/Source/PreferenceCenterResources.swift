@@ -19,7 +19,7 @@ class PreferenceCenterResources {
 }
 
 extension String {
-    var preferenceCenterlocalizedString: String {
+    var preferenceCenterLocalizedString: String {
         return PreferenceCenterResources.localizedString(key: self) ?? self
     }
 }

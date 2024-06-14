@@ -39,7 +39,7 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType, "app_init")
+        XCTAssertEqual(event.eventType.reportingName, "app_init")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -76,7 +76,7 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType, "app_init")
+        XCTAssertEqual(event.eventType.reportingName, "app_init")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -112,7 +112,7 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType, "app_foreground")
+        XCTAssertEqual(event.eventType.reportingName, "app_foreground")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -141,7 +141,7 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType, "app_background")
+        XCTAssertEqual(event.eventType.reportingName, "app_background")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -159,7 +159,7 @@ class AirshipEventsTest: XCTestCase {
             deviceToken: "some-token"
         )
 
-        XCTAssertEqual(event.eventType, "device_registration")
+        XCTAssertEqual(event.eventType.reportingName, "device_registration")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -180,7 +180,7 @@ class AirshipEventsTest: XCTestCase {
 
         let event = AirshipEvents.pushReceivedEvent(notification: notification)
 
-        XCTAssertEqual(event.eventType, "push_received")
+        XCTAssertEqual(event.eventType.reportingName, "push_received")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -198,7 +198,7 @@ class AirshipEventsTest: XCTestCase {
 
         let event = AirshipEvents.pushReceivedEvent(notification: notification)
 
-        XCTAssertEqual(event.eventType, "push_received")
+        XCTAssertEqual(event.eventType.reportingName, "push_received")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -221,7 +221,7 @@ class AirshipEventsTest: XCTestCase {
             duration: 1
         )
 
-        XCTAssertEqual(event.eventType, "screen_tracking")
+        XCTAssertEqual(event.eventType.reportingName, "screen_tracking")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -285,7 +285,7 @@ class AirshipEventsTest: XCTestCase {
             iAdImpressionDate: Date(timeIntervalSince1970: 99.0)
         )
         
-        XCTAssertEqual(event.eventType, "install_attribution")
+        XCTAssertEqual(event.eventType.reportingName, "install_attribution")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -298,7 +298,7 @@ class AirshipEventsTest: XCTestCase {
 
         let event = AirshipEvents.installAttirbutionEvent()
 
-        XCTAssertEqual(event.eventType, "install_attribution")
+        XCTAssertEqual(event.eventType.reportingName, "install_attribution")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -335,7 +335,7 @@ class AirshipEventsTest: XCTestCase {
             responseText: "some response text"
         )
 
-        XCTAssertEqual(event.eventType, "interactive_notification_action")
+        XCTAssertEqual(event.eventType.reportingName, "interactive_notification_action")
         XCTAssertEqual(event.priority, .high)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }

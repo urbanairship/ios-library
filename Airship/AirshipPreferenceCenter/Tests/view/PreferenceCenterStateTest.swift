@@ -193,6 +193,12 @@ class TestPreferenceSubscriber: PreferenceSubscriber {
     {
         return channelEditsSubject.eraseToAnyPublisher()
     }
+    
+    private let channelAssociationSubject = PassthroughSubject<[AssociatedChannel], Never>()
+    var channelAssociationPublisher: AnyPublisher<[AssociatedChannel], Never>
+    {
+        return channelAssociationSubject.eraseToAnyPublisher()
+    }
 
     let contactEditsSubject = PassthroughSubject<
         ScopedSubscriptionListEdit, Never

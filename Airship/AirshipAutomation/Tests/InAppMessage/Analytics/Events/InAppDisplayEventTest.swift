@@ -2,14 +2,13 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppDisplayEventTest: XCTestCase {
     func testEvent() throws {
         let event = InAppDisplayEvent()
-        XCTAssertEqual(event.name, "in_app_display")
+        XCTAssertEqual(event.name.reportingName, "in_app_display")
         XCTAssertNil(event.data)
     }
 }

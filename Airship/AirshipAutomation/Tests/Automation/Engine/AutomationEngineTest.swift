@@ -28,6 +28,7 @@ final class AutomationEngineTest: XCTestCase {
     private var messageExecutor: InAppMessageAutomationExecutor!
     private var delayProcessor: AutomationDelayProcessor!
     private var metrics: ApplicationMetrics!
+    private var runtimeConfig: RuntimeConfig?
 
     override func setUp() async throws {
         self.privacyManager = await AirshipPrivacyManager(
@@ -39,6 +40,14 @@ final class AutomationEngineTest: XCTestCase {
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
+        
+        let config = AirshipConfig()
+        config.requireInitialRemoteConfigEnabled = false
+        self.runtimeConfig = RuntimeConfig(
+            config: config,
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
+        )
+        
         self.automationStore = AutomationStore(appKey: UUID().uuidString, inMemory: true)
         self.preparer = await AutomationPreparer(
             actionPreparer: actionPreparer,
@@ -47,7 +56,9 @@ final class AutomationEngineTest: XCTestCase {
             frequencyLimits: frequencyLimits,
             audienceChecker: audienceChecker,
             experiments: experiments,
-            remoteDataAccess: remoteDataAccess
+            remoteDataAccess: remoteDataAccess,
+            config: self.runtimeConfig!,
+            additionalAudienceResolver: TestAdditionalAudienceResolver()
         )
         
         let actionExecutor = ActionAutomationExecutor()
@@ -134,5 +145,33 @@ final class AutomationEngineTest: XCTestCase {
         try await self.engine.cancelSchedules(identifiers: ["test"])
         let schedule = try await self.engine.getSchedule(identifier: "test")
         XCTAssertNil(schedule)
+    }
+}
+
+actor TestAdditionalAudienceResolver:  AdditionalAudienceCheckerResolverProtocol {
+    struct ResolveRequest {
+        let channelID: String
+        let contactID: String?
+        let overrides: AdditionalAudienceCheckOverrides?
+    }
+    
+    var recordedReqeusts: [ResolveRequest] = []
+    public func setResult(_ result: Bool) {
+        returnResult = result
+    }
+    private var returnResult = true
+
+    func resolve(
+        deviceInfoProvider: AudienceDeviceInfoProvider,
+        additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
+    ) async throws -> Bool {
+        recordedReqeusts.append(
+            ResolveRequest(
+                channelID: try await deviceInfoProvider.channelID,
+                contactID: await deviceInfoProvider.stableContactInfo.contactID,
+                overrides: additionalAudienceCheckOverrides
+            )
+        )
+        return returnResult
     }
 }

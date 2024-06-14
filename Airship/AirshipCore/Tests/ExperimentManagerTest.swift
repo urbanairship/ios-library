@@ -16,7 +16,7 @@ final class ExperimentManagerTest: XCTestCase {
 
     override func setUpWithError() throws {
         self.deviceInfo.channelID = "channel-id"
-        self.deviceInfo.stableContactID = "some-contact-id"
+        self.deviceInfo.stableContactInfo = StableContactInfo(contactID: "some-contact-id")
 
         self.subject = ExperimentManager(
             dataStore: PreferenceDataStore(appKey: UUID().uuidString),
@@ -109,7 +109,7 @@ final class ExperimentManagerTest: XCTestCase {
         )!
 
         XCTAssertFalse(result.isMatch)
-        XCTAssertEqual(self.deviceInfo.stableContactID, result.contactID)
+        XCTAssertEqual(self.deviceInfo.stableContactInfo.contactID, result.contactID)
         XCTAssertEqual(self.deviceInfo.channelID, result.channelID)
 
         XCTAssertEqual(
@@ -135,7 +135,7 @@ final class ExperimentManagerTest: XCTestCase {
             audienceSelector: audienceSelector2
         )
 
-        self.deviceInfo.stableContactID = "active-contact-id"
+        self.deviceInfo.stableContactInfo = StableContactInfo(contactID: "active-contact-id")
 
         self.remoteData.payloads = [createPayload([
             experiment1.toString,
@@ -187,7 +187,7 @@ final class ExperimentManagerTest: XCTestCase {
             )
         )
 
-        self.deviceInfo.stableContactID = "active-contact-id"
+        self.deviceInfo.stableContactInfo = StableContactInfo(contactID: "active-contact-id")
 
         self.remoteData.payloads = [createPayload([
             experiment1.toString,

@@ -3,6 +3,7 @@
 import AirshipCore
 import Foundation
 import SwiftUI
+import AirshipAutomation
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
@@ -43,6 +44,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         CustomViewExampleHelper.registerCameraView()
         CustomViewExampleHelper.registerBiometricLoginView()
 
+        InAppAutomation.shared.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
+            theme.maxWidth = 300
+            theme.maxHeight = 300
+        }
+        
         Task {
             // Set the icon badge to zero on startup (optional)
             try await Airship.push.resetBadge()

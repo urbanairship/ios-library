@@ -37,9 +37,6 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
 }
 
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
-
-
-    
     private let preparedScheduleInfo: PreparedScheduleInfo
     private let messageID: InAppEventMessageID
     private let source: InAppEventSource

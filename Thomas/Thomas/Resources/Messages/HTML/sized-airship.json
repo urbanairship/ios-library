@@ -4,13 +4,10 @@
     "display_type": "html",
     "display": {
         "allow_fullscreen_display" : false,
-        "aspect_lock" : true,
         "background_color" : "#ff00ffff",
         "border_radius" : 10,
         "dismiss_button_color" : "#ff00ff00",
         "require_connectivity" : true,
         "url" : "https://airship.com",
-        "width" : 300,
-        "height" : 400
     }
 }

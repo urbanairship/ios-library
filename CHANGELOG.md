@@ -1,7 +1,16 @@
 
 # iOS Changelog
 
-[Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
+## Version 18.4.0, June 14, 2024
+Minor release that adds contact management support to the preference center, support for anonymous channels, per-message in-app message theming, message center customization and logging improvements. Apps that use the message center or stories should update to this version.
+
+### Changes
+- Added support for anonymous channels
+- Added contact management support in preference centers
+- Added improved theme support and per message theming for in-app messages
+- Added public logging functions
+- Fixed bug in stories page indicator
+- Fixed message center list view background theming
 
 ## Version 18.3.1, May 27, 2024
 Patch release with bug fix for message center customization. Apps that use the message center should update to this version.

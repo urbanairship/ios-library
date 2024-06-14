@@ -3,11 +3,11 @@
 import Foundation
 
 struct SessionEvent: Sendable, Equatable {
-    let type: EventType
+    let type: SessionEventType
     let date: Date
     let sessionState: SessionState
 
-    enum EventType: Sendable, Equatable {
+    enum SessionEventType: Sendable, Equatable {
         case foregroundInit
         case backgroundInit
         case foreground

@@ -275,7 +275,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "bar", type: .subscribe, scope: .app, date: Date()),
                 ScopedSubscriptionListUpdate(listId: "baz", type: .unsubscribe, scope: .app, date: Date())
-            ]
+            ], channels: []
         )
 
 

@@ -157,7 +157,7 @@ class InAppMessageAnalyticsTest: XCTestCase {
         let data = self.eventRecorder.eventData.first!
         XCTAssertEqual(data.context, expectedContext)
         XCTAssertEqual(data.renderedLocale, AirshipJSON.string("rendered locale"))
-        XCTAssertEqual(data.event.name, "test_event")
+        XCTAssertEqual(data.event.name, EventType.customEvent)
     }
     
     @MainActor

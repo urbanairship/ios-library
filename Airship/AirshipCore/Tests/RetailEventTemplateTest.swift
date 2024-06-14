@@ -51,7 +51,8 @@ final class RetailEventTemplateTest: XCTestCase {
         template.transactionID = "1122334455"
         template.brand = "Airship"
         template.isNewItem = true
-        
+        template.currency = "USD"
+
         let event = template.createEvent()
         
         XCTAssertEqual("browsed", event.data["event_name"] as? String, "Unexpected event name.")
@@ -64,6 +65,8 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("Airship", event.properties["brand"] as? String, "Unexpected category.")
         XCTAssertEqual(true, event.properties["new_item"] as? Bool, "Unexpected new item value.")
         XCTAssertEqual("retail", event.data["template_type"] as? String, "Unexpected event template type.")
+        XCTAssertEqual("USD", event.properties["currency"] as? String)
+
     }
     
     /**

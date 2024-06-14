@@ -183,7 +183,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     private let notificationCenter: NotificationCenter
 
     /// NOTE: For internal use only. :nodoc:
-    var remoteConfig: RemoteConfig {
+    public var remoteConfig: RemoteConfig {
         return self.remoteConfigCache.remoteConfig
     }
 

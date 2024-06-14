@@ -27,7 +27,7 @@ final class LegacyInAppAnalyticsTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(eventData.event.name, "in_app_resolution")
+        XCTAssertEqual(eventData.event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try eventData.event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
 
     }
@@ -47,7 +47,7 @@ final class LegacyInAppAnalyticsTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(eventData.event.name, "in_app_resolution")
+        XCTAssertEqual(eventData.event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try eventData.event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 }

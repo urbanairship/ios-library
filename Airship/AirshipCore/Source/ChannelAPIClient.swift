@@ -22,7 +22,6 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
             session: config.requestSession
         )
     }
-    
 
     private func makeURL(path: String) throws -> URL {
         guard let deviceAPIURL = self.config.deviceAPIURL else {
@@ -67,9 +66,8 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
         return try await session.performHTTPRequest(
             request
         ) { data, response in
-            AirshipLogger.debug(
-                "Channel creation finished with response: \(response)"
-            )
+            
+            AirshipLogger.debug("Channel creation finished with response: \(response)")
 
             let status = response.statusCode
             guard status == 200 || status == 201 else {
@@ -120,6 +118,9 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
         )
 
         return try await session.performHTTPRequest(request) { data, response in
+            
+            AirshipLogger.debug("Update channel finished with response: \(response)")
+            
             return ChannelAPIResponse(
                 channelID: channelID,
                 location: url

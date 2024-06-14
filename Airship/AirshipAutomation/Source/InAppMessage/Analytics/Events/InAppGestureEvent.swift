@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 struct InAppGestureEvent: InAppEvent {
-    let name: String = "in_app_gesture"
+    let name = EventType.inAppGesture
     let data: (Sendable&Encodable)?
 
 

@@ -12,7 +12,7 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     let transactionalOptedIn: Date?
 
     /**
-     * Commercial opted-in value
+     * Commercial opted-in value - used to determine the email opt-in state during double opt-in
      */
     let commercialOptedIn: Date?
 

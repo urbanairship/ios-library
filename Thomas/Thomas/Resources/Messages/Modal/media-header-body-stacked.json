@@ -3,6 +3,7 @@
     "name": "240515_CRM_CRMOther_Salvatore_Ferragamo_Afines - FINAL",
     "display_type": "modal",
     "display": {
+        "allow_fullscreen_display": true,
         "template": "media_header_body",
         "background_color": "#FFFFFF",
         "dismiss_button_color": "#222222",
@@ -15,7 +16,7 @@
             "font_family": ["sans-serif"]
         },
         "media": {
-            "url": "https://dl.asnapieu.com/binary/public/f0EJWLPkS1q7ga45N9LitA/f51f406e-4759-4008-b003-a17430155668",
+            "url": "https://images.pexels.com/photos/207529/pexels-photo-207529.jpeg",
             "type": "image",
             "description": "Image"
         },

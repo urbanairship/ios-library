@@ -88,6 +88,15 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         data: PreparedInAppMessageData,
         preparedScheduleInfo: PreparedScheduleInfo
     ) async throws -> ScheduleExecuteResult {
+        guard preparedScheduleInfo.additionalAudienceCheckResult else {
+            AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) missed additional audience check")
+            data.analytics.recordEvent(
+                InAppResolutionEvent.audienceExcluded(),
+                layoutContext: nil
+            )
+            return .finished
+        }
+
         let scene = try self.sceneManager.scene(forMessage: data.message)
 
         // Display
@@ -101,6 +110,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         
         let experimentResult = preparedScheduleInfo.experimentResult
         if let experimentResult = experimentResult, experimentResult.isMatch {
+            AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) part of experiment")
             data.analytics.recordEvent(
                 InAppResolutionEvent.control(experimentResult: experimentResult),
                 layoutContext: nil

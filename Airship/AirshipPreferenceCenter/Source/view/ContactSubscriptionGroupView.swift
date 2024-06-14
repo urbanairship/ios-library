@@ -74,7 +74,7 @@ extension View {
     }
 }
 
-/// The contaction subscription group item style config
+/// The contact subscription group item style config
 public struct ContactSubscriptionGroupStyleConfiguration {
     public let item: PreferenceCenterConfig.ContactSubscriptionGroup
     /// The preference state
@@ -145,7 +145,7 @@ public struct DefaultContactSubscriptionGroupStyle:
             .contactSubscriptionGroup
 
         if configuration.displayConditionsMet {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 8) {
                 if let title = item.display?.title {
                     Text(title)
                         .textAppearance(

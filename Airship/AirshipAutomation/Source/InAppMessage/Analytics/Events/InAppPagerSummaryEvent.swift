@@ -31,7 +31,7 @@ struct PageViewSummary: Encodable, Sendable, Equatable {
 }
 
 struct InAppPagerSummaryEvent: InAppEvent {
-    let name: String = "in_app_pager_summary"
+    let name = EventType.inAppPagerSummary
     let data: (Sendable&Encodable)?
 
     init(pagerInfo: ThomasPagerInfo, viewedPages: [PageViewSummary]) {

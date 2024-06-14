@@ -22,6 +22,10 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
     }
 
     func execute(data: AirshipJSON, preparedScheduleInfo: PreparedScheduleInfo) async -> ScheduleExecuteResult {
+        guard preparedScheduleInfo.additionalAudienceCheckResult else {
+            return .finished
+        }
+
         await actionRunner.runActions(data, situation: .automation, metadata: [:])
         return .finished
     }

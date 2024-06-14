@@ -71,7 +71,7 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
 
         // Perform the upload
         let result = try await self.session.performHTTPRequest(request)
-        AirshipLogger.trace("Usage result: \(result)")
+        AirshipLogger.debug("Usage result: \(result)")
 
         return result
     }

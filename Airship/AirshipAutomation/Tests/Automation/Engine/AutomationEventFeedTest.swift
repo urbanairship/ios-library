@@ -4,7 +4,7 @@ import XCTest
 
 @testable
 import AirshipAutomation
-import AirshipCore
+@testable import AirshipCore
 
 final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     private let date = UATestDate(offset: 0, dateOverride: Date())
@@ -33,7 +33,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         let state = TriggerableState(versionUpdated: "test")
         
-        XCTAssertEqual([AutomationEvent.appInit, AutomationEvent.stateChanged(state: state)], events)
+        XCTAssertEqual([AutomationEvent.event(type: .appInit), AutomationEvent.stateChanged(state: state)], events)
     }
     
     func testSubsequentAttachEmitsNoEvents() async throws {
@@ -57,41 +57,102 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
 
         stateTracker.currentState = .active
         var events = await takeNext(count: 2)
-        XCTAssertEqual(AutomationEvent.foreground, events.first)
+        XCTAssertEqual(AutomationEvent.event(type: .foreground), events.first)
         verifyStateChange(event: events.last!, foreground: true, versionUpdated: "test")
 
         stateTracker.currentState = .background
         events = await takeNext(count: 2)
-        XCTAssertEqual(AutomationEvent.background, events.first)
+        XCTAssertEqual(AutomationEvent.event(type: .background), events.first)
         verifyStateChange(event: events.last!, foreground: false, versionUpdated: "test")
 
         let trackScreenName = "test-screen"
-        analyticsFeed.notifyEvent(.screenChange(screen: trackScreenName))
+        await analyticsFeed.notifyEvent(.screen(screen: trackScreenName))
         var event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.screenView(name: trackScreenName), event)
+        XCTAssertEqual(AutomationEvent.event(type: .screen, data: .string(trackScreenName)), event)
         
-        analyticsFeed.notifyEvent(.regionEnter(body: .string("some region data")))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .regionEnter, body: .string("some region data")))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.regionEnter(data: .string("some region data")), event)
+        XCTAssertEqual(AutomationEvent.event(type: .regionEnter, data: .string("some region data")), event)
 
-        analyticsFeed.notifyEvent(.regionExit(body: .string("some region data")))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .regionExit, body: .string("some region data")))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.regionExit(data: .string("some region data")), event)
+        XCTAssertEqual(AutomationEvent.event(type: .regionExit, data: .string("some region data")), event)
 
-        analyticsFeed.notifyEvent(.customEvent(body: .string("some data"), value: 100.0))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .customEvent, body: .string("some data"), value: 100))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.customEvent(data: .string("some data"), value: 100.0), event)
+        XCTAssertEqual(AutomationEvent.event(type: .customEventCount, data: .string("some data"), value: 1), event)
+        event = await takeNext().first
+        XCTAssertEqual(AutomationEvent.event(type: .customEventValue, data: .string("some data"), value: 100), event)
+        
 
-        analyticsFeed.notifyEvent(.featureFlagInteraction(body: .string("some data")))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .featureFlagInteraction, body: .string("some data")))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.featureFlagInterracted(data: .string("some data")), event)
+        XCTAssertEqual(AutomationEvent.event(type: .featureFlagInteraction, data: .string("some data")), event)
+    }
+    
+    func testAnalyticFeedEvents() async throws {
+        await subject.attach()
+        await takeNext(count: 3)
+        
+        let eventMap: [EventType: [EventAutomationTriggerType]] = [
+            .customEvent: [.customEventCount, .customEventValue],
+            .regionExit: [.regionExit],
+            .regionEnter: [.regionEnter],
+            .featureFlagInteraction: [.featureFlagInteraction],
+            .inAppDisplay: [.inAppDisplay],
+            .inAppResolution: [.inAppResolution],
+            .inAppButtonTap: [.inAppButtonTap],
+            .inAppPermissionResult: [.inAppPermissionResult],
+            .inAppFormDisplay: [.inAppFormDisplay],
+            .inAppFormResult: [.inAppFormResult],
+            .inAppGesture: [.inAppGesture],
+            .inAppPagerCompleted: [.inAppPagerCompleted],
+            .inAppPagerSummary: [.inAppPagerSummary],
+            .inAppPageSwipe: [.inAppPageSwipe],
+            .inAppPageView: [.inAppPageView],
+            .inAppPageAction: [.inAppPageAction]
+        ]
+        
+        for eventType in EventType.allCases {
+            guard let expected = eventMap[eventType] else { continue }
+            
+            let data = AirshipJSON.string(UUID().uuidString)
+            await analyticsFeed.notifyEvent(.analytics(eventType: eventType, body: data))
+            
+            for expectedTriggerType in expected {
+                let event = await takeNext().first
+                XCTAssertEqual(AutomationEvent.event(type: expectedTriggerType, data: data, value: 1.0), event)
+            }
+        }
+    }
+    
+    func testScreenEvent() async throws {
+        await subject.attach()
+        await takeNext(count: 3)
+        
+        await analyticsFeed.notifyEvent(.screen(screen: "foo"))
+        let event = await takeNext().first
+        XCTAssertEqual(AutomationEvent.event(type: .screen, data: .string("foo"), value: 1.0), event)
+    }
+    
+    func testCustomEventValues() async throws {
+        await subject.attach()
+        await takeNext(count: 3)
+        
+        await analyticsFeed.notifyEvent(.analytics(eventType: .customEvent, body: .null, value: 10))
+        
+        var event = await takeNext().first
+        XCTAssertEqual(AutomationEvent.event(type: .customEventCount, data: .null, value: 1.0), event)
+        
+        event = await takeNext().first
+        XCTAssertEqual(AutomationEvent.event(type: .customEventValue, data: .null, value: 10.0), event)
     }
     
     func testNoEventsIfNotAttached() async throws {
         var events = await takeNext()
         XCTAssert(events.isEmpty)
         
-        self.analyticsFeed.notifyEvent(.screenChange(screen: "foo"))
+        await self.analyticsFeed.notifyEvent(.screen(screen: "foo"))
         events = await takeNext()
         XCTAssert(events.isEmpty)
     }
@@ -103,7 +164,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         await subject.detach()
 
-        self.analyticsFeed.notifyEvent(.screenChange(screen: "foo"))
+        await self.analyticsFeed.notifyEvent(.screen(screen: "foo"))
         events = await takeNext()
         XCTAssert(events.isEmpty)
     }

@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 
 final class InAppPermissionResultEventTest: XCTestCase {
@@ -24,7 +23,7 @@ final class InAppPermissionResultEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_permission_result")
+        XCTAssertEqual(event.name.reportingName, "in_app_permission_result")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 

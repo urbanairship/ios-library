@@ -61,10 +61,12 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
         AirshipLogger.debug("Request to update remote data: \(request)")
 
         return try await self.session.performHTTPRequest(request) { data, response in
+            
+            AirshipLogger.debug("Fetching remote data finished with response: \(response)")
+            
             guard response.statusCode == 200, let data = data else {
                 return nil
             }
-
 
             let remoteDataResponse = try self.decoder.decode(RemoteDataResponse.self, from: data)
             let remoteDataInfo = try remoteDataInfoBlock(response.value(forHTTPHeaderField: "Last-Modified"))

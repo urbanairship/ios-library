@@ -63,6 +63,13 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             && self.options == object.options
     }
 
+    public static func == (lhs: PreferenceCenterConfig, rhs: PreferenceCenterConfig) -> Bool {
+        return lhs.identifier == rhs.identifier &&
+        lhs.sections == rhs.sections &&
+        lhs.display == rhs.display &&
+        lhs.options == rhs.options
+    }
+
     /// Config options.
     @objc(UAPreferenceCenterConfigOptions)
     public final class Options: NSObject, Decodable, Sendable {
@@ -134,6 +141,10 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
             return self.title == object.title
                 && self.subtitle == object.subtitle
+        }
+
+        public static func == (lhs: PreferenceCenterConfig.CommonDisplay, rhs: PreferenceCenterConfig.CommonDisplay) -> Bool {
+            return lhs.title == rhs.title && lhs.subtitle == rhs.subtitle
         }
     }
 
@@ -279,6 +290,13 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 && self.items == object.items
                 && self.conditions == object.conditions
         }
+
+        public static func == (lhs: PreferenceCenterConfig.CommonSection, rhs: PreferenceCenterConfig.CommonSection) -> Bool {
+            return lhs.identifier == rhs.identifier &&
+            lhs.items == rhs.items &&
+            lhs.display == rhs.display &&
+            lhs.conditions == rhs.conditions
+        }
     }
 
     /// Labeled section break info.
@@ -335,6 +353,71 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
     }
 
+    /// Contact Management section.
+    @objc(UAPreferenceCenterConfigContactManagementSection)
+    public final class ContactManagementSection: NSObject, Decodable,
+                                      PreferenceCenterConfigSection
+    {
+
+        /// The section's type.
+        @objc
+        public let type = PreferenceCenterConfigSectionType.common
+
+        /// The section's identifier.
+        @objc
+        public let identifier: String
+
+        /// The section's items.
+        public let items: [Item]
+
+        @objc(items)
+        public var _items: [PreferenceCenterConfigItem] {
+            return self.items.map { $0.info }
+        }
+
+        /// The section's display info.
+        @objc
+        public let display: CommonDisplay?
+
+        /// The section's display conditions.
+        public let conditions: [Condition]?
+
+        @objc(conditions)
+        public var _conditions: [PreferenceConfigCondition]? {
+            self.conditions?.map { $0.info }
+        }
+
+        public init(
+            identifier: String,
+            items: [Item],
+            display: CommonDisplay? = nil,
+            conditions: [Condition]? = nil
+        ) {
+            self.identifier = identifier
+            self.items = items
+            self.display = display
+            self.conditions = conditions
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case identifier = "id"
+            case display = "display"
+            case items = "items"
+            case conditions = "conditions"
+        }
+
+        public override func isEqual(_ object: Any?) -> Bool {
+            guard let object = object as? CommonSection else {
+                return false
+            }
+
+            return self.identifier == object.identifier
+            && self.display == object.display
+            && self.items == object.items
+            && self.conditions == object.conditions
+        }
+    }
+
     /// Preference config section.
     public enum Section: Decodable, Equatable, Sendable {
 
@@ -366,7 +449,19 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 )
             }
         }
+
+        public static func == (lhs: PreferenceCenterConfig.Section, rhs: PreferenceCenterConfig.Section) -> Bool {
+            switch (lhs, rhs) {
+            case (.common(let lhsSection), .common(let rhsSection)):
+                return lhsSection == rhsSection
+            case (.labeledSectionBreak(let lhsSection), .labeledSectionBreak(let rhsSection)):
+                return lhsSection == rhsSection
+            default:
+                return false
+            }
+        }
     }
+    
     /// Channel subscription item info.
     @objc(UAPreferenceCenterConfigChannelSubscription)
     public final class ChannelSubscription: NSObject, Decodable, PreferenceCenterConfigItem, Sendable {
@@ -672,7 +767,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         @objc(UAPreferenceCenterConfigAlertButton)
         public final class Button: NSObject, Decodable, Sendable {
 
-            /// The buttton's text.
+            /// The button's text.
             @objc
             public let text: String
 
@@ -682,7 +777,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
             let actionJSON: AirshipJSON
 
-            /// Actions paylaod to run on tap
+            /// Actions payload to run on tap
             @objc
             public var actions: Any? {
                 return self.actionJSON.unWrap()
@@ -758,13 +853,17 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             }
         }
     }
+    
+    /// Contact management item
 
+    
     /// Config item.
     public enum Item: Decodable, Equatable, Sendable {
         case channelSubscription(ChannelSubscription)
         case contactSubscription(ContactSubscription)
         case contactSubscriptionGroup(ContactSubscriptionGroup)
         case alert(Alert)
+        case contactManagement(ContactManagementItem)
 
         enum CodingKeys: String, CodingKey {
             case type = "type"
@@ -794,6 +893,8 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 )
             case .alert:
                 self = .alert((try singleValueContainer.decode(Alert.self)))
+            case .contactManagement:
+                self = .contactManagement((try singleValueContainer.decode(ContactManagementItem.self)))
             }
         }
     }
@@ -808,6 +909,7 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
 
     /// Notification opt-in condition.
     case notificationOptIn
+
 
     var stringValue: String {
         switch self {
@@ -848,7 +950,6 @@ public protocol PreferenceConfigCondition: Sendable {
 public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
-
     /// Channel subscription type.
     case channelSubscription
 
@@ -861,12 +962,16 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
     /// Alert type.
     case alert
 
+    /// Contact management
+    case contactManagement
+    
     var stringValue: String {
         switch self {
         case .channelSubscription: return "channel_subscription"
         case .contactSubscription: return "contact_subscription"
         case .contactSubscriptionGroup: return "contact_subscription_group"
         case .alert: return "alert"
+        case .contactManagement: return "contact_management"
         }
     }
 
@@ -878,6 +983,7 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
         case "contact_subscription": return .contactSubscription
         case "contact_subscription_group": return .contactSubscriptionGroup
         case "alert": return .alert
+        case "contact_management": return .contactManagement
         default:
             throw AirshipErrors.error("invalid item \(value)")
         }
@@ -899,13 +1005,12 @@ public protocol PreferenceCenterConfigItem: Sendable {
     @objc
     var identifier: String { get }
 }
-
+    
 /// Preference config section type.
 @objc(UAPreferenceCenterConfigSectionType)
 public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
-
     /// Common section type.
     case common
 
@@ -961,6 +1066,7 @@ extension PreferenceCenterConfig.Item {
         case .contactSubscription(let info): return info
         case .contactSubscriptionGroup(let info): return info
         case .alert(let info): return info
+        case .contactManagement(let info): return info
         }
     }
 }
@@ -1001,5 +1107,157 @@ extension PreferenceCenterConfig {
                     || item.info.type == .contactSubscriptionGroup)
             })
         })
+    }
+    
+    public func containsContactManagement() -> Bool {
+        return self.sections.contains(where: { section in
+            guard case .common(let info) = section else { return false }
+            return info.items.contains(where: { item in
+                return item.info.type == .contactManagement
+            })
+        })
+    }
+}
+
+// MARK: Encodable support for testing
+
+extension PreferenceCenterConfig {
+    func prettyPrintedJSON() throws -> String {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .prettyPrinted
+        let jsonData = try encoder.encode(self)
+
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+            throw NSError(domain: "JSONEncoding", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert JSON data to string."])
+        }
+
+        return jsonString
+    }
+}
+
+extension PreferenceCenterConfig: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(identifier, forKey: .identifier)
+        try container.encode(sections, forKey: .sections)
+        try container.encodeIfPresent(display, forKey: .display)
+        try container.encodeIfPresent(options, forKey: .options)
+    }
+}
+
+extension PreferenceCenterConfig.Options: Encodable {}
+
+extension PreferenceCenterConfig.CommonDisplay: Encodable {}
+
+extension PreferenceCenterConfig.NotificationOptInCondition: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(optInStatus.rawValue, forKey: .optInStatus)
+    }
+}
+
+extension PreferenceCenterConfig.Condition: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .notificationOptIn(let condition):
+            try container.encode(condition.type.description, forKey: .type)
+            try condition.encode(to: encoder)
+        }
+    }
+}
+
+extension PreferenceCenterConfig.CommonSection: Encodable {}
+
+extension PreferenceCenterConfig.LabeledSectionBreak: Encodable {}
+
+extension PreferenceCenterConfig.Section: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .common(let section):
+            try container.encode(section.type.description, forKey: .type)
+            try section.encode(to: encoder)
+        case .labeledSectionBreak(let section):
+            try container.encode(section.type.description, forKey: .type)
+            try section.encode(to: encoder)
+        }
+    }
+}
+
+extension PreferenceCenterConfig.ChannelSubscription: Encodable {}
+
+extension PreferenceCenterConfig.ContactSubscriptionGroup: Encodable {}
+
+extension PreferenceCenterConfig.ContactSubscriptionGroup.Component: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_scopes, forKey: ._scopes)
+        try container.encode(display, forKey: .display)
+    }
+}
+
+extension PreferenceCenterConfig.ContactSubscription: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(identifier, forKey: .identifier)
+        try container.encode(display, forKey: .display)
+        try container.encode(subscriptionID, forKey: .subscriptionID)
+//        try container.encode(_conditions, forKey: .conditions)
+        try container.encode(_scopes, forKey: ._scopes)
+    }
+}
+
+extension ChannelScopes: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(values.map { $0.rawValue })
+    }
+}
+
+extension PreferenceCenterConfig.Alert: Encodable {}
+
+extension PreferenceCenterConfig.Alert.Button: Encodable {}
+
+extension PreferenceCenterConfigConditionType : Encodable {}
+
+extension PreferenceCenterConfig.Alert.Display: Encodable {}
+
+extension PreferenceCenterConfig.ContactManagementItem: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(identifier, forKey: .identifier)
+        try container.encode(platform, forKey: .platform)
+        try container.encode(display, forKey: .display)
+        try container.encodeIfPresent(emptyMessage, forKey: .emptyMessage)
+        try container.encodeIfPresent(addChannel, forKey: .addChannel)
+        try container.encodeIfPresent(removeChannel, forKey: .removeChannel)
+        try container.encodeIfPresent(conditions, forKey: .conditions)
+    }
+}
+
+extension PreferenceCenterConfig.Item: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .channelSubscription(let item):
+            try container.encode(item.type.description, forKey: .type)
+            try item.encode(to: encoder)
+        case .contactSubscription(let item):
+            try container.encode(item.type.description, forKey: .type)
+            try item.encode(to: encoder)
+        case .contactSubscriptionGroup(let item):
+            try container.encode(item.type.description, forKey: .type)
+            try item.encode(to: encoder)
+        case .alert(let item):
+            try container.encode(item.type.description, forKey: .type)
+            try item.encode(to: encoder)
+        case .contactManagement(let item):
+            try container.encode(item.type.description, forKey: .type)
+            try item.encode(to: encoder)
+        }
     }
 }

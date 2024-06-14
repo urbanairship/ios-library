@@ -51,7 +51,6 @@ class ConditionsMonitor: ObservableObject {
             }
             .eraseToAnyPublisher()
         }
-
     }
 
     @MainActor
@@ -79,4 +78,5 @@ class ConditionsMonitor: ObservableObject {
         }
     }
 }
+
 

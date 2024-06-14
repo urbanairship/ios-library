@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppFormResultEventTest: XCTestCase {
 
@@ -19,7 +18,7 @@ final class InAppFormResultEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_form_result")
+        XCTAssertEqual(event.name.reportingName, "in_app_form_result")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 

@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppPagerSummaryEventTest: XCTestCase {
 
@@ -60,7 +59,7 @@ final class InAppPagerSummaryEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_pager_summary")
+        XCTAssertEqual(event.name.reportingName, "in_app_pager_summary")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 }

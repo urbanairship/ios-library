@@ -3,7 +3,7 @@
     "name": "Jurassic Park",
     "display_type": "modal",
     "display": {
-        "allow_fullscreen_display": false,
+        "allow_fullscreen_display": true,
         "background_color": "#000000",
         "body": {
             "text": "Jurassic Park is a 1993 American science-fiction adventure film directed by Steven Spielberg and produced by Kathleen Kennedy and Gerald R. Molen. The first installment in the Jurassic Park franchise, it is based on the 1990 novel of the same name by Michael Crichton and a screenplay written by Crichton and David Koepp. The film is set on the fictional islet of Isla Nublar, located off Central America's Pacific Coast near Costa Rica, where a billionaire philanthropist and a small team of genetic scientists have created a wildlife park of cloned dinosaurs.",

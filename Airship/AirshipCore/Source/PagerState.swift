@@ -31,13 +31,22 @@ struct PageState: Sendable {
 
 @MainActor
 class PagerState: ObservableObject {
-    @Published var pageIndex: Int = 0
+    @Published var pageIndex: Int = 0 {
+        didSet {
+            updateInProgress()
+        }
+    }
     @Published var pages: [PageState] = []
     @Published var progress: Double = 0.0
     @Published var completed: Bool = false
     
     /// Used to pause/resume a story
-    var inProgress: Bool = true
+    @Published var inProgress: Bool = true
+    
+    private var isManuallyPaused = false
+
+    private var mediaReadyState: [MediaKey: Bool] = [:]
+
     var currentPage: PageState {
         get { pages[pageIndex] }
         set { pages[pageIndex] = newValue }
@@ -54,18 +63,50 @@ class PagerState: ObservableObject {
     }
 
     func pause() {
-        self.inProgress = false
+        self.isManuallyPaused = true
+        updateInProgress()
     }
 
     func resume() {
-        self.inProgress = true
+        self.isManuallyPaused = false
+        updateInProgress()
     }
     
-    func resetProgress() {
+    func preparePageChange() {
         self.progress = 0.0
     }
-    
+
+    func registerMedia(pageIndex: Int, id: UUID) {
+        let key = MediaKey(pageIndex: pageIndex, id: id)
+        guard mediaReadyState[key] == nil else { return }
+        mediaReadyState[key] = false
+    }
+
+    func setMediaReady(pageIndex: Int, id: UUID, isReady: Bool) {
+        let key = MediaKey(pageIndex: pageIndex, id: id)
+        mediaReadyState[key] = true
+        updateInProgress()
+    }
+
     func markAutomatedActionExecuted(_ identifier: String) {
         self.currentPage.markAutomatedActionExecuted(identifier)
     }
+
+    private func updateInProgress() {
+        let isMediaReady = !mediaReadyState.contains(where: { key, isReady in
+            key.pageIndex == pageIndex && isReady == false
+        })
+
+        let update = isMediaReady && !isManuallyPaused
+        if self.inProgress != update {
+            self.inProgress = update
+        }
+    }
+
+    struct MediaKey: Hashable, Equatable {
+        let pageIndex: Int
+        let id: UUID
+    }
 }
+
+

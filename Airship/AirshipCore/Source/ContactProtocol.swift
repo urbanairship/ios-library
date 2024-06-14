@@ -130,7 +130,7 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// The named user ID current value publisher.
     var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
 
-    /// Conflict event publisher
+    /// Conflict event publisher.
     var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
 
     /// Notifies any edits to the subscription lists.
@@ -139,7 +139,40 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
     /// Fetches subscription lists.
     /// - Returns: Subscriptions lists.
     func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]]
+
+    /// SMS validator delegate to allow overriding the default SMS validation
+    /// - Returns: Bool indicating if SMS is valid.
+    var smsValidatorDelegate: SMSValidatorDelegate? { get set }
+
+    /**
+     * Validates MSISDN
+     * - Parameters:
+     *   - msisdn: The mobile phone number to validate.
+     *   - sender: The identifier given to the sender of the SMS message.
+     */
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
+
+    /**
+     * Re-sends the double opt in prompt via the pending or registered channel.
+     * - Parameters:
+     *   - channel: The pending or registered channel to resend the double opt-in prompt to.
+     */
+    func resend(_ channel: ContactChannel)
+
+    /**
+     * Opts out and disassociates channel
+     * - Parameters:
+     *   - channel: The channel to opt-out and disassociate
+     */
+    func disassociateChannel(_ channel: ContactChannel)
+
+    /// Contact channel updates stream.
+    var contactChannelUpdates: AsyncStream<ContactChannelsResult> { get }
+
+    /// Contact channel updates publisher.
+    var contactChannelPublisher: AnyPublisher<ContactChannelsResult, Never> { get }
 }
+
 
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {
     var contactID: String? { get async }
@@ -149,5 +182,7 @@ protocol InternalAirshipContactProtocol: AirshipContactProtocol {
 
     var contactIDInfo: ContactIDInfo? { get async }
     var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> { get }
-}
 
+    func getStableContactInfo() async -> StableContactInfo
+
+}

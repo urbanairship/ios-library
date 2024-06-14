@@ -1,4 +1,5 @@
 {
+  "originHash" : "15f70542934037e26c0fb164e8d9c1cad34f07aec670e7536cfde8fc58e7d90f",
   "pins" : [
     {
       "identity" : "yams",
@@ -10,5 +11,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

@@ -17,7 +17,7 @@ public struct PreferenceCenterAlertView: View {
     @ObservedObject
     public var state: PreferenceCenterState
 
-    @Environment(\.airshipPrefenceCenterAlertStyle)
+    @Environment(\.airshipPreferenceCenterAlertStyle)
     private var style
 
     @Environment(\.airshipPreferenceCenterTheme)
@@ -33,7 +33,7 @@ public struct PreferenceCenterAlertView: View {
 
     @ViewBuilder
     public var body: some View {
-        let configuration = PrefernceCenterAlertStyleConfiguration(
+        let configuration = PreferenceCenterAlertStyleConfiguration(
             item: self.item,
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
@@ -52,17 +52,17 @@ extension View {
     /// Sets the alert style
     /// - Parameters:
     ///     - style: The style
-    public func prefernceCenterAlertStyle<S>(_ style: S) -> some View
-    where S: PrefernceCenterAlertStyle {
+    public func PreferenceCenterAlertStyle<S>(_ style: S) -> some View
+    where S: PreferenceCenterAlertStyle {
         self.environment(
-            \.airshipPrefenceCenterAlertStyle,
-            AnyPrefernceCenterAlertStyle(style: style)
+            \.airshipPreferenceCenterAlertStyle,
+            AnyPreferenceCenterAlertStyle(style: style)
         )
     }
 }
 
 /// Preference Center alert style configuration
-public struct PrefernceCenterAlertStyleConfiguration {
+public struct PreferenceCenterAlertStyleConfiguration {
     /// The item config
     public let item: PreferenceCenterConfig.Alert
 
@@ -77,14 +77,14 @@ public struct PrefernceCenterAlertStyleConfiguration {
 }
 
 /// Preference Center alert style
-public protocol PrefernceCenterAlertStyle {
+public protocol PreferenceCenterAlertStyle {
     associatedtype Body: View
-    typealias Configuration = PrefernceCenterAlertStyleConfiguration
+    typealias Configuration = PreferenceCenterAlertStyleConfiguration
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-extension PrefernceCenterAlertStyle
-where Self == DefaultPrefernceCenterAlertStyle {
+extension PreferenceCenterAlertStyle
+where Self == DefaultPreferenceCenterAlertStyle {
 
     /// Default style
     public static var defaultStyle: Self {
@@ -93,7 +93,7 @@ where Self == DefaultPrefernceCenterAlertStyle {
 }
 
 /// The default Preference Center alert style
-public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
+public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
 
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
@@ -137,7 +137,7 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                             Text(title)
                                 .textAppearance(
                                     itemTheme?.titleAppearance,
-                                    base: DefaultPrefernceCenterAlertStyle
+                                    base: DefaultPreferenceCenterAlertStyle
                                         .titleAppearance
                                 )
                         }
@@ -146,7 +146,7 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                             Text(subtitle)
                                 .textAppearance(
                                     itemTheme?.subtitleAppearance,
-                                    base: DefaultPrefernceCenterAlertStyle
+                                    base: DefaultPreferenceCenterAlertStyle
                                         .subtitleAppearance
                                 )
                         }
@@ -168,7 +168,7 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
                                         .textAppearance(
                                             itemTheme?.buttonLabelAppearance,
                                             base:
-                                                DefaultPrefernceCenterAlertStyle
+                                                DefaultPreferenceCenterAlertStyle
                                                 .buttonLabelAppearance
                                         )
                                         .padding(.horizontal, 8)
@@ -196,11 +196,11 @@ public struct DefaultPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
     }
 }
 
-struct AnyPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
+struct AnyPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
     @ViewBuilder
     private var _makeBody: (Configuration) -> AnyView
 
-    init<S: PrefernceCenterAlertStyle>(style: S) {
+    init<S: PreferenceCenterAlertStyle>(style: S) {
         _makeBody = { configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
@@ -212,13 +212,13 @@ struct AnyPrefernceCenterAlertStyle: PrefernceCenterAlertStyle {
     }
 }
 
-struct PrefernceCenterAlertStyleKey: EnvironmentKey {
-    static var defaultValue = AnyPrefernceCenterAlertStyle(style: .defaultStyle)
+struct PreferenceCenterAlertStyleKey: EnvironmentKey {
+    static var defaultValue = AnyPreferenceCenterAlertStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {
-    var airshipPrefenceCenterAlertStyle: AnyPrefernceCenterAlertStyle {
-        get { self[PrefernceCenterAlertStyleKey.self] }
-        set { self[PrefernceCenterAlertStyleKey.self] = newValue }
+    var airshipPreferenceCenterAlertStyle: AnyPreferenceCenterAlertStyle {
+        get { self[PreferenceCenterAlertStyleKey.self] }
+        set { self[PreferenceCenterAlertStyleKey.self] = newValue }
     }
 }

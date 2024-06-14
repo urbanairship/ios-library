@@ -142,6 +142,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: self.anonIdentifyResponse.contact.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -199,6 +200,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: self.anonIdentifyResponse.contact.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -236,6 +238,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: true,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 ),
@@ -243,6 +246,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: false,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 )
@@ -336,6 +340,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: false,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 ),
@@ -343,6 +348,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.nonAnonIdentifyResponse.contact.contactID,
                         isStable: true,
+                        namedUserID: "some named user",
                         resolveDate: self.date.now
                     )
                 ),
@@ -454,6 +460,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.nonAnonIdentifyResponse.contact.contactID,
                         isStable: false,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 ),
@@ -461,6 +468,7 @@ final class ContactManagerTest: XCTestCase {
                     ContactIDInfo(
                         contactID: self.anonIdentifyResponse.contact.contactID,
                         isStable: true,
+                        namedUserID: nil,
                         resolveDate: self.date.now
                     )
                 )
@@ -492,6 +500,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: self.anonIdentifyResponse.contact.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -612,6 +621,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo!.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -657,6 +667,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -669,6 +680,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: false,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -684,6 +696,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: true,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -696,6 +709,7 @@ final class ContactManagerTest: XCTestCase {
                 ContactIDInfo(
                     contactID: contactInfo.contactID,
                     isStable: false,
+                    namedUserID: nil,
                     resolveDate: self.date.now
                 )
             )
@@ -844,9 +858,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .email, channelID: "some channel"
-                ),
+                result: .init(channelType: .email, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -893,9 +905,7 @@ final class ContactManagerTest: XCTestCase {
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .open, channelID: "some channel"
-                ),
+                result: .init(channelType: .open, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -932,16 +942,189 @@ final class ContactManagerTest: XCTestCase {
 
         // Then register the channel
         let register = XCTestExpectation()
-        self.apiClient.registerSMSCallback = { contactID, address, options, locale in
-            XCTAssertEqual(contactID, self.anonIdentifyResponse.contact.contactID)
+        self.apiClient.registerSMSCallback = {contactID, address, options, locale in
             XCTAssertEqual(address, expectedAddress)
             XCTAssertEqual(options, options)
             XCTAssertEqual(locale, self.localeManager.currentLocale)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .open, channelID: "some channel"
-                ),
+                result: .init(channelType: .sms, channelID: "some channel"),
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+    }
+
+    func testResendEmail() async throws {
+        let expectedAddress: String = "example@email.com"
+
+        let expectedResendOptions = ResendOptions(emailAddress: expectedAddress)
+
+        // Should resolve contact first after checking the token
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let pendingChannel = makePendingEmailContactChannel(address: expectedAddress)
+
+        await self.contactManager.addOperation(
+            .resend(channel: pendingChannel)
+        )
+
+        let resend = XCTestExpectation()
+        self.apiClient.resendCallback = { resendOptions in
+            XCTAssertEqual(resendOptions, expectedResendOptions)
+            resend.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+    }
+
+    func testResendSMS() async throws {
+        let expectedMSISDN: String = "12345"
+        let expectedSenderID: String = "1111"
+
+        let expectedResendOptions = ResendOptions(msisdn: expectedMSISDN, senderID: expectedSenderID)
+
+        // Should resolve contact first after checking the token
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let pendingChannel = makePendingSMSContactChannel(msisdn: expectedMSISDN, sender: expectedSenderID)
+
+        await self.contactManager.addOperation(
+            .resend(channel: pendingChannel)
+        )
+
+        let resend = XCTestExpectation()
+        self.apiClient.resendCallback = { resendOptions in
+            XCTAssertEqual(resendOptions, expectedResendOptions)
+            resend.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+    }
+
+    func testResendChannel() async throws {
+        let expectedChannelID = "12345"
+        let expectedChannelType: ChannelType = ChannelType.email
+
+        let expectedResendOptions = ResendOptions(channelID: expectedChannelID, channelType: expectedChannelType)
+
+        // Should resolve contact first after checking the token
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let registeredChannel = makeRegisteredContactChannel(from: expectedChannelID)
+
+        await self.contactManager.addOperation(
+            .resend(channel: registeredChannel)
+        )
+
+        let resend = XCTestExpectation()
+        self.apiClient.resendCallback = { resendOptions in
+            XCTAssertEqual(resendOptions, expectedResendOptions)
+            resend.fulfill()
+            return AirshipHTTPResponse(
+                result: true,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+
+        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+    }
+
+    func testDisassociate() async throws {
+        let expectedChannelID = "12345"
+        let registeredChannel = makeRegisteredContactChannel(from: expectedChannelID)
+
+        await self.contactManager.addOperation(
+            .disassociateChannel(channel: registeredChannel)
+        )
+
+        // Should resolve contact first
+        let resolve = XCTestExpectation()
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        // Then disassociate the channel
+        let register = XCTestExpectation()
+        self.apiClient.disassociateChannelCallback = { contactID, channelID, type in
+            XCTAssertEqual(channelID, expectedChannelID)
+            XCTAssertEqual(type, ChannelType.email.stringValue)
+            register.fulfill()
+            return AirshipHTTPResponse(
+                result: ContactDisassociateChannelResult(channelID: channelID),
                 statusCode: 200,
                 headers: [:]
             )
@@ -959,7 +1142,10 @@ final class ContactManagerTest: XCTestCase {
 
     func testAssociateChannel() async throws {
         await self.contactManager.addOperation(
-            .associateChannel(channelID: "some channel", channelType: .open)
+            .associateChannel(
+                channelID: "some channel",
+                channelType: .open
+            )
         )
 
         // Should resolve contact first
@@ -975,15 +1161,13 @@ final class ContactManagerTest: XCTestCase {
 
         // Then register the channel
         let register = XCTestExpectation()
-        self.apiClient.associateChannelCallback = { contactID, address, type in
-            XCTAssertEqual(contactID, self.anonIdentifyResponse.contact.contactID)
-            XCTAssertEqual(address, "some channel")
+        self.apiClient.associateChannelCallback = { contactID, channelID, type in
+            XCTAssertEqual(contactID, "some contact")
+            XCTAssertEqual(channelID, "some channel")
             XCTAssertEqual(type, .open)
             register.fulfill()
             return AirshipHTTPResponse(
-                result: AssociatedChannel(
-                    channelType: .open, channelID: "some channel"
-                ),
+                result: .init(channelType: type, channelID: "some channel"),
                 statusCode: 200,
                 headers: [:]
             )
@@ -1138,7 +1322,7 @@ final class ContactManagerTest: XCTestCase {
         let expctedConflictEvent =  ContactConflictEvent(
             tags: ["some group": ["tag"]],
             attributes: ["some attribute": .string("cool")],
-            channels: [],
+            associatedChannels: [],
             subscriptionLists: ["some list": [.app]],
             conflictingNamedUserID: "some named user"
         )
@@ -1159,6 +1343,40 @@ final class ContactManagerTest: XCTestCase {
         }
 
         return collected
+    }
+
+
+    private func makePendingEmailContactChannel(address: String) -> ContactChannel {
+        return .email(
+            .pending(
+                ContactChannel.Email.Pending(
+                    address: address,
+                    registrationOptions: .options(properties: nil, doubleOptIn: true)
+                )
+            )
+        )
+    }
+
+    private func makePendingSMSContactChannel(msisdn: String, sender: String) -> ContactChannel {
+        return .sms(
+            .pending(
+                ContactChannel.Sms.Pending(
+                    address: msisdn,
+                    registrationOptions: .optIn(senderID: sender)
+                )
+            )
+        )
+    }
+
+    private func makeRegisteredContactChannel(from channelID: String) -> ContactChannel {
+        return .email(
+            .registered(
+                ContactChannel.Email.Registered(
+                    channelID: channelID,
+                    maskedAddress: "****@email.com"
+                )
+            )
+        )
     }
 
     private func verifyUpdates(_ expected: [ContactUpdate], file: StaticString = #filePath, line: UInt = #line) async {

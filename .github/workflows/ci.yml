@@ -12,7 +12,7 @@ concurrency:
 jobs:
   run-tests-core:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install yeetd
@@ -25,7 +25,7 @@ jobs:
 
   run-tests-message-center:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install yeetd
@@ -38,7 +38,7 @@ jobs:
 
   run-tests-preference-center:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install yeetd
@@ -51,7 +51,7 @@ jobs:
 
   run-tests-feature-flags:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install yeetd
@@ -64,7 +64,7 @@ jobs:
 
   run-tests-automation:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install yeetd
@@ -77,7 +77,7 @@ jobs:
 
   run-tests-extensions:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install yeetd
@@ -90,7 +90,7 @@ jobs:
 
   run-package-tests:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install xcodegen
@@ -100,7 +100,7 @@ jobs:
 
   build-samples:
     runs-on: macos-14-xlarge
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Build samples

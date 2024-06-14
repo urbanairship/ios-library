@@ -16,25 +16,32 @@ public class PreferenceCenterState: ObservableObject {
 
     private var contactSubscriptions: [String: Set<ChannelScope>]
     private var channelSubscriptions: Set<String>
-    private var channelUpdates: AnyCancellable?
-    private var contactUpdates: AnyCancellable?
+
+    @Published
+    var channelsList: [ContactChannel] = []
+
+    private var subscriptions: Set<AnyCancellable> = []
     private let subscriber: PreferenceSubscriber
 
     /// Default constructor.
     /// - Parameters:
     ///     - config: The preference config
-    ///     - contactSubscriptions: The relavent contact subscriptions
-    ///     - channelSubscriptions: The relavent channel subscriptions.
+    ///     - contactSubscriptions: The relevant contact subscriptions
+    ///     - channelSubscriptions: The relevant channel subscriptions.
+    ///     - channelsLists: The relevant channels list.
     public convenience init(
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
-        channelSubscriptions: Set<String> = Set()
+        channelSubscriptions: Set<String> = Set(),
+        channelsList: [ContactChannel] = [],
+        channelUpdates: AsyncStream<ContactChannelsResult>? = nil
     ) {
 
         self.init(
             config: config,
             contactSubscriptions: contactSubscriptions,
             channelSubscriptions: channelSubscriptions,
+            channelUpdates: channelUpdates,
             subscriber: PreferenceCenterState.makeSubscriber()
         )
     }
@@ -43,28 +50,42 @@ public class PreferenceCenterState: ObservableObject {
         config: PreferenceCenterConfig,
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
+        channelUpdates: AsyncStream<ContactChannelsResult>? = nil,
         subscriber: PreferenceSubscriber
     ) {
-
         self.config = config
         self.contactSubscriptions = contactSubscriptions
         self.channelSubscriptions = channelSubscriptions
         self.subscriber = subscriber
 
         self.subscribeToUpdates()
+
+        if let channelUpdates {
+            Task { @MainActor [weak self] in
+                for await update in channelUpdates {
+                    if case .success(let channels) = update {
+                        self?.channelsList = channels
+                        AirshipLogger.info("Preference center channel updated")
+                    }
+
+                }
+            }
+        }
     }
 
     /// Subscribes to updates from the Airship instance
     private func subscribeToUpdates() {
-        self.channelUpdates = self.subscriber.channelSubscriptionListEdits
+        self.subscriber.channelSubscriptionListEdits
             .sink { edit in
                 self.processChannelEdit(edit)
             }
+            .store(in: &subscriptions)
 
-        self.contactUpdates = self.subscriber.contactSubscriptionListEdits
+        self.subscriber.contactSubscriptionListEdits
             .sink { edit in
                 self.processContactEdit(edit)
             }
+            .store(in: &subscriptions)
     }
 
     /// Checks if the channel is subscribed to the preference state
@@ -81,7 +102,7 @@ public class PreferenceCenterState: ObservableObject {
     ///     - scope: The channel scope
     /// - Returns: true if any the contact is subscribed for that scope, otherwise false.
     public func isContactSubscribed(_ listID: String, scope: ChannelScope)
-        -> Bool
+    -> Bool
     {
         let containsSubscription = self.contactSubscriptions[listID]?
             .contains {
@@ -105,7 +126,7 @@ public class PreferenceCenterState: ObservableObject {
     ///     - scopes: The channel scopes
     /// - Returns: true if the contact is subscribed to any of the scopes, otherwise false.
     public func isContactSubscribed(_ listID: String, scopes: [ChannelScope])
-        -> Bool
+    -> Bool
     {
         return scopes.contains { scope in
             isContactSubscribed(listID, scope: scope)
@@ -158,7 +179,7 @@ public class PreferenceCenterState: ObservableObject {
         switch edit {
         case .subscribe(let listID, let scope):
             var scopes =
-                self.contactSubscriptions[listID] ?? Set<ChannelScope>()
+            self.contactSubscriptions[listID] ?? Set<ChannelScope>()
             scopes.insert(scope)
             self.contactSubscriptions[listID] = scopes
         case .unsubscribe(let listID, let scope):
@@ -198,16 +219,13 @@ public class PreferenceCenterState: ObservableObject {
         }
         return AirshipPreferenceSubscriber()
     }
+
 }
 
 protocol PreferenceSubscriber {
-    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
-    {
-        get
-    }
-    var contactSubscriptionListEdits:
-        AnyPublisher<ScopedSubscriptionListEdit, Never>
-    { get }
+
+    var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
+    var contactSubscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
 
     func updateChannelSubscription(
         _ listID: String,
@@ -222,9 +240,11 @@ protocol PreferenceSubscriber {
 }
 
 class PreviewPreferenceSubscriber: PreferenceSubscriber {
+
     private let channelEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
     >()
+
     var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
     {
         return channelEditsSubject.eraseToAnyPublisher()
@@ -234,7 +254,7 @@ class PreviewPreferenceSubscriber: PreferenceSubscriber {
         ScopedSubscriptionListEdit, Never
     >()
     var contactSubscriptionListEdits:
-        AnyPublisher<ScopedSubscriptionListEdit, Never>
+    AnyPublisher<ScopedSubscriptionListEdit, Never>
     {
         return contactEditsSubject.eraseToAnyPublisher()
     }
@@ -269,7 +289,7 @@ class AirshipPreferenceSubscriber: PreferenceSubscriber {
     }
 
     var contactSubscriptionListEdits:
-        AnyPublisher<ScopedSubscriptionListEdit, Never>
+    AnyPublisher<ScopedSubscriptionListEdit, Never>
     {
         return Airship.contact.subscriptionListEdits
     }
@@ -295,6 +315,32 @@ class AirshipPreferenceSubscriber: PreferenceSubscriber {
                 scopes: scopes,
                 subscribe: subscribe
             )
+        }
+    }
+}
+
+extension PreferenceCenterState: CustomStringConvertible {
+    public var description: String {
+        var description = "PreferenceCenterState:\n"
+        description += "- Config ID: \(config.identifier)\n"
+        description += "- Contact Subscriptions: \(contactSubscriptions.description)\n"
+        description += "- Channel Subscriptions: \(channelSubscriptions.description)\n"
+        description += "- Channels List: \(describeChannelsList())\n"
+
+        return description
+    }
+
+    private func describeChannelsList() -> String {
+        channelsList.map { associatedChannel in
+            "\(associatedChannel)"
+        }.joined(separator: "; ")
+    }
+}
+
+extension [ContactChannel] {
+    func filter(with type: ChannelType) -> [ContactChannel] {
+        return self.filter { channel in
+            channel.channelType == type
         }
     }
 }

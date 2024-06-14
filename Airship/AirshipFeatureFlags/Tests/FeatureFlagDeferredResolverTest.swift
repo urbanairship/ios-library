@@ -45,42 +45,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
         )
     }
 
-    func testResolveEligible() async throws {
-        let expectation = expectation(description: "flag resolved")
-        self.deferredResolver.onData = { request in
-            expectation.fulfill()
-            XCTAssertEqual(request, self.request)
-            let data = try! AirshipJSON.wrap([
-                "is_eligible": true,
-                "variables": ["var": "one"],
-                "reporting_metadata": ["reporting": "reporting"]
-            ]).toData()
-            return .success(data)
-        }
-
-        let flag = try await self.resolver.resolve(
-            request: request,
-            flagInfo: flagInfo
-        )
-
-        let expected = FeatureFlag(
-            name: flagInfo.name,
-            isEligible: true,
-            exists: true,
-            variables: try! AirshipJSON.wrap(["var": "one"]),
-            reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: try! AirshipJSON.wrap(["reporting": "reporting"]),
-                contactID: request.contactID,
-                channelID: request.channelID
-            )
-        )
-
-        XCTAssertEqual(expected, flag)
-
-        await fulfillment(of: [expectation])
-    }
-
-    func testResolveInelegible() async throws {
+    func testResolve() async throws {
         let expectation = expectation(description: "flag resolved")
 
         self.deferredResolver.onData = { request in
@@ -93,23 +58,58 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             return .success(data)
         }
 
-        let flag = try await self.resolver.resolve(
+        let result = try await self.resolver.resolve(
             request: request,
             flagInfo: flagInfo
         )
 
-        let expected = FeatureFlag(
-            name: flagInfo.name,
-            isEligible: false,
-            exists: true,
-            reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: try! AirshipJSON.wrap(["reporting": "reporting"]),
-                contactID: request.contactID,
-                channelID: request.channelID
+        let expected = DeferredFlagResponse.found(
+            DeferredFlag(
+                isEligible: false,
+                variables: nil,
+                reportingMetadata: try! AirshipJSON.wrap(["reporting": "reporting"])
             )
         )
 
-        XCTAssertEqual(expected, flag)
+
+        XCTAssertEqual(expected, result)
+
+        await fulfillment(of: [expectation])
+    }
+
+    func testResolveVariables() async throws {
+        let expectation = expectation(description: "flag resolved")
+
+        self.deferredResolver.onData = { request in
+            expectation.fulfill()
+            XCTAssertEqual(request, self.request)
+            let data = try! AirshipJSON.wrap([
+                "is_eligible": true,
+                "variables": [
+                    "type": "fixed",
+                    "data": [
+                        "var": "one"
+                    ]
+                ],
+                "reporting_metadata": ["reporting": "reporting"]
+            ]).toData()
+            return .success(data)
+        }
+
+        let result = try await self.resolver.resolve(
+            request: request,
+            flagInfo: flagInfo
+        )
+
+        let expected = DeferredFlagResponse.found(
+            DeferredFlag(
+                isEligible: true,
+                variables: .fixed(try! AirshipJSON.wrap(["var": "one"])),
+                reportingMetadata: try! AirshipJSON.wrap(["reporting": "reporting"])
+            )
+        )
+
+        XCTAssertEqual(expected, result)
 
         await fulfillment(of: [expectation])
     }
@@ -122,18 +122,12 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
         }
 
 
-        let flag = try await self.resolver.resolve(
+        let result = try await self.resolver.resolve(
             request: request,
             flagInfo: flagInfo
         )
 
-        let expected = FeatureFlag(
-            name: flagInfo.name,
-            isEligible: false,
-            exists: false
-        )
-
-        XCTAssertEqual(expected, flag)
+        XCTAssertEqual(DeferredFlagResponse.notFound, result)
 
         await fulfillment(of: [expectation])
 
@@ -251,25 +245,18 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             return .notFound
         }
 
-        let expected = FeatureFlag(
-            name: flagInfo.name,
-            isEligible: false,
-            exists: false
-        )
-
-        let flag = try await self.resolver.resolve(
+        let result = try await self.resolver.resolve(
             request: request,
             flagInfo: flagInfo
         )
 
-        XCTAssertEqual(expected, flag)
+        XCTAssertEqual(DeferredFlagResponse.notFound, result)
     }
 
     func testCache() async throws {
         self.deferredResolver.onData = { _ in
             let data = try! AirshipJSON.wrap([
                 "is_eligible": true,
-                "variables": ["var": "one"],
                 "reporting_metadata": ["reporting": "reporting"]
             ]).toData()
             return .success(data)
@@ -289,9 +276,19 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
         ].joined(separator: ":")
 
         let entry = await self.cache.entry(key: expectedKey)!
+
+
+        let expectedValue = DeferredFlagResponse.found(
+            DeferredFlag(
+                isEligible: true,
+                variables: nil,
+                reportingMetadata: try! AirshipJSON.wrap(["reporting": "reporting"])
+            )
+        )
+
         XCTAssertEqual(
-            try JSONDecoder().decode(FeatureFlag.self, from: entry.data),
-            flag
+            try JSONDecoder().decode(DeferredFlagResponse.self, from: entry.data),
+            expectedValue
         )
 
         XCTAssertEqual(entry.ttl, 60.0)
@@ -311,7 +308,6 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
         self.deferredResolver.onData = { _ in
             let data = try! AirshipJSON.wrap([
                 "is_eligible": true,
-                "variables": ["var": "one"],
                 "reporting_metadata": ["reporting": "reporting"]
             ]).toData()
             return .success(data)
@@ -331,7 +327,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             evaluationOptions: EvaluationOptions(ttlMS: 120000)
         )
 
-        let flag = try await self.resolver.resolve(
+        let result = try await self.resolver.resolve(
             request: request,
             flagInfo: flagInfo
         )
@@ -346,8 +342,8 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
 
         let entry = await self.cache.entry(key: expectedKey)!
         XCTAssertEqual(
-            try JSONDecoder().decode(FeatureFlag.self, from: entry.data),
-            flag
+            try JSONDecoder().decode(DeferredFlagResponse.self, from: entry.data),
+            result
         )
 
         XCTAssertEqual(entry.ttl, 120.0)
@@ -387,6 +383,7 @@ fileprivate struct CacheEntry: Sendable {
     let data: Data
     let ttl: TimeInterval
 }
+
 fileprivate actor TestCache: AirshipCache {
     private var values: [String: CacheEntry] = [:]
 

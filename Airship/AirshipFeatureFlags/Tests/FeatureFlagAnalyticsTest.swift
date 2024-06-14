@@ -3,7 +3,7 @@
 import XCTest
 @testable
 import AirshipFeatureFlags
-import AirshipCore
+@testable import AirshipCore
 
 final class FeatureFlagAnalyticsTest: XCTestCase {
     private let airshipAnalytics: TestAnalytics = TestAnalytics()
@@ -71,7 +71,7 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         XCTAssertEqual(1, self.airshipAnalytics.events.count)
 
         let event = self.airshipAnalytics.events.first!
-        XCTAssertEqual("feature_flag_interaction", event.eventType)
+        XCTAssertEqual("feature_flag_interaction", event.eventType.reportingName)
         XCTAssertEqual(AirshipEventPriority.normal, event.priority)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -98,7 +98,7 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         XCTAssertEqual(1, self.airshipAnalytics.events.count)
 
         let event = self.airshipAnalytics.events.first!
-        XCTAssertEqual("feature_flag_interaction", event.eventType)
+        XCTAssertEqual("feature_flag_interaction", event.eventType.reportingName)
         XCTAssertEqual(AirshipEventPriority.normal, event.priority)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
@@ -113,13 +113,14 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
             )
         )
 
-        var feed = self.airshipAnalytics.eventFeed.updates.makeAsyncIterator()
+        var feed = await self.airshipAnalytics.eventFeed.updates.makeAsyncIterator()
+        
         self.analytics.trackInteraction(flag: flag)
 
         let event = self.airshipAnalytics.events.first!
         XCTAssertEqual(1, self.airshipAnalytics.events.count)
         
         let next = await feed.next()
-        XCTAssertEqual(next, .featureFlagInteraction(body: event.eventData))
+        XCTAssertEqual(next, .analytics(eventType: .featureFlagInteraction, body: event.eventData))
     }
 }

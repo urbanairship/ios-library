@@ -153,80 +153,141 @@ public final class FeatureFlagManager: Sendable {
         let flagInfos = remoteDataFeatureFlagInfo.flagInfos
         let deviceInfoProvider = deviceInfoProviderFactory()
 
-        guard !flagInfos.isEmpty else {
-            return FeatureFlag(
-                name: name,
-                isEligible: false,
-                exists: false,
-                variables: nil,
-                reportingInfo: nil
+
+        for (index, flagInfo) in flagInfos.enumerated() {
+            let isLast = index == (flagInfos.count - 1)
+            let isLocallyEligible = try await self.isLocallyEligible(
+                flagInfo: flagInfo,
+                deviceInfoProvider: deviceInfoProvider
             )
-        }
 
-        for flagInfo in flagInfos {
-            if let audienceSelector = flagInfo.audienceSelector {
-                let result = try? await self.audienceChecker.evaluate(
-                    audience: audienceSelector,
-                    newUserEvaluationDate: flagInfo.created,
-                    deviceInfoProvider: deviceInfoProvider
-                )
-
-                if (result != true) {
-                    continue
-                }
+            // We are not locally eligible and have other flags skip
+            if !isLast, !isLocallyEligible {
+                continue
             }
 
-            switch (flagInfo.flagPayload) {
+            let flag: FeatureFlag = switch (flagInfo.flagPayload) {
             case .deferredPayload(let deferredInfo):
-                let request = DeferredRequest(
-                    url: deferredInfo.deferred.url,
-                    channelID: deviceInfoProvider.channelID!,
-                    contactID: await deviceInfoProvider.stableContactID,
-                    locale: deviceInfoProvider.locale,
-                    notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
-                )
-                
-                return try await deferredResolver.resolve(request: request, flagInfo: flagInfo)
-
-            case .staticPayload(let staticInfo):
-                let variables = await evaluateVariables(
-                    staticInfo.variables, 
+                try await evaluateDeferred(
                     flagInfo: flagInfo,
+                    isLocallyEligible: isLocallyEligible,
+                    deferredInfo: deferredInfo,
                     deviceInfoProvider: deviceInfoProvider
                 )
-                return FeatureFlag(
-                    name: name,
-                    isEligible: true,
-                    exists: true,
-                    variables: variables?.data,
-                    reportingInfo: FeatureFlag.ReportingInfo(
-                        reportingMetadata: variables?.reportingMetadata ?? flagInfo.reportingMetadata,
-                        contactID: await deviceInfoProvider.stableContactID,
-                        channelID: deviceInfoProvider.channelID
-                    )
+            case .staticPayload(let staticInfo):
+                try await evaluateStatic(
+                    flagInfo: flagInfo,
+                    isLocallyEligible: isLocallyEligible,
+                    staticInfo: staticInfo,
+                    deviceInfoProvider: deviceInfoProvider
                 )
+            }
+
+            /// If the flag is eligible or the last flag return
+            if flag.isEligible || isLast {
+                return flag
             }
         }
 
-        return FeatureFlag(
-            name: name,
-            isEligible: false,
-            exists: true,
-            variables: nil,
-            reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: flagInfos.last?.reportingMetadata ?? .null,
-                contactID: await deviceInfoProvider.stableContactID,
-                channelID: deviceInfoProvider.channelID
+        return FeatureFlag.makeNotFound(name: name)
+    }
+
+    private func isLocallyEligible(
+        flagInfo: FeatureFlagInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> Bool {
+        guard let audienceSelector = flagInfo.audienceSelector else {
+            return true
+        }
+
+        return try await self.audienceChecker.evaluate(
+            audience: audienceSelector,
+            newUserEvaluationDate: flagInfo.created,
+            deviceInfoProvider: deviceInfoProvider
+        )
+    }
+
+    private func evaluateDeferred(
+        flagInfo: FeatureFlagInfo,
+        isLocallyEligible: Bool,
+        deferredInfo: FeatureFlagPayload.DeferredInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> FeatureFlag {
+
+        guard isLocallyEligible else {
+            return try await FeatureFlag.makeFound(
+                name: flagInfo.name,
+                isEligible: false,
+                deviceInfoProvider: deviceInfoProvider,
+                reportingMetadata: flagInfo.reportingMetadata,
+                variables: nil
             )
+        }
+
+        let request = DeferredRequest(
+            url: deferredInfo.deferred.url,
+            channelID: try await deviceInfoProvider.channelID,
+            contactID: await deviceInfoProvider.stableContactInfo.contactID,
+            locale: deviceInfoProvider.locale,
+            notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
+        )
+
+        let deferredFlagResult = try await deferredResolver.resolve(
+            request: request,
+            flagInfo: flagInfo
+        )
+
+        switch(deferredFlagResult) {
+        case .notFound:
+            return FeatureFlag.makeNotFound(name: flagInfo.name)
+
+        case .found(let deferredFlag):
+            let variables = await evaluateVariables(
+                deferredFlag.variables,
+                flagInfo: flagInfo,
+                isEligible: deferredFlag.isEligible,
+                deviceInfoProvider: deviceInfoProvider
+            )
+
+            return try await FeatureFlag.makeFound(
+                name: flagInfo.name,
+                isEligible: deferredFlag.isEligible,
+                deviceInfoProvider: deviceInfoProvider,
+                reportingMetadata: deferredFlag.reportingMetadata,
+                variables: variables
+            )
+        }
+    }
+
+    private func evaluateStatic(
+        flagInfo: FeatureFlagInfo,
+        isLocallyEligible: Bool,
+        staticInfo: FeatureFlagPayload.StaticInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> FeatureFlag {
+        let variables = await evaluateVariables(
+            staticInfo.variables,
+            flagInfo: flagInfo,
+            isEligible: isLocallyEligible,
+            deviceInfoProvider: deviceInfoProvider
+        )
+
+        return try await FeatureFlag.makeFound(
+            name: flagInfo.name,
+            isEligible: isLocallyEligible,
+            deviceInfoProvider: deviceInfoProvider,
+            reportingMetadata: flagInfo.reportingMetadata,
+            variables: variables
         )
     }
 
     private func evaluateVariables(
         _ variables: FeatureFlagVariables?,
         flagInfo: FeatureFlagInfo,
+        isEligible: Bool,
         deviceInfoProvider: AudienceDeviceInfoProvider
     ) async -> VariableResult? {
-        guard let variables = variables else {
+        guard let variables = variables, isEligible else {
             return nil
         }
 
@@ -257,8 +318,43 @@ public final class FeatureFlagManager: Sendable {
         }
     }
 
-    struct VariableResult {
-        let data: AirshipJSON?
-        let reportingMetadata: AirshipJSON?
+
+}
+
+
+fileprivate struct VariableResult {
+    let data: AirshipJSON?
+    let reportingMetadata: AirshipJSON?
+}
+
+fileprivate extension FeatureFlag {
+    static func makeNotFound(name: String) -> FeatureFlag {
+        return FeatureFlag(
+            name: name,
+            isEligible: false,
+            exists: false,
+            variables: nil,
+            reportingInfo: nil
+        )
+    }
+
+    static func makeFound(
+        name: String,
+        isEligible: Bool,
+        deviceInfoProvider: AudienceDeviceInfoProvider,
+        reportingMetadata: AirshipJSON,
+        variables: VariableResult?
+    ) async throws -> FeatureFlag {
+        return FeatureFlag(
+            name: name,
+            isEligible: isEligible,
+            exists: true,
+            variables: variables?.data,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: variables?.reportingMetadata ?? reportingMetadata,
+                contactID: await deviceInfoProvider.stableContactInfo.contactID,
+                channelID: try await deviceInfoProvider.channelID
+            )
+        )
     }
 }

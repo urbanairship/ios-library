@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 struct InAppPageActionEvent: InAppEvent {
-    let name: String = "in_app_page_action"
+    let name = EventType.inAppPageAction
     let data: (Sendable&Encodable)?
 
 

@@ -67,7 +67,7 @@ final class PreparedTrigger {
 
         return EventProcessResult(
             triggerData: triggerData,
-            triggerResult: match?.isTriggered == true ? generateTriggerResult(for: event) : nil,
+            triggerResult: match?.isTriggered == true ? generateTriggerResult(eventData: event.eventData ?? .null) : nil,
             priority: self.priority
         )
     }
@@ -99,7 +99,7 @@ final class PreparedTrigger {
         self.isActive = false
     }
     
-    private func generateTriggerResult(for event: AutomationEvent) -> TriggerResult {
+    private func generateTriggerResult(eventData: AirshipJSON) -> TriggerResult {
         return TriggerResult(
             scheduleID: self.scheduleID,
             triggerExecutionType: self.executionType,
@@ -107,7 +107,7 @@ final class PreparedTrigger {
                 context: AirshipTriggerContext(
                     type: trigger.type,
                     goal: trigger.goal,
-                    event: event.reportPayload() ?? AirshipJSON.null),
+                    event: eventData),
                 date: self.date.now
             )
         )
@@ -141,29 +141,13 @@ extension EventAutomationTrigger {
         switch event {
         case .stateChanged(let state):
             return stateTriggerMatch(state: state, data: &data)
-        case .foreground:
-            guard self.type == .foreground else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .background:
-            guard self.type == .background else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .appInit:
-            guard self.type == .appInit else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .screenView(let name):
-            guard self.type == .screen, isPredicateMatching(value: name) else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .regionEnter(let eventData):
-            guard self.type == .regionEnter, isPredicateMatching(value: eventData) else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .regionExit(let eventData):
-            guard self.type == .regionExit, isPredicateMatching(value: eventData) else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .customEvent(let eventData, let value):
-            return customEvenTriggerMatch(eventData: eventData, value: value, data: &data)
-        case .featureFlagInterracted(let eventData):
-            guard self.type == .featureFlagInteraction, isPredicateMatching(value: eventData) else { return nil }
-            return evaluateResults(data: &data, increment: 1)
+        case .event(let type, let eventData, let value):
+            guard
+                self.type == type,
+                isPredicateMatching(value: eventData)
+            else { return nil }
+            
+            return evaluateResults(data: &data, increment: value)
         }
     }
 

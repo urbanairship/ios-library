@@ -105,7 +105,7 @@ public extension DeviceAudienceSelector {
             return false
         }
 
-        guard checkTestDevices(deviceInfoProvider: deviceInfoProvider) else {
+        guard try await checkTestDevices(deviceInfoProvider: deviceInfoProvider) else {
             AirshipLogger.trace("Test device condition not met for audience: \(self)")
             return false
         }
@@ -130,7 +130,7 @@ public extension DeviceAudienceSelector {
             return false
         }
 
-        guard await checkHash(deviceInfoProvider: deviceInfoProvider) else {
+        guard try await checkHash(deviceInfoProvider: deviceInfoProvider) else {
             AirshipLogger.trace("Hash condition not met for audience: \(self)")
             return false
         }
@@ -216,16 +216,18 @@ public extension DeviceAudienceSelector {
     }
 
 
-    private func checkTestDevices(deviceInfoProvider: AudienceDeviceInfoProvider) -> Bool {
+    private func checkTestDevices(deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
         guard let testDevices = self.testDevices else {
             return true
         }
 
-        guard let channel = deviceInfoProvider.channelID else {
+
+        guard deviceInfoProvider.isChannelCreated else {
             return false
         }
 
-        let digest = AirshipUtils.sha256Digest(input: channel).subdata(with: NSMakeRange(0, 16))
+        let channelID = try await deviceInfoProvider.channelID
+        let digest = AirshipUtils.sha256Digest(input: channelID).subdata(with: NSMakeRange(0, 16))
         return testDevices.contains { testDevice in
             AirshipBase64.data(from: testDevice) == digest
         }
@@ -252,15 +254,14 @@ public extension DeviceAudienceSelector {
         }
     }
 
-    private func checkHash(deviceInfoProvider: AudienceDeviceInfoProvider) async -> Bool {
+    private func checkHash(deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
         guard let hash = self.hashSelector else {
             return true
         }
 
-        let contactID = await deviceInfoProvider.stableContactID
-        guard let channelID = deviceInfoProvider.channelID else {
-            return false
-        }
+        let contactID = await deviceInfoProvider.stableContactInfo.contactID
+        let channelID = try await deviceInfoProvider.channelID
+
 
         return hash.evaluate(channelID: channelID, contactID: contactID)
     }

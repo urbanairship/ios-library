@@ -1,7 +1,6 @@
 import Foundation
 
 actor ContactManager: ContactManagerProtocol {
-
     private static let operationsKey = "Contact.operationEntries"
     private static let legacyOperationsKey = "Contact.operations" // operations without the date
     private static let contactInfoKey = "Contact.contactInfo"
@@ -112,7 +111,7 @@ actor ContactManager: ContactManagerProtocol {
             ContactManager.updateTaskID,
             type: .serial
         ) { [weak self] _ in
-            if (try await self?.perfromNextOperation() != false) {
+            if (try await self?.performNextOperation() != false) {
                 return .success
             }
             return .failure
@@ -221,16 +220,16 @@ actor ContactManager: ContactManagerProtocol {
             return nil
         }
 
-
         return ContactIDInfo(
             contactID: lastContactInfo.contactID,
             isStable: self.isContactIDStable(),
+            namedUserID: lastContactInfo.namedUserID,
             resolveDate: lastContactInfo.resolveDate ?? .distantPast
         )
     }
 
     // Worker -> one at a time
-    private func perfromNextOperation() async throws -> Bool {
+    private func performNextOperation() async throws -> Bool {
         guard self.isEnabled else {
             AirshipLogger.trace("Contact manager is not enabled, unable to perform operation")
             return true
@@ -248,7 +247,7 @@ actor ContactManager: ContactManagerProtocol {
         // Make sure we have a valid token so we know we are operating on
         // the correct contact ID to hopefully avoid any error logs if the
         // contact ID changes in the middle of an update
-        if  tokenIfValid() == nil  {
+        if tokenIfValid() == nil  {
             let resolveResult = try await performOperation(.resolve)
             self.yieldContactUpdates()
             if (!resolveResult) {
@@ -387,9 +386,16 @@ actor ContactManager: ContactManagerProtocol {
 
         case .associateChannel(let channelID, let type):
             return try await performAssociateChannelOperation(
-                channelID: channelID,
+                channelID: channelID, 
                 type: type
             )
+            
+        case .disassociateChannel(let channel):
+            return try await performDisassociateChannel(
+                channel: channel
+            )
+        case .resend(channel: let channel):
+            return try await performResend(channel: channel)
         }
     }
 
@@ -443,46 +449,197 @@ actor ContactManager: ContactManagerProtocol {
         address: String,
         options: EmailRegistrationOptions
     ) async throws -> Bool {
-        let result = try await self.apiClient.registerEmail(
-            contactID: try requireContactID(),
+        let contactID = try requireContactID()
+
+        let response = try await self.apiClient.registerEmail(
+            contactID: contactID,
             address: address,
             options: options,
             locale: self.localeManager.currentLocale
         )
 
-        return result.isOperationComplete
+        if response.isSuccess, let result = response.result {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [
+                    .associated(
+                        .email(
+                            .pending(
+                                ContactChannel.Email.Pending(
+                                    address: address,
+                                    registrationOptions: options
+                                )
+                            )
+                        ),
+                        channelID: result.channelID
+                    )
+                ]
+            )
+        }
+
+        return response.isOperationComplete
     }
 
-    private func performRegisterSMSOperation(msisdn: String, options: SMSRegistrationOptions) async throws -> Bool {
-        let result = try await self.apiClient.registerSMS(
-            contactID: try requireContactID(),
+    private func performRegisterSMSOperation(
+        msisdn: String,
+        options: SMSRegistrationOptions
+    ) async throws -> Bool {
+        let contactID = try requireContactID()
+
+        let response = try await self.apiClient.registerSMS(
+            contactID: contactID,
             msisdn: msisdn,
             options: options,
             locale: self.localeManager.currentLocale
         )
 
-        return result.isOperationComplete
+        if response.isSuccess, let result = response.result {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [
+                    .associated(
+                        .sms(
+                            .pending(
+                                ContactChannel.Sms.Pending(
+                                    address: msisdn,
+                                    registrationOptions: options
+                                )
+                            )
+                        ),
+                        channelID: result.channelID
+                    )
+                ]
+            )
+        }
+        return response.isOperationComplete
     }
 
     private func performRegisterOpenChannelOperation(address: String, options: OpenRegistrationOptions) async throws -> Bool {
-        let result = try await self.apiClient.registerOpen(
-            contactID: try requireContactID(),
+        let contactID = try requireContactID()
+
+        let response = try await self.apiClient.registerOpen(
+            contactID: contactID,
             address: address,
             options: options,
             locale: self.localeManager.currentLocale
         )
 
-        return result.isOperationComplete
+        if response.isSuccess, let result = response.result {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [
+                    /// TODO: Backend does not support open channels for ContactChannel yet
+                    .associatedAnonChannel(
+                        channelType: .open,
+                        channelID: result.channelID
+                    )
+                ]
+            )
+        }
+
+        return response.isOperationComplete
     }
 
-    private func performAssociateChannelOperation(channelID: String, type: ChannelType) async throws -> Bool {
-        let result = try await self.apiClient.associateChannel(
-            contactID: try requireContactID(),
+    private func performAssociateChannelOperation(
+        channelID: String,
+        type: ChannelType
+    ) async throws -> Bool {
+        let contactID = try requireContactID()
+        let response = try await self.apiClient.associateChannel(
+            contactID: contactID,
             channelID: channelID,
             channelType: type
         )
 
-        return result.isOperationComplete
+        if response.isSuccess {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [
+                    .associatedAnonChannel(channelType: type, channelID: channelID)
+                ]
+            )
+        }
+        return response.isOperationComplete
+    }
+    
+    private func performDisassociateChannel(
+        channel: ContactChannel
+    ) async throws -> Bool {
+        let contactID = try requireContactID()
+
+
+        let options: DisassociateOptions = switch(channel) {
+        case .email(let email):
+            switch(email) {
+            case .registered(let info):
+                DisassociateOptions(
+                    channelID: info.channelID,
+                    channelType: .email,
+                    optOut: false
+                )
+            case .pending(let info):
+                DisassociateOptions(
+                    emailAddress: info.address,
+                    optOut: false
+                )
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .registered(let info):
+                DisassociateOptions(
+                    channelID: info.channelID,
+                    channelType: .sms,
+                    optOut: false
+                )
+            case .pending(let info):
+                DisassociateOptions(
+                    msisdn: info.address, 
+                    senderID: info.registrationOptions.senderID,
+                    optOut: false
+                )
+            }
+        }
+
+        let response = try await self.apiClient.disassociateChannel(
+            contactID: contactID,
+            disassociateOptions: options
+        )
+
+        if response.isSuccess, let result = response.result {
+            await self.contactUpdated(
+                contactID: contactID,
+                channelUpdates: [.disassociated(channel, channelID: result.channelID)]
+            )
+        }
+
+        return response.isOperationComplete
+    }
+    
+    private func performResend(
+        channel: ContactChannel
+    ) async throws -> Bool {
+        let resendOptions:ResendOptions = switch(channel) {
+        case .email(let email):
+            switch(email) {
+            case .registered(let info):
+                ResendOptions(channelID: info.channelID, channelType: .email)
+            case .pending(let info):
+                ResendOptions(emailAddress: info.address)
+            }
+        case .sms(let sms):
+            switch(sms) {
+            case .registered(let info):
+                ResendOptions(channelID: info.channelID, channelType: channel.channelType)
+            case .pending(let info):
+                ResendOptions(msisdn: info.address, senderID: info.registrationOptions.senderID)
+            }
+        }
+
+        let response = try await self.apiClient.resend(
+            resendOptions: resendOptions
+        )
+
+        return response.isOperationComplete
     }
 
     private func performUpdateOperation(
@@ -524,6 +681,7 @@ actor ContactManager: ContactManagerProtocol {
         var attributes: [AttributeUpdate] = []
         var subscriptionLists: [ScopedSubscriptionListUpdate] = []
         let operations = operationEntries.map { $0.operation }
+        var channels: [ContactChannelUpdate] = []
 
         var lastOperationNamedUser: String? = nil
 
@@ -562,12 +720,62 @@ actor ContactManager: ContactManagerProtocol {
 
                 continue
             }
+
+            if case .registerSMS(let address, let options) = operation {
+                channels.append(
+                    .associated(
+                        .sms(
+                            .pending(
+                                ContactChannel.Sms.Pending(
+                                    address: address,
+                                    registrationOptions: options
+                                )
+                            )
+                        )
+                    )
+                )
+                continue
+            }
+
+            if case .registerEmail(let address, let options) = operation {
+                channels.append(
+                    .associated(
+                        .email(
+                            .pending(
+                                ContactChannel.Email.Pending(
+                                    address: address,
+                                    registrationOptions: options
+                                )
+                            )
+                        )
+                    )
+                )
+                continue
+            }
+
+            if case .disassociateChannel(let channel) = operation {
+                channels.append(
+                    .disassociated(channel)
+                )
+                continue
+            }
+
+            if case .associateChannel(let channelID, let channelType) = operation {
+                channels.append(
+                    .associatedAnonChannel(
+                        channelType: channelType,
+                        channelID: channelID
+                    )
+                )
+                continue
+            }
         }
 
         return ContactAudienceOverrides(
             tags: tags,
             attributes: attributes,
-            subscriptionLists: subscriptionLists
+            subscriptionLists: subscriptionLists,
+            channels: channels
         )
     }
 
@@ -633,7 +841,6 @@ actor ContactManager: ContactManagerProtocol {
                 operations: group,
                 mergedOperation: mergedUpdate
             )
-
         case .identify(_): fallthrough
         case .reset:
             // A series of resets and identifies can be skipped and only the last reset or identify
@@ -770,7 +977,7 @@ actor ContactManager: ContactManagerProtocol {
                     ContactConflictEvent(
                         tags: anonData.tags,
                         attributes: anonData.attributes,
-                        channels: anonData.channels,
+                        associatedChannels: anonData.channels.map { .init(channelType: $0.channelType, channelID: $0.channelID) },
                         subscriptionLists: anonData.subscriptionLists,
                         conflictingNamedUserID: namedUserID
                     )
@@ -843,20 +1050,21 @@ actor ContactManager: ContactManagerProtocol {
         tagGroupUpdates: [TagGroupUpdate]? = nil,
         attributeUpdates: [AttributeUpdate]? = nil,
         subscriptionListsUpdates: [ScopedSubscriptionListUpdate]? = nil,
-        channel: AssociatedChannel? = nil
+        channelUpdates: [ContactChannelUpdate]? = nil
     ) async {
 
         guard let contactInfo = self.lastContactInfo, contactInfo.contactID == contactID else {
             return
         }
 
-        if tagGroupUpdates?.isEmpty == false || attributeUpdates?.isEmpty == false || subscriptionListsUpdates?.isEmpty == false {
+        if tagGroupUpdates?.isEmpty == false || attributeUpdates?.isEmpty == false || subscriptionListsUpdates?.isEmpty == false || channelUpdates?.isEmpty == false {
            await self.onAudienceUpdatedCallback?(
                 ContactAudienceUpdate(
                     contactID: contactID,
                     tags: tagGroupUpdates,
                     attributes: attributeUpdates,
-                    subscriptionLists: subscriptionListsUpdates
+                    subscriptionLists: subscriptionListsUpdates,
+                    contactChannels: channelUpdates
                 )
             )
         }
@@ -865,7 +1073,7 @@ actor ContactManager: ContactManagerProtocol {
             let data = self.anonData
             var tags = data?.tags ?? [:]
             var attributes = data?.attributes ?? [:]
-            var channels = data?.channels ?? []
+            var channels = Set(data?.channels ?? [])
             var subscriptionLists = data?.subscriptionLists ?? [:]
 
             tags = AudienceUtils.applyTagUpdates(
@@ -883,14 +1091,26 @@ actor ContactManager: ContactManagerProtocol {
                 updates: subscriptionListsUpdates
             )
 
-            if let channel = channel {
-                channels.append(channel)
+            channelUpdates?.forEach { channelUpdate in
+                switch(channelUpdate) {
+                case .disassociated(let contactChannel, let channelID):
+                    if let channelID = channelID ?? contactChannel.channelID {
+                        channels.remove(.init(channelType: contactChannel.channelType, channelID: channelID))
+                    }
+                case .associated(let contactChannel, let channelID):
+                    if let channelID = channelID ?? contactChannel.channelID {
+                        channels.insert(.init(channelType: contactChannel.channelType, channelID: channelID))
+                    }
+                case .associatedAnonChannel(let channelType, let channelID):
+                    channels.insert(.init(channelType: channelType, channelID: channelID))
+                }
             }
+
 
             self.anonData = AnonContactData(
                 tags: tags,
                 attributes: attributes,
-                channels: channels,
+                channels: Array(channels),
                 subscriptionLists: subscriptionLists
             )
         }

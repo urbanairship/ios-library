@@ -224,7 +224,7 @@ extension PreferenceCenterThemeLoader.FontConfig {
 }
 
 extension PreferenceCenterThemeLoader.Config.TextAppearance {
-    func toTextApperance() throws -> PreferenceCenterTheme.TextAppearance {
+    func toTextAppearance() throws -> PreferenceCenterTheme.TextAppearance {
         return PreferenceCenterTheme.TextAppearance(
             font: try self.font?.toFont(),
             color: self.color?.airshipToColor()
@@ -237,7 +237,7 @@ extension PreferenceCenterThemeLoader.Config.Chip {
         return PreferenceCenterTheme.Chip(
             checkColor: self.checkColor?.airshipToColor(),
             borderColor: self.borderColor?.airshipToColor(),
-            labelAppearance: try self.labelAppearance?.toTextApperance()
+            labelAppearance: try self.labelAppearance?.toTextAppearance()
         )
     }
 }
@@ -254,8 +254,8 @@ extension PreferenceCenterThemeLoader.Config.NavigationBar {
 extension PreferenceCenterThemeLoader.Config.CommonSection {
     func toCommonSection() throws -> PreferenceCenterTheme.CommonSection {
         return PreferenceCenterTheme.CommonSection(
-            titleAppearance: try self.titleAppearance?.toTextApperance(),
-            subtitleAppearance: try self.subtitleAppearance?.toTextApperance()
+            titleAppearance: try self.titleAppearance?.toTextAppearance(),
+            subtitleAppearance: try self.subtitleAppearance?.toTextAppearance()
         )
     }
 }
@@ -265,7 +265,7 @@ extension PreferenceCenterThemeLoader.Config.LabeledSectionBreak {
         -> PreferenceCenterTheme.LabeledSectionBreak
     {
         return PreferenceCenterTheme.LabeledSectionBreak(
-            titleAppearance: try self.titleAppearance?.toTextApperance(),
+            titleAppearance: try self.titleAppearance?.toTextAppearance(),
             backgroundColor: self.backgroundColor?.airshipToColor()
         )
     }
@@ -276,8 +276,8 @@ extension PreferenceCenterThemeLoader.Config.ChannelSubscription {
         -> PreferenceCenterTheme.ChannelSubscription
     {
         return PreferenceCenterTheme.ChannelSubscription(
-            titleAppearance: try self.titleAppearance?.toTextApperance(),
-            subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
+            titleAppearance: try self.titleAppearance?.toTextAppearance(),
+            subtitleAppearance: try self.subtitleAppearance?.toTextAppearance(),
             toggleTintColor: self.toggleTintColor?.airshipToColor()
         )
     }
@@ -288,8 +288,8 @@ extension PreferenceCenterThemeLoader.Config.ContactSubscription {
         -> PreferenceCenterTheme.ContactSubscription
     {
         return PreferenceCenterTheme.ContactSubscription(
-            titleAppearance: try self.titleAppearance?.toTextApperance(),
-            subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
+            titleAppearance: try self.titleAppearance?.toTextAppearance(),
+            subtitleAppearance: try self.subtitleAppearance?.toTextAppearance(),
             toggleTintColor: self.toggleTintColor?.airshipToColor()
         )
     }
@@ -300,8 +300,8 @@ extension PreferenceCenterThemeLoader.Config.ContactSubscriptionGroup {
         -> PreferenceCenterTheme.ContactSubscriptionGroup
     {
         return PreferenceCenterTheme.ContactSubscriptionGroup(
-            titleAppearance: try self.titleAppearance?.toTextApperance(),
-            subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
+            titleAppearance: try self.titleAppearance?.toTextAppearance(),
+            subtitleAppearance: try self.subtitleAppearance?.toTextAppearance(),
             chip: try self.chip?.toChip()
         )
     }
@@ -310,10 +310,9 @@ extension PreferenceCenterThemeLoader.Config.ContactSubscriptionGroup {
 extension PreferenceCenterThemeLoader.Config.Alert {
     func toAlert() throws -> PreferenceCenterTheme.Alert {
         return PreferenceCenterTheme.Alert(
-            titleAppearance: try self.titleAppearance?.toTextApperance(),
-            subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
-            buttonLabelAppearance: try self.buttonLabelAppearance?
-                .toTextApperance(),
+            titleAppearance: try self.titleAppearance?.toTextAppearance(),
+            subtitleAppearance: try self.subtitleAppearance?.toTextAppearance(),
+            buttonLabelAppearance: try self.buttonLabelAppearance?.toTextAppearance(),
             buttonBackgroundColor: self.buttonBackgroundColor?.airshipToColor()
         )
     }
@@ -322,15 +321,15 @@ extension PreferenceCenterThemeLoader.Config.Alert {
 extension PreferenceCenterThemeLoader.Config.PreferenceCenter {
     func toPreferenceCenter() throws -> PreferenceCenterTheme.PreferenceCenter {
         return PreferenceCenterTheme.PreferenceCenter(
-            subtitleAppearance: try self.subtitleAppearance?.toTextApperance(),
+            subtitleAppearance: try self.subtitleAppearance?.toTextAppearance(),
             retryButtonBackgroundColor: self.retryButtonBackgroundColor?
                 .airshipToColor(),
             retryButtonLabelAppearance: try self.retryButtonLabelAppearance?
-                .toTextApperance(),
+                .toTextAppearance(),
             retryButtonLabel: self.retryButtonLabel,
             retryMessage: self.retryMessage,
             retryMessageAppearance: try self.retryMessageAppearance?
-                .toTextApperance()
+                .toTextAppearance()
         )
     }
 }

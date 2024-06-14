@@ -71,7 +71,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         
         try await restoreSchedules()
         
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         XCTAssertEqual(
             TriggerData(
@@ -86,7 +86,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         await self.processor.cancel(scheduleIDs: ["schedule-id"])
         XCTAssert(self.store.stored.isEmpty)
 
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         let result = await takeNext()
         XCTAssert(result.isEmpty)
@@ -97,7 +97,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         let schedule = defaultSchedule(trigger: trigger, group: "test-group")
         
         try await self.processor.restoreSchedules([schedule])
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         XCTAssertEqual(
             TriggerData(
@@ -112,7 +112,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         await self.processor.cancel(group: "test-group")
         XCTAssert(self.store.stored.isEmpty)
 
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         let result = await takeNext()
         XCTAssert(result.isEmpty)
@@ -123,7 +123,7 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
 
         try await restoreSchedules(trigger: trigger)
         
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         XCTAssertEqual(
             TriggerData(
@@ -145,19 +145,19 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
 
         try await restoreSchedules(trigger: trigger)
         
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         var result = await takeNext()
         XCTAssertNotNil(result)
         
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         result = await takeNext()
         XCTAssertNotNil(result)
         
         self.processor.setPaused(true)
         
-        await self.processor.processEvent(.appInit)
+        await self.processor.processEvent(.event(type: .appInit))
         
         result = await takeNext()
         XCTAssert(result.isEmpty)

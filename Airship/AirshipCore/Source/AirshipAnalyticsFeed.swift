@@ -7,29 +7,20 @@ import Combine
 /// For internal use only. :nodoc:
 public final class AirshipAnalyticsFeed: Sendable {
     public enum Event: Equatable, Sendable {
-        case customEvent(body: AirshipJSON, value: Double)
-        case regionEnter(body: AirshipJSON)
-        case regionExit(body: AirshipJSON)
-        case featureFlagInteraction(body: AirshipJSON)
-        case screenChange(screen: String?)
+        case screen(screen: String?)
+        case analytics(eventType: EventType, body: AirshipJSON, value: Double? = 1)
     }
 
-    private let subject = PassthroughSubject<Event, Never>()
+    private let channel = AirshipAsyncChannel<Event>()
 
     public var updates: AsyncStream<Event> {
-        return  AsyncStream { continuation in
-            let cancellable: AnyCancellable = subject.sink { value in
-                continuation.yield(value)
-            }
-
-            continuation.onTermination = { _ in
-                cancellable.cancel()
-            }
+        get async {
+            return await channel.makeStream()
         }
     }
 
-    public func notifyEvent(_ event: Event) {
-        self.subject.send(event)
+    func notifyEvent(_ event: Event) async {
+        await channel.send(event)
     }
 
 

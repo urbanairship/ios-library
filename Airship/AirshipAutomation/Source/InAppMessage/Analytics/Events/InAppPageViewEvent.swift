@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 struct InAppPageViewEvent: InAppEvent {
-    let name: String = "in_app_page_view"
+    let name = EventType.inAppPageView
     let data: (Sendable&Encodable)?
 
     init(pagerInfo: ThomasPagerInfo, viewCount: Int) {

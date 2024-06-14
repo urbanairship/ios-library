@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+@preconcurrency
 import Combine
 import Foundation
 
@@ -8,10 +9,50 @@ import Foundation
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContact)
 public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked Sendable {
+    public var contactChannelUpdates: AsyncStream<ContactChannelsResult> {
+        get {
+            return self.contactChannelsProvider.contactChannels(
+                stableContactIDUpdates: self.stableContactIDUpdates
+            )
+        }
+    }
+
+    public var contactChannelPublisher: AnyPublisher<ContactChannelsResult, Never> {
+        get {
+            let updates = self.contactChannelUpdates
+            let subject = CurrentValueSubject<ContactChannelsResult?, Never>(nil)
+
+            Task { [weak subject] in
+                for await update in updates {
+                    subject?.send(update)
+                }
+            }
+
+            return subject.compactMap { $0 }.eraseToAnyPublisher()
+        }
+    }
+
+    private var stableContactIDUpdates: AsyncStream<String> {
+        AsyncStream { [contactIDUpdates] continuation in
+            let cancellable: AnyCancellable = contactIDUpdates
+                .filter { $0.isStable }
+                .map { $0.contactID }
+                .removeDuplicates()
+                .sink { value in
+                    continuation.yield(value)
+                }
+
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
+    }
+
     private static let resolveDateKey = "Contact.resolveDate"
     static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
     static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
     static let legacyNamedUserKey = "UANamedUserID"
+
 
     // Interval for how often we emit a resolve operation on foreground
     static let defaultForegroundResolveInterval: TimeInterval = 3600.0 // 1 hour
@@ -28,14 +69,27 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
     private let subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol
+    private let contactChannelsProvider: ContactChannelsProviderProtocol
     private let date: AirshipDateProtocol
     private let audienceOverridesProvider: AudienceOverridesProvider
     private let contactManager: ContactManagerProtocol
-    private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])> // (ContactID, [ListID, [ChannelScope]])
+    private var smsValidator: SMSValidatorProtocol
+    private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
     private let fetchSubscriptionListQueue: AirshipSerialQueue = AirshipSerialQueue()
     private let serialQueue: AirshipAsyncSerialQueue
+
+    /// Publishes all edits made to the subscription lists through the  SDK
+    public var smsValidatorDelegate: SMSValidatorDelegate? {
+        set {
+            self.smsValidator.delegate = newValue
+        }
+
+        get {
+            self.smsValidator.delegate
+        }
+    }
 
     private var lastResolveDate: Date {
          get {
@@ -53,7 +107,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     public var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
         subscriptionListEditsSubject.eraseToAnyPublisher()
     }
-
+    
     private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
     public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
         conflictEventSubject.eraseToAnyPublisher()
@@ -106,10 +160,12 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         channel: InternalAirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
         subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol,
+        contactChannelsProvider: ContactChannelsProviderProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: AudienceOverridesProvider,
         contactManager: ContactManagerProtocol,
+        smsValidator: SMSValidatorProtocol,
         serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
     ) {
 
@@ -117,9 +173,11 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.config = config
         self.privacyManager = privacyManager
         self.subscriptionListAPIClient = subscriptionListAPIClient
+        self.contactChannelsProvider = contactChannelsProvider
         self.audienceOverridesProvider = audienceOverridesProvider
         self.date = date
         self.contactManager = contactManager
+        self.smsValidator = smsValidator
         self.serialQueue = serialQueue
 
         self.cachedSubscriptionLists = CachedValue(date: date)
@@ -130,6 +188,14 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             await self.migrateNamedUser()
 
             await audienceOverridesProvider.setPendingContactOverridesProvider { contactID in
+
+                // Audience overrides will take any pending operations and updated operations. Since
+                // pending operations are added through the serialQueue to ensure order, some might still
+                // be in the queue. To avoid ignoring any of those, wait for current operations on the queue
+                // to finish
+                await self.serialQueue.waitForCurrentOperations()
+
+
                 return await contactManager.pendingAudienceOverrides(contactID: contactID)
             }
 
@@ -142,7 +208,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
                     contactID: update.contactID,
                     tags: update.tags,
                     attributes: update.attributes,
-                    subscriptionLists: update.subscriptionLists
+                    subscriptionLists: update.subscriptionLists,
+                    channels: update.contactChannels
                 )
             }
             
@@ -263,14 +330,20 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             config: config,
             channel: channel,
             privacyManager: privacyManager,
-            subscriptionListAPIClient: ContactSubscriptionListAPIClient(config: config),
+            subscriptionListAPIClient: ContactSubscriptionListAPIClient(config: config), 
+            contactChannelsProvider: ContactChannelsProvider(
+                audienceOverrides: audienceOverridesProvider,
+                apiClient: ContactChannelsAPIClient(config: config),
+                privacyManager: privacyManager
+            ),
             audienceOverridesProvider: audienceOverridesProvider,
             contactManager: ContactManager(
                 dataStore: dataStore,
                 channel: channel,
                 localeManager: localeManager,
                 apiClient: ContactAPIClient(config: config)
-            )
+            ), 
+            smsValidator: SMSValidator(apiClient: SMSValidatorAPIClient(config: config))
         )
     }
 
@@ -304,7 +377,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.addOperation(.reset)
     }
 
-
     /// Can be called after the app performs a remote named user association for the channel instead
     /// of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
     /// data. Applications should only call this method when the user login has changed.
@@ -337,6 +409,14 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             }
 
             self.addOperation(.update(tagUpdates: updates))
+
+            self.notifyOverridesChanged()
+        }
+    }
+
+    private func notifyOverridesChanged() {
+        Task { [weak audienceOverridesProvider] in
+            await audienceOverridesProvider?.notifyPendingChanged()
         }
     }
 
@@ -371,6 +451,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             self.addOperation(
                 .update(attributeUpdates: updates)
             )
+            self.notifyOverridesChanged()
         }
     }
 
@@ -401,6 +482,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }
 
         self.addOperation(.registerEmail(address: address, options: options))
+        self.notifyOverridesChanged()
     }
 
     /**
@@ -418,6 +500,30 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }
 
         self.addOperation(.registerSMS(msisdn: msisdn, options: options))
+        self.notifyOverridesChanged()
+    }
+
+    /**
+     * Validates MSISDN
+     * - Parameters:
+     *   - msisdn: The mobile phone number to validate.
+     *   - sender: The identifier given to the sender of the SMS message.
+     *   - Returns: Async boolean indicating validity of msisdn
+     */
+    public func validateSMS(
+        _ msisdn: String,
+        sender: String
+    ) async throws -> Bool {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to validate SMS."
+            )
+            throw AirshipErrors.error(
+                "Validation of SMS requires contacts to be enabled."
+            )
+        }
+
+        return try await self.smsValidator.validateSMS(msisdn:msisdn, sender: sender)
     }
 
     /// Associates an open channel to the contact.
@@ -442,9 +548,12 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
      * - Parameters:
      *   - channelID: The channel ID.
      *   - type: The channel type.
+     *   - options: The SMS/email channel options
      */
-    @objc
-    public func associateChannel(_ channelID: String, type: ChannelType) {
+    public func associateChannel(
+        _ channelID: String,
+        type: ChannelType
+    ) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn(
                 "Contacts disabled. Enable to associate channel."
@@ -452,8 +561,50 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             return
         }
 
+        self.addOperation(
+            .associateChannel(
+                channelID: channelID,
+                channelType: type
+            )
+        )
+    }
 
-        self.addOperation(.associateChannel(channelID: channelID, channelType: type))
+    /**
+     * Resends an opt-in message
+     * - Parameters:
+     *   - channelID: The channel ID.
+     *   - type: The channel type.
+     *   - options: The SMS/email channel options
+     */
+    public func resend(_ channel: ContactChannel) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to re-send double opt in to channel."
+            )
+            return
+        }
+
+        self.addOperation(.resend(channel: channel))
+    }
+
+    /**
+     * Disassociates a channel
+     * - Parameters:
+     *   - channel: The channel to disassociate.
+     */
+    public func disassociateChannel(_ channel: ContactChannel) {
+        guard self.privacyManager.isEnabled(.contacts) else {
+            AirshipLogger.warn(
+                "Contacts disabled. Enable to disassociate channel."
+            )
+            return
+        }
+
+        self.addOperation(.disassociateChannel(channel: channel))
+
+        Task { [weak audienceOverridesProvider] in
+            await audienceOverridesProvider?.notifyPendingChanged()
+        }
     }
 
     /// Begins a subscription list editing session
@@ -530,6 +681,13 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             update.isStable
         }.contactID
     }
+    
+    public func getStableContactInfo() async -> StableContactInfo {
+        let info = await waitForContactIDInfo(filter: { $0.isStable })
+        return StableContactInfo(
+            contactID: info.contactID,
+            namedUserID: info.namedUserID)
+    }
 
     private func getStableVerifiedContactID() async -> String {
         let now = self.date.now
@@ -559,11 +717,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         let contactID = await getStableContactID()
         var subscriptions = try await self.resolveSubscriptionLists(contactID)
 
-        // Audience overrides will take any pending operations and updated operations. Since
-        // pending operations are added through the serialQueue to ensure order, some might still
-        // be in the queue. To avoid ignoring any of those, wait for current operations on the queue
-        // to finish
-        await self.serialQueue.waitForCurrentOperations()
         let overrides = await self.audienceOverridesProvider.contactOverrides(contactID: contactID)
 
         subscriptions = AudienceUtils.applySubscriptionListsUpdates(
@@ -577,6 +730,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private func resolveSubscriptionLists(
         _ contactID: String
     ) async throws -> [String: [ChannelScope]] {
+
         return try await self.fetchSubscriptionListQueue.run {
             if let cached = self.cachedSubscriptionLists.value,
                 cached.0 == contactID {

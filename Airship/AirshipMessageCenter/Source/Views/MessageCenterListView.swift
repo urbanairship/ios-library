@@ -163,8 +163,10 @@ public struct MessageCenterListView: View {
 
         let content = ZStack {
             makeList()
-                .modifier(ListBackgroundModifier())
-                .background(listBackgroundColor)
+                .applyIf(listBackgroundColor != nil, transform: { view in
+                    view.modifier(ListBackgroundModifier())
+                    view.background(listBackgroundColor)
+                })
                 .opacity(self.listOpacity)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
                 .onChange(of: self.messageIDs) { ids in

@@ -3,7 +3,7 @@
 import SwiftUI
 import Combine
 
-/// NOTE: For internal use only. :nodoc:
+/// Airship embedded view - a scene that can be embedded in an app and managed remotely
 public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
     @Environment(\.airshipEmbeddedViewStyle)
@@ -127,13 +127,13 @@ public struct AirshipEmbeddedContentView : View  {
     }
 }
 
-/// NOTE: For internal use only. :nodoc:
+/// Style configuration for customizing an Airship embedded view
 public struct AirshipEmbeddedViewStyleConfiguration {
     public let views: [AirshipEmbeddedContentView]
     public let placeHolder: AnyView
 }
 
-/// NOTE: For internal use only. :nodoc:
+/// Protocol for customizing an Airship embedded view with a style
 public protocol AirshipEmbeddedViewStyle {
     associatedtype Body: View
     typealias Configuration = AirshipEmbeddedViewStyleConfiguration
@@ -147,7 +147,7 @@ extension AirshipEmbeddedViewStyle where Self == DefaultAirshipEmbeddedViewStyle
     }
 }
 
-/// NOTE: For internal use only. :nodoc:
+/// Default style for embedded views
 public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
@@ -188,6 +188,7 @@ extension EnvironmentValues {
 
 
 extension View {
+    /// Setter for applying a style to an Airship embedded view
     public func setAirshipEmbeddedStyle<S>(
         _ style: S
     ) -> some View where S: AirshipEmbeddedViewStyle {

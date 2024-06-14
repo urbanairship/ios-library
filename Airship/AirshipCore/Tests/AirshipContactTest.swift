@@ -7,6 +7,8 @@ import XCTest
 class AirshipContactTest: XCTestCase {
     private let channel: TestChannel = TestChannel()
     private let apiClient: TestContactSubscriptionListAPIClient = TestContactSubscriptionListAPIClient()
+    private let contactChannelsProvider: TestContactChannelsProvider = TestContactChannelsProvider()
+    private let apiChannel: TestChannelsListAPIClient = TestChannelsListAPIClient()
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
     )
@@ -15,7 +17,7 @@ class AirshipContactTest: XCTestCase {
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private let contactManager: TestContactManager = TestContactManager()
     private var contactQueue: AirshipAsyncSerialQueue!
-
+    private let smsValidator: TestSMSValidator = TestSMSValidator()
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
     private var config: RuntimeConfig!
@@ -43,11 +45,13 @@ class AirshipContactTest: XCTestCase {
             config: config,
             channel: self.channel,
             privacyManager: self.privacyManager,
-            subscriptionListAPIClient: self.apiClient,
+            subscriptionListAPIClient: self.apiClient, 
+            contactChannelsProvider: self.contactChannelsProvider,
             date: self.date,
             notificationCenter: self.notificationCenter,
             audienceOverridesProvider: self.audienceOverridesProvider,
             contactManager: self.contactManager,
+            smsValidator: self.smsValidator,
             serialQueue: contactQueue
         )
     }
@@ -125,7 +129,7 @@ class AirshipContactTest: XCTestCase {
         )
 
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some contact ID", isStable: false)
+            ContactIDInfo(contactID: "some contact ID", isStable: false, namedUserID: nil)
         )
 
         setupContact()
@@ -154,7 +158,7 @@ class AirshipContactTest: XCTestCase {
 
     func testStableVerifiedContactID() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: false)
+            ContactIDInfo(contactID: "some-contact-id", isStable: false, namedUserID: nil)
         )
 
         let contactManager = self.contactManager
@@ -173,6 +177,7 @@ class AirshipContactTest: XCTestCase {
             ContactIDInfo(
                 contactID: "some-other-contact-id",
                 isStable: false,
+                namedUserID: nil,
                 resolveDate: date.addingTimeInterval(-AirshipContact.defaultVerifiedContactIDAge)
             )
         )
@@ -181,11 +186,12 @@ class AirshipContactTest: XCTestCase {
             ContactIDInfo(
                 contactID: "some-stable-contact-id",
                 isStable: true,
+                namedUserID: nil,
                 resolveDate: date.addingTimeInterval(-AirshipContact.defaultVerifiedContactIDAge)
             )
         )
         await contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, resolveDate: date)
+            ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, namedUserID: nil, resolveDate: date)
         )
 
         let payload = await payloadTask.value
@@ -197,7 +203,7 @@ class AirshipContactTest: XCTestCase {
         let date = self.date.now
 
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true, resolveDate: date)
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil, resolveDate: date)
         )
 
         let channel = self.channel
@@ -220,7 +226,7 @@ class AirshipContactTest: XCTestCase {
         let date = self.date.now
 
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true, resolveDate: date.addingTimeInterval(-1))
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil, resolveDate: date.addingTimeInterval(-1))
         )
 
         let contactManager = self.contactManager
@@ -236,7 +242,7 @@ class AirshipContactTest: XCTestCase {
         await fulfillment(of: [payloadTaskStarted])
 
         await contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, resolveDate: date)
+            ContactIDInfo(contactID: "some-stable-verified-contact-id", isStable: true, namedUserID: nil, resolveDate: date)
         )
 
         let payload = await payloadTask.value
@@ -247,7 +253,7 @@ class AirshipContactTest: XCTestCase {
     func testExtendRegistrationPaylaodOnChannelCreate() async throws {
         self.channel.identifier = nil
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: false)
+            ContactIDInfo(contactID: "some-contact-id", isStable: false, namedUserID: nil)
         )
         XCTAssertEqual(1, self.channel.extenders.count)
         let payload = await self.channel.channelPayload
@@ -371,8 +377,14 @@ class AirshipContactTest: XCTestCase {
     }
 
     func testAssociateChannel() async throws {
-        self.contact.associateChannel("some-channel-id", type: .email)
-        await self.verifyOperations([.associateChannel(channelID: "some-channel-id", channelType: .email)])
+        self.contact.associateChannel(
+            "some-channel-id",
+            type: .email
+        )
+        await self.verifyOperations([.associateChannel(
+            channelID: "some-channel-id",
+            channelType: .email
+        )])
     }
 
     func testEdits() async throws {
@@ -431,7 +443,7 @@ class AirshipContactTest: XCTestCase {
 
     func testFetchSubscriptionLists() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true)
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
         )
 
         let apiResult: [String: [ChannelScope]] = ["neat": [.web]]
@@ -452,7 +464,7 @@ class AirshipContactTest: XCTestCase {
 
     func testFetchSubscriptionListsCached() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true)
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
         )
 
         var apiResult: [String: [ChannelScope]] = ["neat": [.web]]
@@ -491,7 +503,7 @@ class AirshipContactTest: XCTestCase {
 
     func testFetchSubscriptionListsCachedDifferentContactID() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true)
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
         )
 
         var apiResult: [String: [ChannelScope]] = ["neat": [ChannelScope.web]]
@@ -519,7 +531,7 @@ class AirshipContactTest: XCTestCase {
 
         // Resolve a new contact ID
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-other-contact-id", isStable: true)
+            ContactIDInfo(contactID: "some-other-contact-id", isStable: true, namedUserID: nil)
         )
 
         self.apiClient.fetchSubscriptionListsCallback = {
@@ -540,7 +552,7 @@ class AirshipContactTest: XCTestCase {
 
     func testFetchWaitsForStableContactID() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: false)
+            ContactIDInfo(contactID: "some-contact-id", isStable: false, namedUserID: nil)
         )
 
         let apiResult: [String: [ChannelScope]] = ["neat": [.web]]
@@ -560,11 +572,11 @@ class AirshipContactTest: XCTestCase {
         DispatchQueue.main.async {
             Task {
                 await contactManager.setCurrentContactIDInfo(
-                    ContactIDInfo(contactID: "some-other-contact-id", isStable: false)
+                    ContactIDInfo(contactID: "some-other-contact-id", isStable: false, namedUserID: nil)
                 )
 
                 await contactManager.setCurrentContactIDInfo(
-                    ContactIDInfo(contactID: "some-stable-contact-id", isStable: true)
+                    ContactIDInfo(contactID: "some-stable-contact-id", isStable: true, namedUserID: nil)
                 )
             }
         }
@@ -580,7 +592,7 @@ class AirshipContactTest: XCTestCase {
 
     func testFetchSubscriptionListsOverrides() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true)
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
         )
 
         let apiResult: [String: [ChannelScope]] = ["neat": [.web, .app]]
@@ -601,7 +613,7 @@ class AirshipContactTest: XCTestCase {
             attributes: nil,
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "neat", type: .unsubscribe, scope: .web, date: self.date.now)
-            ]
+            ], channels: []
         )
 
         // Pending
@@ -618,7 +630,7 @@ class AirshipContactTest: XCTestCase {
 
     func testFetchSubscriptionListsFails() async throws {
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true)
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
         )
 
         self.apiClient.fetchSubscriptionListsCallback = {
@@ -648,7 +660,7 @@ class AirshipContactTest: XCTestCase {
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some list", type: .unsubscribe, scope: .app, date: self.date.now)
-            ]
+            ], contactChannels: []
         )
 
         let pending = ContactAudienceOverrides(
@@ -683,7 +695,7 @@ class AirshipContactTest: XCTestCase {
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some list", type: .unsubscribe, scope: .app, date: self.date.now)
-            ]
+            ], contactChannels: []
         )
 
         let updateBar = ContactAudienceUpdate(
@@ -696,7 +708,7 @@ class AirshipContactTest: XCTestCase {
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some other list", type: .unsubscribe, scope: .app, date: self.date.now)
-            ]
+            ], contactChannels: []
         )
 
         await self.contactManager.dispatchAudienceUpdate(updateFoo)
@@ -705,11 +717,11 @@ class AirshipContactTest: XCTestCase {
         let contactManager = self.contactManager
         Task.detached(priority: .high) {
             await contactManager.setCurrentContactIDInfo(
-                ContactIDInfo(contactID: "foo", isStable: false)
+                ContactIDInfo(contactID: "foo", isStable: false, namedUserID: nil)
             )
 
             await contactManager.setCurrentContactIDInfo(
-                ContactIDInfo(contactID: "bar", isStable: true)
+                ContactIDInfo(contactID: "bar", isStable: true, namedUserID: nil)
             )
         }
 
@@ -749,7 +761,7 @@ class AirshipContactTest: XCTestCase {
         let event = ContactConflictEvent(
             tags: [:],
             attributes: [:],
-            channels: [],
+            associatedChannels: [],
             subscriptionLists: [:],
             conflictingNamedUserID: "neat"
         )
@@ -770,7 +782,7 @@ class AirshipContactTest: XCTestCase {
         let event = ContactConflictEvent(
             tags: [:],
             attributes: [:],
-            channels: [],
+            associatedChannels: [],
             subscriptionLists: [:],
             conflictingNamedUserID: "neat"
         )
@@ -810,9 +822,16 @@ class AirshipContactTest: XCTestCase {
 
 }
 
+fileprivate class TestSMSValidator: SMSValidatorProtocol, @unchecked Sendable {
+    var delegate: SMSValidatorDelegate? = nil
+
+    func validateSMS(msisdn: String, sender: String) async throws -> Bool {
+        true
+    }
+}
+
 
 fileprivate actor TestContactManager: ContactManagerProtocol {
-
     private var _currentNamedUserID: String? = nil
     private var _currentContactIDInfo: ContactIDInfo? = nil
     private var _pendingAudienceOverrides = ContactAudienceOverrides()
@@ -820,6 +839,12 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
 
     let contactUpdates: AsyncStream<ContactUpdate>
     let contactUpdatesContinuation: AsyncStream<ContactUpdate>.Continuation
+    let channelUpdates: AsyncStream<[ContactChannel]>
+    let channelUpdatesContinuation: AsyncStream<[ContactChannel]>.Continuation
+
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool {
+        return true
+    }
 
     private(set) var operations: [ContactOperation] = []
     var generateDefaultContactIDCalled: Bool = false
@@ -829,6 +854,10 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
             self.contactUpdates,
             self.contactUpdatesContinuation
         ) = AsyncStream<ContactUpdate>.airshipMakeStreamWithContinuation()
+        (
+            self.channelUpdates,
+            self.channelUpdatesContinuation
+        ) = AsyncStream<[ContactChannel]>.airshipMakeStreamWithContinuation()
     }
 
     func onAudienceUpdated(

@@ -314,22 +314,6 @@ final class DeferredResolverTest: XCTestCase {
 
         XCTAssertEqual(anotherResult, .success(body))
     }
-
-
-
-
-
-    // 307 with location retries right away, 307 with location and retry after,
-    // testResolve
-
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
 
 

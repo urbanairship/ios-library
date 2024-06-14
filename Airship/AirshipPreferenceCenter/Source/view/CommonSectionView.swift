@@ -26,10 +26,18 @@ public struct CommonSectionView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    init(
+        section: PreferenceCenterConfig.CommonSection,
+        state: PreferenceCenterState
+    ) {
+        self.section = section
+        self.state = state
+    }
+    
     @ViewBuilder
     public var body: some View {
         let configuration = CommonSectionViewStyleConfiguration(
-            section: self.section,
+            section: self.section, 
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme
@@ -86,7 +94,7 @@ extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
     }
 }
 
-/// The default comon section view style
+/// The default common section view style
 public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
     public static let titleAppearance = PreferenceCenterTheme.TextAppearance(
@@ -97,6 +105,11 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     public static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .system(size: 14),
         color: .secondary
+    )
+
+    public static let emptyTextAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .system(size: 14),
+        color: .gray.opacity(0.80)
     )
 
     @ViewBuilder
@@ -131,7 +144,10 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                 }
 
                 ForEach(0..<section.items.count, id: \.self) { index in
-                    makeItem(section.items[index], state: configuration.state)
+                    makeItem(
+                        section.items[index],
+                        state: configuration.state
+                    )
                 }
             }
             .padding(.bottom, 8)
@@ -145,7 +161,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     ) -> some View {
         switch item {
         case .alert(let item):
-            PreferenceCenterAlertView(item: item, state: state)
+            PreferenceCenterAlertView(item: item, state: state).transition(.opacity)
         case .channelSubscription(let item):
             ChannelSubscriptionView(item: item, state: state)
             Divider()
@@ -154,6 +170,12 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
             Divider()
         case .contactSubscriptionGroup(let item):
             ContactSubscriptionGroupView(item: item, state: state)
+            Divider()
+        case .contactManagement(let item):
+            PreferenceCenterContactManagementView(
+                item: item,
+                state: state
+            )
             Divider()
         }
     }

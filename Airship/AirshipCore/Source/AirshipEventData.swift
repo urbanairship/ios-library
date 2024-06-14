@@ -18,6 +18,6 @@ public struct AirshipEventData: Sendable, Equatable {
     public let sessionID: String
 
     /// The event type
-    public let type: String
+    public let type: EventType
 }
 

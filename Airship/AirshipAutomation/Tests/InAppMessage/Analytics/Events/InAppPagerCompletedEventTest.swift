@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppPagerCompletedEventTest: XCTestCase {
 
@@ -28,7 +27,7 @@ final class InAppPagerCompletedEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_pager_completed")
+        XCTAssertEqual(event.name.reportingName, "in_app_pager_completed")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 }

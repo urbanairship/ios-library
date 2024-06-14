@@ -8,6 +8,11 @@ import AirshipCore
 
 /// In-app messaging
 public protocol InAppMessagingProtocol: AnyObject, Sendable {
+
+    /// Theme manager
+    @MainActor
+    var themeManager: InAppAutomationThemeManager { get }
+
     /// Display interval
     @MainActor
     var displayInterval: TimeInterval { get set }
@@ -54,6 +59,9 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
 final class InAppMessaging: InAppMessagingProtocol {
     let executor: InAppMessageAutomationExecutor
     let preparer: InAppMessageAutomationPreparer
+
+    @MainActor
+    let themeManager: InAppAutomationThemeManager = InAppAutomationThemeManager()
 
     @MainActor
     var displayInterval: TimeInterval {

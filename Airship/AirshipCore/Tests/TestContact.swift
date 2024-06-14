@@ -4,8 +4,48 @@ import Combine
 @testable import AirshipCore
 
 class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
-    func notifyRemoteLogin() {
+    var contactChannelUpdates: AsyncStream<AirshipCore.ContactChannelsResult> = AsyncStream<ContactChannelsResult>.init { _ in }
 
+    var contactChannelPublisher: AnyPublisher<AirshipCore.ContactChannelsResult, Never> = Just(.success([])).eraseToAnyPublisher()
+
+    func getStableContactInfo() async -> StableContactInfo {
+        return StableContactInfo(contactID: await getStableContactID(), namedUserID: namedUserID)
+    }
+    
+    init() {}
+
+    func registerEmail(_ address: String, options: AirshipCore.EmailRegistrationOptions) {
+
+    }
+    
+    func registerSMS(_ msisdn: String, options: AirshipCore.SMSRegistrationOptions) {
+
+    }
+    
+    func registerOpen(_ address: String, options: AirshipCore.OpenRegistrationOptions) {
+
+    }
+    
+    var smsValidatorDelegate: (any AirshipCore.SMSValidatorDelegate)?
+    
+    func resend(_ channel: AirshipCore.ContactChannel) {
+
+    }
+    
+    func disassociateChannel(_ channel: AirshipCore.ContactChannel) {
+
+    }
+
+    func associateChannel(_ channelID: String, type: AirshipCore.ChannelType) {
+
+    }
+
+    var SMSValidatorDelegate: SMSValidatorDelegate?
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool {
+        true
+    }
+
+    func notifyRemoteLogin() {
     }
 
     var contactIDInfo: AirshipCore.ContactIDInfo? = nil
@@ -41,7 +81,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
         conflictEventSubject.eraseToAnyPublisher()
     }
-    
 
     private let namedUserUpdatesSubject = PassthroughSubject<String?, Never>()
     public var namedUserIDPublisher: AnyPublisher<String?, Never> {
@@ -59,7 +98,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     public func _getNamedUserID() async -> String? {
         return self.namedUserID
     }
-
 
     public var isComponentEnabled: Bool = true
 
@@ -103,28 +141,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         let editor = editAttributes()
         editorBlock(editor)
         editor.apply()
-    }
-
-    public func registerEmail(
-        _ address: String,
-        options: EmailRegistrationOptions
-    ) {
-        // TODO
-    }
-
-    public func registerSMS(_ msisdn: String, options: SMSRegistrationOptions) {
-        // TODO
-    }
-
-    public func registerOpen(
-        _ address: String,
-        options: OpenRegistrationOptions
-    ) {
-        // TODO
-    }
-
-    public func associateChannel(_ channelID: String, type: ChannelType) {
-        // TODO
     }
 
     public func editSubscriptionLists() -> ScopedSubscriptionListEditor {

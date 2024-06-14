@@ -3,11 +3,6 @@
 import Foundation
 import SwiftUI
 
-extension Color {
-    static var tappableClear: Color { Color.white.opacity(0.001) }
-    static var shadowColor: Color { Color.black.opacity(0.33) }
-}
-
 extension View {
     @ViewBuilder
     func showing(isShowing: Bool) -> some View {
@@ -19,12 +14,16 @@ extension View {
     }
 
     @ViewBuilder
-    func addNub(placement: InAppMessageDisplayContent.Banner.Placement?, nub: AnyView, itemSpacing: CGFloat) -> some View {
+    func addNub(
+        placement: InAppMessageDisplayContent.Banner.Placement,
+        nub: AnyView, itemSpacing: CGFloat
+    ) -> some View {
         VStack(spacing: 0) {
-            if placement == .top {
+            switch(placement) {
+            case .top:
                 self
                 nub.padding(.vertical, itemSpacing / 2)
-            } else {
+            case .bottom:
                 nub.padding(.vertical, itemSpacing / 2)
                 self
             }
@@ -40,11 +39,13 @@ extension View {
     }
 
     @ViewBuilder
-    func addTapAndSwipeDismiss(placement: InAppMessageDisplayContent.Banner.Placement,
-                         isPressed: Binding<Bool>,
-                         tapAction: (() -> ())? = nil,
-                         swipeOffset: Binding<CGFloat>,
-                         onDismiss: @escaping () -> Void) -> some View {
+    func addTapAndSwipeDismiss(
+        placement: InAppMessageDisplayContent.Banner.Placement,
+        isPressed: Binding<Bool>,
+        tapAction: (() -> ())? = nil,
+        swipeOffset: Binding<CGFloat>,
+        onDismiss: @escaping () -> Void
+    ) -> some View {
         self.offset(x: 0, y: swipeOffset.wrappedValue)
             .gesture(
                 DragGesture(minimumDistance: 0)
@@ -80,7 +81,8 @@ extension View {
                                 swipeOffset.wrappedValue = 0
                             }
                         }
-                    })
+                    }
+            )
     }
 
     @ViewBuilder
@@ -125,14 +127,15 @@ extension View {
     private func applyTransition(
         placement: InAppMessageDisplayContent.Banner.Placement
     ) -> some View {
-        if (placement == .top) {
+        switch(placement) {
+        case .top:
             self.transition(
                 .asymmetric(
                     insertion: .move(edge: .top),
                     removal: .move(edge: .top).combined(with: .opacity)
                 )
             )
-        } else {
+        case .bottom:
             self.transition(
                 .asymmetric(
                     insertion: .move(edge: .bottom),
@@ -182,25 +185,29 @@ struct CenteredGeometryReader<Content: View>: View {
     var body: some View {
         GeometryReader { geo in
             let size = geo.size
-            content(size)
-                .position(x: size.width / 2, y: size.height / 2)
+            content(size).position(
+                x: size.width / 2,
+                y: size.height / 2
+            )
         }
     }
 }
 
 /// Attempt to resize to specified size and clamp any size axis that exceeds parent size axis to said axis.
 struct AspectResize: ViewModifier {
-    var width:Double?
-    var height:Double?
+    var width: Double?
+    var height: Double?
 
     func body(content: Content) -> some View {
         CenteredGeometryReader { size in
             let parentWidth = size.width
             let parentHeight = size.height
 
-            content
-                .aspectRatio(CGSize(width: width ?? parentWidth, height: height ?? parentHeight), contentMode: .fit)
-                .frame(maxWidth: parentWidth, maxHeight: parentHeight)
+            content.aspectRatio(
+                CGSize(width: width ?? parentWidth, height: height ?? parentHeight),
+                contentMode: .fit
+            )
+            .frame(maxWidth: parentWidth, maxHeight: parentHeight)
         }
     }
 }
@@ -215,8 +222,10 @@ struct ParentClampingResize: ViewModifier {
             let parentWidth = parentSize.width
             let parentHeight = parentSize.height
 
-            content
-                .frame(maxWidth: min(parentWidth, maxWidth), maxHeight: min(parentHeight, maxHeight))
+            content.frame(
+                maxWidth: min(parentWidth, maxWidth),
+                maxHeight: min(parentHeight, maxHeight)
+            )
         }
     }
 }

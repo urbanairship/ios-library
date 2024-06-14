@@ -178,7 +178,6 @@ public final class PreferenceCenter: NSObject, Sendable {
 private final class Delegates: @unchecked Sendable {
     @MainActor
     weak var openDelegate: PreferenceCenterOpenDelegate?
-
 }
 
 extension PreferenceCenter {

@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppResolutionEventTest: XCTestCase {
     
@@ -26,7 +25,7 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 
@@ -42,7 +41,7 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 
@@ -58,7 +57,7 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 
@@ -74,7 +73,7 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 
@@ -101,7 +100,24 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_resolution")
+        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
+        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+    }
+
+    func testAudienceExcluded() throws {
+
+        let event = InAppResolutionEvent.audienceExcluded()
+
+        let expectedJSON = """
+        {
+           "resolution": {
+              "display_time":"0.00",
+              "type":"audience_check_excluded"
+           }
+        }
+        """
+
+        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 }

@@ -9,7 +9,7 @@ struct AirshipEvents {
     ) -> AirshipEvent {
         return AirshipEvent(
             priority: .normal,
-            eventType: "device_registration",
+            eventType: .deviceRegistration,
             eventData: AirshipJSON.makeObject { object in
                 object.set(string: channelID, key: "channel_id")
                 object.set(string: deviceToken, key: "device_token")
@@ -25,7 +25,7 @@ struct AirshipEvents {
 
         return AirshipEvent(
             priority: .normal,
-            eventType: "push_received",
+            eventType: .pushReceived,
             eventData: AirshipJSON.makeObject { object in
                 object.set(string: metadata, key: "metadata")
                 object.set(string: pushID ?? "MISSING_SEND_ID", key: "push_id")
@@ -44,7 +44,7 @@ struct AirshipEvents {
 
         return AirshipEvent(
             priority: .high,
-            eventType: "interactive_notification_action",
+            eventType: .interactiveNotificationAction,
             eventData: AirshipJSON.makeObject { object in
                 object.set(string: category, key: "button_group")
                 object.set(string: action.identifier, key: "button_id")
@@ -76,7 +76,7 @@ struct AirshipEvents {
 
         return AirshipEvent(
             priority: .normal,
-            eventType: "screen_tracking",
+            eventType: .screenTracking,
             eventData: AirshipJSON.makeObject { object in
                 object.set(string: screen, key: "screen")
                 object.set(string: previousScreen, key: "previous_screen")
@@ -113,7 +113,7 @@ struct AirshipEvents {
 
         return AirshipEvent(
             priority: .normal,
-            eventType: "associate_identifiers",
+            eventType: .associateIdentifiers,
             eventData: try AirshipJSON.wrap(identifiers)
         )
     }
@@ -124,7 +124,7 @@ struct AirshipEvents {
     ) -> AirshipEvent {
         return AirshipEvent(
             priority: .normal,
-            eventType: "install_attribution",
+            eventType: .installAttribution,
             eventData: AirshipJSON.makeObject { object in
                 object.set(
                     string: appPurchaseDate?.timeIntervalSince1970.toString(),
@@ -192,11 +192,11 @@ fileprivate extension SessionEvent {
         }
     }
 
-    var eventType: String {
+    var eventType: EventType {
         switch self.type {
-        case .foregroundInit, .backgroundInit: return "app_init"
-        case .background: return "app_background"
-        case .foreground: return "app_foreground"
+        case .foregroundInit, .backgroundInit: return .appInit
+        case .background: return .appBackground
+        case .foreground: return .appForeground
         }
     }
 

@@ -55,6 +55,9 @@ final class EventAPIClient: EventAPIClientProtocol {
 
         // Perform the upload
         return try await self.session.performHTTPRequest(request) { _, response in
+            
+            AirshipLogger.debug("Upload event finished with response: \(response)")
+            
             return EventUploadTuningInfo(
                 maxTotalStoreSizeKB: response.unsignedInt(
                     forHeader: "X-UA-Max-Total"
@@ -77,7 +80,7 @@ final class EventAPIClient: EventAPIClientProtocol {
                 format: "%f",
                 eventData.date.timeIntervalSince1970
             )
-            eventBody["type"] = eventData.type
+            eventBody["type"] = eventData.type.reportingName
             
         
             guard

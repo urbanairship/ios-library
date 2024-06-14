@@ -2,13 +2,14 @@
 
 import Foundation
 
+@testable import AirshipCore
 @testable import AirshipAutomation
 
 struct TestInAppEvent: InAppEvent {
-    var name: String
+    var name: EventType
     var data: (any Encodable & Sendable)?
 
-    init(name: String = "test_event", data: (Encodable & Sendable)? = nil) {
+    init(name: EventType = .customEvent, data: (Encodable & Sendable)? = nil) {
         self.name = name
         self.data = data
     }

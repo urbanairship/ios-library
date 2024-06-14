@@ -55,9 +55,8 @@ final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendab
         )
 
         return try await session.performHTTPRequest(request) { data, response in
-            AirshipLogger.trace(
-                "Channel auth token request finished with status: \(response.statusCode)"
-            );
+            
+            AirshipLogger.debug("Channel auth token request finished with response: \(response)")
 
             guard response.statusCode == 200 else {
                 return nil

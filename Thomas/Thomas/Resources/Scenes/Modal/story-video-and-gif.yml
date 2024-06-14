@@ -1,0 +1,628 @@
+---
+presentation:
+  android:
+    disable_back_button: false
+  default_placement:
+    device:
+      lock_orientation: portrait
+    ignore_safe_area: true
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      max_height: 100%
+      max_width: 100%
+      min_height: 100%
+      min_width: 100%
+      width: 100%
+  dismiss_on_touch_outside: false
+  type: modal
+version: 1
+view:
+  identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a
+  type: pager_controller
+  view:
+    items:
+      - ignore_safe_area: true
+        position:
+          horizontal: center
+          vertical: center
+        size:
+          height: 100%
+          width: 100%
+        view:
+          disable_swipe: true
+          gestures:
+            - behavior:
+                behaviors:
+                  - pager_previous
+              identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_tap_start
+              location: start
+              type: tap
+            - behavior:
+                behaviors:
+                  - pager_next
+              identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_tap_end
+              location: end
+              type: tap
+            - behavior:
+                behaviors:
+                  - dismiss
+              direction: up
+              identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_swipe_up
+              type: swipe
+            - behavior:
+                behaviors:
+                  - dismiss
+              direction: down
+              identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_swipe_down
+              type: swipe
+            - identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_hold
+              press_behavior:
+                behaviors:
+                  - pager_pause
+              release_behavior:
+                behaviors:
+                  - pager_resume
+              type: hold
+          items:
+            - automated_actions:
+                - behaviors:
+                    - pager_next
+                  delay: 10
+                  identifier: "[pager_next]_e09ba183-67e5-422c-acb8-da868e392a7c"
+              identifier: e09ba183-67e5-422c-acb8-da868e392a7c
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#969111"
+                    type: hex
+                items:
+                  - ignore_safe_area: true
+                    margin:
+                      end: 0
+                      start: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      media_fit: center_crop
+                      media_type: video
+                      type: media
+                      url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/18e56538-eb2b-4d7a-a69f-cd107d8a72d9
+                      video:
+                        aspect_ratio: 0.5625
+                        autoplay: true
+                        loop: true
+                        muted: true
+                        show_controls: false
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      items:
+                        - margin:
+                            bottom: 16
+                          position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - identifier: layout_container
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: vertical
+                                  items:
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 48
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: VIDEO longer than Story
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 8
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: '22 seconds video '
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 8
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: 10 seconds story
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        direction: horizontal
+                                        items: []
+                                        type: linear_layout
+                                  type: linear_layout
+                            type: linear_layout
+                      type: container
+                type: container
+            - automated_actions:
+                - behaviors:
+                    - pager_next
+                  delay: 10
+                  identifier: "[pager_next]_afb9eb28-a67f-40c2-a4fe-7b28fd3707e0"
+              identifier: afb9eb28-a67f-40c2-a4fe-7b28fd3707e0
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#969111"
+                    type: hex
+                items:
+                  - ignore_safe_area: true
+                    margin:
+                      end: 0
+                      start: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      media_fit: center_crop
+                      media_type: video
+                      type: media
+                      url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/e17527d2-3471-47b2-8733-7afbe3272b50
+                      video:
+                        aspect_ratio: 0.5625
+                        autoplay: true
+                        loop: true
+                        muted: true
+                        show_controls: false
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      items:
+                        - margin:
+                            bottom: 16
+                          position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - identifier: layout_container
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: vertical
+                                  items:
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 48
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: Video shorter than Story
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                            selectors:
+                                              - color:
+                                                  alpha: 1
+                                                  hex: "#FFFFFF"
+                                                  type: hex
+                                                dark_mode: true
+                                                platform: ios
+                                              - color:
+                                                  alpha: 1
+                                                  hex: "#FFFFFF"
+                                                  type: hex
+                                                dark_mode: true
+                                                platform: android
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 8
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: 6 seconds video
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                            selectors:
+                                              - color:
+                                                  alpha: 1
+                                                  hex: "#FFFFFF"
+                                                  type: hex
+                                                dark_mode: true
+                                                platform: ios
+                                              - color:
+                                                  alpha: 1
+                                                  hex: "#FFFFFF"
+                                                  type: hex
+                                                dark_mode: true
+                                                platform: android
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 8
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: 10 seconds story
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                            selectors:
+                                              - color:
+                                                  alpha: 1
+                                                  hex: "#FFFFFF"
+                                                  type: hex
+                                                dark_mode: true
+                                                platform: ios
+                                              - color:
+                                                  alpha: 1
+                                                  hex: "#FFFFFF"
+                                                  type: hex
+                                                dark_mode: true
+                                                platform: android
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        direction: horizontal
+                                        items: []
+                                        type: linear_layout
+                                  type: linear_layout
+                            type: linear_layout
+                      type: container
+                type: container
+            - automated_actions:
+                - behaviors:
+                    - pager_next
+                  delay: 10
+                  identifier: "[pager_next]_e09ba183-67e5-422c-acb8-da868e392a7c"
+              identifier: e09ba183-67e5-422c-acb8-da868e392a7c
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#969111"
+                    type: hex
+                items:
+                  - ignore_safe_area: true
+                    margin:
+                      end: 0
+                      start: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      media_fit: center_crop
+                      media_type: youtube
+                      type: media
+                      url: https://www.youtube.com/embed/xUOQZeN8A7o
+                      video:
+                        aspect_ratio: 0.5625
+                        autoplay: true
+                        loop: true
+                        muted: true
+                        show_controls: false
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      items:
+                        - margin:
+                            bottom: 16
+                          position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            direction: vertical
+                            items:
+                              - identifier: layout_container
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  direction: vertical
+                                  items:
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 48
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: Youtube VIDEO
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 8
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: 'youtube video '
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - margin:
+                                        bottom: 8
+                                        end: 16
+                                        start: 16
+                                        top: 8
+                                      size:
+                                        height: auto
+                                        width: 100%
+                                      view:
+                                        text: 10 seconds story
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              alpha: 1
+                                              hex: "#000000"
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 40
+                                          styles:
+                                            - bold
+                                        type: label
+                                    - size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        direction: horizontal
+                                        items: [ ]
+                                        type: linear_layout
+                                  type: linear_layout
+                            type: linear_layout
+                      type: container
+                type: container
+            - automated_actions:
+                - behaviors:
+                    - pager_next
+                  delay: 10
+                  identifier: pager_next_627ad448-a18c-432e-976e-d0ab10a67fdb
+              identifier: 627ad448-a18c-432e-976e-d0ab10a67fdb
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#969111"
+                    type: hex
+                items:
+                  - ignore_safe_area: true
+                    margin:
+                      end: 0
+                      start: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      media_fit: center_inside
+                      media_type: image
+                      type: media
+                      url: https://hangar-dl.urbanairship.com/binary/public/VWDwdOFjRTKLRxCeXTVP6g/e9a5493a-c5bb-48ab-9557-48cee046ea74
+                type: container
+            - automated_actions:
+                - behaviors:
+                    - pager_next
+                  delay: 10
+                  identifier: pager_next_627ad448-a18c-432e-976e-d0ab10a67fdb
+              identifier: 627ad448-a18c-432e-976e-d0ab10a67fdb
+              type: pager_item
+              view:
+                background_color:
+                  default:
+                    alpha: 1
+                    hex: "#969111"
+                    type: hex
+                items:
+                  - ignore_safe_area: true
+                    margin:
+                      end: 0
+                      start: 0
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      media_fit: center_inside
+                      media_type: image
+                      type: media
+                      url: https://hangar-dl.urbanairship.com/binary/public/VWDwdOFjRTKLRxCeXTVP6g/25b3bea5-e233-4d25-8d96-c65e6a859cee
+                type: container
+          type: pager
+      - margin:
+          bottom: 0
+          end: 16
+          start: 16
+          top: 8
+        position:
+          horizontal: center
+          vertical: top
+        size:
+          height: 2
+          width: 100%
+        view:
+          source:
+            type: pager
+          style:
+            direction: horizontal
+            progress_color:
+              default:
+                alpha: 1
+                hex: "#AAAAAA"
+                type: hex
+            sizing: equal
+            spacing: 4
+            track_color:
+              default:
+                alpha: 0.5
+                hex: "#AAAAAA"
+                type: hex
+            type: linear_progress
+          type: story_indicator
+    type: container

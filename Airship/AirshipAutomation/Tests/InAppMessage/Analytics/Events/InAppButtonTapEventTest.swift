@@ -2,9 +2,8 @@
 
 import XCTest
 
-@testable
-import AirshipAutomation
-import AirshipCore
+@testable import AirshipAutomation
+@testable import AirshipCore
 
 final class InAppButtonTapEventTest: XCTestCase {
 
@@ -21,7 +20,7 @@ final class InAppButtonTapEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name, "in_app_button_tap")
+        XCTAssertEqual(event.name.reportingName, "in_app_button_tap")
         XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
     }
 
