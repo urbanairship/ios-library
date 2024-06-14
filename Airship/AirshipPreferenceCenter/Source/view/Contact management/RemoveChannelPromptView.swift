@@ -28,7 +28,7 @@ struct RemoveChannelPromptView: View {
         VStack(alignment: .leading, spacing: 8) {
             titleText.padding(.trailing, 16) // Pad out to prevent aliasing with the close button
             bodyText
-            button
+            buttonView
             footer
         }
     }
@@ -38,9 +38,13 @@ struct RemoveChannelPromptView: View {
             promptViewContent
                 .padding(16)
                 .addBackground(theme: theme)
-                .addPreferenceCloseButton(dismissButtonColor: .primary, dismissIconResource: "xmark", onUserDismissed: {
-                    onCancel()
-                })
+                .addPreferenceCloseButton(
+                    dismissButtonColor: .primary,
+                    dismissIconResource: "xmark",
+                    contentDescription: item.view.closeButton?.contentDescription,
+                    onUserDismissed: {
+                        onCancel()
+                    })
                 .padding(16)
                 .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                 .transition(.opacity)
@@ -54,7 +58,7 @@ struct RemoveChannelPromptView: View {
             .textAppearance(
                 theme?.titleAppearance,
                 base: DefaultContactManagementSectionStyle.titleAppearance
-            )                
+            )
             .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -86,16 +90,49 @@ struct RemoveChannelPromptView: View {
     }
 
     @ViewBuilder
-    private var button: some View {
-        if let optOutButton = item.view.acceptButton {
+    private var buttonView: some View {
+        let noText = item.view.onSuccess?.title == nil && item.view.onSuccess?.body == nil
+        if item.view.cancelButton != nil {
+            HStack {
+                Spacer()
+                HStack(alignment: .center, spacing: 12) {
+                    cancelButton
+                    submitButton
+                }
+                Spacer()
+            }
+            .padding(.top, noText ? 24 : 0)
+        } else {
+            HStack {
+                Spacer()
+                submitButton.padding(.top, noText ? 24 : 0)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var submitButton: some View {
+        if let optOutButton = item.view.submitButton {
+            /// Opt out Button
+            LabeledButton(
+                type: .destructiveType,
+                item: optOutButton,
+                theme: self.theme,
+                action: optOutAction)
+        }
+    }
+
+    @ViewBuilder
+    private var cancelButton: some View {
+        if let cancelButton = item.view.cancelButton {
             HStack {
                 Spacer()
                 /// Opt out Button
                 LabeledButton(
-                    type: .destructiveType,
-                    item: optOutButton,
+                    type: .outlineType,
+                    item: cancelButton,
                     theme: self.theme,
-                    action: optOutAction
+                    action: onCancel
                 )
             }
         }

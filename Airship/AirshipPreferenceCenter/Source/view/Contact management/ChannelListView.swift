@@ -47,7 +47,7 @@ struct ChannelListView: View {
 
     @ViewBuilder
     private var removePromptView: some View {
-        if let view = self.item.removePrompt {
+        if let view = self.item.removeChannel {
             RemoveChannelPromptView(
                 item: view,
                 theme: self.theme.contactManagement) {
@@ -69,14 +69,17 @@ struct ChannelListView: View {
             item: model,
             theme: self.theme.contactManagement
         ) {
-            self.disposable = ChannelListView.showModalView(
-                rootView: addChannelPromptView,
-                theme: self.theme.contactManagement
-            )
+            /// Avoid displaying if no view is supplied
+            if self.item.addChannel?.view != nil {
+                self.disposable = ChannelListView.showModalView(
+                    rootView: addChannelPromptView,
+                    theme: self.theme.contactManagement
+                )
+            }
         }
     }
 
-    private func pendingLabelModelForType(type: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions) -> PreferenceCenterConfig.ContactManagementItem.PendingLabel? {
+    private func pendingLabelModelForType(type: PreferenceCenterConfig.ContactManagementItem.Platform) -> PreferenceCenterConfig.ContactManagementItem.PendingLabel? {
         switch type {
         case .sms(let options):
             return options.pendingLabel
@@ -136,7 +139,7 @@ struct ChannelListView: View {
     private var channelListView:some View {
         ForEach(Array(self.$state.channelsList.wrappedValue.filter(with: self.item.platform.channelType)), id: \.self) { channel in
             ChannelListViewCell(viewModel: ChannelListCellViewModel(channel: channel,
-                                                                    pendingLabelModel: pendingLabelModelForType(type: item.registrationOptions),
+                                                                    pendingLabelModel: pendingLabelModelForType(type: item.platform),
                                                                     onResend: {
                 resend(channel)
             }, onRemove: {
@@ -152,11 +155,11 @@ struct ChannelListView: View {
 
     var body: some View {
         if !self.hideView {
-            VStack {
+            VStack(alignment: .leading) {
                 Section {
                     VStack(alignment: .leading) {
                         if self.$state.channelsList.wrappedValue.filter(with: self.item.platform.channelType).isEmpty {
-                            EmptySectionLabel(label: item.emptyLabel) {
+                            EmptySectionLabel(label: item.emptyMessage) {
                                 withAnimation {
                                     self.hideView = true
                                 }
@@ -164,7 +167,7 @@ struct ChannelListView: View {
                         } else {
                             channelListView
                         }
-                        if let model = self.item.addPrompt?.button {
+                        if let model = self.item.addChannel?.button {
                             makeAddButton(model: model)
                         }
                     }
@@ -204,7 +207,7 @@ extension ChannelListView {
     private var resendPromptView: some View {
         /// When we have submitted successfully users see a follow up prompt telling them to check their messaging app, email inbox, etc.
         ResultPromptView(
-            item: pendingLabelModelForType(type: item.registrationOptions)?.resendSuccessPrompt,
+            item: pendingLabelModelForType(type: item.platform)?.resendSuccessPrompt,
             theme: theme.contactManagement
         ) {
             if let channel = self.selectedChannel {
@@ -218,10 +221,10 @@ extension ChannelListView {
 
     @ViewBuilder
     private var addChannelPromptView: some View {
-        if let view = self.item.addPrompt?.view {
+        if let view = self.item.addChannel?.view {
             let viewModel = AddChannelPromptViewModel(item: view,
                                                       theme: self.theme.contactManagement,
-                                                      registrationOptions: self.item.registrationOptions,
+                                                      registrationOptions: self.item.platform,
                                                       onCancel: dismissPrompt,
                                                       onRegisterSMS: registerSMS,
                                                       onRegisterEmail: registerEmail)

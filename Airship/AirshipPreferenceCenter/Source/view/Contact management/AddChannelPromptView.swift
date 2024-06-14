@@ -30,9 +30,9 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     private var errorMessage: String? {
         switch self.viewModel.state {
         case .failedInvalid:
-            return self.viewModel.item.errorMessages?.invalidMessage
+            return self.viewModel.platform?.errorMessages?.invalidMessage
         case .failedDefault:
-            return self.viewModel.item.errorMessages?.defaultMessage
+            return self.viewModel.platform?.errorMessages?.defaultMessage
         default:
             return nil
         }
@@ -42,14 +42,22 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     var foregroundContent: some View {
         switch self.viewModel.state {
         case .succeeded:
-            /// When we have submitted successfully users see a follow up prompt telling them to check their messaging app, email inbox, etc.
-            ResultPromptView(
-                item: self.viewModel.item.onSuccess,
-                theme: viewModel.theme
-            ) {
-                viewModel.onSubmit() 
+            if self.viewModel.item.onSubmit != nil {
+                /// When we have submitted successfully users see a follow up prompt telling them to check their messaging app, email inbox, etc.
+                ResultPromptView(
+                    item: self.viewModel.item.onSubmit,
+                    theme: viewModel.theme
+                ) {
+                    viewModel.onSubmit()
+                }
+                .transition(.opacity)
+            } else {
+                Rectangle()
+                    .foregroundColor(Color.clear)
+                    .onAppear {
+                    viewModel.onSubmit()
+                }
             }
-            .transition(.opacity)
         case .ready, .loading, .failedInvalid, .failedDefault:
             promptView
         }
@@ -143,7 +151,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
 
             /// Channel Input text fields
             ChannelTextField(
-                registrationOptions: viewModel.registrationOptions,
+                platform: viewModel.platform,
                 selectedSender: $viewModel.selectedSender,
                 inputText: $viewModel.inputText,
                 theme: viewModel.theme
@@ -160,7 +168,11 @@ struct AddChannelPromptView: View, @unchecked Sendable {
             promptViewContent
                 .padding(16)
                 .addBackground(theme: viewModel.theme)
-                .addPreferenceCloseButton(dismissButtonColor: .primary, dismissIconResource: "xmark", onUserDismissed: {
+                .addPreferenceCloseButton(
+                    dismissButtonColor: .primary,
+                    dismissIconResource: "xmark",
+                    contentDescription: nil,
+                    onUserDismissed: {
                     self.viewModel.onCancel()
                 })
                 .padding(16)

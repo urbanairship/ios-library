@@ -9,11 +9,11 @@ public struct ChannelTextField: View {
 
     private let placeHolderPadding = EdgeInsets(top: 4, leading: 15, bottom: 4, trailing: 4)
 
-    private var senders: [PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo]?
+    private var senders: [PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo]?
 
-    private var registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?
+    private var platform: PreferenceCenterConfig.ContactManagementItem.Platform?
 
-    @Binding var selectedSender: PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo
+    @Binding var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
 
     @State var selectedSenderID: String = ""
 
@@ -27,23 +27,23 @@ public struct ChannelTextField: View {
     /// The preference center theme
     var theme: PreferenceCenterTheme.ContactManagement?
 
-    private var smsOptions: PreferenceCenterConfig.ContactManagementItem.SmsRegistrationOption?
-    private var emailOptions: PreferenceCenterConfig.ContactManagementItem.EmailRegistrationOption?
+    private var smsOptions: PreferenceCenterConfig.ContactManagementItem.SMS?
+    private var emailOptions: PreferenceCenterConfig.ContactManagementItem.Email?
 
     public init(
-        registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?,
-        selectedSender: Binding<PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo>,
+        platform: PreferenceCenterConfig.ContactManagementItem.Platform?,
+        selectedSender: Binding<PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo>,
         inputText: Binding<String>,
         theme: PreferenceCenterTheme.ContactManagement?
     ) {
-        self.registrationOptions = registrationOptions
+        self.platform = platform
         _selectedSender = selectedSender
         _inputText = inputText
 
         self.theme = theme
 
-        if let registrationOptions = self.registrationOptions {
-            switch registrationOptions {
+        if let platform = self.platform {
+            switch platform {
             case .sms(let options):
                 self.senders = options.senders
                 smsOptions = options
@@ -124,8 +124,8 @@ public struct ChannelTextField: View {
 
     // MARK: Keyboard type
     private var keyboardType: UIKeyboardType {
-        if let registrationOptions = self.registrationOptions {
-            switch registrationOptions {
+        if let platform = self.platform {
+            switch platform {
             case .sms(_):
                 return .decimalPad
             case .email(_):
@@ -139,12 +139,12 @@ public struct ChannelTextField: View {
     // MARK: Placeholder
     private func makePlaceholder() -> String {
         let defaultPlaceholder = ""
-        if let registrationOptions = self.registrationOptions {
-            switch registrationOptions {
+        if let platform = self.platform {
+            switch platform {
             case .sms(_):
                 return self.selectedSender.placeholderText
             case .email(let emailRegistrationOption):
-                return emailRegistrationOption.placeholder
+                return emailRegistrationOption.placeholder ?? defaultPlaceholder
             }
         } else {
             return defaultPlaceholder

@@ -11,14 +11,14 @@ import AirshipCore
 
 internal class AddChannelPromptViewModel: ObservableObject {
     @Published var state: AddChannelState = .ready
-    @Published var selectedSender: PreferenceCenterConfig.ContactManagementItem.SmsSenderInfo
+    @Published var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
     @Published var inputText = ""
     @Published var isInputFormatValid = false
 
     var theme: PreferenceCenterTheme.ContactManagement?
 
     internal let item: PreferenceCenterConfig.ContactManagementItem.AddChannelPrompt
-    internal let registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?
+    internal let platform: PreferenceCenterConfig.ContactManagementItem.Platform?
     internal let onCancel: () -> Void
     internal let onRegisterSMS: (_ msisdn: String, _ senderID: String) -> Void
     internal let onRegisterEmail: (_ email: String) -> Void
@@ -26,15 +26,14 @@ internal class AddChannelPromptViewModel: ObservableObject {
     internal init(
         item: PreferenceCenterConfig.ContactManagementItem.AddChannelPrompt,
         theme: PreferenceCenterTheme.ContactManagement?,
-        registrationOptions: PreferenceCenterConfig.ContactManagementItem.RegistrationOptions?,
+        registrationOptions: PreferenceCenterConfig.ContactManagementItem.Platform?,
         onCancel: @escaping () -> Void,
         onRegisterSMS: @escaping (_ msisdn: String, _ senderID: String) -> Void,
         onRegisterEmail: @escaping (_ email: String) -> Void
-
     ) {
         self.item = item
         self.theme = theme
-        self.registrationOptions = registrationOptions
+        self.platform = registrationOptions
         self.onCancel = onCancel
         self.onRegisterSMS = onRegisterSMS
         self.onRegisterEmail = onRegisterEmail
@@ -45,7 +44,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
     @MainActor
     internal func attemptSubmission() {
         Task {
-            if registrationOptions?.isSms == true {
+            if platform?.channelType == .sms {
                 await attemptSMSSubmission()
             } else {
                 /// Email we just assume is good to go after format check
@@ -83,8 +82,8 @@ internal class AddChannelPromptViewModel: ObservableObject {
     }
 
     internal func onSubmit() {
-        if let registrationOptions = registrationOptions {
-            switch registrationOptions {
+        if let platform = platform {
+            switch platform {
             case .sms(_):
                 let formattedNumber = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
                 onRegisterSMS(formattedNumber, selectedSender.senderId)
@@ -163,8 +162,8 @@ extension AddChannelPromptViewModel {
     /// Initial validation that unlocks the submit button. Email is currently only validated via this method.
     @MainActor
     internal func validateInputFormat() -> Bool {
-        if let registrationOptions = self.registrationOptions {
-            switch registrationOptions {
+        if let platform = self.platform {
+            switch platform {
             case .email(_):
                 let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
                 let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)

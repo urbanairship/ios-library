@@ -43,12 +43,14 @@ public struct ResultPromptView: View {
                         base: DefaultContactManagementSectionStyle.titleAppearance
                     )
 
-                /// Body
-                Text(item.body)
-                    .textAppearance(
-                        theme?.subtitleAppearance,
-                        base: DefaultContactManagementSectionStyle.subtitleAppearance
-                    )
+                if let body = item.body {
+                    /// Body
+                    Text(body)
+                        .textAppearance(
+                            theme?.subtitleAppearance,
+                            base: DefaultContactManagementSectionStyle.subtitleAppearance
+                        )
+                }
 
                 HStack {
                     Spacer()

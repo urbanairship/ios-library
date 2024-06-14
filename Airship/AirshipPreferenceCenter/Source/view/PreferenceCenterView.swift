@@ -99,7 +99,6 @@ public struct PreferenceCenterList: View {
             .receive(on: RunLoop.main)
             .dropFirst()
             .eraseToAnyPublisher()
-
     }
 }
 

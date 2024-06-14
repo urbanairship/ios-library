@@ -78,6 +78,7 @@ extension View {
     func addPreferenceCloseButton(
         dismissButtonColor: Color,
         dismissIconResource: String,
+        contentDescription: String?,
         circleColor:Color? = nil,
         onUserDismissed: @escaping () -> Void
     ) -> some View {
@@ -88,6 +89,9 @@ extension View {
                 dismissIconResource: dismissIconResource,
                 onTap: onUserDismissed
             )
+            .airshipApplyIf(contentDescription != nil, transform: { view in
+                view.accessibilityLabel(contentDescription!)
+            })
             .zIndex(1)
         }
     }
