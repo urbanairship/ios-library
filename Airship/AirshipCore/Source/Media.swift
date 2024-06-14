@@ -6,13 +6,38 @@ import SwiftUI
 /// Media view.
 
 struct Media: View {
-
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
     let model: MediaModel
     let constraints: ViewConstraints
 
     private let defaultAspectRatio = 16.0 / 9.0
+
+    private var contentMode: ContentMode {
+        var contentMode = ContentMode.fill
+
+        /// Fit container if undefined size on x and y axes, otherwise fill and crop content on major axis to maintain aspect ratio
+        if self.model.mediaFit == .centerInside && Self.isUnbounded(constraints) {
+            contentMode = ContentMode.fit
+        }
+
+        return contentMode
+    }
+
+    fileprivate static func isUnbounded(_ constraints: ViewConstraints) -> Bool {
+        if constraints.width != nil && constraints.height != nil {
+            return false
+        }
+
+        if constraints.width == nil && constraints.height == nil {
+            return false
+        }
+
+        guard constraints.width == nil else {
+            return !constraints.isHorizontalFixedSize
+        }
+        return !constraints.isVerticalFixedSize
+    }
 
     var body: some View {
         switch model.mediaType {
@@ -44,7 +69,7 @@ struct Media: View {
                 video: model.video
             )
             .applyIf(self.constraints.width != nil || self.constraints.height != nil) {
-                $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: .fill)
+                $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: self.contentMode)
             }
             .constraints(constraints)
             .background(self.model.backgroundColor)
@@ -78,7 +103,7 @@ extension Image {
         case .centerCrop:
             // If we do not have a fixed size in any direction then we should
             // use centerInside instead to match Android
-            if isUnbounded(filledInConstraints) {
+            if Media.isUnbounded(filledInConstraints) {
                 centerInside(constraints: filledInConstraints)
             } else {
                 cropAligned(constraints: filledInConstraints)
@@ -144,20 +169,5 @@ extension Image {
             modifiedConstraints.isVerticalFixedSize = true
         }
         return modifiedConstraints
-    }
-
-    private func isUnbounded(_ constraints: ViewConstraints) -> Bool {
-        if constraints.width != nil && constraints.height != nil {
-            return false
-        }
-
-        if constraints.width == nil && constraints.height == nil {
-            return false
-        }
-
-        guard constraints.width == nil else {
-            return !constraints.isHorizontalFixedSize
-        }
-        return !constraints.isVerticalFixedSize
     }
 }
