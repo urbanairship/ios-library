@@ -222,6 +222,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 
 
         private let parent: MessageCenterWebView
+        private let challengeResolver: ChallengeResolver
         let nativeBridge: NativeBridge
         var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate? {
             didSet {
@@ -229,9 +230,10 @@ struct MessageCenterWebView: UIViewRepresentable {
             }
         }
 
-        init(_ parent: MessageCenterWebView) {
+        init(_ parent: MessageCenterWebView, resolver: ChallengeResolver = .shared) {
             self.parent = parent
             self.nativeBridge = NativeBridge()
+            self.challengeResolver = resolver
             super.init()
             self.nativeBridge.forwardNavigationDelegate = self
             self.nativeBridge.javaScriptCommandDelegate = self
@@ -259,6 +261,14 @@ struct MessageCenterWebView: UIViewRepresentable {
             Task { @MainActor in
                 await parent.pageFinished(error: error)
             }
+        }
+        
+        func webView(
+            _ webView: WKWebView,
+            respondTo challenge: URLAuthenticationChallenge)
+        async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            
+            return await challengeResolver.resolve(challenge)
         }
 
         func performCommand(_ command: JavaScriptCommand, webView: WKWebView) -> Bool {

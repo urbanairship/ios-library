@@ -54,6 +54,14 @@ public class AirshipConfig: NSObject, NSCopying {
     /// Defaults to `false`
     @objc
     public var isWebViewInspectionEnabled: Bool = false
+    
+    /// Allows setting a custom closure for auth challenge certificate validation
+    /// Defaults to `nil`
+    @MainActor
+    public var customChallengeResolver: ChallengeResolveClosure? {
+        get { return ChallengeResolver.shared.resolver }
+        set { ChallengeResolver.shared.resolver = newValue }
+    }
 
     /// The airship cloud site. Defaults to `us`.
     @objc

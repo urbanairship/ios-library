@@ -75,7 +75,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
         sessionConfig.tlsMinimumSupportedProtocolVersion = .TLSv12
         return URLSession(
             configuration: sessionConfig,
-            delegate: nil,
+            delegate: ChallengeResolver.shared,
             delegateQueue: nil
         )
     }()
@@ -480,6 +480,17 @@ extension URLSession: URLRequestSessionProtocol {
             task.cancel()
         }
     }
+}
+
+/**
+ * URLSession with configured optional challenge resolver
+ * @note For internal use only. :nodoc:
+ */
+public extension URLSession {
+    static let airshipSecureSession: URLSession = .init(
+        configuration: .default,
+        delegate: ChallengeResolver.shared,
+        delegateQueue: nil)
 }
 
 
