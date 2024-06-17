@@ -218,12 +218,17 @@ struct MediaWebView: UIViewRepresentable {
         var onMediaReady: @MainActor () -> Void
         let challengeResolver: ChallengeResolver
 
-        init(_ parent: MediaWebView, isLoaded: Binding<Bool>, onMediaReady: @escaping @MainActor () -> Void, resolver: ChallengeResolver = .shared) {
-            self.parent = parent
-            self.isLoaded = isLoaded
-            self.onMediaReady = onMediaReady
-            self.challengeResolver = resolver
-        }
+        init(
+            _ parent: MediaWebView,
+            isLoaded: Binding<Bool>,
+            resolver: ChallengeResolver = .shared,
+            onMediaReady: @escaping @MainActor () -> Void) {
+                
+                self.parent = parent
+                self.isLoaded = isLoaded
+                self.onMediaReady = onMediaReady
+                self.challengeResolver = resolver
+            }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             isLoaded.wrappedValue = true
