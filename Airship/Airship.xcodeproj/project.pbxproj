@@ -157,6 +157,8 @@
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
 		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */; };
+		6014AD6C2C2032730072DCF0 /* ChallengeResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */; };
+		6014AD752C20410B0072DCF0 /* airship.der in Resources */ = {isa = PBXBuildFile; fileRef = 6014AD742C20410A0072DCF0 /* airship.der */; };
 		6018AF572B29C20A008E528B /* SearchEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */; };
 		603269532BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603269522BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift */; };
 		603269552BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603269542BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift */; };
@@ -2025,6 +2027,8 @@
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolver.swift; sourceTree = "<group>"; };
+		6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolverTest.swift; sourceTree = "<group>"; };
+		6014AD742C20410A0072DCF0 /* airship.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = airship.der; sourceTree = "<group>"; };
 		6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEventTemplateTest.swift; sourceTree = "<group>"; };
 		603269522BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdditionalAudienceCheckerApiClient.swift; sourceTree = "<group>"; };
 		603269542BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdditionalAudienceCheckerResolver.swift; sourceTree = "<group>"; };
@@ -5128,6 +5132,7 @@
 		CC64F1421D8B7954009CEF27 /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				6014AD742C20410A0072DCF0 /* airship.der */,
 				CC64F0611D8B781C009CEF27 /* CustomNotificationCategories.plist */,
 				CC64F0621D8B781C009CEF27 /* Info.plist */,
 				CC64F1431D8B7954009CEF27 /* AirshipConfig-DetectProvisioningMode.plist */,
@@ -5165,6 +5170,7 @@
 			isa = PBXGroup;
 			children = (
 				6E299FD428D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift */,
+				6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */,
 			);
 			name = HTTP;
 			sourceTree = "<group>";
@@ -5938,6 +5944,7 @@
 				CC64F14C1D8B7954009CEF27 /* AirshipConfig-InProduction.plist in Resources */,
 				45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */,
 				CC64F1501D8B7954009CEF27 /* AirshipConfig-Without-InProduction-And-DetectProvisioningMode.plist in Resources */,
+				6014AD752C20410B0072DCF0 /* airship.der in Resources */,
 				CC64F14E1D8B7954009CEF27 /* AirshipConfig-Valid-NeXTStep.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7252,6 +7259,7 @@
 				A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */,
 				6EFAFB8C29562866008AD187 /* RemoveTagsActionTest.swift in Sources */,
 				6E87BD9F26DDDB250005D20D /* AppIntegrationTests.swift in Sources */,
+				6014AD6C2C2032730072DCF0 /* ChallengeResolverTest.swift in Sources */,
 				6E2D6AF626B0C6CA00B7C226 /* TestSubscriptionListAPIClient.swift in Sources */,
 				6E0B8760294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift in Sources */,
 				3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */,
