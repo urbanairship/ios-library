@@ -297,7 +297,7 @@ public class Airship: NSObject {
 
         let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
         
-        ChallengeResolver.shared.resolver = resolvedConfig.customChallengeResolver
+        ChallengeResolver.shared.resolver = resolvedConfig.connectionChallengeResolver
 
         self.logLevel = resolvedConfig.logLevel
         self.logPrivacyLevel = resolvedConfig.logPrivacyLevel

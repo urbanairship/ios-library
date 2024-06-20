@@ -57,7 +57,7 @@ public class AirshipConfig: NSObject, NSCopying {
     
     /// Allows setting a custom closure for auth challenge certificate validation
     /// Defaults to `nil`
-    public var customChallengeResolver: ChallengeResolveClosure?
+    public var connectionChallengeResolver: ChallengeResolveClosure?
 
     /// The airship cloud site. Defaults to `us`.
     @objc
@@ -479,7 +479,7 @@ public class AirshipConfig: NSObject, NSCopying {
         useUserPreferredLocale = config.useUserPreferredLocale
         restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
         isWebViewInspectionEnabled = config.isWebViewInspectionEnabled
-        customChallengeResolver = config.customChallengeResolver
+        connectionChallengeResolver = config.connectionChallengeResolver
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
