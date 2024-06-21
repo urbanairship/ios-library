@@ -144,7 +144,7 @@ extension EventAutomationTrigger {
         case .event(let type, let eventData, let value):
             guard
                 self.type == type,
-                isPredicateMatching(value: eventData)
+                isPredicateMatching(value: eventData?.unWrap())
             else { return nil }
             
             return evaluateResults(data: &data, increment: value)
@@ -176,19 +176,6 @@ extension EventAutomationTrigger {
             return evaluateResults(data: &data, increment: 1)
         default:
            return nil
-        }
-    }
-
-    private func customEvenTriggerMatch(eventData: AirshipJSON, value: Double?, data: inout TriggerData) -> MatchResult? {
-        switch self.type {
-        case .customEventCount:
-            guard isPredicateMatching(value: eventData.unWrap()) else { return nil }
-            return evaluateResults(data: &data, increment: 1)
-        case .customEventValue:
-            guard isPredicateMatching(value: eventData.unWrap()) else { return nil }
-            return evaluateResults(data: &data, increment: value ?? 1.0)
-        default:
-            return nil
         }
     }
 

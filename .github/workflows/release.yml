@@ -122,6 +122,10 @@ jobs:
           files: |
             ./build/Airship.zip
             ./build/Airship.xcframeworks.zip
+      - name: Kickoff prebuilt repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
+        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
 
   deploy-pods:
     runs-on: macos-14-xlarge

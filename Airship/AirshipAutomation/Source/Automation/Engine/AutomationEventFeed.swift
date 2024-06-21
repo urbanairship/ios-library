@@ -115,7 +115,7 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
                 group.addTask {
                     for await event in await analyticsFeed.updates {
                         guard !Task.isCancelled else { return }
-                        guard let converted = event.toAutomationEvent() else { return }
+                        guard let converted = event.toAutomationEvent() else { continue }
                         
                         for item in converted {
                             await onEvent(item)

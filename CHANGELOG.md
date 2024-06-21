@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 18.4.1 June 21, 2024
+Patch release to fix a regression with IAX ignoring screen, version, and custom event triggers. Apps using those triggers that are on 18.4.0 should update.
+
+### Changes
+- Fixed trigger regression for IAX introduced in 18.4.0.
+
 ## Version 18.4.0, June 14, 2024
 Minor release that adds contact management support to the preference center, support for anonymous channels, per-message in-app message theming, message center customization and logging improvements. Apps that use the message center or stories should update to this version.
 
