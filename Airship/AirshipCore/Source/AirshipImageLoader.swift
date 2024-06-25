@@ -33,7 +33,7 @@ public struct AirshipImageLoader {
     }
 
     private func fetchImage(url: URL) -> AnyPublisher<AirshipImageData, Error> {
-        return URLSession.shared.dataTaskPublisher(for: url)
+        return URLSession.airshipSecureSession.dataTaskPublisher(for: url)
             .mapError { AirshipErrors.error("URL error \($0)") }
             .map { response -> AnyPublisher<AirshipImageData, Error> in
                 guard let httpResponse = response.response as? HTTPURLResponse,

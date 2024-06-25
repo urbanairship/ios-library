@@ -49,6 +49,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 
     private let actionHandler: NativeBridgeActionHandlerProtocol
     private let javaScriptEnvironmentFactoryBlock: () -> JavaScriptEnvironmentProtocol
+    private let challengeResolver: ChallengeResolver
 
     /// NativeBridge initializer.
     /// - Note: For internal use only. :nodoc:
@@ -56,11 +57,13 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     /// - Parameter javaScriptEnvironmentFactoryBlock: A factory block producing a JavaScript environment.
     init(
         actionHandler: NativeBridgeActionHandlerProtocol,
-        javaScriptEnvironmentFactoryBlock: @escaping () -> JavaScriptEnvironmentProtocol
+        javaScriptEnvironmentFactoryBlock: @escaping () -> JavaScriptEnvironmentProtocol,
+        resolver: ChallengeResolver = .shared
     ) {
         self.actionHandler = actionHandler
         self.javaScriptEnvironmentFactoryBlock =
             javaScriptEnvironmentFactoryBlock
+        self.challengeResolver = resolver
         super.init()
     }
 
@@ -349,7 +352,10 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
                     ) -> Void
                 )?
         else {
-            completionHandler(.performDefaultHandling, nil)
+            Task {
+                let (disposition, creds) = await challengeResolver.resolve(challenge)
+                completionHandler(disposition, creds)
+            }
             return
         }
 

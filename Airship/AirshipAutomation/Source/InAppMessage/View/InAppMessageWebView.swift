@@ -94,12 +94,16 @@ struct WKWebViewRepresentable: UIViewRepresentable {
 
 
         private let parent: WKWebViewRepresentable
+        private let challengeResolver: ChallengeResolver
         let nativeBridge: NativeBridge
 
-        init(_ parent: WKWebViewRepresentable, actionRunner: NativeBridgeActionRunner) {
+        init(_ parent: WKWebViewRepresentable, actionRunner: NativeBridgeActionRunner, resolver: ChallengeResolver = .shared) {
             self.parent = parent
             self.nativeBridge = NativeBridge(actionRunner: actionRunner)
+            self.challengeResolver = resolver
+            
             super.init()
+            
             self.nativeBridge.nativeBridgeExtensionDelegate =
             self.parent.nativeBridgeExtension
             self.nativeBridge.forwardNavigationDelegate = self
@@ -131,6 +135,14 @@ struct WKWebViewRepresentable: UIViewRepresentable {
                 [weak webView] in
                 webView?.reload()
             }
+        }
+        
+        func webView(
+            _ webView: WKWebView,
+            respondTo challenge: URLAuthenticationChallenge)
+        async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            
+            return await challengeResolver.resolve(challenge)
         }
 
         func performCommand(_ command: JavaScriptCommand, webView: WKWebView) -> Bool {
