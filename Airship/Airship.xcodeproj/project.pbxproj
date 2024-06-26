@@ -248,6 +248,7 @@
 		6E0F557F2AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
 		6E0F55802AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
 		6E0F55812AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
+		6E10A1482C2B825200ED9556 /* DefaultTaskSleeperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */; };
 		6E12539129A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
 		6E12539229A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
 		6E12539329A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
@@ -2090,6 +2091,7 @@
 		6E0F4BE62B32646000673CA4 /* AutomationDelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationDelay.swift; sourceTree = "<group>"; };
 		6E0F4BE82B3264A400673CA4 /* DeferredAutomationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredAutomationData.swift; sourceTree = "<group>"; };
 		6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThomasAsyncImage.swift; sourceTree = "<group>"; };
+		6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTaskSleeperTest.swift; sourceTree = "<group>"; };
 		6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoreDataPredicate.swift; sourceTree = "<group>"; };
 		6E14C97828B3FC8400A55E65 /* AirshipToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipToast.swift; sourceTree = "<group>"; };
 		6E14C97C28B41EDB00A55E65 /* NamedUserDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedUserDebugView.swift; sourceTree = "<group>"; };
@@ -5070,6 +5072,7 @@
 				6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */,
 				6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */,
 				6032695A2BF75D69007F7F75 /* AirshipHTTPResponseTest.swift */,
+				6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -7221,6 +7224,7 @@
 				A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */,
 				6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */,
 				6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */,
+				6E10A1482C2B825200ED9556 /* DefaultTaskSleeperTest.swift in Sources */,
 				6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */,
 				A6AF8D2D27E8D4910068C7EE /* SubscriptionListActionTest.swift in Sources */,
 				6ED2F5382B7FFCEB000AFC80 /* AirshipDateFormatterTest.swift in Sources */,
