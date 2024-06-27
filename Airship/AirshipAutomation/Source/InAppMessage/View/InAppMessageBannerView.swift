@@ -224,5 +224,6 @@ struct InAppMessageBannerView: View {
             banner.frame(width: min(UIScreen.main.bounds.size.width, theme.maxWidth))
             #endif
         }.opacity(isPressed && displayContent.actions != nil ? theme.tapOpacity : 1)
+        .accessibility(sortPriority: 1)
     }
 }

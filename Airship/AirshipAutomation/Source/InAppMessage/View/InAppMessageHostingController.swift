@@ -20,8 +20,17 @@ class InAppMessageHostingController<Content> : UIHostingController<Content> wher
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        dismiss()
+    }
+
+    private func dismiss() {
         self.onDismiss?()
         onDismiss = nil
+    }
+
+    override func accessibilityPerformEscape() -> Bool {
+        dismiss()
+        return true
     }
 
 #if !os(tvOS)
@@ -69,6 +78,9 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+
+        UIAccessibility.post(notification: .screenChanged, argument: nil)
+
         createBannerConstraints()
         handleBannerConstraints()
     }

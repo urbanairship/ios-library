@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
         ) { _ in
             Task {
                 // Set the icon badge to zero
-                await Airship.push.resetBadge()
+                try? await Airship.push.resetBadge()
             }
         }
 

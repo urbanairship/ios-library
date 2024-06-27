@@ -11,10 +11,12 @@ struct HomeView: View {
         let event = CustomEvent(name: customEventName, value: 1)
         event.track()
 
-        AppState.shared.toastMessage = Toast.Message(
-            text:  "\(customEventPreamble) \(customEventName)",
-            duration: 2.0
-        )
+        Task { @MainActor in
+            AppState.shared.toastMessage = Toast.Message(
+                text:  "\(customEventPreamble) \(customEventName)",
+                duration: 2.0
+            )
+        }
     }
 
     var sceneSection: some View {
