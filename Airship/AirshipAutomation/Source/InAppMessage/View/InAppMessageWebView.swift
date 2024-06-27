@@ -31,6 +31,10 @@ struct InAppMessageWebView: View {
                     environment.onUserDismissed()
                 }
             )
+            .addBackground(
+                /// Add system background color by default - clear color will be parsed by the display content if it's set
+                color: displayContent.backgroundColor?.color ?? Color(.systemBackground)
+            )
             .zIndex(0)
 
             if self.isWebViewLoading {

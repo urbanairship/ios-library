@@ -144,7 +144,7 @@ struct InAppMessageBannerView: View {
         }
         .padding([.top, .horizontal], itemSpacing)
         .addNub(
-            placement: displayContent.placement ?? .top,
+            placement: displayContent.placement ?? .bottom,
             nub: AnyView(nub),
             itemSpacing: itemSpacing
         )
@@ -195,9 +195,9 @@ struct InAppMessageBannerView: View {
                 })
             )
             .padding(theme.padding)
-            .applyTransitioningPlacement(placement: displayContent.placement ?? .top)
+            .applyTransitioningPlacement(placement: displayContent.placement ?? .bottom)
             .addTapAndSwipeDismiss(
-                placement: displayContent.placement ?? .top,
+                placement: displayContent.placement ?? .bottom,
                 isPressed: $isPressed,
                 tapAction: bannerOnTapAction,
                 swipeOffset: $swipeOffset,

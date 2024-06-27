@@ -63,7 +63,8 @@ struct HTMLView: View {
                     .padding(theme.padding)
                     .addBackground(color: .airshipShadowColor)
             }.applyIf(!isModal) {
-                $0.addBackground(color: displayContent.backgroundColor?.color ?? Color.clear)
+                /// Add system background color by default - clear color will be parsed by the display content if it's set
+                $0.addBackground(color: displayContent.backgroundColor?.color ?? Color(.systemBackground))
             }
             .onAppear {
                 self.environment.onAppear()
