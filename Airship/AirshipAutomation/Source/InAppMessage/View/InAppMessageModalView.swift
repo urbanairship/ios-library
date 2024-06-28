@@ -128,10 +128,13 @@ struct InAppMessageModalView: View {
     var body: some View {
         content
         .addCloseButton(
-            dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
             dismissIconResource: theme.dismissIconResource,
-            circleColor: .airshipTappableClear, /// Probably should just do this everywhere and remove circleColor entirely
-            onUserDismissed: { environment.onUserDismissed() }
+            dismissButtonColor: displayContent.dismissButtonColor?.color,
+            width: theme.dismissIconWidth,
+            height: theme.dismissIconHeight,
+            onUserDismissed: {
+                environment.onUserDismissed()
+            }
         )
         .background(displayContent.backgroundColor?.color ?? Color.black)
         .applyIf(isModal) {

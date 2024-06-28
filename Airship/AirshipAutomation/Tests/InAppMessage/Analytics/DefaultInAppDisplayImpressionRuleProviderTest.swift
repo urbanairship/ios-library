@@ -140,6 +140,6 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 )
             )
         )
-        XCTAssertEqual(rule, .interval(30.0))
+        XCTAssertEqual(rule, .interval(1800.0))
     }
 }

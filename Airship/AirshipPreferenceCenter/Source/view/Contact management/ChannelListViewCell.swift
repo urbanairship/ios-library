@@ -155,6 +155,8 @@ struct ChannelListViewCell: View {
                 theme.contactManagement?.listSubtitleAppearance,
                 base: DefaultContactManagementSectionStyle.listTitleAppearance
             )
+            .lineLimit(1)
+            .truncationMode(.middle)
         }
     }
 

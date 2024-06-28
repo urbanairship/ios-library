@@ -51,7 +51,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case name
-        case extras
+        case extras = "extra"
         case actions
         case isReportingEnabled = "reporting_enabled"
         case displayBehavior = "display_behavior"

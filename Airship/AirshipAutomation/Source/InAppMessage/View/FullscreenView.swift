@@ -78,8 +78,10 @@ struct FullscreenView: View, Sendable {
                 .background(Color.airshipTappableClear)
             }
             .addCloseButton(
-                dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
                 dismissIconResource: theme.dismissIconResource,
+                dismissButtonColor: displayContent.dismissButtonColor?.color,
+                width: theme.dismissIconWidth,
+                height: theme.dismissIconHeight,
                 onUserDismissed: {
                     environment.onUserDismissed()
                 }
