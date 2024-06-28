@@ -79,7 +79,6 @@ extension View {
         dismissButtonColor: Color,
         dismissIconResource: String,
         contentDescription: String?,
-        circleColor:Color? = nil,
         onUserDismissed: @escaping () -> Void
     ) -> some View {
         ZStack(alignment: .topTrailing) { // Align close button to the top trailing corner

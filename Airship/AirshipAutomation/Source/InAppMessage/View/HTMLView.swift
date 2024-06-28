@@ -38,9 +38,10 @@ struct HTMLView: View {
         InAppMessageWebView(displayContent: displayContent, accessibilityLabel: "In-app web view")
             .applyIf(!theme.hideDismissIcon){
                 $0.addCloseButton(
-                    dismissButtonColor: displayContent.dismissButtonColor?.color ?? Color.white,
                     dismissIconResource: theme.dismissIconResource,
-                    circleColor: .airshipTappableClear, /// Probably should just do this everywhere and remove circleColor entirely
+                    dismissButtonColor: displayContent.dismissButtonColor?.color,
+                    width: theme.dismissIconWidth,
+                    height: theme.dismissIconHeight,
                     onUserDismissed: {
                         environment.onUserDismissed()
                     }
