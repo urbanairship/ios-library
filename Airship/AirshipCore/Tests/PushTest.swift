@@ -137,6 +137,31 @@ class PushTest: XCTestCase {
         await self.fulfillmentCompat(of: [completed], timeout: 10.0)
         XCTAssertFalse(self.push.userPromptedForNotifications)
     }
+    
+    func testNotificationsStatusPropogation() async throws {
+        XCTAssertFalse(self.push.userPromptedForNotifications)
+
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.badge])
+        }
+
+        let completed = self.expectation(description: "Completed")
+        
+        let _ = await self.permissionsManager.requestPermission(.displayNotifications)
+        
+        let cancellable = self.push.notificationStatusPublisher.sink { status in
+            XCTAssertEqual(true, status.areNotificationsAllowed)
+            completed.fulfill()
+        }
+        
+        let status = await self.push.notificationStatus
+        XCTAssertEqual(true, status.areNotificationsAllowed)
+
+        await self.fulfillmentCompat(of: [completed], timeout: 10.0)
+        XCTAssertTrue(self.push.userPromptedForNotifications)
+        
+        cancellable.cancel()
+    }
 
     /// Test that once prompted always prompted
     @MainActor

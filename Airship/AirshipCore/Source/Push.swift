@@ -35,6 +35,21 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
+    
+    var notificationStatusUpdates: AsyncStream<AirshipNotificationStatus> {
+        let publisher = self.notificationStatusPublisher
+        return AsyncStream { continuation in
+            let cancellable = publisher
+                .removeDuplicates()
+                .sink { update in
+                    continuation.yield(update)
+                }
+            
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
+    }
 
 
     private static let pushNotificationsOptionsKey =
@@ -138,7 +153,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         self.serialQueue = serialQueue
 
         super.init()
-
 
         if config.requestAuthorizationToUseNotifications {
             let permissionDelegate = NotificationPermissionDelegate(
