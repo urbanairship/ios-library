@@ -92,7 +92,7 @@ final class SMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
 
-    private let decoder: JSONDecoder = {
+    private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let container = try decoder.singleValueContainer()
@@ -104,9 +104,9 @@ final class SMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
             return date
         })
         return decoder
-    }()
+    }
 
-    private let encoder: JSONEncoder = {
+    private var encoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()

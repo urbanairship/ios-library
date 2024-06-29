@@ -72,7 +72,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
 
-    private let decoder: JSONDecoder = {
+    private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let container = try decoder.singleValueContainer()
@@ -84,9 +84,9 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             return date
         })
         return decoder
-    }()
+    }
 
-    private let encoder: JSONEncoder = {
+    private var encoder: JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
@@ -95,7 +95,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             )
         })
         return encoder
-    }()
+    }
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config

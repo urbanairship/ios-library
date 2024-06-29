@@ -13,7 +13,7 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
     private let session: AirshipRequestSession
     private let config: RuntimeConfig
 
-    private let decoder: JSONDecoder = {
+    private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let container = try decoder.singleValueContainer()
@@ -25,7 +25,7 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
             return date
         })
         return decoder
-    }()
+    }
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config

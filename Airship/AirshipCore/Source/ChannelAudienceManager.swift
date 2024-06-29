@@ -45,8 +45,6 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private let audienceOverridesProvider: AudienceOverridesProvider
 
     private let date: AirshipDateProtocol
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
     private let updateLock = AirshipLock()
 
     private let cachedSubscriptionLists: CachedValue<[String]>
@@ -409,7 +407,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             if let data = self.dataStore.data(
                 forKey: ChannelAudienceManager.updatesKey
             ) {
-                result = try? self.decoder.decode(
+                result = try? JSONDecoder().decode(
                     [AudienceUpdate].self,
                     from: data
                 )
@@ -420,7 +418,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     private func storeUpdates(_ operations: [AudienceUpdate]) {
         updateLock.sync {
-            if let data = try? self.encoder.encode(operations) {
+            if let data = try? JSONEncoder().encode(operations) {
                 self.dataStore.setObject(
                     data,
                     forKey: ChannelAudienceManager.updatesKey

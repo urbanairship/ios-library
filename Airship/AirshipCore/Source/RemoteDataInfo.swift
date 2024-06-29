@@ -14,14 +14,11 @@ public struct RemoteDataInfo: Sendable, Codable, Equatable, Hashable {
         self.contactID = contactID
     }
 
-    private static let decoder = JSONDecoder()
-    private static let encoder = JSONEncoder()
-
     static func fromJSON(data: Data) throws -> RemoteDataInfo {
-        return try RemoteDataInfo.decoder.decode(RemoteDataInfo.self, from: data)
+        try JSONDecoder().decode(RemoteDataInfo.self, from: data)
     }
 
     func toEncodedJSONData() throws -> Data {
-        return try RemoteDataInfo.encoder.encode(self)
+        try JSONEncoder().encode(self)
     }
 }
