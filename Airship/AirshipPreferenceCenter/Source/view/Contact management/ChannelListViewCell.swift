@@ -21,7 +21,6 @@ class ChannelListCellViewModel: ObservableObject {
     let onRemove: () -> Void
     let onDismiss: () -> Void
 
-    private let pendingLabelHideDelaySeconds: Double = 30
     private var resendLabelHideDelaySeconds: Double { Double(pendingLabelModel?.intervalInSeconds ?? 15) }
 
     private var hidePendingLabelTask:Task<Void, Never>?
@@ -42,33 +41,18 @@ class ChannelListCellViewModel: ObservableObject {
     }
 
     private func initializePendingLabel() {
-        temporarilyShowPendingLabel()
+        let isOptedIn = channel.isOptedIn
 
-        /// If we are initializing the cell as a pending cell, assume it's recent
-        /// hide the resend button for the interval set on the pending label model
-        if !channel.isRegistered {
-            temporarilyHideResend()
-        } else {
-            isResendShowing = true
-        }
-    }
-
-    func temporarilyShowPendingLabel() {
-        withAnimation {
-            isPendingLabelShowing = true
-        }
-
-        hidePendingLabelTask?.cancel()
-        hidePendingLabelTask = Task { @MainActor [weak self] in
-            guard let self = self, !Task.isCancelled else { return}
-
-            try? await Task.sleep(nanoseconds: UInt64(pendingLabelHideDelaySeconds * 1_000_000_000))
-
-            guard !Task.isCancelled else { return}
-
+        if isOptedIn {
             withAnimation {
-                self.isPendingLabelShowing = false
+                isPendingLabelShowing = false
+                isResendShowing = false
             }
+        } else {
+            withAnimation {
+                isPendingLabelShowing = true
+            }
+            temporarilyHideResend()
         }
     }
 
@@ -84,7 +68,7 @@ class ChannelListCellViewModel: ObservableObject {
 
             try? await Task.sleep(nanoseconds: UInt64(resendLabelHideDelaySeconds * 1_000_000_000))
 
-            guard !Task.isCancelled else { return}
+            guard !Task.isCancelled, !channel.isOptedIn else { return}
 
             withAnimation {
                 self.isResendShowing = true
@@ -177,7 +161,6 @@ struct ChannelListViewCell: View {
                 pendingLabelView
             }
         }
-
     }
 
     @ViewBuilder
