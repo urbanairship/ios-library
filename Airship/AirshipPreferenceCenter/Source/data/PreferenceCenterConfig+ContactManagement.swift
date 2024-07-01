@@ -536,7 +536,7 @@ public extension PreferenceCenterConfig {
             /// Country code.
             public var countryCode: String
 
-            /// Country display name, for example - United Kingdom.
+            /// Country display name.
             public var displayName: String
 
             enum CodingKeys: String, CodingKey {
