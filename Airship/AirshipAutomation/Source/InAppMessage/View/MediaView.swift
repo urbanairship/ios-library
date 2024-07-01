@@ -52,6 +52,7 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.scrollView.isScrollEnabled = false
+        webView.navigationDelegate = context.coordinator
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
@@ -73,6 +74,22 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
             }
         case .image:
             break // Do nothing for images
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator()
+    }
+    
+    class Coordinator: NSObject, WKNavigationDelegate {
+        let challengeResolver: ChallengeResolver
+
+        init(resolver: ChallengeResolver = .shared) {
+            self.challengeResolver = resolver
+        }
+        
+        func webView(_ webView: WKWebView, respondTo challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            return await challengeResolver.resolve(challenge)
         }
     }
 }

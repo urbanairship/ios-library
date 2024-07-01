@@ -7,6 +7,13 @@ import Foundation
 import Combine
 
 final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {
+    
+    override init() {
+        (self.notificationStatusUpdates, self.statusUpdateContinuation) = AsyncStream<AirshipNotificationStatus>.airshipMakeStreamWithContinuation()
+        
+        super.init()
+    }
+    
     var quietTime: QuietTimeSettings?
     
     func enableUserPushNotifications() async -> Bool {
@@ -32,6 +39,9 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
     }
 
     let notificationStatusSubject: PassthroughSubject<AirshipNotificationStatus, Never> = PassthroughSubject()
+    
+    let notificationStatusUpdates: AsyncStream<AirshipNotificationStatus>
+    let statusUpdateContinuation: AsyncStream<AirshipNotificationStatus>.Continuation
 
     var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
         notificationStatusSubject.removeDuplicates().eraseToAnyPublisher()

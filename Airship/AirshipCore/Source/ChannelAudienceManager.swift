@@ -40,7 +40,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
     private let workManager: AirshipWorkManagerProtocol
-    private let subscriptionListClient: SubscriptionListAPIClientProtocol
+    private let subscriptionListProvider: ChannelSubscriptionListProviderProtocol
     private let updateClient: ChannelBulkUpdateAPIClientProtocol
     private let audienceOverridesProvider: AudienceOverridesProvider
 
@@ -89,7 +89,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     init(
         dataStore: PreferenceDataStore,
         workManager: AirshipWorkManagerProtocol,
-        subscriptionListClient: SubscriptionListAPIClientProtocol,
+        subscriptionListProvider: ChannelSubscriptionListProviderProtocol,
         updateClient: ChannelBulkUpdateAPIClientProtocol,
         privacyManager: AirshipPrivacyManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
@@ -99,7 +99,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.dataStore = dataStore
         self.workManager = workManager
         self.privacyManager = privacyManager
-        self.subscriptionListClient = subscriptionListClient
+        self.subscriptionListProvider = subscriptionListProvider
         self.updateClient = updateClient
         self.date = date
         self.cachedSubscriptionLists = CachedValue(date: date)
@@ -151,7 +151,9 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.init(
             dataStore: dataStore,
             workManager: AirshipWorkManager.shared,
-            subscriptionListClient: SubscriptionListAPIClient(config: config),
+            subscriptionListProvider: ChannelSubscriptionListProvider(
+                audienceOverrides: audienceOverridesProvider,
+                apiClient: SubscriptionListAPIClient(config: config)),
             updateClient: ChannelBulkUpdateAPIClient(config: config),
             privacyManager: privacyManager,
             audienceOverridesProvider: audienceOverridesProvider
@@ -237,20 +239,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
             throw AirshipErrors.error("Channel not created yet")
         }
 
-        var listIDs = try await self.resolveSubscriptionLists(
-            channelID: channelID
-        )
-
-        let overrides = await self.audienceOverridesProvider.channelOverrides(
-            channelID: channelID
-        )
-
-        listIDs = self.applySubscriptionListUpdates(
-            listIDs,
-            updates: overrides.subscriptionLists
-        )
-
-        return listIDs
+        return try await subscriptionListProvider.fetch(channelID: channelID)
     }
 
     func pendingOverrides(channelID: String) -> ChannelAudienceOverrides {
@@ -277,54 +266,6 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         )
     }
 
-    private func resolveSubscriptionLists(
-        channelID: String
-    ) async throws -> [String] {
-        if let cached = self.cachedSubscriptionLists.value {
-            return cached
-        }
-
-        let response = try await self.subscriptionListClient.get(
-            channelID: channelID
-        )
-
-        guard response.isSuccess, let lists = response.result else {
-            throw AirshipErrors.error(
-                "Failed to fetch subscription lists with status: \(response.statusCode)"
-            )
-        }
-
-        self.cachedSubscriptionLists.set(
-            value: lists,
-            expiresIn: ChannelAudienceManager.maxCacheTime
-        )
-
-
-        return lists
-    }
-
-    private func applySubscriptionListUpdates(
-        _ ids: [String],
-        updates: [SubscriptionListUpdate]
-    ) -> [String] {
-        guard !updates.isEmpty else {
-            return ids
-        }
-
-        var result = ids
-        updates.forEach { update in
-            switch update.type {
-            case .subscribe:
-                if !result.contains(update.listId) {
-                    result.append(update.listId)
-                }
-            case .unsubscribe:
-                result.removeAll(where: { $0 == update.listId })
-            }
-        }
-
-        return result
-    }
     @objc
     private func checkPrivacyManager() {
         if !self.privacyManager.isEnabled(.tagsAndAttributes) {

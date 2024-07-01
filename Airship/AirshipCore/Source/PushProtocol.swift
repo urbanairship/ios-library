@@ -177,6 +177,9 @@ public protocol AirshipPushProtocol: AirshipBasePushProtocol {
 
     /// Notification status updates
     var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> { get }
+    
+    /// Notification status updates
+    var notificationStatusUpdates: AsyncStream<AirshipNotificationStatus> { get async }
 
     /// Gets the current notification status
     var notificationStatus: AirshipNotificationStatus { get async }

@@ -16,13 +16,24 @@ class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProt
 
 }
 
-actor TestContactChannelsProvider: ContactChannelsProviderProtocol, @unchecked Sendable {
-    nonisolated func contactChannels(stableContactIDUpdates: AsyncStream<String>) -> AsyncStream<ContactChannelsResult> {
+final class TestContactChannelsProvider: ContactChannelsProviderProtocol, @unchecked Sendable {
+    func contactChannels(stableContactIDUpdates: AsyncStream<String>) -> AsyncStream<ContactChannelsResult> {
         return AsyncStream<ContactChannelsResult> { _ in }
     }
     
     func contactUpdates(contactID: String) async throws -> AsyncStream<[ContactChannel]> {
         return AsyncStream<[ContactChannel]> { _ in }
+    }
+    
+    func refresh() async {
+        refreshedCalled = true
+    }
+
+    var refreshedCalled = false
+
+
+    func refreshAsync() {
+        refreshedCalled = true
     }
 
     init() {}
