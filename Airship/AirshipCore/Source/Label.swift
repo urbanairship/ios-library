@@ -13,7 +13,7 @@ struct Label: View {
     let constraints: ViewConstraints
 
     var body: some View {
-        Text(self.model.text)
+        Text(LocalizedStringKey(self.model.text))
             .textAppearance(self.model.textAppearance)
             .truncationMode(.tail)
             .constraints(

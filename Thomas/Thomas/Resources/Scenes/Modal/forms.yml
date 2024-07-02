@@ -79,7 +79,7 @@ view:
                             height: 100%
                             width: 100%
                           view:
-                            text: How satisfied are you with our product?
+                            text: How 🔥`satisfied`🔥 ~~is your friend~~ are **you** with *our* [product](https://www.airship.com)?
                             text_appearance:
                               alignment: start
                               color:
@@ -163,7 +163,7 @@ view:
                                           height: 100%
                                           width: 100%
                                         view:
-                                          text: Very satisfied
+                                          text: 🔥`satisfied`🔥
                                           text_appearance:
                                             alignment: start
                                             color:
@@ -435,7 +435,7 @@ view:
                                           height: 100%
                                           width: 100%
                                         view:
-                                          text: Very Dissatisfied
+                                          text: Very Dissatisfied [(click here for more)](https://www.airship.com)
                                           text_appearance:
                                             alignment: start
                                             color:
@@ -555,7 +555,7 @@ view:
                             height: auto
                             width: 100%
                           view:
-                            text: What areas do we need to improve?
+                            text: What ~~areas~~ do we **need** to [*improve*](https://airship.com)?
                             text_appearance:
                               alignment: start
                               color:
@@ -714,7 +714,7 @@ view:
                               - form_submission
                             identifier: e49c1d9a-1118-4a7b-8ae8-2e1ce42b0f1a
                             label:
-                              text: Submit
+                              text: ~~Submit~~
                               text_appearance:
                                 alignment: center
                                 color:
