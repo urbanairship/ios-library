@@ -575,7 +575,7 @@ actor ContactManager: ContactManagerProtocol {
                 DisassociateOptions(
                     channelID: info.channelID,
                     channelType: .email,
-                    optOut: false
+                    optOut: true
                 )
             case .pending(let info):
                 DisassociateOptions(
@@ -589,7 +589,7 @@ actor ContactManager: ContactManagerProtocol {
                 DisassociateOptions(
                     channelID: info.channelID,
                     channelType: .sms,
-                    optOut: false
+                    optOut: true
                 )
             case .pending(let info):
                 DisassociateOptions(

@@ -533,8 +533,11 @@ public extension PreferenceCenterConfig {
             /// Placeholder text.
             public var placeholderText: String
 
-            /// Country code.
+            /// Country code. Examples: (US, FR, UK). Not currently used on the mobile side.
             public var countryCode: String
+
+            /// Country calling code. Examples: (1, 33, 44)
+            public var countryCallingCode: String
 
             /// Country display name.
             public var displayName: String
@@ -543,6 +546,7 @@ public extension PreferenceCenterConfig {
                 case senderId = "sender_id"
                 case placeholderText = "placeholder_text"
                 case countryCode = "country_code"
+                case countryCallingCode = "country_calling_code"
                 case displayName = "display_name"
             }
 
@@ -550,11 +554,13 @@ public extension PreferenceCenterConfig {
                 senderId: String,
                 placeholderText: String,
                 countryCode: String,
+                countryCallingCode: String,
                 displayName: String
             ) {
                 self.senderId = senderId
                 self.placeholderText = placeholderText
                 self.countryCode = countryCode
+                self.countryCallingCode = countryCallingCode
                 self.displayName = displayName
             }
 
@@ -562,6 +568,7 @@ public extension PreferenceCenterConfig {
                 senderId: "none",
                 placeholderText: "none",
                 countryCode: "none",
+                countryCallingCode: "none",
                 displayName: "none"
             )
         }

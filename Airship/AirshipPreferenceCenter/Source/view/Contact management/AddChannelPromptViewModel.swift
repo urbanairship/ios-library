@@ -58,7 +58,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
     @MainActor
     private func attemptSMSSubmission() async {
         do {
-            let formattedMSISDN = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
+            let formattedMSISDN = formattedMSISDN(countryCallingCode: selectedSender.countryCallingCode, number: inputText)
 
             /// Only start to load when we are sure it's not a duplicate failed request
             onStartLoading()
@@ -85,7 +85,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
         if let platform = platform {
             switch platform {
             case .sms(_):
-                let formattedNumber = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
+                let formattedNumber = formattedMSISDN(countryCallingCode: selectedSender.countryCallingCode, number: inputText)
                 onRegisterSMS(formattedNumber, selectedSender.senderId)
             case .email(_):
                 let formattedEmail = formattedEmail(email: inputText)
@@ -146,8 +146,8 @@ extension AddChannelPromptViewModel {
     /// Format for MSISDN  standards - including removing plus, dashes, spaces etc.
     /// Formatting behind the scenes like this makes sense because there are lots of valid ways to show
     /// Phone numbers like 1.503.867.5309 1-504-867-5309. This also allows us to strip the "+" from the country code
-    func formattedMSISDN(countryCode: String, number: String) -> String {
-        let msisdn = countryCode + number
+    func formattedMSISDN(countryCallingCode: String, number: String) -> String {
+        let msisdn = countryCallingCode + number
         let allowedCharacters = CharacterSet.decimalDigits
         let formatted = msisdn.unicodeScalars.filter { allowedCharacters.contains($0) }
         return String(formatted)
@@ -169,7 +169,7 @@ extension AddChannelPromptViewModel {
                 let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
                 return emailPredicate.evaluate(with: self.inputText)
             case .sms(_):
-                let formatted = formattedMSISDN(countryCode: self.selectedSender.countryCode, number: self.inputText)
+                let formatted = formattedMSISDN(countryCallingCode: self.selectedSender.countryCallingCode, number: self.inputText)
                 let msisdnRegex = "^[1-9]\\d{1,14}$"
                 let msisdnPredicate = NSPredicate(format: "SELF MATCHES %@", msisdnRegex)
                 return msisdnPredicate.evaluate(with: formatted)

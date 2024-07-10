@@ -134,7 +134,8 @@ class PreferenceCenterDecoderTest: XCTestCase {
                     },
                     "senders": [
                       {
-                        "country_code": "+1",
+                        "country_calling_code": "+1",
+                        "country_code": "US",
                         "display_name": "\u{1F1FA}\u{1F1F8} +1",
                         "placeholder_text": "7010 111222",
                         "sender_id": "23450"
