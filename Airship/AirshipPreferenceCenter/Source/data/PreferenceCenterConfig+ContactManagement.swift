@@ -120,8 +120,8 @@ public extension PreferenceCenterConfig {
                 switch self {
                 case .sms(let sms):
                     return sms.errorMessages
-                case .email:
-                    return nil
+                case .email(let email):
+                    return email.errorMessages
                 }
             }
 
@@ -180,23 +180,29 @@ public extension PreferenceCenterConfig {
             /// Label with resend button
             public var pendingLabel: PendingLabel
 
+            /// Error messages that can result of attempting to add an email address
+            public var errorMessages: ErrorMessages
+
             enum CodingKeys: String, CodingKey {
                 case placeholder = "placeholder_text"
                 case properties = "properties"
                 case addressLabel = "address_label"
                 case pendingLabel = "resend"
+                case errorMessages = "error_messages"
             }
 
             public init(
                 placeholder: String?,
                 addressLabel: String,
                 pendingLabel: PendingLabel,
-                properties: AirshipJSON? = nil
+                properties: AirshipJSON? = nil,
+                errorMessages: ErrorMessages
             ) {
                 self.placeholder = placeholder
                 self.addressLabel = addressLabel
                 self.pendingLabel = pendingLabel
                 self.properties = properties
+                self.errorMessages = errorMessages
             }
         }
 

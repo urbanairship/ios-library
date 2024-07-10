@@ -113,7 +113,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
             /// Submit button
             LabeledButton(
                 item: viewModel.item.submitButton,
-                isEnabled: viewModel.isInputFormatValid,
+                isEnabled: true,
                 isLoading: viewModel.state == .loading,
                 theme: viewModel.theme
             ) {

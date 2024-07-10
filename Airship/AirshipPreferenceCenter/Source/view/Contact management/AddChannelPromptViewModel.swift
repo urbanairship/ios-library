@@ -47,10 +47,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
             if platform?.channelType == .sms {
                 await attemptSMSSubmission()
             } else {
-                /// Email we just assume is good to go after format check
-                /// if a failure occurs it will be determined by the channel update response
-                /// in the channel list view
-                onValidationSucceeded()
+                await attemptEmailSubmission()
             }
         }
     }
@@ -79,6 +76,20 @@ internal class AddChannelPromptViewModel: ObservableObject {
 
         /// Even if an error is thrown, if this ever is hit something went wrong, show it as a generic error
         onValidationError()
+    }
+
+    @MainActor
+    private func attemptEmailSubmission() async {
+        onStartLoading()
+
+        /// Attempt email validation (just regex for now)
+        let passedValidation = validateInputFormat()
+
+        if passedValidation {
+            onValidationSucceeded()
+        } else {
+            onValidationFailed()
+        }
     }
 
     internal func onSubmit() {
