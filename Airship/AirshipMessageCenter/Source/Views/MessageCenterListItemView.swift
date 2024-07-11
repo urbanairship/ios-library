@@ -177,8 +177,6 @@ private struct MessageCenterListContentView: View {
 
     @ViewBuilder
     var body: some View {
-        let message = message
-        
         HStack(alignment: .top, spacing: 5) {
             if (theme.iconsEnabled) {
                 makeIcon()
@@ -194,7 +192,5 @@ private struct MessageCenterListContentView: View {
         }
         .overlay(makeUnreadIndicator(), alignment: .topLeading)
         .padding(8)
-        .accessibilityLabel(String(format: message.unread ? "ua_message_unread_description".messageCenterlocalizedString : "ua_message_description".messageCenterlocalizedString, message.title,  AirshipDateFormatter.string(fromDate: message.sentDate, format: .relativeFull)))
-        .accessibilityHint("ua_message_cell_description".messageCenterlocalizedString)
     }
 }

@@ -62,7 +62,7 @@ public struct MessageCenterView: View {
         }
         .environment(\.editMode, $editMode)
         .navigationTitle(
-            theme.navigationBarTitle ?? "ua_message_center_title".messageCenterlocalizedString
+            theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
         )
 
         if #available(iOS 16.0, *) {

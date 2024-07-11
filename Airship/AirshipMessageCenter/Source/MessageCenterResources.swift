@@ -52,7 +52,7 @@ class MessageCenterResources {
 }
 
 extension String {
-    var messageCenterlocalizedString: String {
+    var messageCenterLocalizedString: String {
         return MessageCenterResources.localizedString(key: self) ?? self
     }
 }

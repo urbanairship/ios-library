@@ -78,11 +78,18 @@ public struct MessageCenterListView: View {
         item: MessageCenterListItemViewModel,
         messageID: String
     ) -> some View {
+        let accessibilityLabel = String(format: item.message.unread ? "ua_message_unread_description".messageCenterLocalizedString : "ua_message_description".messageCenterLocalizedString, item.message.title,  AirshipDateFormatter.string(fromDate: item.message.sentDate, format: .relativeShortDate))
+
         let cell = NavigationLink(
             destination: makeDestination(messageID: messageID, title: item.message.title)
         ) {
             MessageCenterListItemView(viewModel: item)
-        }
+        }.accessibilityLabel(
+            accessibilityLabel
+        )
+        .accessibilityHint(
+            "ua_message_cell_description".messageCenterLocalizedString
+        )
 
         if #available(iOS 15.0, *) {
             cell.listRowBackground(theme.cellColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellColorDark))
@@ -184,7 +191,7 @@ public struct MessageCenterListView: View {
             } else if self.messageIDs.isEmpty {
                 VStack {
                     refreshButton()
-                    Text("ua_empty_message_list".messageCenterlocalizedString)
+                    Text("ua_empty_message_list".messageCenterLocalizedString)
                         .opacity(1.0 - self.listOpacity)
                 }
             }
@@ -218,16 +225,16 @@ public struct MessageCenterListView: View {
             label: {
                 if self.selection.count > 0 {
                     Text(
-                        "\("ua_delete_messages".messageCenterlocalizedString) (\(self.selection.count))"
+                        "\("ua_delete_messages".messageCenterLocalizedString) (\(self.selection.count))"
                     )
                     .foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
                 } else {
-                    Text("ua_delete_messages".messageCenterlocalizedString)
+                    Text("ua_delete_messages".messageCenterLocalizedString)
                         .foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
                 }
             }
         )
-        .accessibilityHint("ua_delete_messages".messageCenterlocalizedString)
+        .accessibilityHint("ua_delete_messages".messageCenterLocalizedString)
         .disabled(self.selection.isEmpty)
     }
 
@@ -240,17 +247,17 @@ public struct MessageCenterListView: View {
             label: {
                 if self.selection.count > 0 {
                     Text(
-                        "\("ua_mark_messages_read".messageCenterlocalizedString) (\(self.selection.count))"
+                        "\("ua_mark_messages_read".messageCenterLocalizedString) (\(self.selection.count))"
                     )
                     .foregroundColor(theme.markAsReadButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.markAsReadButtonTitleColorDark))
                 } else {
-                    Text("ua_mark_messages_read".messageCenterlocalizedString)
+                    Text("ua_mark_messages_read".messageCenterLocalizedString)
                         .foregroundColor(theme.markAsReadButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.markAsReadButtonTitleColorDark))
                 }
             }
         )
         .disabled(self.selection.isEmpty)
-        .accessibilityHint("ua_mark_messages_read".messageCenterlocalizedString)
+        .accessibilityHint("ua_mark_messages_read".messageCenterLocalizedString)
     }
 
     @ViewBuilder
@@ -266,20 +273,20 @@ public struct MessageCenterListView: View {
         Button {
             self.selection = Set(self.messageIDs)
         } label: {
-            Text("ua_select_all_messages".messageCenterlocalizedString)
+            Text("ua_select_all_messages".messageCenterLocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))
         }
-        .accessibilityHint("ua_select_all_messages".messageCenterlocalizedString)
+        .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
 
     private func selectNone() -> some View {
         Button {
             self.selection = Set()
         } label: {
-            Text("ua_select_none_messages".messageCenterlocalizedString)
+            Text("ua_select_none_messages".messageCenterLocalizedString)
                 .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))
         }
-        .accessibilityHint("ua_select_none_messages".messageCenterlocalizedString)
+        .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
 
     private func bottomToolBar() -> some ToolbarContent {
@@ -303,7 +310,9 @@ public struct MessageCenterListView: View {
         ? theme.cancelButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cancelButtonTitleColorDark) :
         theme.editButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.editButtonTitleColorDark)
 
-        return EditButton().foregroundColor(color).accessibilityHint("ua_edit_messages_description".messageCenterlocalizedString)
+        return EditButton()
+            .foregroundColor(color)
+            .accessibilityHint("ua_edit_messages_description".messageCenterLocalizedString)
     }
 
     @ViewBuilder

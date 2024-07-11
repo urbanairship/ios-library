@@ -419,17 +419,17 @@ private struct MessageCenterMessageContentView: View {
                     error == .messageGone
                 {
                     VStack {
-                        Text("ua_mc_no_longer_available".messageCenterlocalizedString)
+                        Text("ua_mc_no_longer_available".messageCenterLocalizedString)
                             .font(.headline)
                             .foregroundColor(.primary)
                     }
                 } else {
                     VStack {
-                        Text("ua_mc_failed_to_load".messageCenterlocalizedString)
+                        Text("ua_mc_failed_to_load".messageCenterLocalizedString)
                             .font(.headline)
                             .foregroundColor(.primary)
 
-                        Button("ua_retry_button".messageCenterlocalizedString) {
+                        Button("ua_retry_button".messageCenterLocalizedString) {
                             self.webViewPhase = .loading
                         }
                     }
@@ -454,7 +454,7 @@ private struct MessageCenterMessageContentView: View {
     @ViewBuilder
     private var deleteButton: some View {
         if theme.hideDeleteButton != true {
-            Button("ua_delete_message".messageCenterlocalizedString) {
+            Button("ua_delete_message".messageCenterLocalizedString) {
                 Task {
                     await MessageCenter.shared.inbox.delete(
                         messageIDs: [self.messageID]
