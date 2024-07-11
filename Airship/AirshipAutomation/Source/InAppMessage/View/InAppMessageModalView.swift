@@ -102,7 +102,7 @@ struct InAppMessageModalView: View {
                         DispatchQueue.main.async {
                             if scrollViewContentSize != geo.size {
                                 if case .mediaHeaderBody = displayContent.template {
-                                    scrollViewContentSize = CGSize(width: geo.size.width, height: geo.size.height - theme.padding.top)
+                                    scrollViewContentSize = CGSize(width: geo.size.width, height: geo.size.height)
                                 } else {
                                     scrollViewContentSize = geo.size
                                 }
