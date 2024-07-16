@@ -55,7 +55,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
     @MainActor
     private func attemptSMSSubmission() async {
         do {
-            let formattedMSISDN = formattedMSISDN(countryCallingCode: selectedSender.countryCallingCode, number: inputText)
+            let formattedMSISDN = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
 
             /// Only start to load when we are sure it's not a duplicate failed request
             onStartLoading()
@@ -96,7 +96,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
         if let platform = platform {
             switch platform {
             case .sms(_):
-                let formattedNumber = formattedMSISDN(countryCallingCode: selectedSender.countryCallingCode, number: inputText)
+                let formattedNumber = formattedMSISDN(countryCode: selectedSender.countryCode, number: inputText)
                 onRegisterSMS(formattedNumber, selectedSender.senderId)
             case .email(_):
                 let formattedEmail = formattedEmail(email: inputText)
@@ -157,11 +157,17 @@ extension AddChannelPromptViewModel {
     /// Format for MSISDN  standards - including removing plus, dashes, spaces etc.
     /// Formatting behind the scenes like this makes sense because there are lots of valid ways to show
     /// Phone numbers like 1.503.867.5309 1-504-867-5309. This also allows us to strip the "+" from the country code
-    func formattedMSISDN(countryCallingCode: String, number: String) -> String {
-        let msisdn = countryCallingCode + number
-        let allowedCharacters = CharacterSet.decimalDigits
-        let formatted = msisdn.unicodeScalars.filter { allowedCharacters.contains($0) }
-        return String(formatted)
+    func formattedMSISDN(countryCode: String, number: String) -> String {
+        let cleanedCountryCode = countryCode.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+        var cleanedNumber = number.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+
+        // Remove country code from the beginning of the number if it's already present
+        if cleanedNumber.hasPrefix(cleanedCountryCode) {
+            cleanedNumber = String(cleanedNumber.dropFirst(cleanedCountryCode.count))
+        }
+
+        let msisdn = cleanedCountryCode + cleanedNumber
+        return msisdn
     }
 
     /// Just trim spaces for emails to be helpful
@@ -180,7 +186,7 @@ extension AddChannelPromptViewModel {
                 let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
                 return emailPredicate.evaluate(with: self.inputText)
             case .sms(_):
-                let formatted = formattedMSISDN(countryCallingCode: self.selectedSender.countryCallingCode, number: self.inputText)
+                let formatted = formattedMSISDN(countryCode: self.selectedSender.countryCode, number: self.inputText)
                 let msisdnRegex = "^[1-9]\\d{1,14}$"
                 let msisdnPredicate = NSPredicate(format: "SELF MATCHES %@", msisdnRegex)
                 return msisdnPredicate.evaluate(with: formatted)

@@ -163,6 +163,9 @@ public class Airship: NSObject {
         return requireComponent(ofType: AirshipBaseChannelProtocol.self)
     }
 
+    @MainActor
+    private static var onReadyCallbacks: [@MainActor @Sendable () -> Void] = []
+
     init(instance: AirshipInstanceProtocol) {
         self.airshipInstance = instance
     }
@@ -292,6 +295,25 @@ public class Airship: NSObject {
 
     #endif
 
+    /// On ready callback gets called immediately when ready otherwise gets called immediately after takeoff
+    /// - Parameter callback: callback closure that's called when Airship is ready
+    @MainActor
+    public static func onReady(callback: @MainActor @Sendable @escaping () -> Void) {
+        onReadyCallbacks.append(callback)
+
+        if isFlying {
+            executeOnReady()
+        }
+    }
+
+    /// Helper method that executes any remaining onReady closures and resets the array
+    @MainActor
+    private static func executeOnReady() {
+        let toExecute = onReadyCallbacks
+        onReadyCallbacks.removeAll()
+        toExecute.forEach { $0() }
+    }
+
     @MainActor
     private class func commonTakeOff(_ config: AirshipConfig?, onReady: (() -> Void)? = nil) {
 
@@ -336,6 +358,7 @@ public class Airship: NSObject {
         onReady?()
 
         self.shared.airshipInstance.airshipReady()
+        executeOnReady()
 
         if self.shared.airshipInstance.config.isExtendedBroadcastsEnabled {
             var userInfo: [String: Any] = [:]
