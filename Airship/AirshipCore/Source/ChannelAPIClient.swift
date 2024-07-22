@@ -6,7 +6,6 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let encoder: JSONEncoder = JSONEncoder()
 
     init(
         config: RuntimeConfig,
@@ -46,7 +45,7 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
         payload: ChannelRegistrationPayload
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
         let url = try makeURL(path: self.channelPath)
-        let data = try encoder.encode(payload)
+        let data = try JSONEncoder().encode(payload)
 
         AirshipLogger.debug(
             "Creating channel with: \(payload)"
@@ -100,7 +99,7 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
     ) async throws -> AirshipHTTPResponse<ChannelAPIResponse> {
 
         let url = try makeChannelLocation(channelID: channelID)
-        let data = try encoder.encode(payload)
+        let data = try JSONEncoder().encode(payload)
 
         AirshipLogger.debug(
             "Updating channel \(channelID) with: \(payload)"
