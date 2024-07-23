@@ -60,6 +60,7 @@ struct MediaWebView: UIViewRepresentable {
         webView.backgroundColor = UIColor.black
         webView.scrollView.backgroundColor = UIColor.black
         webView.navigationDelegate = context.coordinator
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
