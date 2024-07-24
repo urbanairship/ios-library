@@ -460,7 +460,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     #endif
 
     @objc
-    @MainActor
     public private(set) var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
         set {
             self.dataStore.setInteger(
