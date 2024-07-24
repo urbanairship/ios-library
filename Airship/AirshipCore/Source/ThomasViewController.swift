@@ -97,6 +97,12 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
         
         createBannerConstraints()
         handleBannerConstraints()
+
+        if UIAccessibility.isVoiceOverRunning {
+            DispatchQueue.main.asyncAfter(deadline: .now() + BannerView.animationInDuration) {
+                UIAccessibility.post(notification: .screenChanged, argument: self)
+            }
+        }
     }
     
     override func viewDidLayoutSubviews() {

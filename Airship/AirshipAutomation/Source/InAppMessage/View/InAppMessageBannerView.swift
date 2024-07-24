@@ -25,7 +25,6 @@ struct InAppMessageBannerView: View {
 
     var onDismiss: () -> Void
 
-
     private let displayContent: InAppMessageDisplayContent.Banner
 
     private var mediaMaxWidth: CGFloat = 120
@@ -33,7 +32,7 @@ struct InAppMessageBannerView: View {
     private var mediaMinHeight: CGFloat = 88
     private var mediaMaxHeight: CGFloat = 480
 
-    private let animationInOutDuration = 0.2
+    static let animationInOutDuration = 0.2
 
     @ViewBuilder
     private var headerView: some View {
@@ -151,11 +150,11 @@ struct InAppMessageBannerView: View {
     }
 
     private func setShowing(state:Bool, completion: (() -> Void)? = nil) {
-        withAnimation(Animation.easeInOut(duration: animationInOutDuration)) {
+        withAnimation(Animation.easeInOut(duration: InAppMessageBannerView.animationInOutDuration)) {
             self.isShowing = state
         }
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + animationInOutDuration, execute: {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + InAppMessageBannerView.animationInOutDuration, execute: {
             completion?()
         })
     }
@@ -224,6 +223,5 @@ struct InAppMessageBannerView: View {
             banner.frame(width: min(UIScreen.main.bounds.size.width, theme.maxWidth))
             #endif
         }.opacity(isPressed && displayContent.actions != nil ? theme.tapOpacity : 1)
-        .accessibility(sortPriority: 1)
     }
 }
