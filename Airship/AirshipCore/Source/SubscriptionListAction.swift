@@ -23,11 +23,11 @@ public final class SubscriptionListAction: AirshipAction {
     private let channel: @Sendable () -> AirshipChannelProtocol
     private let contact: @Sendable () -> AirshipContactProtocol
   
-    private let decoder: JSONDecoder = {
+    private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return decoder
-    }()
+    }
     
     public var _decoder: JSONDecoder {
         return decoder

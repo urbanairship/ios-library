@@ -8,9 +8,6 @@ public final class PreferenceDataStore: @unchecked Sendable {
     private let defaults: UserDefaults
     private let appKey: String
     static let deviceIDKey = "deviceID"
-
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
     
     private var pending: [String: [Any?]] = [:]
     private var cache: [String: Cached] = [:]
@@ -177,7 +174,7 @@ public final class PreferenceDataStore: @unchecked Sendable {
             return nil
         }
 
-        return try decoder.decode(T.self, from: data)
+        return try JSONDecoder().decode(T.self, from: data)
     }
 
     public func safeCodable<T: Codable>(forKey key: String) -> T? {
@@ -209,7 +206,7 @@ public final class PreferenceDataStore: @unchecked Sendable {
             return
         }
 
-        let data = try encoder.encode(codable)
+        let data = try JSONEncoder().encode(codable)
         write(key, value: data)
     }
 

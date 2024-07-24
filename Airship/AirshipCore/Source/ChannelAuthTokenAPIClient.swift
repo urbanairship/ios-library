@@ -4,7 +4,6 @@ final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendab
     private let tokenPath = "/api/auth/device"
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let decoder: JSONDecoder = JSONDecoder()
 
     init(
         config: RuntimeConfig,
