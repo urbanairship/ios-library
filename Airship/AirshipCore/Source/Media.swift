@@ -67,18 +67,15 @@ struct Media: View {
         case .video, .youtube:
             #if !os(tvOS) && !os(watchOS)
             MediaWebView(
-                url: model.url,
-                type: model.mediaType,
-                accessibilityLabel: model.contentDescription,
-                video: model.video
+                model: model
             ) {
                 pagerState.setMediaReady(pageIndex: pageIndex, id: mediaID, isReady: true)
             }
             .onAppear {
                 pagerState.registerMedia(pageIndex: pageIndex, id: mediaID)
             }
-            .applyIf(self.constraints.width != nil || self.constraints.height != nil) {
-                $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: self.contentMode)
+            .applyIf(self.constraints.width == nil || self.constraints.height == nil) {
+                $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: .fit)
             }
             .constraints(constraints)
             .background(self.model.backgroundColor)

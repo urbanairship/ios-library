@@ -11,15 +11,66 @@ struct MediaWebView: UIViewRepresentable {
 
     typealias UIViewType = WKWebView
 
-    let url: String
-    let type: MediaType
-    let accessibilityLabel: String?
-    let video: Video?
+    let model: MediaModel
     let onMediaReady: @MainActor () -> Void
     @Environment(\.isVisible) var isVisible
     @State private var isLoaded: Bool = false
     @State private var isMediaReady: Bool = false
     @EnvironmentObject var pagerState: PagerState
+    @Environment(\.layoutDirection) var layoutDirection
+
+
+    private var video: Video? {
+        model.video
+    }
+
+    private var url: String {
+        model.url
+    }
+
+    private var styleForVideo: String {
+        switch(model.mediaFit) {
+        case .centerInside:
+            return "object-fit: contain"
+        case .center:
+            return "object-fit: none"
+        case .fitCrop:
+            guard let position = model.cropPosition else {
+                return "object-fit: cover"
+            }
+
+            let horizontal = switch(position.horizontal) {
+            case .center:
+                "center"
+            case .start:
+                if layoutDirection == .leftToRight {
+                    "left"
+                } else {
+                    "right"
+                }
+            case .end:
+                if layoutDirection == .leftToRight {
+                    "right"
+                } else {
+                    "left"
+                }
+            }
+
+            let vertical = switch(position.vertical) {
+            case .center:
+                "center"
+            case .top:
+                "top"
+            case .bottom:
+                "bottom"
+            }
+
+            return "object-fit: cover; object-position: \(horizontal) \(vertical)"
+        case .centerCrop:
+            return "object-fit: cover"
+        }
+    }
+
 
     @MainActor
     func makeUIView(context: Context) -> WKWebView {
@@ -55,7 +106,7 @@ struct MediaWebView: UIViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.isAccessibilityElement = true
-        webView.accessibilityLabel = accessibilityLabel
+        webView.accessibilityLabel = model.contentDescription
         webView.scrollView.isScrollEnabled = false
         webView.backgroundColor = UIColor.black
         webView.scrollView.backgroundColor = UIColor.black
@@ -66,12 +117,13 @@ struct MediaWebView: UIViewRepresentable {
             webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
         }
 
-        if type == .video {
+        let video = model.video
+        if model.mediaType == .video {
             let html = String(
                 format: """
                     <body style="margin:0">
-                        <video id="video" playsinline %@ %@ %@ %@ height="100%%" width="100%%" src="%@"></video>
-                        
+                        <video id="video" playsinline %@ %@ %@ %@ height="100%%" width="100%%" src="%@" style="%@"></video>
+
                         <script>
                             let videoElement = document.getElementById("video");
                                         
@@ -85,11 +137,12 @@ struct MediaWebView: UIViewRepresentable {
                 video?.autoplay ?? false ? "autoplay" : "",
                 video?.muted ?? false ? "muted" : "",
                 video?.loop ?? false ? "loop" : "",
-                url
+                url,
+                styleForVideo
             )
             guard let mediaUrl = URL(string: url) else { return webView }
             webView.loadHTMLString(html, baseURL: mediaUrl)
-        } else if type == .youtube {
+        } else if model.mediaType == .youtube {
             if let videoID = retrieveVideoID(url: url) {
                 let html = String(
                     format: """
@@ -181,9 +234,9 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func pauseMedias(uiView: WKWebView) {
-        if type == .video {
+        if model.mediaType == .video {
             uiView.evaluateJavaScript("videoElement.pause();")
-        } else if type == .youtube {
+        } else if model.mediaType == .youtube {
             uiView.evaluateJavaScript("player.pauseVideo();")
         }
     }
@@ -191,9 +244,9 @@ struct MediaWebView: UIViewRepresentable {
     @MainActor
     func resetMedias(uiView: WKWebView) {
         if video?.autoplay ?? false {
-            if type == .video {
+            if model.mediaType == .video {
                 uiView.evaluateJavaScript("videoElement.currentTime = 0;")
-            } else if type == .youtube {
+            } else if model.mediaType == .youtube {
                 uiView.evaluateJavaScript("player.seekTo(0);")
             }
         }
@@ -201,9 +254,9 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func playMedias(uiView: WKWebView) {
-        if type == .video {
+        if model.mediaType == .video {
             uiView.evaluateJavaScript("videoElement.play();")
-        } else if type == .youtube {
+        } else if model.mediaType == .youtube {
             uiView.evaluateJavaScript("player.playVideo();")
             uiView.evaluateJavaScript("player.addEventListener(\"onReady\", \"onPlayerReady\");")
         }
