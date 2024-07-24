@@ -648,7 +648,6 @@ class PushTest: XCTestCase {
         XCTAssertEqual(0, self.badger.applicationIconBadgeNumber)
     }
 
-    @MainActor
     func testActiveChecksRegistration() async  {
         self.notificationRegistrar.onCheckStatus = {
             return (.authorized, [.alert])
