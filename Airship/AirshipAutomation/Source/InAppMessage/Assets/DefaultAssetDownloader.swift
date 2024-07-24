@@ -29,7 +29,7 @@ extension URLSession: AssetDownloaderSession {
 struct DefaultAssetDownloader : AssetDownloader {
     var session: AssetDownloaderSession
 
-    init(session: AssetDownloaderSession = URLSession.shared) {
+    init(session: AssetDownloaderSession = URLSession.airshipSecureSession) {
         self.session = session
     }
 

@@ -1,6 +1,19 @@
 
 # iOS Changelog
 
+## Version 18.5.0 July 1, 2024
+Minor release that includes cert pinning and various fixes and improvements for Preference Center, In-app Messages and Embedded Content.
+
+### Changes
+- Added ability to inject a custom certificate verification closure that applies to all API calls
+- Added width and height parameters to in-app dismiss button theming
+- Fixed bug that caused HTML in-app message backgrounds to default to clear instead of system background
+- Fixed extra payload parsing in in-app messages
+- Set default banner placement to bottom
+- Increased impression interval for embedded in-app views
+- Improved in-app banner view accessibility
+- Preference center contact channel listing is now refreshed on foreground and from background pushes
+
 ## Version 18.4.1 June 21, 2024
 Patch release to fix a regression with IAX ignoring screen, version, and custom event triggers. Apps using those triggers that are on 18.4.0 should update.
 

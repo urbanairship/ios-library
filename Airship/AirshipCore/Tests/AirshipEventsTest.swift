@@ -374,6 +374,9 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
     var notificationStatus: AirshipCore.AirshipNotificationStatus {
         fatalError("not implemented")
     }
+    
+    let notificationStatusUpdates: AsyncStream<AirshipNotificationStatus>
+    let statusUpdateContinuation: AsyncStream<AirshipNotificationStatus>.Continuation
 
     var isPushNotificationsOptedIn: Bool = false
 
@@ -414,6 +417,10 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
     ]
 
     var badgeNumber: Int = 0
+    
+    init() {
+        (self.notificationStatusUpdates, self.statusUpdateContinuation) = AsyncStream<AirshipNotificationStatus>.airshipMakeStreamWithContinuation()
+    }
 }
 
 private final class InternalPush: InternalPushProtocol {

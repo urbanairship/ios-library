@@ -77,7 +77,7 @@ public struct ChannelTextField: View {
                 Spacer()
                 Picker("senders", selection: $selectedSenderID) {
                     ForEach(senders, id: \.self) {
-                        Text($0.countryCode.countryFlag() + "  " + $0.countryCode + "  ").tag($0.senderId)
+                        Text($0.displayName).tag($0.senderId)
                     }
                 }
                 .accentColor(DefaultColors.primaryText)

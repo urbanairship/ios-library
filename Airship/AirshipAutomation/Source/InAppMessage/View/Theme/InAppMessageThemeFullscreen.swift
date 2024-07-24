@@ -25,10 +25,16 @@ public extension InAppMessageTheme {
         public var media: InAppMessageTheme.Media
 
         /// Button theme
-        public var buttons:  InAppMessageTheme.Button
+        public var buttons: InAppMessageTheme.Button
 
         /// Dismiss icon resource name
-        public var dismissIconResource:  String
+        public var dismissIconResource: String
+
+        /// Dismiss icon width
+        public var dismissIconWidth: CGFloat
+
+        /// Dismiss icon height
+        public var dismissIconHeight: CGFloat
 
         /// Applies a style from a plist to the theme.
         /// - Parameters:
@@ -60,6 +66,8 @@ public extension InAppMessageTheme {
             self.media.applyOverrides(overrides.mediaTheme)
             self.buttons.applyOverrides(overrides.buttonTheme)
             self.dismissIconResource = overrides.dismissIconResource ?? self.dismissIconResource
+            self.dismissIconWidth = overrides.dismissIconWidth ?? self.dismissIconWidth
+            self.dismissIconHeight = overrides.dismissIconHeight ?? self.dismissIconHeight
         }
 
         struct Overrides: Decodable {
@@ -69,6 +77,8 @@ public extension InAppMessageTheme {
             var mediaTheme: InAppMessageTheme.Media.Overrides?
             var buttonTheme: InAppMessageTheme.Button.Overrides?
             var dismissIconResource: String?
+            var dismissIconWidth: CGFloat?
+            var dismissIconHeight: CGFloat?
 
             enum CodingKeys: String, CodingKey {
                 case additionalPadding = "additionalPadding"
@@ -77,6 +87,8 @@ public extension InAppMessageTheme {
                 case mediaTheme = "mediaStyle"
                 case buttonTheme = "buttonStyle"
                 case dismissIconResource = "dismissIconResource"
+                case dismissIconWidth = "dismissIconWidth"
+                case dismissIconHeight = "dismissIconHeight"
             }
         }
 
@@ -103,7 +115,9 @@ public extension InAppMessageTheme {
                     separatedSpacing: 16,
                     padding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
                 ),
-                dismissIconResource: "xmark"
+                dismissIconResource: "ua_airship_dismiss",
+                dismissIconWidth: 12,
+                dismissIconHeight: 12
             )
 
             /// Overrides

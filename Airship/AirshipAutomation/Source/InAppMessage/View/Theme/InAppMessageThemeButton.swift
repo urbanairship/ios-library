@@ -3,18 +3,27 @@
 import Foundation
 import SwiftUI
 
-
 public extension InAppMessageTheme {
+    static func dismissIcon(_ dismissIconResource: String?) -> Image {
+        /// Try custom image, then fallback to system image, finally fallback to xmark
+        if let name = dismissIconResource, let customImage = UIImage(named: name) {
+            return Image(uiImage: customImage)
+        } else if let name = dismissIconResource, let systemImage = UIImage(systemName: name) {
+            return Image(uiImage: systemImage)
+        } else {
+            return Image(systemName: "xmark")
+        }
+    }
 
     /// Button in-app message theme
     struct Button: Equatable {
         /// Button height
         public var height: Double
 
-        /// Button spacing when stackeds
+        /// Button spacing when stacked
         public var stackedSpacing: Double
 
-        /// Button spacing when seperated
+        /// Button spacing when separated
         public var separatedSpacing: Double
 
         /// Padding

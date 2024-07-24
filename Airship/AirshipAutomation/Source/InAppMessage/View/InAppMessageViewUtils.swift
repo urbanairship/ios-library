@@ -157,17 +157,22 @@ extension View {
 
     @ViewBuilder
     func addCloseButton(
-        dismissButtonColor: Color,
         dismissIconResource: String,
-        circleColor:Color? = nil,
+        dismissButtonColor: Color?,
+        width: CGFloat? = nil,
+        height: CGFloat? = nil,
         onUserDismissed: @escaping () -> Void
     ) -> some View {
+        let dismissIconImage = InAppMessageTheme.dismissIcon(dismissIconResource)
+        let defaultDismissColor = Color.white
+
         ZStack(alignment: .topTrailing) { // Align close button to the top trailing corner
             self.zIndex(0)
             CloseButton(
-                dismissIconColor: dismissButtonColor,
-                dismissIconResource: dismissIconResource,
-                circleColor: circleColor,
+                dismissIconImage: dismissIconImage,
+                dismissIconColor: dismissButtonColor ?? defaultDismissColor,
+                width: width,
+                height: height,
                 onTap: onUserDismissed
             )
             .zIndex(1)

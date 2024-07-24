@@ -21,6 +21,7 @@ class AirshipContactTest: XCTestCase {
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
     private var config: RuntimeConfig!
+    private var subscriptionProvider: SubscriptionListProviderProtocol!
 
     override func setUp() async throws {
         self.config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
@@ -30,6 +31,12 @@ class AirshipContactTest: XCTestCase {
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
+        
+        self.subscriptionProvider = SubscriptionListProvider(
+            audienceOverrides: self.audienceOverridesProvider,
+            apiClient: self.apiClient,
+            date: self.date,
+            privacyManager: self.privacyManager)
 
         self.channel.identifier = "channel id"
         setupContact()
@@ -45,8 +52,8 @@ class AirshipContactTest: XCTestCase {
             config: config,
             channel: self.channel,
             privacyManager: self.privacyManager,
-            subscriptionListAPIClient: self.apiClient, 
-            contactChannelsProvider: self.contactChannelsProvider,
+            contactChannelsProvider: self.contactChannelsProvider, 
+            subscriptionListProvider: subscriptionProvider,
             date: self.date,
             notificationCenter: self.notificationCenter,
             audienceOverridesProvider: self.audienceOverridesProvider,
@@ -268,6 +275,23 @@ class AirshipContactTest: XCTestCase {
         await verifyOperations([.resolve])
     }
 
+    func testRefreshContactChannelsOnActive() async throws {
+        notificationCenter.post(
+            name: AppStateTracker.didBecomeActiveNotification
+        )
+
+        XCTAssertTrue(contactChannelsProvider.refreshedCalled)
+    }
+
+    func testRefreshContactChannelsOnPush() async throws {
+        self.contact.receivedRemoteNotification(
+            [
+                "com.urbanairship.contact.update": NSNumber(value: true)
+            ]
+        ) { _ in }
+
+        XCTAssertTrue(contactChannelsProvider.refreshedCalled)
+    }
 
     func testForegroundSkipsResolves() async throws {
         notificationCenter.post(
@@ -498,6 +522,40 @@ class AirshipContactTest: XCTestCase {
         // From api
         expected = apiResult
         lists = try await self.contact.fetchSubscriptionLists()
+        XCTAssertEqual(expected, lists)
+    }
+    
+    func testFetchSubscriptionListsReset() async throws {
+        await self.contactManager.setCurrentContactIDInfo(
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
+        )
+
+        var apiResult: [String: [ChannelScope]] = ["neat": [.web]]
+        var expected = apiResult
+        self.apiClient.fetchSubscriptionListsCallback = {
+            identifier in
+            XCTAssertEqual("some-contact-id", identifier)
+            return AirshipHTTPResponse(
+                result: apiResult,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        // Populate cache
+        var lists: [String: [ChannelScope]] = try await self.contact.fetchSubscriptionLists()
+
+        XCTAssertEqual(expected, lists)
+
+        apiResult = ["something else": [.web]]
+        
+        lists = try await self.contact.fetchSubscriptionLists()
+        XCTAssertEqual(expected, lists)
+
+        await subscriptionProvider.refresh()
+        
+        lists = try await self.contact.fetchSubscriptionLists()
+        expected = apiResult
         XCTAssertEqual(expected, lists)
     }
 

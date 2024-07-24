@@ -9,6 +9,8 @@ import Foundation
 /// within Airship. Contacts may be named and have channels associated with it.
 @objc(UAContact)
 public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked Sendable {
+    static let refreshContactPushPayloadKey = "com.urbanairship.contact.update"
+
     public var contactChannelUpdates: AsyncStream<ContactChannelsResult> {
         get {
             return self.contactChannelsProvider.contactChannels(
@@ -68,8 +70,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
-    private let subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol
     private let contactChannelsProvider: ContactChannelsProviderProtocol
+    private let subscriptionListProvider: SubscriptionListProviderProtocol
     private let date: AirshipDateProtocol
     private let audienceOverridesProvider: AudienceOverridesProvider
     private let contactManager: ContactManagerProtocol
@@ -77,7 +79,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
-    private let fetchSubscriptionListQueue: AirshipSerialQueue = AirshipSerialQueue()
     private let serialQueue: AirshipAsyncSerialQueue
 
     /// Publishes all edits made to the subscription lists through the  SDK
@@ -159,8 +160,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         config: RuntimeConfig,
         channel: InternalAirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
-        subscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol,
         contactChannelsProvider: ContactChannelsProviderProtocol,
+        subscriptionListProvider: SubscriptionListProviderProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: AudienceOverridesProvider,
@@ -172,16 +173,15 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.dataStore = dataStore
         self.config = config
         self.privacyManager = privacyManager
-        self.subscriptionListAPIClient = subscriptionListAPIClient
         self.contactChannelsProvider = contactChannelsProvider
         self.audienceOverridesProvider = audienceOverridesProvider
         self.date = date
         self.contactManager = contactManager
         self.smsValidator = smsValidator
         self.serialQueue = serialQueue
-
+        self.subscriptionListProvider = subscriptionListProvider
         self.cachedSubscriptionLists = CachedValue(date: date)
-
+        
         super.init()
         
         self.setupTask = Task {
@@ -330,12 +330,15 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             config: config,
             channel: channel,
             privacyManager: privacyManager,
-            subscriptionListAPIClient: ContactSubscriptionListAPIClient(config: config), 
             contactChannelsProvider: ContactChannelsProvider(
                 audienceOverrides: audienceOverridesProvider,
                 apiClient: ContactChannelsAPIClient(config: config),
                 privacyManager: privacyManager
             ),
+            subscriptionListProvider: SubscriptionListProvider(
+                audienceOverrides: audienceOverridesProvider,
+                apiClient: ContactSubscriptionListAPIClient(config: config),
+                privacyManager: privacyManager),
             audienceOverridesProvider: audienceOverridesProvider,
             contactManager: ContactManager(
                 dataStore: dataStore,
@@ -715,43 +718,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     public func fetchSubscriptionLists() async throws -> [String: [ChannelScope]] {
         let contactID = await getStableContactID()
-        var subscriptions = try await self.resolveSubscriptionLists(contactID)
-
-        let overrides = await self.audienceOverridesProvider.contactOverrides(contactID: contactID)
-
-        subscriptions = AudienceUtils.applySubscriptionListsUpdates(
-            subscriptions,
-            updates: overrides.subscriptionLists
-        )
-
-        return subscriptions
-    }
-
-    private func resolveSubscriptionLists(
-        _ contactID: String
-    ) async throws -> [String: [ChannelScope]] {
-
-        return try await self.fetchSubscriptionListQueue.run {
-            if let cached = self.cachedSubscriptionLists.value,
-                cached.0 == contactID {
-                return cached.1
-            }
-
-            let response = try await self.subscriptionListAPIClient.fetchSubscriptionLists(
-                contactID: contactID
-            )
-
-            guard response.isSuccess, let lists = response.result else {
-                throw AirshipErrors.error("Failed to fetch subscription lists")
-            }
-
-            AirshipLogger.debug("Fetched lists finished with response: \(response)")
-            self.cachedSubscriptionLists.set(
-                value: (contactID, lists),
-                expiresIn: Self.maxSubscriptionListCacheAge
-            )
-            return lists
-        }
+        return try await subscriptionListProvider.fetch(contactID: contactID)
     }
 
     @objc
@@ -778,6 +745,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             self.lastResolveDate = self.date.now
             self.addOperation(.resolve)
         }
+
+        self.contactChannelsProvider.refreshAsync()
     }
 
     @objc
@@ -926,6 +895,22 @@ extension AirshipContact : InternalAirshipContactProtocol {
         }
     }
 }
+
+#if !os(watchOS)
+extension AirshipContact: AirshipPushableComponent {
+    public func receivedRemoteNotification(
+        _ notification: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        if notification[Self.refreshContactPushPayloadKey] == nil {
+            completionHandler(.noData)
+        } else {
+            self.contactChannelsProvider.refreshAsync()
+            completionHandler(.newData)
+        }
+    }
+}
+#endif
 
 
 

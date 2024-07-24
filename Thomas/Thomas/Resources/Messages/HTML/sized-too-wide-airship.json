@@ -2,6 +2,7 @@
     "source": "app-defined",
     "name": "my HTML message",
     "display_type": "html",
+    "extra": {"squareview": "true"},
     "display": {
         "allow_fullscreen_display" : false,
         "aspect_lock" : true,

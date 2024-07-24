@@ -153,6 +153,38 @@ class ContactChannelsProviderTest: XCTestCase {
 
         XCTAssertEqual(self.apiClient.fetchAssociatedChannelsCallCount, 3)
     }
+    
+    func testContactChannelsRefresh() async {
+        let contactIDChannel = AirshipAsyncChannel<String>()
+
+        var resultStream = provider.contactChannels(
+            stableContactIDUpdates: await contactIDChannel.makeStream()
+        ).makeAsyncIterator()
+
+
+        self.apiClient.fetchResponse = AirshipHTTPResponse(
+            result: self.testChannels1,
+            statusCode: 200,
+            headers: [:]
+        )
+        await contactIDChannel.send("test-contact-id-1")
+        var result = await resultStream.next()
+        XCTAssertEqual(result, .success(self.testChannels1))
+        XCTAssertEqual(1, self.apiClient.fetchAssociatedChannelsCallCount)
+
+        //from cache
+        await contactIDChannel.send("test-contact-id-1")
+        result = await resultStream.next()
+        XCTAssertEqual(result, .success(self.testChannels1))
+        XCTAssertEqual(1, self.apiClient.fetchAssociatedChannelsCallCount)
+        
+        await provider.refresh()
+        
+        await contactIDChannel.send("test-contact-id-1")
+        result = await resultStream.next()
+        XCTAssertEqual(result, .success(self.testChannels1))
+        XCTAssertEqual(2, self.apiClient.fetchAssociatedChannelsCallCount)
+    }
 
     func testContactChannelsFailure() async {
         let contactIDStream = AsyncStream<String> { continuation in

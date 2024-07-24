@@ -134,8 +134,8 @@ class PreferenceCenterDecoderTest: XCTestCase {
                     },
                     "senders": [
                       {
-                        "country_code": "+44",
-                        "display_name": "United Kingdom",
+                        "country_code": "+1",
+                        "display_name": "\u{1F1FA}\u{1F1F8} +1",
                         "placeholder_text": "7010 111222",
                         "sender_id": "23450"
                       }

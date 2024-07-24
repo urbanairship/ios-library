@@ -33,7 +33,11 @@ class ChannelAudienceManagerTest: XCTestCase {
         self.audienceManager = ChannelAudienceManager(
             dataStore: self.dataStore,
             workManager: self.workManager,
-            subscriptionListClient: self.subscriptionListClient,
+            subscriptionListProvider: ChannelSubscriptionListProvider(
+                audienceOverrides: self.audienceOverridesProvider,
+                apiClient: self.subscriptionListClient,
+                date: self.date
+            ),
             updateClient: self.updateClient,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,

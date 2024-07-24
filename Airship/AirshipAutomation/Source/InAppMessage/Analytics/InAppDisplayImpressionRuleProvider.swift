@@ -16,7 +16,7 @@ protocol InAppDisplayImpressionRuleProvider: Sendable {
 }
 
 final class DefaultInAppDisplayImpressionRuleProvider: InAppDisplayImpressionRuleProvider  {
-    private static let defaultEmbeddedImpressionInterval: TimeInterval = 30.0
+    private static let defaultEmbeddedImpressionInterval: TimeInterval = 1800.0 // 30 mins
 
     func impressionRules(for message: InAppMessage) -> InAppDisplayImpressionRule {
         if (message.isEmbedded) {
