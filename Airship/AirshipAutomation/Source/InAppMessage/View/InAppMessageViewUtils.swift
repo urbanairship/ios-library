@@ -16,7 +16,8 @@ extension View {
     @ViewBuilder
     func addNub(
         placement: InAppMessageDisplayContent.Banner.Placement,
-        nub: AnyView, itemSpacing: CGFloat
+        nub: AnyView,
+        itemSpacing: CGFloat
     ) -> some View {
         VStack(spacing: 0) {
             switch(placement) {

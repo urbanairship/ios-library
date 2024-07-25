@@ -121,7 +121,7 @@ struct InAppMessageBannerView: View {
     private var nub: some View {
         let tabHeight: CGFloat = 4
         let tabWidth: CGFloat = 36
-        let tabColor:Color = Color.black.opacity(0.42)
+        let tabColor:Color = displayContent.dismissButtonColor?.color ?? Color.black.opacity(0.42)
 
         Capsule()
             .frame(width: tabWidth, height: tabHeight)
