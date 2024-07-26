@@ -39,6 +39,8 @@ struct InAppMessageBannerView: View {
         if let heading = displayContent.heading {
             TextView(textInfo: heading, textTheme: self.theme.header)
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 
@@ -47,6 +49,7 @@ struct InAppMessageBannerView: View {
         if let body = displayContent.body {
             TextView(textInfo: body, textTheme: self.theme.body)
                 .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 
