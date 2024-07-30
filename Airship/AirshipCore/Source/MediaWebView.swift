@@ -65,7 +65,7 @@ struct MediaWebView: UIViewRepresentable {
                 "bottom"
             }
 
-            return "object-fit: cover; object-position: \(horizontal) \(vertical)"
+            return "width: 100vw; height: 100vh; object-fit: cover; object-position: \(horizontal) \(vertical)"
         case .centerCrop:
             return "object-fit: cover"
         }

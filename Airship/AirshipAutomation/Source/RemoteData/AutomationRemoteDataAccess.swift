@@ -265,7 +265,7 @@ struct InAppRemoteData: Sendable {
                 remoteDataInfo: payload.remoteDataInfo
             )
         } catch {
-            AirshipLogger.error("Failed to parse app remote-data response.")
+            AirshipLogger.error("Failed to parse app remote-data response. \(error)")
         }
 
         return nil

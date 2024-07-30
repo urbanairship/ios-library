@@ -12,7 +12,6 @@ protocol EventAPIClientProtocol: Sendable {
 final class EventAPIClient: EventAPIClientProtocol {
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let encoder: JSONEncoder = JSONEncoder()
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config

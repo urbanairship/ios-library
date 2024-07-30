@@ -17,17 +17,6 @@ struct Media: View {
     @Environment(\.pageIndex) var pageIndex
  
 
-    private var contentMode: ContentMode {
-        var contentMode = ContentMode.fill
-
-        /// Fit container if undefined size on x and y axes, otherwise fill and crop content on major axis to maintain aspect ratio
-        if self.model.mediaFit == .centerInside && Self.isUnbounded(constraints) {
-            contentMode = ContentMode.fit
-        }
-
-        return contentMode
-    }
-
     fileprivate static func isUnbounded(_ constraints: ViewConstraints) -> Bool {
         if constraints.width != nil && constraints.height != nil {
             return false

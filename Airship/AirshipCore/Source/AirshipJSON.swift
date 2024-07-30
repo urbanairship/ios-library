@@ -5,8 +5,8 @@ import Foundation
  * Airship JSON.
  */
 public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
-    public static let defaultEncoder = JSONEncoder()
-    public static let defaultDecoder = JSONDecoder()
+    public static var defaultEncoder: JSONEncoder { return JSONEncoder() }
+    public static var defaultDecoder: JSONDecoder { return JSONDecoder() }
 
     case string(String)
     case number(Double)
