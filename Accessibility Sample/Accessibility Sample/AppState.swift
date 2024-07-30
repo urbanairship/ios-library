@@ -8,9 +8,7 @@ import SwiftUI
 @MainActor
 class AppState: ObservableObject {
     static let shared = AppState()
-    
-    let messageCenterController = MessageCenterController()
-    
+
     @Published
     var selectedTab: SampleTabs = .home
     
@@ -35,7 +33,6 @@ class AppState: ObservableObject {
                 }
                 .store(in: &self.subscriptions)
             
-            MessageCenter.shared.controller = messageCenterController
             MessageCenter.shared.controller.statePublisher
                 .receive(on: RunLoop.main)
                 .sink { status in

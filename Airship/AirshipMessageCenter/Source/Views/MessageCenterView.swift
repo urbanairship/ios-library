@@ -30,8 +30,14 @@ public struct MessageCenterView: View {
     /// Default constructor
     /// - Parameters:
     ///     - controller: Controls navigation within the view
-    public init(controller: MessageCenterController) {
-        self.controller = controller
+    public init(controller: MessageCenterController? = nil) {
+        self.controller = if let controller {
+            controller
+        } else if Airship.isFlying {
+            MessageCenter.shared.controller
+        } else {
+            MessageCenterController()
+        }
     }
 
     @ViewBuilder

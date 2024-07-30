@@ -27,9 +27,7 @@ struct AppView: View {
                 }
                 .tag(SampleTabs.home)
 
-            MessageCenterView(
-                controller: self.appState.messageCenterController
-            )
+            MessageCenterView()
             .messageCenterTheme(
                 try! MessageCenterTheme.fromPlist("SampleMessageCenterTheme")
             )
