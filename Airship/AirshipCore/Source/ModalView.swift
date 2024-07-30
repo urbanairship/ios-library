@@ -156,24 +156,33 @@ struct ModalView: View {
 
     @ViewBuilder
     private func modalBackground(_ placement: ModalPlacement) -> some View {
-        if placement.isFullScreen() && placement.ignoreSafeArea != true {
-            Rectangle()
-                .foregroundColor(statusBarShimColor())
-                .edgesIgnoringSafeArea(.all)
-
-        } else {
-            Rectangle()
-                .foreground(placement.shade)
-                .edgesIgnoringSafeArea(.all)
-                .applyIf(self.presentation.dismissOnTouchOutside == true) {
-                    view in
-                    // Add tap gesture outside of view to dismiss
-                    view.addTapGesture {
-                        self.thomasEnvironment.dismiss()
-                    }
+        GeometryReader { reader in
+            VStack(spacing: 0) {
+                if placement.isFullscreen, placement.ignoreSafeArea != true {
+                    statusBarShimColor()
+                        .frame(height: reader.safeAreaInsets.top)
                 }
+
+                Rectangle()
+                    .foreground(placement.shade)
+                    .edgesIgnoringSafeArea(.all)
+                    .applyIf(self.presentation.dismissOnTouchOutside == true) {
+                        view in
+                        // Add tap gesture outside of view to dismiss
+                        view.addTapGesture {
+                            self.thomasEnvironment.dismiss()
+                        }
+                    }
+
+                if placement.isFullscreen, placement.ignoreSafeArea != true {
+                    statusBarShimColor()
+                        .frame(height: reader.safeAreaInsets.bottom)
+                }
+            }
+            .edgesIgnoringSafeArea(.all)
         }
     }
+
 
     private func resolvePlacement(
         orientation: Orientation,
@@ -242,7 +251,7 @@ struct ModalView: View {
 
 
 extension ModalPlacement {
-    fileprivate func isFullScreen() -> Bool {
+    fileprivate var isFullscreen: Bool {
         if let horiztonalMargins = self.margin?.horiztonalMargins, horiztonalMargins > 0 {
             return false
         }
