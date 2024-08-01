@@ -73,7 +73,7 @@ final class AutomationEngineTest: XCTestCase {
             appVersion: "1.0.0"
         )
 
-        let analyticsFeed = AirshipAnalyticsFeed()
+        let analyticsFeed = AirshipAnalyticsFeed() { true }
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
         let eventFeed = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: AppStateTracker.shared, analyticsFeed: analyticsFeed)
         let analytics = TestAnalytics()
@@ -148,7 +148,7 @@ final class AutomationEngineTest: XCTestCase {
     }
 }
 
-actor TestAdditionalAudienceResolver:  AdditionalAudienceCheckerResolverProtocol {
+actor TestAdditionalAudienceResolver: AdditionalAudienceCheckerResolverProtocol {
     struct ResolveRequest {
         let channelID: String
         let contactID: String?

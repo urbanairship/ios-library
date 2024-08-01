@@ -10,7 +10,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
     private let date = UATestDate(offset: 0, dateOverride: Date())
     private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
     private var subject: AutomationEventFeed!
-    private let analyticsFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
+    private let analyticsFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed() { true }
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
 
     var iterator: AsyncStream<AutomationEvent>.Iterator!
@@ -23,8 +23,6 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
 
         iterator = await subject.feed.makeAsyncIterator()
     }
-    
-
     
     func testFirstAttachProducesInitAndVersionUpdated() async throws {
         await subject.attach()

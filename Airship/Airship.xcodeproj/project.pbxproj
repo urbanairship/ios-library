@@ -340,6 +340,7 @@
 		6E1767F729B923D100D65F60 /* ChannelAuthTokenAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1767F429B923D100D65F60 /* ChannelAuthTokenAPIClientTest.swift */; };
 		6E1767F829B923D100D65F60 /* TestChannelAuthTokenAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1767F529B923D100D65F60 /* TestChannelAuthTokenAPIClient.swift */; };
 		6E1767FA29B92F1700D65F60 /* AirshipUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1767F929B92F1700D65F60 /* AirshipUtilsTest.swift */; };
+		6E1802F92C5C2DEC00198D0D /* AirshipAnalyticFeedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1802F82C5C2DEC00198D0D /* AirshipAnalyticFeedTest.swift */; };
 		6E1892B1268CE8FE00417887 /* AirshipLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* AirshipLock.swift */; };
 		6E1892B2268CE8FE00417887 /* AirshipLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* AirshipLock.swift */; };
 		6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */; };
@@ -2172,6 +2173,7 @@
 		6E1767F429B923D100D65F60 /* ChannelAuthTokenAPIClientTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelAuthTokenAPIClientTest.swift; sourceTree = "<group>"; };
 		6E1767F529B923D100D65F60 /* TestChannelAuthTokenAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestChannelAuthTokenAPIClient.swift; sourceTree = "<group>"; };
 		6E1767F929B92F1700D65F60 /* AirshipUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipUtilsTest.swift; sourceTree = "<group>"; };
+		6E1802F82C5C2DEC00198D0D /* AirshipAnalyticFeedTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAnalyticFeedTest.swift; sourceTree = "<group>"; };
 		6E1892C7268D15C300417887 /* PreferenceCenterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTest.swift; sourceTree = "<group>"; };
 		6E1892C9268D16E200417887 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E1892D0268E26A100417887 /* MockPreferenceCenterOpenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPreferenceCenterOpenDelegate.swift; sourceTree = "<group>"; };
@@ -5053,6 +5055,7 @@
 				6E96ED1329417A600053CC91 /* EventStoreTest.swift */,
 				6E96ED192941A0EC0053CC91 /* EventTestUtils.swift */,
 				6E4326042B7C361F00A9B000 /* AssociatedIdentifiersTest.swift */,
+				6E1802F82C5C2DEC00198D0D /* AirshipAnalyticFeedTest.swift */,
 			);
 			name = Analytics;
 			sourceTree = "<group>";
@@ -7160,6 +7163,7 @@
 				6E4325D32B7AD96800A9B000 /* AirshipTest.swift in Sources */,
 				6068E0342B2B7CA100349E82 /* RetailEventTemplateTest.swift in Sources */,
 				6087DB882B278F7600449BA8 /* JsonValueMatcherTest.swift in Sources */,
+				6E1802F92C5C2DEC00198D0D /* AirshipAnalyticFeedTest.swift in Sources */,
 				6E4325C52B7AC3F700A9B000 /* TestPush.swift in Sources */,
 				6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */,
 				32C68D0529424449006BBB29 /* RemoteDataTest.swift in Sources */,

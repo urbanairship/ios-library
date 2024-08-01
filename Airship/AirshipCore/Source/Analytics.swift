@@ -59,7 +59,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         eventSubject.eraseToAnyPublisher()
     }
 
-    public let eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
+    public let eventFeed: AirshipAnalyticsFeed
 
     private var isAnalyticsEnabled: Bool {
         return self.privacyManager.isEnabled(.analytics) &&
@@ -114,6 +114,10 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         self.permissionsManager = permissionsManager
         self.eventManager = eventManager
         self.sessionTracker = sessionTracker ?? SessionTracker()
+        self.eventFeed = AirshipAnalyticsFeed(
+            privacyManager: privacyManager,
+            isAnalyticsEnabled: config.isAnalyticsEnabled
+        )
 
         self.eventManager.addHeaderProvider {
             await self.makeHeaders()

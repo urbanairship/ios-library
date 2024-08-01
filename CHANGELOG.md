@@ -1,6 +1,14 @@
 
 # iOS Changelog
 
+## Version 18.7.1 August 1, 2024
+Patch release that prevents In-App Automation, Scenes, and Surveys from being able to trigger off custom events or screen views
+when analytics is disabled. The actual event was not being tracked by Airship in these cases, just processed locally.
+
+### Changes
+- Prevent screen view and custom events from being processed by automations when analytics is disabled.
+
+
 ## Version 18.7.0 July 30, 2024
 Minor release that fixes some layout issues with images and videos in a Scene, accessibility improvements, and fixes a potential crash with JSON encoding/decoding due 
 to using a JSONEncoder/JSONDecoder across threads.
