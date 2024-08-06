@@ -1,34 +1,65 @@
 /* Copyright Airship and Contributors */
 
-/// A MediaEventTemplate represents a custom media event template for the
-/// application.
-@objc(UAMediaEventTemplate)
-public class MediaEventTemplate: NSObject {
+import Foundation
+import AirshipCore
+
+/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
+@objc(OUAMediaEventTemplate)
+public class OUAMediaEventTemplate: NSObject {
+    
+    private var template: MediaEventTemplate
+    
     /**
      * The event's ID.
      */
     @objc
-    public var identifier: String?
+    public var identifier: String? {
+        get {
+           return template.identifier
+        }
+        set {
+            template.identifier = newValue
+        }
+    }
 
     /**
      * The event's category.
      */
     @objc
-    public var category: String?
+    public var category: String? {
+        get {
+           return template.category
+        }
+        set {
+            template.category = newValue
+        }
+    }
 
     /**
      * The event's type.
      */
     @objc
-    public var type: String?
+    public var type: String? {
+        get {
+           return template.type
+        }
+        set {
+            template.type = newValue
+        }
+    }
 
     /**
      * The event's description.
      */
     @objc
-    public var eventDescription: String?
-
-    private var _isFeature: Bool?
+    public var eventDescription: String? {
+        get {
+           return template.eventDescription
+        }
+        set {
+            template.eventDescription = newValue
+        }
+    }
 
     /**
      * `YES` if the event is a feature, else `NO`.
@@ -36,10 +67,10 @@ public class MediaEventTemplate: NSObject {
     @objc
     public var isFeature: Bool {
         get {
-            return self._isFeature ?? false
+            return template.isFeature
         }
         set {
-            self._isFeature = newValue
+            template.isFeature = newValue
         }
     }
 
@@ -48,27 +79,42 @@ public class MediaEventTemplate: NSObject {
      * or it will invalidate the event.
      */
     @objc
-    public var author: String?
+    public var author: String? {
+        get {
+           return template.author
+        }
+        set {
+            template.author = newValue
+        }
+    }
 
     /**
      * The event's publishedDate. The publishedDate's length must not exceed 255 characters
      * or it will invalidate the event.
      */
     @objc
-    public var publishedDate: String?
-
-    private let eventName: String
-    private let medium: String?
-    private let source: String?
-    private let eventValue: NSNumber?
+    public var publishedDate: String? {
+        get {
+           return template.publishedDate
+        }
+        set {
+            template.publishedDate = newValue
+        }
+    }
+    
+    @objc
+    public init(template: MediaEventTemplate) {
+        self.template = template
+    }
 
     /**
      * Factory method for creating a browsed content event template.
      * - Returns: A Media event template instance
      */
     @objc
-    public class func browsedTemplate() -> MediaEventTemplate {
-        return MediaEventTemplate("browsed_content")
+    public class func browsedTemplate() -> OUAMediaEventTemplate {
+        let template = MediaEventTemplate("browsed_content")
+        return OUAMediaEventTemplate(template: template)
     }
 
     /**
@@ -76,9 +122,9 @@ public class MediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func starredTemplate() -> MediaEventTemplate {
-        return MediaEventTemplate("starred_content")
-
+    public class func starredTemplate() -> OUAMediaEventTemplate {
+        let template = MediaEventTemplate("starred_content")
+        return OUAMediaEventTemplate(template: template)
     }
 
     /**
@@ -86,7 +132,7 @@ public class MediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func sharedTemplate() -> MediaEventTemplate {
+    public class func sharedTemplate() -> OUAMediaEventTemplate {
         return sharedTemplate(source: nil, medium: nil)
     }
 
@@ -100,14 +146,15 @@ public class MediaEventTemplate: NSObject {
      */
     @objc(sharedTemplateWithSource:withMedium:)
     public class func sharedTemplate(source: String?, medium: String?)
-        -> MediaEventTemplate
+        -> OUAMediaEventTemplate
     {
-        return MediaEventTemplate(
+        let template = MediaEventTemplate(
             "shared_content",
             value: nil,
             source: source,
             medium: medium
         )
+        return OUAMediaEventTemplate(template: template)
     }
 
     /**
@@ -115,7 +162,7 @@ public class MediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func consumedTemplate() -> MediaEventTemplate {
+    public class func consumedTemplate() -> OUAMediaEventTemplate {
         return consumedTemplate(value: nil)
     }
 
@@ -128,7 +175,7 @@ public class MediaEventTemplate: NSObject {
      */
     @objc(consumedTemplateWithValueFromString:)
     public class func consumedTemplate(valueString: String?)
-        -> MediaEventTemplate
+        -> OUAMediaEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -143,21 +190,9 @@ public class MediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc(consumedTemplateWithValue:)
-    public class func consumedTemplate(value: NSNumber?) -> MediaEventTemplate {
-        return MediaEventTemplate("consumed_content", value: value)
-    }
-
-    public init(
-        _ eventName: String,
-        value: NSNumber? = nil,
-        source: String? = nil,
-        medium: String? = nil
-    ) {
-        self.eventName = eventName
-        self.eventValue = value
-        self.source = source
-        self.medium = medium
-        super.init()
+    public class func consumedTemplate(value: NSNumber?) -> OUAMediaEventTemplate {
+        let template = MediaEventTemplate("consumed_content", value: value)
+        return OUAMediaEventTemplate(template: template)
     }
 
     /**
@@ -165,22 +200,6 @@ public class MediaEventTemplate: NSObject {
      */
     @objc
     public func createEvent() -> CustomEvent {
-        var propertyDictionary: [String: Any] = [:]
-        propertyDictionary["ltv"] = self.eventValue != nil
-        propertyDictionary["id"] = self.identifier
-        propertyDictionary["category"] = self.category
-        propertyDictionary["type"] = self.type
-        propertyDictionary["feature"] = self.isFeature
-        propertyDictionary["published_date"] = self.publishedDate
-        propertyDictionary["source"] = self.source
-        propertyDictionary["medium"] = self.medium
-        propertyDictionary["description"] = self.eventDescription
-        propertyDictionary["author"] = self.author
-
-        let event = CustomEvent(name: self.eventName)
-        event.templateType = "media"
-        event.eventValue = self.eventValue
-        event.properties = propertyDictionary
-        return event
+        return self.template.createEvent()
     }
 }

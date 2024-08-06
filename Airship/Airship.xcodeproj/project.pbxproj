@@ -1375,12 +1375,18 @@
 		A62C3354299FD509004DB0DA /* ShareActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62C3353299FD509004DB0DA /* ShareActionTest.swift */; };
 		A63A567628F449D8004B8951 /* TestWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567528F449D8004B8951 /* TestWorkManager.swift */; };
 		A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */; };
+		A641E14A2BDBBDB400DE6FAA /* AirshipWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A641E1492BDBBDB400DE6FAA /* AirshipWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A641E1662BE1247700DE6FAA /* OUAAirshipConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A641E1652BE1247700DE6FAA /* OUAAirshipConfig.swift */; };
 		A658DE0C2727020200007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
 		A658DE1227280B3400007672 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE0A2727020100007672 /* ImageButton.swift */; };
 		A658DE192728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE1A2728498900007672 /* AirshipWebview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE182728498900007672 /* AirshipWebview.swift */; };
 		A658DE2B272AFB0400007672 /* AirshipImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */; };
 		A658DE2C272AFB0400007672 /* AirshipImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */; };
+		A65BEF2C2BEE5BE500F6C5D7 /* OUAAirship.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65BEF2B2BEE5BE500F6C5D7 /* OUAAirship.swift */; };
+		A65BEF322BF658C300F6C5D7 /* OUAPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65BEF312BF658C300F6C5D7 /* OUAPush.swift */; };
+		A65BEF7C2BF7A01500F6C5D7 /* OUARegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65BEF7B2BF7A01500F6C5D7 /* OUARegistrationDelegate.swift */; };
+		A65BEF7E2BF7A02A00F6C5D7 /* OUAPushNotificationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65BEF7D2BF7A02A00F6C5D7 /* OUAPushNotificationDelegate.swift */; };
 		A67229BA28199D500033F54D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A67229B928199D430033F54D /* libz.tbd */; };
 		A67229BC28199D610033F54D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A67229BB28199D590033F54D /* libsqlite3.tbd */; };
 		A67229BE28199D6A0033F54D /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A67229BD28199D6A0033F54D /* Network.framework */; };
@@ -1614,6 +1620,8 @@
 		A68C74A6285CB09100EEA2F4 /* Badger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7B028401D2E00C7BB9D /* Badger.swift */; };
 		A68C74A7285CB0E900EEA2F4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7A928401D2D00C7BB9D /* Atomic.swift */; };
 		A68C74A8285CB0FF00EEA2F4 /* RegistrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E49D7AC28401D2D00C7BB9D /* RegistrationDelegate.swift */; };
+		A692023B2C10AC08007197EF /* OUAAppIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A692023A2C10AC08007197EF /* OUAAppIntegration.swift */; };
+		A69202402C133DBA007197EF /* OUAPreferenceCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A692023F2C133DBA007197EF /* OUAPreferenceCenter.swift */; };
 		A69C987F27E247B20063A101 /* SubscriptionListAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A69C987E27E247B20063A101 /* SubscriptionListAction.swift */; };
 		A6A5530A26D548AF002B20F6 /* NativeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530926D548AF002B20F6 /* NativeBridge.swift */; };
 		A6A5530B26D548AF002B20F6 /* NativeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A5530926D548AF002B20F6 /* NativeBridge.swift */; };
@@ -1638,6 +1646,28 @@
 		A6D6D4A62A02BB200072A5CA /* ActionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D49E2A02608C0072A5CA /* ActionResult.swift */; };
 		A6D6D4A72A02BB200072A5CA /* ActionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D49E2A02608C0072A5CA /* ActionResult.swift */; };
 		A6F0B1912B83CD9B002D10A4 /* AutomationEngineTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */; };
+		A6F0D11A2BFBA85400F9EA2D /* OUAChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D1192BFBA85400F9EA2D /* OUAChannel.swift */; };
+		A6F0D11C2BFBA91F00F9EA2D /* OUATagEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D11B2BFBA91F00F9EA2D /* OUATagEditor.swift */; };
+		A6F0D1212BFBA9C000F9EA2D /* OUASubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D1202BFBA9C000F9EA2D /* OUASubscriptionListEditor.swift */; };
+		A6F0D1232BFDF4B700F9EA2D /* OUATagGroupsEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D1222BFDF4B700F9EA2D /* OUATagGroupsEditor.swift */; };
+		A6F0D1252BFDF5DF00F9EA2D /* OUAAttributesEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D1242BFDF5DF00F9EA2D /* OUAAttributesEditor.swift */; };
+		A6F0D12C2C00EF5200F9EA2D /* OUAAirshipContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D12B2C00EF5200F9EA2D /* OUAAirshipContact.swift */; };
+		A6F0D12E2C00F02400F9EA2D /* OUAScopedSubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D12D2C00F02400F9EA2D /* OUAScopedSubscriptionListEditor.swift */; };
+		A6F0D1312C0612A700F9EA2D /* OUAMessageCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D1302C0612A700F9EA2D /* OUAMessageCenter.swift */; };
+		A6F0D1332C0612B500F9EA2D /* OUAMessageCenterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0D1322C0612B500F9EA2D /* OUAMessageCenterList.swift */; };
+		A6F507662C3543AE00F679BC /* OUAAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507652C3543AE00F679BC /* OUAAnalytics.swift */; };
+		A6F507692C35446800F679BC /* OUACustomEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507682C35446800F679BC /* OUACustomEvent.swift */; };
+		A6F5076B2C35447400F679BC /* OUARegionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5076A2C35447400F679BC /* OUARegionEvent.swift */; };
+		A6F5076E2C35449200F679BC /* OUAMediaEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5076D2C35449200F679BC /* OUAMediaEventTemplate.swift */; };
+		A6F507702C3544A300F679BC /* OUAAccountEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5076F2C3544A300F679BC /* OUAAccountEventTemplate.swift */; };
+		A6F507722C3544B900F679BC /* OUASearchEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507712C3544B900F679BC /* OUASearchEventTemplate.swift */; };
+		A6F507742C3544C800F679BC /* OUARetailEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507732C3544C800F679BC /* OUARetailEventTemplate.swift */; };
+		A6F507952C466FBD00F679BC /* OUADeepLinkDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507942C466FBD00F679BC /* OUADeepLinkDelegate.swift */; };
+		A6F507842C3E6F8700F679BC /* OUAPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507832C3E6F8700F679BC /* OUAPrivacyManager.swift */; };
+		A6F507872C401F5300F679BC /* OUANativeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507862C401F5300F679BC /* OUANativeBridge.swift */; };
+		A6F507892C401F6400F679BC /* OUANativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507882C401F6400F679BC /* OUANativeBridgeDelegate.swift */; };
+		A6F5078F2C401FB300F679BC /* OUAJavaScriptCommandDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5078E2C401FB300F679BC /* OUAJavaScriptCommandDelegate.swift */; };
+		A6F507912C401FC900F679BC /* OUANativeBridgeExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507902C401FC900F679BC /* OUANativeBridgeExtensionDelegate.swift */; };
 		A6F6726126E1162F008C69C3 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		A6F6726226E11633008C69C3 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		A6F6726326E11637008C69C3 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -1919,6 +1949,41 @@
 			proxyType = 1;
 			remoteGlobalIDString = A62058682A5841330041FBF9;
 			remoteInfo = AirshipFeatureFlags;
+		};
+		A641E1562BDBF5FF00DE6FAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
+			remoteInfo = AirshipAutomation;
+		};
+		A641E1582BDBF5FF00DE6FAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		A641E15A2BDBF5FF00DE6FAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A62058682A5841330041FBF9;
+			remoteInfo = AirshipFeatureFlags;
+		};
+		A641E15C2BDBF5FF00DE6FAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
+			remoteInfo = AirshipMessageCenter;
+		};
+		A641E15E2BDBF5FF00DE6FAA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 847BFFF3267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
 		};
 		A6DF51ED2876EBAD00A42433 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2848,10 +2913,17 @@
 		A62C3353299FD509004DB0DA /* ShareActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareActionTest.swift; sourceTree = "<group>"; };
 		A63A567528F449D8004B8951 /* TestWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkManager.swift; sourceTree = "<group>"; };
 		A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkRateLimiterActor.swift; sourceTree = "<group>"; };
+		A641E1472BDBBDB400DE6FAA /* AirshipWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A641E1492BDBBDB400DE6FAA /* AirshipWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipWrapper.h; sourceTree = "<group>"; };
+		A641E1652BE1247700DE6FAA /* OUAAirshipConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAAirshipConfig.swift; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
 		A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageLoader.swift; sourceTree = "<group>"; };
+		A65BEF2B2BEE5BE500F6C5D7 /* OUAAirship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAAirship.swift; sourceTree = "<group>"; };
+		A65BEF312BF658C300F6C5D7 /* OUAPush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OUAPush.swift; sourceTree = "<group>"; };
+		A65BEF7B2BF7A01500F6C5D7 /* OUARegistrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUARegistrationDelegate.swift; sourceTree = "<group>"; };
+		A65BEF7D2BF7A02A00F6C5D7 /* OUAPushNotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPushNotificationDelegate.swift; sourceTree = "<group>"; };
 		A67229B228199CEF0033F54D /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A67229B928199D430033F54D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		A67229BB28199D590033F54D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
@@ -2862,6 +2934,8 @@
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A6849386273290520021675E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
 		A684939C273436370021675E /* FontViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontViewModifier.swift; sourceTree = "<group>"; };
+		A692023A2C10AC08007197EF /* OUAAppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAAppIntegration.swift; sourceTree = "<group>"; };
+		A692023F2C133DBA007197EF /* OUAPreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPreferenceCenter.swift; sourceTree = "<group>"; };
 		A69C987E27E247B20063A101 /* SubscriptionListAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListAction.swift; sourceTree = "<group>"; };
 		A6A5530926D548AF002B20F6 /* NativeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridge.swift; sourceTree = "<group>"; };
 		A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEnvironment.swift; sourceTree = "<group>"; };
@@ -2874,6 +2948,28 @@
 		A6D6D49C2A0260780072A5CA /* AirshipAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAction.swift; sourceTree = "<group>"; };
 		A6D6D49E2A02608C0072A5CA /* ActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionResult.swift; sourceTree = "<group>"; };
 		A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngineTest.swift; sourceTree = "<group>"; };
+		A6F0D1192BFBA85400F9EA2D /* OUAChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAChannel.swift; sourceTree = "<group>"; };
+		A6F0D11B2BFBA91F00F9EA2D /* OUATagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUATagEditor.swift; sourceTree = "<group>"; };
+		A6F0D1202BFBA9C000F9EA2D /* OUASubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUASubscriptionListEditor.swift; sourceTree = "<group>"; };
+		A6F0D1222BFDF4B700F9EA2D /* OUATagGroupsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUATagGroupsEditor.swift; sourceTree = "<group>"; };
+		A6F0D1242BFDF5DF00F9EA2D /* OUAAttributesEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAAttributesEditor.swift; sourceTree = "<group>"; };
+		A6F0D12B2C00EF5200F9EA2D /* OUAAirshipContact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OUAAirshipContact.swift; sourceTree = "<group>"; };
+		A6F0D12D2C00F02400F9EA2D /* OUAScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
+		A6F0D1302C0612A700F9EA2D /* OUAMessageCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAMessageCenter.swift; sourceTree = "<group>"; };
+		A6F0D1322C0612B500F9EA2D /* OUAMessageCenterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAMessageCenterList.swift; sourceTree = "<group>"; };
+		A6F507652C3543AE00F679BC /* OUAAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAAnalytics.swift; sourceTree = "<group>"; };
+		A6F507682C35446800F679BC /* OUACustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUACustomEvent.swift; sourceTree = "<group>"; };
+		A6F5076A2C35447400F679BC /* OUARegionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUARegionEvent.swift; sourceTree = "<group>"; };
+		A6F5076D2C35449200F679BC /* OUAMediaEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAMediaEventTemplate.swift; sourceTree = "<group>"; };
+		A6F5076F2C3544A300F679BC /* OUAAccountEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAAccountEventTemplate.swift; sourceTree = "<group>"; };
+		A6F507712C3544B900F679BC /* OUASearchEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUASearchEventTemplate.swift; sourceTree = "<group>"; };
+		A6F507732C3544C800F679BC /* OUARetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUARetailEventTemplate.swift; sourceTree = "<group>"; };
+		A6F507942C466FBD00F679BC /* OUADeepLinkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUADeepLinkDelegate.swift; sourceTree = "<group>"; };
+		A6F507832C3E6F8700F679BC /* OUAPrivacyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPrivacyManager.swift; sourceTree = "<group>"; };
+		A6F507862C401F5300F679BC /* OUANativeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUANativeBridge.swift; sourceTree = "<group>"; };
+		A6F507882C401F6400F679BC /* OUANativeBridgeDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUANativeBridgeDelegate.swift; sourceTree = "<group>"; };
+		A6F5078E2C401FB300F679BC /* OUAJavaScriptCommandDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAJavaScriptCommandDelegate.swift; sourceTree = "<group>"; };
+		A6F507902C401FC900F679BC /* OUANativeBridgeExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUANativeBridgeExtensionDelegate.swift; sourceTree = "<group>"; };
 		BD8C10762865F92200358622 /* CreateSMSChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSMSChannelView.swift; sourceTree = "<group>"; };
 		BD8C10772865F92200358622 /* AddChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelView.swift; sourceTree = "<group>"; };
 		BD8C107D2865F92200358622 /* CreateEmailChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEmailChannelView.swift; sourceTree = "<group>"; };
@@ -3003,6 +3099,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A62058712A5841330041FBF9 /* AirshipFeatureFlags.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A641E1442BDBBDB400DE6FAA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3304,6 +3407,7 @@
 				6E5C32B627C9A2C9005B2DDE /* AirshipRelease */,
 				6E5C32D427C9A54A005B2DDE /* AirshipRelease tvOS */,
 				A620586A2A5841330041FBF9 /* AirshipFeatureFlags */,
+				A641E1482BDBBDB400DE6FAA /* AirshipWrapper */,
 				E3E85E514DBE69D4C8BF51CE /* Frameworks */,
 				1B8DCF452507B9380006E595 /* Recovered References */,
 			);
@@ -3328,6 +3432,7 @@
 				6E0B8731294A9C130064B7BD /* AirshipAutomationTests.xctest */,
 				A62058692A5841330041FBF9 /* AirshipFeatureFlags.framework */,
 				A62058702A5841330041FBF9 /* AirshipFeatureFlagsTests.xctest */,
+				A641E1472BDBBDB400DE6FAA /* AirshipWrapper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4908,6 +5013,45 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		A641E1482BDBBDB400DE6FAA /* AirshipWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				A6F507642C35438700F679BC /* Analytics */,
+				A6F507822C3E6F7200F679BC /* PrivacyManager */,
+				A6F507852C401E6800F679BC /* NativeBridge */,
+				A65BEF782BF79FEC00F6C5D7 /* Push */,
+				A641E1492BDBBDB400DE6FAA /* AirshipWrapper.h */,
+				A6F0D12F2C06129400F9EA2D /* MessageCenter */,
+				A692023E2C133D9E007197EF /* PreferenceCenter */,
+				A641E1652BE1247700DE6FAA /* OUAAirshipConfig.swift */,
+				A65BEF2B2BEE5BE500F6C5D7 /* OUAAirship.swift */,
+				A692023A2C10AC08007197EF /* OUAAppIntegration.swift */,
+				A6F0D12A2C00EF2B00F9EA2D /* Contact */,
+				A6F0D11F2BFBA98A00F9EA2D /* Subscription Lists */,
+				A6F0D1182BFBA80100F9EA2D /* Channel */,
+				A6F507942C466FBD00F679BC /* OUADeepLinkDelegate.swift */,
+			);
+			path = AirshipWrapper;
+			sourceTree = "<group>";
+		};
+		A65BEF782BF79FEC00F6C5D7 /* Push */ = {
+			isa = PBXGroup;
+			children = (
+				A65BEF312BF658C300F6C5D7 /* OUAPush.swift */,
+				A65BEF7B2BF7A01500F6C5D7 /* OUARegistrationDelegate.swift */,
+				A65BEF7D2BF7A02A00F6C5D7 /* OUAPushNotificationDelegate.swift */,
+			);
+			path = Push;
+			sourceTree = "<group>";
+		};
+		A692023E2C133D9E007197EF /* PreferenceCenter */ = {
+			isa = PBXGroup;
+			children = (
+				A692023F2C133DBA007197EF /* OUAPreferenceCenter.swift */,
+			);
+			path = PreferenceCenter;
+			sourceTree = "<group>";
+		};
 		A6CDD8CE269491850040A673 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
@@ -4925,6 +5069,92 @@
 				6E6363E729DCEB84009C358A /* ContactManagerTest.swift */,
 			);
 			name = Contacts;
+			sourceTree = "<group>";
+		};
+		A6F0D1182BFBA80100F9EA2D /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				A6F0D1192BFBA85400F9EA2D /* OUAChannel.swift */,
+				A6F0D11B2BFBA91F00F9EA2D /* OUATagEditor.swift */,
+				A6F0D1222BFDF4B700F9EA2D /* OUATagGroupsEditor.swift */,
+				A6F0D1242BFDF5DF00F9EA2D /* OUAAttributesEditor.swift */,
+			);
+			path = Channel;
+			sourceTree = "<group>";
+		};
+		A6F0D11F2BFBA98A00F9EA2D /* Subscription Lists */ = {
+			isa = PBXGroup;
+			children = (
+				A6F0D1202BFBA9C000F9EA2D /* OUASubscriptionListEditor.swift */,
+				A6F0D12D2C00F02400F9EA2D /* OUAScopedSubscriptionListEditor.swift */,
+			);
+			path = "Subscription Lists";
+			sourceTree = "<group>";
+		};
+		A6F0D12A2C00EF2B00F9EA2D /* Contact */ = {
+			isa = PBXGroup;
+			children = (
+				A6F0D12B2C00EF5200F9EA2D /* OUAAirshipContact.swift */,
+			);
+			path = Contact;
+			sourceTree = "<group>";
+		};
+		A6F0D12F2C06129400F9EA2D /* MessageCenter */ = {
+			isa = PBXGroup;
+			children = (
+				A6F0D1302C0612A700F9EA2D /* OUAMessageCenter.swift */,
+				A6F0D1322C0612B500F9EA2D /* OUAMessageCenterList.swift */,
+			);
+			path = MessageCenter;
+			sourceTree = "<group>";
+		};
+		A6F507642C35438700F679BC /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				A6F507672C35445700F679BC /* Events */,
+				A6F507652C3543AE00F679BC /* OUAAnalytics.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		A6F507672C35445700F679BC /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				A6F5076C2C35448100F679BC /* Templates */,
+				A6F507682C35446800F679BC /* OUACustomEvent.swift */,
+				A6F5076A2C35447400F679BC /* OUARegionEvent.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		A6F5076C2C35448100F679BC /* Templates */ = {
+			isa = PBXGroup;
+			children = (
+				A6F5076D2C35449200F679BC /* OUAMediaEventTemplate.swift */,
+				A6F5076F2C3544A300F679BC /* OUAAccountEventTemplate.swift */,
+				A6F507712C3544B900F679BC /* OUASearchEventTemplate.swift */,
+				A6F507732C3544C800F679BC /* OUARetailEventTemplate.swift */,
+			);
+			path = Templates;
+            sourceTree = "<group>";
+        };
+		A6F507822C3E6F7200F679BC /* PrivacyManager */ = {
+			isa = PBXGroup;
+			children = (
+				A6F507832C3E6F8700F679BC /* OUAPrivacyManager.swift */,
+			);
+			path = PrivacyManager;
+            sourceTree = "<group>";
+        };
+		A6F507852C401E6800F679BC /* NativeBridge */ = {
+			isa = PBXGroup;
+			children = (
+				A6F507862C401F5300F679BC /* OUANativeBridge.swift */,
+				A6F507882C401F6400F679BC /* OUANativeBridgeDelegate.swift */,
+				A6F5078E2C401FB300F679BC /* OUAJavaScriptCommandDelegate.swift */,
+				A6F507902C401FC900F679BC /* OUANativeBridgeExtensionDelegate.swift */,
+			);
+			path = NativeBridge;
 			sourceTree = "<group>";
 		};
 		BD8C10742865F92200358622 /* Contact */ = {
@@ -5320,6 +5550,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A641E1422BDBBDB400DE6FAA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A641E14A2BDBBDB400DE6FAA /* AirshipWrapper.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A67229AD28199CEF0033F54D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -5587,6 +5825,29 @@
 			productReference = A62058702A5841330041FBF9 /* AirshipFeatureFlagsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A641E1462BDBBDB400DE6FAA /* AirshipWrapper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A641E14D2BDBBDB400DE6FAA /* Build configuration list for PBXNativeTarget "AirshipWrapper" */;
+			buildPhases = (
+				A641E1422BDBBDB400DE6FAA /* Headers */,
+				A641E1432BDBBDB400DE6FAA /* Sources */,
+				A641E1442BDBBDB400DE6FAA /* Frameworks */,
+				A641E1452BDBBDB400DE6FAA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A641E1572BDBF5FF00DE6FAA /* PBXTargetDependency */,
+				A641E1592BDBF5FF00DE6FAA /* PBXTargetDependency */,
+				A641E15B2BDBF5FF00DE6FAA /* PBXTargetDependency */,
+				A641E15D2BDBF5FF00DE6FAA /* PBXTargetDependency */,
+				A641E15F2BDBF5FF00DE6FAA /* PBXTargetDependency */,
+			);
+			name = AirshipWrapper;
+			productName = AirshipWrapper;
+			productReference = A641E1472BDBBDB400DE6FAA /* AirshipWrapper.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		A67229B128199CEF0033F54D /* AirshipCore watchOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A67229B628199CEF0033F54D /* Build configuration list for PBXNativeTarget "AirshipCore watchOS" */;
@@ -5718,6 +5979,10 @@
 					A620586F2A5841330041FBF9 = {
 						CreatedOnToolsVersion = 14.1;
 					};
+					A641E1462BDBBDB400DE6FAA = {
+						CreatedOnToolsVersion = 15.3;
+						LastSwiftMigration = 1530;
+					};
 					A67229B128199CEF0033F54D = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
@@ -5817,6 +6082,7 @@
 				A62058682A5841330041FBF9 /* AirshipFeatureFlags */,
 				A620586F2A5841330041FBF9 /* AirshipFeatureFlagsTests */,
 				32F678A22B750B2E003A2999 /* AirshipRelease visionOS */,
+				A641E1462BDBBDB400DE6FAA /* AirshipWrapper */,
 			);
 		};
 /* End PBXProject section */
@@ -5924,6 +6190,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A620586E2A5841330041FBF9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A641E1452BDBBDB400DE6FAA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -6799,6 +7072,42 @@
 				6E2F5AB22A67589400CABD3D /* TestDate.swift in Sources */,
 				6E2F5AB82A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */,
 				6E2F5AB32A6758ED00CABD3D /* TestNetworkMonitor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A641E1432BDBBDB400DE6FAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A6F507952C466FBD00F679BC /* OUADeepLinkDelegate.swift in Sources */,
+				A6F507892C401F6400F679BC /* OUANativeBridgeDelegate.swift in Sources */,
+				A692023B2C10AC08007197EF /* OUAAppIntegration.swift in Sources */,
+				A6F507842C3E6F8700F679BC /* OUAPrivacyManager.swift in Sources */,
+				A65BEF322BF658C300F6C5D7 /* OUAPush.swift in Sources */,
+				A65BEF7C2BF7A01500F6C5D7 /* OUARegistrationDelegate.swift in Sources */,
+				A6F5076B2C35447400F679BC /* OUARegionEvent.swift in Sources */,
+				A6F507692C35446800F679BC /* OUACustomEvent.swift in Sources */,
+				A6F5076E2C35449200F679BC /* OUAMediaEventTemplate.swift in Sources */,
+				A6F0D1332C0612B500F9EA2D /* OUAMessageCenterList.swift in Sources */,
+				A65BEF2C2BEE5BE500F6C5D7 /* OUAAirship.swift in Sources */,
+				A6F507742C3544C800F679BC /* OUARetailEventTemplate.swift in Sources */,
+				A6F0D12E2C00F02400F9EA2D /* OUAScopedSubscriptionListEditor.swift in Sources */,
+				A6F0D1252BFDF5DF00F9EA2D /* OUAAttributesEditor.swift in Sources */,
+				A6F0D11C2BFBA91F00F9EA2D /* OUATagEditor.swift in Sources */,
+				A6F0D12C2C00EF5200F9EA2D /* OUAAirshipContact.swift in Sources */,
+				A6F507722C3544B900F679BC /* OUASearchEventTemplate.swift in Sources */,
+				A6F0D1212BFBA9C000F9EA2D /* OUASubscriptionListEditor.swift in Sources */,
+				A6F0D1232BFDF4B700F9EA2D /* OUATagGroupsEditor.swift in Sources */,
+				A6F5078F2C401FB300F679BC /* OUAJavaScriptCommandDelegate.swift in Sources */,
+				A69202402C133DBA007197EF /* OUAPreferenceCenter.swift in Sources */,
+				A641E1662BE1247700DE6FAA /* OUAAirshipConfig.swift in Sources */,
+				A6F507702C3544A300F679BC /* OUAAccountEventTemplate.swift in Sources */,
+				A6F507872C401F5300F679BC /* OUANativeBridge.swift in Sources */,
+				A6F507912C401FC900F679BC /* OUANativeBridgeExtensionDelegate.swift in Sources */,
+				A6F0D11A2BFBA85400F9EA2D /* OUAChannel.swift in Sources */,
+				A6F507662C3543AE00F679BC /* OUAAnalytics.swift in Sources */,
+				A65BEF7E2BF7A02A00F6C5D7 /* OUAPushNotificationDelegate.swift in Sources */,
+				A6F0D1312C0612A700F9EA2D /* OUAMessageCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7817,6 +8126,31 @@
 			isa = PBXTargetDependency;
 			target = A62058682A5841330041FBF9 /* AirshipFeatureFlags */;
 			targetProxy = A62058722A5841330041FBF9 /* PBXContainerItemProxy */;
+		};
+		A641E1572BDBF5FF00DE6FAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E0B8729294A9C120064B7BD /* AirshipAutomation */;
+			targetProxy = A641E1562BDBF5FF00DE6FAA /* PBXContainerItemProxy */;
+		};
+		A641E1592BDBF5FF00DE6FAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = A641E1582BDBF5FF00DE6FAA /* PBXContainerItemProxy */;
+		};
+		A641E15B2BDBF5FF00DE6FAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A62058682A5841330041FBF9 /* AirshipFeatureFlags */;
+			targetProxy = A641E15A2BDBF5FF00DE6FAA /* PBXContainerItemProxy */;
+		};
+		A641E15D2BDBF5FF00DE6FAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
+			targetProxy = A641E15C2BDBF5FF00DE6FAA /* PBXContainerItemProxy */;
+		};
+		A641E15F2BDBF5FF00DE6FAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */;
+			targetProxy = A641E15E2BDBF5FF00DE6FAA /* PBXContainerItemProxy */;
 		};
 		A6DF51EE2876EBAD00A42433 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8911,6 +9245,115 @@
 			};
 			name = Release;
 		};
+		A641E14B2BDBBDB400DE6FAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Urban Airship. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.--PRODUCT-NAME-rfc1034identifier-";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.urbanairship.AirshipWrapper;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.urbanairship.AirshipWrapper;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=xros*]" = com.urbanairship.AirshipWrapper;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+			};
+			name = Debug;
+		};
+		A641E14C2BDBBDB400DE6FAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Urban Airship. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.--PRODUCT-NAME-rfc1034identifier-";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.urbanairship.AirshipWrapper;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = com.urbanairship.AirshipWrapper;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=xros*]" = com.urbanairship.AirshipWrapper;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+			};
+			name = Release;
+		};
 		A67229B728199CEF0033F54D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9363,6 +9806,15 @@
 			buildConfigurations = (
 				A620587A2A5841340041FBF9 /* Debug */,
 				A620587B2A5841340041FBF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A641E14D2BDBBDB400DE6FAA /* Build configuration list for PBXNativeTarget "AirshipWrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A641E14B2BDBBDB400DE6FAA /* Debug */,
+				A641E14C2BDBBDB400DE6FAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

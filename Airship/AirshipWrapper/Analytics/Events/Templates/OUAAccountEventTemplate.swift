@@ -1,48 +1,80 @@
 /* Copyright Airship and Contributors */
 
-/// AccountEventTemplate represents a custom account event template for the
-/// application.
-@objc(UAAccountEventTemplate)
-public class AccountEventTemplate: NSObject {
+import Foundation
+import AirshipCore
 
-    private let eventName: String
-
-    /**
-     * The event's value. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     */
+/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
+@objc(OUAAccountEventTemplate)
+public class OUAAccountEventTemplate: NSObject {
+   
+    private var template: AccountEventTemplate
+    
     @objc
-    public var eventValue: NSNumber?
+    public var eventValue: NSNumber? {
+        get {
+           return template.eventValue
+        }
+        set {
+            template.eventValue = newValue
+        }
+    }
 
     /**
      * The event's transaction ID. The transaction ID's length must not exceed 255
      * characters or it will invalidate the event.
      */
     @objc
-    public var transactionID: String?
+    public var transactionID: String? {
+        get {
+           return template.transactionID
+        }
+        set {
+            template.transactionID = newValue
+        }
+    }
 
     /**
      * The event's identifier.
      */
     @objc
-    public var userID: String?
+    public var userID: String? {
+        get {
+           return template.userID
+        }
+        set {
+            template.userID = newValue
+        }
+    }
 
     /**
      * The event's category.
      */
     @objc
-    public var category: String?
+    public var category: String? {
+        get {
+           return template.category
+        }
+        set {
+            template.category = newValue
+        }
+    }
 
     /**
      * The event's type.
      */
     @objc
-    public var type: String?
-
-    public init(eventName: String, value: NSNumber? = nil) {
-        self.eventName = eventName
-        self.eventValue = value
-        super.init()
+    public var type: String? {
+        get {
+           return template.type
+        }
+        set {
+            template.type = newValue
+        }
+    }
+    
+    @objc
+    public init(template: AccountEventTemplate) {
+        self.template = template
     }
 
     /**
@@ -50,7 +82,7 @@ public class AccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc
-    public class func registeredTemplate() -> AccountEventTemplate {
+    public class func registeredTemplate() -> OUAAccountEventTemplate {
         return registeredTemplate(value: nil)
     }
 
@@ -63,7 +95,7 @@ public class AccountEventTemplate: NSObject {
      */
     @objc(registeredTemplateWithValueFromString:)
     public class func registeredTemplate(valueString: String?)
-        -> AccountEventTemplate
+        -> OUAAccountEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -79,12 +111,13 @@ public class AccountEventTemplate: NSObject {
      */
     @objc(registeredTemplateWithValue:)
     public class func registeredTemplate(value: NSNumber?)
-        -> AccountEventTemplate
+        -> OUAAccountEventTemplate
     {
-        return AccountEventTemplate(
+        let template = AccountEventTemplate(
             eventName: "registered_account",
             value: value
         )
+        return OUAAccountEventTemplate(template: template)
     }
 
     /**
@@ -92,7 +125,7 @@ public class AccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc
-    public class func loggedInTemplate() -> AccountEventTemplate {
+    public class func loggedInTemplate() -> OUAAccountEventTemplate {
         return loggedInTemplate(value: nil)
     }
 
@@ -105,7 +138,7 @@ public class AccountEventTemplate: NSObject {
      */
     @objc(loggedInTemplateWithValueFromString:)
     public class func loggedInTemplate(valueString: String?)
-        -> AccountEventTemplate
+        -> OUAAccountEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -120,9 +153,10 @@ public class AccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc(loggedInTemplateWithValue:)
-    public class func loggedInTemplate(value: NSNumber?) -> AccountEventTemplate
+    public class func loggedInTemplate(value: NSNumber?) -> OUAAccountEventTemplate
     {
-        return AccountEventTemplate(eventName: "logged_in", value: value)
+        let template = AccountEventTemplate(eventName: "logged_in", value: value)
+        return OUAAccountEventTemplate(template: template)
     }
 
     /**
@@ -130,7 +164,7 @@ public class AccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc
-    public class func loggedOutTemplate() -> AccountEventTemplate {
+    public class func loggedOutTemplate() -> OUAAccountEventTemplate {
         return loggedOutTemplate(value: nil)
     }
 
@@ -143,7 +177,7 @@ public class AccountEventTemplate: NSObject {
      */
     @objc(loggedOutTemplateWithValueFromString:)
     public class func loggedOutTemplate(valueString: String?)
-        -> AccountEventTemplate
+        -> OUAAccountEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -159,9 +193,10 @@ public class AccountEventTemplate: NSObject {
      */
     @objc(loggedOutTemplateWithValue:)
     public class func loggedOutTemplate(value: NSNumber?)
-        -> AccountEventTemplate
+        -> OUAAccountEventTemplate
     {
-        return AccountEventTemplate(eventName: "logged_out", value: value)
+        let template = AccountEventTemplate(eventName: "logged_out", value: value)
+        return OUAAccountEventTemplate(template: template)
     }
 
     /**
@@ -169,17 +204,8 @@ public class AccountEventTemplate: NSObject {
      */
     @objc
     public func createEvent() -> CustomEvent? {
-        var propertyDictionary: [String: Any] = [:]
-        propertyDictionary["ltv"] = self.eventValue != nil
-        propertyDictionary["user_id"] = self.userID
-        propertyDictionary["category"] = self.category
-        propertyDictionary["type"] = self.type
-
-        let event = CustomEvent(name: self.eventName)
-        event.templateType = "account"
-        event.eventValue = self.eventValue
-        event.transactionID = self.transactionID
-        event.properties = propertyDictionary
-        return event
+        return self.template.createEvent()
     }
+    
+    
 }

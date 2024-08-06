@@ -1,49 +1,93 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import AirshipCore
 
-/// A RetailEventTemplate represents a custom retail event template for the
-/// application.
-@objc(UARetailEventTemplate)
-public class RetailEventTemplate: NSObject {
-
+/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
+@objc(OUARetailEventTemplate)
+public class OUARetailEventTemplate: NSObject {
+    
+    private var template: RetailEventTemplate
+    
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
      */
     @objc
-    public var eventValue: NSNumber?
+    public var eventValue: NSNumber? {
+        get {
+           return template.eventValue
+        }
+        set {
+            template.eventValue = newValue
+        }
+    }
 
     /**
      * The event's transaction ID. The transaction ID's length must not exceed 255
      * characters or it will invalidate the event.
      */
     @objc
-    public var transactionID: String?
+    public var transactionID: String? {
+        get {
+           return template.transactionID
+        }
+        set {
+            template.transactionID = newValue
+        }
+    }
 
     /**
      * The event's ID.
      */
     @objc
-    public var identifier: String?
+    public var identifier: String? {
+        get {
+           return template.identifier
+        }
+        set {
+            template.identifier = newValue
+        }
+    }
 
     /**
      * The event's category.
      */
     @objc
-    public var category: String?
+    public var category: String? {
+        get {
+           return template.category
+        }
+        set {
+            template.category = newValue
+        }
+    }
 
     /**
      * The event's description.
      */
     @objc
-    public var eventDescription: String?
+    public var eventDescription: String? {
+        get {
+            return template.eventDescription
+        }
+        set {
+            template.eventDescription = newValue
+        }
+    }
 
     /**
-     * The brand.
+     * The brand..
      */
     @objc
-    public var brand: String?
+    public var brand: String? {
+        get {
+           return template.brand
+        }
+        set {
+            template.brand = newValue
+        }
+    }
 
     /**
      * If the item is new or not.
@@ -51,32 +95,24 @@ public class RetailEventTemplate: NSObject {
     @objc
     public var isNewItem: Bool {
         get {
-            return self._isNewItem ?? false
+            return template.isNewItem
         }
         set {
-            self._isNewItem = newValue
+            template.isNewItem = newValue
         }
     }
-
-    /**
-     * The currency.
-     */
+    
     @objc
-    public var currency: String?
-
-    private var _isNewItem: Bool?
-    private let eventName: String
-    private let source: String?
-    private let medium: String?
-    private let wishlistName: String?
-    private let wishlistID: String?
+    public init(template: RetailEventTemplate) {
+        self.template = template
+    }
 
     /**
      * Factory method for creating a browsed event template.
      * - Returns: A Retail event template instance
      */
     @objc(browsedTemplate)
-    public class func browsedTemplate() -> RetailEventTemplate {
+    public class func browsedTemplate() -> OUARetailEventTemplate {
         return browsedTemplate(value: nil)
     }
 
@@ -89,7 +125,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(browsedTemplateWithValueFromString:)
     public class func browsedTemplate(valueString: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -104,8 +140,9 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(browsedTemplateWithValue:)
-    public class func browsedTemplate(value: NSNumber?) -> RetailEventTemplate {
-        return RetailEventTemplate("browsed", value: value)
+    public class func browsedTemplate(value: NSNumber?) -> OUARetailEventTemplate {
+        let template = RetailEventTemplate("browsed", value: value)
+        return OUARetailEventTemplate(template: template)
     }
 
     /**
@@ -113,7 +150,7 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplate)
-    public class func addedToCartTemplate() -> RetailEventTemplate {
+    public class func addedToCartTemplate() -> OUARetailEventTemplate {
         return addedToCartTemplate(value: nil)
     }
 
@@ -126,7 +163,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(addedToCartTemplateWithValueFromString:)
     public class func addedToCartTemplate(valueString: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -142,9 +179,10 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(addedToCartTemplateWithValue:)
     public class func addedToCartTemplate(value: NSNumber?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
-        return RetailEventTemplate("added_to_cart", value: value)
+        let template = RetailEventTemplate("added_to_cart", value: value)
+        return OUARetailEventTemplate(template: template)
     }
 
     /**
@@ -152,7 +190,7 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplate)
-    public class func starredProductTemplate() -> RetailEventTemplate {
+    public class func starredProductTemplate() -> OUARetailEventTemplate {
         return starredProductTemplate(value: nil)
     }
 
@@ -165,7 +203,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(starredProductTemplateWithValueFromString:)
     public class func starredProductTemplate(valueString: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -181,9 +219,10 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(starredProductTemplateWithValue:)
     public class func starredProductTemplate(value: NSNumber?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
-        return RetailEventTemplate("starred_product", value: value)
+        let template = RetailEventTemplate("starred_product", value: value)
+        return OUARetailEventTemplate(template: template)
     }
 
     /**
@@ -191,7 +230,7 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplate)
-    public class func purchasedTemplate() -> RetailEventTemplate {
+    public class func purchasedTemplate() -> OUARetailEventTemplate {
         return purchasedTemplate(value: nil)
     }
 
@@ -204,7 +243,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(purchasedTemplateWithValueFromString:)
     public class func purchasedTemplate(valueString: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -219,9 +258,10 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplateWithValue:)
-    public class func purchasedTemplate(value: NSNumber?) -> RetailEventTemplate
+    public class func purchasedTemplate(value: NSNumber?) -> OUARetailEventTemplate
     {
-        return RetailEventTemplate("purchased", value: value)
+        let template = RetailEventTemplate("purchased", value: value)
+        return OUARetailEventTemplate(template: template)
     }
 
     /**
@@ -229,7 +269,7 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplate)
-    public class func sharedProductTemplate() -> RetailEventTemplate {
+    public class func sharedProductTemplate() -> OUARetailEventTemplate {
         return sharedProductTemplate(value: nil, source: nil, medium: nil)
     }
 
@@ -242,7 +282,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(sharedProductTemplateWithValueFromString:)
     public class func sharedProductTemplate(valueString: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -262,7 +302,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(sharedProductTemplateWithValue:)
     public class func sharedProductTemplate(value: NSNumber?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         return sharedProductTemplate(value: value, source: nil, medium: nil)
     }
@@ -275,7 +315,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(sharedProductTemplateWithSource:withMedium:)
     public class func sharedProductTemplate(source: String?, medium: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
         return sharedProductTemplate(value: nil, source: source, medium: medium)
     }
@@ -294,7 +334,7 @@ public class RetailEventTemplate: NSObject {
         valueString: String?,
         source: String?,
         medium: String?
-    ) -> RetailEventTemplate {
+    ) -> OUARetailEventTemplate {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return sharedProductTemplate(
@@ -318,13 +358,14 @@ public class RetailEventTemplate: NSObject {
         value: NSNumber?,
         source: String?,
         medium: String?
-    ) -> RetailEventTemplate {
-        return RetailEventTemplate(
+    ) -> OUARetailEventTemplate {
+        let template = RetailEventTemplate(
             "shared_product",
             value: value,
             source: source,
             medium: medium
         )
+        return OUARetailEventTemplate(template: template)
     }
 
     /**
@@ -332,7 +373,7 @@ public class RetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(wishlistTemplate)
-    public class func wishlistTemplate() -> RetailEventTemplate {
+    public class func wishlistTemplate() -> OUARetailEventTemplate {
         return wishlistTemplate(name: nil, wishlistID: nil)
     }
 
@@ -345,30 +386,14 @@ public class RetailEventTemplate: NSObject {
      */
     @objc(wishlistTemplateWithName:wishlistID:)
     public class func wishlistTemplate(name: String?, wishlistID: String?)
-        -> RetailEventTemplate
+        -> OUARetailEventTemplate
     {
-        return RetailEventTemplate(
+        let template = RetailEventTemplate(
             "wishlist",
             wishlistName: name,
             wishlistID: wishlistID
         )
-    }
-
-    public init(
-        _ eventName: String,
-        value: NSNumber? = nil,
-        source: String? = nil,
-        medium: String? = nil,
-        wishlistName: String? = nil,
-        wishlistID: String? = nil
-    ) {
-        self.eventName = eventName
-        self.eventValue = value
-        self.source = source
-        self.medium = medium
-        self.wishlistID = wishlistID
-        self.wishlistName = wishlistName
-        super.init()
+        return OUARetailEventTemplate(template: template)
     }
 
     /**
@@ -376,25 +401,7 @@ public class RetailEventTemplate: NSObject {
      */
     @objc
     public func createEvent() -> CustomEvent {
-        var propertyDictionary: [String: Any] = [:]
-        propertyDictionary["ltv"] =
-            self.eventName == "purchased" && self.eventValue != nil
-        propertyDictionary["id"] = self.identifier
-        propertyDictionary["category"] = self.category
-        propertyDictionary["brand"] = self.brand
-        propertyDictionary["new_item"] = self._isNewItem
-        propertyDictionary["source"] = self.source
-        propertyDictionary["medium"] = self.medium
-        propertyDictionary["wishlist_name"] = self.wishlistName
-        propertyDictionary["wishlist_id"] = self.wishlistID
-        propertyDictionary["description"] = self.eventDescription
-        propertyDictionary["currency"] = self.currency
-
-        let event = CustomEvent(name: self.eventName)
-        event.templateType = "retail"
-        event.eventValue = self.eventValue
-        event.transactionID = self.transactionID
-        event.properties = propertyDictionary
-        return event
+        self.template.createEvent()
     }
+    
 }

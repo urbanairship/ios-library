@@ -316,7 +316,7 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
 
 
 extension AirshipFeature {
-    var toObjc: _UAFeatures {
+    public var toObjc: _UAFeatures {
         return _UAFeatures(rawValue: self.rawValue)
     }
 }
