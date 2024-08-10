@@ -6,8 +6,17 @@ import Foundation
 import AirshipCore
 #endif
 
+protocol ScheduleConditionsChangedNotifierProtocol {
+    @MainActor
+    func notify()
+
+    @MainActor
+    func wait() async
+}
+
+
 /// NOTE: For internal use only. :nodoc:
-final class ScheduleConditionsChangedNotifier : @unchecked Sendable {
+final class ScheduleConditionsChangedNotifier : @unchecked Sendable, ScheduleConditionsChangedNotifierProtocol {
     private var waiting: [CheckedContinuation<Void, Never>] = []
 
     @MainActor

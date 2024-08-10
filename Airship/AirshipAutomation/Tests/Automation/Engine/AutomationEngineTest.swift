@@ -6,6 +6,19 @@ import XCTest
 import AirshipAutomation
 import AirshipCore
 
+class TestScheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol {
+    var onNotify: (() -> Void)?
+    var onWait: (() -> Void)?
+
+    func notify() {
+        onNotify?()
+    }
+    
+    func wait() async {
+        onWait?()
+    }
+}
+
 final class AutomationEngineTest: XCTestCase {
     
     private var engine: AutomationEngine!
@@ -29,6 +42,8 @@ final class AutomationEngineTest: XCTestCase {
     private var delayProcessor: AutomationDelayProcessor!
     private var metrics: ApplicationMetrics!
     private var runtimeConfig: RuntimeConfig?
+
+    private var scheduleConditionsChangedNotifier: TestScheduleConditionsChangedNotifier!
 
     override func setUp() async throws {
         self.privacyManager = await AirshipPrivacyManager(
@@ -74,13 +89,20 @@ final class AutomationEngineTest: XCTestCase {
         )
 
         let analyticsFeed = AirshipAnalyticsFeed() { true }
-        let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
+        self.scheduleConditionsChangedNotifier = TestScheduleConditionsChangedNotifier()
         let eventFeed = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: AppStateTracker.shared, analyticsFeed: analyticsFeed)
         let analytics = TestAnalytics()
         let delayProcessor = await AutomationDelayProcessor(analytics: analytics)
         
-        self.engine = AutomationEngine(store: self.automationStore, executor: executor, preparer: self.preparer, scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier, eventFeed: eventFeed, triggersProcessor: triggersProcessor, delayProcessor: delayProcessor)
-
+        self.engine = AutomationEngine(
+            store: self.automationStore,
+            executor: executor,
+            preparer: self.preparer,
+            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
+            eventFeed: eventFeed,
+            triggersProcessor: triggersProcessor,
+            delayProcessor: delayProcessor
+        )
     }
     
     func testStart() async throws {
@@ -107,8 +129,20 @@ final class AutomationEngineTest: XCTestCase {
     
     @MainActor
     func testSetExecutionPaused() async throws {
+        let onNotifyExpectation = expectation(description: "Schedule conditions changed notifiers should be notified when pause state changes.")
+
+        self.scheduleConditionsChangedNotifier.onNotify = {
+            onNotifyExpectation.fulfill()
+        }
+
         self.engine.setExecutionPaused(true)
         XCTAssertTrue(self.engine.isExecutionPaused.value)
+
+
+        self.engine.setExecutionPaused(false)
+        XCTAssertFalse(self.engine.isExecutionPaused.value)
+
+        await fulfillment(of: [onNotifyExpectation], timeout: 1)
     }
     
     func testStopSchedules() async throws {

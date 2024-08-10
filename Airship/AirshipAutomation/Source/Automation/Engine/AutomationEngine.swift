@@ -17,7 +17,7 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let store: AutomationStore
     private let executor: AutomationExecutor
     private let preparer: AutomationPreparer
-    private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
+    private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol
     private let eventFeed: AutomationEventFeedProtocol
     private let triggersProcessor: AutomationTriggerProcessorProtocol
     private let delayProcessor: AutomationDelayProcessorProtocol
@@ -28,7 +28,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         store: AutomationStore,
         executor: AutomationExecutor,
         preparer: AutomationPreparer,
-        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
+        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol,
         eventFeed: AutomationEventFeedProtocol,
         triggersProcessor: AutomationTriggerProcessorProtocol,
         delayProcessor: AutomationDelayProcessorProtocol,
@@ -50,11 +50,19 @@ actor AutomationEngine : AutomationEngineProtocol {
     func setEnginePaused(_ paused: Bool) {
         self.isEnginePaused.set(paused)
         self.triggersProcessor.setPaused(paused)
+
+        if !isExecutionPaused.value && !isEnginePaused.value {
+            self.scheduleConditionsChangedNotifier.notify()
+        }
     }
 
     @MainActor
     func setExecutionPaused(_ paused: Bool) {
         self.isExecutionPaused.set(paused)
+
+        if !isExecutionPaused.value && !isEnginePaused.value {
+            self.scheduleConditionsChangedNotifier.notify()
+        }
     }
 
     func start() async {
