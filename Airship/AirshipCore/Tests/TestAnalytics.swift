@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 public class TestAnalytics: InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
-    public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed()
+    public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed { true }
     
     let eventSubject = PassthroughSubject<AirshipEventData, Never>()
 

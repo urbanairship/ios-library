@@ -1,0 +1,541 @@
+version: 1
+presentation:
+  type: modal
+  placement_selectors:
+    - placement:
+        ignore_safe_area: true
+        size:
+          width: 70%
+          height: 60%
+        position:
+          horizontal: center
+          vertical: center
+        shade_color:
+          default:
+            type: hex
+            hex: '#868686'
+            alpha: 1
+        border:
+          radius: 15
+      window_size: large
+      orientation: portrait
+    - placement:
+        ignore_safe_area: true
+        size:
+          width: 80%
+          height: 80%
+        position:
+          horizontal: center
+          vertical: center
+        shade_color:
+          default:
+            type: hex
+            hex: '#868686'
+            alpha: 1
+        border:
+          radius: 15
+      window_size: large
+      orientation: landscape
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: true
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        type: hex
+        hex: '#000000'
+        alpha: 0.2
+view:
+  type: pager_controller
+  identifier: dfbeb4be-acce-411e-b211-4fabefb4b1b8
+  view:
+    type: container
+    items:
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 100%
+          height: 100%
+        view:
+          type: pager
+          disable_swipe: true
+          gestures:
+            - identifier: dfbeb4be-acce-411e-b211-4fabefb4b1b8_tap_start
+              type: tap
+              location: start
+              behavior:
+                behaviors:
+                  - pager_previous
+            - identifier: dfbeb4be-acce-411e-b211-4fabefb4b1b8_tap_end
+              type: tap
+              location: end
+              behavior:
+                behaviors:
+                  - pager_next_or_first
+            - identifier: dfbeb4be-acce-411e-b211-4fabefb4b1b8_swipe_up
+              type: swipe
+              direction: up
+              behavior:
+                behaviors:
+                  - dismiss
+            - identifier: dfbeb4be-acce-411e-b211-4fabefb4b1b8_swipe_down
+              type: swipe
+              direction: down
+              behavior:
+                behaviors:
+                  - dismiss
+            - identifier: dfbeb4be-acce-411e-b211-4fabefb4b1b8_hold
+              type: hold
+              press_behavior:
+                behaviors:
+                  - pager_pause
+              release_behavior:
+                behaviors:
+                  - pager_resume
+          items:
+#            - identifier: 58bb45b8-de18-49a2-ba2c-2dab129233ac
+#              type: pager_item
+#              view:
+#                type: container
+#                items:
+#                  - margin:
+#                      start: 0
+#                      end: 0
+#                    position:
+#                      horizontal: center
+#                      vertical: center
+#                    size:
+#                      width: 100%
+#                      height: 100%
+#                    view:
+#                      type: media
+#                      media_fit: center_crop
+#                      url: https://storage.googleapis.com/airship-media-url/ProductTeam/Maxime/pexels-oliver-sjo%CC%88stro%CC%88m-1650732.jpg
+#                      media_type: image
+#                    ignore_safe_area: true
+#                  - size:
+#                      width: 100%
+#                      height: 100%
+#                    position:
+#                      horizontal: center
+#                      vertical: center
+#                    ignore_safe_area: true
+#                    view:
+#                      type: container
+#                      items:
+#                        - margin:
+#                            bottom: 0
+#                            top: 0
+#                            end: 0
+#                            start: 0
+#                          position:
+#                            horizontal: center
+#                            vertical: center
+#                          size:
+#                            width: 100%
+#                            height: 100%
+#                          view:
+#                            type: linear_layout
+#                            direction: vertical
+#                            items:
+#                              - identifier: layout_container
+#                                size:
+#                                  width: 100%
+#                                  height: 100%
+#                                view:
+#                                  type: linear_layout
+#                                  direction: vertical
+#                                  items:
+#                                    - identifier: c865e1c9-b03f-410a-be67-3679adf576b9
+#                                      size:
+#                                        width: 100%
+#                                        height: auto
+#                                      view:
+#                                        type: container
+#                                        items:
+#                                          - margin:
+#                                              top: 10
+#                                              bottom: 0
+#                                              start: 0
+#                                              end: 0
+#                                            position:
+#                                              horizontal: center
+#                                              vertical: center
+#                                            size:
+#                                              width: 100%
+#                                              height: auto
+#                                            view:
+#                                              type: linear_layout
+#                                              direction: horizontal
+#                                              items:
+#                                                - size:
+#                                                    width: 20%
+#                                                    height: auto
+#                                                  view:
+#                                                    type: media
+#                                                    media_fit: center_inside
+#                                                    url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/746a2309-146e-4ddd-87a8-e30650fb1f69
+#                                                    media_type: image
+#                                                  identifier: 7332c72c-3235-45b7-a868-14e3686db6ed
+#                                                  margin:
+#                                                    top: 0
+#                                                    bottom: 0
+#                                                    start: 0
+#                                                    end: 0
+#                                                - identifier: bef99142-1267-4caa-8851-6e1331b5b23b
+#                                                  size:
+#                                                    width: 100%
+#                                                    height: auto
+#                                                  margin:
+#                                                    top: 5
+#                                                    bottom: 8
+#                                                    start: 0
+#                                                    end: 16
+#                                                  view:
+#                                                    type: label
+#                                                    text: Surf Magazine
+#                                                    text_appearance:
+#                                                      font_size: 15
+#                                                      color:
+#                                                        default:
+#                                                          type: hex
+#                                                          hex: '#FFFFFF'
+#                                                          alpha: 1
+#                                                      alignment: start
+#                                                      styles:
+#                                                        - bold
+#                                                      font_families:
+#                                                        - sans-serif
+#                                      margin:
+#                                        top: 10
+#                                        bottom: 0
+#                                        start: 0
+#                                        end: 0
+#                              - identifier: f97c7145-2cce-4068-a7aa-2104c7a63d8d
+#                                size:
+#                                  width: 100%
+#                                  height: auto
+#                                view:
+#                                  type: container
+#                                  items:
+#                                    - margin:
+#                                        top: 8
+#                                        bottom: 8
+#                                        start: 0
+#                                        end: 0
+#                                      position:
+#                                        horizontal: center
+#                                        vertical: center
+#                                      size:
+#                                        width: 100%
+#                                        height: auto
+#                                      view:
+#                                        type: linear_layout
+#                                        direction: horizontal
+#                                        items:
+#                                          - identifier: 916018ab-4843-4e86-aabe-d572740b6219
+#                                            margin:
+#                                              top: 8
+#                                              bottom: 8
+#                                              start: 10
+#                                              end: 50
+#                                            size:
+#                                              width: 50%
+#                                              height: auto
+#                                            view:
+#                                              type: label_button
+#                                              identifier: dismiss--Watch video
+#                                              reporting_metadata:
+#                                                trigger_link_id: 916018ab-4843-4e86-aabe-d572740b6219
+#                                              label:
+#                                                type: label
+#                                                text: Watch video
+#                                                text_appearance:
+#                                                  font_size: 16
+#                                                  color:
+#                                                    default:
+#                                                      type: hex
+#                                                      hex: '#000000'
+#                                                      alpha: 1
+#                                                  alignment: center
+#                                                  styles:
+#                                                    - bold
+#                                                  font_families:
+#                                                    - sans-serif
+#                                              actions: {}
+#                                              enabled: []
+#                                              button_click:
+#                                                - dismiss
+#                                              background_color:
+#                                                default:
+#                                                  type: hex
+#                                                  hex: '#FFFFFF'
+#                                                  alpha: 1
+#                                              border:
+#                                                radius: 15
+#                                                stroke_width: 0
+#                                                stroke_color:
+#                                                  default:
+#                                                    type: hex
+#                                                    hex: '#FFFFFF'
+#                                                    alpha: 1
+#                                          - size:
+#                                              width: 18%
+#                                              height: auto
+#                                            view:
+#                                              type: media
+#                                              media_fit: center_inside
+#                                              url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/e0eb750c-5d97-4e3b-93be-26f5c6ebabe0
+#                                              media_type: image
+#                                            identifier: 4d6bb769-40b3-429f-aef8-bfdb5146db38
+#                                            margin:
+#                                              top: 0
+#                                              bottom: 0
+#                                              start: 0
+#                                              end: 60
+#                                          - size:
+#                                              width: 10%
+#                                              height: auto
+#                                            view:
+#                                              type: media
+#                                              media_fit: center_inside
+#                                              url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/552fef48-266f-49fe-982f-beda4107557f
+#                                              media_type: image
+#                                            identifier: 98c23a30-5f52-47eb-9838-16a11626eb23
+#                                            margin:
+#                                              top: 0
+#                                              bottom: 0
+#                                              start: 0
+#                                              end: 20
+#                                margin:
+#                                  top: 8
+#                                  bottom: 8
+#                                  start: 0
+#                                  end: 0
+#                background_color:
+#                  default:
+#                    type: hex
+#                    hex: '#BCBDC2'
+#                    alpha: 1
+#                  selectors:
+#                    - platform: ios
+#                      dark_mode: true
+#                      color:
+#                        type: hex
+#                        hex: '#FFFFFF'
+#                        alpha: 0.5
+#                    - platform: android
+#                      dark_mode: true
+#                      color:
+#                        type: hex
+#                        hex: '#FFFFFF'
+#                        alpha: 0.5
+#                    - platform: web
+#                      dark_mode: true
+#                      color:
+#                        type: hex
+#                        hex: '#FFFFFF'
+#                        alpha: 0.5
+#              automated_actions:
+#                - identifier: '[pager_next]_58bb45b8-de18-49a2-ba2c-2dab129233ac'
+#                  delay: 7
+#                  behaviors:
+#                    - pager_next
+            - identifier: e2fd43ff-4f4c-4f69-86dc-3762605752ba
+              type: pager_item
+              view:
+                type: container
+                items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: true
+                    view:
+                      type: container
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                              - identifier: layout_container
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: linear_layout
+                                  direction: vertical
+                                  items:
+                                    - identifier: d3c83a1a-3c17-4491-a646-9a6e2e0b360f
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: container
+                                        items:
+                                          - margin:
+                                              top: 20
+                                            position:
+                                              horizontal: center
+                                              vertical: center
+                                            size:
+                                              width: 100%
+                                              height: auto
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                                - size:
+                                                    width: 100%
+                                                    height: auto
+                                                  view:
+                                                    type: media
+                                                    media_fit: center_inside
+                                                    url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/746a2309-146e-4ddd-87a8-e30650fb1f69
+                                                    media_type: image
+                                                    content_description: clean SURF logo
+                                                  identifier: 91546819-ec1d-474d-bd7e-61b8dc14926f
+                                                - identifier: d8cf9f55-927c-4b4f-a225-7381a00f610e
+                                                  size:
+                                                    width: 100%
+                                                    height: auto
+                                                  margin:
+                                                    top: 8
+                                                    bottom: 8
+                                                    start: 16
+                                                    end: 16
+                                                  view:
+                                                    type: label
+                                                    text: Surf Magazine
+                                                    text_appearance:
+                                                      font_size: 24
+                                                      color:
+                                                        default:
+                                                          type: hex
+                                                          hex: '#FFFFFF'
+                                                          alpha: 1
+                                                      alignment: start
+                                                      styles:
+                                                        - bold
+                                                      font_families:
+                                                        - sans-serif
+                                      margin:
+                                        top: 20
+                                    - identifier: ac5948bf-e00f-42a9-927c-7d3d44f46ed7
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: container
+                                        items:
+                                          - position:
+                                              horizontal: center
+                                              vertical: center
+                                            size:
+                                              width: 100%
+                                              height: auto
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                                - identifier: 68913127-af13-472c-85c6-aea8ff421c35
+                                                  margin:
+                                                    top: 8
+                                                    bottom: 8
+                                                    start: 16
+                                                    end: 16
+                                                  size:
+                                                    width: 100%
+                                                    height: auto
+                                                  view:
+                                                    type: label_button
+                                                    identifier: dismiss--Watch full video
+                                                    reporting_metadata:
+                                                      trigger_link_id: 68913127-af13-472c-85c6-aea8ff421c35
+                                                    label:
+                                                      type: label
+                                                      text: Watch full video
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                          selectors:
+                                                            - platform: ios
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: '#000000'
+                                                                alpha: 1
+                                                            - platform: android
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: '#000000'
+                                                                alpha: 1
+                                                            - platform: web
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: '#000000'
+                                                                alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                                    actions: {}
+                                                    enabled: []
+                                                    button_click:
+                                                      - dismiss
+                                                    background_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#63AFF1'
+                                                        alpha: 1
+                                                    border:
+                                                      radius: 3
+                                                      stroke_width: 0
+                                                      stroke_color:
+                                                        default:
+                                                          type: hex
+                                                          hex: '#63AFF1'
+                                                          alpha: 1
+                                                - size:
+                                                    width: 100%
+                                                    height: auto
+                                                  view:
+                                                    type: media
+                                                    media_fit: center_inside
+                                                    url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/e0eb750c-5d97-4e3b-93be-26f5c6ebabe0
+                                                    media_type: image
+                                                    content_description: share icon
+                                                  identifier: 3bdd060e-6f41-4899-9c8f-8dc0a4d97e3f
+                                                - size:
+                                                    width: 100%
+                                                    height: auto
+                                                  view:
+                                                    type: media
+                                                    media_fit: center_inside
+                                                    url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/552fef48-266f-49fe-982f-beda4107557f
+                                                    media_type: image
+                                                    content_description: bookmark icon
+                                                  identifier: e5cc14e3-9c9c-4814-8b22-f3e93dd048a8
+

@@ -14,7 +14,6 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let encoder: JSONEncoder = JSONEncoder()
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config
@@ -35,6 +34,7 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
         let url = try makeURL(channelID: channelID)
         let payload = update.clientPayload
 
+        let encoder = JSONEncoder()
         let data = try encoder.encode(payload)
 
         AirshipLogger.debug(

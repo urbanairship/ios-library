@@ -49,7 +49,7 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
             ],
             method: "POST",
             auth: .channelAuthToken(identifier: channelID),
-            body: try self.encoder.encode(body)
+            body: try JSONEncoder().encode(body)
         )
 
         AirshipLogger.trace("Resolving deferred with request \(request) body \(body)")
@@ -69,7 +69,6 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
 
     private let config: RuntimeConfig
     private let session: AirshipRequestSession
-    private let encoder: JSONEncoder = JSONEncoder()
 
     init(config: RuntimeConfig, session: AirshipRequestSession) {
         self.config = config

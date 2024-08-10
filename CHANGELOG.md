@@ -1,6 +1,30 @@
 
 # iOS Changelog
 
+## Version 18.7.2 August 9, 2024
+Patch release that fixes in-app experience displays when resuming from a paused state. Apps that use in-app experiences are encouraged to update.
+
+### Changes
+- Fixed Automation Engine updates when pause state changes.
+
+## Version 18.7.1 August 1, 2024
+Patch release that prevents In-App Automation, Scenes, and Surveys from being able to trigger off custom events or screen views
+when analytics is disabled. The actual event was not being tracked by Airship in these cases, just processed locally.
+
+### Changes
+- Prevent screen view and custom events from being processed by automations when analytics is disabled.
+
+## Version 18.7.0 July 30, 2024
+Minor release that fixes some layout issues with images and videos in a Scene, accessibility improvements, and fixes a potential crash with JSON encoding/decoding due 
+to using a JSONEncoder/JSONDecoder across threads.
+
+### Changes
+- Fixed video & image scaling/cropping in scenes.
+- Removed reusing JSONEncoder/JSONDecoder across tasks.
+- Removed @MainActor requirement from AirshipPush.authorizedNotificationSettings.
+- Announce screen changes when banners In-App messages are displayed.
+- `MessageCenterController` is now optional when creating a `MessageCenterView`.
+
 ## Version 18.6.0 July 12, 2024
 Minor release with some improvements to preference center, a fix for in-app message veritcal sizing, accessibility improvements and markdown support in scenes.
 

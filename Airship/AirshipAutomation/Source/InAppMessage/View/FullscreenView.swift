@@ -18,6 +18,8 @@ struct FullscreenView: View, Sendable {
         if let heading = displayContent.heading {
             TextView(textInfo: heading, textTheme: self.theme.header)
                 .applyAlignment(placement: displayContent.heading?.alignment ?? .left)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 
@@ -26,6 +28,7 @@ struct FullscreenView: View, Sendable {
         if let body = displayContent.body {
             TextView(textInfo: body, textTheme: self.theme.body)
                 .applyAlignment(placement: displayContent.body?.alignment ?? .left)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 

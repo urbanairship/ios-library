@@ -26,6 +26,8 @@ struct InAppMessageModalView: View {
         if let heading = displayContent.heading {
             TextView(textInfo: heading, textTheme: theme.header)
                 .applyAlignment(placement: displayContent.heading?.alignment ?? .left)
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 
@@ -34,6 +36,7 @@ struct InAppMessageModalView: View {
         if let body = displayContent.body {
             TextView(textInfo: body, textTheme: theme.body)
                 .applyAlignment(placement: displayContent.body?.alignment ?? .left)
+                .accessibilityAddTraits(.isStaticText)
         }
     }
 

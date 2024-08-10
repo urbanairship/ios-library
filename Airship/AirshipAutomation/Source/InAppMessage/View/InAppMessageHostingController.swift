@@ -79,10 +79,14 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        UIAccessibility.post(notification: .screenChanged, argument: nil)
-
         createBannerConstraints()
         handleBannerConstraints()
+
+        if UIAccessibility.isVoiceOverRunning {
+            DispatchQueue.main.asyncAfter(deadline: .now() + InAppMessageBannerView.animationInOutDuration) {
+                UIAccessibility.post(notification: .screenChanged, argument: self)
+            }
+        }
     }
 
     override func viewDidLayoutSubviews() {

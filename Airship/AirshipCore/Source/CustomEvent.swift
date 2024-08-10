@@ -61,11 +61,11 @@ public class CustomEvent: NSObject {
 
     private var _eventValue: NSDecimalNumber?
 
-    public static let defaultEncoder: JSONEncoder = {
+    public static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         return encoder
-    }()
+    }
 
 
     /// The in-app message context for custom event attribution
