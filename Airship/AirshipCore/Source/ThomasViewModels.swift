@@ -1055,27 +1055,53 @@ struct IconModel: Codable, Equatable, Sendable {
 }
 
 struct ActionsPayload: Codable, Equatable, Sendable {
-    let value: AirshipJSON
+    static let keyActionOverride = "platform_action_overrides"
+    
+    private let original: AirshipJSON
+    private let merged: AirshipJSON
+    
+    var value: AirshipJSON {
+        return merged
+    }
 
     init(value: AirshipJSON) {
-        self.value = value
+        self.original = value
+        self.merged = Self.overridingPlatformActions(value)
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let json = try container.decode(AirshipJSON.self)
 
-        guard case .object(_) = json else {
+        guard case .object = json else {
             throw AirshipErrors.error("Invalid actions payload.")
         }
-        self.value = json
+        
+        self.original = json
+        self.merged = Self.overridingPlatformActions(json)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(self.value)
+        try container.encode(self.original)
     }
-
+    
+    static func overridingPlatformActions(_ input: AirshipJSON) -> AirshipJSON {
+        guard
+            case .object(var actions) = input,
+            let override = actions.removeValue(forKey: Self.keyActionOverride),
+            case .object(let platforms) = override,
+            case .object(let overridenActions) = platforms["ios"]
+        else {
+            return input
+        }
+        
+        actions.merge(overridenActions) { _, overriden in
+            overriden
+        }
+        
+        return .object(actions)
+    }
 }
 
 struct ImageButtonModel: BaseModel, Accessible, Codable {
