@@ -2139,6 +2139,26 @@ final class ThomasViewModelTest: XCTestCase {
         XCTAssertEqual(payload, decoded)
     }
     
+    func testActionPayloadPlatformOverrides() throws {
+        let payload = ActionsPayload(value: try AirshipJSON.wrap([
+            "foo": "bar",
+            "shouldnt_change": "value",
+            "platform_action_overrides": [
+                "ios": [
+                    "foo": "bar2",
+                    "added": "override"
+                ]
+            ]
+        ]))
+        let encoded = try AirshipJSON.defaultEncoder.encode(payload)
+        let decoded = try AirshipJSON.defaultDecoder.decode(ActionsPayload.self, from: encoded)
+        XCTAssertEqual(payload, decoded)
+        
+        XCTAssertEqual("bar2", payload.value.object?["foo"]?.string)
+        XCTAssertEqual("value", payload.value.object?["shouldnt_change"]?.string)
+        XCTAssertEqual("override", payload.value.object?["added"]?.string)
+    }
+    
     private func decodeEncodeCompare<T: Codable & Equatable>(source: String, type: T.Type) throws {
         let decoder = JSONDecoder()
         let encoder = JSONEncoder()
