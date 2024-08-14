@@ -164,6 +164,9 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
     /// Defaults to `false`.
     @objc
     public var useUserPreferredLocale: Bool
+    
+    /// Specifies how a new channel should be created
+    public let restoreChannelID: AirshipChannelCreateOptionClosure?
 
     /// If set to `true`, Message Center will attempt to be restored between reinstalls. If `false`,
     /// the Message Center user will be reset and the Channel will not be able to use the user
@@ -336,6 +339,7 @@ public final class RuntimeConfig: NSObject, @unchecked Sendable {
         self.remoteConfigCache = RemoteConfigCache(dataStore: dataStore)
         self.notificationCenter = notificationCenter
         self.isWebViewInspectionEnabled = config.isWebViewInspectionEnabled
+        self.restoreChannelID = config.restoreChannelID
         super.init()
     }
 

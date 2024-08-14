@@ -16,23 +16,14 @@ class ChannelRegistrarTest: XCTestCase {
     private let workID = "UAChannelRegistrar.registration"
 
     private var channelRegistrar: ChannelRegistrar!
-
-    @MainActor
-    override func setUp() async throws {
-        self.channelRegistrar = ChannelRegistrar(
-            dataStore: self.dataStore,
-            channelAPIClient: self.client,
-            date: self.date,
-            workManager:  self.workManager,
-            appStateTracker: self.appStateTracker
-        )
-    }
+    private var channelCreateMethod: ChannelGenerationMethod = .automatic
 
     override func tearDown() async throws {
         self.subscriptions.removeAll()
     }
 
-    func testRegister() throws {
+    func testRegister() async throws {
+        await makeRegistrar()
         XCTAssertEqual(0, self.workManager.workRequests.count)
 
         self.channelRegistrar.register(forcefully: false)
@@ -48,7 +39,8 @@ class ChannelRegistrarTest: XCTestCase {
         XCTAssertEqual(0, request.initialDelay)
     }
 
-    func testRegisterForcefully() throws {
+    func testRegisterForcefully() async throws {
+        await makeRegistrar()
         XCTAssertEqual(0, self.workManager.workRequests.count)
 
         self.channelRegistrar.register(forcefully: true)
@@ -65,6 +57,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testCreateChannel() async throws {
+        await makeRegistrar()
         var payload = ChannelRegistrationPayload()
         payload.channel.deviceModel = UUID().uuidString
 
@@ -104,8 +97,102 @@ class ChannelRegistrarTest: XCTestCase {
 
         await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
     }
+    
+    func testCreateChannelRestores() async throws {
+        let restoredUUID = UUID().uuidString
+        self.channelCreateMethod = .restore(channelID: restoredUUID)
+        await makeRegistrar()
+        
+        var payload = ChannelRegistrationPayload()
+        payload.channel.deviceModel = UUID().uuidString
+
+        self.channelRegistrar.addChannelRegistrationExtender { _ in
+            return payload
+        }
+
+        self.client.createCallback =  { channelPayload in
+            XCTFail()
+            throw AirshipErrors.error("")
+        }
+
+        let channelUpdated = self.expectation(description: "channel updated")
+        var updateCounter = 0
+        self.channelRegistrar.updatesPublisher.sink { update in
+            switch update {
+            case .created(let channelID, let isExisting):
+                XCTAssertEqual(restoredUUID, channelID)
+                XCTAssertTrue(isExisting)
+            case .updated(let channelID):
+                XCTAssertEqual(restoredUUID, channelID)
+            }
+            updateCounter += 1
+            if updateCounter > 1 {
+                channelUpdated.fulfill()
+            }
+        }.store(in: &self.subscriptions)
+        
+        self.client.updateCallback = { channelID, channelPayload in
+            XCTAssertEqual(restoredUUID, channelID)
+            XCTAssertNil(channelPayload.channel.deviceModel) // minimized
+            
+            return AirshipHTTPResponse(
+                result: ChannelAPIResponse(
+                    channelID: restoredUUID,
+                    location: try self.client.makeChannelLocation(
+                        channelID: "some-channel-id"
+                    )
+                ),
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(workID: workID)
+        )
+
+        XCTAssertEqual(.success, result)
+
+        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
+    }
+    
+    func testRestoreFallBackToCreateOnInvalidID() async throws {
+        self.channelCreateMethod = .restore(channelID: "invalid-uuid")
+        await makeRegistrar()
+        
+        var payload = ChannelRegistrationPayload()
+        payload.channel.deviceModel = UUID().uuidString
+
+        self.channelRegistrar.addChannelRegistrationExtender { _ in
+            return payload
+        }
+
+        let create = expectation(description: "create block called")
+        self.client.createCallback =  { channelPayload in
+            XCTAssertEqual(channelPayload, payload)
+            create.fulfill()
+            return AirshipHTTPResponse(
+                result: ChannelAPIResponse(
+                    channelID: "some-channel-id",
+                    location: try self.client.makeChannelLocation(
+                        channelID: "some-channel-id"
+                    )
+                ),
+                statusCode: 201,
+                headers: [:])
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(workID: workID)
+        )
+
+        XCTAssertEqual(.success, result)
+
+        await self.fulfillmentCompat(of: [create], timeout: 10.0)
+    }
 
     func testCreateChannelExisting() async throws {
+        await makeRegistrar()
         var payload = ChannelRegistrationPayload()
         payload.channel.deviceModel = UUID().uuidString
 
@@ -148,6 +235,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testCreateChannelError() async throws {
+        await makeRegistrar()
         self.client.createCallback =  { channelPayload in
             throw AirshipErrors.error("Some error")
         }
@@ -163,6 +251,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testCreateChannelServerError() async throws {
+        await makeRegistrar()
         self.client.createCallback =  { channelPayload in
             return AirshipHTTPResponse(
                 result: nil,
@@ -178,6 +267,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testCreateChannelClientError() async throws {
+        await makeRegistrar()
         self.client.createCallback =  { channelPayload in
             return AirshipHTTPResponse(
                 result: nil,
@@ -193,7 +283,8 @@ class ChannelRegistrarTest: XCTestCase {
         XCTAssertEqual(.success, result)
     }
     
-    func testUpdateNotConfigured() {
+    func testUpdateNotConfigured() async {
+        await makeRegistrar()
         self.client.isURLConfigured = false
         self.channelRegistrar.register(forcefully: true)
         self.channelRegistrar.register(forcefully: false)
@@ -207,6 +298,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testCreateChannel429Error() async throws {
+        await makeRegistrar()
         self.client.createCallback =  { channelPayload in
             return AirshipHTTPResponse(
                 result: nil,
@@ -222,6 +314,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateChannel() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
 
         try await createChannel(channelID: someChannelID)
@@ -270,6 +363,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateChannelError() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         try await createChannel(channelID: someChannelID)
 
@@ -292,6 +386,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateChannelServerError() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         try await createChannel(channelID: someChannelID)
 
@@ -316,6 +411,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateChannelClientError() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         try await createChannel(channelID: someChannelID)
 
@@ -341,6 +437,7 @@ class ChannelRegistrarTest: XCTestCase {
     
 
     func testUpdateChannel429Error() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         try await createChannel(channelID: someChannelID)
 
@@ -365,6 +462,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testSkipUpdateChannelUpToDate() async throws {
+        await makeRegistrar()
         var payload = ChannelRegistrationPayload()
         payload.channel.deviceModel = UUID().uuidString
         self.channelRegistrar.addChannelRegistrationExtender { _ in
@@ -384,6 +482,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateForcefully() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         try await createChannel(channelID: someChannelID)
 
@@ -422,6 +521,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateLocationChanged() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         var payload = ChannelRegistrationPayload()
         payload.channel.deviceModel = UUID().uuidString
@@ -471,6 +571,7 @@ class ChannelRegistrarTest: XCTestCase {
     }
 
     func testUpdateMinPayload() async throws {
+        await makeRegistrar()
         let someChannelID = UUID().uuidString
         var payload = ChannelRegistrationPayload()
         payload.channel.deviceModel = UUID().uuidString
@@ -524,6 +625,7 @@ class ChannelRegistrarTest: XCTestCase {
 
     @MainActor
     func testUpdateAfter24Hours() async throws {
+        await makeRegistrar()
         self.appStateTracker.currentState = .active
         self.date.dateOverride = Date()
         let someChannelID = UUID().uuidString
@@ -593,6 +695,19 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
+    }
+    
+    private func makeRegistrar() async {
+        await MainActor.run {
+            self.channelRegistrar = ChannelRegistrar(
+                dataStore: self.dataStore,
+                channelAPIClient: self.client,
+                date: self.date,
+                workManager:  self.workManager,
+                appStateTracker: self.appStateTracker,
+                channelCreateMethod: { return self.channelCreateMethod }
+            )
+        }
     }
 }
 
