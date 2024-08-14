@@ -58,6 +58,17 @@ public class AirshipConfig: NSObject, NSCopying {
     /// Allows setting a custom closure for auth challenge certificate validation
     /// Defaults to `nil`
     public var connectionChallengeResolver: ChallengeResolveClosure?
+    
+
+    /// A closure that can be used to manually recover the channel ID instead of having
+    /// Airship recover or generate an ID automatically.
+    ///
+    /// This is a delicate API that should only be used if the application can ensure the channel ID was previously created and by recovering
+    /// it will only be used by a single device. Having multiple devices with the same channel ID will cause unpredictable behavior.
+    ///
+    /// When the method is set to `restore`, the user must provide a previously generated, unique
+    /// If the closure throws an error, Airship will delay channel registration until a successful execution.
+    public var restoreChannelID: AirshipChannelCreateOptionClosure?
 
     /// The airship cloud site. Defaults to `us`.
     @objc
@@ -480,6 +491,7 @@ public class AirshipConfig: NSObject, NSCopying {
         restoreMessageCenterOnReinstall = config.restoreMessageCenterOnReinstall
         isWebViewInspectionEnabled = config.isWebViewInspectionEnabled
         connectionChallengeResolver = config.connectionChallengeResolver
+        restoreChannelID = config.restoreChannelID
     }
 
     public func copy(with zone: NSZone? = nil) -> Any {
@@ -1003,6 +1015,15 @@ public class AirshipConfig: NSObject, NSCopying {
         AirshipLogger.debug("Ignoring invalid Config key: \(key)")
     }
 }
+
+// The Channel generation method. In `automatic` mode Airship will generate a new channelID and create a new channel.
+// If the restore option is specified and `channelID` is a correct ID, Airship will try to restore a channel with the specified ID
+public enum ChannelGenerationMethod {
+    case automatic
+    case restore(channelID: String)
+}
+
+public typealias AirshipChannelCreateOptionClosure = (() async throws -> ChannelGenerationMethod)
 
 private enum LogPrivacyLevelNames: String {
     case `private`

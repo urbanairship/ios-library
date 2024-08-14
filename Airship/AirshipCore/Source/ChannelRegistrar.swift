@@ -36,7 +36,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     private let appStateTracker: AppStateTrackerProtocol
     private let updatesSubject = CurrentValueSubject<ChannelRegistrationUpdate?, Never>(nil)
     private var checkAppRestoreTask: Task<Void, Never>?
-
+    private let channelCreateMethod: (() async throws -> ChannelGenerationMethod)?
 
     private var lastRegistrationInfo: LastRegistrationInfo? {
         get {
@@ -85,13 +85,15 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         channelAPIClient: ChannelAPIClientProtocol,
         date: AirshipDateProtocol = AirshipDate.shared,
         workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        appStateTracker: AppStateTrackerProtocol? = nil
+        appStateTracker: AppStateTrackerProtocol? = nil,
+        channelCreateMethod: AirshipChannelCreateOptionClosure? = nil
     ) {
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
         self.date = date
         self.workManager = workManager
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
+        self.channelCreateMethod = channelCreateMethod
 
         if self.channelID != nil {
             checkAppRestoreTask = Task { [weak self] in
@@ -116,7 +118,8 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     ) {
         self.init(
             dataStore: dataStore,
-            channelAPIClient: ChannelAPIClient(config: config)
+            channelAPIClient: ChannelAPIClient(config: config),
+            channelCreateMethod: config.restoreChannelID
         )
     }
 
@@ -233,13 +236,65 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     private func createChannel(
         payload: ChannelRegistrationPayload
     ) async throws -> AirshipWorkResult {
-
+        
+        let method = try await channelCreateMethod?() ?? .automatic
+        
+        guard 
+            case .restore(let channelID) = method,
+            method.isValid,
+            let result = try await tryRestoreChannel(channelID, payload: payload)
+        else {
+            return try await regularCreateChannel(payload: payload)
+        }
+        
+        return result
+    }
+    
+    private func tryRestoreChannel(
+        _ channelId: String,
+        payload: ChannelRegistrationPayload
+    ) async throws -> AirshipWorkResult? {
+        
+        let response: AirshipHTTPResponse<ChannelAPIResponse> = .init(
+            result: .init(
+                channelID: channelId,
+                location: try channelAPIClient.makeChannelLocation(channelID: channelId)),
+            statusCode: 200,
+            headers: [:]
+        )
+        
+        guard 
+            await onNewChannelID(payload: payload, response: response) == .success,
+            let nextPayload = try await self.makeNextUpdatePayload(
+                channelID: channelId,
+                forcefully: true,
+                payload: payload,
+                lastRegistrationInfo: lastRegistrationInfo)
+        else {
+            return nil
+        }
+        
+        return try await updateChannel(channelId, payload: payload, minimizedPayload: nextPayload)
+    }
+    
+    private func regularCreateChannel(
+        payload: ChannelRegistrationPayload
+    ) async throws -> AirshipWorkResult {
+        
         let response = try await self.channelAPIClient.createChannel(
             payload: payload
         )
 
         AirshipLogger.debug("Channel create request finished with response: \(response)")
 
+        return await onNewChannelID(payload: payload, response: response)
+    }
+    
+    private func onNewChannelID(
+        payload: ChannelRegistrationPayload,
+        response: AirshipHTTPResponse<ChannelAPIResponse>
+    ) async -> AirshipWorkResult {
+        
         guard response.isSuccess, let result = response.result else {
             if response.isServerError || response.statusCode == 429 {
                 return .failure
@@ -247,16 +302,16 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
                 return .success
             }
         }
-
+        
         self.channelID = result.channelID
-
+        
         self.updatesSubject.send(
             .created(
                 channelID: result.channelID,
                 isExisting: response.statusCode == 200
             )
         )
-
+        
         await self.registrationSuccess(
             channelID: result.channelID,
             registrationInfo: LastRegistrationInfo(
@@ -265,6 +320,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
                 location: result.location
             )
         )
+        
         return .success
     }
 
@@ -334,5 +390,14 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         let date: Date
         let payload: ChannelRegistrationPayload
         let location: URL
+    }
+}
+
+fileprivate extension ChannelGenerationMethod {
+    var isValid: Bool {
+        switch self {
+        case .automatic: return true
+        case .restore(let id): return UUID(uuidString: id) != nil
+        }
     }
 }
