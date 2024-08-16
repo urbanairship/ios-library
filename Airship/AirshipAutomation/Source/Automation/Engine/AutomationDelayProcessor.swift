@@ -86,6 +86,14 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
                     }
                 }
             }
+            
+            guard !Task.isCancelled else { return }
+            
+            if let window = delay.displayWindow {
+                if case .retry(let delay) = window.nextAvailability(date: date.now) {
+                    try? await self.taskSleeper.sleep(timeInterval: delay)
+                }
+            }
         }
     }
 
@@ -113,6 +121,12 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
         // Region
         if let regionID = delay.regionID {
             guard self.analytics.currentRegions.contains(regionID) else {
+                return false
+            }
+        }
+        
+        if let window = delay.displayWindow {
+            guard window.nextAvailability(date: date.now) == .now else {
                 return false
             }
         }

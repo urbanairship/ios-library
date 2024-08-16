@@ -31,6 +31,8 @@ public struct AutomationDelay: Sendable, Codable, Equatable {
 
     /// Cancellation triggers. These triggers only cancel the execution of the schedule not the entire schedule
     public var cancellationTriggers: [AutomationTrigger]?
+    
+    public var displayWindow: DisplayWindow?
 
     enum CodingKeys: String, CodingKey {
         case seconds
@@ -38,5 +40,6 @@ public struct AutomationDelay: Sendable, Codable, Equatable {
         case regionID = "region"
         case appState = "app_state"
         case cancellationTriggers = "cancellation_triggers"
+        case displayWindow = "display_window"
     }
 }
