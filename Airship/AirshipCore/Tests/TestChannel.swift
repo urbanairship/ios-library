@@ -1,12 +1,26 @@
 import Foundation
 import ActivityKit
 
-@testable import AirshipCore
+@testable
+import AirshipCore
 import Combine
 
 class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecked Sendable {
+    private var identifierSubject: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
+
     var identifierUpdates: AsyncStream<String> {
-        return AsyncStream { _ in }
+        return AsyncStream { continuation in
+            let cancellable = identifierSubject
+                .compactMap { $0 }
+                .removeDuplicates()
+                .sink { update in
+                    continuation.yield(update)
+                }
+
+            continuation.onTermination = { _ in
+                cancellable.cancel()
+            }
+        }
     }
 
     private let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
@@ -25,7 +39,11 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
     }
 
     @objc
-    public var identifier: String? = nil
+    public var identifier: String? = nil {
+        didSet {
+            identifierSubject.send(identifier)
+        }
+    }
 
     public var contactUpdates: [SubscriptionListUpdate] = []
 

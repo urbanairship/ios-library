@@ -590,3 +590,4 @@ public extension AirshipNotifications {
     }
 
 }
+
