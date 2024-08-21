@@ -22,6 +22,7 @@ enum ChannelRegistrationUpdate {
 /// - Note: For internal use only. :nodoc:
 final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     static let workID = "UAChannelRegistrar.registration"
+    private static let payloadCadence: TimeInterval = 24 * 60 * 60
 
     fileprivate static let forcefullyKey = "forcefully"
     private static let channelIDKey = "UAChannelID"
@@ -203,12 +204,14 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         )
 
         AirshipLogger.debug("Channel update request finished with response: \(response)")
+        let fullPayloadUploadDate = payload == minimizedPayload ? self.lastRegistrationInfo?.lastFullPayloadSent : self.date.now
 
         if response.isSuccess, let result = response.result {
             await self.registrationSuccess(
                 channelID: channelID,
                 registrationInfo: LastRegistrationInfo(
                     date: self.date.now,
+                    lastFullPayloadSent: fullPayloadUploadDate,
                     payload: payload,
                     location: result.location
                 )
@@ -316,6 +319,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
             channelID: result.channelID,
             registrationInfo: LastRegistrationInfo(
                 date: self.date.now,
+                lastFullPayloadSent: self.date.now,
                 payload: payload,
                 location: result.location
             )
@@ -367,7 +371,9 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         )
 
         guard let lastRegistrationInfo = lastRegistrationInfo,
-              currentLocation == lastRegistrationInfo.location
+              currentLocation == lastRegistrationInfo.location,
+              let lastFullPayloadSent = lastRegistrationInfo.lastFullPayloadSent,
+              self.date.now.timeIntervalSince(lastFullPayloadSent) <= Self.payloadCadence
         else {
             return payload
         }
@@ -377,7 +383,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         )
 
         let isActive = await self.appStateTracker.state == .active
-        let shouldUpdateForActive = isActive && timeSinceLastUpdate >= (24 * 60 * 60)
+        let shouldUpdateForActive = isActive && timeSinceLastUpdate >= Self.payloadCadence
 
         guard forcefully || shouldUpdateForActive || payload != lastRegistrationInfo.payload else {
             return nil
@@ -388,6 +394,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
 
     fileprivate struct LastRegistrationInfo: Codable {
         let date: Date
+        let lastFullPayloadSent: Date?
         let payload: ChannelRegistrationPayload
         let location: URL
     }
