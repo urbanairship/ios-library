@@ -11,7 +11,7 @@ class ActionAutomationExecutorTest: XCTestCase {
     private let actionRunner: TestActionRunner = TestActionRunner()
     private var executor: ActionAutomationExecutor!
 
-    private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some id", triggerSessionID: UUID().uuidString)
+    private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some id", triggerSessionID: UUID().uuidString, priority: 0)
     private let actions = try! AirshipJSON.wrap(["some-action": "some-value"])
 
     override func setUp() {

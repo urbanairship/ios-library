@@ -261,7 +261,7 @@ extension InAppMessage {
     public func _display(
         scene: UIWindowScene
     ) async throws {
-        let adapter = try AirshipLayoutDisplayAdapter(message: self, assets: EmptyAirshipCachedAssets())
+        let adapter = try AirshipLayoutDisplayAdapter(message: self, priority: 0, assets: EmptyAirshipCachedAssets())
         _ = try await adapter.display(
             scene: DefaultWindowSceneHolder(scene: scene),
             analytics: LoggingInAppMessageAnalytics()

@@ -125,6 +125,7 @@ final class AirshipLayoutDisplayAdapterTest: XCTestCase {
     ) throws -> AirshipLayoutDisplayAdapter  {
         return try AirshipLayoutDisplayAdapter(
             message: message,
+            priority: 0,
             assets: self.assets,
             networkChecker: self.networkChecker
         )

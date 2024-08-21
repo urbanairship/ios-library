@@ -9,7 +9,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private let sceneManager: TestSceneManager = TestSceneManager()
     private let assetManager: TestAssetManager = TestAssetManager()
     private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
-    private let conditionsChangedNotifier: ScheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
+    private var conditionsChangedNotifier: ScheduleConditionsChangedNotifier!
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private let actionRunner: TestInAppActionRunner = TestInAppActionRunner()
     private let displayAdapter: TestDisplayAdapter = TestDisplayAdapter()
@@ -21,7 +21,8 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         campaigns: .string(UUID().uuidString),
         contactID: UUID().uuidString,
         reportingContext: .string(UUID().uuidString),
-        triggerSessionID: UUID().uuidString
+        triggerSessionID: UUID().uuidString,
+        priority: 0
     )
 
     private var displayCoordinator: TestDisplayCoordinator!
@@ -29,6 +30,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private var executor: InAppMessageAutomationExecutor!
 
     override func setUp() async throws {
+        self.conditionsChangedNotifier = await ScheduleConditionsChangedNotifier()
         self.displayCoordinator = await TestDisplayCoordinator()
         self.preparedData = PreparedInAppMessageData(
             message: InAppMessage(

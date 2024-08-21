@@ -68,12 +68,14 @@ actor RetryingQueue<T: Sendable> {
     }
 
     private struct OperationState {
+        let priority: Int
         var id: UInt
         var status: Status = .pendingRun
         private var continuation: CheckedContinuation<Void, Never>? = nil
 
-        init(id: UInt) {
+        init(id: UInt, priority: Int) {
             self.id = id
+            self.priority = priority
         }
 
         mutating func continueWork() {
@@ -138,12 +140,13 @@ actor RetryingQueue<T: Sendable> {
     /// - Returns: The successful result value.
     func run(
         name: String,
+        priority: Int = 0,
         operation: @escaping @Sendable (State) async throws -> Result
     ) async  -> T {
         let state = State()
         var nextBackOff = initialBackOff
 
-        let operationID = addOperation()
+        let operationID = addOperation(priority: priority)
 
         while(true) {
             await waitForStart(operationID: operationID)
@@ -176,8 +179,8 @@ actor RetryingQueue<T: Sendable> {
         }
     }
 
-    private func addOperation() -> UInt {
-        let state = OperationState(id: nextID)
+    private func addOperation(priority: Int) -> UInt {
+        let state = OperationState(id: nextID, priority: priority)
         nextID += 1
         self.operationState[state.id] = state
         return state.id
@@ -254,17 +257,18 @@ actor RetryingQueue<T: Sendable> {
         if (returning.count >= self.maxPendingResults) {
             return nil
         }
-
-        return self.operationState.values.filter { $0.status == .pendingRun }
-            .map { $0.id }
-            .min()
+        
+        return self.operationState.values
+            .filter { $0.status == .pendingRun }
+            .sorted { $0.priority < $1.priority }
+            .first?.id
     }
 
     private func nextReturnID() -> UInt? {
         return self.operationState.values
             .filter { $0.status != .retrying }
-            .map { $0.id }
-            .min()
+            .sorted { $0.priority < $1.priority }
+            .first?.id
     }
 
     private func setContinuation(

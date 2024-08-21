@@ -8,9 +8,9 @@ import AirshipCore
 
 protocol AutomationExecutorProtocol: Sendable {
     @MainActor
-    func isReadyPrecheck(
+    func isValid(
         schedule: AutomationSchedule
-    ) async -> ScheduleReadyResult
+    ) async -> Bool
 
     @MainActor
     func isReady(preparedSchedule: PreparedSchedule) -> ScheduleReadyResult
@@ -63,12 +63,12 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     }
 
     @MainActor
-    func isReadyPrecheck(schedule: AutomationSchedule) async -> ScheduleReadyResult {
+    func isValid(schedule: AutomationSchedule) async -> Bool {
         guard await self.remoteDataAccess.isCurrent(schedule: schedule) else {
-            return .invalidate
+            return false
         }
 
-        return .ready
+        return true
     }
 
     @MainActor

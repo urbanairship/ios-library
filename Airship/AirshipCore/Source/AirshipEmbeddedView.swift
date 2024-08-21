@@ -52,6 +52,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
         let pending = viewModel.pending
 
         let configuration = AirshipEmbeddedViewStyleConfiguration(
+            embeddedID: embeddedID,
             views: pending.map{ pending in
                 AirshipEmbeddedContentView(
                     embeddedInfo: pending.embeddedInfo,
@@ -72,6 +73,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
         return self.style.makeBody(configuration: configuration)
     }
 }
+
 
 private class EmbeddedViewModel: ObservableObject {
 
@@ -123,12 +125,16 @@ public struct AirshipEmbeddedContentView : View  {
 
     @ViewBuilder
     public var body: some View {
-        view()
+        view().onAppear {
+            EmbeddedViewSelector.shared.onViewDisplayed(embeddedInfo)
+        }
+        .id(embeddedInfo.instanceID)
     }
 }
 
 /// Style configuration for customizing an Airship embedded view
 public struct AirshipEmbeddedViewStyleConfiguration {
+    public let embeddedID: String
     public let views: [AirshipEmbeddedContentView]
     public let placeHolder: AnyView
 }
@@ -149,9 +155,19 @@ extension AirshipEmbeddedViewStyle where Self == DefaultAirshipEmbeddedViewStyle
 
 /// Default style for embedded views
 public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
+
+    @MainActor
+    private func nextView(configuration: Configuration) -> AirshipEmbeddedContentView? {
+        return EmbeddedViewSelector.shared.selectView(
+            embeddedID: configuration.embeddedID,
+            views: configuration.views
+       )
+    }
+
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
-        if let view = configuration.views.first {
+        if let view = nextView(configuration: configuration) {
             view
         } else {
             configuration.placeHolder
@@ -198,6 +214,3 @@ extension View {
         )
     }
 }
-
-
-

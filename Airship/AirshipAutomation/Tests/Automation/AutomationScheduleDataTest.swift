@@ -15,7 +15,7 @@ final class AutomationScheduleDataTest: XCTestCase {
         date: Date()
     )
 
-    private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString)
+    private let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0)
 
     private var data: AutomationScheduleData!
 

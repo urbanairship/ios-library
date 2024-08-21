@@ -10,7 +10,8 @@ protocol AirshipEmbeddedViewManagerProtocol {
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate,
-        extras: AirshipJSON?
+        extras: AirshipJSON?,
+        priority: Int
     ) -> AirshipMainActorCancellable
 
     var publisher: AnyPublisher<[PendingEmbedded], Never> { get }
@@ -35,7 +36,8 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate,
-        extras: AirshipJSON?
+        extras: AirshipJSON?,
+        priority: Int
     ) -> AirshipMainActorCancellable {
         let id = UUID().uuidString
 
@@ -53,7 +55,8 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
                 embeddedInfo: AirshipEmbeddedInfo(
                     instanceID: id,
                     embeddedID: presentation.embeddedID,
-                    extras: extras
+                    extras: extras,
+                    priority: priority
                 )
             )
         )

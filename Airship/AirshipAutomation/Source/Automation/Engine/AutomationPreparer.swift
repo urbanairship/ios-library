@@ -181,7 +181,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         experimentResult: experimentResult,
                         reportingContext: schedule.reportingContext,
                         triggerSessionID: triggerSessionID,
-                        additionalAudienceCheckResult: result
+                        additionalAudienceCheckResult: result,
+                        priority: schedule.priority ?? 0
                     )
                 },
                 prepareSchedule: { [frequencyChecker] scheduleInfo, data in

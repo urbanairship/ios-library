@@ -89,7 +89,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
         do {
             let _ = try await factory.makeAdapter(
                 args: DisplayAdapterArgs(
-                    message: message, assets: assets, _actionRunner: TestInAppActionRunner()
+                    message: message, assets: assets, priority: 0, _actionRunner: TestInAppActionRunner()
                 )
             )
             XCTFail("Wrong adapter")
@@ -108,7 +108,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
 
         let adapter = try await factory.makeAdapter(
             args: DisplayAdapterArgs(
-                message: message, assets: assets, _actionRunner: TestInAppActionRunner()
+                message: message, assets: assets, priority: 0, _actionRunner: TestInAppActionRunner()
             )
         )
 
@@ -145,7 +145,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
 
         let result = try await factory.makeAdapter(
             args: DisplayAdapterArgs(
-                message: message, assets: assets, _actionRunner: TestInAppActionRunner()
+                message: message, assets: assets, priority: 0, _actionRunner: TestInAppActionRunner()
             )
         )
 

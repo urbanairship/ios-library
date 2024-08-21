@@ -11,7 +11,7 @@ final class RetryingQueueTests: XCTestCase {
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     func testState() async throws {
-        let queue = RetryingQueue<Int>()
+        let queue = RetryingQueue<Int>(taskSleeper: taskSleeper)
 
         let result = await queue.run(name: "testState") { state in
             let runCount: Int = await state.value(key: "runCount") ?? 1
@@ -25,6 +25,44 @@ final class RetryingQueueTests: XCTestCase {
         }
 
         XCTAssertEqual(6, result)
+    }
+    
+    func testExecutionOrderPriorities() async throws {
+        
+        let queue = RetryingQueue<Int>(
+            maxConcurrentOperations: 1
+        )
+        
+        let numbers = await withTaskGroup(of: Int.self) { group in
+            group.addTask {
+                return await queue.run(name: "3", priority: 3) { _ in
+                    try await Task.sleep(nanoseconds: 1_000_000)
+                    return .success(result: 3, ignoreReturnOrder: false)
+                }
+            }
+            group.addTask {
+                return await queue.run(name: "2", priority: 2) { _ in
+                    try await Task.sleep(nanoseconds: 1_000_000)
+                    return .success(result: 2, ignoreReturnOrder: false)
+                }
+            }
+            group.addTask {
+                return await queue.run(name: "1", priority: 1) { _ in
+                    try await Task.sleep(nanoseconds: 1_000_000)
+                    return .success(result: 1, ignoreReturnOrder: false)
+                }
+            }
+
+            var result = [Int]()
+            
+            for await item in group {
+                result.append(item)
+            }
+            
+            return result
+        }
+        
+        XCTAssertEqual([1, 2, 3], numbers)
     }
 
     func testRetryAfter0() async throws {

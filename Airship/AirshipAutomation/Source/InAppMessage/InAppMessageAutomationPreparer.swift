@@ -69,7 +69,12 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         let actionRunner = self.actionRunnerFactory.makeRunner(message: data, analytics: analytics)
 
         let displayAdapter = try await self.displayAdapterFactory.makeAdapter(
-            args: DisplayAdapterArgs(message: data, assets: assets, _actionRunner: actionRunner)
+            args: DisplayAdapterArgs(
+                message: data,
+                assets: assets,
+                priority: preparedScheduleInfo.priority,
+                _actionRunner: actionRunner
+            )
         )
 
         return PreparedInAppMessageData(

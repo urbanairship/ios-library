@@ -21,7 +21,8 @@ class InAppMessageAnalyticsTest: XCTestCase {
             reportingMetadata: [AirshipJSON.string(UUID().uuidString)]
         ),
         reportingContext: AirshipJSON.string(UUID().uuidString),
-        triggerSessionID: UUID().uuidString
+        triggerSessionID: UUID().uuidString,
+        priority: 0
     )
 
     @MainActor
