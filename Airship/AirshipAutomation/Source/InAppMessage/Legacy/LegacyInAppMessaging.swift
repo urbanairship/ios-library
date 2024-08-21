@@ -237,14 +237,17 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
         
         let overrideId = notification["_"] as? String
         let messageCenterAction: AirshipJSON?
+
         if
             let actionRaw = notification[Keys.messageCenterActionKey.rawValue] as? [String: Any],
             let action = try? AirshipJSON.wrap(actionRaw) {
             messageCenterAction = action
+        } else if let messageId = notification[Keys.messageCenterActionKey.rawValue] as? String {
+            messageCenterAction = .object([Keys.messageCenterActionKey.rawValue: .string(messageId)])
         } else {
             messageCenterAction = nil
         }
-        
+
         let message = LegacyInAppMessage(
             payload: payload,
             overrideId: overrideId,

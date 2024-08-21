@@ -596,7 +596,7 @@ fileprivate extension AutomationEngine {
 
     @MainActor
     private func execute(preparedSchedule: PreparedSchedule) async throws -> ScheduleExecuteResult {
-        AirshipLogger.trace("Executiong schedule \(preparedSchedule.info.scheduleID)")
+        AirshipLogger.trace("Executing schedule \(preparedSchedule.info.scheduleID)")
 
         // Execute
         let updateStateTask = Task {
@@ -611,7 +611,7 @@ fileprivate extension AutomationEngine {
 
         _ = try await updateStateTask.value
 
-        AirshipLogger.trace("Executiong result \(preparedSchedule.info.scheduleID) \(executeResult)")
+        AirshipLogger.trace("Executing result \(preparedSchedule.info.scheduleID) \(executeResult)")
 
         return executeResult
     }
