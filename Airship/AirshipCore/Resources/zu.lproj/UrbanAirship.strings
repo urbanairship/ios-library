@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Khetha Lutho";
 "ua_select_none_messages_description" = "Setha kabusha ukukhetha komlayezo";
 "ua_unread_message_description" = "Umlayezo awufundiwe";
+
+// Generic localizations
+"ua_dismiss" = "Khipha";
+"ua_escape" = "Phuma";
+"ua_next" = "Okulandelayo";
+"ua_previous" = "Okwangaphambili";
+"ua_submit" = "Faka";
+"ua_loading" = "Iyalayisha";
+"ua_pager_progress" = "Ikhasi %@ ye-%@";
+"ua_play" = "Dlala";
+"ua_pause" = "Misa";
+"ua_stop" = "Yeka";

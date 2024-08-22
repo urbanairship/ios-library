@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Kies Geen";
 "ua_select_none_messages_description" = "Stel boodskapkeuse terug";
 "ua_unread_message_description" = "Boodskap ongelees";
+
+// Generic localizations
+"ua_dismiss" = "Laat gaan";
+"ua_escape" = "Ontsnap";
+"ua_next" = "Volgende";
+"ua_previous" = "Vorige";
+"ua_submit" = "Indien";
+"ua_loading" = "Laai";
+"ua_pager_progress" = "Bladsy %@ van %@";
+"ua_play" = "Speel";
+"ua_pause" = "Laat wag";
+"ua_stop" = "Hou op";

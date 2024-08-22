@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Chọn Không";
 "ua_select_none_messages_description" = "Đặt lại lựa chọn tin nhắn";
 "ua_unread_message_description" = "Tin nhắn chưa đọc";
+
+// Generic localizations
+"ua_dismiss" = "Bỏ qua";
+"ua_escape" = "Thoát";
+"ua_next" = "Kế tiếp";
+"ua_previous" = "Trước đó";
+"ua_submit" = "Gửi";
+"ua_loading" = "Đang tải";
+"ua_pager_progress" = "Trang %@ của %@";
+"ua_play" = "Phát";
+"ua_pause" = "Tạm dừng";
+"ua_stop" = "Dừng";

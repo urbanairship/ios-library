@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Älä valitse mitään";
 "ua_select_none_messages_description" = "Nollaa viestivalinta";
 "ua_unread_message_description" = "Viesti lukematon";
+
+// Generic localizations
+"ua_dismiss" = "Hylkää";
+"ua_escape" = "Poistu";
+"ua_next" = "Seuraava";
+"ua_previous" = "Edellinen";
+"ua_submit" = "Lähetä";
+"ua_loading" = "Lataus";
+"ua_pager_progress" = "Sivu %@ / %@";
+"ua_play" = "Toista";
+"ua_pause" = "Tauko";
+"ua_stop" = "Pysäytä";

@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "ללא בחירה";
 "ua_select_none_messages_description" = "אפס את בחירת ההודעה";
 "ua_unread_message_description" = "הודעה שלא נקראה";
+
+// Generic localizations
+"ua_dismiss" = "להתעלם";
+"ua_escape" = "לצאת";
+"ua_next" = "הבא";
+"ua_previous" = "הקודם";
+"ua_submit" = "להגיש";
+"ua_loading" = "טוען";
+"ua_pager_progress" = "עמוד %@ מתוך %@";
+"ua_play" = "לנגן";
+"ua_pause" = "להפסיק";
+"ua_stop" = "לעצור";

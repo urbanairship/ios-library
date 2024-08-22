@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Nevybrať ani jednu";
 "ua_select_none_messages_description" = "Obnoviť výber správ";
 "ua_unread_message_description" = "Správa neprečítaná";
+
+// Generic localizations
+"ua_dismiss" = "Zamietnuť";
+"ua_escape" = "Uniknúť";
+"ua_next" = "Ďalší";
+"ua_previous" = "Predchádzajúci";
+"ua_submit" = "Predložiť";
+"ua_loading" = "Načítavanie";
+"ua_pager_progress" = "Strana %@ z %@";
+"ua_play" = "Hrať";
+"ua_pause" = "Pauza";
+"ua_stop" = "Zastaviť";

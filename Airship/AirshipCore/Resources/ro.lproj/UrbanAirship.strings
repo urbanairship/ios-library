@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Selectează Niciunul";
 "ua_select_none_messages_description" = "Resetați selecția mesajului";
 "ua_unread_message_description" = "Mesaj necitit";
+
+// Generic localizations
+"ua_dismiss" = "Renunță";
+"ua_escape" = "Ieși";
+"ua_next" = "Următorul";
+"ua_previous" = "Anterior";
+"ua_submit" = "Trimite";
+"ua_loading" = "Se încarcă";
+"ua_pager_progress" = "Pagina %@ din %@";
+"ua_play" = "Redă";
+"ua_pause" = "Pauză";
+"ua_stop" = "Oprire";

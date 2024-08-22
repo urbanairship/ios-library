@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Selecteer Geen";
 "ua_select_none_messages_description" = "Berichtselectie resetten";
 "ua_unread_message_description" = "Bericht ongelezen";
+
+// Generic localizations
+"ua_dismiss" = "Afwijzen";
+"ua_escape" = "Ontsnappen";
+"ua_next" = "Volgende";
+"ua_previous" = "Vorige";
+"ua_submit" = "Indienen";
+"ua_loading" = "Laden";
+"ua_pager_progress" = "Pagina %@ van %@";
+"ua_play" = "Spelen";
+"ua_pause" = "Pauze";
+"ua_stop" = "Stoppen";

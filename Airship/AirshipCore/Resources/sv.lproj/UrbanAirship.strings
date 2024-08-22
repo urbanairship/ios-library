@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Välj inget";
 "ua_select_none_messages_description" = "Återställ meddelandeval";
 "ua_unread_message_description" = "Meddelande oläst";
+
+// Generic localizations
+"ua_dismiss" = "Avfärda";
+"ua_escape" = "Rymma";
+"ua_next" = "Nästa";
+"ua_previous" = "Föregående";
+"ua_submit" = "Skicka";
+"ua_loading" = "Laddar";
+"ua_pager_progress" = "Sida %@ av %@";
+"ua_play" = "Spela";
+"ua_pause" = "Pausa";
+"ua_stop" = "Stoppa";

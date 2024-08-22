@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Ne válassz ki egyet sem";
 "ua_select_none_messages_description" = "Üzenetválasztás visszaállítása";
 "ua_unread_message_description" = "Az üzenet olvasatlan";
+
+// Generic localizations
+"ua_dismiss" = "Elutasítás";
+"ua_escape" = "Kilépés";
+"ua_next" = "Következő";
+"ua_previous" = "Előző";
+"ua_submit" = "Beküldés";
+"ua_loading" = "Betöltés";
+"ua_pager_progress" = "%@. oldal a %@-ból";
+"ua_play" = "Lejátszás";
+"ua_pause" = "Szünet";
+"ua_stop" = "Leállítás";

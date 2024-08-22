@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "없음 선택";
 "ua_select_none_messages_description" = "메시지 선택 재설정";
 "ua_unread_message_description" = "읽지 않은 메시지";
+
+// Generic localizations
+"ua_dismiss" = "해제";
+"ua_escape" = "탈출";
+"ua_next" = "다음";
+"ua_previous" = "이전";
+"ua_submit" = "제출";
+"ua_loading" = "불러오는 중";
+"ua_pager_progress" = "페이지 %@/%@";
+"ua_play" = "재생";
+"ua_pause" = "일시정지";
+"ua_stop" = "정지";

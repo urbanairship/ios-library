@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "اختر لا شيء";
 "ua_select_none_messages_description" = "إعادة تعيين اختيار الرسالة";
 "ua_unread_message_description" = "الرسالة غير مقروءة";
+
+// Generic localizations
+"ua_dismiss" = "تجاهل";
+"ua_escape" = "خروج";
+"ua_next" = "التالي";
+"ua_previous" = "السابق";
+"ua_submit" = "إرسال";
+"ua_loading" = "تحميل";
+"ua_pager_progress" = "الصفحة %@ من %@";
+"ua_play" = "تشغيل";
+"ua_pause" = "إيقاف مؤقت";
+"ua_stop" = "إيقاف";

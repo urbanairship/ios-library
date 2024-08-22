@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Hiçbirini Seçme";
 "ua_select_none_messages_description" = "Mesaj seçimini sıfırla";
 "ua_unread_message_description" = "Mesaj okunmadı";
+
+// Generic localizations
+"ua_dismiss" = "Kapat";
+"ua_escape" = "Çıkış";
+"ua_next" = "Sonraki";
+"ua_previous" = "Önceki";
+"ua_submit" = "Gönder";
+"ua_loading" = "Yükleniyor";
+"ua_pager_progress" = "%@ / %@ Sayfa";
+"ua_play" = "Oynat";
+"ua_pause" = "Duraklat";
+"ua_stop" = "Durdur";

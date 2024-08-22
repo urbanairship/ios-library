@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Nie zaznaczaj nic";
 "ua_select_none_messages_description" = "Zresetuj wybór wiadomości";
 "ua_unread_message_description" = "Wiadomość nieprzeczytana";
+
+// Generic localizations
+"ua_dismiss" = "Odrzuć";
+"ua_escape" = "Uciec";
+"ua_next" = "Następny";
+"ua_previous" = "Poprzedni";
+"ua_submit" = "Złożyć";
+"ua_loading" = "Ładowanie";
+"ua_pager_progress" = "Strona %@ z %@";
+"ua_play" = "Odtwarzać";
+"ua_pause" = "Pauza";
+"ua_stop" = "Zatrzymać";

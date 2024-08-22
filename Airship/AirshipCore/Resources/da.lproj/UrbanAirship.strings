@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Vælg ingen";
 "ua_select_none_messages_description" = "Nulstil beskedvalg";
 "ua_unread_message_description" = "Besked er ulæst";
+
+// Generic localizations
+"ua_dismiss" = "Afvis";
+"ua_escape" = "Undslip";
+"ua_next" = "Næste";
+"ua_previous" = "Forrige";
+"ua_submit" = "Indsend";
+"ua_loading" = "Indlæser";
+"ua_pager_progress" = "Side %@ af %@";
+"ua_play" = "Afspil";
+"ua_pause" = "Pause";
+"ua_stop" = "Stop";
