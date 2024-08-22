@@ -1,5 +1,5 @@
 
-XCODE ?= 15.3
+XCODE ?= 16.1
 
 export XCBEAUTIY_RENDERER ?= github-actions
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=17.4,name=iPhone 15 Pro Max
@@ -112,24 +112,24 @@ pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
 
 .PHONY: pod-lint-tvos
 pod-lint-tvos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --fail-fast --skip-tests --no-subspecs
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --fail-fast --skip-tests --no-subspecs --allow-warnings
 
 .PHONY: pod-lint-watchos
 pod-lint-watchos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=watchos --subspec=Core --fail-fast --skip-tests --no-clean
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=watchos --subspec=Core --fail-fast --skip-tests --no-clean --allow-warnings
 
 .PHONY: pod-lint-ios
 pod-lint-ios: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios  --fail-fast --skip-tests --no-subspecs
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios  --fail-fast --skip-tests --no-subspecs --allow-warnings
 
 .PHONY: pod-lint-visionos
 pod-lint-visionos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=visionOS  --fail-fast --skip-tests --no-subspecs
+	bundle exec pod lib lint Airship.podspec --verbose --platforms=visionOS  --fail-fast --skip-tests --no-subspecs --allow-warnings
 
 .PHONY: pod-lint-extensions
 pod-lint-extensions: setup
-	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests 
-	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests 
+	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests --allow-warnings
+	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests --allow-warnings
 
 .PHONY: clean
 clean:

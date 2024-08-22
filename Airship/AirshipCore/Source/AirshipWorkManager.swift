@@ -43,7 +43,8 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     }
 
     @objc
-    @MainActor(unsafe)
+    @preconcurrency
+    @MainActor
     private func applicationDidEnterBackground() {
         backgroundWaitTask.value?.cancel()
 
@@ -69,7 +70,8 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     }
 
     @objc
-    @MainActor(unsafe)
+    @preconcurrency
+    @MainActor
     private func applicationDidBecomeActive() {
         backgroundWaitTask.value?.cancel()
     }

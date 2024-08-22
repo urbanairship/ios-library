@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-@preconcurrency
 import CoreData
 
 

@@ -109,7 +109,13 @@ private struct DefaultAppRater: AppRaterProtocol {
                 "Unable to find scene for rate app prompt"
             )
         }
-        SKStoreReviewController.requestReview(in: scene)
+
+        if #available(iOS 16.0, *) {
+            AppStore.requestReview(in: scene)
+        } else {
+            /// Deprecated - remove when no longer needed
+            SKStoreReviewController.requestReview()
+        }
     }
 
     @MainActor

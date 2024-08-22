@@ -22,6 +22,7 @@ protocol APNSRegistrar: Sendable {
 
 #if !os(watchOS)
 
+extension UIApplication: @retroactive Sendable {}
 extension UIApplication: APNSRegistrar {
     static var _isRemoteNotificationBackgroundModeEnabled: Bool {
         let backgroundModes =
