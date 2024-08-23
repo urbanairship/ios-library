@@ -114,12 +114,6 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .invalidate)
             }
 
-            guard await !frequencyChecker.isOverLimit else {
-                AirshipLogger.trace("Frequency limits exceeded \(schedule.identifier)")
-                return .success(result: .skip, ignoreReturnOrder: true)
-            }
-
-
             let deviceInfoProvider = self.deviceInfoProviderFactory(
                 self.remoteDataAccess.contactID(forSchedule: schedule)
             )

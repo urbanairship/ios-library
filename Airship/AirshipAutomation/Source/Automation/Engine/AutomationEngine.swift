@@ -334,6 +334,28 @@ fileprivate extension AutomationEngine {
         }
     }
 
+    private func verifyTriggeredData(scheduleID: String) async throws {
+        guard
+            let data = try await self.store.getSchedule(scheduleID: scheduleID)
+        else {
+            AirshipLogger.trace("Aborting processing schedule \(scheduleID), no longer in database.")
+            return
+        }
+
+        guard
+            data.isInState([.triggered])
+        else {
+            AirshipLogger.trace("Aborting processing schedule \(data), no longer triggered.")
+            return
+        }
+
+        guard data.isActive(date: self.date.now) else {
+            AirshipLogger.trace("Aborting processing schedule \(data), no longer active.")
+            await self.preparer.cancelled(schedule: data.schedule)
+            return
+        }
+    }
+
     private func processTriggeredSchedule(scheduleID: String) async throws {
         guard
             let data = try await self.store.getSchedule(scheduleID: scheduleID)
@@ -346,6 +368,21 @@ fileprivate extension AutomationEngine {
             data.isInState([.triggered])
         else {
             AirshipLogger.trace("Aborting processing schedule \(data), no longer triggered.")
+            return
+        }
+
+        AirshipLogger.trace("Preprocessing delay \(scheduleID)")
+        await self.delayProcessor.preprocess(
+            delay: data.schedule.delay,
+            triggerDate: data.triggerInfo?.date ?? data.scheduleStateChangeDate
+        )
+        AirshipLogger.trace("Finished preprocessing delay \(scheduleID)")
+
+        guard
+            try await self.store.getSchedule(scheduleID: scheduleID) == data
+        else {
+            AirshipLogger.trace("Trigger data has changed since preprocessing, retrying \(scheduleID)")
+            try await processTriggeredSchedule(scheduleID: scheduleID)
             return
         }
 

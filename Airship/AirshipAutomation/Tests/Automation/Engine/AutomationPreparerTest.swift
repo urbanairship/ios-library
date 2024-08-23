@@ -116,43 +116,6 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertTrue(prepareResult.isInvalidate)
     }
 
-    func testFrequencyLimitOverLimit() async throws {
-        let automationSchedule = AutomationSchedule(
-            identifier: UUID().uuidString,
-            data: .inAppMessage(
-                InAppMessage(name: "name", displayContent: .custom(.null))
-            ),
-            triggers: [],
-            created: Date(),
-            lastUpdated: Date(),
-            frequencyConstraintIDs: ["constraint"]
-        )
-
-        self.remoteDataAccess.requiresUpdateBlock = { _ in
-            return false
-        }
-
-        self.remoteDataAccess.bestEffortRefreshBlock = { _ in
-            return true
-        }
-
-        let checker = TestFrequencyChecker()
-        await checker.setIsOverLimit(true)
-
-        await self.frequencyLimits.setCheckerBlock { constraintIDs in
-            XCTAssertEqual(constraintIDs, automationSchedule.frequencyConstraintIDs)
-            return checker
-        }
-
-        let prepareResult = await self.preparer.prepare(
-            schedule: automationSchedule,
-            triggerContext: triggerContext,
-            triggerSessionID: UUID().uuidString
-        )
-
-        XCTAssertTrue(prepareResult.isSkipped)
-    }
-
     func testAudienceMismatchSkip() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,

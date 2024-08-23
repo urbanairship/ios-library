@@ -1,18 +1,11 @@
 import Foundation
 
-public struct DisplayWindow: Sendable, Equatable, Codable {
-    var include: [Include]?
-    var exclude: [Exclude]?
+public struct ExecutionWindow: Sendable, Equatable, Codable {
+    var include: [Rule]?
+    var exclude: [Rule]?
 
-    //TODO: do we want to use the same structure for include \ exclude?
-    struct Include: Codable {
-        let rule: DisplayWindowRule
-        let timeWindow: TimeWindow?
-        let timeZoneOffset: Int?
-    }
-
-    struct Exclude: Codable {
-        let rule: DisplayWindowRule
+    struct Rule: Codable {
+        let rule: ExecutionWindowRule
         let timeWindow: TimeWindow?
         let timeZoneOffset: Int?
     }
@@ -25,20 +18,19 @@ public struct DisplayWindow: Sendable, Equatable, Codable {
     }
 }
 
-enum DisplayWindowRule: Codable {
+enum ExecutionWindowRule: Codable {
     case daily
     case weekly(months: [Int]? = nil, daysOfWeek: [Int])
     case monthly(months: [Int]? = nil, daysOfMonth: [Int])
 }
 
-
-enum DisplayWindowResult: Equatable {
+enum ExecutionWindowResult: Equatable {
     case now
     case retry(TimeInterval)
 }
 
-extension DisplayWindow {
-    
+extension ExecutionWindow {
+
     static func calendar(offsetSeconds: Int? = nil) -> Calendar {
         var calendar = Calendar(identifier: .gregorian)
         
@@ -49,7 +41,7 @@ extension DisplayWindow {
         return calendar
     }
     
-    func nextAvailability(date: Date, customCalendar: Calendar? = nil) -> DisplayWindowResult {
+    func nextAvailability(date: Date, customCalendar: Calendar? = nil) -> ExecutionWindowResult {
         let calendar = customCalendar ?? Self.calendar()
         let nextDay = calendar.nextDay(for: date) ?? date.addingTimeInterval(10 * 60)
         let tillNextDayDelay = nextDay.timeIntervalSince(date)
@@ -65,7 +57,7 @@ extension DisplayWindow {
             return .retry(tillNextDayDelay)
         }
         
-        var result = DisplayWindowResult.retry(tillNextDayDelay)
+        var result = ExecutionWindowResult.retry(tillNextDayDelay)
         
         for slot in includes {
             guard let window = slot.timeWindow else {
@@ -87,7 +79,7 @@ extension DisplayWindow {
         return result
     }
     
-    private func excludes(date: Date, local: Calendar) -> [Exclude]? {
+    private func excludes(date: Date, local: Calendar) -> [Rule]? {
         return exclude?
             .map({ ($0, $0.calendar(local)) })
             .filter({ exclude, calendar in
@@ -100,7 +92,7 @@ extension DisplayWindow {
             .sorted(by: <)
     }
     
-    private func includes(date: Date, local: Calendar) -> [Include]? {
+    private func includes(date: Date, local: Calendar) -> [Rule]? {
         return include?
             .map({ ($0, $0.calendar(local)) })
             .filter({ include, calendar in
@@ -111,7 +103,7 @@ extension DisplayWindow {
     }
 }
 
-extension DisplayWindowRule {
+extension ExecutionWindowRule {
     func isMatching(date: Date, calendar: Calendar) -> Bool {
         switch self {
         case .daily:
@@ -128,7 +120,7 @@ extension DisplayWindowRule {
     }
 }
 
-extension DisplayWindow.TimeWindow {
+extension ExecutionWindow.TimeWindow {
     
     func contains(date: Date, calendar: Calendar) -> Bool {
         
@@ -168,8 +160,8 @@ extension DisplayWindow.TimeWindow {
     }
 }
 
-extension DisplayWindow.Include: Comparable {
-    static func < (lhs: DisplayWindow.Include, rhs: DisplayWindow.Include) -> Bool {
+extension ExecutionWindow.Rule: Comparable {
+    static func < (lhs: ExecutionWindow.Rule, rhs: ExecutionWindow.Rule) -> Bool {
         if lhs.timeWindow == nil && rhs.timeWindow == nil {
             return false
         }
@@ -185,7 +177,7 @@ extension DisplayWindow.Include: Comparable {
         return leftWindow.startFromMidnight < rightWindow.startFromMidnight
     }
     
-    static func == (lhs: DisplayWindow.Include, rhs: DisplayWindow.Include) -> Bool {
+    static func == (lhs: ExecutionWindow.Rule, rhs: ExecutionWindow.Rule) -> Bool {
         return lhs.timeWindow?.startHour == rhs.timeWindow?.startHour &&
             lhs.timeWindow?.startMinute == rhs.timeWindow?.startMinute
     }
@@ -195,38 +187,7 @@ extension DisplayWindow.Include: Comparable {
             return local
         }
         
-        return DisplayWindow.calendar(offsetSeconds: offset * 60 * 60)
-    }
-}
-
-extension DisplayWindow.Exclude: Comparable {
-    static func < (lhs: DisplayWindow.Exclude, rhs: DisplayWindow.Exclude) -> Bool {
-        if lhs.timeWindow == nil && rhs.timeWindow == nil {
-            return false
-        }
-        
-        guard let leftWindow = lhs.timeWindow else {
-            return true
-        }
-        
-        guard let rightWindow = rhs.timeWindow else {
-            return false
-        }
-        
-        return leftWindow.startFromMidnight < rightWindow.startFromMidnight
-    }
-    
-    static func == (lhs: DisplayWindow.Exclude, rhs: DisplayWindow.Exclude) -> Bool {
-        return lhs.timeWindow?.startHour == rhs.timeWindow?.startHour &&
-            lhs.timeWindow?.startMinute == rhs.timeWindow?.startMinute
-    }
-    
-    func calendar(_ local: Calendar) -> Calendar {
-        guard let offset = timeZoneOffset else {
-            return local
-        }
-        
-        return DisplayWindow.calendar(offsetSeconds: offset * 60 * 60)
+        return ExecutionWindow.calendar(offsetSeconds: offset * 60 * 60)
     }
 }
 
