@@ -168,32 +168,3 @@ fileprivate extension ApplicationState {
         }
     }
 }
-
-
-protocol ExecutionWindowProcessorProtocol: Sendable {
-    func process(window: ExecutionWindow) async throws
-    @MainActor
-    func isActive(window: ExecutionWindow) -> Bool
-}
-
-fileprivate final class ExecutionWindowProcessor: ExecutionWindowProcessorProtocol {
-    private let taskSleeper: AirshipTaskSleeper
-    private let date: AirshipDateProtocol
-
-    init(taskSleeper: AirshipTaskSleeper, date: AirshipDateProtocol) {
-        self.taskSleeper = taskSleeper
-        self.date = date
-    }
-
-    func process(window: ExecutionWindow) async throws {
-        while case .retry(let delay) = window.nextAvailability(date: date.now) {
-            try Task.checkCancellation()
-            try await self.taskSleeper.sleep(timeInterval: delay)
-        }
-    }
-    
-    @MainActor
-    func isActive(window: ExecutionWindow) -> Bool {
-        return window.nextAvailability(date: date.now) == .now
-    }
-}

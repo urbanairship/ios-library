@@ -18,7 +18,7 @@ final class AutomationDelayProcessorTest: XCTestCase {
     private var executionWindowProcessor: TestExecutionWindowProcessor!
 
     override func setUp() async throws {
-        self.executionWindowProcessor = await TestExecutionWindowProcessor()
+        self.executionWindowProcessor = TestExecutionWindowProcessor()
         self.date.dateOverride = Date()
         self.processor = await AutomationDelayProcessor(
             analytics: analytics,
@@ -31,14 +31,8 @@ final class AutomationDelayProcessorTest: XCTestCase {
 
     @MainActor
     func testProcess() async throws {
-        let executionWindow = ExecutionWindow(
-            include: [
-                .init(
-                    rule: .daily,
-                      timeWindow: .init(startHour: 2, endHour: 2),
-                      timeZoneOffset: 1
-                )
-            ]
+        let executionWindow = try ExecutionWindow(
+            include: [ .weekly(daysOfWeek: [1]) ]
         )
         let delay = AutomationDelay(
             seconds: 100.0,
@@ -78,19 +72,14 @@ final class AutomationDelayProcessorTest: XCTestCase {
 
         let sleeps = self.taskSleeper.sleeps
         XCTAssertEqual(sleeps, [100.0])
-        XCTAssertEqual(self.executionWindowProcessor.processed, [executionWindow])
+        let processed = await self.executionWindowProcessor.getProcessed()
+        XCTAssertEqual(processed, [executionWindow])
     }
 
     @MainActor
     func testPreprocess() async throws {
-        let executionWindow = ExecutionWindow(
-            include: [
-                .init(
-                    rule: .daily,
-                      timeWindow: .init(startHour: 2, endHour: 2),
-                      timeZoneOffset: 1
-                )
-            ]
+        let executionWindow = try ExecutionWindow(
+            include: [ .weekly(daysOfWeek: [1]) ]
         )
 
         let delay = AutomationDelay(
@@ -116,7 +105,9 @@ final class AutomationDelayProcessorTest: XCTestCase {
 
         let sleeps = self.taskSleeper.sleeps
         XCTAssertEqual(sleeps, [70.0])
-        XCTAssertEqual(self.executionWindowProcessor.processed, [executionWindow])
+
+        let processed = await self.executionWindowProcessor.getProcessed()
+        XCTAssertEqual(processed, [executionWindow])
     }
 
     @MainActor
@@ -283,14 +274,8 @@ final class AutomationDelayProcessorTest: XCTestCase {
 
     @MainActor
     func testExecutionWindow() async throws {
-        let executionWindow = ExecutionWindow(
-            include: [
-                .init(
-                    rule: .daily,
-                      timeWindow: .init(startHour: 2, endHour: 2),
-                      timeZoneOffset: 1
-                )
-            ]
+        let executionWindow = try ExecutionWindow(
+            include: [ .weekly(daysOfWeek: [1]) ]
         )
 
         let delay = AutomationDelay(
@@ -310,17 +295,22 @@ final class AutomationDelayProcessorTest: XCTestCase {
 }
 
 
-@MainActor
-fileprivate final class TestExecutionWindowProcessor: ExecutionWindowProcessorProtocol {
+fileprivate actor TestExecutionWindowProcessor: ExecutionWindowProcessorProtocol {
 
-    var processed: [ExecutionWindow] = []
+    private var processed: [ExecutionWindow] = []
 
+    @MainActor
     var onIsActive: ((ExecutionWindow) -> Bool)?
 
     func process(window: ExecutionWindow) async throws {
         processed.append(window)
     }
 
+    func getProcessed() -> [ExecutionWindow] {
+        return processed
+    }
+
+    @MainActor
     func isActive(window: ExecutionWindow) -> Bool {
         return onIsActive?(window) ?? false
     }

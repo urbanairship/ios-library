@@ -461,6 +461,8 @@
 		6E2F5AB72A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */; };
 		6E2F5AB82A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */; };
 		6E2F5ABA2A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */; };
+		6E34C4B12C7D4B6400B00506 /* ExecutionWindowProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34C4B02C7D4B6400B00506 /* ExecutionWindowProcessor.swift */; };
+		6E34C4B32C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34C4B22C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift */; };
 		6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E382C20276D3E990091A351 /* ThomasValidationTests.swift */; };
 		6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B230E28A318CD0005D46E /* PreferenceCenterThemeLoader.swift */; };
 		6E3B231328A32EC30005D46E /* PreferenceCenterViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */; };
@@ -2262,6 +2264,8 @@
 		6E2F5AB02A67434B00CABD3D /* FeatureFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlag.swift; sourceTree = "<group>"; };
 		6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAudienceChecker.swift; sourceTree = "<group>"; };
 		6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsRemoteDataAccess.swift; sourceTree = "<group>"; };
+		6E34C4B02C7D4B6400B00506 /* ExecutionWindowProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindowProcessor.swift; sourceTree = "<group>"; };
+		6E34C4B22C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindowProcessorTest.swift; sourceTree = "<group>"; };
 		6E382C20276D3E990091A351 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
 		6E3B230E28A318CD0005D46E /* PreferenceCenterThemeLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterThemeLoader.swift; sourceTree = "<group>"; };
 		6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewExtensions.swift; sourceTree = "<group>"; };
@@ -4540,6 +4544,7 @@
 				6E1A9BD22B5EE8A400A6489B /* AutomationScheduleState.swift */,
 				6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */,
 				6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */,
+				6E34C4B02C7D4B6400B00506 /* ExecutionWindowProcessor.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -4556,6 +4561,7 @@
 				60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */,
 				A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */,
 				6EDE5FC12BADDD96003ADF55 /* PreparedScheduleInfoTest.swift */,
+				6E34C4B22C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -6554,6 +6560,7 @@
 				6E0F4BE52B32645600673CA4 /* AutomationTrigger.swift in Sources */,
 				6E1A9BAB2B5AE38A00A6489B /* InAppMessageDisplayListener.swift in Sources */,
 				6EE6AAC82B58A947002FEA75 /* InAppGestureEvent.swift in Sources */,
+				6E34C4B12C7D4B6400B00506 /* ExecutionWindowProcessor.swift in Sources */,
 				60FCA3072B4F1C73005C9232 /* LegacyInAppMessage.swift in Sources */,
 				6EDF1D9C2B2A287A00E23BC4 /* InAppMessageButtonLayoutType.swift in Sources */,
 				6E1A9BC72B5EE32E00A6489B /* AutomationTriggerProcessor.swift in Sources */,
@@ -6614,6 +6621,7 @@
 				6EE6AA132B4F3009002FEA75 /* InAppMessageAutomationPreparerTest.swift in Sources */,
 				6EE6AAF22B58A9D5002FEA75 /* InAppFormResultEventTest.swift in Sources */,
 				6EC0CA762B4B8A3A00333A87 /* TestRemoteDataAccess.swift in Sources */,
+				6E34C4B32C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift in Sources */,
 				60D1D9BD2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift in Sources */,
 				6EC0CA6D2B4B879800333A87 /* AutomationPreparerTest.swift in Sources */,
 				6E4AEE2C2B6B302D008AEAC1 /* ActionAutomationPreparerTest.swift in Sources */,

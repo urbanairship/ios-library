@@ -256,6 +256,9 @@ final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleeps.append(timeInterval)
+        try await self.onSleep?(sleeps)
         await Task.yield()
     }
+
+    var onSleep: (([TimeInterval]) async throws -> Void)?
 }
