@@ -123,7 +123,7 @@ extension MessageCenterMessage {
             )!,
             expirationDate: expiry,
             messageReporting: [UUID().uuidString: UUID().uuidString],
-            unread: false,
+            unread: true,
             sentDate: sentDate,
             messageURL: URL(
                 string: "https://some-url.fr/\(UUID().uuidString)"

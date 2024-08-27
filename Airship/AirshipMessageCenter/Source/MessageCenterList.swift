@@ -77,12 +77,22 @@ public protocol MessageCenterInboxBaseProtocol: AnyObject, Sendable {
 public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
     /// Publisher that emits messages.
     var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> { get }
+    
+    /// Async Stream on messages' updates
+    var messageUpdates: AsyncStream<[MessageCenterMessage]> { get }
+    
     /// Publisher that emits unread counts.
     var unreadCountPublisher: AnyPublisher<Int, Never> { get }
+    
+    /// Async Stream of unread count updates
+    var unreadCountUpdates: AsyncStream<Int> { get }
+    
     /// The list of messages in the inbox.
     var messages: [MessageCenterMessage] { get async }
+
     /// The user associated to the Message Center
     var user: MessageCenterUser? { get async }
+
     /// The number of messages that are currently unread.
     var unreadCount: Int { get async }
 
@@ -95,7 +105,7 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
 
 /// Airship Message Center inbox.
 final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
-
+    
     private enum UpdateType: Sendable {
         case local
         case refreshSucess
@@ -113,6 +123,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     private let workManager: AirshipWorkManagerProtocol
     private let startUpTask: Task<Void, Never>?
     private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
+    
     var enabled: Bool {
         get {
             _enabled.value
@@ -123,60 +134,53 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             }
         }
     }
-    private var messagesFuture: Future<[MessageCenterMessage], Never> {
-        return Future { promise in
-            Task {
-                let messages = await self.messages
-                promise(.success(messages))
-            }
-        }
-    }
-
-    private var unreadCountFuture: Future<Int, Never> {
-        return Future { promise in
-            Task {
-                let count = await self.unreadCount
-                promise(.success(count))
-            }
-        }
-    }
 
     public var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> {
         let messagesSubject = CurrentValueSubject<[MessageCenterMessage]?, Never>(nil)
+        let messageUpdates = self.messageUpdates
 
-        Task { [weak messagesSubject, weak self] in
-            guard let stream = await self?.updateChannel.makeStream(bufferPolicy: .bufferingNewest(1)) else {
-                return
-            }
-
-            messagesSubject?.send(await self?.messages)
-
-            for await update in stream {
-                guard let self, let messagesSubject else { return }
-                if (update != .refreshFailed) {
-                    messagesSubject.send(await self.messages)
-                }
+        Task { [messageUpdates, weak messagesSubject] in
+            for await update in messageUpdates {
+                guard let messagesSubject else { return }
+                messagesSubject.send(update)
             }
         }
 
         return messagesSubject.compactMap { $0 }.eraseToAnyPublisher()
     }
+    
+    var messageUpdates: AsyncStream<[MessageCenterMessage]> {
+        AsyncStream<[MessageCenterMessage]> { [weak self] continuation in
+            let task = Task { [weak self] in
+                guard let stream = await self?.updateChannel.makeStream() else {
+                    return
+                }
+
+                if let messages = await self?.messages {
+                    continuation.yield(messages)
+                }
+
+                for await update in stream  {
+                    if update != .refreshFailed, let messages = await self?.messages {
+                        continuation.yield(messages)
+                    }
+                }
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
 
     public var unreadCountPublisher: AnyPublisher<Int, Never> {
         let unreadCountSubject = CurrentValueSubject<Int?, Never>(nil)
+        let unreadCountUpdates = self.unreadCountUpdates
 
-        Task { [weak unreadCountSubject, weak self] in
-            guard let stream = await self?.updateChannel.makeStream(bufferPolicy: .bufferingNewest(1)) else {
-                return
-            }
-
-            unreadCountSubject?.send(await self?.unreadCount)
-
-            for await update in stream {
-                guard let self, let unreadCountSubject else { return }
-                if (update != .refreshFailed) {
-                    unreadCountSubject.send(await self.unreadCount)
-                }
+        Task { [unreadCountUpdates, weak unreadCountSubject] in
+            for await update in unreadCountUpdates {
+                guard let unreadCountSubject else { return }
+                unreadCountSubject.send(update)
             }
         }
 
@@ -184,6 +188,30 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             .compactMap { $0 }
             .removeDuplicates()
             .eraseToAnyPublisher()
+    }
+    
+    var unreadCountUpdates: AsyncStream<Int> {
+        AsyncStream<Int> { [weak self] continuation in
+            let task = Task { [weak self] in
+                guard let stream = await self?.updateChannel.makeStream() else {
+                    return
+                }
+
+                if let count = await self?.unreadCount {
+                    continuation.yield(count)
+                }
+
+                for await update in stream  {
+                    if update != .refreshFailed, let unreadCount = await self?.unreadCount {
+                        continuation.yield(unreadCount)
+                    }
+                }
+            }
+
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
     }
 
     public var messages: [MessageCenterMessage] {
@@ -228,7 +256,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         } else {
             nil
         }
-
+        
         super.init()
 
         workManager.registerWorker(
@@ -295,9 +323,6 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 
             return payload
         }
-
-
-
     }
 
     convenience init(

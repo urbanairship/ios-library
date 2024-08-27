@@ -203,8 +203,9 @@ final class MessageCenterListTest: XCTestCase {
     }
 
     func testUpdateMessages() async throws {
-
         self.inbox.enabled = true
+
+
 
         let messages = MessageCenterMessage.generateMessages(1)
         let message = try XCTUnwrap(messages.first)
@@ -240,6 +241,15 @@ final class MessageCenterListTest: XCTestCase {
 
         let expectations = self.expectation(description: "client called")
         expectations.expectedFulfillmentCount = 2
+
+        var messageUpdates = self.inbox.messageUpdates.makeAsyncIterator()
+        var messageUpdate = await messageUpdates.next()
+        XCTAssertEqual(messageUpdate, [])
+
+        var unreadCountUpdates = self.inbox.unreadCountUpdates.makeAsyncIterator()
+        var unreadCountUpdate = await unreadCountUpdates.next()
+        XCTAssertEqual(unreadCountUpdate, 0)
+
 
         let messages = MessageCenterMessage.generateMessages(1)
         let mcUser = MessageCenterUser(
@@ -278,6 +288,12 @@ final class MessageCenterListTest: XCTestCase {
         XCTAssertFalse(self.workManager.workRequests.last!.requiresNetwork)
         XCTAssertEqual(self.workManager.workRequests.last!.conflictPolicy, .replace)
         await self.fulfillment(of: [expectations])
+
+        messageUpdate = await messageUpdates.next()
+        XCTAssertEqual(messageUpdate, messages)
+
+        unreadCountUpdate = await unreadCountUpdates.next()
+        XCTAssertEqual(unreadCountUpdate, 1)
     }
 
     func testRefreshMessagesWithTimeout() async throws {
