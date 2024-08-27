@@ -650,12 +650,14 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         get async {
             let (status, settings) = await self.notificationRegistrar.checkStatus()
             let isRegisteredForRemoteNotifications = await self.apnsRegistrar.isRegisteredForRemoteNotifications
+            let displayNotificationStatus = await self.permissionsManager.checkPermissionStatus(.displayNotifications)
 
             return await AirshipNotificationStatus(
                 isUserNotificationsEnabled: self.userPushNotificationsEnabled,
                 areNotificationsAllowed: status != .denied && status != .notDetermined && settings != [],
                 isPushPrivacyFeatureEnabled: self.privacyManager.isEnabled(.push),
-                isPushTokenRegistered: self.deviceToken != nil && isRegisteredForRemoteNotifications
+                isPushTokenRegistered: self.deviceToken != nil && isRegisteredForRemoteNotifications,
+                displayNotificationStatus: displayNotificationStatus
             )
         }
     }

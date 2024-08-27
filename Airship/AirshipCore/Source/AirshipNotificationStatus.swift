@@ -16,11 +16,14 @@ public struct AirshipNotificationStatus: Sendable, Equatable {
 
     /// If a push token is generated.
     public let isPushTokenRegistered: Bool
+    
+    /// Display notification status
+    public let displayNotificationStatus: AirshipPermissionStatus
 
 
     /// If isUserNotificationsEnabled, isPushPrivacyFeatureEnabled, and areNotificationsAllowed are all true..
     public var isUserOptedIn: Bool {
-        return isUserNotificationsEnabled && isPushPrivacyFeatureEnabled && areNotificationsAllowed
+        return isUserNotificationsEnabled && isPushPrivacyFeatureEnabled && areNotificationsAllowed && displayNotificationStatus == .granted
     }
 
     /// If isUserOptedIn and isPushTokenRegistered are both true.

@@ -51,7 +51,8 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
         isUserNotificationsEnabled: false,
         areNotificationsAllowed: false,
         isPushPrivacyFeatureEnabled: false,
-        isPushTokenRegistered: false
+        isPushTokenRegistered: false,
+        displayNotificationStatus: .denied
     )
 
 

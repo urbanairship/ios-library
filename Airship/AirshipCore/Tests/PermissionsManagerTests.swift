@@ -6,9 +6,13 @@ import XCTest
 
 class PermissionsManagerTests: XCTestCase {
 
-    let permissionsManager = AirshipPermissionsManager()
+    let notificationCenter = NotificationCenter()
+    var permissionsManager: AirshipPermissionsManager!
     let delegate = TestPermissionsDelegate()
 
+    override func setUp() async throws {
+        permissionsManager = AirshipPermissionsManager(notificationCenter: notificationCenter)
+    }
     func testCheckPermissionNotConfigured() async throws {
         let status = await self.permissionsManager.checkPermissionStatus(.displayNotifications)
         
@@ -27,6 +31,43 @@ class PermissionsManagerTests: XCTestCase {
         XCTAssertEqual(AirshipPermissionStatus.granted, status)
         XCTAssertTrue(self.delegate.checkCalled)
         XCTAssertFalse(self.delegate.requestCalled)
+    }
+    
+    func testStatusUpdate() async {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        var stream = self.permissionsManager.statusUpdate(for: .location).makeAsyncIterator()
+        let status = await self.permissionsManager.requestPermission(.location)
+
+        let currentStatus = await stream.next()
+        XCTAssertEqual(AirshipPermissionStatus.denied, status)
+        XCTAssertEqual(status, currentStatus)
+    }
+    
+    func testStatusRefreshOnActive() async {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        var stream = self.permissionsManager.statusUpdate(for: .location).makeAsyncIterator()
+
+        var currentStatus = await stream.next()
+        XCTAssertEqual(AirshipPermissionStatus.denied, currentStatus)
+
+        self.delegate.permissionStatus = .granted
+        
+        Task { @MainActor in
+            notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
+        }
+
+        currentStatus = await stream.next()
+        XCTAssertEqual(AirshipPermissionStatus.granted, currentStatus)
     }
 
     func testRequestPermissionNotConfigured() async throws {

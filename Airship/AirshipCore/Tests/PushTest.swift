@@ -1010,7 +1010,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: true,
                 areNotificationsAllowed: true,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: true
+                isPushTokenRegistered: true,
+                displayNotificationStatus: .granted
             ),
             status
         )
@@ -1028,7 +1029,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: false,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: false
+                isPushTokenRegistered: false,
+                displayNotificationStatus: .notDetermined
             ),
             status
         )
@@ -1041,7 +1043,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: false,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: true
+                isPushTokenRegistered: true,
+                displayNotificationStatus: .notDetermined
             ),
             status
         )
@@ -1060,7 +1063,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: false,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: false
+                isPushTokenRegistered: false,
+                displayNotificationStatus: .notDetermined
             ),
             status
         )
@@ -1075,7 +1079,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: true,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: false
+                isPushTokenRegistered: false,
+                displayNotificationStatus: .granted
             ),
             status
         )

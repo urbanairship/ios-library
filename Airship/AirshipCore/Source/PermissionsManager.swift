@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 /// Airship permissions manager.
 ///
@@ -19,6 +20,21 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     private var extenders: [
         AirshipPermission: [(AirshipPermissionStatus) async -> Void]
     ] = [:]
+    
+    private let statusUpdates: AirshipAsyncChannel<(AirshipPermission, AirshipPermissionStatus)> = AirshipAsyncChannel()
+    private var notificationListener: AnyCancellable?
+    
+    init(notificationCenter: NotificationCenter = .default) {
+        super.init()
+        
+        notificationListener = notificationCenter
+            .publisher(for: AppStateTracker.didBecomeActiveNotification)
+            .sink(receiveValue: { _ in
+                Task { @MainActor [weak self] in
+                    await self?.refreshPermissionStatuses()
+                }
+            })
+    }
 
     var configuredPermissions: Set<AirshipPermission> {
         var result: Set<AirshipPermission>!
@@ -26,6 +42,34 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
             result = Set(delegateMap.keys)
         }
         return result
+    }
+    
+    /// Returns an async stream with status updates for the given permission
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    public func statusUpdate(for permission: AirshipPermission) -> AsyncStream<AirshipPermissionStatus> {
+
+        return AsyncStream<AirshipPermissionStatus> { [weak self, statusUpdates] continuation in
+            let task = Task { [weak self, statusUpdates] in
+                if let startingStatus = await self?.checkPermissionStatus(permission) {
+                    continuation.yield(startingStatus)
+                }
+
+                let updates = await statusUpdates.makeStream()
+                    .filter({ $0.0 == permission })
+                    .map({ $0.1 })
+
+                for await item in updates {
+                    continuation.yield(item)
+                }
+                continuation.finish()
+            }
+            
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
     }
     
     /// - Note: For internal use only. :nodoc:
@@ -123,8 +167,12 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
 
             return status
         }
+        
+        let result = status ?? .notDetermined
+        
+        await statusUpdates.send((permission, result))
 
-        return status ?? .notDetermined
+        return result
     }
     
     /// - Note: for internal use only.  :nodoc:
@@ -179,6 +227,14 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
             delegate = delegateMap[permission]
         }
         return delegate
+    }
+    
+    @MainActor
+    private func refreshPermissionStatuses() async {
+        for permission in configuredPermissions {
+            let status = await checkPermissionStatus(permission)
+            await statusUpdates.send((permission, status))
+        }
     }
 
     @MainActor
