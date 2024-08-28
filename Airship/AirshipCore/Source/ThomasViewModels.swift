@@ -935,6 +935,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
+    let markdown: MarkDownOptions?
 
     enum CodingKeys: String, CodingKey {
         case text = "text"
@@ -946,6 +947,22 @@ struct LabelModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case type
+        case markdown
+    }
+}
+
+struct MarkDownOptions: Codable, Sendable, Equatable {
+    var disabled: Bool?
+    var appearance: Appearance?
+
+    struct Appearance: Codable, Sendable, Equatable{
+        var anchor: AnchorAppearance?
+    }
+
+    struct AnchorAppearance: Codable, Sendable, Equatable {
+        var color: ThomasColor?
+        // Currently we only support underlined styles
+        var styles: [TextStyle]?
     }
 }
 

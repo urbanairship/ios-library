@@ -130,6 +130,26 @@ view:
                     hex: "#000000"
                     alpha: 1
           - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Disabled Normal, **Bold**, *Italic*, ***Bold + Italic*** [link](https://www.airship.com) https://www.airship.com
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+              markdown:
+                disabled: true
+          - margin:
               top: 8
               bottom: 8
               start: 8
@@ -202,6 +222,16 @@ view:
                   default:
                     hex: "#000000"
                     alpha: 1
+              markdown:
+                appearance:
+                  anchor:
+                      color:
+                        default:
+                          hex: "#00ff00"
+                          alpha: 1
+                      styles:
+                        - underlined
+
           - margin:
               top: 0
               bottom: 8

@@ -12,8 +12,49 @@ struct Label: View {
     /// View constraints.
     let constraints: ViewConstraints
 
+    @Environment(\.colorScheme) var colorScheme
+
+    @available(iOS 15, tvOS 15, watchOS 8, *)
+    private var markdownText: Text {
+        get throws {
+            var text = try AttributedString(markdown: self.model.text)
+
+            let anchorAppearance = self.model.markdown?.appearance?.anchor
+            let anchorColor = anchorAppearance?.color?.toColor(self.colorScheme)
+            // Currently we only support underlined styles
+            let underline = anchorAppearance?.styles?.contains(.underlined) ?? false
+
+            text.runs.filter { run in
+                run.link != nil
+            }.forEach { run in
+                text[run.range].foregroundColor = anchorColor
+                if underline {
+                    text[run.range].underlineStyle = .single
+                }
+            }
+
+            return Text(text)
+        }
+    }
+
+    private var text: Text {
+        guard 
+            self.model.markdown?.disabled != true,
+            #available(iOS 15, tvOS 15, watchOS 8, *)
+        else {
+            return Text(verbatim: self.model.text)
+        }
+
+        do {
+            return try markdownText
+        } catch {
+            AirshipLogger.error("Failed to parse markdown text \(error) text \(self.model.text)")
+            return Text(verbatim: self.model.text)
+        }
+    }
+
     var body: some View {
-        Text(LocalizedStringKey(self.model.text))
+        self.text
             .textAppearance(self.model.textAppearance)
             .truncationMode(.tail)
             .constraints(
