@@ -752,6 +752,61 @@ final class ExectutionWindowTest: XCTestCase {
         XCTAssertEqual(windowAvailibility(window, date: date), .retry(300.days))
     }
 
+    func testMonthlyNoMonthsAfterDay() throws {
+        let date = calendar.date(bySetting: .day, value: 16, of: referenceDate)!
+
+        let window = try ExecutionWindow(
+            include: [
+                .monthly(daysOfMonth: [15])
+            ]
+        )
+
+        XCTAssertEqual(windowAvailibility(window, date: date), .retry(30.days))
+    }
+
+    func testMonthlyNextMonth() throws {
+        // Feb 16
+        var date = calendar.date(bySetting: .month, value: 2, of: referenceDate)!
+        date = calendar.date(bySetting: .day, value: 16, of: date)!
+
+        let window = try ExecutionWindow(
+            include: [
+                .monthly(months: [1], daysOfMonth: [15]),
+                .monthly(months: [3], daysOfMonth: [2, 3])
+            ]
+        )
+
+        XCTAssertEqual(windowAvailibility(window, date: date), .retry(15.days))
+    }
+
+    func testMonthlyNextMonthNoDays() throws {
+        // Feb 16
+        var date = calendar.date(bySetting: .month, value: 2, of: referenceDate)!
+        date = calendar.date(bySetting: .day, value: 16, of: date)!
+
+        let window = try ExecutionWindow(
+            include: [
+                .monthly(months: [1, 3])
+            ]
+        )
+
+        XCTAssertEqual(windowAvailibility(window, date: date), .retry(14.days))
+    }
+
+    func testMonthlyNextYear() throws {
+        // Feb 15
+        var date = calendar.date(bySetting: .day, value: 15, of: referenceDate)!
+        date = calendar.date(bySetting: .month, value: 2, of: date)!
+
+        let window = try ExecutionWindow(
+            include: [
+                .monthly(months: [1], daysOfMonth: [14])
+            ]
+        )
+
+        XCTAssertEqual(windowAvailibility(window, date: date), .retry(348.days))
+    }
+
     func testIncludeMonthlyWithTimeZone() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!

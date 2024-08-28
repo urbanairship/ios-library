@@ -484,7 +484,9 @@ fileprivate struct AirshipCalendar : Hashable, Equatable, Sendable {
     private func date(date: Date, hour: Int, minute: Int) -> Date {
         guard
             let newDate = calendar.date(
-                bySettingHour: hour, minute: minute, second: 0,
+                bySettingHour: hour, 
+                minute: minute,
+                second: 0,
                 of:date
             )
         else {
@@ -628,11 +630,20 @@ fileprivate struct AirshipCalendar : Hashable, Equatable, Sendable {
             }
         }
 
-
         // Pick the earliest day
         targetDay = sortedDays?.first ?? 1
 
-        return sortedMonths?.compactMap { month in
+        guard let sortedMonths, !sortedMonths.isEmpty else {
+            return calendar.nextDate(
+                after: date,
+                matching: DateComponents(
+                    day: targetDay
+                ),
+                matchingPolicy: .strict
+            ) ?? Date.distantFuture
+        }
+
+        let results = sortedMonths.compactMap { month in
             let next = calendar.nextDate(
                 after: date,
                 matching: DateComponents(
@@ -646,7 +657,9 @@ fileprivate struct AirshipCalendar : Hashable, Equatable, Sendable {
             } else {
                 nil
             }
-        }.sorted().first ?? Date.distantFuture
+        }.sorted()
+
+        return results.first ?? Date.distantFuture
     }
 }
 
