@@ -95,7 +95,7 @@ final class AutomationDelayProcessorTest: XCTestCase {
 
         let now = date.now
         Task { @MainActor [processor] in
-            await processor!.preprocess(delay: delay, triggerDate: now)
+            try! await processor!.preprocess(delay: delay, triggerDate: now)
             finished.set(true)
             ended.fulfill()
         }

@@ -12,7 +12,7 @@ protocol AutomationDelayProcessorProtocol: Sendable {
     func process(delay: AutomationDelay?, triggerDate: Date) async
 
     // Waits for any delay - 30s and to be a display window if set
-    func preprocess(delay: AutomationDelay?, triggerDate: Date) async
+    func preprocess(delay: AutomationDelay?, triggerDate: Date) async throws
 
     // Checks if conditions are met
     @MainActor
@@ -106,17 +106,19 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
         }
     }
 
-    func preprocess(delay: AutomationDelay?, triggerDate: Date) async {
+    func preprocess(delay: AutomationDelay?, triggerDate: Date) async throws {
         guard let delay = delay else { return }
 
         // Handle delay - preprocessSecondsDelayAllowance
         let seconds = remainingSeconds(delay: delay, triggerDate: triggerDate) - Self.preprocessSecondsDelayAllowance
         if seconds > 0 {
-            try? await self.taskSleeper.sleep(timeInterval: seconds)
+            try await self.taskSleeper.sleep(timeInterval: seconds)
         }
 
+        try Task.checkCancellation()
+
         if let window = delay.executionWindow {
-            try? await executionWindowProcessor.process(window: window)
+            try await executionWindowProcessor.process(window: window)
         }
     }
 

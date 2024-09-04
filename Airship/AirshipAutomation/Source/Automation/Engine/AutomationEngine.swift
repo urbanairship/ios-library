@@ -26,6 +26,7 @@ actor AutomationEngine : AutomationEngineProtocol {
 
     private var processPendingExecutionTask: Task<Void, Never>?
     private var pendingExecution: [String: PreparedData] = [:]
+    private var preprocessDelayTasks: Set<Task<Bool, Error>> = Set()
 
 
     init(
@@ -143,6 +144,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         }
 
         await self.triggersProcessor.updateSchedules(updated)
+        self.cancelPreprocessDelayTasks()
     }
 
     func cancelSchedules(identifiers: [String]) async throws {
@@ -356,6 +358,32 @@ fileprivate extension AutomationEngine {
         }
     }
 
+    private func preprocessDelay(data: AutomationScheduleData) async -> Bool {
+        guard let delay = data.schedule.delay else { return true }
+        let scheduleID = data.schedule.identifier
+        let triggerDate = data.triggerInfo?.date ?? data.scheduleStateChangeDate
+
+        let task = Task {
+            AirshipLogger.trace("Preprocessing delay \(scheduleID)")
+            try await self.delayProcessor.preprocess(
+                delay: delay,
+                triggerDate: triggerDate
+            )
+            AirshipLogger.trace("Finished preprocessing delay \(scheduleID)")
+            return true
+        }
+
+        preprocessDelayTasks.insert(task)
+        let result = try? await task.value
+        preprocessDelayTasks.remove(task)
+        return result ?? false
+    }
+
+    private func cancelPreprocessDelayTasks() {
+        preprocessDelayTasks.forEach { $0.cancel() }
+        preprocessDelayTasks.removeAll()
+    }
+
     private func processTriggeredSchedule(scheduleID: String) async throws {
         guard
             let data = try await self.store.getSchedule(scheduleID: scheduleID)
@@ -371,12 +399,14 @@ fileprivate extension AutomationEngine {
             return
         }
 
-        AirshipLogger.trace("Preprocessing delay \(scheduleID)")
-        await self.delayProcessor.preprocess(
-            delay: data.schedule.delay,
-            triggerDate: data.triggerInfo?.date ?? data.scheduleStateChangeDate
-        )
-        AirshipLogger.trace("Finished preprocessing delay \(scheduleID)")
+        guard 
+            await preprocessDelay(data: data)
+        else {
+            AirshipLogger.trace("Preprocess delay was interrupted, retrying \(scheduleID)")
+            try await processTriggeredSchedule(scheduleID: scheduleID)
+            return
+        }
+
 
         guard
             try await self.store.getSchedule(scheduleID: scheduleID) == data
