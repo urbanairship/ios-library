@@ -738,6 +738,67 @@ class ChannelRegistrarTest: XCTestCase {
         XCTAssertEqual(payload, updatePayload)
     }
 
+    fileprivate struct LastRegistrationInfo: Codable {
+        var date: Date
+        var payload: ChannelRegistrationPayload
+        var lastFullPayloadSent: Date?
+        var location: URL
+    }
+
+    @MainActor
+    public func testEmptyLastFullRegistratrion() async throws {
+        await makeRegistrar()
+        self.appStateTracker.currentState = .active
+        self.date.dateOverride = Date()
+        let someChannelID = UUID().uuidString
+        try await createChannel(channelID: someChannelID)
+
+        var registrationInfo: LastRegistrationInfo = self.dataStore.safeCodable(forKey: "ChannelRegistrar.lastRegistrationInfo")!
+        registrationInfo.lastFullPayloadSent = nil
+        self.dataStore.setSafeCodable(registrationInfo, forKey: "ChannelRegistrar.lastRegistrationInfo")
+
+        var payload = ChannelRegistrationPayload()
+        payload.channel.deviceModel = UUID().uuidString
+        payload.channel.appVersion = "test"
+        self.channelRegistrar.addChannelRegistrationExtender { _ in
+            return payload
+        }
+
+        var updatePayload: ChannelRegistrationPayload? = nil
+        self.client.updateCallback = { channelID, channelPayload in
+            updatePayload = channelPayload
+            return AirshipHTTPResponse(
+                result: ChannelAPIResponse(
+                    channelID: someChannelID,
+                    location: try self.client.makeChannelLocation(
+                        channelID: someChannelID
+                    )
+                ),
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        _ = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: workID
+            )
+        )
+
+        XCTAssertEqual(payload, updatePayload)
+
+       updatePayload = nil
+        _ = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: workID
+            )
+        )
+        
+        // No update
+        XCTAssertNil(updatePayload)
+    }
+
+
     private func createChannel(channelID: String) async throws {
         self.client.createCallback = { _ in
             return AirshipHTTPResponse(

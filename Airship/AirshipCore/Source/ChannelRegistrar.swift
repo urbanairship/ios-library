@@ -204,7 +204,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         )
 
         AirshipLogger.debug("Channel update request finished with response: \(response)")
-        let fullPayloadUploadDate = payload == minimizedPayload ? self.lastRegistrationInfo?.lastFullPayloadSent : self.date.now
+        let fullPayloadUploadDate = payload == minimizedPayload ? self.date.now : self.lastRegistrationInfo?.lastFullPayloadSent 
 
         if response.isSuccess, let result = response.result {
             await self.registrationSuccess(
