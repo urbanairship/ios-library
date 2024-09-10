@@ -5,6 +5,14 @@ import Foundation
 @testable import AirshipCore
 
 class TestAirshipInstance: AirshipInstanceProtocol {
+
+
+
+    var _permissionsManager: AirshipPermissionsManager?
+    var permissionsManager: AirshipPermissionsManager {
+        return _permissionsManager!
+    }
+
     public let preferenceDataStore: AirshipCore.PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
 
     private var _config: RuntimeConfig?
@@ -18,8 +26,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
         }
     }
 
-    @objc
-    public var permissionsManager: AirshipPermissionsManager = AirshipPermissionsManager()
 
     private var _actionRegistry: ActionRegistry?
     public var actionRegistry: ActionRegistry {

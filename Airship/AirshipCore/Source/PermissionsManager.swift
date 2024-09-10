@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import Combine
 
 /// Airship permissions manager.
 ///
@@ -22,18 +21,26 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     ] = [:]
     
     private let statusUpdates: AirshipAsyncChannel<(AirshipPermission, AirshipPermissionStatus)> = AirshipAsyncChannel()
-    private var notificationListener: AnyCancellable?
-    
-    init(notificationCenter: NotificationCenter = .default) {
+    private let appStateTracker: AppStateTrackerProtocol
+    private let systemSettingsNavigator: SystemSettingsNavigatorProtocol
+
+    @MainActor
+    init(
+        appStateTracker: AppStateTrackerProtocol? = nil,
+        systemSettingsNavigator: SystemSettingsNavigatorProtocol = SystemSettingsNavigator()
+    ) {
+        self.appStateTracker = appStateTracker ?? AppStateTracker.shared
+        self.systemSettingsNavigator = systemSettingsNavigator
         super.init()
-        
-        notificationListener = notificationCenter
-            .publisher(for: AppStateTracker.didBecomeActiveNotification)
-            .sink(receiveValue: { _ in
-                Task { @MainActor [weak self] in
+
+        Task { @MainActor [weak self] in
+            guard let updates = self?.appStateTracker.stateUpdates else { return }
+            for await update in updates {
+                if (update == .active) {
                     await self?.refreshPermissionStatuses()
                 }
-            })
+            }
+        }
     }
 
     var configuredPermissions: Set<AirshipPermission> {
@@ -141,7 +148,7 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     ///
     /// - Parameters:
     ///     - permission: The permission.
-    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.postNotifications` is granted.
+    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
     ///     - completionHandler: The completion handler.
     @objc
     @MainActor
@@ -149,32 +156,76 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
         _ permission: AirshipPermission,
         enableAirshipUsageOnGrant: Bool
     ) async -> AirshipPermissionStatus {
-        let status: AirshipPermissionStatus? = try? await self.queue.run { @MainActor in
+        return await requestPermission(
+            permission,
+            enableAirshipUsageOnGrant: enableAirshipUsageOnGrant,
+            fallback: .none
+        ).endStatus
+    }
+
+    /// Requests a permission.
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
+    ///     - fallback: The fallback behavior if the permission is alreay denied.
+    /// - Returns: A `AirshipPermissionResult` with the starting and ending status If no permission delegate is
+    /// set for the given permission the status will be `.notDetermined`
+    @MainActor
+    public func requestPermission(
+        _ permission: AirshipPermission,
+        enableAirshipUsageOnGrant: Bool,
+        fallback: PromptPermissionFallback
+    ) async -> AirshipPermissionResult {
+        let status: AirshipPermissionResult? = try? await self.queue.run { @MainActor in
             guard let delegate = self.permissionDelegate(permission) else {
-                return .notDetermined
+                return AirshipPermissionResult.notDetermined
             }
 
-            let status = await delegate.requestPermission()
+            let startingStatus = await delegate.checkPermissionStatus()
+            var endStatus: AirshipPermissionStatus = .notDetermined
 
-            if status == .granted {
+            switch(startingStatus) {
+            case .granted:
+                endStatus = .granted
+            case .notDetermined:
+                endStatus = await delegate.requestPermission()
+            case .denied:
+                switch fallback {
+                case .none:
+                    endStatus = .denied
+                case .systemSettings:
+                    if await self.systemSettingsNavigator.open(for: permission) {
+                        await self.appStateTracker.waitForActive()
+                        endStatus = await delegate.checkPermissionStatus()
+                    } else {
+                        endStatus = .denied
+                    }
+                case .callback(let callback):
+                    await callback()
+                    endStatus = await delegate.checkPermissionStatus()
+                }
+            }
+
+            if endStatus == .granted {
                 await self.onPermissionEnabled(
                     permission,
                     enableAirshipUsage: enableAirshipUsageOnGrant
                 )
             }
 
-            await self.onExtend(permission: permission, status: status)
+            await self.onExtend(permission: permission, status: endStatus)
 
-            return status
+            return AirshipPermissionResult(startStatus: startingStatus, endStatus: endStatus)
         }
-        
-        let result = status ?? .notDetermined
-        
-        await statusUpdates.send((permission, result))
+
+        let result = status ?? AirshipPermissionResult.notDetermined
+
+        await statusUpdates.send((permission, result.endStatus))
 
         return result
     }
-    
+
     /// - Note: for internal use only.  :nodoc:
     func addRequestExtender(
         permission: AirshipPermission,
@@ -251,5 +302,79 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
             await extender(status)
         }
     }
+}
+
+public struct AirshipPermissionResult: Sendable {
+    /// Starting status
+    public var startStatus: AirshipPermissionStatus
+
+    /// Ending status
+    public var endStatus: AirshipPermissionStatus
+
+    public init(startStatus: AirshipPermissionStatus, endStatus: AirshipPermissionStatus) {
+        self.startStatus = startStatus
+        self.endStatus = endStatus
+    }
+
+    static var notDetermined: AirshipPermissionResult {
+        AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
+    }
+}
+
+
+
+/// Prompt permission fallback to be used if the requested permission is already denied.
+public enum PromptPermissionFallback: Sendable {
+    /// No fallback
+    case none
+    /// Navigate to system settings
+    case systemSettings
+    // Custom callback
+    case callback(@MainActor @Sendable () async -> Void)
+}
+
+
+
+protocol SystemSettingsNavigatorProtocol: Sendable {
+    @MainActor
+    func open(for: AirshipPermission) async -> Bool
+}
+
+struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
+#if !os(watchOS)
+    @MainActor
+    func open(for permission: AirshipPermission) async -> Bool {
+        if let url = systemSettingURLForPermission(permission) {
+            return await UIApplication.shared.open(url, options: [:])
+        } else {
+            return false
+        }
+    }
+    
+    @MainActor
+    private func systemSettingURLForPermission(_ permission: AirshipPermission) -> URL? {
+        let string = switch(permission) {
+        case .displayNotifications:
+            if #available(iOS 16.0, tvOS 16.0, macCatalyst 16.0, visionOS 1.0, *) {
+                UIApplication.openNotificationSettingsURLString
+            } else if #available(iOS 15.4, tvOS 15.4, macCatalyst 15.4, *) {
+                UIApplicationOpenNotificationSettingsURLString
+            } else {
+                UIApplication.openSettingsURLString
+            }
+        case .location:
+            UIApplication.openSettingsURLString
+        }
+
+        return URL(string: string)
+    }
+    #else
+
+    @MainActor
+    func open(for permission: AirshipPermission) async -> Bool {
+       return false
+    }
+
+    #endif
 
 }

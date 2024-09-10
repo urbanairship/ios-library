@@ -563,13 +563,26 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     @objc
     public func enableUserPushNotifications() async -> Bool {
+        return await enableUserPushNotifications(fallback: .none)
+    }
+
+    public func enableUserPushNotifications(
+        fallback: PromptPermissionFallback
+    ) async -> Bool {
         self.dataStore.setBool(
             true,
             forKey: AirshipPush.userPushNotificationsEnabledKey
         )
-        return await self.permissionsManager.requestPermission(.displayNotifications) == .granted
+
+        let result = await self.permissionsManager.requestPermission(
+            .displayNotifications,
+            enableAirshipUsageOnGrant: false,
+            fallback: fallback
+        )
+
+        return result.endStatus == .granted
     }
-    
+
     @MainActor
     private func waitForDeviceTokenRegistration() async {
         guard self.waitForDeviceToken,

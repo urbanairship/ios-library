@@ -64,7 +64,7 @@ class PromptPermissionActionTest: XCTestCase {
             XCTAssertTrue(enableAirshipUsage)
             XCTAssertTrue(fallbackSystemSetting)
             prompted.fulfill()
-            return (.notDetermined, .notDetermined)
+            return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
 
@@ -91,7 +91,7 @@ class PromptPermissionActionTest: XCTestCase {
             XCTAssertFalse(enableAirshipUsage)
             XCTAssertFalse(fallbackSystemSetting)
             prompted.fulfill()
-            return (.notDetermined, .notDetermined)
+            return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
 
@@ -115,7 +115,7 @@ class PromptPermissionActionTest: XCTestCase {
             enableAirshipUsage,
             fallbackSystemSetting in
             XCTFail()
-            return (.notDetermined, .notDetermined)
+            return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
         do {
@@ -156,7 +156,7 @@ class PromptPermissionActionTest: XCTestCase {
             permission,
             enableAirshipUsage,
             fallbackSystemSetting in
-            return (.notDetermined, .granted)
+            return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .granted)
         }
 
         _ = try await self.action.perform(arguments: arguments)

@@ -203,9 +203,9 @@ struct HomeView: View {
         @MainActor
         func togglePushEnabled() {
             if (!pushEnabled) {
-                Airship.privacyManager.enableFeatures(.push)
-                Airship.push.userPushNotificationsEnabled = true
-                Airship.push.backgroundPushNotificationsEnabled = true
+                Task {
+                    await Airship.push.enableUserPushNotifications(fallback: .systemSettings)
+                }
             } else {
                 Airship.push.userPushNotificationsEnabled = false
             }

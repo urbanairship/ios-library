@@ -67,18 +67,17 @@ public final class PromptPermissionAction: AirshipAction {
         )
         let args = try JSONDecoder().decode(Args.self, from: data)
                 
-        let (start, end) = await self.permissionPrompter()
-            .prompt(
-                permission: args.permission,
-                enableAirshipUsage: args.enableAirshipUsage ?? false,
-                fallbackSystemSettings: args.fallbackSystemSettings ?? false
-            )
+        let result = await self.permissionPrompter().prompt(
+            permission: args.permission,
+            enableAirshipUsage: args.enableAirshipUsage ?? false,
+            fallbackSystemSettings: args.fallbackSystemSettings ?? false
+        )
 
         let resultReceiver = arguments.metadata[
             PromptPermissionAction.resultReceiverMetadataKey
         ] as? PermissionResultReceiver
 
-        await resultReceiver?(args.permission, start, end)
+        await resultReceiver?(args.permission, result.startStatus, result.endStatus)
 
         return nil
     }
@@ -95,5 +94,6 @@ public final class PromptPermissionAction: AirshipAction {
         }
     }
 }
+
 
 

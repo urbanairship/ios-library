@@ -11,7 +11,7 @@ final class TestPermissionPrompter: PermissionPrompter, @unchecked Sendable {
             (
                 AirshipPermission, Bool, Bool
             ) ->
-            (AirshipPermissionStatus, AirshipPermissionStatus)
+            AirshipPermissionResult
         )?
 
     init() {}
@@ -19,7 +19,7 @@ final class TestPermissionPrompter: PermissionPrompter, @unchecked Sendable {
     func prompt(
         permission: AirshipPermission,
         enableAirshipUsage: Bool,
-        fallbackSystemSettings: Bool) async ->  (AirshipPermissionStatus, AirshipPermissionStatus) {
+        fallbackSystemSettings: Bool) async ->  AirshipPermissionResult  {
 
         if let onPrompt = self.onPrompt {
             return onPrompt(
@@ -28,7 +28,7 @@ final class TestPermissionPrompter: PermissionPrompter, @unchecked Sendable {
                 fallbackSystemSettings
             )
         } else {
-            return(.notDetermined, .notDetermined)
+            return AirshipPermissionResult.notDetermined
         }
     }
 }

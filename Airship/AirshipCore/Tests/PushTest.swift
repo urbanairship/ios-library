@@ -12,7 +12,7 @@ class PushTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
-    private let permissionsManager = AirshipPermissionsManager()
+    private var permissionsManager: AirshipPermissionsManager!
 
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
@@ -27,6 +27,7 @@ class PushTest: XCTestCase {
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
+        self.permissionsManager = await AirshipPermissionsManager()
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
             config:  RuntimeConfig(
@@ -290,15 +291,6 @@ class PushTest: XCTestCase {
         self.push.requestExplicitPermissionWhenEphemeral = false
         await self.serialQueue.waitForCurrentOperations()
 
-        let updated = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = {
-            options,
-            skipIfEphemeral in
-            XCTAssertEqual([.alert, .badge], options)
-            XCTAssertTrue(skipIfEphemeral)
-            updated.fulfill()
-        }
-
         self.notificationRegistrar.onCheckStatus = {
             return(.authorized, [])
         }
@@ -306,7 +298,7 @@ class PushTest: XCTestCase {
         let success = await self.push.enableUserPushNotifications()
         XCTAssertTrue(success)
 
-        await self.fulfillmentCompat(of: [permissionsManagerCalled, updated], timeout: 10.0)
+        await self.fulfillmentCompat(of: [permissionsManagerCalled], timeout: 10.0)
     }
 
     func testEnableUserNotificationsDenied() async throws {

@@ -155,7 +155,6 @@
 		3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */; };
 		3CC95B2C2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */; };
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
-		54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */; };
 		6014AD6C2C2032730072DCF0 /* ChallengeResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */; };
 		6014AD752C20410B0072DCF0 /* airship.der in Resources */ = {isa = PBXBuildFile; fileRef = 6014AD742C20410A0072DCF0 /* airship.der */; };
@@ -3045,7 +3044,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */,
-				54DE2901247B2AF059E46862 /* Pods_AirshipTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9117,7 +9115,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -9158,7 +9155,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;

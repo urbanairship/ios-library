@@ -38,4 +38,10 @@ public final class TestAppStateTracker: AppStateTrackerProtocol, @unchecked Send
             stateValue.set(currentState)
         }
     }
+
+
+    @MainActor
+    public func updateState(_ state: ApplicationState) async {
+        self.currentState = state
+    }
 }
