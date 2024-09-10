@@ -1,8 +1,22 @@
 
 # iOS Changelog
 
+## Version 18.9.0 September 10, 2024
+Minor release that introduces `fallback` parameter when requesting permission updates and the permission is denied. This release also contains
+a fix for a regression in 18.8.0 where Channel Registration would continuously update for channels that have upgraded from an earlier
+SDK versions. Applications using 18.8.0 should update.
+
+#### Changes
+- Added new method `Airship.permissionsManager.requestPermission(_:enableAirshipUsageOnGrant:fallback:)` and `Airship.push.enableUserPushNotifications(fallback:)` that allows you to specify a
+fallback behavior if the permission is already denied.
+- Fixed high CPU issues with embedded messages that define a percent based size.
+- Fixed Channel Registration bug that was introduced in 18.8.
+
+
 ## Version 18.8.0 September 6, 2024
 Minor release with several enhancements to In-App Automation, Scenes, and Surveys.
+
+**This version has a regression and should be avoided. Please use 18.9.0 or newer instead**
 
 ### Changes
 - Added support to disable plain markdown (text markup) support in a Scene.
