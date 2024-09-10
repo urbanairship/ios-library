@@ -339,8 +339,6 @@ struct Pager: View {
     }
     
     private func handleTouch(isPressed: Bool, index: Binding<Int>) {
-        print("isPressed: \(isPressed)")
-
         self.model.retrieveGestures(type: PagerHoldGesture.self).forEach { gesture in
             let behavior = isPressed ? gesture.pressBehavior : gesture.releaseBehavior
             handleGestureBehavior(
