@@ -94,6 +94,7 @@ struct Pager: View {
                                     model: self.model.items[i].view,
                                     constraints: childConstraints
                                 )
+                                .allowsHitTesting(self.isVisible && i == index.wrappedValue)
                                 .environment(
                                     \.isVisible,
                                      self.isVisible && i == index.wrappedValue
