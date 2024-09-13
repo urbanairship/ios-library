@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 18.9.1 September 13, 2024
+Patch release to fix Scene button not able to be tapped in some cases.
+
+#### Changes
+- Fix Scene buttons not able to be tapped if the last page of the scene contains a wide image background.
+
 ## Version 18.9.0 September 10, 2024
 Minor release that introduces `fallback` parameter when requesting permission updates and the permission is denied. This release also contains
 a fix for a regression in 18.8.0 where Channel Registration would continuously update for channels that have upgraded from an earlier
