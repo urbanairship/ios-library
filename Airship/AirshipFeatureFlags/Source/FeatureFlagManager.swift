@@ -185,11 +185,58 @@ public final class FeatureFlagManager: Sendable {
 
             /// If the flag is eligible or the last flag return
             if flag.isEligible || isLast {
-                return flag
+                return try await self.flag(flag, applyingControlFrom: flagInfo, deviceInfoProvider: deviceInfoProvider)
             }
         }
 
         return FeatureFlag.makeNotFound(name: name)
+    }
+    
+    private func flag(_ flag: FeatureFlag, 
+                      applyingControlFrom info: FeatureFlagInfo,
+                      deviceInfoProvider: AudienceDeviceInfoProvider
+    ) async throws -> FeatureFlag {
+        
+        guard
+            flag.isEligible,
+            let control = info.controlOptins
+        else {
+            return flag
+        }
+        
+        let isAudienceMatch = if let audience = control.audience {
+            try await self.audienceChecker.evaluate(
+                audience: audience,
+                newUserEvaluationDate: info.created,
+                deviceInfoProvider: deviceInfoProvider
+            )
+        } else {
+            true
+        }
+        
+        if !isAudienceMatch {
+            return flag
+        }
+        
+        var result = flag
+        
+        switch control.controlType {
+        case .flag:
+            result.isEligible = false
+        case .variables(let override):
+            result.variables = override
+        }
+        
+        guard var reportingInfo = flag.reportingInfo else {
+            return result
+        }
+        
+        reportingInfo.addSuperseded(metadata: reportingInfo.reportingMetadata)
+        reportingInfo.reportingMetadata = control.reportingMetadata
+        
+        result.reportingInfo = reportingInfo
+        
+        return result
     }
 
     private func isLocallyEligible(

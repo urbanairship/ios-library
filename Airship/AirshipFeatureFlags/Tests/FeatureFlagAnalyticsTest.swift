@@ -75,6 +75,41 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         XCTAssertEqual(AirshipEventPriority.normal, event.priority)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }
+    
+    func testTrackInteractionSupersede() throws {
+        let flag = FeatureFlag(
+            name: "some_flag",
+            isEligible: true,
+            exists: true,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reportingMetadata"),
+                supersededReportingMetadata: [.string("supersede")],
+                contactID: "some_contact",
+                channelID: "some_channel"
+            )
+        )
+
+        let expectedBody = """
+        {
+            "flag_name": "some_flag",
+            "reporting_metadata": "reportingMetadata",
+            "superseded_reporting_metadata": ["supersede"],
+            "eligible": true,
+            "device": {
+                "channel_id": "some_channel",
+                "contact_id": "some_contact"
+            }
+        }
+        """
+
+        self.analytics.trackInteraction(flag: flag)
+        XCTAssertEqual(1, self.airshipAnalytics.events.count)
+
+        let event = self.airshipAnalytics.events.first!
+        XCTAssertEqual("feature_flag_interaction", event.eventType.reportingName)
+        XCTAssertEqual(AirshipEventPriority.normal, event.priority)
+        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+    }
 
     func testTrackInteractionNoDeviceInfo() throws {
         let flag = FeatureFlag(
