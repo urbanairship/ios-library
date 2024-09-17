@@ -5,12 +5,10 @@ import Combine
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
-@objc(UAContactProtocol)
 public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
     /**
      * The current named user ID if set through the SDK.
      */
-    @objc(getNamedUserIDWithCompletionHandler:)
     func _getNamedUserID() async -> String?
 
     /**
@@ -19,14 +17,12 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - namedUserID: The named user ID.
      */
-    @objc
     func identify(_ namedUserID: String)
 
     /**
      * Disassociate the channel from its current contact, and create a new
      * un-named contact.
      */
-    @objc
     func reset()
 
     /**
@@ -34,14 +30,12 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      * of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
      * data. Applications should only call this method when the user login has changed.
      */
-    @objc
     func notifyRemoteLogin()
 
     /**
      * Edits tags.
      * - Returns: A tag groups editor.
      */
-    @objc
     func editTagGroups() -> TagGroupsEditor
 
     /**
@@ -49,14 +43,12 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
-    @objc
     func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void)
 
     /**
      * Edits attributes.
      * - Returns: An attributes editor.
      */
-    @objc
     func editAttributes() -> AttributesEditor
 
     /**
@@ -64,7 +56,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
-    @objc
     func editAttributes(_ editorBlock: (AttributesEditor) -> Void)
 
     /**
@@ -73,7 +64,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      *   - address: The email address.
      *   - options: The email channel registration options.
      */
-    @objc
     func registerEmail(_ address: String, options: EmailRegistrationOptions)
 
     /**
@@ -82,7 +72,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      *   - msisdn: The SMS msisdn.
      *   - options: The SMS channel registration options.
      */
-    @objc
     func registerSMS(_ msisdn: String, options: SMSRegistrationOptions)
 
     /**
@@ -91,7 +80,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      *   - address: The open channel address.
      *   - options: The open channel registration options.
      */
-    @objc
     func registerOpen(_ address: String, options: OpenRegistrationOptions)
 
     /**
@@ -100,24 +88,20 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
      *   - channelID: The channel ID.
      *   - type: The channel type.
      */
-    @objc
     func associateChannel(_ channelID: String, type: ChannelType)
 
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
-    @objc
     func editSubscriptionLists() -> ScopedSubscriptionListEditor
 
     /// Begins a subscription list editing session
     /// - Parameter editorBlock: A scoped subscription list editor block.
-    @objc
     func editSubscriptionLists(
         _ editorBlock: (ScopedSubscriptionListEditor) -> Void
     )
 
     /// Fetches subscription lists.
     /// - Returns: Subscriptions lists.
-    @objc(fetchSubscriptionListsWithCompletionHandler:)
     func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes]
 }
 

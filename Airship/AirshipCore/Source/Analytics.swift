@@ -35,19 +35,16 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     private var isAirshipReady = false
 
     /// The conversion send ID. :nodoc:
-   @objc
    public var conversionSendID: String? {
        return self.sessionTracker.sessionState.conversionSendID
     }
 
    /// The conversion push metadata. :nodoc:
-   @objc
    public var conversionPushMetadata: String? {
        return self.sessionTracker.sessionState.conversionMetadata
    }
 
     /// The current session ID.
-    @objc
     public var sessionID: String {
         return self.sessionTracker.sessionState.sessionID
     }
@@ -425,7 +422,6 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     /// For internal use only. :nodoc:
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
-    @objc
     public func associateDeviceIdentifiers(
         _ associatedIdentifiers: AssociatedIdentifiers
     ) {
@@ -463,7 +459,6 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
     /// The device's current associated identifiers.
     /// - Returns: The device's current associated identifiers.
-    @objc
     public func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
         let storedIDs =
             self.dataStore.object(forKey: AirshipAnalytics.associatedIdentifiers)
@@ -475,7 +470,6 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
     /// - Parameter screen: The screen's identifier.
-    @objc
     @MainActor
     public func trackScreen(_ screen: String?) {
         let date = self.date.now
@@ -524,7 +518,6 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     ///  - Parameters:
     ///   - ext: The SDK extension.
     ///   - version: The version.
-    @objc
     public func registerSDKExtension(
         _ ext: AirshipSDKExtension,
         version: String

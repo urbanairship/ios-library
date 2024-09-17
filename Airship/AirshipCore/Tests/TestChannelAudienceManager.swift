@@ -37,13 +37,10 @@ class TestChannelAudienceManager: ChannelAudienceManagerProtocol, @unchecked Sen
 
     public var enabled: Bool = false
 
-    @objc
     public var tagGroupEditor: TagGroupsEditor?
 
-    @objc
     public var attributeEditor: AttributesEditor?
 
-    @objc
     public var subcriptionListEditor: SubscriptionListEditor?
 
     public var fetchSubscriptionListCallback:

@@ -33,7 +33,6 @@ public final class RemoveTagsAction: AirshipAction {
     private let channel: @Sendable () -> AirshipChannelProtocol
     private let contact: @Sendable () -> AirshipContactProtocol
 
-    @objc
     public convenience init() {
         self.init(
             channel: Airship.componentSupplier(),

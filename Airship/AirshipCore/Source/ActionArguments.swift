@@ -3,7 +3,6 @@
 import Foundation
 
 /// Action situations
-@objc(UAActionSituation)
 public enum ActionSituation: Int, Sendable {
     /// Action invoked manually
     case manualInvocation

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 /// Predicate for JSON payloads.
-@objc(UAJSONPredicate)
 public final class JSONPredicate: NSObject, Sendable, Codable {
     private static let andTypeKey = "and"
     private static let orTypeKey = "or"
@@ -12,7 +11,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
     private let subpredicates: [JSONPredicate]?
     private let jsonMatcher: JSONMatcher?
 
-    @objc
     required init(
         type: String?,
         jsonMatcher: JSONMatcher?,
@@ -32,7 +30,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   - json The JSON payload.
      * - Returns: A predicate or `nil` if the JSON is invalid.
      */
-    @objc(initWithJSON:error:)
     public convenience init(json: Any?) throws {
         guard let parsedJson = json as? [String: Any] else {
             AirshipLogger.error(
@@ -123,7 +120,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *
      * - Returns: The predicate's JSON payload.
      */
-    @objc
     public func payload() -> [String: Any] {
         if let type = type {
             var subpredicatePayloads: [Any] = []
@@ -146,7 +142,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   -  object: The object to evaluate.
      * - Returns: true if the predicate matches the object, otherwise false.
      */
-    @objc(evaluateObject:)
     public func evaluate(_ object: Any?) -> Bool {
         // And
         if type == JSONPredicate.andTypeKey {
@@ -185,7 +180,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   -  matcher: A JSON matcher.
      * - Returns: A JSON predicate.
      */
-    @objc(initWithJSONMatcher:)
     public convenience init(jsonMatcher matcher: JSONMatcher?) {
         self.init(type: nil, jsonMatcher: matcher, subpredicates: nil)
     }
@@ -197,7 +191,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   - subpredicates: An array of predicates.
      * - Returns: A JSON predicate.
      */
-    @objc(andPredicateWithSubpredicates:)
     public class func andPredicate(subpredicates: [JSONPredicate]?)
         -> JSONPredicate
     {
@@ -215,7 +208,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   - subpredicates: An array of predicates.
      * - Returns: A JSON predicate.
      */
-    @objc(orPredicateWithSubpredicates:)
     public class func orPredicate(subpredicates: [JSONPredicate]?)
         -> JSONPredicate
     {
@@ -234,7 +226,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   -  subpredicate: A predicate.
      * - Returns:A JSON predicate.
      */
-    @objc(notPredicateWithSubpredicate:)
     public class func notPredicate(subpredicate: JSONPredicate) -> JSONPredicate
     {
         return JSONPredicate(
@@ -251,7 +242,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
      *   - json: The JSON payload.
      * - Returns: A predicate or `nil` if the JSON is invalid.
      */
-    @objc(predicateWithJSON:error:)
     class func fromJson(json: Any?) throws -> JSONPredicate {
         return try JSONPredicate(json: json)
     }

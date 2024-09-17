@@ -1,19 +1,16 @@
 /* Copyright Airship and Contributors */
 
 /// Airship locale manager.
-@objc(UALocaleManagerProtocol)
 public protocol AirshipLocaleManagerProtocol: AnyObject, Sendable {
     /**
      * Resets the current locale.
      */
-    @objc
     func clearLocale()
 
     /**
      * The current locale used by Airship. Defaults to `autoupdatingCurrent` or the user preferred lanaguage, depending on
      * `AirshipConfig.useUserPreferredLocale`.
      */
-    @objc
     var currentLocale: Locale { get set }
 
 }
@@ -30,7 +27,6 @@ final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
     /**
      * The current locale used by Airship. Defaults to `autoupdatingCurrent`.
      */
-    @objc
     public var currentLocale: Locale {
         get {
             if self.config.useUserPreferredLocale {
@@ -70,7 +66,6 @@ final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
     /**
      * Resets the current locale.
      */
-    @objc
     public func clearLocale() {
         dataStore.localeOverride = nil
         dispatchUpdate()
@@ -131,17 +126,14 @@ fileprivate extension PreferenceDataStore {
 public extension AirshipNotifications {
 
     /// NSNotification info when the locale is updated.
-    @objc(UAirshipNotificationLocaleUpdated)
     final class LocaleUpdated: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.locale.locale_updated"
         )
         
         /// NSNotification userInfo key to get the locale.
-        @objc
         public static let localeKey = "locale"
     }
 

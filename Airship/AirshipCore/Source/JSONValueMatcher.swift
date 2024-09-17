@@ -1,7 +1,6 @@
 // Copyright Airship and Contributors
 
 /// Defines a JSON value matcher.
-@objc(UAJSONValueMatcher)
 public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     private static let atMostKey = "at_most"
     private static let atLeastKey = "at_least"
@@ -25,7 +24,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     /**
      * The matcher's JSON payload.
      */
-    @objc
     public func payload() -> [String: Any] {
         var payload: [String: Any] = [:]
 
@@ -47,7 +45,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - value: The object to evaluate.
      * - Returns: true  if the matcher matches the object, otherwise false.
      */
-    @objc(evaluateObject:)
     public func evaluate(_ value: Any?) -> Bool {
         return evaluate(value, ignoreCase: false)
     }
@@ -61,7 +58,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *  Strings contained in arrays and dictionaries also follow this rule.
      * - Returns: true if the matcher matches the object, otherwise false.
      */
-    @objc(evaluateObject:ignoreCase:)
     public func evaluate(_ value: Any?, ignoreCase: Bool) -> Bool {
         if let isPresent = isPresent {
             return isPresent.boolValue == (value != nil)
@@ -126,7 +122,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc(value:isEqualToValue:ignoreCase:)
     public func value(
         _ valueOne: Any?,
         isEqualToValue valueTwo: Any?,
@@ -203,7 +198,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   -  number: The lower bound for the number.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereNumberAtLeast:)
     public class func matcherWhereNumberAtLeast(atLeast number: NSNumber)
         -> JSONValueMatcher
     {
@@ -221,7 +215,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - higherNumber: The upper bound for the number.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereNumberAtLeast:atMost:)
     public class func matcherWhereNumberAtLeast(
         atLeast lowerNumber: NSNumber,
         atMost higherNumber: NSNumber
@@ -240,7 +233,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - number: The upper bound for the number.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereNumberAtMost:)
     public class func matcherWhereNumberAtMost(atMost number: NSNumber)
         -> JSONValueMatcher
     {
@@ -256,7 +248,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - number: The expected number value.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereNumberEquals:)
     public class func matcherWhereNumberEquals(_ number: NSNumber)
         -> JSONValueMatcher
     {
@@ -272,7 +263,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - boolean: The expected boolean value.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereBooleanEquals:)
     public class func matcherWhereBooleanEquals(_ boolean: Bool)
         -> JSONValueMatcher
     {
@@ -288,7 +278,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - string: The expected string value.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereStringEquals:)
     public class func matcherWhereStringEquals(_ string: String)
         -> JSONValueMatcher
     {
@@ -304,7 +293,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - present: true if the value must be present, otherwise false.
      * - Returns: A value matcher.
      */
-    @objc(matcherWhereValueIsPresent:)
     public class func matcherWhereValueIsPresent(_ present: Bool)
         -> JSONValueMatcher
     {
@@ -320,7 +308,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - versionConstraint The version constraint to be matched against.
      * - Returns: A value matcher.
      */
-    @objc(matcherWithVersionConstraint:)
     public class func matcherWithVersionConstraint(_ versionConstraint: String)
         -> JSONValueMatcher?
     {
@@ -345,7 +332,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - predicate A predicate to be used to evaluate each value in the array for a match.
      * - Returns:  A value matcher.
      */
-    @objc(matcherWithArrayContainsPredicate:)
     public class func matcherWithArrayContainsPredicate(
         _ predicate: JSONPredicate
     ) -> JSONValueMatcher? {
@@ -362,7 +348,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   -  index The array index.
      * - Returns: A value matcher.
      */
-    @objc(matcherWithArrayContainsPredicate:atIndex:)
     public class func matcherWithArrayContainsPredicate(
         _ predicate: JSONPredicate,
         at index: Int
@@ -381,7 +366,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      *   - error An NSError pointer for storing errors, if applicable.
      * - Returns: A value matcher, or `nil` if the JSON is invalid.
      */
-    @objc(matcherWithJSON:error:)
     public class func matcherWithJSON(_ json: Any?) throws -> JSONValueMatcher {
         guard let parsedJson = json as? [String: Any] else {
             AirshipLogger.error(
@@ -454,7 +438,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         )
     }
 
-    @objc(isEqualMatcherExpression:)
     class func isEqualMatcherExpression(_ expression: [AnyHashable: Any])
         -> Bool
     {
@@ -466,7 +449,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         return expression[JSONValueMatcher.equalsKey] != nil
     }
 
-    @objc(isNumericMatcherExpression:)
     class func isNumericMatcherExpression(_ expression: [AnyHashable: Any])
         -> Bool
     {
@@ -488,7 +470,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         return false
     }
 
-    @objc(isPresentExpression:)
     class func isPresentExpression(_ expression: [AnyHashable: Any]) -> Bool {
         guard (expression.count) == 1 else {
             return false
@@ -500,7 +481,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         return subexp is NSNumber
     }
 
-    @objc(isArrayMatcherExpression:)
     class func isArrayMatcherExpression(_ expression: [AnyHashable: Any])
         -> Bool
     {
@@ -531,7 +511,6 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         return isEqual(to: matcher)
     }
 
-    @objc(isEqualToJSONValueMatcher:)
     func isEqual(to matcher: JSONValueMatcher?) -> Bool {
         if let equals = equals {
             if matcher?.equals == nil || !compareAny(equals, matcher?.equals) {

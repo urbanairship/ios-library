@@ -13,7 +13,6 @@ class InAppMessageHostingController<Content> : UIHostingController<Content> wher
         self.view.backgroundColor = .clear
     }
 
-    @objc
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -72,7 +71,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         super.init(rootView: rootView)
     }
 
-    @objc required dynamic init?(coder aDecoder: NSCoder) {
+    required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

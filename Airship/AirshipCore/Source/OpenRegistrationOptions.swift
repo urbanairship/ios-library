@@ -3,7 +3,6 @@
 import Foundation
 
 /// Open registration options
-@objc(UAOpenRegistrationOptions)
 public final class OpenRegistrationOptions: NSObject, Codable, Sendable {
 
     /**
@@ -25,7 +24,6 @@ public final class OpenRegistrationOptions: NSObject, Codable, Sendable {
     /// - Parameter platformName: The platform name
     /// - Parameter identifiers: The identifiers
     /// - Returns: An open registration options.
-    @objc
     public static func optIn(
         platformName: String,
         identifiers: [String: String]?

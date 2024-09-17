@@ -25,8 +25,6 @@ public final class PasteboardAction: AirshipAction {
             return pasteboardString(arguments) != nil
         case .backgroundPush, .foregroundPush:
             return false
-        default:
-            return false
         }
     }
 

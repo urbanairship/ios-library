@@ -7,29 +7,24 @@ import AirshipCore
 #endif
 
 /// Preference center config.
-@objc(UAPreferenceCenterConfig)
 public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
     /// The config's identifier.
-    @objc
     public let identifier: String
 
     /// The config's sections.
     public let sections: [Section]
 
-    @objc(sections)
     public var _sections: [PreferenceCenterConfigSection] {
         self.sections.map { $0.info }
     }
 
     /// The config's display info.
-    @objc
     public let display: CommonDisplay?
 
     /**
      * The config's options.
      */
-    @objc
     public let options: Options?
 
     public init(
@@ -71,20 +66,17 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Config options.
-    @objc(UAPreferenceCenterConfigOptions)
     public final class Options: NSObject, Decodable, Sendable {
 
         /**
          * The config identifier.
          */
-        @objc
         public let mergeChannelDataToContact: Bool
 
         enum CodingKeys: String, CodingKey {
             case mergeChannelDataToContact = "merge_channel_data_to_contact"
         }
 
-        @objc
         public init(mergeChannelDataToContact: Bool) {
             self.mergeChannelDataToContact = mergeChannelDataToContact
         }
@@ -113,15 +105,12 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Common display info
-    @objc(UAPreferenceConfigCommonDisplay)
     public final class CommonDisplay: NSObject, Decodable, Sendable {
 
         /// Title
-        @objc
         public let title: String?
 
         // Subtitle
-        @objc
         public let subtitle: String?
 
         public init(title: String? = nil, subtitle: String? = nil) {
@@ -148,20 +137,16 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
     }
 
-    @objc(UAPreferenceCenterConfigNotificationOptInCondition)
     public final class NotificationOptInCondition: NSObject, Decodable, PreferenceConfigCondition, Sendable
     {
 
-        @objc(UANotificationOptInConditionStatus)
         public enum OptInStatus: Int, Equatable, Sendable {
             case optedIn
             case optedOut
         }
 
-        @objc
         public let type = PreferenceCenterConfigConditionType.notificationOptIn
 
-        @objc
         public let optInStatus: OptInStatus
 
         enum CodingKeys: String, CodingKey {
@@ -227,35 +212,29 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Common section.
-    @objc(UAPreferenceCenterConfigCommonSection)
     public final class CommonSection: NSObject, Decodable,
         PreferenceCenterConfigSection
     {
 
         /// The section's type.
-        @objc
         public let type = PreferenceCenterConfigSectionType.common
 
         /// The section's identifier.
-        @objc
         public let identifier: String
 
         /// The section's items.
         public let items: [Item]
 
-        @objc(items)
         public var _items: [PreferenceCenterConfigItem] {
             return self.items.map { $0.info }
         }
 
         /// The section's display info.
-        @objc
         public let display: CommonDisplay?
 
         /// The section's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
@@ -300,27 +279,22 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Labeled section break info.
-    @objc(UAPreferenceLabeledSectionBreak)
     public final class LabeledSectionBreak: NSObject, Decodable,
         PreferenceCenterConfigSection
     {
 
         /// The section's type.
-        @objc
         public let type = PreferenceCenterConfigSectionType.labeledSectionBreak
 
         /// The section's identifier.
-        @objc
         public let identifier: String
 
         /// The section's display info.
-        @objc
         public let display: CommonDisplay?
 
         /// The section's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
@@ -354,35 +328,29 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Contact Management section.
-    @objc(UAPreferenceCenterConfigContactManagementSection)
     public final class ContactManagementSection: NSObject, Decodable,
                                       PreferenceCenterConfigSection
     {
 
         /// The section's type.
-        @objc
         public let type = PreferenceCenterConfigSectionType.common
 
         /// The section's identifier.
-        @objc
         public let identifier: String
 
         /// The section's items.
         public let items: [Item]
 
-        @objc(items)
         public var _items: [PreferenceCenterConfigItem] {
             return self.items.map { $0.info }
         }
 
         /// The section's display info.
-        @objc
         public let display: CommonDisplay?
 
         /// The section's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
@@ -463,29 +431,23 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
     
     /// Channel subscription item info.
-    @objc(UAPreferenceCenterConfigChannelSubscription)
     public final class ChannelSubscription: NSObject, Decodable, PreferenceCenterConfigItem, Sendable {
 
         /// The item's type.
-        @objc
         public let type = PreferenceCenterConfigItemType.channelSubscription
 
         /// The item's identifier.
-        @objc
         public let identifier: String
 
         /// The item's subscription ID.
-        @objc
         public let subscriptionID: String
 
         /// The item's display info.
-        @objc
         public let display: CommonDisplay?
 
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
@@ -523,36 +485,29 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Group contact subscription item info.
-    @objc(UAPreferenceCenterConfigContactSubscriptionGroup)
     public final class ContactSubscriptionGroup: NSObject, Decodable,
         PreferenceCenterConfigItem
     {
 
         /// The item's type.
-        @objc
         public let type = PreferenceCenterConfigItemType
             .contactSubscriptionGroup
 
         /// The item's identifier.
-        @objc
         public let identifier: String
 
         /// The item's subscription ID.
-        @objc
         public let subscriptionID: String
 
         /// Components
-        @objc
         public let components: [Component]
 
         /// The item's display info.
-        @objc
         public let display: CommonDisplay?
 
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
@@ -593,7 +548,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         /// Contact subscription group component.
-        @objc(UAPreferenceContactSubscriptionGroupComponent)
         public final class Component: NSObject, Decodable, Sendable {
 
             /// The component's scopes.
@@ -601,11 +555,9 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 return self._scopes.values
             }
 
-            @objc(scopes)
             public let _scopes: ChannelScopes
 
             /// The component's display info.
-            @objc
             public let display: CommonDisplay?
 
             enum CodingKeys: String, CodingKey {
@@ -633,33 +585,27 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Contact subscription item info.
-    @objc(UAPreferenceCenterConfigContactSubscription)
     public final class ContactSubscription: NSObject, Decodable,
         PreferenceCenterConfigItem
     {
 
         /// The item's type.
-        @objc
         public let type = PreferenceCenterConfigItemType.contactSubscription
 
         /// The item's identifier.
-        @objc
         public let identifier: String
 
         /// The item's display info.
-        @objc
         public let display: CommonDisplay?
 
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
         /// The item's subscription ID.
-        @objc
         public let subscriptionID: String
 
         /// The item's scopes.
@@ -667,7 +613,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             return self._scopes.values
         }
 
-        @objc(scopes)
         public let _scopes: ChannelScopes
 
         enum CodingKeys: String, CodingKey {
@@ -707,30 +652,24 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Alert item info.
-    @objc(UAPreferenceCenterConfigAlert)
     public final class Alert: NSObject, Decodable, PreferenceCenterConfigItem {
 
-        @objc
         public let type = PreferenceCenterConfigItemType.alert
 
         /// The item's identifier.
-        @objc
         public let identifier: String
 
         /// The item's display info.
-        @objc
         public let display: Display?
 
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        @objc(conditions)
         public var _conditions: [PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
         /// The alert's button.
-        @objc
         public let button: Button?
 
         enum CodingKeys: String, CodingKey {
@@ -764,21 +703,17 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         /// Alert button info.
-        @objc(UAPreferenceCenterConfigAlertButton)
         public final class Button: NSObject, Decodable, Sendable {
 
             /// The button's text.
-            @objc
             public let text: String
 
             /// The button's content description.
-            @objc
             public let contentDescription: String?
 
             let actionJSON: AirshipJSON
 
             /// Actions payload to run on tap
-            @objc
             public var actions: Any? {
                 return self.actionJSON.unWrap()
             }
@@ -811,19 +746,15 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         /// Alert display info
-        @objc(UAPreferenceConfigAlertDisplay)
         public final class Display: NSObject, Decodable, Sendable {
 
             /// Title
-            @objc
             public let title: String?
 
             /// Subtitle
-            @objc
             public let subtitle: String?
 
             /// Icon URL
-            @objc
             public let iconURL: String?
 
             enum CodingKeys: String, CodingKey {
@@ -902,7 +833,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 }
 
 /// Condition types
-@objc(UAPreferenceCenterConfigConditionType)
 public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
@@ -935,18 +865,15 @@ public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
 }
 
 /// Condition
-@objc(UAPreferenceConfigCondition)
 public protocol PreferenceConfigCondition: Sendable {
 
     /**
      * Condition type.
      */
-    @objc
     var type: PreferenceCenterConfigConditionType { get }
 }
 
 /// Item types.
-@objc(UAPreferenceCenterConfigItemType)
 public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
@@ -995,19 +922,15 @@ public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
 }
 
 /// Preference section item info.
-@objc(UAPreferenceCenterConfigItem)
 public protocol PreferenceCenterConfigItem: Sendable {
     /// The type.
-    @objc
     var type: PreferenceCenterConfigItemType { get }
 
     /// The identifier.
-    @objc
     var identifier: String { get }
 }
     
 /// Preference config section type.
-@objc(UAPreferenceCenterConfigSectionType)
 public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
     Equatable, Sendable
 {
@@ -1043,19 +966,16 @@ public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
 }
 
 /// Preference config section.
-@objc(UAPreferenceCenterConfigSection)
 public protocol PreferenceCenterConfigSection: Sendable {
 
     /**
      * The section's type.
      */
-    @objc
     var type: PreferenceCenterConfigSectionType { get }
 
     /**
      * The section's identifier.
      */
-    @objc
     var identifier: String { get }
 }
 

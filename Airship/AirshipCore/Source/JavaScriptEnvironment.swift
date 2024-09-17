@@ -4,39 +4,33 @@
 
 import Foundation
 
-@objc(UAJavaScriptEnvironmentProtocol)
 public protocol JavaScriptEnvironmentProtocol: Sendable {
 
 
     /// Adds a string getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter string: The getter's value.
-    @objc(addStringGetter:value:)
     func add(_ getter: String, string: String?)
 
     /// Adds a number getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter number: The getter's value.
-    @objc(addNumberGetter:value:)
     func add(_ getter: String, number: NSNumber?)
 
     /// Adds a dictionary getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter dictionary: The getter's value.
-    @objc(addDictionaryGetter:value:)
     func add(_ getter: String, dictionary: [AnyHashable: Any]?)
 
     /**
      * Builds the script that can be injected into a web view.
      * - Returns: The script.
      */
-    @objc
     func build() async -> String
 }
 
 
 /// The JavaScript environment builder that is used by the native bridge.
-@objc(UAJavaScriptEnvironment)
 public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol, @unchecked Sendable {
 
     private var extensions: [String] = []
@@ -44,7 +38,6 @@ public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtoco
     private let channel: () -> AirshipChannelProtocol
     private let contact: () -> AirshipContactProtocol
 
-    @objc
     public override convenience init() {
         self.init(
             channel: Airship.componentSupplier(),
@@ -60,28 +53,24 @@ public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtoco
         self.contact = contact
     }
 
-    @objc(addStringGetter:value:)
     public func add(_ getter: String, string: String?) {
         self.addExtension(
             makeGetter(name: getter, string: string)
         )
     }
 
-    @objc(addNumberGetter:value:)
     public func add(_ getter: String, number: NSNumber?) {
         self.addExtension(
             makeGetter(name: getter, number: number)
         )
     }
 
-    @objc(addDictionaryGetter:value:)
     public func add(_ getter: String, dictionary: [AnyHashable: Any]?) {
         self.addExtension(
             makeGetter(name: getter, dictionary: dictionary)
         )
     }
 
-    @objc
     public func build() async -> String {
         var js = "var _UAirship = {};"
         var extensions: [String] = await self.makeDefaultExtensions()

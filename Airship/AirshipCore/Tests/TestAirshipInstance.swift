@@ -8,7 +8,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
     public let preferenceDataStore: AirshipCore.PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
 
     private var _config: RuntimeConfig?
-    @objc
     public var config: RuntimeConfig {
         get {
             return _config!
@@ -18,7 +17,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
         }
     }
 
-    @objc
     public var permissionsManager: AirshipPermissionsManager = AirshipPermissionsManager()
 
     private var _actionRegistry: ActionRegistry?
@@ -32,7 +30,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
     }
     
     private var _channelCapture: ChannelCapture?
-    @objc
     public var channelCapture: ChannelCapture {
         get {
             return _channelCapture!
@@ -43,7 +40,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
     }
 
     private var _urlAllowList: URLAllowListProtocol?
-    @objc
     public var urlAllowList: URLAllowListProtocol {
         get {
             return _urlAllowList!
@@ -54,7 +50,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
     }
 
     private var _localeManager: AirshipLocaleManager?
-    @objc
     public var localeManager: AirshipLocaleManager {
         get {
             return _localeManager!
@@ -65,7 +60,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
     }
 
     private var _privacyManager: AirshipPrivacyManager?
-    @objc
     public var privacyManager: AirshipPrivacyManager {
         get {
             return _privacyManager!
@@ -75,10 +69,8 @@ class TestAirshipInstance: AirshipInstanceProtocol {
         }
     }
 
-    @objc
     public var javaScriptCommandDelegate: JavaScriptCommandDelegate?
 
-    @objc
     public var deepLinkDelegate: DeepLinkDelegate?
 
     public var components: [AirshipComponent] = []
@@ -95,12 +87,10 @@ class TestAirshipInstance: AirshipInstanceProtocol {
         return componentMap[key] as? E
     }
 
-    @objc
     public func makeShared() {
         Airship._shared = Airship(instance: self)
     }
 
-    @objc
     public class func clearShared() {
         Airship._shared = nil
     }

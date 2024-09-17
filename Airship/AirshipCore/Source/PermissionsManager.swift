@@ -6,7 +6,6 @@ import Foundation
 ///
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need
 /// to be configured by the app by providing a `PermissionDelegate` for the given permissions.
-@objc(UAPermissionsManager)
 public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     private let lock = AirshipLock()
     private var delegateMap: [AirshipPermission: AirshipPermissionDelegate] = [:]
@@ -29,7 +28,6 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     }
     
     /// - Note: For internal use only. :nodoc:
-    @objc
     public func permissionStatusMap() async -> [String: String] {
         var map: [String: String] = [:]
         for permission in configuredPermissions {
@@ -46,7 +44,6 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     /// - Parameters:
     ///     - delegate: The delegate.
     ///     - permission: The permission.
-    @objc
     public func setDelegate(
         _ delegate: AirshipPermissionDelegate?,
         permission: AirshipPermission
@@ -80,7 +77,6 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     ///
     /// - Parameters:
     ///     - permission: The permission.
-    @objc
     @MainActor
     public func requestPermission(
         _ permission: AirshipPermission
@@ -99,7 +95,6 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     ///     - permission: The permission.
     ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.postNotifications` is granted.
     ///     - completionHandler: The completion handler.
-    @objc
     @MainActor
     public func requestPermission(
         _ permission: AirshipPermission,

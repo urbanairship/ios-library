@@ -6,7 +6,6 @@
 
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UAJSONValueTransformer)
 public class JSONValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {
@@ -57,7 +56,6 @@ public class JSONValueTransformer: ValueTransformer {
 }
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UANSDictionaryValueTransformer)
 public class NSDictionaryValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {
@@ -112,7 +110,6 @@ public class NSDictionaryValueTransformer: ValueTransformer {
 }
 
 // NOTE: For internal use only. :nodoc:
-@objc(UANSURLValueTransformer)
 public class NSURLValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {
@@ -161,7 +158,6 @@ public class NSURLValueTransformer: ValueTransformer {
 }
 
 // NOTE: For internal use only. :nodoc:
-@objc(UANSArrayValueTransformer)
 public class NSArrayValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {

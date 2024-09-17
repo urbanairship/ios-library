@@ -3,7 +3,6 @@
 import Foundation
 
 /// Tag editor.
-@objc(UATagEditor)
 public class TagEditor: NSObject {
 
     typealias TagApplicator = ([String]) -> [String]
@@ -21,7 +20,6 @@ public class TagEditor: NSObject {
      * - Parameters:
      *   - tags: The tags.
      */
-    @objc(addTags:)
     public func add(_ tags: [String]) {
         let normalizedTags = AudienceUtils.normalizeTags(tags)
         self.tagOperations.append({ incoming in
@@ -36,7 +34,6 @@ public class TagEditor: NSObject {
      * - Parameters:
      *   - tag: The tag.
      */
-    @objc(addTag:)
     public func add(_ tag: String) {
         self.add([tag])
     }
@@ -46,7 +43,6 @@ public class TagEditor: NSObject {
      * - Parameters:
      *   - tags: The tags.
      */
-    @objc(removeTags:)
     public func remove(_ tags: [String]) {
         let normalizedTags = AudienceUtils.normalizeTags(tags)
         self.tagOperations.append({ incoming in
@@ -61,7 +57,6 @@ public class TagEditor: NSObject {
      * - Parameters:
      *   - tag: The tag.
      */
-    @objc(removeTag:)
     public func remove(_ tag: String) {
         self.remove([tag])
     }
@@ -71,7 +66,6 @@ public class TagEditor: NSObject {
      * - Parameters:
      *   - tags: The tags.
      */
-    @objc(setTags:)
     public func set(_ tags: [String]) {
         let normalizedTags = AudienceUtils.normalizeTags(tags)
         self.tagOperations.append({ incoming in
@@ -82,7 +76,6 @@ public class TagEditor: NSObject {
     /**
      * Clears tags.
      */
-    @objc(clearTags)
     public func clear() {
         self.tagOperations.append({ _ in
             return []
@@ -92,7 +85,6 @@ public class TagEditor: NSObject {
     /**
      * Applies tag changes.
      */
-    @objc
     public func apply() {
         let operations = tagOperations
         tagOperations.removeAll()

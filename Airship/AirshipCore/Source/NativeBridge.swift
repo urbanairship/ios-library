@@ -11,7 +11,6 @@ import WebKit
 
 /// The native bridge will automatically load the Airship JavaScript environment into whitlelisted sites. The native
 /// bridge must be assigned as the navigation delegate on a `WKWebView` in order to function.
-@objc(UANativeBridge)
 public class NativeBridge: NSObject, WKNavigationDelegate {
     static let airshipScheme = "uairship"
     private static let closeCommand = "close"
@@ -32,19 +31,15 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     ]
 
     /// Delegate to support additional native bridge features such as `close`.
-    @objc
     public weak var nativeBridgeDelegate: NativeBridgeDelegate?
 
     /// Optional delegate to forward any WKNavigationDelegate calls.
-    @objc
     public weak var forwardNavigationDelegate: UANavigationDelegate?
 
     /// Optional delegate to support custom JavaScript commands.
-    @objc
     public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
 
     /// Optional delegate to extend the native bridge.
-    @objc
     public weak var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
 
     private let actionHandler: NativeBridgeActionHandlerProtocol
@@ -68,7 +63,6 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     }
 
     /// NativeBridge initializer.
-    @objc
     public convenience override init() {
         self.init(
             actionHandler: NativeBridgeActionHandler(),

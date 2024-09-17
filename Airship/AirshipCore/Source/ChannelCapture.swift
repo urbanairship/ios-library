@@ -8,7 +8,6 @@ import Foundation
 /// knocks (app foregrounds) within a specific timeframe. Channel Capture can be enabled
 /// or disabled in Airship Config.
 @available(tvOS, unavailable)
-@objc(UAChannelCapture)
 public class ChannelCapture: NSObject {
     private static let knocksToTriggerChannelCapture = 6
     private static let knocksMaxTimeSeconds: TimeInterval = 30
@@ -26,7 +25,6 @@ public class ChannelCapture: NSObject {
      * Flag indicating whether channel capture is enabled. Clear to disable. Set to enable.
      * Note: Does not persist through app launches.
      */
-    @objc
     public var enabled: Bool {
         didSet {
             AirshipLogger.trace("Channel capture enabled: \(enabled)")

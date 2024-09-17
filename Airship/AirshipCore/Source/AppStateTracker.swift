@@ -24,7 +24,6 @@ public protocol AppStateTrackerProtocol: Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UAAppStateTracker)
 public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecked Sendable {
 
 

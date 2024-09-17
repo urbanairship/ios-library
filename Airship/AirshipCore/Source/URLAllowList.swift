@@ -3,7 +3,6 @@
 import Foundation
 
 /// Delegate protocol for accepting and rejecting URLs.
-@objc(UAURLAllowListDelegate)
 public protocol URLAllowListDelegate {
     /**
      * Called when a URL has been allowed by the SDK, but before the URL is fetched.
@@ -14,24 +13,18 @@ public protocol URLAllowListDelegate {
      *
      * - Returns: `true` to accept this URL, `false`  to reject this URL.
      */
-    @objc
     func allowURL(_ url: URL, scope: URLAllowListScope) -> Bool
 }
 
 /// NOTE: For internal use only. :nodoc:
-@objc(UAURLAllowListProtocol)
 public protocol URLAllowListProtocol {
-    @objc
     func isAllowed(_ url: URL?) -> Bool
 
-    @objc
     func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool
 
-    @objc
     @discardableResult
     func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool
 
-    @objc
     @discardableResult
     func addEntry(_ patternString: String) -> Bool
 }
@@ -58,7 +51,6 @@ public protocol URLAllowListProtocol {
 /// Note that NSURL does not support internationalized domains containing non-ASCII characters.
 /// All URL allow list entries for internationalized domains must be in ASCII IDNA format as
 /// specified in https://tools.ietf.org/html/rfc3490
-@objc(UAURLAllowList)
 public final class URLAllowList: NSObject, URLAllowListProtocol {
     /// `<scheme> := <any chars (no spaces), '*' will match 0 or more characters>`
     private static let schemeRegex = "^([^\\s]*)$"
@@ -96,7 +88,6 @@ public final class URLAllowList: NSObject, URLAllowListProtocol {
     /// - Parameter config: An instance of UARuntimeConfig.
     ///
     /// - Returns: An instance of UAURLAllowList
-    @objc
     @MainActor
     public static func allowListWithConfig(_ config: RuntimeConfig)
         -> URLAllowList
@@ -152,15 +143,13 @@ public final class URLAllowList: NSObject, URLAllowListProtocol {
     /// The URL allow list delegate.
     ///
     /// - note: The delegate is not retained.
-    @objc
-    public weak var delegate: URLAllowListDelegate? = nil
+    public var delegate: URLAllowListDelegate? = nil
 
     /// Add an entry to the URL allow list, with the implicit scope `URLAllowListScope.all`.
     ///
     /// - Parameter patternString: A URL allow list pattern string.
     ///
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
-    @objc
     @discardableResult
     public func addEntry(_ patternString: String) -> Bool {
         return addEntry(patternString, scope: .all)
@@ -173,7 +162,6 @@ public final class URLAllowList: NSObject, URLAllowListProtocol {
     ///   - scope: The scope of the pattern.
     ///
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
-    @objc
     @discardableResult
     public func addEntry(
         _ patternString: String,
@@ -262,7 +250,6 @@ public final class URLAllowList: NSObject, URLAllowListProtocol {
     ///   - url: The URL under consideration.
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
-    @objc
     public func isAllowed(_ url: URL?) -> Bool {
         return isAllowed(url, scope: .all)
     }
@@ -274,7 +261,6 @@ public final class URLAllowList: NSObject, URLAllowListProtocol {
     ///   - scope: The scope of the desired match.
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
-    @objc
     public func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
         guard let url = url else {
             return false

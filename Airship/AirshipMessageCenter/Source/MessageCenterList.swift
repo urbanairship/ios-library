@@ -10,66 +10,55 @@ import AirshipCore
 #endif
 
 /// Airship Message Center inbox base protocol.
-@objc(UAMessageCenterInboxProtocol)
 public protocol MessageCenterInboxBaseProtocol: AnyObject, Sendable {
 
     /// Gets the list of messages in the inbox.
     /// - Returns: the list of messages in the inbox.
-    @objc(getMessagesWithCompletionHandler:)
     func _getMessages() async -> [MessageCenterMessage]
 
     /// Gets the user associated to the Message Center if there is one associated already.
     /// - Returns: the user associated to the Message Center, otherwise `nil`.
-    @objc(getUserWithCompletionHandler:)
     func _getUser() async -> MessageCenterUser?
 
     /// Gets the number of messages that are currently unread.
     /// - Returns: the number of messages that are currently unread.
-    @objc(getUnreadCountWithCompletionHandler:)
     func _getUnreadCount() async -> Int
 
     /// Refreshes the list of messages in the inbox.
     /// - Returns: `true` if the messages was refreshed, otherwise `false`.
-    @objc
     @discardableResult
     func refreshMessages() async -> Bool
 
     /// Marks messages read.
     /// - Parameters:
     ///     - messages: The list of messages to be marked read.
-    @objc
     func markRead(messages: [MessageCenterMessage]) async
 
     /// Marks messages read by message IDs.
     /// - Parameters:
     ///     - messageIDs: The list of message IDs for the messages to be marked read.
-    @objc
     func markRead(messageIDs: [String]) async
 
     /// Marks messages deleted.
     /// - Parameters:
     ///     - messages: The list of messages to be marked deleted.
-    @objc
     func delete(messages: [MessageCenterMessage]) async
 
     /// Marks messages deleted by message IDs.
     /// - Parameters:
     ///     - messageIDs: The list of message IDs for the messages to be marked deleted.
-    @objc
     func delete(messageIDs: [String]) async
 
     /// Returns the message associated with a particular URL.
     /// - Parameters:
     ///     - bodyURL: The URL of the message.
     /// - Returns: The associated `MessageCenterMessage` object or nil if a message was unable to be found.
-    @objc
     func message(forBodyURL bodyURL: URL) async -> MessageCenterMessage?
 
     /// Returns the message associated with a particular ID.
     /// - Parameters:
     ///     - messageID: The message ID.
     /// - Returns: The associated `MessageCenterMessage` object or nil if a message was unable to be found.
-    @objc
     func message(forID messageID: String) async -> MessageCenterMessage?
 }
 
@@ -354,7 +343,6 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 
     private let updateChannel: AirshipAsyncChannel<UpdateType> = AirshipAsyncChannel()
 
-    @objc
     @discardableResult
     public func refreshMessages() async -> Bool {
         if !self.enabled {
@@ -400,14 +388,12 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
     }
 
-    @objc
     public func markRead(messages: [MessageCenterMessage]) async {
         await self.markRead(
             messageIDs: messages.map { message in message.id }
         )
     }
 
-    @objc
     public func markRead(messageIDs: [String]) async {
         do {
             try await self.store.markRead(messageIDs: messageIDs, level: .local)
@@ -418,14 +404,12 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
     }
 
-    @objc
     public func delete(messages: [MessageCenterMessage]) async {
         await self.delete(
             messageIDs: messages.map { message in message.id }
         )
     }
 
-    @objc
     public func delete(messageIDs: [String]) async {
         do {
             try await self.store.markDeleted(messageIDs: messageIDs)
@@ -436,7 +420,6 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
     }
 
-    @objc
     public func message(forBodyURL bodyURL: URL) async -> MessageCenterMessage?
     {
         do {
@@ -702,11 +685,9 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 public extension AirshipNotifications {
     
     /// NSNotification info when the inbox is updated is updated.
-    @objc(UAirshipNotificationMessageCenterListUpdated)
     final class MessageCenterListUpdated: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.notification.message_list_updated"
         )

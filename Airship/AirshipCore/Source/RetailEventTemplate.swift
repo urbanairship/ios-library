@@ -4,51 +4,43 @@ import Foundation
 
 /// A RetailEventTemplate represents a custom retail event template for the
 /// application.
-@objc(UARetailEventTemplate)
 public class RetailEventTemplate: NSObject {
 
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
      */
-    @objc
     public var eventValue: NSNumber?
 
     /**
      * The event's transaction ID. The transaction ID's length must not exceed 255
      * characters or it will invalidate the event.
      */
-    @objc
     public var transactionID: String?
 
     /**
      * The event's ID.
      */
-    @objc
     public var identifier: String?
 
     /**
      * The event's category.
      */
-    @objc
     public var category: String?
 
     /**
      * The event's description.
      */
-    @objc
     public var eventDescription: String?
 
     /**
      * The brand.
      */
-    @objc
     public var brand: String?
 
     /**
      * If the item is new or not.
      */
-    @objc
     public var isNewItem: Bool {
         get {
             return self._isNewItem ?? false
@@ -61,7 +53,6 @@ public class RetailEventTemplate: NSObject {
     /**
      * The currency.
      */
-    @objc
     public var currency: String?
 
     private var _isNewItem: Bool?
@@ -75,7 +66,6 @@ public class RetailEventTemplate: NSObject {
      * Factory method for creating a browsed event template.
      * - Returns: A Retail event template instance
      */
-    @objc(browsedTemplate)
     public class func browsedTemplate() -> RetailEventTemplate {
         return browsedTemplate(value: nil)
     }
@@ -87,7 +77,6 @@ public class RetailEventTemplate: NSObject {
      * -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(browsedTemplateWithValueFromString:)
     public class func browsedTemplate(valueString: String?)
         -> RetailEventTemplate
     {
@@ -103,7 +92,6 @@ public class RetailEventTemplate: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(browsedTemplateWithValue:)
     public class func browsedTemplate(value: NSNumber?) -> RetailEventTemplate {
         return RetailEventTemplate("browsed", value: value)
     }
@@ -112,7 +100,6 @@ public class RetailEventTemplate: NSObject {
      * Factory method for creating an addedToCart event template.
      * - Returns: A Retail event template instance
      */
-    @objc(addedToCartTemplate)
     public class func addedToCartTemplate() -> RetailEventTemplate {
         return addedToCartTemplate(value: nil)
     }
@@ -124,7 +111,6 @@ public class RetailEventTemplate: NSObject {
      * -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(addedToCartTemplateWithValueFromString:)
     public class func addedToCartTemplate(valueString: String?)
         -> RetailEventTemplate
     {
@@ -140,7 +126,6 @@ public class RetailEventTemplate: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(addedToCartTemplateWithValue:)
     public class func addedToCartTemplate(value: NSNumber?)
         -> RetailEventTemplate
     {
@@ -151,7 +136,6 @@ public class RetailEventTemplate: NSObject {
      * Factory method for creating a starredProduct event template
      * - Returns: A Retail event template instance
      */
-    @objc(starredProductTemplate)
     public class func starredProductTemplate() -> RetailEventTemplate {
         return starredProductTemplate(value: nil)
     }
@@ -163,7 +147,6 @@ public class RetailEventTemplate: NSObject {
      * -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(starredProductTemplateWithValueFromString:)
     public class func starredProductTemplate(valueString: String?)
         -> RetailEventTemplate
     {
@@ -179,7 +162,6 @@ public class RetailEventTemplate: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(starredProductTemplateWithValue:)
     public class func starredProductTemplate(value: NSNumber?)
         -> RetailEventTemplate
     {
@@ -190,7 +172,6 @@ public class RetailEventTemplate: NSObject {
      * Factory method for creating a purchased event template.
      * - Returns: A Retail event template instance
      */
-    @objc(purchasedTemplate)
     public class func purchasedTemplate() -> RetailEventTemplate {
         return purchasedTemplate(value: nil)
     }
@@ -202,7 +183,6 @@ public class RetailEventTemplate: NSObject {
      * -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(purchasedTemplateWithValueFromString:)
     public class func purchasedTemplate(valueString: String?)
         -> RetailEventTemplate
     {
@@ -218,7 +198,6 @@ public class RetailEventTemplate: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(purchasedTemplateWithValue:)
     public class func purchasedTemplate(value: NSNumber?) -> RetailEventTemplate
     {
         return RetailEventTemplate("purchased", value: value)
@@ -228,7 +207,6 @@ public class RetailEventTemplate: NSObject {
      * Factory method for creating a sharedProduct template event.
      * - Returns: A Retail event template instance
      */
-    @objc(sharedProductTemplate)
     public class func sharedProductTemplate() -> RetailEventTemplate {
         return sharedProductTemplate(value: nil, source: nil, medium: nil)
     }
@@ -240,7 +218,6 @@ public class RetailEventTemplate: NSObject {
      * -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(sharedProductTemplateWithValueFromString:)
     public class func sharedProductTemplate(valueString: String?)
         -> RetailEventTemplate
     {
@@ -260,7 +237,6 @@ public class RetailEventTemplate: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      * - Returns: A Retail event template instance
      */
-    @objc(sharedProductTemplateWithValue:)
     public class func sharedProductTemplate(value: NSNumber?)
         -> RetailEventTemplate
     {
@@ -273,7 +249,6 @@ public class RetailEventTemplate: NSObject {
      * - Parameter medium: The medium as an NSString
      * - Returns: A Retail event template instance.
      */
-    @objc(sharedProductTemplateWithSource:withMedium:)
     public class func sharedProductTemplate(source: String?, medium: String?)
         -> RetailEventTemplate
     {
@@ -289,7 +264,6 @@ public class RetailEventTemplate: NSObject {
      * - Parameter medium: The medium as an NSString.
      * - Returns: A Retail event template instance
      */
-    @objc(sharedProductTemplateWithValueFromString:withSource:withMedium:)
     public class func sharedProductTemplate(
         valueString: String?,
         source: String?,
@@ -313,7 +287,6 @@ public class RetailEventTemplate: NSObject {
      * - Parameter medium: The medium as an NSString.
      * - Returns: A Retail event template instance
      */
-    @objc(sharedProductTemplateWithValue:withSource:withMedium:)
     public class func sharedProductTemplate(
         value: NSNumber?,
         source: String?,
@@ -331,7 +304,6 @@ public class RetailEventTemplate: NSObject {
      * Factory method for creating a wishlist event template.
      * - Returns: A Retail event template instance
      */
-    @objc(wishlistTemplate)
     public class func wishlistTemplate() -> RetailEventTemplate {
         return wishlistTemplate(name: nil, wishlistID: nil)
     }
@@ -343,7 +315,6 @@ public class RetailEventTemplate: NSObject {
      * - Parameter wishlistID: The ID of the wishlist as as string.
      * - Returns: A Retail event template instance
      */
-    @objc(wishlistTemplateWithName:wishlistID:)
     public class func wishlistTemplate(name: String?, wishlistID: String?)
         -> RetailEventTemplate
     {
@@ -374,7 +345,6 @@ public class RetailEventTemplate: NSObject {
     /**
      * Creates the custom media event.
      */
-    @objc
     public func createEvent() -> CustomEvent {
         var propertyDictionary: [String: Any] = [:]
         propertyDictionary["ltv"] =

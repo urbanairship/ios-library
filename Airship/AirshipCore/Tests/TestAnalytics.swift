@@ -102,13 +102,10 @@ public class TestAnalytics: InternalAnalyticsProtocol, AirshipComponent, @unchec
     public var events: [AirshipEvent] = []
     public var customEvents: [CustomEvent] = []
 
-    @objc
     public var conversionSendID: String?
 
-    @objc
     public var conversionPushMetadata: String?
 
-    @objc
     public var sessionID: String = ""
 
     public func addEvent(_ event: AirshipEvent) {

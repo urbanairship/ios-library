@@ -255,7 +255,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
-    @objc
     public var backgroundPushNotificationsEnabled: Bool {
         set {
             let previous = self.backgroundPushNotificationsEnabled
@@ -277,7 +276,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     /// Enables/disables user notifications on this device through Airship.
     /// Defaults to `false`. Once set to `true`, the user will be prompted for remote notifications.
-    @objc
     public var userPushNotificationsEnabled: Bool {
         set {
             let previous = self.userPushNotificationsEnabled
@@ -302,7 +300,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     /// When enabled, if the user has ephemeral notification authorization the SDK will prompt the user for
     /// notifications.  Defaults to `false`.
-    @objc
     public var requestExplicitPermissionWhenEphemeral: Bool {
         set {
             let previous = self.requestExplicitPermissionWhenEphemeral
@@ -322,7 +319,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     }
 
     /// The device token for this device, as a hex string.
-    @objc
     @MainActor
     public private(set) var deviceToken: String? {
         set {
@@ -377,7 +373,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     /// updateRegistration.
     ///
     /// Defaults to alert, sound and badge.
-    @objc
     public var notificationOptions: UANotificationOptions {
         set {
             let previous = self.notificationOptions
@@ -413,7 +408,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     #if !os(tvOS)
     /// Custom notification categories. Airship default notification
     /// categories will be unaffected by this field.
-    @objc
     @MainActor
     public var customCategories: Set<UNNotificationCategory> = Set() {
         didSet {
@@ -423,7 +417,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     /// The combined set of notification categories from `customCategories` set by the app
     /// and the Airship provided categories.
-    @objc
     @MainActor
     public var combinedCategories: Set<UNNotificationCategory> {
         let defaultCategories = NotificationCategories.defaultCategories(
@@ -439,7 +432,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     ///
     /// Changes to this value will not take effect until the next time the app registers
     /// with updateRegistration.
-    @objc
     @MainActor
     public var requireAuthorizationForDefaultCategories = true {
         didSet {
@@ -455,11 +447,9 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     #if !os(tvOS)
     /// Notification response that launched the application.
-    @objc
     public private(set) var launchNotificationResponse: UNNotificationResponse?
     #endif
 
-    @objc
     public private(set) var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
         set {
             self.dataStore.setInteger(
@@ -482,7 +472,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     public private(set) var authorizationStatus: UAAuthorizationStatus {
         set {
             self.dataStore.setInteger(
@@ -506,7 +495,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     public private(set) var userPromptedForNotifications: Bool {
         set {
             self.dataStore.setBool(
@@ -521,7 +509,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     public var defaultPresentationOptions: UNNotificationPresentationOptions =
         []
 
@@ -561,7 +548,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         return(status, settings)
     }
 
-    @objc
     public func enableUserPushNotifications() async -> Bool {
         self.dataStore.setBool(
             true,
@@ -609,7 +595,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     @MainActor
     public var isPushNotificationsOptedIn: Bool {
         var optedIn = true
@@ -737,7 +722,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     }
 
     /// deprecation warning
-    @objc
     @MainActor
     public var badgeNumber: Int {
         get {
@@ -745,7 +729,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     public var autobadgeEnabled: Bool {
         set {
             if self.autobadgeEnabled != newValue {
@@ -762,7 +745,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     @MainActor
     func resetBadge() async throws {
         try await self.setBadgeNumber(0)
@@ -792,7 +774,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     /// Time Zone for quiet time. If the time zone is not set, the current
     /// local time zone is returned.
-    @objc
     public var timeZone: NSTimeZone? {
         set {
             self.dataStore.setObject(
@@ -810,7 +791,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     }
 
     /// Enables/Disables quiet time
-    @objc
     public var quietTimeEnabled: Bool {
         set {
             self.dataStore.setBool(
@@ -824,7 +804,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     public func setQuietTimeStartHour(
         _ startHour: Int,
         startMinute: Int,
@@ -1247,11 +1226,9 @@ extension AirshipPush: AirshipComponent {}
 public extension AirshipNotifications {
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    @objc(UAirshipNotificationReceivedNotificationResponse)
     final class ReceivedNotificationResponse: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.push.received_notification_response"
         )
@@ -1262,11 +1239,9 @@ public extension AirshipNotifications {
 
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    @objc(UAirshipNotificationRecievedNotification)
     final class RecievedNotification: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.push.received_notification"
         )

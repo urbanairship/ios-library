@@ -8,7 +8,6 @@ import Foundation
     deprecated,
     message: "Use Contact#editAttributes() or Channel#editAttributes() instead."
 )
-@objc(UAAttributeMutations)
 public class AttributeMutations: NSObject {
 
     var mutations: [Mutation] = []
@@ -19,7 +18,6 @@ public class AttributeMutations: NSObject {
      *   - string: The value.
      *   - forAttribute: The attribute
      */
-    @objc(setString:forAttribute:)
     public func setString(_ string: String, forAttribute: String) {
         mutations.append(
             Mutation(
@@ -37,7 +35,6 @@ public class AttributeMutations: NSObject {
      *   - number: The value.
      *   - forAttribute: The attribute
      */
-    @objc(setNumber:forAttribute:)
     public func setNumber(_ number: NSNumber, forAttribute: String) {
         mutations.append(
             Mutation(
@@ -55,7 +52,6 @@ public class AttributeMutations: NSObject {
      *   - date: The value.
      *   - forAttribute: The attribute
      */
-    @objc(setDate:forAttribute:)
     public func setDate(_ date: Date, forAttribute: String) {
         mutations.append(
             Mutation(
@@ -72,7 +68,6 @@ public class AttributeMutations: NSObject {
      * - Parameters:
      *   - attribute: The attribute
      */
-    @objc(removeAttribute:)
     public func removeAttribute(_ attribute: String) {
         mutations.append(
             Mutation(
@@ -88,13 +83,11 @@ public class AttributeMutations: NSObject {
      * Generates an empty mutation.
      * - Returns: An empty mutation object.
      */
-    @objc
     public class func mutations() -> AttributeMutations {
         return AttributeMutations()
     }
 
     /// NOTE: For internal use only. :nodoc:
-    @objc
     public func applyMutations(editor: AttributesEditor) {
         mutations.forEach { $0.apply(editor) }
     }

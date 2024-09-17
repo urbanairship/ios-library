@@ -5,15 +5,12 @@ import AirshipCore
 #endif
 
 /// Model object for holding user data.
-@objc(UAMessageCenterUser)
 public final class MessageCenterUser: NSObject, Codable, Sendable {
 
     /// The username.
-    @objc
     public let password: String
 
     /// The password.
-    @objc
     public let username: String
 
     /// - Note: for internal use only.  :nodoc:
@@ -29,7 +26,6 @@ public final class MessageCenterUser: NSObject, Codable, Sendable {
 }
 
 extension MessageCenterUser {
-    @objc
     public var basicAuthString: String {
         return AirshipUtils.authHeader(
             username: self.username,

@@ -3,13 +3,11 @@
 import Foundation
 
 /// Contact data.
-@objc(UAContactConflictEvent)
 public final class ContactConflictEvent: NSObject, @unchecked Sendable {
 
     /**
      * The named user ID if the conflict was caused by an identify operation with an existing named user through the SDK.
      */
-    @objc
     public let conflictingNamedUserID: String?
 
     /**
@@ -18,30 +16,19 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
     public let subscriptionLists: [String: [ChannelScope]]
 
     /**
-     * Subscription lists.
-     */
-    @objc(subscriptionLists)
-    public var _subscriptionLists: [String: ChannelScopes] {
-        return self.subscriptionLists.mapValues { ChannelScopes($0) }
-    }
-
-    /**
      * Tag groups.
      */
-    @objc
     public let tags: [String: [String]]
 
     /**
      * Attributes.
      */
-    @objc
     public let attributes: [String: AnyHashable]
 
     /**
      * Associated channels.
      * @deprecated
      */
-    @objc
     @available(*, deprecated, message: "Use associatedChannels instead")
     public var channels: [AssociatedChannel] {
         associatedChannels.map { info in
@@ -52,7 +39,6 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
     /**
      * Associated channels.
      */
-    @objc
     public let associatedChannels: [ChannelInfo]
 
     /**
@@ -101,23 +87,19 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
         return result
     }
 
-    @objc(UAContactConflictEventChannelInfo)
     public final class ChannelInfo: NSObject, Codable, Sendable {
 
         /**
          * Channel type
          */
-        @objc
         public let channelType: ChannelType
 
         /**
          * channel ID
          */
-        @objc
         public let channelID: String
 
 
-        @objc
         public init(channelType: ChannelType, channelID: String) {
             self.channelType = channelType
             self.channelID = channelID

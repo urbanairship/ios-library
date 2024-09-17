@@ -2,19 +2,17 @@
 
 import Foundation
 
+@objc
 /// Represents the possible log levels.
-@objc(UALogLevel)
 public enum AirshipLogLevel: Int, Sendable {
     /**
      * Undefined log level.
      */
-    @objc(UALogLevelUndefined)
     case undefined = -1
 
     /**
      * No log messages.
      */
-    @objc(UALogLevelNone)
     case none = 0
 
     /**
@@ -22,7 +20,6 @@ public enum AirshipLogLevel: Int, Sendable {
      *
      * Used for critical errors, parse exceptions and other situations that cannot be gracefully handled.
      */
-    @objc(UALogLevelError)
     case error = 1
 
     /**
@@ -30,7 +27,6 @@ public enum AirshipLogLevel: Int, Sendable {
      *
      * Used for API deprecations, invalid setup and other potentially problematic situations.
      */
-    @objc(UALogLevelWarn)
     case warn = 2
 
     /**
@@ -38,7 +34,6 @@ public enum AirshipLogLevel: Int, Sendable {
      *
      * Used for reporting general SDK status.
      */
-    @objc(UALogLevelInfo)
     case info = 3
 
     /**
@@ -46,7 +41,6 @@ public enum AirshipLogLevel: Int, Sendable {
      *
      * Used for reporting general SDK status with more detailed information.
      */
-    @objc(UALogLevelDebug)
     case debug = 4
 
     /**
@@ -54,6 +48,5 @@ public enum AirshipLogLevel: Int, Sendable {
      *
      * Used for reporting highly detailed SDK status that can be useful when debugging and troubleshooting.
      */
-    @objc(UALogLevelVerbose)
     case verbose = 5
 }

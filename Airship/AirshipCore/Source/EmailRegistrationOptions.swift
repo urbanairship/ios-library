@@ -3,7 +3,6 @@
 import Foundation
 
 /// Email registration options
-@objc(UAEmailRegistrationOptions)
 public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
 
     /**
@@ -43,7 +42,6 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     /// - Parameter commercialOptedIn: The commercial opted-in value
     /// - Parameter properties: The properties. They must be JSON serializable.
     /// - Returns: An Email registration options.
-    @objc
     public static func commercialOptions(
         transactionalOptedIn: Date?,
         commercialOptedIn: Date?,
@@ -61,7 +59,6 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     /// - Parameter properties: The properties. They must be JSON serializable.
     /// - Parameter doubleOptIn: The double opt-in value
     /// - Returns: An Email registration options.
-    @objc
     public static func options(
         transactionalOptedIn: Date?,
         properties: [String: Any]?,
@@ -78,7 +75,6 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     /// - Parameter properties: The properties. They must be JSON serializable.
     /// - Parameter doubleOptIn: The double opt-in value
     /// - Returns: An Email registration options.
-    @objc
     public static func options(
         properties: [String: Any]?,
         doubleOptIn: Bool

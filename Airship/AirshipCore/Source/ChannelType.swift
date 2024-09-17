@@ -3,7 +3,6 @@
 import Foundation
 
 /// Channel type
-@objc(UAChannelType)
 public enum ChannelType: Int, Codable, CustomStringConvertible, Sendable, Equatable {
 
     /**

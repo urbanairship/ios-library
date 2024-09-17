@@ -4,32 +4,25 @@ import Foundation
 import Combine
 
 /// Analytics protocol
-@objc(UAAnalyticsProtocol)
 public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
 
     /// The conversion send ID. :nodoc:
-    @objc
     var conversionSendID: String? { get }
 
     /// The conversion push metadata. :nodoc:
-    @objc
     var conversionPushMetadata: String? { get }
 
     /// The current session ID.
-    @objc
     var sessionID: String { get }
 
     /// Adds a custom event.
     /// - Parameter event: The event.
-    @objc
     func recordCustomEvent(_ event: CustomEvent)
 
     /// Tracks a custom event.
     /// - Parameter event: The event.
-    @objc
     func recordRegionEvent(_ event: RegionEvent)
 
-    @objc
     func trackInstallAttribution(appPurchaseDate: Date?, iAdImpressionDate: Date?)
 
     /// Associates identifiers with the device. This call will add a special event
@@ -38,19 +31,16 @@ public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
     ///
     ///
     /// - Parameter associatedIdentifiers: The associated identifiers.
-    @objc
     func associateDeviceIdentifiers(
         _ associatedIdentifiers: AssociatedIdentifiers
     )
 
     /// The device's current associated identifiers.
     /// - Returns: The device's current associated identifiers.
-    @objc
     func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers
 
     /// Initiates screen tracking for a specific app screen, must be called once per tracked screen.
     /// - Parameter screen: The screen's identifier.
-    @objc
     @MainActor
     func trackScreen(_ screen: String?)
 
@@ -60,7 +50,6 @@ public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
     /// - Parameters:
     ///   - ext: The SDK extension.
     ///   - version: The version.
-    @objc
     func registerSDKExtension(_ ext: AirshipSDKExtension, version: String)
 }
 

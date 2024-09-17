@@ -4,7 +4,6 @@ import Foundation
 
 #if !os(tvOS)
 /// Utility methods to create categories from plist files or dictionaries.
-@objc(UANotificationCategories)
 public class NotificationCategories: NSObject {
     // MARK: - Notification Categories Factories
 
@@ -13,7 +12,6 @@ public class NotificationCategories: NSObject {
      * Background user notification actions will default to requiring authorization.
      * - Returns: A set of user notification categories
      */
-    @objc
     public class func defaultCategories() -> Set<UNNotificationCategory> {
         return self.defaultCategories(withRequireAuth: true)
     }
@@ -24,7 +22,6 @@ public class NotificationCategories: NSObject {
      * - Parameter requireAuth: If background actions should default to requiring authorization or not.
      * - Returns: A set of user notification categories.
      */
-    @objc
     public class func defaultCategories(withRequireAuth requireAuth: Bool)
         -> Set<UNNotificationCategory>
     {
@@ -73,7 +70,6 @@ public class NotificationCategories: NSObject {
      * - Parameter path: The path of the `plist` file
      * - Returns: A set of categories
      */
-    @objc
     public class func createCategories(fromFile path: String) -> Set<
         UNNotificationCategory
     > {
@@ -90,7 +86,6 @@ public class NotificationCategories: NSObject {
      * - Parameter actionDefinitions: An array of user notification action dictionaries used to construct UNNotificationAction for the category.
      * - Returns: The user notification category created, or `nil` if an error occurred.
      */
-    @objc
     public class func createCategory(
         _ categoryId: String,
         actions actionDefinitions: [[AnyHashable: Any]]
@@ -120,7 +115,6 @@ public class NotificationCategories: NSObject {
      * - Parameter hiddenPreviewsBodyPlaceholder: A placeholder string to display when the user has disabled notification previews for the app.
      * - Returns: The user notification category created or `nil` if an error occurred.
      */
-    @objc
     public class func createCategory(
         _ categoryId: String,
         actions actionDefinitions: [[AnyHashable: Any]],

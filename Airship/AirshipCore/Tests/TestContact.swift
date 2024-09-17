@@ -65,15 +65,12 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
         return contactID ?? ""
     }
 
-    @objc
     public static let contactConflictEvent = NSNotification.Name(
         "com.urbanairship.contact_conflict"
     )
 
-    @objc
     public static let contactConflictEventKey = "event"
 
-    @objc
     public static let maxNamedUserIDLength = 128
 
 
@@ -107,10 +104,8 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
 
     public var pendingTagGroupUpdates: [TagGroupUpdate] = []
 
-    @objc
     public var tagGroupEditor: TagGroupsEditor?
 
-    @objc
     public var attributeEditor: AttributesEditor?
 
     public var subscriptionListEditor: ScopedSubscriptionListEditor?

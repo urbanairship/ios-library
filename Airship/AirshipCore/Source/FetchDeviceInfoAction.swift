@@ -31,26 +31,21 @@ public final class FetchDeviceInfoAction: AirshipAction {
     }
 
     // Channel ID key
-    @objc
     public static let channelID = "channel_id"
 
     // Named user key
-    @objc
     public static let namedUser = "named_user"
 
     // Tags key
-    @objc
     public static let tags = "tags"
 
     // Push opt-in key
-    @objc
     public static let pushOptIn = "push_opt_in"
 
     private let channel: @Sendable () -> AirshipChannelProtocol
     private let contact: @Sendable () -> AirshipContactProtocol
     private let push: @Sendable () -> AirshipPushProtocol
 
-    @objc
     public convenience init() {
         self.init(
             channel: Airship.componentSupplier(),

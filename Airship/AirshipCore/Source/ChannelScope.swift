@@ -3,14 +3,12 @@
 import Foundation
 
 /// Channel scopes.
-@objc(UAChannelScopes)
 public final class ChannelScopes: NSObject, Decodable, Sendable {
 
     /// The scopes
     public let values: [ChannelScope]
 
     /// The raw channel scope values.
-    @objc(values)
     public var rawValues: [Int] {
         return values.map { $0.rawValue }
     }
@@ -43,7 +41,6 @@ public final class ChannelScopes: NSObject, Decodable, Sendable {
 }
 
 /// Channel scope.
-@objc(UAChannelScope)
 public enum ChannelScope: Int, Codable, CustomStringConvertible, Sendable, Equatable {
     /**
      * App channels - amazon, android, iOS

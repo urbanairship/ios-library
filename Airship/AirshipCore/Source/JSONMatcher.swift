@@ -1,7 +1,6 @@
 // Copyright Airship and Contributors
 
 /// Matcher for a JSON payload.
-@objc(UAJSONMatcher)
 public final class JSONMatcher: NSObject, Sendable {
 
     private static let keyKey = "key"
@@ -37,7 +36,6 @@ public final class JSONMatcher: NSObject, Sendable {
      *   -  valueMatcher Matcher to apply to the value.
      * - Returns: A JSONMatcher instance.
      */
-    @objc
     public convenience init(valueMatcher: JSONValueMatcher) {
         self.init(
             valueMatcher: valueMatcher,
@@ -55,7 +53,6 @@ public final class JSONMatcher: NSObject, Sendable {
      *   - scope Used to path into the object before evaluating the value.
      * - Returns: A JSONMatcher instance.
      */
-    @objc
     public convenience init(valueMatcher: JSONValueMatcher, scope: [String]) {
         self.init(
             valueMatcher: valueMatcher,
@@ -66,7 +63,6 @@ public final class JSONMatcher: NSObject, Sendable {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc
     public convenience init(valueMatcher: JSONValueMatcher, ignoreCase: Bool) {
         self.init(
             valueMatcher: valueMatcher,
@@ -77,7 +73,6 @@ public final class JSONMatcher: NSObject, Sendable {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc
     public convenience init(valueMatcher: JSONValueMatcher, key: String) {
         self.init(
             valueMatcher: valueMatcher,
@@ -88,7 +83,6 @@ public final class JSONMatcher: NSObject, Sendable {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc
     public convenience init(
         valueMatcher: JSONValueMatcher,
         key: String,
@@ -103,7 +97,6 @@ public final class JSONMatcher: NSObject, Sendable {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc
     public convenience init(
         valueMatcher: JSONValueMatcher,
         scope: [String],
@@ -125,7 +118,6 @@ public final class JSONMatcher: NSObject, Sendable {
      *   - error An NSError pointer for storing errors, if applicable.
      * - Returns: A JSONMatcher instance or `nil` if the JSON is invalid.
      */
-    @objc(initWithJSON:error:)
     public convenience init(json: Any?) throws {
         guard let info = json as? [String: Any] else {
             throw AirshipErrors.error(
@@ -184,7 +176,6 @@ public final class JSONMatcher: NSObject, Sendable {
     /**
      * The matcher's JSON payload.
      */
-    @objc
     public func payload() -> [String: Any] {
         var payload: [String: Any] = [:]
         payload[JSONMatcher.valueKey] = valueMatcher.payload()
@@ -201,13 +192,11 @@ public final class JSONMatcher: NSObject, Sendable {
      *   - value: The object to evaluate.
      * - Returns: true if the matcher matches the object, otherwise false.
      */
-    @objc(evaluateObject:)
     public func evaluate(_ value: Any?) -> Bool {
         return evaluate(value, ignoreCase: self.ignoreCase ?? false)
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc(evaluateObject:ignoreCase:)
     public func evaluate(_ value: Any?, ignoreCase: Bool) -> Bool {
         var object = value
 
@@ -245,7 +234,6 @@ public final class JSONMatcher: NSObject, Sendable {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc(isEqualToJSONMatcher:)
     public func isEqual(to matcher: JSONMatcher) -> Bool {
         guard self.valueMatcher == matcher.valueMatcher,
             self.key == matcher.key,

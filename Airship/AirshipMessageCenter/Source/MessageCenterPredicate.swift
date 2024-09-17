@@ -8,7 +8,6 @@ import UIKit
 import AirshipCore
 #endif
 
-@objc(UAMessageCenterPredicate)
 public protocol MessageCenterPredicate {
     /// Evaluate the message center message. Used to filter the message center list
     /// - Parameters:

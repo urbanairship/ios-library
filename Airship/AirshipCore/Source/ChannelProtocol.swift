@@ -4,7 +4,6 @@ import Combine
 import Foundation
 
 /// Airship Channel protocol.
-@objc(UAChannelProtocol)
 public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
     /**
      * The Channel ID.
@@ -14,7 +13,6 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
     /**
      * Device tags
      */
-    @objc
     var tags: [String] { get set }
 
     /**
@@ -25,14 +23,12 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
      * Set this to `false` to prevent the device from sending any tag information to the server when using
      * server-side tagging. Defaults to `true`.
      */
-    @objc
     var isChannelTagRegistrationEnabled: Bool { get set }
 
     /**
      * Edits channel tags.
      * - Returns: Tag editor.
      */
-    @objc
     func editTags() -> TagEditor
 
     /**
@@ -40,14 +36,12 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
-    @objc
     func editTags(_ editorBlock: (TagEditor) -> Void)
 
     /**
      * Edits channel tags groups.
      * - Returns: Tag group editor.
      */
-    @objc
     func editTagGroups() -> TagGroupsEditor
 
     /**
@@ -55,14 +49,12 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
-    @objc
     func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void)
 
     /**
      * Edits channel subscription lists.
      * - Returns: Subscription list editor.
      */
-    @objc
     func editSubscriptionLists() -> SubscriptionListEditor
 
     /**
@@ -70,21 +62,18 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
-    @objc
     func editSubscriptionLists(_ editorBlock: (SubscriptionListEditor) -> Void)
 
     /**
      * Fetches current subscription lists.
      * - Returns: The subscription lists
      */
-    @objc
     func fetchSubscriptionLists() async throws -> [String]
 
     /**
      * Edits channel attributes.
      * - Returns: Attribute editor.
      */
-    @objc
     func editAttributes() -> AttributesEditor
 
     /**
@@ -92,13 +81,11 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
      * - Parameters:
      *   - editorBlock: The editor block with the editor. The editor will `apply` will be called after the block is executed.
      */
-    @objc
     func editAttributes(_ editorBlock: (AttributesEditor) -> Void)
 
     /**
      * Enables channel creation if channelCreationDelayEnabled was set to `YES` in the config.
      */
-    @objc
     func enableChannelCreation()
 }
 

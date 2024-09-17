@@ -5,7 +5,6 @@ import SwiftUI
 import UIKit
 
 /// View factories for Preference Center view controllers
-@objc(UAPreferenceCenterViewControllerFactory)
 public class PreferenceCenterViewControllerFactory: NSObject {
         
     /// Makes a view controller for the given Preference Center ID.
@@ -13,7 +12,6 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     ///     - preferenceCenterID: The preferenceCenterID.
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
-    @objc
     @MainActor
     public class func makeViewController(
         preferenceCenterID: String,
@@ -32,7 +30,6 @@ public class PreferenceCenterViewControllerFactory: NSObject {
     ///     - preferenceCenterID: The preferenceCenterID.
     ///     - preferenceCenterThemePlist: The theme plist.
     /// - Returns: A view controller.
-    @objc
     @MainActor
     public class func makeViewController(
         preferenceCenterID: String,
@@ -104,7 +101,6 @@ private class PreferenceCenterViewController<Content>: UIHostingController<Conte
         }
     }
 
-    @objc
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 /// A helper class for running actions by name or by reference.
-@objc(UAActionRunner)
 public final class ActionRunner: NSObject {
 
     /// Runs an action
@@ -96,7 +95,6 @@ public final class ActionRunner: NSObject {
         return results
     }
 
-    @objc(runActions:situation:completionHandler:)
     public class func _run(
         actionsPayload: [String: Any],
         situation: ActionSituation

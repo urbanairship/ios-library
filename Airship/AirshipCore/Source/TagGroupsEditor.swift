@@ -3,7 +3,6 @@
 import Foundation
 
 /// Tag groups editor.
-@objc(UATagGroupsEditor)
 public class TagGroupsEditor: NSObject {
 
     private var tagUpdates: [TagGroupUpdate] = []
@@ -32,7 +31,6 @@ public class TagGroupsEditor: NSObject {
      *   - tags: The tags.
      *   - group: The tag group.
      */
-    @objc(addTags:group:)
     public func add(_ tags: [String], group: String) {
         let group = AudienceUtils.normalizeTagGroup(group)
         let tags = AudienceUtils.normalizeTags(tags)
@@ -50,7 +48,6 @@ public class TagGroupsEditor: NSObject {
      *   - tags: The tags.
      *   - group: The tag group.
      */
-    @objc(removeTags:group:)
     public func remove(_ tags: [String], group: String) {
         let group = AudienceUtils.normalizeTagGroup(group)
         let tags = AudienceUtils.normalizeTags(tags)
@@ -68,7 +65,6 @@ public class TagGroupsEditor: NSObject {
      *   - tags: The tags.
      *   - group: The tag group.
      */
-    @objc(setTags:group:)
     public func set(_ tags: [String], group: String) {
         let group = AudienceUtils.normalizeTagGroup(group)
         let tags = AudienceUtils.normalizeTags(tags)
@@ -82,7 +78,6 @@ public class TagGroupsEditor: NSObject {
     /**
      * Applies tag changes.
      */
-    @objc
     public func apply() {
         self.completionHandler(tagUpdates)
         tagUpdates.removeAll()

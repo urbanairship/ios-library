@@ -6,7 +6,6 @@ import AirshipCore
 
 /// AirshipPreferenceCenter module loader.
 /// @note For internal use only. :nodoc:
-@objc(UAPreferenceCenterSDKModule)
 public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
     public let actionsManifest: ActionsManifest? = nil
     public let components: [AirshipComponent]

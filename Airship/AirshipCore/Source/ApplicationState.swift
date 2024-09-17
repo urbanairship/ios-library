@@ -2,7 +2,6 @@
 
 /// Platform independent representation of application state.
 /// - Note: For internal use only. :nodoc:
-@objc(UAApplicationState)
 public enum ApplicationState: Int, Sendable {
     /// The active state.
     case active

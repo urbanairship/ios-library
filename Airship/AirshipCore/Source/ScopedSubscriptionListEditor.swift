@@ -3,7 +3,6 @@
 import Foundation
 
 /// Scoped subscription list editor.
-@objc(UAScopedSubscriptionListEditor)
 public class ScopedSubscriptionListEditor: NSObject {
 
     private var subscriptionListUpdates: [ScopedSubscriptionListUpdate] = []
@@ -25,7 +24,6 @@ public class ScopedSubscriptionListEditor: NSObject {
      *   - subscriptionListID: The subscription list identifier.
      *   - scope: Defines the channel types that the change applies to.
      */
-    @objc(subscribe:scope:)
     public func subscribe(_ subscriptionListID: String, scope: ChannelScope) {
         let subscriptionListUpdate = ScopedSubscriptionListUpdate(
             listId: subscriptionListID,
@@ -42,7 +40,6 @@ public class ScopedSubscriptionListEditor: NSObject {
      *   - subscriptionListID: The subscription list identifier.
      *   - scope: Defines the channel types that the change applies to.
      */
-    @objc(unsubscribe:scope:)
     public func unsubscribe(_ subscriptionListID: String, scope: ChannelScope) {
         let subscriptionListUpdate = ScopedSubscriptionListUpdate(
             listId: subscriptionListID,
@@ -75,7 +72,6 @@ public class ScopedSubscriptionListEditor: NSObject {
     /**
      * Applies subscription list changes.
      */
-    @objc
     public func apply() {
         completionHandler(subscriptionListUpdates)
         subscriptionListUpdates.removeAll()

@@ -24,15 +24,12 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
         }
     }
 
-    @objc
     public var identifier: String? = nil
 
     public var contactUpdates: [SubscriptionListUpdate] = []
 
-    @objc
     public var updateRegistrationCalled: Bool = false
 
-    @objc
     public var isChannelCreationEnabled: Bool = false
 
     public var pendingAttributeUpdates: [AttributeUpdate] = []
@@ -43,13 +40,10 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
 
     public var isChannelTagRegistrationEnabled: Bool = false
 
-    @objc
     public var tagGroupEditor: TagGroupsEditor?
     
-    @objc
     public var attributeEditor: AttributesEditor?
 
-    @objc
     public var subscriptionListEditor: SubscriptionListEditor?
 
     public func updateRegistration(forcefully: Bool) {

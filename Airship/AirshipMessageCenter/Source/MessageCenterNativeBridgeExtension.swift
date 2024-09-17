@@ -8,13 +8,11 @@ import AirshipCore
 #endif
 
 /// Airship native bridge extension for the Message Center.
-@objc(UAMessageCenterNativeBridgeExtension)
 public final class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate, Sendable {
 
     let message: MessageCenterMessage
     let user: MessageCenterUser
 
-    @objc
     public init(
         message: MessageCenterMessage,
         user: MessageCenterUser

@@ -117,10 +117,9 @@ class PermissionsManagerTests: XCTestCase {
     }
 }
 
-@objc
 open class TestPermissionsDelegate: NSObject, AirshipPermissionDelegate {
 
-    @objc public var permissionStatus: AirshipPermissionStatus = .notDetermined
+    public var permissionStatus: AirshipPermissionStatus = .notDetermined
     var checkCalled: Bool = false
     var requestCalled: Bool = false
 

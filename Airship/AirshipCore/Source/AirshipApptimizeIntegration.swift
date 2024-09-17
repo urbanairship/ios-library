@@ -9,7 +9,7 @@ import Foundation
 @objc(UAirshipApptimizeIntegration)
 final class AirshipApptimizeIntegration: NSObject {
     
-    @objc 
+    @objc
     public static var airshipVersion: String {
         return AirshipVersion.get()
     }

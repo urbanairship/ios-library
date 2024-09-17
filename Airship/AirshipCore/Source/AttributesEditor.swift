@@ -3,7 +3,6 @@
 import Foundation
 
 /// Attributes editor.
-@objc(UAAttributesEditor)
 public final class AttributesEditor: NSObject {
 
     private let date: AirshipDateProtocol
@@ -31,7 +30,6 @@ public final class AttributesEditor: NSObject {
      * - Parameters:
      *   - attribute: The attribute.
      */
-    @objc(removeAttribute:)
     public func remove(_ attribute: String) {
         guard isValid(key: attribute) else { return }
         sets[attribute] = nil
@@ -44,7 +42,6 @@ public final class AttributesEditor: NSObject {
      *   - date: The value
      *   - attribute: The attribute
      */
-    @objc(setDate:attribute:)
     public func set(date: Date, attribute: String) {
         add(
             attribute: attribute,
@@ -60,7 +57,6 @@ public final class AttributesEditor: NSObject {
      *   - number: The value.
      *   - attribute: The attribute.
      */
-    @objc(setNumber:attribute:)
     public func set(number: NSNumber, attribute: String) {
         add(attribute: attribute, value: .number(number.doubleValue))
     }
@@ -71,7 +67,6 @@ public final class AttributesEditor: NSObject {
      *   - string: The value.
      *   - attribute: The attribute.
      */
-    @objc(setString:attribute:)
     public func set(string: String, attribute: String) {
         guard string.count >= 1 && string.count <= 1024 else {
             AirshipLogger.error(
@@ -126,7 +121,6 @@ public final class AttributesEditor: NSObject {
     /**
      * Applies the attribute changes.
      */
-    @objc
     public func apply() {
         let removeOperations: [AttributeUpdate] = removes.compactMap {
             AttributeUpdate.remove(attribute: $0, date: self.date.now)

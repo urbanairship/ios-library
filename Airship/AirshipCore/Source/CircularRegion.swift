@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 /// A  circular region defines a radius, and latitude and longitude from its center.
-@objc(UACircularRegion)
 public class CircularRegion: NSObject {
 
     let radius: Double
@@ -17,7 +16,6 @@ public class CircularRegion: NSObject {
      *
      * - Returns: Circular region object or `nil` if error occurs
      */
-    @objc
     public init?(radius: Double, latitude: Double, longitude: Double) {
         guard CircularRegion.isValid(radius: radius) else {
             return nil
@@ -46,7 +44,6 @@ public class CircularRegion: NSObject {
      *
      * - Returns: Circular region object or `nil` if error occurs
      */
-    @objc(circularRegionWithRadius:latitude:longitude:)
     public class func circularRegion(
         radius: Double,
         latitude: Double,

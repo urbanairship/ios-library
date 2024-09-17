@@ -13,21 +13,16 @@ import CoreTelephony
 #endif
 
 /// Representations of various device connection types.
-@objc(UAConnectionType)
 public class ConnectionType: NSObject {
     /// Network is unreachable.
-    @objc
     public static let none = "none"
     /// Network is a cellular or mobile network.
-    @objc
     public static let cell = "cell"
     /// Network is a WiFi network.
-    @objc
     public static let wifi = "wifi"
 }
 
 /// The `Utils` object provides an interface for utility methods.
-@objc(UAUtils)
 public class AirshipUtils: NSObject {
 
     // MARK: Device Utilities
@@ -35,7 +30,6 @@ public class AirshipUtils: NSObject {
     /// Get the device model name (e.g.,` iPhone3,1`).
     ///
     /// - Returns: The device model name.
-    @objc
     public class func deviceModelName() -> String? {
         #if targetEnvironment(macCatalyst)
         return "mac"
@@ -60,7 +54,6 @@ public class AirshipUtils: NSObject {
     /// Gets the short bundle version string.
     ///
     /// - Returns: A short bundle version string value.
-    @objc
     public class func bundleShortVersionString() -> String? {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"]
             as? String
@@ -69,7 +62,6 @@ public class AirshipUtils: NSObject {
     /// Gets the current carrier name.
     ///
     /// - Returns: The current carrier name.
-    @objc
     public class func carrierName() -> String? {
         #if os(iOS) && !targetEnvironment(macCatalyst)
         let info = CTTelephonyNetworkInfo()
@@ -84,7 +76,6 @@ public class AirshipUtils: NSObject {
     /// Gets the current connection type.
     ///
     /// - Returns: The current connection type as a `String`.
-    @objc
     public class func connectionType() -> String {
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
@@ -142,7 +133,6 @@ public class AirshipUtils: NSObject {
     ///   - toVersion: The second version.
     ///
     /// - Returns: a `ComparisonResult`.
-    @objc(compareVersion:toVersion:)
     public class func compareVersion(_ fromVersion: String, toVersion: String)
         -> ComparisonResult
     {
@@ -202,7 +192,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter scene: The `UIWindowScene`.
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
-    @objc(mainWindow:)
     @MainActor
     @available(iOS 13.0, tvOS 13.0, *)
     public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
@@ -226,7 +215,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter results: An `Array` of fetch results.
     ///
     /// - Returns: The merged fetch result.
-    @objc
     public class func mergeFetchResults(
         _ results: [UInt]
     ) -> UIBackgroundFetchResult {
@@ -246,7 +234,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter results: An `Array` of fetch results.
     ///
     /// - Returns: The merged fetch result.
-    @objc
     public class func mergeFetchResults(_ results: [UInt])
         -> WKBackgroundFetchResult
     {
@@ -269,7 +256,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter notification The notification payload.
     ///
     /// - Returns: `true` the notification is a silent push, `false` otherwise.
-    @objc
     public class func isSilentPush(_ notification: [AnyHashable: Any]) -> Bool {
         guard let apsDict = notification["aps"] as? [AnyHashable: Any] else {
             return true
@@ -297,7 +283,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter notification The notification payload.
     ///
     /// - Returns: `true` the notification is an alerting  push, `false` otherwise.
-    @objc
     public class func isAlertingPush(_ notification: [AnyHashable: Any]) -> Bool
     {
         guard let apsDict = notification["aps"] as? [AnyHashable: Any] else {
@@ -327,7 +312,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter token: An APNS-provided device token.
     ///
     /// - Returns: The decoded Airship device token.
-    @objc
     public class func deviceTokenStringFromDeviceToken(_ token: Data) -> String
     {
         var tokenString = ""
@@ -346,7 +330,6 @@ public class AirshipUtils: NSObject {
     ///
     /// - Parameter input: `String` for which to calculate SHA.
     /// - Returns: The `SHA256` digest as `NSData`.
-    @objc(sha256DigestWithString:)
     public class func sha256Digest(input: String) -> NSData {
         guard let dataIn = input.data(using: .utf8) as NSData? else {
             return NSData()
@@ -363,7 +346,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter input: Input string for which to calculate SHA.
     ///
     /// - Returns: SHA256 digest as a hex string
-    @objc(sha256HashWithString:)
     public class func sha256Hash(input: String) -> String {
         let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
         let digest = sha256Digest(input: input)
@@ -381,7 +363,6 @@ public class AirshipUtils: NSObject {
     ///   - username: The username.
     ///   - password: The password.
     /// - Returns: An HTTP Basic Auth header string value for the provided credentials in the form of: `Basic [Base64 Encoded "username:password"]`
-    @objc(authHeaderStringWithName:password:)
     public class func authHeader(username: String, password: String) -> String?
     {
         guard let data = "\(username):\(password)".data(using: .utf8) else {
@@ -407,7 +388,6 @@ public class AirshipUtils: NSObject {
     /// - Parameter value: Input string for which to create the URL.
     ///
     /// - Returns: returns the created URL otherwise return nil.
-    @objc(parseURL:)
     public class func parseURL(_ value: String) -> URL? {
         if let url = URL(string: value) {
             return url

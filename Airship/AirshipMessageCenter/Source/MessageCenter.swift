@@ -8,33 +8,27 @@ import AirshipCore
 #endif
 
 /// Delegate protocol for receiving callbacks related to message center.
-@objc(UAMessageCenterDisplayDelegate)
 public protocol MessageCenterDisplayDelegate {
 
     /// Called when a message is requested to be displayed.
     ///
     /// - Parameters:
     ///   - messageID: The message ID.
-    @objc(displayMessageCenterForMessageID:)
     @MainActor
     func displayMessageCenter(messageID: String)
 
     /// Called when the message center is requested to be displayed.
-    @objc
     @MainActor
     func displayMessageCenter()
 
     /// Called when the message center is requested to be dismissed.
-    @objc
     @MainActor
     func dismissMessageCenter()
 }
 
 /// Airship Message Center module.
-@objc(UAMessageCenter)
 public final class MessageCenter: NSObject, Sendable {
     /// Message center display delegate.
-    @objc
     @MainActor
     public var displayDelegate: MessageCenterDisplayDelegate? {
         get {
@@ -49,7 +43,6 @@ public final class MessageCenter: NSObject, Sendable {
     private let privacyManager: AirshipPrivacyManager
 
     /// Message center inbox.
-    @objc(inbox)
     var _inbox: MessageCenterInboxBaseProtocol {
         return self.inbox
     }
@@ -84,7 +77,6 @@ public final class MessageCenter: NSObject, Sendable {
     ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
     /// - Parameters:
     ///     - plist: The name of the plist in the bundle.
-    @objc
     @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try MessageCenterTheme.fromPlist(plist)
@@ -92,7 +84,6 @@ public final class MessageCenter: NSObject, Sendable {
 
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
-    @objc
     @MainActor
     public var predicate: MessageCenterPredicate? {
         get {
@@ -108,7 +99,6 @@ public final class MessageCenter: NSObject, Sendable {
     }
 
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    @objc
     public static var shared: MessageCenter {
         return Airship.requireComponent(ofType: MessageCenterComponent.self).messageCenter
     }
@@ -174,7 +164,6 @@ public final class MessageCenter: NSObject, Sendable {
     }
 
     /// Display the message center.
-    @objc
     @MainActor
     public func display() {
         guard self.enabled else {
@@ -196,7 +185,6 @@ public final class MessageCenter: NSObject, Sendable {
     /// Display the given message with animation.
     /// - Parameters:
     ///     - messageID:  The messageID of the message.
-    @objc(displayWithMessageID:)
     @MainActor
     public func display(messageID: String) {
         guard self.enabled else {
@@ -218,7 +206,6 @@ public final class MessageCenter: NSObject, Sendable {
     }
 
     /// Dismiss the message center.
-    @objc
     @MainActor
     public func dismiss() {
         if let displayDelegate = self.displayDelegate {

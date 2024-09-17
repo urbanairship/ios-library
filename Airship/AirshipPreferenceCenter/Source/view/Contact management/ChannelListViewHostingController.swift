@@ -14,7 +14,6 @@ class ChannelListViewHostingController<Content>: UIHostingController<Content> wh
         }
     }
 
-    @objc
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

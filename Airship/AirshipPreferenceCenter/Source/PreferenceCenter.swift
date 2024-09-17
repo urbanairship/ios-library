@@ -8,7 +8,6 @@ import AirshipCore
 #endif
 
 /// Open delegate.
-@objc(UAPreferenceCenterOpenDelegate)
 public protocol PreferenceCenterOpenDelegate {
 
     /**
@@ -17,16 +16,13 @@ public protocol PreferenceCenterOpenDelegate {
      *   - preferenceCenterID: The preference center ID.
      * - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
      */
-    @objc
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
 /// Airship PreferenceCenter module.
-@objc(UAPreferenceCenter)
 public final class PreferenceCenter: NSObject, Sendable {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    @objc
     public static var shared: PreferenceCenter {
         return Airship.requireComponent(ofType: PreferenceCenterComponent.self).preferenceCenter
     }
@@ -41,9 +37,8 @@ public final class PreferenceCenter: NSObject, Sendable {
      * If set, the delegate will be called instead of launching the OOTB preference center screen. Must be set
      * on the main actor.
      */
-    @objc
     @MainActor
-    public weak var openDelegate: PreferenceCenterOpenDelegate? {
+    public var openDelegate: PreferenceCenterOpenDelegate? {
         get {
             self.delegates.openDelegate
         }
@@ -73,7 +68,6 @@ public final class PreferenceCenter: NSObject, Sendable {
         }
     }
 
-    @objc
     @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
@@ -98,7 +92,6 @@ public final class PreferenceCenter: NSObject, Sendable {
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
      */
-    @objc(openPreferenceCenter:)
     @MainActor
     public func open(_ preferenceCenterID: String) {
         if self.openDelegate?.openPreferenceCenter(preferenceCenterID) == true {
@@ -140,7 +133,6 @@ public final class PreferenceCenter: NSObject, Sendable {
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
      */
-    @objc
     public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
         let data = try await jsonConfig(preferenceCenterID: preferenceCenterID)
         return try PreferenceCenterDecoder.decodeConfig(data: data)
@@ -151,7 +143,6 @@ public final class PreferenceCenter: NSObject, Sendable {
      * - Parameters:
      *   - preferenceCenterID: The preference center ID.
      */
-    @objc
     public func jsonConfig(preferenceCenterID: String) async throws -> Data {
         let payloads = await self.remoteData.payloads(types: ["preference_forms"])
 
@@ -177,7 +168,7 @@ public final class PreferenceCenter: NSObject, Sendable {
 /// Delegates holder so I can keep the executor sendable
 private final class Delegates: @unchecked Sendable {
     @MainActor
-    weak var openDelegate: PreferenceCenterOpenDelegate?
+    var openDelegate: PreferenceCenterOpenDelegate?
 }
 
 extension PreferenceCenter {

@@ -3,7 +3,6 @@
 import Foundation
 
 /// SMS registration options
-@objc(UASMSRegistrationOptions)
 public final class SMSRegistrationOptions: NSObject, Codable, Sendable {
 
     /**
@@ -18,7 +17,6 @@ public final class SMSRegistrationOptions: NSObject, Codable, Sendable {
     /// Returns a SMS registration options with opt-in status
     /// - Parameter senderID: The sender ID
     /// - Returns: A SMS registration options.
-    @objc
     public static func optIn(senderID: String) -> SMSRegistrationOptions {
         return SMSRegistrationOptions(senderID: senderID)
     }

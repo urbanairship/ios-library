@@ -5,7 +5,6 @@ import SwiftUI
 import UIKit
 
 /// View controller for Message Center view
-@objc(UAMessageCenterViewController)
 public class MessageCenterViewControllerFactory: NSObject {
 
     /// Makes a message view controller with the given theme.
@@ -41,7 +40,6 @@ public class MessageCenterViewControllerFactory: NSObject {
     ///     - controller: The Message Center controller
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
-    @objc
     @MainActor
     public class func make(
         themePlist: String?,
@@ -70,7 +68,6 @@ public class MessageCenterViewControllerFactory: NSObject {
     ///     - controller: The Message Center controller
     ///     - dismissAction: Optional action to dismiss the view controller.
     /// - Returns: A view controller.
-    @objc
     @MainActor
     public class func make(
         themePlist: String?,
@@ -104,7 +101,6 @@ where Content: View {
         self.view.backgroundColor = .clear
     }
 
-    @objc
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -1,7 +1,6 @@
 import Foundation
 
 /// Used to migrate data to TagGroupUpdate in contact and channels.
-@objc(UATagGroupsMutation)
 class TagGroupsMutation: NSObject, NSSecureCoding {
     static let codableAddKey = "add"
     static let codableRemoveKey = "remove"

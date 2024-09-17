@@ -2,7 +2,6 @@
 
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.
-@objc(UACustomEvent)
 public class CustomEvent: NSObject {
 
     /// The event type
@@ -13,21 +12,14 @@ public class CustomEvent: NSObject {
     /**
      * The max properties size in bytes.
      */
-    @objc
     public static let maxPropertiesSize = 65536
 
     // Public data keys
-    @objc
     public static let eventNameKey = "event_name"
-    @objc
     public static let eventValueKey = "event_value"
-    @objc
     public static let eventPropertiesKey = "properties"
-    @objc
     public static let eventTransactionIDKey = "transaction_id"
-    @objc
     public static let eventInteractionIDKey = "interaction_id"
-    @objc
     public static let eventInteractionTypeKey = "interaction_type"
 
     static let eventInAppKey = "in_app"
@@ -41,14 +33,12 @@ public class CustomEvent: NSObject {
      * The send ID that triggered the event.
      * - Note: For internal use only. :nodoc:
      */
-    @objc
     public var conversionSendID: String?
 
     /**
      * The conversion push metadata.
      * - Note: For internal use only. :nodoc:
      */
-    @objc
     public var conversionPushMetadata: String?
 
     /**
@@ -56,7 +46,6 @@ public class CustomEvent: NSObject {
      * invalidate the event.
      * - Note: For internal use only. :nodoc:
      */
-    @objc
     public var templateType: String?
 
     private var _eventValue: NSDecimalNumber?
@@ -76,7 +65,6 @@ public class CustomEvent: NSObject {
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
      */
-    @objc
     public var eventValue: NSNumber? {
         get {
             return self._eventValue
@@ -105,37 +93,31 @@ public class CustomEvent: NSObject {
      * The event's name. The name's length must not exceed 255 characters or it will
      * invalidate the event.
      */
-    @objc
     public var eventName: String?
 
     /**
      * The event's transaction ID. The ID's length must not exceed 255 characters or it will
      * invalidate the event.
      */
-    @objc
     public var transactionID: String?
 
     /**
      * The event's interaction type. The type's length must not exceed 255 characters or it will
      * invalidate the event.
      */
-    @objc
     public var interactionType: String?
 
     /**
      * The event's interaction ID. The ID's length must not exceed 255 characters or it will
      * invalidate the event.
      */
-    @objc
     public var interactionID: String?
 
     /**
      * The event's properties. Properties must be valid JSON.
      */
-    @objc
     public var properties: [String: Any] = [:]
 
-    @objc
     public var data: [AnyHashable: Any] {
         return self.eventBody(
             sendID: self.analytics.conversionSendID,
@@ -152,7 +134,6 @@ public class CustomEvent: NSObject {
      * - Parameter value: The event value.
      * - Returns: A Custom event instance
      */
-    @objc
     public init(name: String, value: NSNumber?) {
         self.eventName = name
         super.init()
@@ -168,7 +149,6 @@ public class CustomEvent: NSObject {
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Custom event instance
      */
-    @objc
     public convenience init(name: String, stringValue: String?) {
         let decimalValue =
             stringValue != nil ? NSDecimalNumber(string: stringValue) : nil
@@ -192,7 +172,6 @@ public class CustomEvent: NSObject {
      * 255 characters or it will invalidate the event.
      * - Returns: A Custom event instance
      */
-    @objc(eventWithName:)
     public class func event(name: String) -> CustomEvent {
         return CustomEvent(name: name)
     }
@@ -206,7 +185,6 @@ public class CustomEvent: NSObject {
      * number between -2^31 and 2^31 - 1 or it will invalidate the event.
      * - Returns: A Custom event instance
      */
-    @objc(eventWithName:valueFromString:)
     public class func event(name: String, string: String?) -> CustomEvent {
         return CustomEvent(name: name, stringValue: string)
     }
@@ -220,7 +198,6 @@ public class CustomEvent: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      * - Returns: A Custom event instance
      */
-    @objc(eventWithName:value:)
     public class func event(name: String, value: NSNumber?) -> CustomEvent {
         guard let value else {
             return CustomEvent(name: name)
@@ -234,7 +211,6 @@ public class CustomEvent: NSObject {
         }
     }
 
-    @objc
     public func isValid() -> Bool {
         let areFieldsValid = validateFields()
         let isValueValid = validateValue()
@@ -247,7 +223,6 @@ public class CustomEvent: NSObject {
      * - Parameter messageID: The message ID.
      * - Note: For internal use only. :nodoc:
      */
-    @objc
     public func setInteractionFromMessageCenterMessage(_ messageID: String?) {
         self.interactionID = messageID
         self.interactionType = CustomEvent.interactionMCRAP
@@ -288,7 +263,6 @@ public class CustomEvent: NSObject {
     /**
      * Adds the event to analytics.
      */
-    @objc
     public func track() {
         self.analytics.recordCustomEvent(self)
     }

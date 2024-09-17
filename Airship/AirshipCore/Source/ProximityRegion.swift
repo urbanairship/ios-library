@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 /// A proximity region defines an identifier, major and minor.
-@objc(UAProximityRegion)
 public class ProximityRegion: NSObject {
 
     let latitude: Double?
@@ -88,7 +87,6 @@ public class ProximityRegion: NSObject {
      *
      * - Returns: Proximity region object or `nil` if error occurs.
      */
-    @objc(proximityRegionWithID:major:minor:)
     public class func proximityRegion(
         proximityID: String,
         major: Double,
@@ -111,7 +109,6 @@ public class ProximityRegion: NSObject {
      *
      * - Returns: Proximity region object or `nil` if error occurs.
      */
-    @objc(proximityRegionWithID:major:minor:rssi:)
     public class func proximityRegion(
         proximityID: String,
         major: Double,
@@ -137,7 +134,6 @@ public class ProximityRegion: NSObject {
      *
      * - Returns: Proximity region object or `nil` if error occurs.
      */
-    @objc(proximityRegionWithID:major:minor:latitude:longitude:)
     public class func proximityRegion(
         proximityID: String,
         major: Double,
@@ -166,7 +162,6 @@ public class ProximityRegion: NSObject {
      *
      * - Returns: Proximity region object or `nil` if error occurs.
      */
-    @objc(proximityRegionWithID:major:minor:rssi:latitude:longitude:)
     public class func proximityRegion(
         proximityID: String,
         major: Double,

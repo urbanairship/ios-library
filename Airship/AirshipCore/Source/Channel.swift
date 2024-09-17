@@ -295,7 +295,6 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         )
     }
 
-    @objc
     public func editTags() -> TagEditor {
         return TagEditor { tagApplicator in
             self.tagsLock.sync {
@@ -304,14 +303,12 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         }
     }
 
-    @objc
     public func editTags(_ editorBlock: (TagEditor) -> Void) {
         let editor = editTags()
         editorBlock(editor)
         editor.apply()
     }
 
-    @objc
     public func editTagGroups() -> TagGroupsEditor {
         let allowDeviceTags = !self.isChannelTagRegistrationEnabled
         return self.audienceManager.editTagGroups(
@@ -319,19 +316,16 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         )
     }
 
-    @objc
     public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
         let editor = editTagGroups()
         editorBlock(editor)
         editor.apply()
     }
 
-    @objc
     public func editSubscriptionLists() -> SubscriptionListEditor {
         return self.audienceManager.editSubscriptionLists()
     }
 
-    @objc
     public func editSubscriptionLists(
         _ editorBlock: (SubscriptionListEditor) -> Void
     ) {
@@ -340,7 +334,6 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         editor.apply()
     }
 
-    @objc
     public func fetchSubscriptionLists() async throws -> [String] {
         return try await self.audienceManager.fetchSubscriptionLists()
     }
@@ -350,19 +343,16 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         audienceManager.subscriptionListEdits
     }
 
-    @objc
     public func editAttributes() -> AttributesEditor {
         return self.audienceManager.editAttributes()
     }
 
-    @objc
     public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
         let editor = editAttributes()
         editorBlock(editor)
         editor.apply()
     }
 
-    @objc(enableChannelCreation)
     public func enableChannelCreation() {
         if !self.isChannelCreationEnabled {
             self.isChannelCreationEnabled = true
@@ -571,21 +561,17 @@ extension AirshipChannel: AirshipComponent {}
 public extension AirshipNotifications {
 
     /// NSNotification info when the channel is created.
-    @objc(UAirshipNotificationChannelCreated)
     final class ChannelCreated: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.channel.channel_created"
         )
 
         /// NSNotification userInfo key to get the channel ID.
-        @objc
         public static let channelIDKey = "channel_identifier"
 
         /// NSNotification userInfo key to get a boolean if the channel is existing or not.
-        @objc
         public static let isExistingChannelKey = "channel_existing"
     }
 

@@ -34,11 +34,11 @@ final class AirshipInstance: AirshipInstanceProtocol {
 
     #if !os(tvOS) && !os(watchOS)
 
-    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
+    public var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     public let channelCapture: ChannelCapture
     #endif
 
-    public weak var deepLinkDelegate: DeepLinkDelegate?
+    public var deepLinkDelegate: DeepLinkDelegate?
     public let urlAllowList: URLAllowListProtocol
     public let localeManager: AirshipLocaleManager
     public let privacyManager: AirshipPrivacyManager

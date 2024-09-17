@@ -6,8 +6,7 @@ import Foundation
 import WebKit
 
 /// A standard protocol for handling commands from the NativeBridge..
-@objc(UAJavaScriptCommandDelegate)
-public protocol JavaScriptCommandDelegate {
+public protocol JavaScriptCommandDelegate: AnyObject {
     /// Delegates must implement this method. Implementations take a model object representing
     /// the JavaScript command which includes the command name, an array of string arguments,
     /// and a dictionary of key-value pairs (all strings).

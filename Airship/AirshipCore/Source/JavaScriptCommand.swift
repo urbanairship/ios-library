@@ -5,26 +5,20 @@
 import Foundation
 
 // Model object for holding data associated with JS delegate calls
-@objc(UAJavaScriptCommand)
 public final class JavaScriptCommand: NSObject, Sendable {
 
     // A name, derived from the host passed in the delegate call URL.
-    @objc
     public let name: String?
 
     // The argument strings passed in the call.
-    @objc
     public let arguments: [String]
 
     // The query options passed in the call.
-    @objc
     public let options: [String: [String]]
 
     // The original URL that initiated the call.
-    @objc(URL)
     public let url: URL
 
-    @objc(initWithURL:)
     public init(url: URL) {
         self.url = url
 

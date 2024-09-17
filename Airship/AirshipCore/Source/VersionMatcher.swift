@@ -14,7 +14,6 @@ enum UAVersionMatcherRangeBoundary: Int {
 }
 
 /// Version matcher.
-@objc(UAVersionMatcher)
 public class VersionMatcher: NSObject {
 
     private static let EXACT_VERSION_PATTERN =
@@ -53,7 +52,6 @@ public class VersionMatcher: NSObject {
     private let parsedConstraint: [AnyHashable: Any]
 
     /// NOTE: For internal use only. :nodoc:
-    @objc
     public init?(versionConstraint: String) {
         let strippedVersionConstraint = VersionMatcher.removeWhitespace(
             versionConstraint
@@ -91,7 +89,6 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint that matches one of our supported patterns
      * - Returns: matcher or nil if versionConstraint does not match any of the expected patterns
      */
-    @objc(matcherWithVersionConstraint:)
     public class func matcher(versionConstraint: String) -> VersionMatcher? {
         return VersionMatcher(versionConstraint: versionConstraint)
     }
@@ -105,7 +102,6 @@ public class VersionMatcher: NSObject {
      *   - value: The object to evaluate.
      * - Returns: true if the matcher matches the object, otherwise false.
      */
-    @objc(evaluateObject:)
     public func evaluate(_ value: Any?) -> Bool {
         guard let value = value as? String else {
             return false
@@ -131,12 +127,10 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "exact version" pattern
      */
-    @objc
     public class func isExactVersion(_ versionConstraint: String) -> Bool {
         return self.parseExactVersionConstraint(versionConstraint) != nil
     }
 
-    @objc
     class func parseExactVersionConstraint(_ versionConstraint: String)
         -> [AnyHashable: Any]?
     {
@@ -157,7 +151,6 @@ public class VersionMatcher: NSObject {
         ]
     }
 
-    @objc
     func versionMatchesExactVersion(_ checkVersion: String) -> Bool {
         if constraintType != .exactVersion {
             return false
@@ -177,7 +170,6 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "sub version" pattern
      */
-    @objc
     public class func isSubVersion(_ versionConstraint: String) -> Bool {
         return self.parseSubVersionConstraint(versionConstraint) != nil
     }
@@ -249,7 +241,6 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "version range" pattern
      */
-    @objc
     public class func isVersionRange(_ versionConstraint: String) -> Bool {
         return self.parseVersionRangeConstraint(versionConstraint) != nil
     }
@@ -412,7 +403,6 @@ public class VersionMatcher: NSObject {
         return parsedConstraint
     }
 
-    @objc
     func versionMatchesRange(_ checkVersion: String) -> Bool {
         if constraintType != .versionRange {
             return false
@@ -530,7 +520,6 @@ public class VersionMatcher: NSObject {
         return matches
     }
 
-    @objc
     class func removeWhitespace(_ sourceString: String) -> String {
         let destString = (sourceString as NSString)
             .replacingOccurrences(
@@ -543,7 +532,6 @@ public class VersionMatcher: NSObject {
     }
 
     /// - Note: For internal use only. :nodoc:
-    @objc(isEqual:)
     public override func isEqual(_ other: Any?) -> Bool {
         guard let other = other as? VersionMatcher else {
             return false
@@ -552,7 +540,6 @@ public class VersionMatcher: NSObject {
         return isEqual(to: other)
     }
 
-    @objc(isEqualToVersionMatcher:)
     func isEqual(to matcher: VersionMatcher?) -> Bool {
         return matcher?.versionConstraint == self.versionConstraint
     }

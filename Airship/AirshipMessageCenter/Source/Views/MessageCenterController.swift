@@ -14,7 +14,6 @@ public enum MessageCenterState: Equatable {
 }
 
 /// Controller for the Message Center View.
-@objc(UAMessageCenterController)
 public class MessageCenterController: NSObject, ObservableObject {
 
     @Published
@@ -40,12 +39,10 @@ public class MessageCenterController: NSObject, ObservableObject {
     /// Navigates to the message ID.
     /// - Parameters:
     ///     - messageID: The message ID to navigate to.
-    @objc
     public func navigate(messageID: String?) {
         self.messageID = messageID
     }
 
-    @objc
     public override init() {
         super.init()
         Publishers

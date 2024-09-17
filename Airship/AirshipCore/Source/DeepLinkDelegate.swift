@@ -3,8 +3,7 @@
 import Foundation
 
 /// Protocol to be implemented by deep link handlers.
-@objc(UADeepLinkDelegate)
-public protocol DeepLinkDelegate {
+public protocol DeepLinkDelegate: AnyObject {
 
     /// Called when a deep link has been triggered from Airship. If implemented, the delegate is responsible for processing the provided url.
     /// - Parameters:

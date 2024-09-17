@@ -18,12 +18,10 @@ import WatchKit
 
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
 /// before accessing any instances on Airship or Airship modules.
-@objc(UAirship)
 public class Airship: NSObject {
 
     /// Airship deep link scheme
     /// - Note: For internal use only. :nodoc:
-    @objc
     public static let deepLinkScheme = "uairship"
 
     private static let appSettingsDeepLinkHost = "app_settings"
@@ -33,7 +31,6 @@ public class Airship: NSObject {
     private static let itunesIDKey = "itunesID"
 
     /// A flag that checks if the Airship instance is available. `true` if available, otherwise `false`.
-    @objc
     public static var isFlying: Bool {
         return Airship._shared != nil
     }
@@ -41,7 +38,6 @@ public class Airship: NSObject {
     private(set) var airshipInstance: AirshipInstanceProtocol
 
     /// Airship config.
-    @objc
     public static var config: RuntimeConfig { return shared.airshipInstance.config }
 
     /// Action registry.
@@ -50,7 +46,6 @@ public class Airship: NSObject {
     }
 
     /// The Airship permissions manager.
-    @objc
     public static var permissionsManager: AirshipPermissionsManager {
         return shared.airshipInstance.permissionsManager
     }
@@ -59,7 +54,6 @@ public class Airship: NSObject {
 
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
-    @objc
     public static weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
         get {
             return shared.airshipInstance.javaScriptCommandDelegate
@@ -70,7 +64,6 @@ public class Airship: NSObject {
     }
 
     /// The channel capture utility.
-    @objc
     public static var channelCapture: ChannelCapture {
         return shared.airshipInstance.channelCapture
     }
@@ -78,7 +71,6 @@ public class Airship: NSObject {
 
     /// A user configurable deep link delegate.
     /// - NOTE: this delegate is not retained.
-    @objc
     public static weak var deepLinkDelegate: DeepLinkDelegate? {
         get {
             return shared.airshipInstance.deepLinkDelegate
@@ -91,19 +83,16 @@ public class Airship: NSObject {
     /// The URL allow list used for validating URLs for landing pages,
     /// wallet action, open external URL action, deep link
     /// action (if delegate is not set), and HTML in-app messages.
-    @objc(URLAllowList)
     public static var urlAllowList: URLAllowListProtocol {
         return shared.airshipInstance.urlAllowList
     }
 
     /// The locale manager.
-    @objc
     public static var localeManager: AirshipLocaleManagerProtocol {
         return shared.airshipInstance.localeManager
     }
 
     /// The privacy manager
-    @objc
     public static var privacyManager: AirshipPrivacyManager {
         return shared.airshipInstance.privacyManager
     }
@@ -125,20 +114,9 @@ public class Airship: NSObject {
         return requireComponent(ofType: AirshipPushProtocol.self)
     }
 
-    /// Shared Push instance.
-    @objc(push)
-    public static var _push: AirshipBasePushProtocol {
-        return requireComponent(ofType: AirshipBasePushProtocol.self)
-    }
-
     /// Shared Contact instance.
     public static var contact: AirshipContactProtocol {
         return requireComponent(ofType: AirshipContactProtocol.self)
-    }
-
-    @objc(contact)
-    public static var _contact: AirshipBaseContactProtocol {
-        return requireComponent(ofType: AirshipBaseContactProtocol.self)
     }
 
     /// Shared Analytics instance.
@@ -146,21 +124,9 @@ public class Airship: NSObject {
         return requireComponent(ofType: AirshipAnalyticsProtocol.self)
     }
 
-    /// Shared Analytics instance.
-    @objc(analytics)
-    public static var _analytics: AirshipBaseAnalyticsProtocol {
-        return requireComponent(ofType: AirshipBaseAnalyticsProtocol.self)
-    }
-
     /// Shared Channel instance.
     public static var channel: AirshipChannelProtocol {
         return requireComponent(ofType: AirshipChannelProtocol.self)
-    }
-
-    /// Shared Channel instance.
-    @objc(channel)
-    public static var _channel: AirshipBaseChannelProtocol {
-        return requireComponent(ofType: AirshipBaseChannelProtocol.self)
     }
 
     @MainActor
@@ -175,7 +141,6 @@ public class Airship: NSObject {
     /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
     /// - Parameters:
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
-    @objc
     @MainActor
     public class func takeOff(
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -187,7 +152,6 @@ public class Airship: NSObject {
     /// - Parameters:
     ///     - config: The Airship config.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
-    @objc
     @MainActor
     public class func takeOff(
         _ config: AirshipConfig?,
@@ -247,7 +211,6 @@ public class Airship: NSObject {
 
     /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
 
-    @objc
     @MainActor
     public class func takeOff() {
         takeOff(nil)
@@ -256,7 +219,6 @@ public class Airship: NSObject {
     /// Initializes Airship.
     /// - Parameters:
     ///     - config: The Airship config.
-    @objc
     @MainActor
     public class func takeOff(_ config: AirshipConfig?) {
 
@@ -384,7 +346,6 @@ public class Airship: NSObject {
     /// The default logger will os.Logger on iOS 14+, and `print` on older devices.
     ///
     /// Custom loggers should be set before takeOff.
-    @objc
     public static var logHandler: AirshipLogHandler {
         get {
             return AirshipLogger.logHandler
@@ -398,7 +359,6 @@ public class Airship: NSObject {
     /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
     /// and `.error` in production. Values set before `takeOff` will be overridden by
     /// the value from the AirshipConfig.
-    @objc
     public static var logLevel: AirshipLogLevel {
         get {
             return AirshipLogger.logLevel
@@ -560,28 +520,22 @@ public class Airship: NSObject {
 }
 
 /// NSNotificationCenter keys event names
-@objc(UAirshipNotifications)
 public final class AirshipNotifications: NSObject {
 
     /// Notification when Airship is ready.
-    @objc(UAirshipNotificationsAirshipReady)
     public final class AirshipReady: NSObject {
         /// Notification name
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.airship_ready"
         )
 
         /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
-        @objc
         public static let channelIDKey = "channel_id"
 
         /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
-        @objc
         public static let appKey = "app_key"
 
         /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
-        @objc
         public static let payloadVersionKey = "payload_version"
     }
 }

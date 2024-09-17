@@ -7,7 +7,6 @@ import Foundation
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
-@objc(UAContact)
 public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked Sendable {
     static let refreshContactPushPayloadKey = "com.urbanairship.contact.update"
 
@@ -352,7 +351,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     /// Identifies the contact.
     /// - Parameter namedUserID: The named user ID.
-    @objc
     public func identify(_ namedUserID: String) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn("Contacts disabled. Enable to identify user.")
@@ -371,7 +369,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     }
 
     /// Resets the contact.
-    @objc
     public func reset() {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.trace("Contacts are disabled, ignoring reset request")
@@ -383,7 +380,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     /// Can be called after the app performs a remote named user association for the channel instead
     /// of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
     /// data. Applications should only call this method when the user login has changed.
-    @objc
     public func notifyRemoteLogin() {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.trace("Contacts are disabled, ignoring notifyRemoteLogin request")
@@ -394,7 +390,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     /// Begins a tag groups editing session.
     /// - Returns: A TagGroupsEditor
-    @objc
     public func editTagGroups() -> TagGroupsEditor {
         return TagGroupsEditor { updates in
             guard !updates.isEmpty else {
@@ -434,7 +429,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     /// Begins an attribute editing session.
     /// - Returns: An AttributesEditor
-    @objc
     public func editAttributes() -> AttributesEditor {
         return AttributesEditor { updates in
             guard !updates.isEmpty else {
@@ -612,7 +606,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
-    @objc
     public func editSubscriptionLists() -> ScopedSubscriptionListEditor {
         return ScopedSubscriptionListEditor(date: self.date) { updates in
             guard !updates.isEmpty else {
@@ -648,7 +641,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     /// Begins a subscription list editing session
     /// - Parameter editorBlock: A scoped subscription list editor block.
     /// - Returns: A ScopedSubscriptionListEditor
-    @objc
     public func editSubscriptionLists(
         _ editorBlock: (ScopedSubscriptionListEditor) -> Void
     ) {
@@ -710,7 +702,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }.contactID
     }
 
-    @objc(fetchSubscriptionListsWithCompletionHandler:)
     public func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
         let lists = try await self.fetchSubscriptionLists()
         return AudienceUtils.wrap(lists)
@@ -920,17 +911,14 @@ extension AirshipContact: AirshipComponent {}
 public extension AirshipNotifications {
 
     /// NSNotification info when a conflict event is emitted.
-    @objc(UAirshipNotificationContactConflict)
     final class ContactConflict: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.contact_conflict"
         )
 
         /// NSNotification userInfo key to get the `ContactConflictEvent`.
-        @objc
         public static let eventKey = "event"
     }
 }

@@ -15,7 +15,6 @@ import Foundation
 /// - Opt in state (push and notifications)
 /// - SDK version
 /// - Accengage Device ID (Accengage module for migration)
-@objc(UAPrivacyManager)
 public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
 
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
@@ -67,17 +66,6 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
         }
     }
 
-    /// :nodoc:
-    @objc(enabledFeatures)
-    public var _objc_enabledFeatures: _UAFeatures {
-        get {
-            return enabledFeatures.toObjc
-        }
-        set {
-            enabledFeatures = newValue.toSwift
-        }
-    }
-
     /*
      * - Note: For internal use only. :nodoc:
      */
@@ -116,23 +104,11 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
         self.enabledFeatures.insert(features)
     }
 
-    /// :nodoc:
-    @objc(enableFeatures:)
-    public func _objc_enableFeatures(_ features: _UAFeatures) {
-        enableFeatures(features.toSwift)
-    }
-
     /// Disables features.
     /// This will remove any features to the `enabledFeatures` property.
     /// - Parameter features: The features to disable.
     public func disableFeatures(_ features: AirshipFeature) {
         self.enabledFeatures.remove(features)
-    }
-
-    /// :nodoc:
-    @objc(disableFeatures:)
-    public func _objc_disableFeatures(_ features: _UAFeatures) {
-        disableFeatures(features.toSwift)
     }
 
     /**
@@ -148,15 +124,8 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
         return enabledFeatures == []
     }
 
-    /// :nodoc:
-    @objc(isEnabled:)
-    public func _objc_isEnabled(_ features: _UAFeatures) -> Bool {
-        return isEnabled(features.toSwift)
-    }
-
     /// Checks if any feature is enabled.
     /// - Returns: `true` if a feature is enabled, otherwise `false`.
-    @objc
     public func isAnyFeatureEnabled() -> Bool {
         return isAnyFeatureEnabled(ignoringRemoteConfig: false)
     }
@@ -403,11 +372,9 @@ extension AirshipFeature: Codable {
 public extension AirshipNotifications {
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    @objc(UAirshipNotificationPrivacyManagerUpdated)
     final class PrivacyManagerUpdated: NSObject {
 
         /// NSNotification name.
-        @objc
         public static let name = NSNotification.Name(
             "com.urbanairship.privacymanager.enabledfeatures_changed"
         )

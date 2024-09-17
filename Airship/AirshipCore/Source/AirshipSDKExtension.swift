@@ -4,7 +4,6 @@ import Foundation
 
 /// Allowed SDK extension types.
 /// - Note: For internal use only. :nodoc:
-@objc(UASDKExtension)
 public enum AirshipSDKExtension: Int {
     /// The Cordova SDK extension.
     case cordova = 0

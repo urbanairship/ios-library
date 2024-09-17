@@ -7,14 +7,12 @@ import Foundation
 import WebKit
 
 /// Delegate to extend the native bridge.
-@objc(UANativeBridgeExtensionDelegate)
-public protocol NativeBridgeExtensionDelegate {
+public protocol NativeBridgeExtensionDelegate: AnyObject {
 
     /// Called when an action is triggered from the JavaScript Environment. This method should return the metadata used in the `ActionArgument`.
     /// - Parameter command The JavaScript command.
     /// - Parameter webView The webview.
     /// @return The action metadata.
-    @objc(actionsMetadataForCommand:webView:)
     @MainActor
     func actionsMetadata(
         for command: JavaScriptCommand,
@@ -25,7 +23,6 @@ public protocol NativeBridgeExtensionDelegate {
     /// - Parameter js The JavaScript environment.
     /// - Parameter webView  The web view.
     /// - Parameter completionHandler The completion handler when finished.
-    @objc
     @MainActor
     func extendJavaScriptEnvironment(
         _ js: JavaScriptEnvironmentProtocol,

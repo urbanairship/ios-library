@@ -20,10 +20,8 @@ public final class ShareAction: AirshipAction {
         return args.situation != .foregroundPush
     }
     
-    @objc
     public static let name = "share_action"
 
-    @objc
     public static let shortName = "^s"
     
     public func accepts(arguments: ActionArguments) async -> Bool {

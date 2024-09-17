@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 /// Represents the boundary crossing event type.
-@objc
 public enum UABoundaryEvent: Int, Sendable {
     /**
      * Enter event
@@ -16,13 +15,10 @@ public enum UABoundaryEvent: Int, Sendable {
 }
 
 /// A region event captures information regarding a region event for analytics.
-@objc(UARegionEvent)
 public class RegionEvent: NSObject {
 
-    @objc
     public static let eventType: String = "region_event"
 
-    @objc
     public static let regionIDKey = "region_id"
     static let sourceKey = "source"
     static let boundaryEventKey = "action"
@@ -41,31 +37,26 @@ public class RegionEvent: NSObject {
     /**
      * The region's identifier.
      */
-    @objc
     public let regionID: String
 
     /**
      * The source of the event.
      */
-    @objc
     public let source: String
 
     /**
      * The type of boundary event.
      */
-    @objc
     public let boundaryEvent: UABoundaryEvent
 
     /**
      * A circular region with a radius, and latitude/longitude from its center.
      */
-    @objc
     public let circularRegion: CircularRegion?
 
     /**
      * A proximity region with an identifier, major and minor.
      */
-    @objc
     public let proximityRegion: ProximityRegion?
 
     /**
@@ -112,7 +103,6 @@ public class RegionEvent: NSObject {
      *
      * - Returns: Region event object or `nil` if error occurs.
      */
-    @objc(regionEventWithRegionID:source:boundaryEvent:)
     public class func regionEvent(
         regionID: String,
         source: String,
@@ -136,13 +126,6 @@ public class RegionEvent: NSObject {
      *
      * - Returns: Region event object or `nil` if error occurs.
      */
-    @objc(
-        regionEventWithRegionID:
-        source:
-        boundaryEvent:
-        circularRegion:
-        proximityRegion:
-    )
     public class func regionEvent(
         regionID: String,
         source: String,

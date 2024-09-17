@@ -226,7 +226,6 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
      *  - command The command.
      * - Returns: `YES` if the command is either `run-actions`, `run-action`, or `run-action-cb`, otherwise `NO`.
      */
-    @objc(isActionCommand:)
     public class func isActionCommand(command: JavaScriptCommand) -> Bool {
         let name = command.name
         return
