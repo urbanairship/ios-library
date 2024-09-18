@@ -13,8 +13,10 @@ public class OUAScopedSubscriptionListEditor: NSObject {
      *   - scope: Defines the channel types that the change applies to.
      */
     @objc(subscribe:scope:)
-    public func subscribe(_ subscriptionListID: String, scope: ChannelScope) {
-        self.editor?.subscribe(subscriptionListID, scope: scope)
+    public func subscribe(_ subscriptionListID: String, scope: OUAChannelScope) {
+        if let scope = ChannelScope(rawValue: scope.rawValue) {
+            self.editor?.subscribe(subscriptionListID, scope: scope)
+        }
     }
 
     /**
@@ -24,8 +26,10 @@ public class OUAScopedSubscriptionListEditor: NSObject {
      *   - scope: Defines the channel types that the change applies to.
      */
     @objc(unsubscribe:scope:)
-    public func unsubscribe(_ subscriptionListID: String, scope: ChannelScope) {
-        self.editor?.unsubscribe(subscriptionListID, scope: scope)
+    public func unsubscribe(_ subscriptionListID: String, scope: OUAChannelScope) {
+        if let scope = ChannelScope(rawValue: scope.rawValue) {
+            self.editor?.unsubscribe(subscriptionListID, scope: scope)
+        }
     }
 
     /**
@@ -37,3 +41,27 @@ public class OUAScopedSubscriptionListEditor: NSObject {
     }
 }
     
+@objc
+/// Channel scope.
+public enum OUAChannelScope: Int, Sendable, Equatable {
+    /**
+     * App channels - amazon, android, iOS
+     */
+    case app
+
+    /**
+     * Web channels
+     */
+    case web
+
+    /**
+     * Email channels
+     */
+    case email
+
+    /**
+     * SMS channels
+     */
+    case sms
+}
+

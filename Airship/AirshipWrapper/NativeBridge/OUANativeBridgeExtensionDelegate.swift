@@ -20,7 +20,7 @@ public protocol OUANativeBridgeExtensionDelegate {
         for command: JavaScriptCommand,
         webView: WKWebView
     ) -> [String: String]
-
+    
     /// Called before the JavaScript environment is being injected into the web view.
     /// - Parameter js The JavaScript environment.
     /// - Parameter webView  The web view.
@@ -28,9 +28,10 @@ public protocol OUANativeBridgeExtensionDelegate {
     @objc
     @MainActor
     func extendJavaScriptEnvironment(
-        _ js: JavaScriptEnvironmentProtocol,
+        _ js: OUAJavaScriptEnvironment,
         webView: WKWebView
     ) async
+
 }
 
 public class OUANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExtensionDelegate {
@@ -40,13 +41,44 @@ public class OUANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExte
         self.delegate = delegate
     }
     
-    public func actionsMetadata(for command: AirshipCore.JavaScriptCommand, webView: WKWebView) -> [String : String] {
+    public func actionsMetadata(for command: JavaScriptCommand, webView: WKWebView) -> [String : String] {
         self.delegate.actionsMetadata(for: command, webView: webView)
     }
     
     public func extendJavaScriptEnvironment(_ js: JavaScriptEnvironmentProtocol, webView: WKWebView) async {
-        await self.delegate.extendJavaScriptEnvironment(js, webView: webView)
+        let jse = OUAJavaScriptEnvironment(delegate: js)
+        await self.delegate.extendJavaScriptEnvironment(jse, webView: webView)
     }
 }
+
+@objc
+public class OUAJavaScriptEnvironment: NSObject {
+    private let delegate: JavaScriptEnvironmentProtocol
+    
+    init(delegate: JavaScriptEnvironmentProtocol) {
+        self.delegate = delegate
+    }
+   
+    @objc(addStringGetter:value:)
+    func add(_ getter: String, string: String?) {
+        self.delegate.add(getter, string: string)
+    }
+    
+    @objc(addNumberGetter:value:)
+    func add(_ getter: String, number: NSNumber?) {
+        self.delegate.add(getter, number: number)
+    }
+
+    @objc(addDictionaryGetter:value:)
+    func add(_ getter: String, dictionary: [AnyHashable: Any]?) {
+        self.delegate.add(getter, dictionary: dictionary)
+    }
+
+    @objc
+    func build() async -> String {
+        await self.delegate.build()
+    }
+}
+
 
 #endif

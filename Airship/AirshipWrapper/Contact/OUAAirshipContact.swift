@@ -52,20 +52,12 @@ public class OUAAirshipContact: NSObject {
      *   - type: The channel type.
      */
     @objc
-    public func associateChannel(_ channelID: String, type: ChannelType) {
-        Airship.contact.associateChannel(channelID, type: type)
+    public func associateChannel(_ channelID: String, type: OUAChannelType) {
+        if let type = ChannelType(rawValue: type.rawValue) {
+            Airship.contact.associateChannel(channelID, type: type)
+        }
     }
-    
-    /**
-     * Opt out a channel from the contact.
-     * - Parameters:
-     *   - channelID: The channel ID.
-     */
-    @objc
-    public func optOutChannel(_ channelID: String) {
-        Airship.contact.optOutChannel(channelID)
-    }
-    
+
     
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
@@ -85,4 +77,24 @@ public class OUAAirshipContact: NSObject {
     ) {
         Airship.contact.editSubscriptionLists(editorBlock)
     }
+}
+
+@objc
+/// Channel type
+public enum OUAChannelType: Int, Sendable, Equatable {
+
+    /**
+     * Email channel
+     */
+    case email
+
+    /**
+     * SMS channel
+     */
+    case sms
+
+    /**
+     * Open channel
+     */
+    case open
 }

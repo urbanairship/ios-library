@@ -27,6 +27,15 @@ public protocol OUAMessageCenterDisplayDelegate {
 }
 
 @objc
+public protocol OUAMessageCenterPredicate {
+    /// Evaluate the message center message. Used to filter the message center list
+    /// - Parameters:
+    ///     - message: The message center message
+    /// - Returns: True if the message passed the evaluation, otherwise false.
+    func evaluate(message: MessageCenterMessage) -> Bool
+}
+
+@objc
 public class OUAMessageCenter: NSObject {
     
     private var _displayDelegate: OUAMessageCenterDisplayDelegate?
@@ -45,9 +54,9 @@ public class OUAMessageCenter: NSObject {
     
     /// Message center inbox.
     @objc
-    var inbox: MessageCenterInboxBaseProtocol {
+    var inbox: OUAMessageCenterInbox {
         get {
-            return MessageCenter.shared.inbox
+            return OUAMessageCenterInbox()
         }
     }
 
@@ -61,16 +70,18 @@ public class OUAMessageCenter: NSObject {
         try MessageCenter.shared.setThemeFromPlist(plist)
     }
 
+    private var _predicate: OUAMessageCenterPredicate?
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
     @objc
     @MainActor
-    public var predicate: MessageCenterPredicate? {
-        get {
-            return MessageCenter.shared.predicate
-        }
-        set {
-            MessageCenter.shared.predicate = newValue
+    public var predicate: OUAMessageCenterPredicate? {
+        didSet {
+            if let predicate {
+                MessageCenter.shared.predicate = OUAMessageCenterPredicateWrapper(delegate: predicate)
+            } else {
+                MessageCenter.shared.predicate = nil
+            }
         }
     }
 
@@ -116,5 +127,17 @@ public class OUAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisp
     
     public func dismissMessageCenter() {
         self.delegate.dismissMessageCenter()
+    }
+}
+
+public class OUAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
+    private let delegate: OUAMessageCenterPredicate
+    
+    init(delegate: OUAMessageCenterPredicate) {
+        self.delegate = delegate
+    }
+    
+    public func evaluate(message: MessageCenterMessage) -> Bool {
+        self.delegate.evaluate(message: message)
     }
 }

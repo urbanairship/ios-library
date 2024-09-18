@@ -55,9 +55,9 @@ public class OUARegionEvent: NSObject {
     public class func regionEvent(
         regionID: String,
         source: String,
-        boundaryEvent: UABoundaryEvent
+        boundaryEvent: OUABoundaryEvent
     ) -> OUARegionEvent {
-        let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent)
+        let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent.event)
         return OUARegionEvent(event: regionEvent)
     }
     
@@ -82,11 +82,20 @@ public class OUARegionEvent: NSObject {
     public class func regionEvent(
         regionID: String,
         source: String,
-        boundaryEvent: UABoundaryEvent,
+        boundaryEvent: OUABoundaryEvent,
         circularRegion: CircularRegion?,
         proximityRegion: ProximityRegion?
     ) -> OUARegionEvent {
-        let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent, circularRegion: circularRegion, proximityRegion: proximityRegion)
+        let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent.event, circularRegion: circularRegion, proximityRegion: proximityRegion)
         return OUARegionEvent(event: regionEvent)
+    }
+}
+
+@objc
+public class OUABoundaryEvent: NSObject {
+    var event: UABoundaryEvent
+    
+    public init(boundaryEvent: UABoundaryEvent) {
+        event = boundaryEvent
     }
 }

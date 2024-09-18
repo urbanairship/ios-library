@@ -15,7 +15,6 @@ import AirshipCore
 public class OUAAirship: NSObject {
     
     /// A user configurable deep link delegate.
-    @objc
     private var _deepLinkDelegate: DeepLinkDelegate?
     @objc
     public var deepLinkDelegate: OUADeepLinkDelegate? {
@@ -49,10 +48,10 @@ public class OUAAirship: NSObject {
     @objc
     @MainActor
     public class func takeOff(
-        _ config: AirshipConfig?,
+        _ config: OUAAirshipConfig?,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) {
-        Airship.takeOff(config, launchOptions: launchOptions)
+        Airship.takeOff(config?.config, launchOptions: launchOptions)
     }
 
 #else
