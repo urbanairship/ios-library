@@ -21,6 +21,7 @@ struct LabelButton : View {
             reportingMetadata: self.model.reportingMetadata,
             description: self.model.contentDescription ?? self.model.label.text,
             clickBehaviors: self.model.clickBehaviors,
+            eventHandlers: self.model.eventHandlers,
             actions: self.model.actions
         ) {
             Label(model: self.model.label, constraints: constraints)
@@ -36,7 +37,7 @@ struct LabelButton : View {
                 .border(self.model.border)
                 .accessible(self.model)
         }
-        .common(self.model)
+        .commonButton(self.model)
         .buttonStyle(PlainButtonStyle())
         .environment(
             \.layoutState,
