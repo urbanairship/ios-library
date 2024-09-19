@@ -27,7 +27,7 @@ public extension View {
         // broken on tvOS for now
         self
         #else
-        self.gesture(TapGesture().onEnded(action))
+        self.simultaneousGesture(TapGesture().onEnded(action))
             .accessibilityAction(.default) {
                 action()
             }
@@ -42,15 +42,6 @@ public extension View {
         } else {
             self.accessibilityHidden(hideIfNotSet)
         }
-    }
-
-    /// Common modifier for buttons so event handlers can be added separately to prevent tap issues
-    @ViewBuilder
-    internal func commonButton<Content: BaseModel>(
-        _ model: Content
-    ) -> some View {
-        self.enableBehaviors(model.enableBehaviors)
-        .visibility(model.visibility)
     }
 
     @ViewBuilder

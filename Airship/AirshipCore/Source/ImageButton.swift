@@ -24,7 +24,6 @@ struct ImageButton : View {
             reportingMetadata: self.model.reportingMetadata,
             description: self.model.contentDescription ?? self.model.identifier,
             clickBehaviors: self.model.clickBehaviors,
-            eventHandlers: self.model.eventHandlers,
             actions: self.model.actions
         ) {
             makeInnerButton()
@@ -33,7 +32,7 @@ struct ImageButton : View {
                 .border(self.model.border)
                 .accessible(self.model)
         }
-        .commonButton(self.model)
+        .common(self.model)
         .environment(
             \.layoutState,
              layoutState.override(
