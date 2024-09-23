@@ -110,8 +110,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 )
             } catch {
                 AirshipLogger.error("Failed to fetch frequency checker for schedule \(schedule.identifier) error: \(error)")
-                await self.remoteDataAccess.notifyOutdated(schedule: schedule)
-                return .success(result: .invalidate)
+                return .success(result: .skip)
             }
 
             let deviceInfoProvider = self.deviceInfoProviderFactory(

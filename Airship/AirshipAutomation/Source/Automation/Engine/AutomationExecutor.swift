@@ -64,11 +64,7 @@ final class AutomationExecutor: AutomationExecutorProtocol {
 
     @MainActor
     func isValid(schedule: AutomationSchedule) async -> Bool {
-        guard await self.remoteDataAccess.isCurrent(schedule: schedule) else {
-            return false
-        }
-
-        return true
+        return await self.remoteDataAccess.isCurrent(schedule: schedule)
     }
 
     @MainActor

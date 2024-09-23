@@ -119,6 +119,7 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.contactProvider.setNotifyOutdatedCallback { @Sendable info in
             XCTAssertEqual(remoteDataInfo, info)
             expectation.fulfill()
+            return true
         }
 
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
@@ -137,11 +138,30 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.appProvider.setNotifyOutdatedCallback { @Sendable info in
             XCTAssertEqual(remoteDataInfo, info)
             expectation.fulfill()
+            return true
         }
 
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
 
         await self.fulfillmentCompat(of: [expectation], timeout: 10)
+    }
+
+    func testNotifyOutdatedEnqueusRefreshTask() async {
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "example://")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
+        XCTAssertEqual(0, testWorkManager.workRequests.count)
+
+        await self.appProvider.setNotifyOutdatedCallback { _ in return false }
+        await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
+        XCTAssertEqual(0, testWorkManager.workRequests.count)
+
+        await self.appProvider.setNotifyOutdatedCallback { _ in return true }
+        await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
+        XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
 
     func testIsCurrentContact() async {
@@ -304,7 +324,7 @@ final class RemoteDataTest: AirshipBaseTest {
     }
 
 
-    func testRefreshSuccess() async {
+    func testForceRefresh() async {
         await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .newData
         }
@@ -317,55 +337,9 @@ final class RemoteDataTest: AirshipBaseTest {
 
         let remoteData = self.remoteData
         Task.detached {
-            let result = await remoteData?.refresh()
-            XCTAssertTrue(result == true)
+            await remoteData?.forceRefresh()
             refreshFinished.fulfill()
         }
-
-        await self.fulfillmentCompat(of: [refreshFinished])
-
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
-    }
-
-    func testRefreshFailed() async {
-        await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
-            return .failed
-        }
-        await self.appProvider.setRefreshCallback{ @Sendable _, _, _ in
-            return .newData
-        }
-
-        self.testWorkManager.autoLaunchRequests = true
-        let refreshFinished = expectation(description: "refresh finished")
-        let remoteData = self.remoteData
-        Task.detached {
-            let result = await remoteData!.refresh()
-            XCTAssertFalse(result)
-            refreshFinished.fulfill()
-        }
-
-        await self.fulfillmentCompat(of: [refreshFinished])
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
-    }
-
-    func testRefreshSource() async {
-        await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
-            return .failed
-        }
-        await self.appProvider.setRefreshCallback{ @Sendable _, _, _ in
-            return .newData
-        }
-
-        self.testWorkManager.autoLaunchRequests = true
-        let refreshFinished = expectation(description: "refresh finished")
-        let remoteData = self.remoteData
-        Task.detached {
-            let result = await remoteData!.refresh(source: .app)
-            XCTAssertTrue(result)
-            refreshFinished.fulfill()
-        }
-
-        await self.launchRefreshTask()
 
         await self.fulfillmentCompat(of: [refreshFinished])
 
@@ -496,7 +470,33 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertNotEqual(last, changeToken.value)
     }
 
+    func testWaitForRefresh() async {
+        await self.contactProvider.setRefreshCallback{ _, _, _ in
+            return .failed
+        }
 
+        await self.appProvider.setRefreshCallback{ _, _, _ in
+            return .failed
+        }
+
+        let finished = AirshipMainActorValue(false)
+        Task {
+            await self.remoteData.waitRefresh(source: .app)
+            await finished.set(true)
+        }
+
+        await self.launchRefreshTask()
+        var isFinished = await finished.value
+        XCTAssertFalse(isFinished)
+
+        await self.appProvider.setRefreshCallback{ _, _, _ in
+            return .newData
+        }
+
+        await self.launchRefreshTask()
+        isFinished = await finished.value
+        XCTAssertTrue(isFinished)
+    }
 
     @discardableResult
     private func launchRefreshTask() async -> AirshipWorkResult {
@@ -523,8 +523,8 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
     private var payloads: [RemoteDataPayload] = []
     var enabled: Bool
 
-    private var notifyOutdatedCallback: ((RemoteDataInfo) -> Void)?
-    func setNotifyOutdatedCallback(callback: @escaping (RemoteDataInfo) -> Void) {
+    private var notifyOutdatedCallback: ((RemoteDataInfo) -> Bool)?
+    func setNotifyOutdatedCallback(callback: @escaping (RemoteDataInfo) -> Bool) {
         self.notifyOutdatedCallback = callback
     }
 
@@ -551,8 +551,8 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
         return payloads.filter { types.contains($0.type) }.sortedByType(types)
     }
 
-    func notifyOutdated(remoteDataInfo: RemoteDataInfo) {
-        self.notifyOutdatedCallback!(remoteDataInfo)
+    func notifyOutdated(remoteDataInfo: RemoteDataInfo) -> Bool {
+        return self.notifyOutdatedCallback!(remoteDataInfo)
     }
 
     func isCurrent(locale: Locale, randomeValue: Int) async -> Bool {

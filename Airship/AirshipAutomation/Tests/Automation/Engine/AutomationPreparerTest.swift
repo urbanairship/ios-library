@@ -342,6 +342,54 @@ final class AutomationPreparerTest: XCTestCase {
         XCTAssertNotNil(prepared.frequencyChecker)
     }
 
+    func testPrepareMessageCheckerError() async throws {
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            ),
+            triggers: [],
+            created: Date(),
+            lastUpdated: Date(),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: .penalize
+            ),
+            campaigns: .string("campaigns"),
+            frequencyConstraintIDs: ["constraint"]
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in
+            return "contact ID"
+        }
+
+        self.remoteDataAccess.requiresUpdateBlock = { _ in
+            return false
+        }
+
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in
+            return true
+        }
+
+        self.audienceChecker.onEvaluate = { _, _, provider in
+            return true
+        }
+
+        await self.frequencyLimits.setCheckerBlock { _ in
+            throw AirshipErrors.error("Failed")
+        }
+
+        let triggerSessionID = UUID().uuidString
+
+        let result = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: triggerSessionID
+        )
+
+        XCTAssertTrue(result.isSkipped)
+    }
+
     func testAdditionalAudienceMiss() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,

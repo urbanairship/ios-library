@@ -407,7 +407,6 @@ fileprivate extension AutomationEngine {
             return
         }
 
-
         guard
             try await self.store.getSchedule(scheduleID: scheduleID) == data
         else {
@@ -564,39 +563,41 @@ fileprivate extension AutomationEngine {
             triggerSessionID: data.triggerSessionID
         )
 
-        AirshipLogger.trace("Preparing schedule \(data) result: \(prepareResult)")
-        if case .cancel = prepareResult {
-            try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
-            return nil
-        }
-
-        let updated = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
-            guard data.isInState([.triggered]) else { return }
-
-            switch (prepareResult) {
-            case .prepared(let preparedSchedule):
-                data.prepared(info: preparedSchedule.info, date: date.now)
-            case .invalidate, .cancel:
-               break
-            case .skip:
-                data.prepareCancelled(date: date.now, penalize: false)
-            case .penalize:
-                data.prepareCancelled(date: date.now, penalize: true)
-            }
-        }
+        AirshipLogger.trace("Finished preparing schedule \(data) result: \(prepareResult)")
 
         switch prepareResult {
-        case .prepared(let info):
+        case .prepared(let preparedSchedule):
+            let updated = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+                data.prepared(info: preparedSchedule.info, date: date.now)
+            }
+
+            // Make sure its updated
+            guard let updated else {
+                await preparer.cancelled(schedule: data.schedule)
+                return nil
+            }
+
             return PreparedData(
-                scheduleData: updated ?? data,
-                preparedSchedule: info
+                scheduleData: updated,
+                preparedSchedule: preparedSchedule
             )
         case .invalidate:
             await self.startTaskToProcessTriggeredSchedule(
                 scheduleID: data.schedule.identifier
             )
             return nil
-        case .cancel, .skip, .penalize:
+        case .cancel:
+            try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
+            return nil
+        case .skip:
+            _ = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+                data.prepareCancelled(date: date.now, penalize: false)
+            }
+            return nil
+        case .penalize:
+            _ = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+                data.prepareCancelled(date: date.now, penalize: true)
+            }
             return nil
         }
     }

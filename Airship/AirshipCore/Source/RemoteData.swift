@@ -199,7 +199,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     public func notifyOutdated(remoteDataInfo: RemoteDataInfo) async {
         for provider in self.providers {
             if (provider.source == remoteDataInfo.source) {
-                await provider.notifyOutdated(remoteDataInfo: remoteDataInfo)
+                if (await provider.notifyOutdated(remoteDataInfo: remoteDataInfo)) {
+                    enqueueRefreshTask()
+                }
                 return
             }
         }
@@ -313,14 +315,13 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         return success ? .success : .failure
     }
 
-    @discardableResult
-    public func refresh() async -> Bool {
-        return await self.refresh(sources: self.providers.map { $0.source})
-    }
-
-    @discardableResult
-    public func refresh(source: RemoteDataSource) async -> Bool {
-        return await self.refresh(sources: [source])
+    public func forceRefresh() async {
+        self.updateChangeToken()
+        enqueueRefreshTask()
+        let sources = self.providers.map { $0.source }
+        for source in sources {
+            await self.waitRefreshAttempt(source: source)
+        }
     }
 
     public func waitRefresh(source: RemoteDataSource) async {
@@ -331,9 +332,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         source: RemoteDataSource,
         maxTime: TimeInterval?
     ) async {
-        AirshipLogger.trace("Waiting for remote data to refresh \(source)")
+        AirshipLogger.trace("Waiting for remote data to refresh succesfully \(source)")
         await waitRefreshStatus(source: source, maxTime: maxTime) { status in
-            status != .none
+            status == .success
         }
     }
 
@@ -345,7 +346,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         source: RemoteDataSource,
         maxTime: TimeInterval?
     ) async {
-        AirshipLogger.trace("Waiting for remote data to refresh successfully \(source)")
+        AirshipLogger.trace("Waiting for remote refresh attempt \(source)")
         await waitRefreshStatus(source: source, maxTime: maxTime) { status in
             status != .none
         }
@@ -384,34 +385,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
 
         AirshipLogger.trace("Remote data refresh: \(source), status: \(result)")
     }
-
-    private func refresh(sources: [RemoteDataSource]) async -> Bool {
-        // Refresh task will refresh all remoteDataHandlers. If we only care about
-        // a subset of the sources, we need filter out those results and collect
-        // the expected count of sources.
-        var cancellable: AnyCancellable?
-        let result = await withCheckedContinuation { continuation in
-            cancellable = self.refreshResultSubject
-                .filter { result in
-                    sources.contains(result.source)
-                }
-                .collect(sources.count)
-                .map { results in
-                    !results.contains { result in
-                        result.result == .failed
-                    }
-                }
-                .first()
-                .sink { result in
-                    continuation.resume(returning: result)
-                }
-
-            enqueueRefreshTask()
-        }
-        cancellable?.cancel()
-        return result
-    }
-
+    
     public func payloads(types: [String]) async -> [RemoteDataPayload] {
         var payloads: [RemoteDataPayload] = []
         for provider in self.providers {
