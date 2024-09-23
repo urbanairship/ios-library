@@ -103,7 +103,7 @@ class PermissionsManagerTests: XCTestCase {
         let status = await self.permissionsManager.requestPermission(.location)
 
         XCTAssertEqual(AirshipPermissionStatus.denied, status)
-        XCTAssertFalse(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.requestCalled)
         XCTAssertTrue(self.delegate.checkCalled)
     }
 
@@ -117,7 +117,7 @@ class PermissionsManagerTests: XCTestCase {
         let status = await self.permissionsManager.requestPermission(.location)
 
         XCTAssertEqual(AirshipPermissionStatus.granted, status)
-        XCTAssertFalse(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.requestCalled)
         XCTAssertTrue(self.delegate.checkCalled)
     }
 
@@ -131,7 +131,7 @@ class PermissionsManagerTests: XCTestCase {
 
         _ = await self.permissionsManager.requestPermission(.location, enableAirshipUsageOnGrant: false, fallback: .systemSettings)
 
-        XCTAssertFalse(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.requestCalled)
         XCTAssertTrue(self.delegate.checkCalled)
         XCTAssertEqual(systemSettingsNavigator.permissionOpens, [.location])
     }
@@ -148,7 +148,7 @@ class PermissionsManagerTests: XCTestCase {
 
         _ = await self.permissionsManager.requestPermission(.location, enableAirshipUsageOnGrant: false, fallback: .systemSettings)
 
-        XCTAssertFalse(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.requestCalled)
         XCTAssertTrue(self.delegate.checkCalled)
         XCTAssertEqual(systemSettingsNavigator.permissionOpens, [.location])
     }
@@ -170,7 +170,7 @@ class PermissionsManagerTests: XCTestCase {
         )
 
         XCTAssertEqual(AirshipPermissionStatus.granted, status.endStatus)
-        XCTAssertFalse(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.requestCalled)
         XCTAssertTrue(self.delegate.checkCalled)
     }
 

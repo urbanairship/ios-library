@@ -183,14 +183,9 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
             }
 
             let startingStatus = await delegate.checkPermissionStatus()
-            var endStatus: AirshipPermissionStatus = .notDetermined
+            var endStatus: AirshipPermissionStatus = await delegate.requestPermission()
 
-            switch(startingStatus) {
-            case .granted:
-                endStatus = .granted
-            case .notDetermined:
-                endStatus = await delegate.requestPermission()
-            case .denied:
+            if startingStatus == .denied, endStatus == .denied {
                 switch fallback {
                 case .none:
                     endStatus = .denied
