@@ -1,11 +1,20 @@
 
 # iOS Changelog
 
+## Version 18.9.2 September 23, 2024
+Patch release to fix an issue with high energy usage for In-App Automations, Scenes, and Surveys that was introduced in 18.0.0. This issue is
+not very common but it can occur if the device is unable to connect to our backend to fetch an update to the In-App rules on the device after an SDK
+update or locale change. Application that are receiving high energy usage reports should update.
+
+### Changes
+- Fixed high energy usage for In-App Automations, Scenes, and Surveys if remote-data fails to refresh.
+- Fixed requesting additional notification options if they change after the first prompt.
+
 ## Version 18.9.1 September 13, 2024
 Patch release to fix Scene button not able to be tapped in some cases.
 
 #### Changes
-- Fix Scene buttons not able to be tapped if the last page of the scene contains a wide image background.
+- Fixed Scene buttons not able to be tapped if the last page of the scene contains a wide image background.
 
 ## Version 18.9.0 September 10, 2024
 Minor release that introduces `fallback` parameter when requesting permission updates and the permission is denied. This release also contains
