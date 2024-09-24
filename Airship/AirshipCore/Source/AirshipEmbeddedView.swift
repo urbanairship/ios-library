@@ -103,8 +103,12 @@ private class EmbeddedViewModel: ObservableObject {
  * Internal only
  * :nodoc:
  */
-public struct AirshipEmbeddedContentView : View  {
+public struct AirshipEmbeddedContentView : View, Identifiable  {
     public let embeddedInfo: AirshipEmbeddedInfo
+
+    public var id: String {
+        embeddedInfo.instanceID
+    }
 
     private let view: () -> EmbeddedView
     private let onDismiss: () -> Void
