@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+import SwiftUI
 import Foundation
 
 /// AirshipLayout
@@ -892,6 +893,7 @@ struct MediaModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let video: Video?
     let cropPosition: Position?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"
@@ -906,6 +908,7 @@ struct MediaModel: BaseModel, Accessible, Codable {
         case video = "video"
         case cropPosition = "position"
         case type
+        case role
     }
 }
 
@@ -936,6 +939,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
     let markdown: MarkDownOptions?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case text = "text"
@@ -948,6 +952,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
         case enableBehaviors = "enabled"
         case type
         case markdown
+        case role
     }
 }
 
@@ -979,6 +984,7 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let reportingMetadata: AirshipJSON?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -993,6 +999,7 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
         case type
+        case role
     }
 }
 
@@ -1071,7 +1078,7 @@ struct IconModel: Codable, Equatable, Sendable {
     }
 }
 
-struct ActionsPayload: Codable, Equatable, Sendable {
+struct ActionsPayload: Codable, Equatable, Sendable, Hashable {
     static let keyActionOverride = "platform_action_overrides"
     
     private let original: AirshipJSON
@@ -1134,6 +1141,7 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let reportingMetadata: AirshipJSON?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1148,6 +1156,7 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
         case type
+        case role
     }
 }
 
@@ -1276,6 +1285,58 @@ struct PagerModel: BaseModel {
     }
 }
 
+/// @note For internal use only. :nodoc:
+public enum AccessibilityActionType: String, Codable, Sendable {
+    case `default` = "default"
+    case escape = "escape"
+}
+
+enum AutomatedAccessibilityActionType: String, Codable {
+    case announce = "announce"
+}
+
+struct AutomatedAccessibilityAction: Codable, Equatable, Sendable {
+    let type: AutomatedAccessibilityActionType
+}
+
+struct AccessibilityActionName: Codable, Equatable, Sendable, Hashable {
+    let nameKey: String?
+    let fallbackName: String
+
+    enum CodingKeys: String, CodingKey {
+        case nameKey = "ref"
+        case fallbackName = "fallback"
+    }
+}
+
+struct AccessibilityAction: Codable, Equatable, Sendable, Hashable, Identifiable {
+    var id: String { name.fallbackName }
+
+    let type: AccessibilityActionType
+    let reportingMetadata: AirshipJSON?
+    let name: AccessibilityActionName
+    let actions: [ActionsPayload]?
+    let behaviors: [ButtonClickBehavior]?
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case reportingMetadata = "reporting_metadata"
+        case name
+        case actions
+        case behaviors
+    }
+}
+
+struct AccessibilityActionPager: Codable, Equatable, Sendable {
+    let hasNext: Bool
+    let hasPrevious: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case hasNext = "has_next"
+        case hasPrevious = "has_previous"
+    }
+}
+
 struct AutomatedAction: Codable, Equatable, Sendable {
     let identifier: String
     let delay: Double?
@@ -1311,12 +1372,14 @@ struct PagerItem: Codable, Equatable, Sendable {
     let view: ViewModel
     let displayActions: ActionsPayload?
     let automatedActions: [AutomatedAction]?
-    
+    let accessibilityActions: [AccessibilityAction]?
+
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
         case view = "view"
         case displayActions = "display_actions"
         case automatedActions = "automated_actions"
+        case accessibilityActions = "accessibility_actions"
     }
 }
 
@@ -1329,6 +1392,7 @@ struct PagerIndicatorModel: BaseModel {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
+    let automatedAccessibilityActions: [AutomatedAccessibilityAction]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1339,6 +1403,7 @@ struct PagerIndicatorModel: BaseModel {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case type
+        case automatedAccessibilityActions = "automated_accessibility_actions"
     }
 
     struct Bindings: Codable, Equatable, Sendable {
@@ -1371,6 +1436,7 @@ struct StoryIndicatorModel: BaseModel {
     let enableBehaviors: [EnableBehavior]?
     let source: StoryIndicatorSource
     let style: LinearProgressStoryIndicatorStyle
+    let automatedAccessibilityActions: [AutomatedAccessibilityAction]?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1381,6 +1447,7 @@ struct StoryIndicatorModel: BaseModel {
         case source = "source"
         case style = "style"
         case type
+        case automatedAccessibilityActions = "automated_accessibility_actions"
     }
     
     struct StoryIndicatorSource: Codable, Equatable, Sendable {
@@ -1544,6 +1611,7 @@ struct CheckboxControllerModel: BaseModel, Accessible {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1558,6 +1626,7 @@ struct CheckboxControllerModel: BaseModel, Accessible {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
+        case role
     }
 }
 
@@ -1574,6 +1643,7 @@ struct RadioInputControllerModel: BaseModel, Accessible {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1588,11 +1658,24 @@ struct RadioInputControllerModel: BaseModel, Accessible {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
+        case role
     }
+}
+
+enum AccessibilityRole: String, Codable {
+    case heading
+    case checkbox
+    case button
+    case form
+    case radio
+    case radioGroup = "radiogroup"
+    case presentation
 }
 
 protocol Accessible {
     var contentDescription: String? { get }
+
+    var role: AccessibilityRole? { get }
 }
 
 struct TextInputModel: BaseModel, Accessible, Codable {
@@ -1608,6 +1691,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let inputType: TextInputType
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case textAppearance = "text_appearance"
@@ -1622,6 +1706,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case inputType = "input_type"
         case type
+        case role
     }
 }
 
@@ -1638,6 +1723,7 @@ struct ToggleModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1652,6 +1738,7 @@ struct ToggleModel: BaseModel, Accessible, Codable {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
+        case role
     }
 }
 
@@ -1665,6 +1752,7 @@ struct CheckboxModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1676,7 +1764,7 @@ struct CheckboxModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case type
-
+        case role
     }
 }
 
@@ -1691,6 +1779,7 @@ struct RadioInputModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case style = "style"
@@ -1703,6 +1792,7 @@ struct RadioInputModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case type
+        case role
     }
 }
 
@@ -1791,6 +1881,7 @@ struct ScoreModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
+    var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1804,6 +1895,7 @@ struct ScoreModel: BaseModel, Accessible, Codable {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
+        case role
     }
 }
 

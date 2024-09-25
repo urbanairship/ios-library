@@ -34,7 +34,6 @@ final class ThomasDisplayListener: ThomasDelegate {
         }
     }
 
-
     func onFormSubmitted(
         formResult: ThomasFormResult,
         layoutContext: ThomasLayoutContext
@@ -165,7 +164,7 @@ final class ThomasDisplayListener: ThomasDelegate {
             layoutContext: layoutContext
         )
     }
-    
+
     func onPageSwiped(
         from: ThomasPagerInfo,
         to: ThomasPagerInfo,

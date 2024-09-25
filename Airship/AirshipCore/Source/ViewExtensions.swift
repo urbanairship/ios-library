@@ -36,11 +36,15 @@ public extension View {
 
 
     @ViewBuilder
-    internal func accessible(_ accessible: Accessible?, hideIfNotSet: Bool = false) -> some View {
+    internal func accessible(_ accessible: Accessible?, hideIfNotSet: Bool = false, isSelected: Bool = false) -> some View {
         if let label = accessible?.contentDescription {
             self.accessibility(label: Text(label))
         } else {
             self.accessibilityHidden(hideIfNotSet)
+        }
+
+        if let role = accessible?.role {
+            self.accessibilityAddTraits(role.toAccessibilityTraits(isSelected: isSelected))
         }
     }
 
@@ -151,5 +155,34 @@ struct AirshipViewModifierBuilder {
                 content
             }
         }
+    }
+}
+
+extension AccessibilityRole {
+    func toAccessibilityTraits(isSelected: Bool = false) -> AccessibilityTraits {
+        var traits: AccessibilityTraits = []
+
+        switch self {
+        case .heading:
+            _ = traits.insert(.isHeader)
+        case .checkbox, .radio:
+            _ = traits.insert(.isButton)
+            if isSelected {
+                _ = traits.insert(.isSelected)
+            }
+        case .button:
+            _ = traits.insert(.isButton)
+        case .form:
+            // No direct equivalent; adjust if necessary
+            break
+        case .radioGroup:
+            // No direct equivalent; adjust if necessary
+            break
+        case .presentation:
+            // No direct equivalent; adjust if necessary
+            break
+        }
+
+        return traits
     }
 }

@@ -1284,9 +1284,6 @@
 		6EFD6D79272A1F26005B26F1 /* NpsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D77272A1F26005B26F1 /* NpsController.swift */; };
 		6EFD6D82272A53AE005B26F1 /* PagerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D81272A53AE005B26F1 /* PagerState.swift */; };
 		6EFD6D83272A53AE005B26F1 /* PagerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D81272A53AE005B26F1 /* PagerState.swift */; };
-		6EFD6D87272A53FB005B26F1 /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D84272A53FA005B26F1 /* Pager.swift */; };
-		6EFD6D88272A53FB005B26F1 /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D84272A53FA005B26F1 /* Pager.swift */; };
-		6EFD6D89272A53FB005B26F1 /* PagerIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */; };
 		6EFD6D8A272A53FB005B26F1 /* PagerIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */; };
 		6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		6EFD6D8C272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
@@ -1343,6 +1340,13 @@
 		99D1B3282B44F08900447840 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
 		99E0BD0D2B4DD4AB00465B37 /* FullscreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0C2B4DD4AB00465B37 /* FullscreenView.swift */; };
 		99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */; };
+		99E433932C9A0362006436B9 /* PagerIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */; };
+		99E433942C9A03D9006436B9 /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D84272A53FA005B26F1 /* Pager.swift */; };
+		99E433952C9A03DA006436B9 /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D84272A53FA005B26F1 /* Pager.swift */; };
+		99E433962C9A03DB006436B9 /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D84272A53FA005B26F1 /* Pager.swift */; };
+		99E433982C9A044C006436B9 /* AirshipResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E433972C9A044C006436B9 /* AirshipResources.swift */; };
+		99E433992C9A044C006436B9 /* AirshipResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E433972C9A044C006436B9 /* AirshipResources.swift */; };
+		99E4339A2C9A044C006436B9 /* AirshipResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E433972C9A044C006436B9 /* AirshipResources.swift */; };
 		99E6EF6A2B8E36BA0006326A /* InAppMessageValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */; };
 		99E6EF6D2B8E3C250006326A /* InAppMessageContentValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */; };
 		99E6F0702B97EA8F0006326A /* ValidTestMessageCenterTheme.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */; };
@@ -1429,7 +1433,6 @@
 		A67229E6281A9E640033F54D /* RadioInputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE22730E6F900548DA3 /* RadioInputController.swift */; };
 		A67229E7281A9E640033F54D /* RadioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE82730E85700548DA3 /* RadioInput.swift */; };
 		A67229E8281A9E640033F54D /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6849386273290520021675E /* Score.swift */; };
-		A67229EB281A9E640033F54D /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D84272A53FA005B26F1 /* Pager.swift */; };
 		A67229EC281A9E640033F54D /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		A67229ED281A9E640033F54D /* PagerIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D85272A53FA005B26F1 /* PagerIndicator.swift */; };
 		A67229EE281A9E640033F54D /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D5B27273257005B26F1 /* Shapes.swift */; };
@@ -2824,6 +2827,7 @@
 		99D1B3272B44F08900447840 /* AirshipSceneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneManager.swift; sourceTree = "<group>"; };
 		99E0BD0C2B4DD4AB00465B37 /* FullscreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullscreenView.swift; sourceTree = "<group>"; };
 		99E0BD0E2B4DD71A00465B37 /* InAppMessageHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageHostingController.swift; sourceTree = "<group>"; };
+		99E433972C9A044C006436B9 /* AirshipResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipResources.swift; sourceTree = "<group>"; };
 		99E6EF692B8E36BA0006326A /* InAppMessageValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageValidation.swift; sourceTree = "<group>"; };
 		99E6EF6B2B8E3AF60006326A /* InAppMessageContentValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageContentValidationTest.swift; sourceTree = "<group>"; };
 		99E6F06F2B97EA8F0006326A /* ValidTestMessageCenterTheme.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ValidTestMessageCenterTheme.plist; sourceTree = "<group>"; };
@@ -4072,6 +4076,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				99E433972C9A044C006436B9 /* AirshipResources.swift */,
 				3237D5F12B865D990055932B /* JSONValueTransformer.swift */,
 				99D1B3272B44F08900447840 /* AirshipSceneManager.swift */,
 				6E8E1C9A26447B3800B11791 /* AirshipLock.swift */,
@@ -6184,7 +6189,6 @@
 				6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
 				6E1589582AFF023400954A04 /* SessionEvent.swift in Sources */,
 				6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */,
-				6EFD6D89272A53FB005B26F1 /* PagerIndicator.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E49D7C828401D2E00C7BB9D /* APNSRegistrar.swift in Sources */,
 				6E49D7B228401D2E00C7BB9D /* Permission.swift in Sources */,
@@ -6216,6 +6220,7 @@
 				A658DE192728498900007672 /* AirshipWebview.swift in Sources */,
 				6E15B72D26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */,
 				6E07688829F9D28A0014E2A9 /* AirshipNotificationCenter.swift in Sources */,
+				99E433932C9A0362006436B9 /* PagerIndicator.swift in Sources */,
 				6E6ED1402683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
 				6EF66D912769B69C00ABCB76 /* RootView.swift in Sources */,
@@ -6225,6 +6230,7 @@
 				6EFD6D78272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6EE49C222A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
 				6EF1401B2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
+				99E433942C9A03D9006436B9 /* Pager.swift in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
@@ -6267,7 +6273,6 @@
 				6E1528282B4DCFCB00DF1377 /* AirshipActorValue.swift in Sources */,
 				6E664BCA26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
 				6ECDDE7929B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */,
-				6EFD6D87272A53FB005B26F1 /* Pager.swift in Sources */,
 				6E1C9C49271F77F2009EF9EF /* ForegroundColorViewModifier.swift in Sources */,
 				6E952920268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				6E739D6E26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
@@ -6331,6 +6336,7 @@
 				6E698E3F267BEDC300654DB2 /* AttributesEditor.swift in Sources */,
 				6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */,
 				6E3B32CF2755D8C700B89C7B /* LayoutState.swift in Sources */,
+				99E433982C9A044C006436B9 /* AirshipResources.swift in Sources */,
 				6E87BE1326E28F570005D20D /* AirshipInstance.swift in Sources */,
 				32515869272AFB2E00DF8B44 /* Media.swift in Sources */,
 				6E91B4452686911B00DDB1A8 /* EventUtils.swift in Sources */,
@@ -7087,6 +7093,7 @@
 				A67229C8281A9E630033F54D /* ThomasDelegate.swift in Sources */,
 				A67229C9281A9E630033F54D /* ThomasViewController.swift in Sources */,
 				A67229CA281A9E630033F54D /* (null) in Sources */,
+				99E4339A2C9A044C006436B9 /* AirshipResources.swift in Sources */,
 				A67229CB281A9E640033F54D /* ThomasViewModels.swift in Sources */,
 				6E6BD24C2AEAFEB700B9DFC9 /* AirsihpTriggerContext.swift in Sources */,
 				A67229CC281A9E640033F54D /* ThomasViewModelExtensions.swift in Sources */,
@@ -7102,6 +7109,7 @@
 				6ECDDE6E29B7EEE9009D79DB /* AuthToken.swift in Sources */,
 				A67229D4281A9E640033F54D /* FormInputViewModifier.swift in Sources */,
 				A67229D5281A9E640033F54D /* BorderViewModifier.swift in Sources */,
+				99E433962C9A03DB006436B9 /* Pager.swift in Sources */,
 				A67229D6281A9E640033F54D /* FontViewModifier.swift in Sources */,
 				6E91E44828EF423400B6F25E /* AirshipWorkManagerProtocol.swift in Sources */,
 				A67229D7281A9E640033F54D /* ViewConstraintsViewModifier.swift in Sources */,
@@ -7126,7 +7134,6 @@
 				A67229E7281A9E640033F54D /* RadioInput.swift in Sources */,
 				6E4A4FDC2A30358F0049FEFC /* TagsActionArgs.swift in Sources */,
 				A67229E8281A9E640033F54D /* Score.swift in Sources */,
-				A67229EB281A9E640033F54D /* Pager.swift in Sources */,
 				6E213B1A2BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */,
 				A67229EC281A9E640033F54D /* PagerController.swift in Sources */,
 				A67229ED281A9E640033F54D /* PagerIndicator.swift in Sources */,
@@ -7438,6 +7445,7 @@
 				6E698E3E267BEDC300654DB2 /* AirshipContact.swift in Sources */,
 				6E411CB02538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
 				6E6ED1412683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
+				99E433952C9A03DA006436B9 /* Pager.swift in Sources */,
 				6EFD6D79272A1F26005B26F1 /* NpsController.swift in Sources */,
 				6E664BD426C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
 				6EE49C232A13E32B00AB1CF4 /* RemoteDataProviderProtocol.swift in Sources */,
@@ -7483,7 +7491,6 @@
 				6E1528292B4DCFCB00DF1377 /* AirshipActorValue.swift in Sources */,
 				6E510C262721DA86006D9126 /* ForegroundColorViewModifier.swift in Sources */,
 				6ECDDE7A29B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */,
-				6EFD6D88272A53FB005B26F1 /* Pager.swift in Sources */,
 				6E91B46A2689327D00DDB1A8 /* CustomEvent.swift in Sources */,
 				32F01B0929E83C87007A2131 /* StoryIndicator.swift in Sources */,
 				6E664BCB26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
@@ -7544,6 +7551,7 @@
 				6E91E43E28EF423400B6F25E /* WorkConditionsMonitor.swift in Sources */,
 				6E1892B2268CE8FE00417887 /* AirshipLock.swift in Sources */,
 				6E510C252721DA86006D9126 /* MarginViewModifier.swift in Sources */,
+				99E433992C9A044C006436B9 /* AirshipResources.swift in Sources */,
 				6E698E0D267A88D600654DB2 /* EventAPIClient.swift in Sources */,
 				32515872272B007F00DF8B44 /* Media.swift in Sources */,
 				6E3B32D02755D8C700B89C7B /* LayoutState.swift in Sources */,

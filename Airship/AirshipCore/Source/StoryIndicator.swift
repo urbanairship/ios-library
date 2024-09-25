@@ -14,6 +14,10 @@ struct StoryIndicator: View {
     @EnvironmentObject var pagerState: PagerState
     @Environment(\.colorScheme) var colorScheme
     
+    func announcePage(model: StoryIndicatorModel) -> Bool {
+        return model.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
+    }
+
     @ViewBuilder
     private func createStoryIndicatorView(
         progressDelay: Binding<Double>,
@@ -42,7 +46,9 @@ struct StoryIndicator: View {
                             )
                         }
                     }
-                }
+                }.applyIf(announcePage(model: model), transform: { view in
+                    view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString, (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
+                })
             }
             
         } else if (self.model.source.type == .currentPage) {

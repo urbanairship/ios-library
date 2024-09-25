@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
 
     func displayMessageCenter(messageID: String) {
         AppState.shared.selectedTab = .messageCenter
-        AppState.shared.messageCenterController.navigate(messageID: messageID)
+        MessageCenter.shared.controller.navigate(messageID: messageID)
     }
 
     func displayMessageCenter() {

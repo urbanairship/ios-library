@@ -19,6 +19,7 @@ struct Pager: View {
     private enum PageTransition {
         case gesture(identifier: String, reportingMetadata: AirshipJSON?)
         case automated(identifier: String, reportingMetadata: AirshipJSON?)
+        case accessibilityAction(type: AccessibilityActionType, reportingMetadata: AirshipJSON?)
         case defaultSwipe
     }
 
@@ -50,6 +51,8 @@ struct Pager: View {
     @GestureState private var translation: CGFloat = 0
     @State var size: CGSize?
 
+    @State private var isVoiceOverRunning: Bool = false
+
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
 
     init(
@@ -64,6 +67,53 @@ struct Pager: View {
             in: .default
         )
         .autoconnect()
+    }
+
+    @ViewBuilder
+    private func makePageViews(index: Binding<Int>, childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
+        ForEach(0..<self.model.items.count, id: \.self) { i in
+            VStack {
+                ViewFactory.createView(
+                    model: self.model.items[i].view,
+                    constraints: childConstraints
+                )
+                .allowsHitTesting(self.isVisible && i == index.wrappedValue)
+                .environment(
+                    \.isVisible,
+                     self.isVisible && i == index.wrappedValue
+                )
+                .environment(\.pageIndex, i)
+                .applyIf(true) { view in
+                    if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+                        view.accessibilityActions {
+                            makeAccessibilityActions(accessibilityActions: model.items[i].accessibilityActions, index: index)
+                        }
+                    } else {
+                        /// Applying these action
+                        view
+                    }
+                }
+                .accessibilityHidden(!(self.isVisible && i == index.wrappedValue))
+            }
+            .frame(
+                width: metrics.size.width,
+                height: metrics.size.height
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func makeAccessibilityActions(accessibilityActions: [AccessibilityAction]?, index: Binding<Int>) -> some View {
+        if let actions = accessibilityActions {
+            ForEach(actions) { accessibilityAction in
+                Button {
+                    handleActions(accessibilityAction.actions)
+                    handleBehavior(accessibilityAction.behaviors, transition: .accessibilityAction(type: accessibilityAction.type, reportingMetadata: accessibilityAction.reportingMetadata), index: index)
+                } label: {
+                    Text(accessibilityActionName(action: accessibilityAction))
+                }.accessibilityRemoveTraits(.isButton)
+            }
+        }
     }
 
     @ViewBuilder
@@ -88,25 +138,7 @@ struct Pager: View {
 
                 VStack {
                     HStack(spacing: 0) {
-                        ForEach(0..<self.model.items.count, id: \.self) { i in
-                            VStack {
-                                ViewFactory.createView(
-                                    model: self.model.items[i].view,
-                                    constraints: childConstraints
-                                )
-                                .allowsHitTesting(self.isVisible && i == index.wrappedValue)
-                                .environment(
-                                    \.isVisible,
-                                     self.isVisible && i == index.wrappedValue
-                                )
-                                .environment(\.pageIndex, i)
-                                .accessibilityHidden(!(self.isVisible && i == index.wrappedValue))
-                            }
-                            .frame(
-                                width: metrics.size.width,
-                                height: metrics.size.height
-                            )
-                        }
+                        makePageViews(index: index, childConstraints: childConstraints, metrics: metrics)
                     }
                     .offset(x: -(metrics.size.width * CGFloat(index.wrappedValue)))
                     .offset(x: calcDragOffset(index: index.wrappedValue))
@@ -125,6 +157,28 @@ struct Pager: View {
                     size = newSize
                 }
             }
+        }
+    }
+
+    private func accessibilityActionName(action: AccessibilityAction) -> String {
+        let nameKey = action.name.nameKey
+        let fallback = action.name.fallbackName
+
+        return nameKey?.airshipLocalizedString ?? fallback
+    }
+
+    private func updateVoiceoverRunningState() {
+        #if !os(watchOS)
+            isVoiceOverRunning = UIAccessibility.isVoiceOverRunning
+        #else
+            isVoiceOverRunning = false
+        #endif
+
+        /// Pause pager when voiceover is active
+        if isVoiceOverRunning {
+            pagerState.pause()
+        } else {
+            pagerState.resume()
         }
     }
 
@@ -150,10 +204,17 @@ struct Pager: View {
                 reportPage(value)
             }
             .onReceive(self.timer) { timer in
-                if let automatedActions = self.model.items[self.pagerState.pageIndex].automatedActions {
+                if let automatedActions = self.model.items[self.pagerState.pageIndex].automatedActions, !isVoiceOverRunning {
                     handlePagerProgress(automatedActions, index: index)
                 }
             }
+#if !os(watchOS)
+            .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
+                updateVoiceoverRunningState()
+            }.onAppear {
+                updateVoiceoverRunningState()
+            }
+#endif
 #if !os(tvOS)
             .applyIf(true) { view in
                 view.onTouch { isPressed in
@@ -182,7 +243,6 @@ struct Pager: View {
                     }
                 }
             }
-
             .applyIf(true) { view in
                 if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
                     view.simultaneousGesture(makeTapGesture(index: index))
@@ -190,7 +250,6 @@ struct Pager: View {
                     view
                 }
             }
-
 #endif
             .constraints(constraints)
             .background(self.model.backgroundColor)
@@ -352,6 +411,21 @@ struct Pager: View {
             )
         }
     }
+
+    private func handleAccessibilityAction(
+        accessibilityAction: AccessibilityAction,
+        transition: PageTransition,
+        index: Binding<Int>
+    ) {
+        handleBehavior(
+            accessibilityAction.behaviors,
+            transition: transition,
+            index: index
+        )
+        handleActions(accessibilityAction.actions)
+        handleEvents(transition, index: index, pageIndex: pagerState.pageIndex)
+    }
+
     
     private func handleGestureBehavior(
         _ gestureBehavior: PagerGestureBehavior,
@@ -497,6 +571,9 @@ struct Pager: View {
                 reportingMetatda: reportingMetadata,
                 layoutState: layoutState
             )
+        case .accessibilityAction(type: let type, reportingMetadata: _):
+            AirshipLogger.debug("Transition type: accessibility action with type \(type)")
+            /// TODO add accessibility action analytics event
         }
     }
     
@@ -555,7 +632,7 @@ struct Pager: View {
         guard let behaviors = behaviors else {
             return false
         }
-        
+
         return !behaviors.filter{ Pager.navigationAction.contains($0) }.isEmpty
     }
     
@@ -650,4 +727,3 @@ fileprivate extension PagerModel {
         })
     }
 }
-
