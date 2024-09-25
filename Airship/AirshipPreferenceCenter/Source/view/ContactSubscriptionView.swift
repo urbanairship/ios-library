@@ -128,7 +128,7 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle
                                 itemTheme?.titleAppearance,
                                 base: DefaultContactSubscriptionViewStyle
                                     .titleAppearance
-                            )
+                            ).accessibilityAddTraits(.isHeader)
                     }
 
                     if let subtitle = item.display?.subtitle {

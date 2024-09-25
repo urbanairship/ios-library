@@ -42,6 +42,7 @@ public struct ResultPromptView: View {
                         theme?.titleAppearance,
                         base: DefaultContactManagementSectionStyle.titleAppearance
                     )
+                    .accessibilityAddTraits(.isHeader)
 
                 if let body = item.body {
                     /// Body
@@ -70,6 +71,7 @@ public struct ResultPromptView: View {
             )
             .padding(alertExternalPadding)
             .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
+            .accessibilityAddTraits(.isModal)
         }
     }
 }

@@ -1316,6 +1316,7 @@
 		9919EE452B2263CF00A46BFE /* ArishipCustomViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */; };
 		99303B062BD97F89002174CA /* ChannelListViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99303B052BD97F89002174CA /* ChannelListViewCell.swift */; };
 		993AFDFE2C1B2D9A00AA875B /* PreferenceCenterConfig+ContactManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993AFDFD2C1B2D9A00AA875B /* PreferenceCenterConfig+ContactManagement.swift */; };
+		993F91FB2CA37874001B1C2E /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 993F91FA2CA37874001B1C2E /* FooterView.swift */; };
 		99560C1E2BAE2FFA00F28BDC /* ChannelTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C1D2BAE2FFA00F28BDC /* ChannelTextField.swift */; };
 		99560C222BAE3D5D00F28BDC /* LabeledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C212BAE3D5D00F28BDC /* LabeledButton.swift */; };
 		99560C282BB3843600F28BDC /* PreferenceCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C272BB3843600F28BDC /* PreferenceCenterUtils.swift */; };
@@ -2805,6 +2806,7 @@
 		99104DF22BA6689A0040C0FD /* PreferenceCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCloseButton.swift; sourceTree = "<group>"; };
 		99303B052BD97F89002174CA /* ChannelListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewCell.swift; sourceTree = "<group>"; };
 		993AFDFD2C1B2D9A00AA875B /* PreferenceCenterConfig+ContactManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreferenceCenterConfig+ContactManagement.swift"; sourceTree = "<group>"; };
+		993F91FA2CA37874001B1C2E /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		99560C1D2BAE2FFA00F28BDC /* ChannelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTextField.swift; sourceTree = "<group>"; };
 		99560C212BAE3D5D00F28BDC /* LabeledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledButton.swift; sourceTree = "<group>"; };
 		99560C272BB3843600F28BDC /* PreferenceCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterUtils.swift; sourceTree = "<group>"; };
@@ -3097,6 +3099,7 @@
 				32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */,
 				99560C302BB3864E00F28BDC /* RemoveChannelPromptView.swift */,
 				99560C342BB38A2900F28BDC /* ResultPromptView.swift */,
+				993F91FA2CA37874001B1C2E /* FooterView.swift */,
 				322AAB1C2B5A869000652DAC /* ContactManagementView.swift */,
 				322AAB202B5ACB2800652DAC /* ChannelListView.swift */,
 				99303B052BD97F89002174CA /* ChannelListViewCell.swift */,
@@ -6755,6 +6758,7 @@
 				99560C312BB3864E00F28BDC /* RemoveChannelPromptView.swift in Sources */,
 				6E9B488B2891962000C905B1 /* PreferenceCenterView.swift in Sources */,
 				6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */,
+				993F91FB2CA37874001B1C2E /* FooterView.swift in Sources */,
 				99104DF32BA6689A0040C0FD /* PreferenceCloseButton.swift in Sources */,
 				6E9B48932891B6A700C905B1 /* ChannelSubscriptionView.swift in Sources */,
 				6E9B48952891B6B400C905B1 /* ContactSubscriptionView.swift in Sources */,
