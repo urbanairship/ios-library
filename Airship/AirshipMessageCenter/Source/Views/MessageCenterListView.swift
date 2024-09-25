@@ -206,6 +206,7 @@ public struct MessageCenterListView: View {
         if #available(iOS 16.0, *) {
             content.background(
                 NavigationLink("", value: selected)
+                .accessibilityHidden(true)
                 .navigationDestination(isPresented: $isActive) {
                     destination
                 }
@@ -213,6 +214,7 @@ public struct MessageCenterListView: View {
         } else {
             content.background(
                 NavigationLink("", destination: destination, isActive: $isActive)
+                    .accessibilityHidden(true)
             )
         }
     }
