@@ -26,7 +26,7 @@ protocol AssetFileManager: Sendable {
     func clearAssets(identifier: String, cacheURL: URL) throws
 }
 
-protocol AssetCacheManagerProtocol: AnyActor {
+protocol AssetCacheManagerProtocol: Actor {
     func cacheAssets(
         identifier: String,
         assets: [String]

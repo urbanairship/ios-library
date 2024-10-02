@@ -75,6 +75,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 }
 
 
+@MainActor
 private class EmbeddedViewModel: ObservableObject {
 
     @Published
@@ -147,6 +148,7 @@ public struct AirshipEmbeddedViewStyleConfiguration {
 public protocol AirshipEmbeddedViewStyle {
     associatedtype Body: View
     typealias Configuration = AirshipEmbeddedViewStyleConfiguration
+    @preconcurrency @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 

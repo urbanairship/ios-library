@@ -10,7 +10,7 @@ env:
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -28,7 +28,7 @@ jobs:
 
   build-package:
     needs: check-version
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Install Coreutils
@@ -58,7 +58,7 @@ jobs:
 
   build-samples:
     needs: check-version
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Build samples
@@ -66,24 +66,19 @@ jobs:
 
   run-tests:
     needs: check-version
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Install xcodegen
         run: brew install xcodegen
-      - name: Install yeetd
-        run: |
-          wget https://github.com/biscuitehh/yeetd/releases/download/1.0/yeetd-normal.pkg
-          sudo installer -pkg yeetd-normal.pkg -target /
-          yeetd &
       - name: Test
         run: make test
 
   deploy-github:
     permissions:
       contents: write
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
@@ -128,7 +123,7 @@ jobs:
         run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
 
   deploy-pods:
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
@@ -149,7 +144,7 @@ jobs:
           url: ${{ secrets.SLACK_WEBHOOK }}
 
   deploy-docs:
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     needs: [run-tests, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4

@@ -16,7 +16,7 @@ class PushTest: XCTestCase {
 
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
-    private let apnsRegistrar = TestAPNSRegistrar()
+    private var apnsRegistrar: TestAPNSRegistrar!
     private let badger = TestBadger()
     private let registrationDelegate = TestRegistraitonDelegate()
     private let pushDelegate = TestPushNotificationDelegate()
@@ -27,6 +27,7 @@ class PushTest: XCTestCase {
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
+        self.apnsRegistrar = await TestAPNSRegistrar()
         self.permissionsManager = await AirshipPermissionsManager()
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,

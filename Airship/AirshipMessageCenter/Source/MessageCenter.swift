@@ -284,7 +284,7 @@ extension MessageCenter {
         return true
     }
 
-    @MainActor
+    @preconcurrency @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void

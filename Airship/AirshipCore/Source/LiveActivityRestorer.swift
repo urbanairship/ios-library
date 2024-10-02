@@ -3,7 +3,7 @@ import ActivityKit
 
 /// Restores live activity tracking
 @available(iOS 16.1, *)
-public protocol LiveActivityRestorer: AnyActor {
+public protocol LiveActivityRestorer: Actor {
     /// Should be called for every live activity type that you track with Airship.
     /// This method will  track a push to start token for the activity and check if any previousl
     /// tracked live activities are still available by comparing the activity's ID. If we previously tracked

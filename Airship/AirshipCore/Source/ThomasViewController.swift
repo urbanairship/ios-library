@@ -173,6 +173,7 @@ class ThomasViewControllerOptions {
 }
 
 
+@MainActor
 class ThomasBannerConstraints: ObservableObject {
     @Published
     var size: CGSize

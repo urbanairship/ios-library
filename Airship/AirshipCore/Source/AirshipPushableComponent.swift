@@ -14,6 +14,7 @@ public protocol AirshipPushableComponent {
      *    - notification: The notification.
      *    - completionHandler: The completion handler that must be called with the fetch result.
      */
+    @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
@@ -25,6 +26,7 @@ public protocol AirshipPushableComponent {
      *    - notification: The notification.
      *    - completionHandler: The completion handler that must be called with the fetch result.
      */
+    @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
@@ -38,6 +40,7 @@ public protocol AirshipPushableComponent {
      *   - response: The notification response.
      *   - completionHandler: The completion handler that must be called after processing the response.
      */
+    @MainActor
     func receivedNotificationResponse(
         _ response: UNNotificationResponse,
         completionHandler: @escaping () -> Void
@@ -47,6 +50,7 @@ public protocol AirshipPushableComponent {
 
 extension AirshipPushableComponent {
 #if !os(watchOS)
+    @MainActor
     public func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
@@ -55,6 +59,7 @@ extension AirshipPushableComponent {
     }
 #else
 
+    @MainActor
     public func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
@@ -65,6 +70,7 @@ extension AirshipPushableComponent {
 
 #if !os(tvOS)
 
+    @MainActor
     public func receivedNotificationResponse(
         _ response: UNNotificationResponse,
         completionHandler: @escaping () -> Void

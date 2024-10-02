@@ -10,7 +10,8 @@ class PreferenceCenterStateTest: XCTestCase {
     let subscriber = TestPreferenceSubscriber()
     var state: PreferenceCenterState!
 
-    override func setUp() {
+    @MainActor
+    override func setUp() async throws {
         state = PreferenceCenterState(
             config: PreferenceCenterConfig(
                 identifier: "empty",
@@ -24,6 +25,7 @@ class PreferenceCenterStateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testChannelBinding() {
         let channelFoo = self.state.makeBinding(channelListID: "foo")
         XCTAssertTrue(channelFoo.wrappedValue)
@@ -39,6 +41,7 @@ class PreferenceCenterStateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testChannelBindingNotSubscribed() {
         let channelNotFoo = self.state.makeBinding(channelListID: "not foo")
         XCTAssertFalse(channelNotFoo.wrappedValue)
@@ -48,6 +51,7 @@ class PreferenceCenterStateTest: XCTestCase {
         XCTAssertEqual([.subscribe("not foo")], self.subscriber.channelEdits)
     }
 
+    @MainActor
     func testContactBinding() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
@@ -69,6 +73,7 @@ class PreferenceCenterStateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testContactlBindingNotSubscribed() {
         let contactNotBaz = self.state.makeBinding(
             contactListID: "not baz",
@@ -84,6 +89,7 @@ class PreferenceCenterStateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testContactlBindingPartialScope() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
@@ -110,6 +116,7 @@ class PreferenceCenterStateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testContactDifferentScope() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
@@ -118,6 +125,7 @@ class PreferenceCenterStateTest: XCTestCase {
         XCTAssertFalse(contactBaz.wrappedValue)
     }
 
+    @MainActor
     func testChannelMergeData() {
         state = PreferenceCenterState(
             config: PreferenceCenterConfig(
@@ -149,6 +157,7 @@ class PreferenceCenterStateTest: XCTestCase {
         XCTAssertEqual([], self.subscriber.channelEdits)
     }
 
+    @MainActor
     func testChannelExternalUpdates() {
         let channelFoo = self.state.makeBinding(channelListID: "foo")
         XCTAssertTrue(channelFoo.wrappedValue)
@@ -166,6 +175,7 @@ class PreferenceCenterStateTest: XCTestCase {
         XCTAssertTrue(channelFoo.wrappedValue)
     }
 
+    @MainActor
     func testContactExternalUpdates() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",

@@ -238,7 +238,8 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertEqual(.stale, result)
     }
 
-    func testContentAvailableRefresh() {
+    @MainActor
+    func testContentAvailableRefresh() async {
         XCTAssertEqual(0, self.testWorkManager.workRequests.count)
 
         let expectation = self.expectation(description: "Callback called")
@@ -250,7 +251,7 @@ final class RemoteDataTest: AirshipBaseTest {
             expectation.fulfill()
         })
 
-        waitForExpectations(timeout: testExpectationTimeOut)
+        await fulfillment(of: [expectation], timeout: testExpectationTimeOut)
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
 
@@ -393,6 +394,7 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertEqual(result, .failure)
     }
 
+    @MainActor
     func testChangeTokenBgPush() async {
         let changeToken = AirshipAtomicValue<String?>(nil)
 

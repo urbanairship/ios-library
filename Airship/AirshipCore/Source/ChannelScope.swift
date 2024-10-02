@@ -4,7 +4,7 @@ import Foundation
 
 /// Channel scopes.
 @objc(UAChannelScopes)
-public final class ChannelScopes: NSObject, Decodable, Sendable {
+public final class ChannelScopes: NSObject, Codable, Sendable {
 
     /// The scopes
     public let values: [ChannelScope]
@@ -39,6 +39,11 @@ public final class ChannelScopes: NSObject, Decodable, Sendable {
         } else {
             self.values = try singleValueContainer.decode([ChannelScope].self)
         }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(values.map { $0.rawValue })
     }
 }
 

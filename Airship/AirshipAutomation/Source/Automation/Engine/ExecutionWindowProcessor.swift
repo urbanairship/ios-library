@@ -7,7 +7,7 @@ import AirshipCore
 import Foundation
 
 
-protocol ExecutionWindowProcessorProtocol: AnyActor {
+protocol ExecutionWindowProcessorProtocol: Actor {
     func process(window: ExecutionWindow) async throws
     @MainActor
     func isActive(window: ExecutionWindow) -> Bool

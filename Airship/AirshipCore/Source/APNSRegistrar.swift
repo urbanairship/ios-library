@@ -7,22 +7,27 @@ import UIKit
 import WatchKit
 #endif
 
+@MainActor
 protocol APNSRegistrar: Sendable {
-    @MainActor
     var isRegisteredForRemoteNotifications: Bool { get }
-    @MainActor
     func registerForRemoteNotifications()
-    @MainActor
     var isRemoteNotificationBackgroundModeEnabled: Bool { get }
     #if !os(watchOS)
-    @MainActor
     var isBackgroundRefreshStatusAvailable: Bool { get }
     #endif
 }
 
 #if !os(watchOS)
 
-extension UIApplication: APNSRegistrar {
+final class UIApplicationAPNSRegistrar: APNSRegistrar {
+    var isRegisteredForRemoteNotifications: Bool {
+        return UIApplication.shared.isRegisteredForRemoteNotifications
+    }
+
+    func registerForRemoteNotifications() {
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+
     static var _isRemoteNotificationBackgroundModeEnabled: Bool {
         let backgroundModes =
             Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes")
@@ -34,20 +39,28 @@ extension UIApplication: APNSRegistrar {
     }
 
     var isRemoteNotificationBackgroundModeEnabled: Bool {
-        return UIApplication._isRemoteNotificationBackgroundModeEnabled
+        return Self._isRemoteNotificationBackgroundModeEnabled
     }
 
     var isBackgroundRefreshStatusAvailable: Bool {
-        return self.backgroundRefreshStatus == .available
+        return UIApplication.shared.backgroundRefreshStatus == .available
     }
 }
 
 #else
 
-extension WKExtension: APNSRegistrar {
+
+final class WKExtensionAPNSRegistrar: APNSRegistrar {
+    var isRegisteredForRemoteNotifications: Bool {
+        WKExtension.shared().isRegisteredForRemoteNotifications
+    }
+
+    func registerForRemoteNotifications() {
+        WKExtension.shared().registerForRemoteNotifications()
+    }
+    
     var isRemoteNotificationBackgroundModeEnabled: Bool {
         return true
-
     }
 }
 

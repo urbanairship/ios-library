@@ -51,6 +51,7 @@ public struct PrivacyManagerDebugView: View {
         .navigationTitle("Privacy Manager".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published

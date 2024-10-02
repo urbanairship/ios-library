@@ -15,6 +15,7 @@ public enum MessageCenterState: Equatable {
 
 /// Controller for the Message Center View.
 @objc(UAMessageCenterController)
+@MainActor
 public class MessageCenterController: NSObject, ObservableObject {
 
     @Published

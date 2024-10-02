@@ -2,7 +2,7 @@
 
 import Foundation
 
-protocol AirshipDeviceIDProtocol: AnyActor {
+protocol AirshipDeviceIDProtocol: Actor {
     var value: String { get async }
 }
 

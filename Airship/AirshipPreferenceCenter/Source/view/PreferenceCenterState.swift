@@ -9,6 +9,7 @@ import AirshipCore
 #endif
 
 /// Preference Center State
+@MainActor
 public class PreferenceCenterState: ObservableObject {
 
     /// The config
@@ -316,24 +317,6 @@ class AirshipPreferenceSubscriber: PreferenceSubscriber {
                 subscribe: subscribe
             )
         }
-    }
-}
-
-extension PreferenceCenterState: CustomStringConvertible {
-    public var description: String {
-        var description = "PreferenceCenterState:\n"
-        description += "- Config ID: \(config.identifier)\n"
-        description += "- Contact Subscriptions: \(contactSubscriptions.description)\n"
-        description += "- Channel Subscriptions: \(channelSubscriptions.description)\n"
-        description += "- Channels List: \(describeChannelsList())\n"
-
-        return description
-    }
-
-    private func describeChannelsList() -> String {
-        channelsList.map { associatedChannel in
-            "\(associatedChannel)"
-        }.joined(separator: "; ")
     }
 }
 

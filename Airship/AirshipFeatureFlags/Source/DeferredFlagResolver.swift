@@ -5,7 +5,7 @@ import Foundation
 import AirshipCore
 #endif
 
-protocol FeatureFlagDeferredResolverProtocol: AnyActor {
+protocol FeatureFlagDeferredResolverProtocol: Actor {
     func resolve(
         request: DeferredRequest,
         flagInfo: FeatureFlagInfo

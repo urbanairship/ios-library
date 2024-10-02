@@ -201,6 +201,7 @@ public protocol AirshipPushProtocol: AirshipBasePushProtocol {
 protocol InternalPushProtocol {
     var deviceToken: String? { get }
     func dispatchUpdateAuthorizedNotificationTypes()
+    @MainActor
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)
 

@@ -754,7 +754,7 @@ fileprivate struct PreparedData: Sendable {
 }
 
 /// Automation engine
-protocol AutomationEngineProtocol: AnyActor, Sendable {
+protocol AutomationEngineProtocol: Actor, Sendable {
     @MainActor
     func setEnginePaused(_ paused: Bool)
 

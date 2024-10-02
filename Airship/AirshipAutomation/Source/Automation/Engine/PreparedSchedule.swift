@@ -63,7 +63,23 @@ struct PreparedScheduleInfo: Codable, Equatable {
 }
 
 /// Prepared schedule data
-enum PreparedScheduleData {
+enum PreparedScheduleData: Equatable {
     case inAppMessage(PreparedInAppMessageData)
     case actions(AirshipJSON)
+
+    public static func == (lhs: PreparedScheduleData, rhs: PreparedScheduleData) -> Bool {
+        switch lhs {
+        case  .actions(let lhsJson):
+            switch rhs {
+            case .actions(let rhsJson): return lhsJson == rhsJson
+            default: return false
+            }
+        case .inAppMessage(let lhsMessageData):
+            switch rhs {
+            case .inAppMessage(let rhsMessageData):
+                return rhsMessageData.message == lhsMessageData.message
+            default: return false
+            }
+        }
+    }
 }

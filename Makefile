@@ -1,10 +1,10 @@
 
-XCODE ?= 15.3
+XCODE ?= 16.0
 
 export XCBEAUTIY_RENDERER ?= github-actions
-export TEST_DESTINATION ?= platform=iOS Simulator,OS=17.4,name=iPhone 15 Pro Max
-export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=17.4,name=Apple TV
-export TEST_DESTINATION_VISIONOS ?= platform=visionOS Simulator,OS=1.1,name=Apple Vision Pro
+export TEST_DESTINATION ?= platform=iOS Simulator,OS=18.0,name=iPhone 16 Pro Max
+export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=18.0,name=Apple TV
+export TEST_DESTINATION_VISIONOS ?= platform=visionOS Simulator,OS=2.0,name=Apple Vision Pro
 
 export DEVELOPER_DIR = $(shell bash ./scripts/get_xcode_path.sh ${XCODE} $(XCODE_PATH))
 export AIRSHIP_VERSION = $(shell bash "./scripts/airship_version.sh")
@@ -128,8 +128,8 @@ pod-lint-visionos: setup
 
 .PHONY: pod-lint-extensions
 pod-lint-extensions: setup
-	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests 
-	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests 
+	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests
+	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests
 
 .PHONY: clean
 clean:

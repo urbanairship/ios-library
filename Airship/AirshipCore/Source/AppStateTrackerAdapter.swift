@@ -92,7 +92,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
         )
     }
 
-    @MainActor(unsafe)
+    @preconcurrency @MainActor
     static func runUnsafe(_ block: @MainActor () -> Void) {
         block()
     }
@@ -181,7 +181,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
         )
     }
 
-    @MainActor(unsafe)
+    @preconcurrency @MainActor
     static func runUnsafe(_ block: @MainActor () -> Void) {
         block()
     }

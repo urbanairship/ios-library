@@ -4,6 +4,7 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class WeatherViewModel: ObservableObject {
     @Published var time: String = "Loading..."
     let summary: String

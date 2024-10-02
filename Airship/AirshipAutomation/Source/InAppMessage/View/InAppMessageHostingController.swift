@@ -135,6 +135,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     }
 }
 
+@MainActor
 class InAppMessageBannerConstraints: ObservableObject {
     @Published
     var size: CGSize

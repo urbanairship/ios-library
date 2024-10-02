@@ -9,6 +9,7 @@ import Combine
 import AirshipCore
 #endif
 
+@MainActor
 internal class AddChannelPromptViewModel: ObservableObject {
     @Published var state: AddChannelState = .ready
     @Published var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo

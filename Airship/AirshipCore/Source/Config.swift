@@ -925,11 +925,10 @@ public class AirshipConfig: NSObject, NSCopying {
     {
         AirshipLogger.trace("Profile path: \(profilePath)")
 
-        // Attempt to read this file as ASCII (rather than UTF-8) due to the binary blocks before and after the plist data
         guard
             let embeddedProfile: String = try? String(
                 contentsOfFile: profilePath,
-                encoding: .ascii
+                encoding: .isoLatin1
             )
         else {
             AirshipLogger.info(

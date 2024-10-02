@@ -10,6 +10,7 @@ enum LoginState {
     case loading
 }
 
+@MainActor
 class BiometricLoginViewModel:ObservableObject {
     init(context: LAContext = LAContext(), state: LoginState = .ready) {
         self.context = context

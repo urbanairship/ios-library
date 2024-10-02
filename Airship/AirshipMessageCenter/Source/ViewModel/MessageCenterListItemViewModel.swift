@@ -7,6 +7,7 @@ import Foundation
 import AirshipCore
 #endif
 
+@MainActor
 class MessageCenterListItemViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()

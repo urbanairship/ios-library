@@ -59,6 +59,7 @@ struct NamedUserView: View {
     }
 
 
+    @MainActor
     private class ViewModel: ObservableObject {
         @Published
         public var namedUserID: String = ""

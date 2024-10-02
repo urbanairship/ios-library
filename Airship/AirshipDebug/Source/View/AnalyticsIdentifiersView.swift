@@ -44,6 +44,7 @@ public struct AnalyticsIdentifiersView: View {
         .navigationTitle("Analytic Identifiers".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published var identifiers: [String: String] {
             didSet {

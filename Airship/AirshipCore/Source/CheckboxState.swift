@@ -2,6 +2,7 @@
 
 import Foundation
 
+@MainActor
 class CheckboxState: ObservableObject {
     let minSelection: Int
     let maxSelection: Int

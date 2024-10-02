@@ -156,6 +156,7 @@ struct HomeView: View {
         .navigationBarHidden(true)
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published
         var pushEnabled: Bool = true

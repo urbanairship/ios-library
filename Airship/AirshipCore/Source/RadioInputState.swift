@@ -2,6 +2,7 @@
 
 import Foundation
 
+@MainActor
 class RadioInputState: ObservableObject {
     @Published
     var selectedItem: String?

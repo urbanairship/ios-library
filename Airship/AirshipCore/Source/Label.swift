@@ -17,7 +17,12 @@ struct Label: View {
     @available(iOS 15, tvOS 15, watchOS 8, *)
     private var markdownText: Text {
         get throws {
-            var text = try AttributedString(markdown: self.model.text)
+            var text = try AttributedString(
+                markdown: self.model.text,
+                options: .init(
+                    interpretedSyntax: .inlineOnlyPreservingWhitespace
+                )
+            )
 
             let anchorAppearance = self.model.markdown?.appearance?.anchor
             let anchorColor = anchorAppearance?.color?.toColor(self.colorScheme)

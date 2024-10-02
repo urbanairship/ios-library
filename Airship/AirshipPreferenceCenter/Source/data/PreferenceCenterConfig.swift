@@ -1210,12 +1210,6 @@ extension PreferenceCenterConfig.ContactSubscription: Encodable {
     }
 }
 
-extension ChannelScopes: Encodable {
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(values.map { $0.rawValue })
-    }
-}
 
 extension PreferenceCenterConfig.Alert: Encodable {}
 

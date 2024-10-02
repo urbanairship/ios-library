@@ -283,6 +283,7 @@ class AirshipContactTest: XCTestCase {
         XCTAssertTrue(contactChannelsProvider.refreshedCalled)
     }
 
+    @MainActor
     func testRefreshContactChannelsOnPush() async throws {
         self.contact.receivedRemoteNotification(
             [

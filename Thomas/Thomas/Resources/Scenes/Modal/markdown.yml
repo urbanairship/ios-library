@@ -121,6 +121,42 @@ view:
               height: auto
             view:
               type: label
+              text: "__Label with line breaks:__\nNormal\n__Bold__\n_Italic_\n___Bold + Italic___"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "Markdown formatting will *preserve* **symbols**, **punctuation**, & **newlines** in the original text:\n\n!@#$%^&*()_+-=[]{}|;':,.<>"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
               text: ~~Strikethrough~~
               text_appearance:
                 alignment: start

@@ -53,6 +53,7 @@ struct LiveActivityManagementView: View {
     }
 
     @available(iOS 16.1, *)
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published
