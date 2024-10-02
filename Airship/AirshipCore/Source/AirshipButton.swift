@@ -16,9 +16,9 @@ struct AirshipButton<Label> : View  where Label : View {
     let reportingMetadata: AirshipJSON?
     let description: String
     let clickBehaviors:[ButtonClickBehavior]?
+    let eventHandlers: [EventHandler]?
     let actions: ActionsPayload?
     let label: () -> Label
-
 
     var body: some View {
 
@@ -110,6 +110,28 @@ struct AirshipButton<Label> : View  where Label : View {
 
         if let actions = actions {
             thomasEnvironment.runActions(actions, layoutState: layoutState)
+        }
+
+        applyEventHandlers(type: .tap)
+    }
+
+    private func applyEventHandlers(type: EventHandlerType) {
+        self.eventHandlers?.forEach { eventHandler in
+            if eventHandler.type == type {
+                eventHandler.stateActions.forEach { action in
+                    switch action {
+                    case .setState(let details):
+                        viewState.updateState(
+                            key: details.key,
+                            value: details.value?.unWrap()
+                        )
+                    case .clearState:
+                        viewState.clearState()
+                    case .formValue(_):
+                        AirshipLogger.error("Unable to process form value")
+                    }
+                }
+            }
         }
     }
 }

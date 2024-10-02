@@ -22,16 +22,15 @@ public extension View {
         }
     }
 
+    @ViewBuilder
     internal func addTapGesture(action: @escaping () -> Void) -> some View {
-        #if os(tvOS)
-        // broken on tvOS for now
-        self
-        #else
-        self.simultaneousGesture(TapGesture().onEnded(action))
-            .accessibilityAction(.default) {
-                action()
-            }
-        #endif
+        if #available(iOS 13.0, macOS 10.15, tvOS 16.0, watchOS 6.0, *) {
+            self.onTapGesture(perform: action)
+                .accessibilityAction(.default, action)
+        } else {
+            // Tap gesture is unavailable on tvOS versions prior to tvOS 16 for now
+            self.accessibilityAction(.default, action)
+        }
     }
 
 
@@ -46,6 +45,15 @@ public extension View {
         if let role = accessible?.role {
             self.accessibilityAddTraits(role.toAccessibilityTraits(isSelected: isSelected))
         }
+    }
+
+    /// Common modifier for buttons so event handlers can be added separately to prevent tap issues
+    @ViewBuilder
+    internal func commonButton<Content: BaseModel>(
+        _ model: Content
+    ) -> some View {
+        self.enableBehaviors(model.enableBehaviors)
+        .visibility(model.visibility)
     }
 
     @ViewBuilder
