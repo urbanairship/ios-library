@@ -19,9 +19,7 @@ protocol APNSRegistrar: Sendable {
 
 #if !os(watchOS)
 
-extension UIApplication: @retroactive Sendable {}
-
-extension UIApplication: APNSRegistrar {
+final class UIApplicationAPNSRegistrar: APNSRegistrar {
     var isRegisteredForRemoteNotifications: Bool {
         return UIApplication.shared.isRegisteredForRemoteNotifications
     }
@@ -48,7 +46,6 @@ extension UIApplication: APNSRegistrar {
         return UIApplication.shared.backgroundRefreshStatus == .available
     }
 }
-
 #else
 
 
