@@ -80,6 +80,7 @@ struct TextInput: View {
             createTextEditor()
                 .id(self.model.identifier)
         }
+        .padding(self.model.border?.strokeWidth ?? 0)
         #if !os(watchOS)
         .keyboardType(keyboardType)
         #endif

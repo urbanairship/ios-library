@@ -10,9 +10,9 @@ struct BorderViewModifier: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let color = border.strokeColor?.toColor(colorScheme),
-            let width = border.strokeWidth
-        {
+        if let width = border.strokeWidth {
+            // Defaults to black to match Android & Web
+            let color = border.strokeColor?.toColor(colorScheme) ?? .black
             if let cornerRadius = border.radius, cornerRadius > 0 {
                 content.overlay(
                     RoundedRectangle(
