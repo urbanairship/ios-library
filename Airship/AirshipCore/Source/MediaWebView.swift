@@ -108,8 +108,9 @@ struct MediaWebView: UIViewRepresentable {
         webView.isAccessibilityElement = true
         webView.accessibilityLabel = model.contentDescription
         webView.scrollView.isScrollEnabled = false
-        webView.backgroundColor = UIColor.black
-        webView.scrollView.backgroundColor = UIColor.black
+        webView.isOpaque = false
+        webView.backgroundColor = UIColor.clear
+        webView.scrollView.backgroundColor = UIColor.clear
         webView.navigationDelegate = context.coordinator
         webView.scrollView.contentInsetAdjustmentBehavior = .never
 
