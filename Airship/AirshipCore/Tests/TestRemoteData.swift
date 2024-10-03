@@ -6,6 +6,8 @@ import Combine
 
 
 final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
+    func forceRefresh() async {
+    }
 
     var waitForRefreshAttemptBlock: ((RemoteDataSource, TimeInterval?) -> Void)?
     var waitForRefreshBlock: ((RemoteDataSource, TimeInterval?) -> Void)?
@@ -22,8 +24,6 @@ final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
 
     var status: [RemoteDataSource : RemoteDataSourceStatus] = [:]
 
-
-    var refreshBlock: ((RemoteDataSource) -> Bool)?
 
     var remoteDataRefreshInterval: TimeInterval = 0
     var isContactSourceEnabled: Bool = false
@@ -71,17 +71,6 @@ final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
         }
     }
 
-    func refresh() async -> Bool {
-        return true
-    }
-
-    func refresh(source: AirshipCore.RemoteDataSource) async -> Bool {
-        guard let block = self.refreshBlock else {
-            return true
-        }
-        
-        return block(source)
-    }
 
     func waitRefresh(
         source: AirshipCore.RemoteDataSource,

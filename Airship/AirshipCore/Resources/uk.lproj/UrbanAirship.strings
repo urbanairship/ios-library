@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Скасувати вибір";
 "ua_select_none_messages_description" = "Скинути вибір повідомлення";
 "ua_unread_message_description" = "Повідомлення непрочитане";
+
+// Generic localizations
+"ua_dismiss" = "Відхилити";
+"ua_escape" = "Вихід";
+"ua_next" = "Далі";
+"ua_previous" = "Попередній";
+"ua_submit" = "Подати";
+"ua_loading" = "Завантаження";
+"ua_pager_progress" = "Сторінка %@ з %@";
+"ua_play" = "Грати";
+"ua_pause" = "Пауза";
+"ua_stop" = "Стоп";

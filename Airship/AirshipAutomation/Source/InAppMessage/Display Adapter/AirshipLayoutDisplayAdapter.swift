@@ -10,6 +10,7 @@ import AirshipCore
 final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     private let message: InAppMessage
+    private let priority: Int
     private let assets: AirshipCachedAssetsProtocol
     private let actionRunner: InternalInAppActionRunner?
     private let networkChecker: AirshipNetworkCheckerProtocol
@@ -22,11 +23,13 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     init(
         message: InAppMessage,
+        priority: Int,
         assets: AirshipCachedAssetsProtocol,
         actionRunner: InternalInAppActionRunner? = nil,
         networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
     ) throws {
         self.message = message
+        self.priority = priority
         self.assets = assets
         self.actionRunner = actionRunner
         self.networkChecker = networkChecker
@@ -343,7 +346,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                     scene: scene,
                     extensions: extensions,
                     delegate: listener,
-                    extras: message.extras
+                    extras: message.extras,
+                    priority: priority
                 )
             } catch {
                 continuation.resume(throwing: error)

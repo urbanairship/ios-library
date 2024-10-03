@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Επιλογή κανενός";
 "ua_select_none_messages_description" = "Επαναφορά της επιλογής μηνύματος";
 "ua_unread_message_description" = "Μη αναγνωσμένο μήνυμα";
+
+// Generic localizations
+"ua_dismiss" = "Απόρριψη";
+"ua_escape" = "Διαφυγή";
+"ua_next" = "Επόμενο";
+"ua_previous" = "Προηγούμενο";
+"ua_submit" = "Υποβολή";
+"ua_loading" = "Φόρτωση";
+"ua_pager_progress" = "Σελίδα %@ από %@";
+"ua_play" = "Αναπαραγωγή";
+"ua_pause" = "Παύση";
+"ua_stop" = "Διακοπή";

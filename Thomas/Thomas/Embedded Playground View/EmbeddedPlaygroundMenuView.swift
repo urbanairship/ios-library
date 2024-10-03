@@ -10,6 +10,7 @@ struct Item {
     var destination: AnyView
 }
 
+@MainActor
 class EmbeddedPlaygroundMenuViewModel: ObservableObject {
     @Published var selectedFileID: String = "" {
         didSet {

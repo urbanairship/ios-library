@@ -78,7 +78,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
             .textAppearance(
                 viewModel.theme?.titleAppearance,
                 base: DefaultContactManagementSectionStyle.titleAppearance
-            )
+            ).accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
@@ -133,13 +133,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     private var footer: some View {
         /// Footer
         if let footer = self.viewModel.item.display.footer {
-            Text(LocalizedStringKey(footer)) /// Markdown parsing in iOS15+
-                .textAppearance(
-                    viewModel.theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
-                )
-                .fixedSize(horizontal: false, vertical: true)
-                .lineLimit(2)
+            FooterView(text: footer, textAppearance: viewModel.theme?.subtitleAppearance ?? DefaultContactManagementSectionStyle.subtitleAppearance)
         }
     }
 
@@ -189,6 +183,6 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                         }
                     }
                 }
-        }
+        }.accessibilityAddTraits(.isModal)
     }
 }

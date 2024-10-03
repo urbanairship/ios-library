@@ -95,7 +95,7 @@ struct ViewConstraints: Equatable {
             parentHeight
         )
 
-        childHeight = childHeight? .bound(
+        childHeight = childHeight?.bound(
             minValue: childMinHeight,
             maxValue: childMaxHeight
         )

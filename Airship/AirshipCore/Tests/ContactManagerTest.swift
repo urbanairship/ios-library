@@ -64,6 +64,21 @@ final class ContactManagerTest: XCTestCase {
         XCTAssertFalse(self.workManager.workRequests.isEmpty)
     }
 
+    func testChannelCreationEnqueuesWork() async throws {
+        await self.contactManager.setEnabled(enabled: true)
+        XCTAssertTrue(self.workManager.workRequests.isEmpty)
+
+        let expectation = XCTestExpectation(description: "work added")
+        workManager.onNewWorkRequestAdded = { work in
+            expectation.fulfill()
+        }
+
+        self.channel.identifier = "some-id"
+
+        await fulfillment(of: [expectation], timeout: 30)
+        XCTAssertFalse(self.workManager.workRequests.isEmpty)
+    }
+
     func testAddOperationEnqueuesWork() async throws {
         await self.contactManager.setEnabled(enabled: true)
         XCTAssertTrue(self.workManager.workRequests.isEmpty)

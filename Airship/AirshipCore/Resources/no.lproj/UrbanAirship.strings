@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Velg ingen";
 "ua_select_none_messages_description" = "Tilbakestill meldingsvalg";
 "ua_unread_message_description" = "Melding ulest";
+
+// Generic localizations
+"ua_dismiss" = "Avvis";
+"ua_escape" = "Avbryt";
+"ua_next" = "Neste";
+"ua_previous" = "Forrige";
+"ua_submit" = "Send inn";
+"ua_loading" = "Laster";
+"ua_pager_progress" = "Side %@ av %@";
+"ua_play" = "Spill av";
+"ua_pause" = "Pause";
+"ua_stop" = "Stopp";

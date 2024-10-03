@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "किसी का चयन न करें";
 "ua_select_none_messages_description" = "संदेश चयन रीसेट करें";
 "ua_unread_message_description" = "संदेश अपठित करें";
+
+// Generic localizations
+"ua_dismiss" = "खारिज करें";
+"ua_escape" = "बचें";
+"ua_next" = "अगला";
+"ua_previous" = "पिछला";
+"ua_submit" = "जमा करें";
+"ua_loading" = "लोड हो रहा है";
+"ua_pager_progress" = "पृष्ठ %@ का %@";
+"ua_play" = "चलाएं";
+"ua_pause" = "विराम";
+"ua_stop" = "रोकें";

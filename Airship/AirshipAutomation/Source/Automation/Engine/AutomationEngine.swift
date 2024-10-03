@@ -24,6 +24,11 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let date: AirshipDateProtocol
     private let taskSleeper: AirshipTaskSleeper
 
+    private var processPendingExecutionTask: Task<Void, Never>?
+    private var pendingExecution: [String: PreparedData] = [:]
+    private var preprocessDelayTasks: Set<Task<Bool, Error>> = Set()
+
+
     init(
         store: AutomationStore,
         executor: AutomationExecutor,
@@ -92,7 +97,13 @@ actor AutomationEngine : AutomationEngineProtocol {
                     }
                 }
             }
+        }
 
+        Task {
+            while true {
+                await self.scheduleConditionsChangedNotifier.wait()
+                await startProcessingPendingExecution()
+            }
         }
     }
 
@@ -133,6 +144,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         }
 
         await self.triggersProcessor.updateSchedules(updated)
+        self.cancelPreprocessDelayTasks()
     }
 
     func cancelSchedules(identifiers: [String]) async throws {
@@ -274,7 +286,6 @@ actor AutomationEngine : AutomationEngineProtocol {
     }
 }
 
-
 /// Schedule processing
 fileprivate extension AutomationEngine {
     private func processTriggerResult(_ result: TriggerResult) async {
@@ -325,7 +336,7 @@ fileprivate extension AutomationEngine {
         }
     }
 
-    private func processTriggeredSchedule(scheduleID: String) async throws {
+    private func verifyTriggeredData(scheduleID: String) async throws {
         guard
             let data = try await self.store.getSchedule(scheduleID: scheduleID)
         else {
@@ -345,17 +356,205 @@ fileprivate extension AutomationEngine {
             await self.preparer.cancelled(schedule: data.schedule)
             return
         }
+    }
+
+    private func preprocessDelay(data: AutomationScheduleData) async -> Bool {
+        guard let delay = data.schedule.delay else { return true }
+        let scheduleID = data.schedule.identifier
+        let triggerDate = data.triggerInfo?.date ?? data.scheduleStateChangeDate
+
+        let task = Task {
+            AirshipLogger.trace("Preprocessing delay \(scheduleID)")
+            try await self.delayProcessor.preprocess(
+                delay: delay,
+                triggerDate: triggerDate
+            )
+            AirshipLogger.trace("Finished preprocessing delay \(scheduleID)")
+            return true
+        }
+
+        preprocessDelayTasks.insert(task)
+        let result = try? await task.value
+        preprocessDelayTasks.remove(task)
+        return result ?? false
+    }
+
+    private func cancelPreprocessDelayTasks() {
+        preprocessDelayTasks.forEach { $0.cancel() }
+        preprocessDelayTasks.removeAll()
+    }
+
+    private func processTriggeredSchedule(scheduleID: String) async throws {
+        guard
+            let data = try await self.store.getSchedule(scheduleID: scheduleID)
+        else {
+            AirshipLogger.trace("Aborting processing schedule \(scheduleID), no longer in database.")
+            return
+        }
+
+        guard
+            data.isInState([.triggered])
+        else {
+            AirshipLogger.trace("Aborting processing schedule \(data), no longer triggered.")
+            return
+        }
+
+        guard 
+            await preprocessDelay(data: data)
+        else {
+            AirshipLogger.trace("Preprocess delay was interrupted, retrying \(scheduleID)")
+            try await processTriggeredSchedule(scheduleID: scheduleID)
+            return
+        }
+
+        guard
+            try await self.store.getSchedule(scheduleID: scheduleID) == data
+        else {
+            AirshipLogger.trace("Trigger data has changed since preprocessing, retrying \(scheduleID)")
+            try await processTriggeredSchedule(scheduleID: scheduleID)
+            return
+        }
+
+        guard data.isActive(date: self.date.now) else {
+            AirshipLogger.trace("Aborting processing schedule \(data), no longer active.")
+            await self.preparer.cancelled(schedule: data.schedule)
+            return
+        }
 
         /// Prepare
         guard let prepared = try await self.prepareSchedule(data: data) else {
             return
         }
 
-        // Execute
-        try await self.startExecuting(data: prepared.0, preparedSchedule: prepared.1)
+        try await processPrepared(preparedData: prepared)
     }
 
-    private func prepareSchedule(data: AutomationScheduleData) async throws -> (AutomationScheduleData, PreparedSchedule)? {
+
+    private func processPrepared(preparedData: PreparedData) async throws {
+        await waitForConditions(preparedData: preparedData)
+
+        guard await checkStillValid(prepared: preparedData) else {
+            let updated = try await self.updateState(identifier: preparedData.scheduleData.schedule.identifier) { [date] data in
+                data.executionInvalidated(date: date.now)
+            }
+
+            if updated?.scheduleState == .triggered {
+                await self.startTaskToProcessTriggeredSchedule(
+                    scheduleID: preparedData.scheduleID
+                )
+            } else {
+                await self.preparer.cancelled(schedule: preparedData.scheduleData.schedule)
+            }
+            return
+        }
+
+        self.addPending(preparedData: preparedData)
+        await self.startProcessingPendingExecution()
+    }
+
+    private func startProcessingPendingExecution() async {
+        await self.processPendingExecutionTask?.value
+        self.processPendingExecutionTask = Task {
+            await processPendingExecution()
+        }
+    }
+
+    private func processPendingExecution() async {
+        var processedScheduleIDs = Set<String>()
+
+        while true {
+            let next = self.pendingExecution.values.filter { data in
+                !processedScheduleIDs.contains(data.scheduleID)
+            }.sorted { l, r in
+                l.priority < r.priority
+            }.first
+
+            guard let next else { return }
+
+            processedScheduleIDs.insert(next.scheduleID)
+
+            guard
+                await checkStillValid(prepared: next),
+                await self.delayProcessor.areConditionsMet(delay: next.scheduleData.schedule.delay)
+            else {
+                self.pendingExecution.removeValue(forKey: next.scheduleID)
+                Task {
+                    do {
+                        try await processPrepared(preparedData: next)
+                    } catch {
+                        AirshipLogger.error("Failed to execute schedule \(next.scheduleData) \(error)")
+                    }
+                }
+                continue
+            }
+
+            self.pendingExecution.removeValue(forKey: next.scheduleID)
+
+            Task { @MainActor in
+                do {
+                    let handled = try await attemptExecution(
+                        data: next.scheduleData,
+                        preparedSchedule: next.preparedSchedule
+                    )
+
+                    if (!handled) {
+                        await addPending(preparedData: next)
+                    }
+                } catch {
+                    AirshipLogger.error("Failed to execute schedule \(next.scheduleData) \(error)")
+                }
+            }
+        }
+    }
+
+    private func addPending(preparedData: PreparedData) {
+        AirshipLogger.trace("Adding \(preparedData.scheduleID) to pending execution queue")
+        self.pendingExecution[preparedData.scheduleID] = preparedData
+    }
+
+    private func checkStillValid(prepared: PreparedData) async -> Bool {
+        // Make sure we are still up to date. Data might change due to a change
+        // in the data, schedule was cancelled, or if a delay cancellation trigger
+        // was fired.
+        guard
+            let fromStore = try? await self.store.getSchedule(scheduleID: prepared.scheduleData.schedule.identifier),
+            fromStore.scheduleState == .prepared,
+            fromStore.schedule == prepared.scheduleData.schedule
+        else {
+            AirshipLogger.trace("Prepared schedule no longer up to date, no longer valid \(prepared.scheduleData)")
+            return false
+        }
+
+        guard prepared.scheduleData.isActive(date: self.date.now) else {
+            AirshipLogger.trace("Prepared schedule no longer active, no longer valid \(prepared.scheduleData)")
+            return false
+        }
+
+        guard await self.executor.isValid(
+            schedule: prepared.scheduleData.schedule
+        ) else {
+            AirshipLogger.trace("Prepared schedule no longer \(prepared.scheduleData)")
+            return false
+        }
+
+        return true
+    }
+
+    private func waitForConditions(preparedData: PreparedData) async  {
+        let triggerDate = preparedData.scheduleData.triggerInfo?.date ?? preparedData.scheduleData.scheduleStateChangeDate
+
+        // Wait for conditions
+        AirshipLogger.trace("Waiting for delay conditions \(preparedData)")
+        await self.delayProcessor.process(
+            delay: preparedData.scheduleData.schedule.delay,
+            triggerDate: triggerDate
+        )
+
+        AirshipLogger.trace("Delay conditions met \(preparedData)")
+    }
+
+
+    private func prepareSchedule(data: AutomationScheduleData) async throws -> PreparedData? {
         AirshipLogger.trace("Preparing schedule \(data)")
 
         let prepareResult = await self.preparer.prepare(
@@ -364,107 +563,108 @@ fileprivate extension AutomationEngine {
             triggerSessionID: data.triggerSessionID
         )
 
-        AirshipLogger.trace("Preparing schedule \(data) result: \(prepareResult)")
-        if case .cancel = prepareResult {
-            try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
-            return nil
-        }
-
-        let updated = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
-            guard data.isInState([.triggered]) else { return }
-
-            switch (prepareResult) {
-            case .prepared(let preparedSchedule):
-                data.prepared(info: preparedSchedule.info, date: date.now)
-            case .invalidate, .cancel:
-               break
-            case .skip:
-                data.prepareCancelled(date: date.now, penalize: false)
-            case .penalize:
-                data.prepareCancelled(date: date.now, penalize: true)
-            }
-        }
+        AirshipLogger.trace("Finished preparing schedule \(data) result: \(prepareResult)")
 
         switch prepareResult {
-        case .prepared(let info): 
-            return (updated ?? data, info)
+        case .prepared(let preparedSchedule):
+            let updated = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+                data.prepared(info: preparedSchedule.info, date: date.now)
+            }
+
+            // Make sure its updated
+            guard let updated else {
+                await preparer.cancelled(schedule: data.schedule)
+                return nil
+            }
+
+            return PreparedData(
+                scheduleData: updated,
+                preparedSchedule: preparedSchedule
+            )
         case .invalidate:
             await self.startTaskToProcessTriggeredSchedule(
                 scheduleID: data.schedule.identifier
             )
             return nil
-        case .cancel, .skip, .penalize:
+        case .cancel:
+            try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
+            return nil
+        case .skip:
+            _ = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+                data.prepareCancelled(date: date.now, penalize: false)
+            }
+            return nil
+        case .penalize:
+            _ = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+                data.prepareCancelled(date: date.now, penalize: true)
+            }
             return nil
         }
     }
 
     @MainActor
-    private func startExecuting(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws {
+    private func attemptExecution(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> Bool {
         AirshipLogger.trace("Starting to execute schedule \(data)")
 
         let scheduleID = data.schedule.identifier
 
-        // Using a while loop to recheck conditions on `notReady` results
-        while true {
-            let readyResult = try await self.checkReady(data: data, preparedSchedule: preparedSchedule)
-            switch (readyResult) {
-            case .ready:
-                break
+        let readyResult = self.checkReady(data: data, preparedSchedule: preparedSchedule)
+        switch (readyResult) {
+        case .ready:
+            break
 
-            case .invalidate:
-                let updated = try await self.updateState(identifier: scheduleID) { [date] data in
-                    data.executionInvalidated(date: date.now)
-                }
+        case .invalidate:
+            let updated = try await self.updateState(identifier: scheduleID) { [date] data in
+                data.executionInvalidated(date: date.now)
+            }
 
-                if updated?.scheduleState == .triggered {
-                    await self.startTaskToProcessTriggeredSchedule(
-                        scheduleID: data.schedule.identifier
-                    )
-                } else {
-                    await self.preparer.cancelled(schedule: data.schedule)
-                }
-                return
-
-            case .notReady:
-                await self.scheduleConditionsChangedNotifier.wait()
-                continue
-
-            case .skip:
-                try await self.updateState(identifier: scheduleID) { [date] data in
-                    data.executionSkipped(date: date.now)
-                }
+            if updated?.scheduleState == .triggered {
+                await self.startTaskToProcessTriggeredSchedule(
+                    scheduleID: data.schedule.identifier
+                )
+            } else {
                 await self.preparer.cancelled(schedule: data.schedule)
-                return
+            }
+            return true
+
+        case .notReady:
+            return false
+
+        case .skip:
+            try await self.updateState(identifier: scheduleID) { [date] data in
+                data.executionSkipped(date: date.now)
+            }
+            await self.preparer.cancelled(schedule: data.schedule)
+            return true
+        }
+
+
+        let executeResult = try await self.execute(preparedSchedule: preparedSchedule)
+
+        switch (executeResult) {
+        case .cancel:
+            try await self.store.deleteSchedules(scheduleIDs: [scheduleID])
+            await self.triggersProcessor.cancel(scheduleIDs: [scheduleID])
+            return true
+
+        case .finished:
+            let updated = try await self.updateState(identifier: scheduleID) {  [date] data in
+                data.finishedExecuting(date: date.now)
             }
 
-
-            let executeResult = try await self.execute(preparedSchedule: preparedSchedule)
-
-            switch (executeResult) {
-            case .cancel:
-                try await self.store.deleteSchedules(scheduleIDs: [scheduleID])
-                await self.triggersProcessor.cancel(scheduleIDs: [scheduleID])
-
-            case .finished:
-                let updated = try await self.updateState(identifier: scheduleID) {  [date] data in
-                    data.finishedExecuting(date: date.now)
-                }
-
-                if let updated = updated, updated.scheduleState == .paused {
-                    await handleInterval(updated.schedule.interval ?? 0.0, scheduleID: updated.schedule.identifier)
-                }
-
-            case .retry:
-                continue
+            if let updated = updated, updated.scheduleState == .paused {
+                await handleInterval(updated.schedule.interval ?? 0.0, scheduleID: updated.schedule.identifier)
             }
+            return true
 
-            return
+        case .retry:
+            return false
         }
     }
 
     @MainActor
     private func execute(preparedSchedule: PreparedSchedule) async throws -> ScheduleExecuteResult {
-        AirshipLogger.trace("Executiong schedule \(preparedSchedule.info.scheduleID)")
+        AirshipLogger.trace("Executing schedule \(preparedSchedule.info.scheduleID)")
 
         // Execute
         let updateStateTask = Task {
@@ -479,70 +679,30 @@ fileprivate extension AutomationEngine {
 
         _ = try await updateStateTask.value
 
-        AirshipLogger.trace("Executiong result \(preparedSchedule.info.scheduleID) \(executeResult)")
+        AirshipLogger.trace("Executing result \(preparedSchedule.info.scheduleID) \(executeResult)")
 
         return executeResult
     }
 
     @MainActor
-    private func checkReady(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> ScheduleReadyResult {
+    private func checkReady(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) -> ScheduleReadyResult {
         AirshipLogger.trace("Checking if schedule is ready \(data)")
 
-        let triggerDate = data.triggerInfo?.date ?? data.scheduleStateChangeDate
-
-        // Wait for conditions
-        AirshipLogger.trace("Waiting for delay conditions \(data)")
-        await self.delayProcessor.process(
-            delay: data.schedule.delay,
-            triggerDate: triggerDate
-        )
-
-        AirshipLogger.trace("Delay conditions met \(data)")
-
-
-        // Make sure we are still up to date. Data might change due to a change
-        // in the data, schedule was cancelled, or if a delay cancellation trigger
-        // was fired.
-        guard
-            let fromStore = try? await self.store.getSchedule(scheduleID: data.schedule.identifier),
-            fromStore.scheduleState == .prepared,
-            fromStore.schedule == data.schedule
-        else {
-            AirshipLogger.trace("Schedule no longer valid, invalidating \(data)")
-            return .invalidate
-        }
-
-        // Precheck
-        let precheckResult = await self.executor.isReadyPrecheck(
-            schedule: data.schedule
-        )
-
-        guard precheckResult == .ready else {
-            AirshipLogger.trace("Precheck not ready \(fromStore)")
-            return precheckResult
-        }
-
-        // Verify conditions still met
-        guard
-            self.delayProcessor.areConditionsMet(delay: fromStore.schedule.delay)
-        else {
-            AirshipLogger.trace("Delay conditions not met, not ready \(fromStore)")
-            return .notReady
-        }
-
+        // Execution should not be paused
         guard !self.isExecutionPaused.value, !self.isEnginePaused.value else {
-            AirshipLogger.trace("Executor paused, not ready \(fromStore)")
+            AirshipLogger.trace("Executor paused, not ready \(data)")
             return .notReady
         }
 
+        // Still active
         guard data.isActive(date: self.date.now) else {
-            AirshipLogger.trace("Schedule no longer active, Invalidating \(fromStore)")
+            AirshipLogger.trace("Schedule no longer active, Invalidating \(data)")
             return .invalidate
         }
 
         let result = self.executor.isReady(preparedSchedule: preparedSchedule)
         if result != .ready {
-            AirshipLogger.trace("Schedule not ready \(fromStore)")
+            AirshipLogger.trace("Schedule not ready \(data)")
         }
         return result
     }
@@ -580,9 +740,21 @@ fileprivate extension AutomationSchedule {
     }
 }
 
+fileprivate struct PreparedData: Sendable {
+    let scheduleData: AutomationScheduleData
+    let preparedSchedule: PreparedSchedule
+
+    var scheduleID: String {
+        return scheduleData.schedule.identifier
+    }
+
+    var priority: Int {
+        return scheduleData.schedule.priority ?? 0
+    }
+}
 
 /// Automation engine
-protocol AutomationEngineProtocol: AnyActor, Sendable {
+protocol AutomationEngineProtocol: Actor, Sendable {
     @MainActor
     func setEnginePaused(_ paused: Bool)
 

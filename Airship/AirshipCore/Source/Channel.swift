@@ -576,3 +576,4 @@ public extension AirshipNotifications {
     }
 
 }
+

@@ -53,10 +53,12 @@ enum SampleTabs: Hashable {
     case home
     case messageCenter
     case preferenceCenter
+#if canImport(AirshipDebug)
+    case debug
+#endif
 }
 
 enum HomeDestination: Hashable {
-    case settings
     case namedUser
     case liveactivities
 }

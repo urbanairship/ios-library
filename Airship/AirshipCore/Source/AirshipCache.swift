@@ -1,6 +1,6 @@
 import CoreData
 
-public protocol AirshipCache: AnyActor {
+public protocol AirshipCache: Actor {
     func getCachedValue<T: Codable & Sendable>(key: String) async -> T?
     func getCachedValue<T: Codable & Sendable>(key: String, decoder: JSONDecoder) async -> T?
     func setCachedValue<T: Codable & Sendable>(_ value: T?, key: String, ttl: TimeInterval) async

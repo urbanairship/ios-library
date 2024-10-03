@@ -69,7 +69,8 @@ final class AutomationStoreTest: XCTestCase {
                 isMatch: true,
                 reportingMetadata: [AirshipJSON.string("reporing")]
             ),
-            triggerSessionID: "some trigger session id"
+            triggerSessionID: "some trigger session id",
+            priority: 0
         )
 
         let date = Date()
@@ -110,7 +111,8 @@ final class AutomationStoreTest: XCTestCase {
                 isMatch: true,
                 reportingMetadata: [AirshipJSON.string("reporing")]
             ),
-            triggerSessionID: "some trigger session id"
+            triggerSessionID: "some trigger session id",
+            priority: 0
         )
 
         let batchUpsertResult = try await self.store.upsertSchedules(scheduleIDs: ["full"]) { [schedule] identifier, existing in

@@ -128,7 +128,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                                 sectionTheme?.titleAppearance,
                                 base: DefaultCommonSectionViewStyle
                                     .titleAppearance
-                            )
+                            ).accessibilityAddTraits(.isHeader)
                     }
 
                     if let subtitle = section.display?.subtitle {

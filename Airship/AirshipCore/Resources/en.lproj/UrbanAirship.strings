@@ -76,3 +76,15 @@
 "ua_preference_center_empty" = "Unable to load preferences. Please try again later.";
 
 
+
+// Generic localizations
+"ua_dismiss" = "Dismiss";
+"ua_escape" = "Escape";
+"ua_next" = "Next";
+"ua_previous" = "Previous";
+"ua_submit" = "Submit";
+"ua_loading" = "Loading";
+"ua_pager_progress" = "Page %@ of %@";
+"ua_play" = "Play";
+"ua_pause" = "Pause";
+"ua_stop" = "Stop";

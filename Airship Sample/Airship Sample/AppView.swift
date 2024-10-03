@@ -57,11 +57,25 @@ struct AppView: View {
                 Airship.analytics.trackScreen("preference_center")
             }
             .tag(SampleTabs.preferenceCenter)
+
+
+#if canImport(AirshipDebug)
+           debug.tabItem {
+               Label(
+                   "Debug",
+                   systemImage: "gear"
+               )
+           }
+           .onAppear {
+               Airship.analytics.trackScreen("debug")
+           }
+           .tag(SampleTabs.debug)
+#endif
         }
         .onShake {
             shakeCount += 1
 
-            let event = CustomEvent(name: "shake_event", value: NSNumber(value: shakeCount))
+            let event = CustomEvent(name: "shake", value: NSNumber(value: shakeCount))
             event.track()
 
             AppState.shared.toastMessage = Toast.Message(
@@ -77,7 +91,26 @@ struct AppView: View {
         Toast(message: self.$appState.toastMessage)
             .padding()
     }
+
+#if canImport(AirshipDebug)
+    @ViewBuilder
+    var debug: some View {
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                ZStack{
+                    AirshipDebugView()
+                }
+            }
+        } else {
+            NavigationView {
+                AirshipDebugView()
+            }
+            .navigationViewStyle(.stack)
+        }
+    }
+#endif
 }
+
 
 extension View {
     @ViewBuilder

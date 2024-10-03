@@ -129,6 +129,7 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
                                 base: DefaultChannelSubscriptionViewStyle
                                     .titleAppearance
                             )
+                            .accessibilityAddTraits(.isHeader)
                     }
 
                     if let subtitle = item.display?.subtitle {
@@ -138,6 +139,7 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
                                 base: DefaultChannelSubscriptionViewStyle
                                     .subtitleAppearance
                             )
+
                     }
                 }
             }

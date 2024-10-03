@@ -51,6 +51,11 @@ struct FeatureFlagInfo: Decodable, Equatable {
      * Evaluation options.
      */
     let evaluationOptions: EvaluationOptions?
+    
+    /**
+     * Control options
+     */
+    let controlOptins: ControlOptions?
 
     private enum FeatureFlagObjectCodingKeys: String, CodingKey {
         case id = "flag_id"
@@ -66,10 +71,22 @@ struct FeatureFlagInfo: Decodable, Equatable {
         case timeCriteria = "time_criteria"
         case variables
         case evaluationOptions = "evaluation_options"
+        case control
         case name
     }
 
-    init(id: String, created: Date, lastUpdated: Date, name: String, reportingMetadata: AirshipJSON, audienceSelector: DeviceAudienceSelector? = nil, timeCriteria: AirshipTimeCriteria? = nil, flagPayload: FeatureFlagPayload, evaluationOptions: EvaluationOptions? = nil) {
+    init(
+        id: String,
+        created: Date,
+        lastUpdated: Date,
+        name: String,
+        reportingMetadata: AirshipJSON,
+        audienceSelector: DeviceAudienceSelector? = nil,
+        timeCriteria: AirshipTimeCriteria? = nil,
+        flagPayload: FeatureFlagPayload,
+        evaluationOptions: EvaluationOptions? = nil,
+        controlOptions: ControlOptions? = nil
+    ) {
         self.id = id
         self.created = created
         self.lastUpdated = lastUpdated
@@ -79,6 +96,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
         self.timeCriteria = timeCriteria
         self.flagPayload = flagPayload
         self.evaluationOptions = evaluationOptions
+        self.controlOptins = controlOptions
     }
 
 
@@ -120,6 +138,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
         self.timeCriteria = try payloadContainer.decodeIfPresent(AirshipTimeCriteria.self, forKey: .timeCriteria)
         self.reportingMetadata = try payloadContainer.decode(AirshipJSON.self, forKey: .reportingMetadata)
         self.evaluationOptions = try payloadContainer.decodeIfPresent(EvaluationOptions.self, forKey: .evaluationOptions)
+        self.controlOptins = try payloadContainer.decodeIfPresent(ControlOptions.self, forKey: .control)
     }
 }
 
@@ -252,5 +271,85 @@ extension FeatureFlagInfo {
             return true
         }
         return false
+    }
+}
+
+struct ControlOptions: Codable, Equatable {
+    
+    let audience: DeviceAudienceSelector?
+    let reportingMetadata: AirshipJSON
+    let controlType: ControlType
+    
+    private enum CodingKeys: String, CodingKey {
+        case audience = "audience_selector"
+        case reportintMetadata = "reporting_metadata"
+    }
+    
+    init(
+        audience: DeviceAudienceSelector?,
+        reportingMetadata: AirshipJSON,
+        controlType: ControlType
+    ) {
+        self.audience = audience
+        self.reportingMetadata = reportingMetadata
+        self.controlType = controlType
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.audience = try container.decodeIfPresent(DeviceAudienceSelector.self, forKey: .audience)
+        self.reportingMetadata = try container.decode(AirshipJSON.self, forKey: .reportintMetadata)
+        self.controlType = try ControlType(from: decoder)
+    }
+    
+    func encode(to encoder: any Encoder) throws {
+        try controlType.encode(to: encoder)
+        
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(audience, forKey: .audience)
+        try container.encode(reportingMetadata, forKey: .reportintMetadata)
+    }
+    
+    enum ControlType: Codable, Equatable {
+        case flag
+        case variables(AirshipJSON?)
+        
+        private enum CodingKeys: CodingKey {
+            case type
+            case variables
+        }
+        
+        enum OptionType: String, Codable {
+            case flag
+            case variables
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            
+            let type = try container.decode(OptionType.self, forKey: .type)
+            
+            switch type {
+            case .flag:
+                self = .flag
+            case .variables:
+                self = .variables(
+                    try container.decodeIfPresent(AirshipJSON.self, forKey: .variables)
+                )
+            }
+        }
+        
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            
+            switch self {
+            case .flag:
+                try container.encode(OptionType.flag, forKey: .type)
+                
+            case .variables(let variables):
+                try container.encode(OptionType.variables, forKey: .type)
+                try container.encodeIfPresent(variables, forKey: .variables)
+            }
+        }
     }
 }

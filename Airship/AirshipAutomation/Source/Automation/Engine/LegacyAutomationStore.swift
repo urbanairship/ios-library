@@ -330,7 +330,8 @@ fileprivate extension UAScheduleData {
                 productID: schedule.productID,
                 campaigns: schedule.campaigns,
                 reportingContext: schedule.reportingContext,
-                triggerSessionID: UUID().uuidString
+                triggerSessionID: UUID().uuidString,
+                priority: schedule.priority ?? 0
             )
         }
 

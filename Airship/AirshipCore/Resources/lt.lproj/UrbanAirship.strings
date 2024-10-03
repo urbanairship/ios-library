@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Pasirinkti jokio";
 "ua_select_none_messages_description" = "Iš naujo nustatyti žinutės pasirinkimą";
 "ua_unread_message_description" = "Žinutė neskaityta";
+
+// Generic localizations
+"ua_dismiss" = "Atsisakyti";
+"ua_escape" = "Išeiti";
+"ua_next" = "Kitas";
+"ua_previous" = "Ankstesnis";
+"ua_submit" = "Pateikti";
+"ua_loading" = "Įkeliama";
+"ua_pager_progress" = "Puslapis %@ iš %@";
+"ua_play" = "Groti";
+"ua_pause" = "Pristabdyti";
+"ua_stop" = "Sustabdyti";

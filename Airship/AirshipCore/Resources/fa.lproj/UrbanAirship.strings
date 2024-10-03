@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "هیچ کدام را انتخاب نکنید";
 "ua_select_none_messages_description" = "بازنشانی انتخاب پیام";
 "ua_unread_message_description" = "پیام خوانده نشده";
+
+// Generic localizations
+"ua_dismiss" = "رد کردن";
+"ua_escape" = "فرار";
+"ua_next" = "بعدی";
+"ua_previous" = "قبلی";
+"ua_submit" = "ارسال";
+"ua_loading" = "در حال بارگذاری";
+"ua_pager_progress" = "صفحه %@ از %@";
+"ua_play" = "پخش";
+"ua_pause" = "مکث";
+"ua_stop" = "توقف";

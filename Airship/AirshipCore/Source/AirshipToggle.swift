@@ -18,7 +18,7 @@ struct AirshipToggle: View {
             .background(self.model.backgroundColor)
             .border(self.model.border)
             .common(self.model, formInputID: self.model.identifier)
-            .accessible(self.model)
+            .accessible(self.model, isSelected: self.isOn)
             .formElement()
             .onAppear {
                 restoreFormState()

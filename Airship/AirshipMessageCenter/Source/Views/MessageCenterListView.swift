@@ -103,18 +103,6 @@ public struct MessageCenterListView: View {
         }
     }
 
-    struct ListBackgroundModifier: ViewModifier {
-        @ViewBuilder
-        func body(content: Content) -> some View {
-            if #available(iOS 16.0, *) {
-                content
-                    .scrollContentBackground(.hidden)
-            } else {
-                content
-            }
-        }
-    }
-
     @ViewBuilder
     private func makeList() -> some View {
         let list = List(selection: $selection) {
@@ -170,10 +158,7 @@ public struct MessageCenterListView: View {
 
         let content = ZStack {
             makeList()
-                .applyIf(listBackgroundColor != nil, transform: { view in
-                    view.modifier(ListBackgroundModifier())
-                    view.background(listBackgroundColor)
-                })
+                .listBackground(listBackgroundColor)
                 .opacity(self.listOpacity)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
                 .onChange(of: self.messageIDs) { ids in
@@ -206,6 +191,7 @@ public struct MessageCenterListView: View {
         if #available(iOS 16.0, *) {
             content.background(
                 NavigationLink("", value: selected)
+                .accessibilityHidden(true)
                 .navigationDestination(isPresented: $isActive) {
                     destination
                 }
@@ -213,6 +199,7 @@ public struct MessageCenterListView: View {
         } else {
             content.background(
                 NavigationLink("", destination: destination, isActive: $isActive)
+                    .accessibilityHidden(true)
             )
         }
     }
@@ -356,6 +343,20 @@ public struct MessageCenterListView: View {
             .toolbar {
                 leadingToolbar()
             }
+    }
+}
 
+fileprivate extension View {
+    @ViewBuilder
+    func listBackground(_ color: Color?) -> some View {
+        if let color {
+            if #available(iOS 16.0, watchOS 9.0, *) {
+                self.scrollContentBackground(.hidden).background(color)
+            } else {
+                self.background(color)
+            }
+        } else {
+            self
+        }
     }
 }

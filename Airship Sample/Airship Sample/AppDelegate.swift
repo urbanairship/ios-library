@@ -81,9 +81,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
 
         let components = deepLink.path.lowercased().split(separator: "/")
         switch components.first {
-        case "settings":
-            AppState.shared.homeDestination = .settings
-            AppState.shared.selectedTab = .home
+#if canImport(AirshipDebug)
+        case "debug":
+            AppState.shared.selectedTab = .debug
+#endif
         case "home":
             AppState.shared.homeDestination = nil
             AppState.shared.selectedTab = .home

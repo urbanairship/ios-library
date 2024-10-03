@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Chagua Hakuna";
 "ua_select_none_messages_description" = "Weka upya uteuzi wa ujumbe";
 "ua_unread_message_description" = "Ujumbe haujasomwa";
+
+// Generic localizations
+"ua_dismiss" = "Ondoa";
+"ua_escape" = "Kutoroka";
+"ua_next" = "Ifuatayo";
+"ua_previous" = "Iliyopita";
+"ua_submit" = "Wasilisha";
+"ua_loading" = "Inapakia";
+"ua_pager_progress" = "Ukurasa %@ ya %@";
+"ua_play" = "Cheza";
+"ua_pause" = "Sitisha";
+"ua_stop" = "Simamisha";

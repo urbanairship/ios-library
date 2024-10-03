@@ -17,6 +17,7 @@ final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
     private enum FlagKeys {
         static let name = "flag_name"
         static let metadata = "reporting_metadata"
+        static let supersededMetadata = "superseded_reporting_metadata"
         static let eligible = "eligible"
         static let device = "device"
     }
@@ -44,6 +45,10 @@ final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
             object.set(string: flag.name, key: FlagKeys.name)
             object.set(json: reportingInfo.reportingMetadata, key: FlagKeys.metadata)
             object.set(bool: flag.isEligible, key: FlagKeys.eligible)
+            
+            if let superseded = reportingInfo.supersededReportingMetadata {
+                object.set(json: .array(superseded), key: FlagKeys.supersededMetadata)
+            }
 
             let device = AirshipJSON.makeObject { object in
                 object.set(string: reportingInfo.channelID, key: DeviceKeys.channelID)

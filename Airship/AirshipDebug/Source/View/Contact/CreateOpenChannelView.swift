@@ -82,6 +82,7 @@ struct CreateOpenChannelView: View {
         .navigationTitle("Open Channel".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published var identifiers: [String: String] = [:]
         @Published var address: String = ""

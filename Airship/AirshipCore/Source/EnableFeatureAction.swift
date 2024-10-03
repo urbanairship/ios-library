@@ -60,7 +60,7 @@ public final class EnableFeatureAction: AirshipAction {
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         let permission = try parsePermission(arguments: arguments)
 
-        let (start, end) = await self.permissionPrompter()
+        let result = await self.permissionPrompter()
             .prompt(
                 permission: permission,
                 enableAirshipUsage: true,
@@ -71,7 +71,7 @@ public final class EnableFeatureAction: AirshipAction {
             EnableFeatureAction.resultReceiverMetadataKey
         ] as? PermissionResultReceiver
 
-        await resultReceiver?(permission, start, end)
+        await resultReceiver?(permission, result.startStatus, result.endStatus)
 
         return nil
     }

@@ -9,6 +9,7 @@ import SwiftUI
 import AirshipCore
 #endif
 
+@MainActor
 class InAppMessageEnvironment: ObservableObject {
     private let delegate: InAppMessageViewDelegate
 

@@ -12,11 +12,11 @@ class PushTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
-    private let permissionsManager = AirshipPermissionsManager()
+    private var permissionsManager: AirshipPermissionsManager!
 
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
-    private let apnsRegistrar = TestAPNSRegistrar()
+    private var apnsRegistrar: TestAPNSRegistrar!
     private let badger = TestBadger()
     private let registrationDelegate = TestRegistraitonDelegate()
     private let pushDelegate = TestPushNotificationDelegate()
@@ -27,6 +27,8 @@ class PushTest: XCTestCase {
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
+        self.apnsRegistrar = await TestAPNSRegistrar()
+        self.permissionsManager = await AirshipPermissionsManager()
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
             config:  RuntimeConfig(
@@ -290,15 +292,6 @@ class PushTest: XCTestCase {
         self.push.requestExplicitPermissionWhenEphemeral = false
         await self.serialQueue.waitForCurrentOperations()
 
-        let updated = self.expectation(description: "Registration updated")
-        self.notificationRegistrar.onUpdateRegistration = {
-            options,
-            skipIfEphemeral in
-            XCTAssertEqual([.alert, .badge], options)
-            XCTAssertTrue(skipIfEphemeral)
-            updated.fulfill()
-        }
-
         self.notificationRegistrar.onCheckStatus = {
             return(.authorized, [])
         }
@@ -306,7 +299,7 @@ class PushTest: XCTestCase {
         let success = await self.push.enableUserPushNotifications()
         XCTAssertTrue(success)
 
-        await self.fulfillmentCompat(of: [permissionsManagerCalled, updated], timeout: 10.0)
+        await self.fulfillmentCompat(of: [permissionsManagerCalled], timeout: 10.0)
     }
 
     func testEnableUserNotificationsDenied() async throws {
@@ -1010,7 +1003,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: true,
                 areNotificationsAllowed: true,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: true
+                isPushTokenRegistered: true,
+                displayNotificationStatus: .granted
             ),
             status
         )
@@ -1028,7 +1022,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: false,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: false
+                isPushTokenRegistered: false,
+                displayNotificationStatus: .notDetermined
             ),
             status
         )
@@ -1041,7 +1036,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: false,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: true
+                isPushTokenRegistered: true,
+                displayNotificationStatus: .notDetermined
             ),
             status
         )
@@ -1060,7 +1056,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: false,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: false
+                isPushTokenRegistered: false,
+                displayNotificationStatus: .notDetermined
             ),
             status
         )
@@ -1075,7 +1072,8 @@ class PushTest: XCTestCase {
                 isUserNotificationsEnabled: false,
                 areNotificationsAllowed: true,
                 isPushPrivacyFeatureEnabled: true,
-                isPushTokenRegistered: false
+                isPushTokenRegistered: false,
+                displayNotificationStatus: .granted
             ),
             status
         )

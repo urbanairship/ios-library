@@ -217,23 +217,14 @@ public final class MessageCenter: NSObject, Sendable {
         }
     }
 
-    final class MutableValues : @unchecked Sendable {
-        @MainActor
+    @MainActor
+    final class MutableValues: Sendable {
         var displayDelegate: MessageCenterDisplayDelegate?
-
-        @MainActor
         var controller: MessageCenterController
-
-        @MainActor
         var predicate: MessageCenterPredicate?
-
-        @MainActor
         var theme: MessageCenterTheme?
-
-        @MainActor
         var currentDisplay: AirshipMainActorCancellable?
 
-        @MainActor
         init(
             displayDelegate: MessageCenterDisplayDelegate? = nil,
             controller: MessageCenterController,
@@ -244,8 +235,9 @@ public final class MessageCenter: NSObject, Sendable {
             self.displayDelegate = displayDelegate
             self.controller = controller
             self.predicate = predicate
+            self.theme = theme
+            self.currentDisplay = currentDisplay
         }
-
     }
 }
 
@@ -279,7 +271,7 @@ extension MessageCenter {
         return true
     }
 
-    @MainActor
+    @preconcurrency @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void

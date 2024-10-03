@@ -14,7 +14,7 @@ fileprivate struct TouchViewModifier: ViewModifier {
                 TapGesture()
             )
             .gesture(
-                LongPressGesture(minimumDuration: 0.0)
+                LongPressGesture(minimumDuration: 0.1)
                     .sequenced(before: LongPressGesture(minimumDuration: .infinity))
                     .updating($isPressed) { value, state, transaction in
                         switch value {

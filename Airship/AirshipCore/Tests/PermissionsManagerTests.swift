@@ -6,9 +6,18 @@ import XCTest
 
 class PermissionsManagerTests: XCTestCase {
 
-    let permissionsManager = AirshipPermissionsManager()
-    let delegate = TestPermissionsDelegate()
 
+    var systemSettingsNavigator: TestSystemSettingsNavigator!
+    var permissionsManager: AirshipPermissionsManager!
+    let delegate = TestPermissionsDelegate()
+    let appStateTracker = TestAppStateTracker()
+    override func setUp() async throws {
+        self.systemSettingsNavigator = await TestSystemSettingsNavigator()
+        permissionsManager = await AirshipPermissionsManager(
+            appStateTracker: appStateTracker,
+            systemSettingsNavigator: systemSettingsNavigator
+        )
+    }
     func testCheckPermissionNotConfigured() async throws {
         let status = await self.permissionsManager.checkPermissionStatus(.displayNotifications)
         
@@ -28,6 +37,41 @@ class PermissionsManagerTests: XCTestCase {
         XCTAssertTrue(self.delegate.checkCalled)
         XCTAssertFalse(self.delegate.requestCalled)
     }
+    
+    func testStatusUpdate() async {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        var stream = self.permissionsManager.statusUpdate(for: .location).makeAsyncIterator()
+        let status = await self.permissionsManager.requestPermission(.location)
+
+        let currentStatus = await stream.next()
+        XCTAssertEqual(AirshipPermissionStatus.denied, status)
+        XCTAssertEqual(status, currentStatus)
+    }
+    
+    func testStatusRefreshOnActive() async {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        var stream = self.permissionsManager.statusUpdate(for: .location).makeAsyncIterator()
+
+        var currentStatus = await stream.next()
+        XCTAssertEqual(AirshipPermissionStatus.denied, currentStatus)
+
+        self.delegate.permissionStatus = .granted
+
+        await self.appStateTracker.updateState(.active)
+
+        currentStatus = await stream.next()
+        XCTAssertEqual(AirshipPermissionStatus.granted, currentStatus)
+    }
 
     func testRequestPermissionNotConfigured() async throws {
         let status = await self.permissionsManager.requestPermission(.displayNotifications)
@@ -35,7 +79,21 @@ class PermissionsManagerTests: XCTestCase {
         XCTAssertEqual(AirshipPermissionStatus.notDetermined, status)
     }
 
-    func testRequestPermission() async throws {
+    func testRequestPermissionNotDetermined() async throws {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .notDetermined
+
+        let status = await self.permissionsManager.requestPermission(.location)
+
+        XCTAssertEqual(AirshipPermissionStatus.notDetermined, status)
+        XCTAssertTrue(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.checkCalled)
+    }
+
+    func testRequestPermissionDenied() async throws {
         self.permissionsManager.setDelegate(
             self.delegate,
             permission: .location
@@ -46,7 +104,74 @@ class PermissionsManagerTests: XCTestCase {
 
         XCTAssertEqual(AirshipPermissionStatus.denied, status)
         XCTAssertTrue(self.delegate.requestCalled)
-        XCTAssertFalse(self.delegate.checkCalled)
+        XCTAssertTrue(self.delegate.checkCalled)
+    }
+
+    func testRequestPermissionGranted() async throws {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .granted
+
+        let status = await self.permissionsManager.requestPermission(.location)
+
+        XCTAssertEqual(AirshipPermissionStatus.granted, status)
+        XCTAssertTrue(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.checkCalled)
+    }
+
+    @MainActor
+    func testRequestPermissionSystemSettingsFallback() async throws {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        _ = await self.permissionsManager.requestPermission(.location, enableAirshipUsageOnGrant: false, fallback: .systemSettings)
+
+        XCTAssertTrue(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.checkCalled)
+        XCTAssertEqual(systemSettingsNavigator.permissionOpens, [.location])
+    }
+
+    @MainActor
+    func testRequestPermissionSystemSettingsFallbackFailsToOpen() async throws {
+        self.systemSettingsNavigator.permissionOpenResult = false
+
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        _ = await self.permissionsManager.requestPermission(.location, enableAirshipUsageOnGrant: false, fallback: .systemSettings)
+
+        XCTAssertTrue(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.checkCalled)
+        XCTAssertEqual(systemSettingsNavigator.permissionOpens, [.location])
+    }
+
+    @MainActor
+    func testRequestPermissionCallbackFallback() async throws {
+        self.permissionsManager.setDelegate(
+            self.delegate,
+            permission: .location
+        )
+        self.delegate.permissionStatus = .denied
+
+        let status = await self.permissionsManager.requestPermission(
+            .location,
+            enableAirshipUsageOnGrant: false,
+            fallback: .callback({
+                self.delegate.permissionStatus = .granted
+            })
+        )
+
+        XCTAssertEqual(AirshipPermissionStatus.granted, status.endStatus)
+        XCTAssertTrue(self.delegate.requestCalled)
+        XCTAssertTrue(self.delegate.checkCalled)
     }
 
     func testConfiguredPermissionsEmpty() throws {
@@ -132,4 +257,17 @@ open class TestPermissionsDelegate: NSObject, AirshipPermissionDelegate {
         self.requestCalled = true
        return permissionStatus
     }
+}
+
+
+@MainActor
+public final class TestSystemSettingsNavigator: SystemSettingsNavigatorProtocol {
+    var permissionOpens: [AirshipPermission] =  []
+    var permissionOpenResult = false
+    public func open(for permission: AirshipPermission) async -> Bool {
+        permissionOpens.append(permission)
+        return permissionOpenResult
+    }
+    
+
 }

@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Ne odaberi ništa";
 "ua_select_none_messages_description" = "Poništi odabir poruke";
 "ua_unread_message_description" = "Poruka nepročitana";
+
+// Generic localizations
+"ua_dismiss" = "Odbaciti";
+"ua_escape" = "Izlaz";
+"ua_next" = "Sljedeće";
+"ua_previous" = "Prethodno";
+"ua_submit" = "Podnijeti";
+"ua_loading" = "Učitavanje";
+"ua_pager_progress" = "Stranica %@ od %@";
+"ua_play" = "Reproduciraj";
+"ua_pause" = "Pauziraj";
+"ua_stop" = "Zaustavi";

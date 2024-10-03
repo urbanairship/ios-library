@@ -16,7 +16,8 @@ protocol RemoteDataProviderProtocol: Actor {
     /// Notifies that the remote-data info is outdated. This will cause the next refresh to
     /// to fetch data.
     /// - Parameter remoteDataInfo: The remote data info.
-    func notifyOutdated(remoteDataInfo: RemoteDataInfo)
+    /// - Returns true if cleared, otherwise false.
+    func notifyOutdated(remoteDataInfo: RemoteDataInfo) -> Bool
 
     /// Checks if the source is current.
     /// - Parameter locale: The current locale.

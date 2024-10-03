@@ -13,22 +13,23 @@ public struct FeatureFlag: Equatable, Sendable, Codable {
     public let name: String
 
     /// If the device is elegible or not for the flag.
-    public let isEligible: Bool
+    public var isEligible: Bool
 
     /// If the flag exists in the current flag listing or not
     public let exists: Bool
 
     /// Optional variables associated with the flag
-    public let variables: AirshipJSON?
+    public var variables: AirshipJSON?
 
-    let reportingInfo: ReportingInfo?
+    var reportingInfo: ReportingInfo?
 
     init(
         name: String,
         isEligible: Bool,
         exists: Bool, 
         variables: AirshipJSON? = nil,
-        reportingInfo: ReportingInfo? = nil
+        reportingInfo: ReportingInfo? = nil,
+        supersededReportingMetadata: AirshipJSON? = nil
     ) {
         self.name = name
         self.isEligible = isEligible
@@ -47,7 +48,9 @@ public struct FeatureFlag: Equatable, Sendable, Codable {
 
     struct ReportingInfo: Codable, Sendable, Equatable {
         // Reporting info
-        let reportingMetadata: AirshipJSON
+        var reportingMetadata: AirshipJSON
+        
+        var supersededReportingMetadata: [AirshipJSON]?
 
         // Evaluated contact ID
         let contactID: String?
@@ -55,16 +58,33 @@ public struct FeatureFlag: Equatable, Sendable, Codable {
         // Evaluated channel ID
         let channelID: String?
 
-        init(reportingMetadata: AirshipJSON, contactID: String? = nil, channelID: String? = nil) {
-            self.reportingMetadata = reportingMetadata
-            self.contactID = contactID
-            self.channelID = channelID
-        }
+        init(
+            reportingMetadata: AirshipJSON,
+            supersededReportingMetadata: [AirshipJSON]? = nil,
+            contactID: String? = nil,
+            channelID: String? = nil) {
+                self.reportingMetadata = reportingMetadata
+                self.supersededReportingMetadata = supersededReportingMetadata
+                self.contactID = contactID
+                self.channelID = channelID
+            }
 
         enum CodingKeys: String, CodingKey {
             case reportingMetadata = "reporting_metadata"
+            case supersededReportingMetadata = "superseded_reporting_metadata"
             case contactID = "contact_id"
             case channelID = "channel_id"
+        }
+        
+        mutating func addSuperseded(metadata: AirshipJSON?) {
+            guard let metadata = metadata else {
+                return
+            }
+            
+            var mutable = supersededReportingMetadata ?? []
+            mutable.append(metadata)
+            
+            supersededReportingMetadata = mutable
         }
     }
 }

@@ -106,7 +106,7 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
             return true
         }
 
-        // if we are connected wait for refresh
+        // if we are connected wait for refresh attempt
         if (await network.isConnected) {
             await remoteData.waitRefreshAttempt(source: source)
         }

@@ -21,34 +21,43 @@ struct HomeView23Grande: View {
                 .frame(maxWidth: .infinity)
                 .background(Color.white)
 
-                ScrollView(showsIndicators: false) {
+                GeometryReader { scrollViewSize in
+
+                    ScrollView(showsIndicators: false) {
 
 
-                    AirshipEmbeddedView(embeddedID: "home_image")
-                        .setAirshipEmbeddedStyle(DismissableStyle())
+                        AirshipEmbeddedView(
+                            embeddedID: "home_image",
+                            embeddedSize: AirshipEmbeddedSize(
+                                                            parentHeight: scrollViewSize.size.height
+                                                        )
+                            )
+
+                            .setAirshipEmbeddedStyle(DismissableStyle())
 
 
-                    Spacer(minLength: 30)
+                        Spacer(minLength: 30)
 
-                    VStack(spacing:0) {
-                        FashionMenu(tabIndex: $tabIndex)
-                        Separation()
-                        FashionImages(tabIndex: $tabIndex)
-                            .frame(height: max(300.0, geo.size.height * 0.50))
-                    }
+                        VStack(spacing:0) {
+                            FashionMenu(tabIndex: $tabIndex)
+                            Separation()
+                            FashionImages(tabIndex: $tabIndex)
+                                .frame(height: max(300.0, geo.size.height * 0.50))
+                        }
 
-                    Text("NEW ARRIVALS")
-                        .fontWeight(.bold)
-                        .multilineTextAlignment(.center)
+                        Text("NEW ARRIVALS")
+                            .fontWeight(.bold)
+                            .multilineTextAlignment(.center)
 
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing:10) {
-                            Spacer()
-                            Image("23GrandeArrival1")
-                                .resize(width: geo.size.width * 0.40)
-                            Image("23GrandeArrival2")
-                                .resize(width: geo.size.width * 0.40)
-                            Spacer()
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing:10) {
+                                Spacer()
+                                Image("23GrandeArrival1")
+                                    .resize(width: geo.size.width * 0.40)
+                                Image("23GrandeArrival2")
+                                    .resize(width: geo.size.width * 0.40)
+                                Spacer()
+                            }
                         }
                     }
                 }

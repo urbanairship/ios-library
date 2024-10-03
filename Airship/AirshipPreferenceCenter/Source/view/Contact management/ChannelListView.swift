@@ -173,6 +173,7 @@ struct ChannelListView: View {
                     }
                 } header: {
                     headerView
+                        .accessibilityAddTraits(.isHeader)
                 }
             }
             .padding(.bottom, 8)

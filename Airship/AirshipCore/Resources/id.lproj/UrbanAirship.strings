@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Batal Pilih Semua";
 "ua_select_none_messages_description" = "Atur ulang pemilihan pesan";
 "ua_unread_message_description" = "Pesan belum dibaca";
+
+// Generic localizations
+"ua_dismiss" = "Tutup";
+"ua_escape" = "Keluar";
+"ua_next" = "Berikutnya";
+"ua_previous" = "Sebelumnya";
+"ua_submit" = "Kirim";
+"ua_loading" = "Memuat";
+"ua_pager_progress" = "Halaman %@ dari %@";
+"ua_play" = "Putar";
+"ua_pause" = "Jeda";
+"ua_stop" = "Berhenti";

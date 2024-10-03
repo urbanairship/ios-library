@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "ምንምን ይምረጡ";
 "ua_select_none_messages_description" = "የመልእክት ምርጫን ዳግም አስጀምር";
 "ua_unread_message_description" = "መልእክት አልተነበበም።";
+
+// Generic localizations
+"ua_dismiss" = "አሳርፍ";
+"ua_escape" = "መሻገሪያ";
+"ua_next" = "ሚቃኝ";
+"ua_previous" = "ቀዳሚ";
+"ua_submit" = "አስገባ";
+"ua_loading" = "በመጫን ላይ";
+"ua_pager_progress" = "ገጽ %@ ከ %@";
+"ua_play" = "አጫውት";
+"ua_pause" = "ለአጭር ጊዜ ቆም";
+"ua_stop" = "አቁም";

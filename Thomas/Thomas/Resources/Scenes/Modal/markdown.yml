@@ -1,0 +1,437 @@
+---
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 90%
+      height: auto
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.75
+  dismiss_on_touch_outside: true
+view:
+  type: container
+  background_color:
+    default:
+      hex: "#ffffff"
+      alpha: 1
+  items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        width: 100%
+        height: auto
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+          #
+          # Markdown Support
+          #
+          - margin:
+              top: 8
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Markdown Support
+              text_appearance:
+                alignment: start
+                styles:
+                  - bold
+                  - underlined
+                font_size: 18
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          #
+          # Styles
+          #
+          - margin:
+              top: 8
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Styles
+              text_appearance:
+                alignment: start
+                styles:
+                  - bold
+                font_size: 16
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Normal, **Bold**, *Italic*, ***Bold + Italic***
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Normal, __Bold__, _Italic_, ___Bold + Italic___
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "__Label with line breaks:__\nNormal\n__Bold__\n_Italic_\n___Bold + Italic___"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "Markdown formatting will *preserve* **symbols**, **punctuation**, & **newlines** in the original text:\n\n!@#$%^&*()_+-=[]{}|;':,.<>"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: ~~Strikethrough~~
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Disabled Normal, **Bold**, *Italic*, ***Bold + Italic*** [link](https://www.airship.com) https://www.airship.com
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+              markdown:
+                disabled: true
+          - margin:
+              top: 8
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label_button
+              identifier: style_button
+              background_color:
+                default:
+                  hex: "#6699ff"
+                  alpha: 1
+              border:
+                radius: 5
+                stroke_width: 1
+                stroke_color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+              label:
+                type: label
+                text: Styling works in *buttons*, too. **No way!**
+                text_appearance:
+                  font_size: 14
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+          #
+          # HTML Links
+          #
+          - margin:
+              top: 8
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: HTML Links
+              text_appearance:
+                alignment: start
+                styles:
+                  - bold
+                font_size: 16
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "Click [here](https://www.airship.com) to visit Airship's website, or [here](http://www.google.com) to visit Google."
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+              markdown:
+                appearance:
+                  anchor:
+                      color:
+                        default:
+                          hex: "#00ff00"
+                          alpha: 1
+                      styles:
+                        - underlined
+
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Email links work too! [test@example.com](mailto:test@example.com)
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Also phone numbers! [(503) 867-5309](tel:+1503-867-5309)
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Even stylish links! ~~***[(503) 867-5309](tel:+1503-867-5309)***~~ (but why?)
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 8
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label_button
+              identifier: link_button
+              border:
+                stroke_width: 1
+                radius: 5
+                stroke_color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+              background_color:
+                default:
+                  hex: "#ff99ff"
+                  alpha: 1
+              label:
+                type: label
+                text: What about **[buttons](https://www.airship.com)**? ***Weird***, **but works!**
+                text_appearance:
+                  font_size: 14
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+          #
+          # Text Links
+          #
+          - margin:
+              top: 8
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: Text Links
+              text_appearance:
+                alignment: start
+                styles:
+                  - bold
+                font_size: 16
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "*Some* bare links work, but this behavior will differ between platforms: https://www.airship.com, www.airship.com, www.airship.com/product, airship.com, airship.com/product"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+          - margin:
+              top: 0
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "Bare emails work, but not bare phone numbers: test@example.com, +1 503-867-5309"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                color:
+                  default:
+                    hex: "#000000"
+                    alpha: 1
+
+          - margin:
+              top: 24
+              bottom: 8
+              start: 8
+              end: 8
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: label
+              text: "All other markdown syntax will be ***ignored!!!***"
+              text_appearance:
+                alignment: start
+                font_size: 14
+                styles:
+                  - underlined
+                  - bold
+                color:
+                  default:
+                    hex: "#cc0000"
+                    alpha: 1

@@ -40,6 +40,7 @@ public struct ExperimentsListsDebugView: View {
         return payload["experiment_id"] as? String ?? "MISSING_ID"
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published private(set) var payloads: [[String: AnyHashable]] =
             []

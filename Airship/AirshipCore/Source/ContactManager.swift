@@ -9,7 +9,7 @@ actor ContactManager: ContactManagerProtocol {
     static let identityRateLimitID = "Contact.identityRateLimitID"
     static let updateRateLimitID = "Contact.updateRateLimitID"
     static let updateTaskID = "Contact.update"
-    
+
     private let cachedAuthToken: CachedValue<AuthToken> = CachedValue()
     private var dataStore: PreferenceDataStore
     private let identifySerialQueue: AirshipSerialQueue = AirshipSerialQueue()
@@ -28,7 +28,7 @@ actor ContactManager: ContactManagerProtocol {
     private let contactUpdatesContinuation: AsyncStream<ContactUpdate>.Continuation
 
     private var isEnabled: Bool = false
-    
+
     private var lastIdentifyOperationDate = Date.distantPast
 
     private var lastSuccessfulIdentifyDate = Date.distantPast
@@ -73,7 +73,7 @@ actor ContactManager: ContactManagerProtocol {
             dataStore.setSafeCodable(newValue, forKey: ContactManager.contactInfoKey)
         }
     }
-    
+
     private var possiblyOrphanedContactID: String? {
         guard let lastContactInfo = self.lastContactInfo,
               lastContactInfo.isAnonymous,
@@ -129,8 +129,18 @@ actor ContactManager: ContactManagerProtocol {
             timeInterval: 0.5
         )
 
-        Task {
+        Task { [weak channel] in
             await self.yieldContactUpdates()
+
+            let startingChannelID = channel?.identifier
+            let updates = channel?.identifierUpdates.filter { $0 != startingChannelID }
+
+            if let updates {
+                for await _ in updates {
+                    try Task.checkCancellation()
+                    await enqueueTask()
+                }
+            }
         }
     }
 
@@ -386,10 +396,10 @@ actor ContactManager: ContactManagerProtocol {
 
         case .associateChannel(let channelID, let type):
             return try await performAssociateChannelOperation(
-                channelID: channelID, 
+                channelID: channelID,
                 type: type
             )
-            
+
         case .disassociateChannel(let channel):
             return try await performDisassociateChannel(
                 channel: channel
@@ -561,7 +571,7 @@ actor ContactManager: ContactManagerProtocol {
         }
         return response.isOperationComplete
     }
-    
+
     private func performDisassociateChannel(
         channel: ContactChannel
     ) async throws -> Bool {
@@ -593,7 +603,7 @@ actor ContactManager: ContactManagerProtocol {
                 )
             case .pending(let info):
                 DisassociateOptions(
-                    msisdn: info.address, 
+                    msisdn: info.address,
                     senderID: info.registrationOptions.senderID,
                     optOut: false
                 )
@@ -614,7 +624,7 @@ actor ContactManager: ContactManagerProtocol {
 
         return response.isOperationComplete
     }
-    
+
     private func performResend(
         channel: ContactChannel
     ) async throws -> Bool {
@@ -800,7 +810,7 @@ actor ContactManager: ContactManagerProtocol {
         }
         return channelID
     }
-    
+
     private func prepareNextOperationGroup() -> ContactOperationGroup? {
         var operations = self.operationEntries
 
@@ -1146,3 +1156,4 @@ fileprivate extension AirshipHTTPResponse {
         return self.isSuccess || self.isClientError
     }
 }
+

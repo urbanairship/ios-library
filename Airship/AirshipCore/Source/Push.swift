@@ -549,13 +549,26 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     }
 
     public func enableUserPushNotifications() async -> Bool {
+        return await enableUserPushNotifications(fallback: .none)
+    }
+
+    public func enableUserPushNotifications(
+        fallback: PromptPermissionFallback
+    ) async -> Bool {
         self.dataStore.setBool(
             true,
             forKey: AirshipPush.userPushNotificationsEnabledKey
         )
-        return await self.permissionsManager.requestPermission(.displayNotifications) == .granted
+
+        let result = await self.permissionsManager.requestPermission(
+            .displayNotifications,
+            enableAirshipUsageOnGrant: false,
+            fallback: fallback
+        )
+
+        return result.endStatus == .granted
     }
-    
+
     @MainActor
     private func waitForDeviceTokenRegistration() async {
         guard self.waitForDeviceToken,
@@ -635,12 +648,14 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         get async {
             let (status, settings) = await self.notificationRegistrar.checkStatus()
             let isRegisteredForRemoteNotifications = await self.apnsRegistrar.isRegisteredForRemoteNotifications
+            let displayNotificationStatus = await self.permissionsManager.checkPermissionStatus(.displayNotifications)
 
             return await AirshipNotificationStatus(
                 isUserNotificationsEnabled: self.userPushNotificationsEnabled,
                 areNotificationsAllowed: status != .denied && status != .notDetermined && settings != [],
                 isPushPrivacyFeatureEnabled: self.privacyManager.isEnabled(.push),
-                isPushTokenRegistered: self.deviceToken != nil && isRegisteredForRemoteNotifications
+                isPushTokenRegistered: self.deviceToken != nil && isRegisteredForRemoteNotifications,
+                displayNotificationStatus: displayNotificationStatus
             )
         }
     }

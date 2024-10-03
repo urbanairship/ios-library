@@ -46,6 +46,7 @@ public struct DeviceTagsDebugView: View {
         .navigationTitle("Tags".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published

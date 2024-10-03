@@ -5,7 +5,7 @@ import Foundation
 import AirshipCore
 #endif
 
-protocol AdditionalAudienceCheckerResolverProtocol: AnyActor {
+protocol AdditionalAudienceCheckerResolverProtocol: Actor {
     func resolve(
         deviceInfoProvider: AudienceDeviceInfoProvider,
         additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?

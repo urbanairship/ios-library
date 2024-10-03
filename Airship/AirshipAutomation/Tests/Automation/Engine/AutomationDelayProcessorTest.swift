@@ -15,24 +15,31 @@ final class AutomationDelayProcessorTest: XCTestCase {
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     private var processor: AutomationDelayProcessor!
+    private var executionWindowProcessor: TestExecutionWindowProcessor!
 
     override func setUp() async throws {
+        self.executionWindowProcessor = TestExecutionWindowProcessor()
         self.date.dateOverride = Date()
         self.processor = await AutomationDelayProcessor(
             analytics: analytics,
             appStateTracker: stateTracker,
             taskSleeper: taskSleeper,
-            date: date
+            date: date,
+            executionWindowProcessor: executionWindowProcessor
         )
     }
 
     @MainActor
-    func testWaitConditions() async throws {
+    func testProcess() async throws {
+        let executionWindow = try ExecutionWindow(
+            include: [ .weekly(daysOfWeek: [1]) ]
+        )
         let delay = AutomationDelay(
             seconds: 100.0,
             screens: ["screen1", "screen2"],
             regionID: "region1",
-            appState: .foreground
+            appState: .foreground,
+            executionWindow: executionWindow
         )
 
         let finished = AirshipMainActorValue<Bool>(false)
@@ -55,12 +62,52 @@ final class AutomationDelayProcessorTest: XCTestCase {
         self.analytics.setRegions(Set(["region1"]))
         self.analytics.setRegions(Set(["region1"]))
         self.stateTracker.currentState = .active
+        self.executionWindowProcessor.onIsActive = { window in
+            XCTAssertEqual(window, executionWindow)
+            return true
+        }
 
         await self.fulfillment(of: [ended])
         XCTAssertTrue(finished.value)
 
         let sleeps = self.taskSleeper.sleeps
         XCTAssertEqual(sleeps, [100.0])
+        let processed = await self.executionWindowProcessor.getProcessed()
+        XCTAssertEqual(processed, [executionWindow])
+    }
+
+    @MainActor
+    func testPreprocess() async throws {
+        let executionWindow = try ExecutionWindow(
+            include: [ .weekly(daysOfWeek: [1]) ]
+        )
+
+        let delay = AutomationDelay(
+            seconds: 100.0,
+            screens: ["screen1", "screen2"],
+            regionID: "region1",
+            appState: .foreground,
+            executionWindow: executionWindow
+        )
+
+        let finished = AirshipMainActorValue<Bool>(false)
+        let ended = expectation(description: "delay processed")
+
+        let now = date.now
+        Task { @MainActor [processor] in
+            try! await processor!.preprocess(delay: delay, triggerDate: now)
+            finished.set(true)
+            ended.fulfill()
+        }
+
+        await self.fulfillment(of: [ended])
+        XCTAssertTrue(finished.value)
+
+        let sleeps = self.taskSleeper.sleeps
+        XCTAssertEqual(sleeps, [70.0])
+
+        let processed = await self.executionWindowProcessor.getProcessed()
+        XCTAssertEqual(processed, [executionWindow])
     }
 
     @MainActor
@@ -225,5 +272,46 @@ final class AutomationDelayProcessorTest: XCTestCase {
         XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
     }
 
+    @MainActor
+    func testExecutionWindow() async throws {
+        let executionWindow = try ExecutionWindow(
+            include: [ .weekly(daysOfWeek: [1]) ]
+        )
 
+        let delay = AutomationDelay(
+            executionWindow: executionWindow
+        )
+
+        self.executionWindowProcessor.onIsActive = { _ in
+            return false
+        }
+        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+
+        self.executionWindowProcessor.onIsActive = { _ in
+            return true
+        }
+        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+    }
+}
+
+
+fileprivate actor TestExecutionWindowProcessor: ExecutionWindowProcessorProtocol {
+
+    private var processed: [ExecutionWindow] = []
+
+    @MainActor
+    var onIsActive: ((ExecutionWindow) -> Bool)?
+
+    func process(window: ExecutionWindow) async throws {
+        processed.append(window)
+    }
+
+    func getProcessed() -> [ExecutionWindow] {
+        return processed
+    }
+
+    @MainActor
+    func isActive(window: ExecutionWindow) -> Bool {
+        return onIsActive?(window) ?? false
+    }
 }

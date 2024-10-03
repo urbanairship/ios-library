@@ -1,6 +1,51 @@
 
 # iOS Changelog
 
+## Version 18.9.2 September 23, 2024
+Patch release to fix an issue with high energy usage for In-App Automations, Scenes, and Surveys that was introduced in 18.0.0. This issue is
+not very common but it can occur if the device is unable to connect to our backend to fetch an update to the In-App rules on the device after an SDK
+update or locale change. Application that are receiving high energy usage reports should update.
+
+### Changes
+- Fixed high energy usage for In-App Automations, Scenes, and Surveys if remote-data fails to refresh.
+- Fixed requesting additional notification options if they change after the first prompt.
+
+## Version 18.9.1 September 13, 2024
+Patch release to fix Scene button not able to be tapped in some cases.
+
+#### Changes
+- Fixed Scene buttons not able to be tapped if the last page of the scene contains a wide image background.
+
+## Version 18.9.0 September 10, 2024
+Minor release that introduces `fallback` parameter when requesting permission updates and the permission is denied. This release also contains
+a fix for a regression in 18.8.0 where Channel Registration would continuously update for channels that have upgraded from an earlier
+SDK versions. Applications using 18.8.0 should update.
+
+#### Changes
+- Added new method `Airship.permissionsManager.requestPermission(_:enableAirshipUsageOnGrant:fallback:)` and `Airship.push.enableUserPushNotifications(fallback:)` that allows you to specify a
+fallback behavior if the permission is already denied.
+- Fixed high CPU issues with embedded messages that define a percent based size.
+- Fixed Channel Registration bug that was introduced in 18.8.
+
+
+## Version 18.8.0 September 6, 2024
+Minor release with several enhancements to In-App Automation, Scenes, and Surveys.
+
+**This version has a regression and should be avoided. Please use 18.9.0 or newer instead**
+
+### Changes
+- Added support to disable plain markdown (text markup) support in a Scene.
+- Added support to theme markdown links in a Scene.
+- Added execution window support to In-App Automation, Scenes, and Surveys.
+- Added `displayNotificationStatus` status to the `AirshipNotificationStatus` object to get the user notification permission status.
+- Added `Airship.permissionManager.statusUpdates(for:)` that returns an async stream of permission status updates.
+- Added `MessageCenter.shared.inbox.unreadCountUpdates` that returns an async stream of unread count updates.
+- Added `MessageCenter.shared.inbox.messageUpdates` that returns an async stream of message updates.
+- Updated handling of priority for In-App Automation, Scenes, and Surveys. Priority is now taken into consideration at each step of displaying a message instead of just sorting messages that are
+triggered at the same time.
+- Updated handling of long delays for In-App Automation, Scenes, and Surveys. Delays will now be preprocessed up to 30 seconds before it ends before the message is prepared.
+- Fixed Message Center theme loader when trying to theme the OOTB Message Center window.
+
 ## Version 18.7.2 August 9, 2024
 Patch release that fixes in-app experience displays when resuming from a paused state. Apps that use in-app experiences are encouraged to update.
 
@@ -26,7 +71,7 @@ to using a JSONEncoder/JSONDecoder across threads.
 - `MessageCenterController` is now optional when creating a `MessageCenterView`.
 
 ## Version 18.6.0 July 12, 2024
-Minor release with some improvements to preference center, a fix for in-app message veritcal sizing, accessibility improvements and markdown support in scenes.
+Minor release with some improvements to preference center, a fix for in-app message veritcal sizing, accessibility improvements and plain markdown support in scenes.
 
 ### Changes
 - Added warning message to preference center email entry field.

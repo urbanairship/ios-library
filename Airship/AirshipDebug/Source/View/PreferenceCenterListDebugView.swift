@@ -36,6 +36,7 @@ public struct PreferenceCenterListDebugView: View {
         .navigationTitle("Preference Centers".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published private(set) var identifiers: [String] = []
         private var cancellable: AnyCancellable? = nil

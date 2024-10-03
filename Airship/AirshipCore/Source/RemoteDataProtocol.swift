@@ -18,14 +18,29 @@ public protocol RemoteDataProtocol: AnyObject, Sendable {
     func publisher(types: [String]) -> AnyPublisher<[RemoteDataPayload], Never>
     func payloads(types: [String]) async -> [RemoteDataPayload]
 
+    /// Waits for a successful refresh
+    /// - Parameters:
+    ///     - source: The remote data source.
+    ///     - maxTime: The max time to wait
     func waitRefresh(source: RemoteDataSource, maxTime: TimeInterval?) async
-    func waitRefreshAttempt(source: RemoteDataSource, maxTime: TimeInterval?) async
+
+    /// Waits for a successful refresh
+    /// - Parameters:
+    ///     - source: The remote data source.
     func waitRefresh(source: RemoteDataSource) async
+
+    /// Waits for a refresh attempt for the session.
+    /// - Parameters:
+    ///     - source: The remote data source.
+    ///     - maxTime: The max time to wait
+    func waitRefreshAttempt(source: RemoteDataSource, maxTime: TimeInterval?) async
+
+    /// Waits for a refresh attempt for the session.
+    /// - Parameters:
+    ///     - source: The remote data source.
     func waitRefreshAttempt(source: RemoteDataSource) async
 
-    @discardableResult
-    func refresh() async -> Bool
-
-    @discardableResult
-    func refresh(source: RemoteDataSource) async -> Bool
+    /// Forces a refresh attempt. This should generally never be called externally. Currently being exposed for
+    /// test apps.
+    func forceRefresh() async
 }

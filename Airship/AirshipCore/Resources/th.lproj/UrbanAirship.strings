@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "ไม่เลือกเลย";
 "ua_select_none_messages_description" = "รีเซ็ตการเลือกข้อความ";
 "ua_unread_message_description" = "ยังไม่ได้อ่านข้อความ";
+
+// Generic localizations
+"ua_dismiss" = "ปฏิเสธ";
+"ua_escape" = "หนีออกจาก";
+"ua_next" = "ถัดไป";
+"ua_previous" = "ก่อนหน้า";
+"ua_submit" = "ส่ง";
+"ua_loading" = "กำลังโหลด";
+"ua_pager_progress" = "หน้า %@ จาก %@";
+"ua_play" = "เล่น";
+"ua_pause" = "หยุดชั่วคราว";
+"ua_stop" = "หยุด";

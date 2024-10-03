@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Atlasīt Neviens";
 "ua_select_none_messages_description" = "Atiestatīt ziņojumu atlasi";
 "ua_unread_message_description" = "Ziņojums nelasīts";
+
+// Generic localizations
+"ua_dismiss" = "Noraidīt";
+"ua_escape" = "Izbēgt";
+"ua_next" = "Nākamais";
+"ua_previous" = "Iepriekšējais";
+"ua_submit" = "Iesniegt";
+"ua_loading" = "Ielādē";
+"ua_pager_progress" = "Lapa %@ no %@";
+"ua_play" = "Atskaņot";
+"ua_pause" = "Pauze";
+"ua_stop" = "Apturēt";

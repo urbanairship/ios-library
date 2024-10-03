@@ -22,26 +22,38 @@ public extension View {
         }
     }
 
+    @ViewBuilder
     internal func addTapGesture(action: @escaping () -> Void) -> some View {
-        #if os(tvOS)
-        // broken on tvOS for now
-        self
-        #else
-        self.simultaneousGesture(TapGesture().onEnded(action))
-            .accessibilityAction(.default) {
-                action()
-            }
-        #endif
+        if #available(iOS 13.0, macOS 10.15, tvOS 16.0, watchOS 6.0, *) {
+            self.onTapGesture(perform: action)
+                .accessibilityAction(.default, action)
+        } else {
+            // Tap gesture is unavailable on tvOS versions prior to tvOS 16 for now
+            self.accessibilityAction(.default, action)
+        }
     }
 
 
     @ViewBuilder
-    internal func accessible(_ accessible: Accessible?, hideIfNotSet: Bool = false) -> some View {
+    internal func accessible(_ accessible: Accessible?, hideIfNotSet: Bool = false, isSelected: Bool = false) -> some View {
         if let label = accessible?.contentDescription {
             self.accessibility(label: Text(label))
         } else {
             self.accessibilityHidden(hideIfNotSet)
         }
+
+        if let role = accessible?.role {
+            self.accessibilityAddTraits(role.toAccessibilityTraits(isSelected: isSelected))
+        }
+    }
+
+    /// Common modifier for buttons so event handlers can be added separately to prevent tap issues
+    @ViewBuilder
+    internal func commonButton<Content: BaseModel>(
+        _ model: Content
+    ) -> some View {
+        self.enableBehaviors(model.enableBehaviors)
+        .visibility(model.visibility)
     }
 
     @ViewBuilder
@@ -151,5 +163,34 @@ struct AirshipViewModifierBuilder {
                 content
             }
         }
+    }
+}
+
+extension AccessibilityRole {
+    func toAccessibilityTraits(isSelected: Bool = false) -> AccessibilityTraits {
+        var traits: AccessibilityTraits = []
+
+        switch self {
+        case .heading:
+            _ = traits.insert(.isHeader)
+        case .checkbox, .radio:
+            _ = traits.insert(.isButton)
+            if isSelected {
+                _ = traits.insert(.isSelected)
+            }
+        case .button:
+            _ = traits.insert(.isButton)
+        case .form:
+            // No direct equivalent; adjust if necessary
+            break
+        case .radioGroup:
+            // No direct equivalent; adjust if necessary
+            break
+        case .presentation:
+            // No direct equivalent; adjust if necessary
+            break
+        }
+
+        return traits
     }
 }

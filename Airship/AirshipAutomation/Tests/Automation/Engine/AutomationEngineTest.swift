@@ -6,7 +6,8 @@ import XCTest
 import AirshipAutomation
 import AirshipCore
 
-class TestScheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol {
+@MainActor
+final class TestScheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol {
     var onNotify: (() -> Void)?
     var onWait: (() -> Void)?
 
@@ -89,7 +90,7 @@ final class AutomationEngineTest: XCTestCase {
         )
 
         let analyticsFeed = AirshipAnalyticsFeed() { true }
-        self.scheduleConditionsChangedNotifier = TestScheduleConditionsChangedNotifier()
+        self.scheduleConditionsChangedNotifier = await TestScheduleConditionsChangedNotifier()
         let eventFeed = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: AppStateTracker.shared, analyticsFeed: analyticsFeed)
         let analytics = TestAnalytics()
         let delayProcessor = await AutomationDelayProcessor(analytics: analytics)

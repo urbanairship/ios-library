@@ -73,9 +73,9 @@ final class AirshipInstance: AirshipInstanceProtocol {
         )
 
         #if !os(watchOS)
-        let sharedApp = UIApplication.shared
+        let apnsRegistrar = UIApplicationAPNSRegistrar()
         #else
-        let sharedApp = WKExtension.shared()
+        let apnsRegistrar = WKExtensionAPNSRegistrar()
         #endif
 
         let audienceOverridesProvider = DefaultAudienceOverridesProvider()
@@ -111,7 +111,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             analytics: analytics,
             privacyManager: self.privacyManager,
             permissionsManager: self.permissionsManager,
-            apnsRegistrar: sharedApp,
+            apnsRegistrar: apnsRegistrar,
             badger: Badger.shared
         )
 

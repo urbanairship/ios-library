@@ -6,11 +6,15 @@ import Foundation
 import AirshipCore
 #endif
 
-
 protocol AutomationDelayProcessorProtocol: Sendable {
+    // Waits for the delay
     @MainActor
     func process(delay: AutomationDelay?, triggerDate: Date) async
 
+    // Waits for any delay - 30s and to be a display window if set
+    func preprocess(delay: AutomationDelay?, triggerDate: Date) async throws
+
+    // Checks if conditions are met
     @MainActor
     func areConditionsMet(delay: AutomationDelay?) -> Bool
 }
@@ -21,20 +25,27 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
     private let taskSleeper: AirshipTaskSleeper
     private let date: AirshipDateProtocol
     private let screen: AirshipMainActorValue<String?> = AirshipMainActorValue(nil)
+    private let executionWindowProcessor: ExecutionWindowProcessorProtocol
+
+    private static let preprocessSecondsDelayAllowance: TimeInterval = 30.0
 
     @MainActor
     init(
         analytics: InternalAnalyticsProtocol,
         appStateTracker: AppStateTrackerProtocol? = nil,
         taskSleeper: AirshipTaskSleeper = .shared,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: AirshipDateProtocol = AirshipDate.shared,
+        executionWindowProcessor: ExecutionWindowProcessorProtocol? = nil
     ) {
         self.analytics = analytics
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.taskSleeper = taskSleeper
         self.date = date
+        self.executionWindowProcessor = executionWindowProcessor ?? ExecutionWindowProcessor(
+            taskSleeper: taskSleeper,
+            date: date
+        )
     }
-
 
     private func remainingSeconds(delay: AutomationDelay, triggerDate: Date) -> TimeInterval {
         guard let seconds = delay.seconds else { return 0 }
@@ -89,11 +100,25 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
             
             guard !Task.isCancelled else { return }
             
-            if let window = delay.displayWindow {
-                if case .retry(let delay) = window.nextAvailability(date: date.now) {
-                    try? await self.taskSleeper.sleep(timeInterval: delay)
-                }
+            if let window = delay.executionWindow {
+                try? await executionWindowProcessor.process(window: window)
             }
+        }
+    }
+
+    func preprocess(delay: AutomationDelay?, triggerDate: Date) async throws {
+        guard let delay = delay else { return }
+
+        // Handle delay - preprocessSecondsDelayAllowance
+        let seconds = remainingSeconds(delay: delay, triggerDate: triggerDate) - Self.preprocessSecondsDelayAllowance
+        if seconds > 0 {
+            try await self.taskSleeper.sleep(timeInterval: seconds)
+        }
+
+        try Task.checkCancellation()
+
+        if let window = delay.executionWindow {
+            try await executionWindowProcessor.process(window: window)
         }
     }
 
@@ -125,8 +150,8 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
             }
         }
         
-        if let window = delay.displayWindow {
-            guard window.nextAvailability(date: date.now) == .now else {
+        if let window = delay.executionWindow {
+            guard executionWindowProcessor.isActive(window: window) else {
                 return false
             }
         }

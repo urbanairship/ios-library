@@ -13,6 +13,7 @@ struct HomeView: View {
     @StateObject
     private var viewModel: ViewModel = ViewModel()
 
+
     @Environment(\.verticalSizeClass)
     private var verticalSizeClass
 
@@ -36,7 +37,7 @@ struct HomeView: View {
     }
 
     @ViewBuilder
-    private func makeQuickSettings() -> some View {
+    private var quickSettings: some View {
         ScrollView {
             VStack {
                 Button(
@@ -69,7 +70,7 @@ struct HomeView: View {
 
                 Divider()
 
-                #if canImport(ActivityKit)
+#if canImport(ActivityKit)
                 if #available(iOS 16.1, *) {
                     NavigationLink(
                         destination: LiveActivityManagementView(),
@@ -82,32 +83,28 @@ struct HomeView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
-                #endif
+#endif
             }
         }
     }
 
     @ViewBuilder
-    private func makeHeroImage() -> some View {
-        AirshipEmbeddedView(embeddedID: "home_hero") {
+    private var hero: some View {
+        AirshipEmbeddedView(embeddedID: "test") {
             Image("HomeHeroImage")
                 .resizable()
                 .scaledToFit()
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
         }
     }
 
     @ViewBuilder
-    func makeEnablePushButton() -> some View {
+    private var enablePushButton: some View {
         // MARK: Push/Bleat Button
         Button(action: { viewModel.togglePushEnabled() }) {
             ZStack {
                 Capsule()
                     .strokeBorder(Color.accentColor, lineWidth: 2.0)
-                    .frame(height: 40, alignment: .center)
-                    .padding()
-
+                    .frame(height: 44, alignment: .center)
                 let title =
                     self.viewModel.pushEnabled ? "Disable Push" : "Enable Push"
                 Text(title)
@@ -115,71 +112,51 @@ struct HomeView: View {
                     .foregroundColor(.primary)
             }
         }
-        .padding()
     }
 
     @ViewBuilder
-    func makeCompactContent() -> some View {
-        HStack {
-            VStack {
-                makeHeroImage()
-                makeEnablePushButton()
+    private var content: some View {
+        if self.verticalSizeClass == .compact {
+            HStack(spacing: 16) {
+                VStack(spacing: 16) {
+                    hero.frame(maxHeight: .infinity)
+                    enablePushButton
+                }
+                .frame(maxHeight: .infinity)
+                quickSettings.frame(maxHeight: .infinity)
             }
-            VStack {
-                makeQuickSettings()
+        } else {
+            VStack(spacing: 16) {
+                VStack(spacing: 16) {
+                    hero.frame(maxHeight: .infinity)
+                    enablePushButton
+                }
+                .frame(maxHeight: .infinity)
+                quickSettings.frame(maxHeight: .infinity)
             }
-        }
-    }
-
-    @ViewBuilder
-    func makeContent() -> some View {
-        VStack {
-            Spacer()
-            makeHeroImage()
-            Spacer()
-            makeEnablePushButton()
-            Spacer()
-            makeQuickSettings()
-                .padding(.horizontal)
-            Spacer()
         }
     }
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                if self.verticalSizeClass == .compact {
-                    makeCompactContent()
-                } else {
-                    makeContent()
+        Group {
+            if #available(iOS 16.0, *) {
+                NavigationStack {
+                    content
                 }
+            } else {
+                NavigationView {
+                    content
+                }
+                .navigationViewStyle(.stack)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationBarTitle("")
-            .navigationBarHidden(true)
-            .overlay(makeSettingLink(), alignment: .topTrailing)
         }
-        .navigationViewStyle(.stack)
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationBarTitle("")
+        .navigationBarHidden(true)
     }
 
-    @ViewBuilder
-    private func makeSettingLink() -> some View {
-        #if canImport(AirshipDebug)
-        NavigationLink(
-            destination: AirshipDebugView(),
-            tag: HomeDestination.settings,
-            selection: self.$appState.homeDestination
-        ) {
-            Image(systemName: "gear")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.accentColor)
-                .padding(10)
-                .frame(width: 44, height: 44)
-        }
-        #endif
-    }
-
+    @MainActor
     class ViewModel: ObservableObject {
         @Published
         var pushEnabled: Bool = true
@@ -227,9 +204,9 @@ struct HomeView: View {
         @MainActor
         func togglePushEnabled() {
             if (!pushEnabled) {
-                Airship.privacyManager.enableFeatures(.push)
-                Airship.push.userPushNotificationsEnabled = true
-                Airship.push.backgroundPushNotificationsEnabled = true
+                Task {
+                    await Airship.push.enableUserPushNotifications(fallback: .systemSettings)
+                }
             } else {
                 Airship.push.userPushNotificationsEnabled = false
             }

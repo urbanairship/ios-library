@@ -38,6 +38,11 @@ public final class ChannelScopes: NSObject, Decodable, Sendable {
             self.values = try singleValueContainer.decode([ChannelScope].self)
         }
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(values.map { $0.rawValue })
+    }
 }
 
 /// Channel scope.

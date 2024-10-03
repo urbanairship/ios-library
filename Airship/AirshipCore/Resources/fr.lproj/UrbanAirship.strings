@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Ne rien sélectionner";
 "ua_select_none_messages_description" = "Réinitialiser la sélection des messages";
 "ua_unread_message_description" = "Message non lu";
+
+// Generic localizations
+"ua_dismiss" = "Rejeter";
+"ua_escape" = "Échapper";
+"ua_next" = "Suivant";
+"ua_previous" = "Précédent";
+"ua_submit" = "Soumettre";
+"ua_loading" = "Chargement";
+"ua_pager_progress" = "Page %@ sur %@";
+"ua_play" = "Jouer";
+"ua_pause" = "Pause";
+"ua_stop" = "Arrêter";

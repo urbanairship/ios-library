@@ -110,15 +110,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 )
             } catch {
                 AirshipLogger.error("Failed to fetch frequency checker for schedule \(schedule.identifier) error: \(error)")
-                await self.remoteDataAccess.notifyOutdated(schedule: schedule)
-                return .success(result: .invalidate)
+                return .success(result: .skip)
             }
-
-            guard await !frequencyChecker.isOverLimit else {
-                AirshipLogger.trace("Frequency limits exceeded \(schedule.identifier)")
-                return .success(result: .skip, ignoreReturnOrder: true)
-            }
-
 
             let deviceInfoProvider = self.deviceInfoProviderFactory(
                 self.remoteDataAccess.contactID(forSchedule: schedule)
@@ -181,7 +174,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         experimentResult: experimentResult,
                         reportingContext: schedule.reportingContext,
                         triggerSessionID: triggerSessionID,
-                        additionalAudienceCheckResult: result
+                        additionalAudienceCheckResult: result,
+                        priority: schedule.priority ?? 0
                     )
                 },
                 prepareSchedule: { [frequencyChecker] scheduleInfo, data in

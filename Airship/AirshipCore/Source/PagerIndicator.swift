@@ -37,6 +37,10 @@ struct PagerIndicator: View {
         }
     }
 
+    func announcePage(model: PagerIndicatorModel) -> Bool {
+        return model.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
+    }
+
     var body: some View {
         let childConstraints = ViewConstraints(
             height: constraints.height ?? 32.0
@@ -62,5 +66,9 @@ struct PagerIndicator: View {
         .background(self.model.backgroundColor)
         .border(self.model.border)
         .common(self.model)
+
+        .applyIf(announcePage(model: model), transform: { view in
+            view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString, (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
+        })
     }
 }

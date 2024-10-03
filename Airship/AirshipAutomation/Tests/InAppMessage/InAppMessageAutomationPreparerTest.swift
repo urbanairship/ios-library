@@ -24,7 +24,8 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         campaigns: .string("campigns"),
         contactID: UUID().uuidString,
         experimentResult: nil,
-        triggerSessionID: UUID().uuidString
+        triggerSessionID: UUID().uuidString,
+        priority: 0
     )
 
     override func setUp() async throws {

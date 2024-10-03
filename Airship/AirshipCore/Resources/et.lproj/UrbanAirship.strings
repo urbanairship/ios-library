@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Valige Puudub";
 "ua_select_none_messages_description" = "Lähtestage sõnumi valik";
 "ua_unread_message_description" = "Sõnum lugemata";
+
+// Generic localizations
+"ua_dismiss" = "Lahkuda";
+"ua_escape" = "Põgenemine";
+"ua_next" = "Järgmine";
+"ua_previous" = "Eelmine";
+"ua_submit" = "Esitada";
+"ua_loading" = "Laadimine";
+"ua_pager_progress" = "Lehekülg %@ / %@";
+"ua_play" = "Mängima";
+"ua_pause" = "Paus";
+"ua_stop" = "Peatama";

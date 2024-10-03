@@ -7,6 +7,7 @@ import AirshipCore
 #endif
 
 
+@MainActor
 class ChannelListCellViewModel: ObservableObject {
     let channel: ContactChannel
     let pendingLabelModel: PreferenceCenterConfig.ContactManagementItem.PendingLabel?

@@ -7,6 +7,10 @@ import Foundation
 import Combine
 
 final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {
+    func enableUserPushNotifications(fallback: AirshipCore.PromptPermissionFallback) async -> Bool {
+        return true
+    }
+    
     
     override init() {
         (self.notificationStatusUpdates, self.statusUpdateContinuation) = AsyncStream<AirshipNotificationStatus>.airshipMakeStreamWithContinuation()
@@ -51,7 +55,8 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
         isUserNotificationsEnabled: false,
         areNotificationsAllowed: false,
         isPushPrivacyFeatureEnabled: false,
-        isPushTokenRegistered: false
+        isPushTokenRegistered: false,
+        displayNotificationStatus: .denied
     )
 
 

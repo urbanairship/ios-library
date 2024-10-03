@@ -425,6 +425,158 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         XCTAssertEqual(expected, flag)
     }
     
+    func testControlFlag() async throws {
+        
+        let controlAudience = DeviceAudienceSelector(
+            versionPredicate: JSONPredicate(
+                jsonMatcher: JSONMatcher(
+                    valueMatcher: .matcherWithVersionConstraint("1.6.0+")!
+                )
+            )
+        )
+        
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting"),
+            flagPayload: .staticPayload(
+                FeatureFlagPayload.StaticInfo(
+                    variables: .variant([])
+                )
+            ),
+            controlOptions: .init(
+                audience: controlAudience,
+                reportingMetadata: .string("supersede"),
+                controlType: .flag)
+        )
+        
+        self.remoteDataAccess.status = .upToDate
+        self.remoteDataAccess.flagInfos = [
+            flagInfo,
+        ]
+        
+        var audienceMatched = false
+        self.audienceChecker.onEvaluate = { selector, _, _ in
+            if selector == controlAudience {
+                return audienceMatched
+            }
+            
+            return true
+        }
+        
+        let noControlFlag = try await featureFlagManager.flag(name: "foo")
+        
+        var expected = FeatureFlag(
+            name: "foo",
+            isEligible: true,
+            exists: true,
+            variables: nil,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reporting"),
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+        
+        XCTAssertEqual(expected, noControlFlag)
+        
+        audienceMatched = true
+        
+        let controlFlag = try await featureFlagManager.flag(name: "foo")
+        
+        expected = FeatureFlag(
+            name: "foo",
+            isEligible: false,
+            exists: true,
+            variables: nil,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("supersede"),
+                supersededReportingMetadata: [.string("reporting")],
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+        XCTAssertEqual(expected, controlFlag)
+    }
+    
+    func testControlVariables() async throws {
+        
+        let controlAudience = DeviceAudienceSelector(
+            versionPredicate: JSONPredicate(
+                jsonMatcher: JSONMatcher(
+                    valueMatcher: .matcherWithVersionConstraint("1.6.0+")!
+                )
+            )
+        )
+        
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting"),
+            flagPayload: .staticPayload(
+                FeatureFlagPayload.StaticInfo(
+                    variables: .variant([])
+                )
+            ),
+            controlOptions: .init(
+                audience: controlAudience,
+                reportingMetadata: .string("supersede"),
+                controlType: .variables(.string("variables-overrides")))
+        )
+        
+        self.remoteDataAccess.status = .upToDate
+        self.remoteDataAccess.flagInfos = [
+            flagInfo,
+        ]
+        
+        var audienceMatched = false
+        self.audienceChecker.onEvaluate = { selector, _, _ in
+            if selector == controlAudience {
+                return audienceMatched
+            }
+            
+            return true
+        }
+        
+        let noControlFlag = try await featureFlagManager.flag(name: "foo")
+        
+        var expected = FeatureFlag(
+            name: "foo",
+            isEligible: true,
+            exists: true,
+            variables: nil,
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reporting"),
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+        
+        XCTAssertEqual(expected, noControlFlag)
+        
+        audienceMatched = true
+        
+        let controlFlag = try await featureFlagManager.flag(name: "foo")
+        
+        expected = FeatureFlag(
+            name: "foo",
+            isEligible: true,
+            exists: true,
+            variables: .string("variables-overrides"),
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("supersede"),
+                supersededReportingMetadata: [.string("reporting")],
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+        XCTAssertEqual(expected, controlFlag)
+    }
+    
     func testVariantVariablesDeferred() async throws {
         let variables: [FeatureFlagVariables.VariablesVariant] = [
             FeatureFlagVariables.VariablesVariant(

@@ -51,6 +51,7 @@ public struct InAppAutomationListDebugView: View {
         return payload["id"] as? String ?? "MISSING_ID"
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published private(set) var messagePayloads: [[String: AnyHashable]] =
             []

@@ -55,7 +55,7 @@ struct Checkbox: View {
             .background(self.model.backgroundColor)
             .border(self.model.border)
             .common(self.model)
-            .accessible(self.model)
+            .accessible(self.model, isSelected: self.checkboxState.selectedItems.contains(self.model.value))
             .formElement()
             .disabled(!enabled)
     }

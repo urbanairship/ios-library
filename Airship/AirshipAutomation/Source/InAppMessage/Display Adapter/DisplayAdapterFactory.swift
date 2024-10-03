@@ -10,8 +10,13 @@ import AirshipCore
 public struct DisplayAdapterArgs: Sendable {
     /// The in-app message
     public var message: InAppMessage
+
     /// The assets
     public var assets: AirshipCachedAssetsProtocol
+
+    /// The schedule priority
+    public var priority: Int
+
     /// Action runner
     public var actionRunner: InAppActionRunner {
         return _actionRunner
@@ -80,6 +85,7 @@ final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sen
 
         return try AirshipLayoutDisplayAdapter(
             message: args.message,
+            priority: args.priority,
             assets: args.assets,
             actionRunner: args._actionRunner
         )

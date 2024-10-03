@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Seleccioneu Cap";
 "ua_select_none_messages_description" = "Restablir la selecció de missatges";
 "ua_unread_message_description" = "Missatge no llegit";
+
+// Generic localizations
+"ua_dismiss" = "Descartar";
+"ua_escape" = "Escapar";
+"ua_next" = "Següent";
+"ua_previous" = "Anterior";
+"ua_submit" = "Enviar";
+"ua_loading" = "Carregant";
+"ua_pager_progress" = "Pàgina %@ de %@";
+"ua_play" = "Reproduir";
+"ua_pause" = "Pausar";
+"ua_stop" = "Aturar";

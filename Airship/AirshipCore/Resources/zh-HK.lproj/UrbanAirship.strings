@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "選擇無";
 "ua_select_none_messages_description" = "重置消息選擇";
 "ua_unread_message_description" = "留言未讀";
+
+// Generic localizations
+"ua_dismiss" = "解除";
+"ua_escape" = "逃生";
+"ua_next" = "下一個";
+"ua_previous" = "上一個";
+"ua_submit" = "提交";
+"ua_loading" = "正在載入";
+"ua_pager_progress" = "第%@頁，共%@頁";
+"ua_play" = "播放";
+"ua_pause" = "暫停";
+"ua_stop" = "停止";

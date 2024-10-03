@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "何も選択しない";
 "ua_select_none_messages_description" = "メッセージ選択をリセット";
 "ua_unread_message_description" = "未読メッセージ";
+
+// Generic localizations
+"ua_dismiss" = "解散する";
+"ua_escape" = "脱出";
+"ua_next" = "次へ";
+"ua_previous" = "前";
+"ua_submit" = "は提出します";
+"ua_loading" = "ロード中";
+"ua_pager_progress" = "ページ%@/%@";
+"ua_play" = "再生";
+"ua_pause" = "一時停止";
+"ua_stop" = "止める";

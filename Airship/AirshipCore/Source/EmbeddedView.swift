@@ -30,6 +30,30 @@ struct AdoptLayout: SwiftUI.Layout {
 
         /// proposal.replacingUnspecifiedDimensions() uses `10`, so we shall as well
         let size = CGSize(width: width ?? 10, height: height ?? 10)
+
+        let constraintWidth: CGFloat? = if placement.size.width.isAuto {
+            nil
+        } else {
+            size.width
+        }
+
+        let constraintHeight: CGFloat? = if placement.size.height.isAuto {
+            nil
+        } else {
+            size.height
+        }
+
+        let viewConstraints = ViewConstraints(
+            width: constraintWidth,
+            height: constraintHeight
+        )
+
+        DispatchQueue.main.async {
+            if (self.viewConstraints != viewConstraints) {
+                self.viewConstraints = viewConstraints
+            }
+        }
+
         return size
     }
 
@@ -48,16 +72,6 @@ struct AdoptLayout: SwiftUI.Layout {
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-
-        let constraints = ViewConstraints(
-            width: embeddedSize?.parentWidth ?? bounds.width,
-            height: embeddedSize?.parentHeight ?? bounds.height
-        )
-
-        DispatchQueue.main.async {
-            viewConstraints = constraints
-        }
-
         let viewProposal = ProposedViewSize(
             width: size(
                 constraint: placement.size.width,
@@ -107,25 +121,25 @@ struct EmbeddedView: View {
                     height: placement.size.height.calculateSize(self.embeddedSize?.parentHeight)
                 )
 
-                createView(constraints: constraints, placement: placement)
+                let contentConstraints = constraints.contentConstraints(
+                    placement.size,
+                    contentSize: nil,
+                    margin: placement.margin
+                )
+
+                createView(constraints: contentConstraints, placement: placement)
             }
         }
     }
 
     @MainActor
     private func createView(constraints: ViewConstraints, placement: EmbeddedPlacement) -> some View {
-        let contentConstraints = constraints.contentConstraints(
-            placement.size,
-            contentSize: nil,
-            margin: placement.margin
-        )
-
         return ViewFactory
-            .createView(model: layout.view, constraints: contentConstraints)
+            .createView(model: layout.view, constraints: constraints)
             .background(placement.backgroundColor)
             .border(placement.border)
             .margin(placement.margin)
-            .constraints(contentConstraints)
+            .constraints(constraints)
     }
 
     private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> EmbeddedPlacement {

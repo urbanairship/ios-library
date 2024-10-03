@@ -274,6 +274,7 @@ public struct AirshipDebugView: View {
 
 }
 
+@MainActor
 private class AirshipDebugViewModel: ObservableObject {
     let bundleID = Bundle.main.bundleIdentifier
     let appVersion =

@@ -92,6 +92,7 @@ struct CreateEmailChannelView: View {
         .navigationTitle("Email Channel".localized())
     }
 
+    @MainActor
     fileprivate class ViewModel: ObservableObject {
         @Published var emailAddress: String = ""
         @Published var commercial: Bool = false

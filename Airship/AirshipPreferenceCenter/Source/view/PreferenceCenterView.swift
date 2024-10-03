@@ -9,7 +9,7 @@ import AirshipCore
 #endif
 
 /// Preference center view phase
-public enum PreferenceCenterViewPhase {
+public enum PreferenceCenterViewPhase: Sendable {
     /// The view is loading
     case loading
     /// The view failed to load the config
@@ -19,6 +19,7 @@ public enum PreferenceCenterViewPhase {
 }
 
 /// Preference center view
+@preconcurrency @MainActor
 public struct PreferenceCenterList: View {
 
     @StateObject
@@ -63,7 +64,7 @@ public struct PreferenceCenterList: View {
         let refresh = {
             self.loader.load(
                 preferenceCenterID: preferenceCenterID,
-                onLoad: self.onLoad
+                onLoad: onLoad
             )
         }
 
@@ -268,7 +269,7 @@ struct PreferenceCenterView_Previews: PreviewProvider {
 
         PreferenceCenterList(preferenceCenterID: "PREVIEW") {
             preferenceCenterID in
-            return .loaded(PreferenceCenterState(config: config))
+            return await .loaded(PreferenceCenterState(config: config))
         }
     }
 }

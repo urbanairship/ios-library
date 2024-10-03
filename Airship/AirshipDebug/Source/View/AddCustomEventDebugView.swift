@@ -102,6 +102,7 @@ public struct AddCustomEventView: View {
         .navigationTitle("Custom Event".localized())
     }
 
+    @MainActor
     fileprivate class ViewModel: ObservableObject {
         @Published var eventName: String = ""
         @Published var eventValue: Double = 1.0

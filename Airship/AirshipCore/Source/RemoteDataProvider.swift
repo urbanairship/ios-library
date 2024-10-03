@@ -117,10 +117,13 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
         }
     }
 
-    func notifyOutdated(remoteDataInfo: RemoteDataInfo) {
-        if (self.refreshState?.remoteDataInfo == remoteDataInfo) {
-            self.refreshState = nil
+    func notifyOutdated(remoteDataInfo: RemoteDataInfo) -> Bool {
+        guard self.refreshState?.remoteDataInfo == remoteDataInfo else {
+            return false
         }
+
+        self.refreshState = nil
+        return true
     }
 
     func isCurrent(locale: Locale, randomeValue: Int) async -> Bool {

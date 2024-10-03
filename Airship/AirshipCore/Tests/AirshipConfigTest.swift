@@ -39,7 +39,11 @@ final class AirshipConfigTest: XCTestCase {
     }
     
     func testDevelopmentProfileParsing() {
-        let profilePath = Bundle(for: self.classForCoder).path(forResource: "development-embedded", ofType: "mobileprovision")!
+        let profilePath = Bundle(for: self.classForCoder).path(
+            forResource: "development-embedded",
+            ofType: "mobileprovision"
+        )!
+
         XCTAssertFalse(AirshipConfig.isProductionProvisioningProfile(profilePath))
     }
     

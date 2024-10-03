@@ -13,7 +13,7 @@ final actor TestFrequencyLimitManager: FrequencyLimitManagerProtocol {
     private var checkerBlock: (@Sendable ([String]) async throws -> FrequencyCheckerProtocol)?
 
 
-    func setCheckerBlock(_ checkerBlock: @Sendable @escaping ([String]) -> FrequencyCheckerProtocol) {
+    func setCheckerBlock(_ checkerBlock: @Sendable @escaping ([String]) throws -> FrequencyCheckerProtocol) {
         self.checkerBlock = checkerBlock
     }
 

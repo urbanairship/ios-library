@@ -2,6 +2,7 @@
 
 import Foundation
 
+@MainActor
 class ViewState: ObservableObject {
     @Published var state: [String: Any] = [:]
 

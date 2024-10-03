@@ -34,6 +34,7 @@ public struct FeatureFlagDebugView: View {
         .navigationTitle("Feature Flags".localized())
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published private(set) var entries: [FeatureFlagEntry] = []
         private var cancellable: AnyCancellable? = nil
@@ -197,6 +198,7 @@ private struct FeaturFlagDetailsView: View {
         )
     }
 
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published private(set) var result: FeatureFlag?

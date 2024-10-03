@@ -60,6 +60,7 @@ struct RemoveChannelPromptView: View {
                 base: DefaultContactManagementSectionStyle.titleAppearance
             )
             .fixedSize(horizontal: false, vertical: true)
+            .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
@@ -81,11 +82,7 @@ struct RemoveChannelPromptView: View {
         if let footer = item.view.display.footer {
             Spacer()
                 .frame(height: 20)
-            Text(footer)
-                .textAppearance(
-                    theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
-                )
+            FooterView(text: footer, textAppearance: theme?.subtitleAppearance ?? DefaultContactManagementSectionStyle.subtitleAppearance)
         }
     }
 
@@ -139,6 +136,8 @@ struct RemoveChannelPromptView: View {
     }
 
     var body: some View {
-        promptView.frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
+        promptView
+            .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
+            .accessibilityAddTraits(.isModal)
     }
 }

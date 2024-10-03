@@ -143,6 +143,7 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     )
 }
 
+
 /// Airship Push protocol.
 public protocol AirshipPushProtocol: AirshipBasePushProtocol {
 
@@ -158,11 +159,24 @@ public protocol AirshipPushProtocol: AirshipBasePushProtocol {
 
     /// Gets the current notification status
     var notificationStatus: AirshipNotificationStatus { get async }
+
+    /// Enables user notifications on this device through Airship.
+    ///
+    /// - Note: The result of this method does NOT represent the state of the userPushNotificationsEnabled flag,
+    /// which will be invariably set to `true` after the completion of this call.
+    ///
+    /// - Parameters:
+    ///   - fallback: The prompt permission fallback if the display notifications permission is already denied.
+    ///
+    /// - Returns: `true` if user notifications are enabled at the system level,  otherwise`false`.
+    @discardableResult
+    func enableUserPushNotifications(fallback: PromptPermissionFallback) async -> Bool
 }
 
 protocol InternalPushProtocol {
     var deviceToken: String? { get }
     func dispatchUpdateAuthorizedNotificationTypes()
+    @MainActor
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
     func didFailToRegisterForRemoteNotifications(_ error: Error)
 

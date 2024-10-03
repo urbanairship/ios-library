@@ -44,6 +44,17 @@ final class FeatureFlagInfoTest: XCTestCase {
                     }
                  }
               },
+              "control":{
+                 "audience_selector":{
+                    "app_version":{
+                       "value":{
+                          "version_matches":"1.6.0+"
+                       }
+                    }
+                },
+                "reporting_metadata": "superseded",
+                "type": "flag"
+              },
               "variables":{
                  "type":"variant",
                  "variants":[
@@ -222,10 +233,54 @@ final class FeatureFlagInfoTest: XCTestCase {
                         ]
                     )
                 )
-            )
+            ),
+            controlOptions: ControlOptions(
+                audience: .init(
+                    versionPredicate: JSONPredicate(
+                        jsonMatcher: JSONMatcher(
+                            valueMatcher: .matcherWithVersionConstraint("1.6.0+")!
+                        )
+                    )),
+                reportingMetadata: .string("superseded"),
+                controlType: .flag)
         )
 
         XCTAssertEqual(decoded, expected)
+    }
+    
+    func testDecodeControl() throws {
+        let json = """
+          {
+             "audience_selector":{
+                "app_version":{
+                   "value":{
+                      "version_matches":"1.6.0+"
+                   }
+                }
+            },
+            "reporting_metadata": "superseded",
+            "type": "variables",
+            "variables": "variables_override"
+          }
+        """
+        
+        let decoded = try JSONDecoder().decode(
+            ControlOptions.self,
+            from: json.data(using: .utf8)!
+        )
+        
+        let expected = ControlOptions(
+            audience: .init(
+                versionPredicate: JSONPredicate(
+                    jsonMatcher: JSONMatcher(
+                        valueMatcher: .matcherWithVersionConstraint("1.6.0+")!
+                    )
+                )),
+            reportingMetadata: .string("superseded"),
+            controlType: .variables(.string("variables_override"))
+        )
+        
+        XCTAssertEqual(expected, decoded)
     }
 }
 

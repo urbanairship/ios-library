@@ -24,6 +24,8 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         self.push.dispatchUpdateAuthorizedNotificationTypes()
     }
 
+
+    @preconcurrency @MainActor
     public func didRegisterForRemoteNotifications(deviceToken: Data) {
         let tokenString = AirshipUtils.deviceTokenStringFromDeviceToken(deviceToken)
 
@@ -42,7 +44,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(watchOS)
-    @MainActor
+    @preconcurrency @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool,
@@ -66,7 +68,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
     }
     #else
-    @MainActor
+    @preconcurrency @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool,
@@ -91,7 +93,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
     #endif
 
-    @MainActor
+    @preconcurrency @MainActor
     public func willPresentNotification(
         notification: UNNotification,
         presentationOptions: UNNotificationPresentationOptions,
@@ -111,7 +113,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(tvOS)
-    @MainActor
+    @preconcurrency @MainActor
     public func didReceiveNotificationResponse(
         response: UNNotificationResponse,
         completionHandler: @escaping () -> Void

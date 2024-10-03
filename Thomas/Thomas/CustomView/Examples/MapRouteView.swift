@@ -29,6 +29,7 @@ struct MapRouteView: View {
     }
 }
 
+@MainActor
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var location: CLLocationCoordinate2D?
     private let locationManager = CLLocationManager()
@@ -40,7 +41,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.startUpdatingLocation()
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last?.coordinate {
             DispatchQueue.main.async {
                 self.location = location

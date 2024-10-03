@@ -55,3 +55,15 @@
 "ua_select_none_messages" = "Не выбирать ничего";
 "ua_select_none_messages_description" = "Сбросить выбор сообщения";
 "ua_unread_message_description" = "Сообщение непрочитано";
+
+// Generic localizations
+"ua_dismiss" = "Отклонить";
+"ua_escape" = "Выход";
+"ua_next" = "Следующий";
+"ua_previous" = "Предыдущий";
+"ua_submit" = "Отправить";
+"ua_loading" = "Загрузка";
+"ua_pager_progress" = "Страница %@ из %@";
+"ua_play" = "Воспроизвести";
+"ua_pause" = "Пауза";
+"ua_stop" = "Стоп";

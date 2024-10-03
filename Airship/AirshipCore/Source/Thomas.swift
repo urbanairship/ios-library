@@ -15,7 +15,8 @@ public final class Thomas {
         scene: UIWindowScene,
         extensions: ThomasExtensions? = nil,
         delegate: ThomasDelegate,
-        extras: AirshipJSON?
+        extras: AirshipJSON?,
+        priority: Int
     ) throws -> AirshipMainActorCancellable {
         switch layout.presentation {
         case .banner(let presentation):
@@ -40,7 +41,8 @@ public final class Thomas {
                 layout: layout,
                 extensions: extensions,
                 delegate: delegate,
-                extras: extras
+                extras: extras,
+                priority: priority
             )
         }
     }

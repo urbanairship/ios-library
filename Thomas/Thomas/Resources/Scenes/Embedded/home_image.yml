@@ -7,7 +7,13 @@ presentation:
     size:
       width: 100%
       height: auto
+    margin:
+      start: 16
+      end: 16
+      top: 16
+      bottom: 16
   embedded_id: home_image
+
 view:
   type: pager_controller
   identifier: cd21507b-c0b1-4094-9cc6-a1c7e0713c82
