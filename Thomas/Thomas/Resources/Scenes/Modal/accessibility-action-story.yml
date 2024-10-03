@@ -98,7 +98,7 @@ view:
             - type: default
               reporting_metadata:
                 key: "page_1_next"
-              name:
+              localized_content_description:
                 fallback: "Next Page"
                 ref: "ua_next"
               actions:
@@ -165,7 +165,7 @@ view:
             - type: default
               reporting_metadata:
                 key: "page_2_next"
-              name:
+              localized_content_description:
                 fallback: "Next Page"
                 ref: "ua_next"
               actions:
@@ -175,7 +175,7 @@ view:
             - type: default
               reporting_metadata:
                 key: "page_2_previous"
-              name:
+              localized_content_description:
                 fallback: "Previous Page"
                 ref: "ua_previous"
               actions:
@@ -242,7 +242,7 @@ view:
             - type: default
               reporting_metadata:
                 key: "page_3_previous"
-              name:
+              localized_content_description:
                 fallback: "Previous Page"
                 ref: "ua_previous"
               actions:

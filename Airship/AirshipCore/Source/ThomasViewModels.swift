@@ -888,6 +888,7 @@ struct MediaModel: BaseModel, Accessible, Codable {
     let mediaType: MediaType
     let mediaFit: MediaFit
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
@@ -902,6 +903,7 @@ struct MediaModel: BaseModel, Accessible, Codable {
         case backgroundColor = "background_color"
         case mediaFit = "media_fit"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
@@ -935,6 +937,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
     let text: String
     let textAppearance: TextAppearance
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
@@ -947,6 +950,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
@@ -981,6 +985,7 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
     let actions: ActionsPayload?
     let label: LabelModel
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let reportingMetadata: AirshipJSON?
@@ -995,6 +1000,7 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
         case actions = "actions"
         case label = "label"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
@@ -1138,6 +1144,7 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let actions: ActionsPayload?
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let reportingMetadata: AirshipJSON?
@@ -1152,6 +1159,7 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
         case clickBehaviors = "button_click"
         case actions = "actions"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
@@ -1299,31 +1307,26 @@ struct AutomatedAccessibilityAction: Codable, Equatable, Sendable {
     let type: AutomatedAccessibilityActionType
 }
 
-struct AccessibilityActionName: Codable, Equatable, Sendable, Hashable {
-    let nameKey: String?
-    let fallbackName: String
-
-    enum CodingKeys: String, CodingKey {
-        case nameKey = "ref"
-        case fallbackName = "fallback"
-    }
-}
-
-struct AccessibilityAction: Codable, Equatable, Sendable, Hashable, Identifiable {
-    var id: String { name.fallbackName }
+struct AccessibilityAction: Codable, Equatable, Sendable, Hashable, Identifiable, Accessible {
+    var id: String { localizedContentDescription?.fallbackDescription ?? "unknown" } /// fallbackDescription should always be defined for accessibility action
 
     let type: AccessibilityActionType
     let reportingMetadata: AirshipJSON?
-    let name: AccessibilityActionName
     let actions: [ActionsPayload]?
     let behaviors: [ButtonClickBehavior]?
+
+    let role: AccessibilityRole?
+    let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
 
     enum CodingKeys: String, CodingKey {
         case type
         case reportingMetadata = "reporting_metadata"
-        case name
         case actions
         case behaviors
+        case role
+        case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
     }
 }
 
@@ -1608,6 +1611,7 @@ struct CheckboxControllerModel: BaseModel, Accessible {
     let maxSelection: Int?
     let view: ViewModel
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
@@ -1622,6 +1626,7 @@ struct CheckboxControllerModel: BaseModel, Accessible {
         case minSelection = "min_selection"
         case maxSelection = "max_selection"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case enableBehaviors = "enabled"
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
@@ -1639,6 +1644,7 @@ struct RadioInputControllerModel: BaseModel, Accessible {
     let isRequired: Bool?
     let view: ViewModel
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let attributeName: AttributeName?
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
@@ -1653,6 +1659,7 @@ struct RadioInputControllerModel: BaseModel, Accessible {
         case view = "view"
         case isRequired = "required"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case attributeName = "attribute_name"
         case enableBehaviors = "enabled"
         case visibility = "visibility"
@@ -1672,8 +1679,20 @@ enum AccessibilityRole: String, Codable {
     case presentation
 }
 
+struct LocalizedContentDescription: Codable, Equatable, Sendable, Hashable {
+    let descriptionKey: String?
+    let fallbackDescription: String
+
+    enum CodingKeys: String, CodingKey {
+        case descriptionKey = "ref"
+        case fallbackDescription = "fallback"
+    }
+}
+
 protocol Accessible {
     var contentDescription: String? { get }
+
+    var localizedContentDescription: LocalizedContentDescription? { get }
 
     var role: AccessibilityRole? { get }
 }
@@ -1684,6 +1703,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
     let backgroundColor: ThomasColor?
     let identifier: String
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let isRequired: Bool?
     let placeHolder: String?
     let textAppearance: TextInputTextAppearance
@@ -1699,6 +1719,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
         case backgroundColor = "background_color"
         case identifier = "identifier"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case isRequired = "required"
         case placeHolder = "place_holder"
         case enableBehaviors = "enabled"
@@ -1716,6 +1737,7 @@ struct ToggleModel: BaseModel, Accessible, Codable {
     let backgroundColor: ThomasColor?
     let identifier: String
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let isRequired: Bool?
     let style: ToggleStyleModel
     let attributeName: AttributeName?
@@ -1730,6 +1752,7 @@ struct ToggleModel: BaseModel, Accessible, Codable {
         case backgroundColor = "background_color"
         case identifier = "identifier"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case isRequired = "required"
         case style = "style"
         case attributeName = "attribute_name"
@@ -1747,6 +1770,7 @@ struct CheckboxModel: BaseModel, Accessible, Codable {
     let border: Border?
     let backgroundColor: ThomasColor?
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let value: String
     let style: ToggleStyleModel
     let visibility: VisibilityInfo?
@@ -1758,6 +1782,7 @@ struct CheckboxModel: BaseModel, Accessible, Codable {
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case value = "reporting_value"
         case style = "style"
         case visibility = "visibility"
@@ -1773,6 +1798,7 @@ struct RadioInputModel: BaseModel, Accessible, Codable {
     let border: Border?
     let backgroundColor: ThomasColor?
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let value: String
     let style: ToggleStyleModel
     let attributeValue: AttributeValue?
@@ -1786,6 +1812,7 @@ struct RadioInputModel: BaseModel, Accessible, Codable {
         case border = "border"
         case backgroundColor = "background_color"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case value = "reporting_value"
         case attributeValue = "attribute_value"
         case visibility = "visibility"
@@ -1875,6 +1902,7 @@ struct ScoreModel: BaseModel, Accessible, Codable {
     let backgroundColor: ThomasColor?
     let identifier: String
     let contentDescription: String?
+    let localizedContentDescription: LocalizedContentDescription?
     let isRequired: Bool?
     let style: ScoreStyleModel
     let attributeName: AttributeName?
@@ -1888,6 +1916,7 @@ struct ScoreModel: BaseModel, Accessible, Codable {
         case backgroundColor = "background_color"
         case identifier = "identifier"
         case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
         case isRequired = "required"
         case style = "style"
         case attributeName = "attribute_name"

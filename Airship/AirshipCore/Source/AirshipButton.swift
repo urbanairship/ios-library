@@ -27,7 +27,7 @@ struct AirshipButton<Label> : View  where Label : View {
                 doButtonActions()
             },
             label: self.label
-        )
+        ).accessibilityLabel(self.description)
     }
 
     private func doButtonActions() {

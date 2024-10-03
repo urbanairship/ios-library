@@ -495,3 +495,9 @@ internal extension Collection {
         indices.contains(index) ? self[index] : nil
     }
 }
+
+internal extension LocalizedContentDescription {
+    var localized: String? {
+        self.descriptionKey?.airshipLocalizedString(fallback: self.fallbackDescription)
+    }
+}

@@ -20,7 +20,7 @@ class AirshipResources {
 }
 
 extension String {
-    var airshipLocalizedString: String {
-        return AirshipResources.localizedString(key: self) ?? self
+    func airshipLocalizedString(fallback: String? = nil) -> String {
+        return AirshipResources.localizedString(key: self) ?? fallback ?? self
     }
 }
