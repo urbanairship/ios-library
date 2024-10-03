@@ -183,6 +183,9 @@ view:
           button_click:
             - dismiss
           identifier: dismiss_button
+          localized_content_description:
+            ref: "ua_dismiss"
+            fallback: "cool"
           image:
             color:
               default:

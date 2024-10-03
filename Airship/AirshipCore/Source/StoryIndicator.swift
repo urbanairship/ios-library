@@ -47,7 +47,7 @@ struct StoryIndicator: View {
                         }
                     }
                 }.applyIf(announcePage(model: model), transform: { view in
-                    view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString, (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
+                    view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
                 })
             }
             

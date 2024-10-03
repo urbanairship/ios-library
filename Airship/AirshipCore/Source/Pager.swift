@@ -110,7 +110,7 @@ struct Pager: View {
                     handleActions(accessibilityAction.actions)
                     handleBehavior(accessibilityAction.behaviors, transition: .accessibilityAction(type: accessibilityAction.type, reportingMetadata: accessibilityAction.reportingMetadata), index: index)
                 } label: {
-                    Text(accessibilityActionName(action: accessibilityAction))
+                    Text(accessibilityActionContentDescription(action: accessibilityAction))
                 }.accessibilityRemoveTraits(.isButton)
             }
         }
@@ -160,11 +160,11 @@ struct Pager: View {
         }
     }
 
-    private func accessibilityActionName(action: AccessibilityAction) -> String {
-        let nameKey = action.name.nameKey
-        let fallback = action.name.fallbackName
+    private func accessibilityActionContentDescription(action: AccessibilityAction) -> String {
+        let nameKey = action.localizedContentDescription?.descriptionKey
+        let fallback = action.localizedContentDescription?.fallbackDescription
 
-        return nameKey?.airshipLocalizedString ?? fallback
+        return nameKey?.airshipLocalizedString(fallback: fallback) ?? "unknown" /// Action fallback description should always be defined
     }
 
     private func updateVoiceoverRunningState() {
