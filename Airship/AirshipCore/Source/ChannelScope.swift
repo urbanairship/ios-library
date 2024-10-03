@@ -3,7 +3,7 @@
 import Foundation
 
 /// Channel scopes.
-public final class ChannelScopes: NSObject, Decodable, Sendable {
+public final class ChannelScopes: NSObject, Codable, Sendable {
 
     /// The scopes
     public let values: [ChannelScope]
