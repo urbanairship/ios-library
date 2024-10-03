@@ -92,14 +92,14 @@ public struct MessageCenterListView: View {
         )
 
         if #available(iOS 15.0, *) {
-            cell.listRowBackground(theme.cellColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellColorDark))
+            cell.listRowBackground(colorScheme.resolveColor(light: theme.cellColor, dark: theme.cellColorDark))
                 .listRowSeparator(
                     (theme.cellSeparatorStyle == SeparatorStyle.none)
                         ? .hidden : .automatic
                 )
-                .listRowSeparatorTint(theme.cellSeparatorColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellSeparatorColorDark))
+                .listRowSeparatorTint(colorScheme.resolveColor(light: theme.cellSeparatorColor, dark: theme.cellSeparatorColorDark))
         } else {
-            cell.listRowBackground(theme.cellColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cellColorDark))
+            cell.listRowBackground(colorScheme.resolveColor(light: theme.cellColor, dark: theme.cellColorDark))
         }
     }
 
@@ -149,12 +149,7 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeContent() -> some View {
-        let listBackgroundColor = theme
-            .messageListBackgroundColor?
-            .adaptiveColor(
-                for: colorScheme,
-                darkVariation: theme.messageListBackgroundColorDark
-            )
+        let listBackgroundColor = colorScheme.resolveColor(light: theme.messageListBackgroundColor, dark: theme.messageListBackgroundColorDark)
 
         let content = ZStack {
             makeList()
@@ -214,10 +209,10 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_delete_messages".messageCenterLocalizedString) (\(self.selection.count))"
                     )
-                    .foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
+                    .foregroundColor(colorScheme.resolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
                 } else {
                     Text("ua_delete_messages".messageCenterLocalizedString)
-                        .foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
+                        .foregroundColor(colorScheme.resolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
                 }
             }
         )
@@ -236,10 +231,10 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_mark_messages_read".messageCenterLocalizedString) (\(self.selection.count))"
                     )
-                    .foregroundColor(theme.markAsReadButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.markAsReadButtonTitleColorDark))
+                    .foregroundColor(colorScheme.resolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
                 } else {
                     Text("ua_mark_messages_read".messageCenterLocalizedString)
-                        .foregroundColor(theme.markAsReadButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.markAsReadButtonTitleColorDark))
+                        .foregroundColor(colorScheme.resolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
                 }
             }
         )
@@ -261,7 +256,7 @@ public struct MessageCenterListView: View {
             self.selection = Set(self.messageIDs)
         } label: {
             Text("ua_select_all_messages".messageCenterLocalizedString)
-                .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))
+                .foregroundColor(colorScheme.resolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
         }
         .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
@@ -271,7 +266,7 @@ public struct MessageCenterListView: View {
             self.selection = Set()
         } label: {
             Text("ua_select_none_messages".messageCenterLocalizedString)
-                .foregroundColor(theme.selectAllButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.selectAllButtonTitleColorDark))
+                .foregroundColor(colorScheme.resolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
         }
         .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
@@ -294,8 +289,8 @@ public struct MessageCenterListView: View {
         let isEditMode = self.editMode?.wrappedValue.isEditing ?? false
         let color =
             isEditMode
-        ? theme.cancelButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.cancelButtonTitleColorDark) :
-        theme.editButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.editButtonTitleColorDark)
+        ? colorScheme.resolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark) :
+        colorScheme.resolveColor(light: theme.editButtonTitleColor, dark: theme.editButtonTitleColorDark)
 
         return EditButton()
             .foregroundColor(color)
@@ -304,7 +299,7 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func refreshButton() -> some View {
-        let refreshColor = theme.refreshTintColor?.adaptiveColor(for: colorScheme, darkVariation: theme.refreshTintColorDark)
+        let refreshColor = colorScheme.resolveColor(light: theme.refreshTintColor, dark: theme.refreshTintColorDark)
 
         if isRefreshing {
             ProgressView()
