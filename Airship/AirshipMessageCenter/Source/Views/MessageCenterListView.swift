@@ -104,15 +104,22 @@ public struct MessageCenterListView: View {
     }
 
     @ViewBuilder
+    private func makeCell(messageID: String) -> some View {
+        if let item = self.viewModel.messageItem(forID: messageID) {
+            makeCell(item: item, messageID: messageID)
+                .tag(messageID)
+                .opacity(self.listOpacity)
+        } else {
+            EmptyView()
+                .opacity(self.listOpacity)
+        }
+    }
+
+    @ViewBuilder
     private func makeList() -> some View {
         let list = List(selection: $selection) {
             ForEach(self.messageIDs, id: \.self) { messageID in
-                if let item = self.viewModel.messageItem(forID: messageID) {
-                    makeCell(item: item, messageID: messageID)
-                        .tag(messageID)
-                } else {
-                    EmptyView()
-                }
+                makeCell(messageID: messageID)
             }
             .onDelete { offsets in
                 delete(
@@ -142,6 +149,7 @@ public struct MessageCenterListView: View {
             list.refreshable {
                 await self.viewModel.refreshList()
             }
+            .disabled(self.messageIDs.isEmpty)
         } else {
             list
         }
@@ -154,7 +162,6 @@ public struct MessageCenterListView: View {
         let content = ZStack {
             makeList()
                 .listBackground(listBackgroundColor)
-                .opacity(self.listOpacity)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
                 .onChange(of: self.messageIDs) { ids in
                     if ids.isEmpty {
@@ -169,11 +176,7 @@ public struct MessageCenterListView: View {
                     .appearanceTint()
                     .opacity(1.0 - self.listOpacity)
             } else if self.messageIDs.isEmpty {
-                VStack {
-                    refreshButton()
-                    Text("ua_empty_message_list".messageCenterLocalizedString)
-                        .opacity(1.0 - self.listOpacity)
-                }
+                emptyMessageListMessage()
             }
         }
 
@@ -298,33 +301,65 @@ public struct MessageCenterListView: View {
     }
 
     @ViewBuilder
-    private func refreshButton() -> some View {
+    private func toolbarRefreshButton() -> some View {
         let refreshColor = colorScheme.resolveColor(light: theme.refreshTintColor, dark: theme.refreshTintColorDark)
 
-        if isRefreshing {
-            ProgressView()
-                .appearanceTint()
-        } else {
+        Button {
+            Task { @MainActor in
+                isRefreshing = true
+                await self.viewModel.refreshList()
+                isRefreshing = false
+            }
+        } label: {
+            if isRefreshing {
+                ProgressView()
+                    .appearanceTint()
+            } else {
+                Image(systemName: "arrow.clockwise")
+                    .foregroundColor(refreshColor)
+            }
+        }
+        .disabled(isRefreshing)
+    }
+
+    @ViewBuilder
+    private func emptyMessageListMessage() -> some View {
+        let refreshColor = colorScheme.resolveColor(light: theme.refreshTintColor, dark: theme.refreshTintColorDark)
+
+        VStack {
             Button {
-                Task {
+                Task { @MainActor in
                     isRefreshing = true
                     await self.viewModel.refreshList()
                     isRefreshing = false
                 }
             } label: {
-                Image(systemName: "arrow.clockwise")
-                    .foregroundColor(refreshColor)
+
+                ZStack {
+                    if isRefreshing {
+                        ProgressView()
+                            .appearanceTint()
+                    } else {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundColor(refreshColor)
+                    }
+                }
+                .frame(height: 44)
+                .background(Color.airshipTappableClear)
             }
             .disabled(isRefreshing)
-            .opacity(isRefreshing ? 0 : 1)
+
+            Text("ua_empty_message_list".messageCenterLocalizedString)
         }
+        .opacity(1.0 - self.listOpacity)
+
     }
 
     private func leadingToolbar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             editButton()
-            if #available(iOS 15, *) {} else {
-                refreshButton()
+            if #unavailable(iOS 15) {
+                toolbarRefreshButton()
             }
         }
     }
