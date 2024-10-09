@@ -1706,6 +1706,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
     let localizedContentDescription: LocalizedContentDescription?
     let isRequired: Bool?
     let placeHolder: String?
+    let attributeName: AttributeName?
     let textAppearance: TextInputTextAppearance
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
@@ -1714,6 +1715,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
     var role: AccessibilityRole?
 
     enum CodingKeys: String, CodingKey {
+        case attributeName = "attribute_name"
         case textAppearance = "text_appearance"
         case border = "border"
         case backgroundColor = "background_color"

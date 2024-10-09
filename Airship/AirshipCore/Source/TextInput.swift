@@ -114,6 +114,8 @@ struct TextInput: View {
         let data = FormInputData(
             self.model.identifier,
             value: .text(trimmed.isEmpty ? nil : trimmed),
+            attributeName: self.model.attributeName,
+            attributeValue: trimmed.isEmpty ? nil : .string(trimmed),
             isValid: isValid
         )
         self.formState.updateFormInput(data)
