@@ -316,7 +316,7 @@ struct ControlOptions: Codable, Equatable {
         
         private enum CodingKeys: CodingKey {
             case type
-            case variables
+            case data
         }
         
         enum OptionType: String, Codable {
@@ -334,7 +334,7 @@ struct ControlOptions: Codable, Equatable {
                 self = .flag
             case .variables:
                 self = .variables(
-                    try container.decodeIfPresent(AirshipJSON.self, forKey: .variables)
+                    try container.decodeIfPresent(AirshipJSON.self, forKey: .data)
                 )
             }
         }
@@ -348,7 +348,7 @@ struct ControlOptions: Codable, Equatable {
                 
             case .variables(let variables):
                 try container.encode(OptionType.variables, forKey: .type)
-                try container.encodeIfPresent(variables, forKey: .variables)
+                try container.encodeIfPresent(variables, forKey: .data)
             }
         }
     }
