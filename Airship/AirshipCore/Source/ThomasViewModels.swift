@@ -308,6 +308,7 @@ enum ViewModelType: String, Codable {
     case label = "label"
     case labelButton = "label_button"
     case imageButton = "image_button"
+    case buttonLayout = "button_layout"
     case emptyView = "empty_view"
     case pager = "pager"
     case pagerIndicator = "pager_indicator"
@@ -399,6 +400,7 @@ indirect enum ViewModel: Codable, Equatable, Sendable {
     case npsController(NpsControllerModel)
     case toggle(ToggleModel)
     case stateController(StateControllerModel)
+    case buttonLayout(ButtonLayoutModel)
 
     private enum CodingKeys: String, CodingKey {
         case type
@@ -504,6 +506,10 @@ indirect enum ViewModel: Codable, Equatable, Sendable {
             self = .customView(
                 try singleValueContainer.decode(CustomViewModel.self)
             )
+        case .buttonLayout:
+            self = .buttonLayout(
+                try singleValueContainer.decode(ButtonLayoutModel.self)
+            )
         }
     }
     
@@ -562,8 +568,10 @@ indirect enum ViewModel: Codable, Equatable, Sendable {
             content = model
         case .stateController(let model):
             content = model
+        case .buttonLayout(let model):
+            content = model
         }
-        
+
         try container.encode(content)
     }
 }
@@ -603,7 +611,6 @@ protocol BaseModel: Codable, Equatable, Sendable {
 
 enum EventHandlerType: String, Codable, Equatable, Sendable {
     case tap
-    case focus
     case formInput = "form_input"
 }
 
@@ -836,6 +843,44 @@ struct ScrollLayoutModel: BaseModel {
     }
 }
 
+enum ButtonTapEffect: Codable, Sendable {
+    case `default`
+    case none
+
+    enum CodingKeys: String, CodingKey {
+        case type
+    }
+
+    enum EffectType: String, Codable {
+        case `default` = "default"
+        case none = "none"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type: EffectType = try container.decode(EffectType.self, forKey: .type)
+        switch(type) {
+        case .default:
+            self = .default
+        case .none:
+            self = .none
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch (self) {
+        case .default:
+            try container.encode(EffectType.default, forKey: .type)
+        case .none:
+            try container.encode(EffectType.none, forKey: .type)
+        }
+    }
+
+
+
+}
+
 struct WebViewModel: BaseModel {
     let type = ViewModelType.webView
     let border: Border?
@@ -977,19 +1022,21 @@ struct MarkDownOptions: Codable, Sendable, Equatable {
 
 struct LabelButtonModel: BaseModel, Accessible, Codable {
     let type = ViewModelType.labelButton
-    let identifier: String
-    let border: Border?
-    let backgroundColor: ThomasColor?
-    let clickBehaviors: [ButtonClickBehavior]?
-    let enableBehaviors: [EnableBehavior]?
-    let actions: ActionsPayload?
-    let label: LabelModel
-    let contentDescription: String?
-    let localizedContentDescription: LocalizedContentDescription?
-    let visibility: VisibilityInfo?
-    let eventHandlers: [EventHandler]?
-    let reportingMetadata: AirshipJSON?
+    var identifier: String
+    var border: Border?
+    var backgroundColor: ThomasColor?
+    var clickBehaviors: [ButtonClickBehavior]?
+    var enableBehaviors: [EnableBehavior]?
+    var actions: ActionsPayload?
+    var label: LabelModel
+    var contentDescription: String?
+    var localizedContentDescription: LocalizedContentDescription?
+    var visibility: VisibilityInfo?
+    var eventHandlers: [EventHandler]?
+    var reportingMetadata: AirshipJSON?
     var role: AccessibilityRole?
+    var tapEffect: ButtonTapEffect?
+
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1006,8 +1053,46 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
         case reportingMetadata = "reporting_metadata"
         case type
         case role
+        case tapEffect = "tap_effect"
     }
 }
+
+struct ButtonLayoutModel: BaseModel, Accessible, Codable {
+    let type = ViewModelType.buttonLayout
+    var identifier: String
+    var border: Border?
+    var backgroundColor: ThomasColor?
+    var clickBehaviors: [ButtonClickBehavior]?
+    var enableBehaviors: [EnableBehavior]?
+    var actions: ActionsPayload?
+    var contentDescription: String?
+    var localizedContentDescription: LocalizedContentDescription?
+    var visibility: VisibilityInfo?
+    var eventHandlers: [EventHandler]?
+    var reportingMetadata: AirshipJSON?
+    var role: AccessibilityRole?
+    var view: ViewModel
+    var tapEffect: ButtonTapEffect?
+
+    enum CodingKeys: String, CodingKey {
+        case identifier = "identifier"
+        case border = "border"
+        case enableBehaviors = "enabled"
+        case clickBehaviors = "button_click"
+        case backgroundColor = "background_color"
+        case actions = "actions"
+        case view = "view"
+        case contentDescription = "content_description"
+        case localizedContentDescription = "localized_content_description"
+        case visibility = "visibility"
+        case eventHandlers = "event_handlers"
+        case reportingMetadata = "reporting_metadata"
+        case type
+        case role
+        case tapEffect = "tap_effect"
+    }
+}
+
 
 enum ButtonImageModelType: String, Codable, Equatable, Sendable {
     case url
@@ -1056,10 +1141,14 @@ enum ButtonImageModel: Codable, Equatable, Sendable {
 struct ImageURLModel: Codable, Equatable, Sendable {
     let type = ButtonImageModelType.url
     let url: String
+    let mediaFit: MediaFit?
+    let cropPosition: Position?
 
     enum CodingKeys: String, CodingKey {
         case url = "url"
         case type
+        case cropPosition = "position"
+        case mediaFit = "media_fit"
     }
 }
 
@@ -1136,19 +1225,20 @@ struct ActionsPayload: Codable, Equatable, Sendable, Hashable {
 
 struct ImageButtonModel: BaseModel, Accessible, Codable {
     let type = ViewModelType.imageButton
-    let identifier: String
-    let border: Border?
-    let backgroundColor: ThomasColor?
-    let image: ButtonImageModel
-    let clickBehaviors: [ButtonClickBehavior]?
-    let enableBehaviors: [EnableBehavior]?
-    let actions: ActionsPayload?
-    let contentDescription: String?
-    let localizedContentDescription: LocalizedContentDescription?
-    let visibility: VisibilityInfo?
-    let eventHandlers: [EventHandler]?
-    let reportingMetadata: AirshipJSON?
+    var identifier: String
+    var border: Border?
+    var backgroundColor: ThomasColor?
+    var image: ButtonImageModel
+    var clickBehaviors: [ButtonClickBehavior]?
+    var enableBehaviors: [EnableBehavior]?
+    var actions: ActionsPayload?
+    var contentDescription: String?
+    var localizedContentDescription: LocalizedContentDescription?
+    var visibility: VisibilityInfo?
+    var eventHandlers: [EventHandler]?
+    var reportingMetadata: AirshipJSON?
     var role: AccessibilityRole?
+    var tapEffect: ButtonTapEffect?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1165,6 +1255,7 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
         case reportingMetadata = "reporting_metadata"
         case type
         case role
+        case tapEffect = "tap_effect"
     }
 }
 
@@ -2319,6 +2410,31 @@ enum AttributeValue: Codable, Equatable, Hashable, Sendable {
             try container.encode(value)
         case .number(let value):
             try container.encode(value)
+        }
+    }
+}
+
+extension ButtonClickBehavior {
+    var sortOrder: Int {
+        switch self {
+        case .dismiss:
+            return 3
+        case .cancel:
+            return 3
+        case .pagerPause:
+            return 2
+        case .pagerResume:
+            return 2
+        case .pagerNextOrFirst:
+            return 1
+        case .pagerNextOrDismiss:
+            return 1
+        case .pagerNext:
+            return 1
+        case .pagerPrevious:
+            return 1
+        case .formSubmit:
+            return 0
         }
     }
 }

@@ -69,6 +69,7 @@ final class ThomasDisplayListener: ThomasDelegate {
     }
     
     func onDismissed(
+        cancel: Bool,
         layoutContext: ThomasLayoutContext?
     ) {
         tryDismiss(layoutContext: layoutContext) { time in
@@ -76,7 +77,7 @@ final class ThomasDisplayListener: ThomasDelegate {
                 InAppResolutionEvent.userDismissed(displayTime: time),
                 layoutContext: layoutContext
             )
-            return .finished
+            return cancel ? .cancel : .finished
         }
     }
     
@@ -108,7 +109,7 @@ final class ThomasDisplayListener: ThomasDelegate {
                 InAppResolutionEvent.timedOut(displayTime: time),
                 layoutContext: layoutContext
             )
-            return  .finished
+            return .finished
         }
 
     }
