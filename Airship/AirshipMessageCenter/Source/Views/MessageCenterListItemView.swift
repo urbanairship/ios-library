@@ -28,8 +28,22 @@ extension View {
     /// Sets the list item style
     /// - Parameters:
     ///     - style: The style
-    public func setMessageCenterItemViewStyle<S>(_ style: S) -> some View
-    where S: MessageCenterListItemViewStyle {
+    @available(*, deprecated, message: "Use messageCenterItemViewStyle(_:) instead")
+    public func setMessageCenterItemViewStyle<S>(
+        _ style: S
+    ) -> some View where S: MessageCenterListItemViewStyle {
+        self.environment(
+            \.airshipMessageCenterListItemStyle,
+            AnyListItemViewStyle(style: style)
+        )
+    }
+
+    /// Sets the list item style
+    /// - Parameters:
+    ///     - style: The style
+    public func messageCenterItemViewStyle<S>(
+        _ style: S
+    ) -> some View where S: MessageCenterListItemViewStyle {
         self.environment(
             \.airshipMessageCenterListItemStyle,
             AnyListItemViewStyle(style: style)

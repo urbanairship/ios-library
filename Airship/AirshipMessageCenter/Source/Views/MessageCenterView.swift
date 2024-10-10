@@ -75,6 +75,7 @@ public protocol MessageCenterViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
+
 public struct MessageCenterStyleConfiguration {
     public struct Content: View {
         let controller: MessageCenterController
@@ -97,7 +98,17 @@ public struct MessageCenterStyleConfiguration {
     public let dismissAction: (() -> Void)?
 }
 
-internal struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
+/// Default Message Center style
+public struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
+
+    private let includeNavigation: Bool
+
+    /// Default constructor
+    /// - Parameters:
+    ///     - includeNavigation: `true` if the view should create its own NavigationView or NavigationStack (iOS 16+)
+    public init(includeNavigation: Bool = true) {
+        self.includeNavigation = includeNavigation
+    }
 
     @ViewBuilder
     private func makeBackButton(configuration: Configuration) -> some View {
@@ -117,8 +128,11 @@ internal struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
     }
 
     @ViewBuilder
-    internal func makeBody(configuration: Configuration) -> some View {
-        let containerBackgroundColor: Color? = configuration.colorScheme.resolveColor(light: configuration.theme.messageListContainerBackgroundColor, dark: configuration.theme.messageListContainerBackgroundColorDark)
+    public func makeBody(configuration: Configuration) -> some View {
+        let containerBackgroundColor: Color? = configuration.colorScheme.resolveColor(
+            light: configuration.theme.messageListContainerBackgroundColor,
+            dark: configuration.theme.messageListContainerBackgroundColorDark
+        )
 
         let content = configuration.content
             .applyIf(containerBackgroundColor != nil) { view in
@@ -133,18 +147,24 @@ internal struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
                 configuration.theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
             )
 
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                content
+        if (includeNavigation) {
+            if #available(iOS 16.0, *) {
+                NavigationStack {
+                    content
+                }
+            } else {
+                NavigationView {
+                    content
+                }
+                .navigationViewStyle(.stack)
             }
-        } else {
-            NavigationView {
-                content
-            }
-            .navigationViewStyle(.stack)
+        } else  {
+            content
         }
     }
 }
+
+
 
 // Type-erased wrapper for MessageCenterViewStyle
 private struct AnyMessageCenterViewStyle: MessageCenterViewStyle {
