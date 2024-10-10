@@ -45,7 +45,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
                 var attachemnts: [UNNotificationAttachment] = []
                 
                 payload.media.forEach { media in
-                    group.addTask {
+                    group.addTask { [weak self] in
                         return await self?.load(
                             attachment: media,
                             defaultOptions: payload.options,
