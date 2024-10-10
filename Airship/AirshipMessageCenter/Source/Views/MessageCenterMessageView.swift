@@ -461,7 +461,7 @@ private struct MessageCenterMessageContentView: View {
                     )
                 }
                 dismiss()
-            }.foregroundColor(theme.deleteButtonTitleColor?.adaptiveColor(for: colorScheme, darkVariation: theme.deleteButtonTitleColorDark))
+            }.foregroundColor(colorScheme.resolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
         }
     }
 
@@ -473,7 +473,7 @@ private struct MessageCenterMessageContentView: View {
             Image(systemName: "chevron.backward")
                 .scaleEffect(0.68)
                 .font(Font.title.weight(.medium))
-                .foregroundColor(theme.backButtonColor?.adaptiveColor(for: colorScheme, darkVariation: theme.backButtonColorDark))
+                .foregroundColor(colorScheme.resolveColor(light: theme.backButtonColor, dark: theme.backButtonColorDark))
         }
     }
 

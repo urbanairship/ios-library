@@ -139,7 +139,7 @@ class ThomasDisplayListenerTest: XCTestCase {
         self.timer.start()
         self.timer.time = 10
 
-        listener.onDismissed(layoutContext: nil)
+        listener.onDismissed( cancel: false, layoutContext: nil)
 
         verifyEvents(
             [(InAppResolutionEvent.userDismissed(displayTime: 10), nil)]
@@ -150,11 +150,26 @@ class ThomasDisplayListenerTest: XCTestCase {
     }
 
     @MainActor
+    func testDismissedCancelled() {
+        self.timer.start()
+        self.timer.time = 10
+
+        listener.onDismissed(cancel: true, layoutContext: nil)
+
+        verifyEvents(
+            [(InAppResolutionEvent.userDismissed(displayTime: 10), nil)]
+        )
+
+        XCTAssertFalse(timer.isStarted)
+        XCTAssertEqual(self.result.value, .cancel)
+    }
+
+    @MainActor
     func testDismissedWithContext() {
         self.timer.start()
         self.timer.time = 10
 
-        listener.onDismissed(layoutContext: self.layoutContext)
+        listener.onDismissed(cancel: false, layoutContext: self.layoutContext)
 
         verifyEvents(
             [
@@ -465,7 +480,7 @@ class ThomasDisplayListenerTest: XCTestCase {
         )
 
         self.timer.time = 30
-        listener.onDismissed(layoutContext: self.layoutContext)
+        listener.onDismissed(cancel: false, layoutContext: self.layoutContext)
 
         let expectedEvents: [(any InAppEvent, ThomasLayoutContext?)] = [
             (InAppPageViewEvent(pagerInfo: page0, viewCount: 1), self.layoutContext),

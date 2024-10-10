@@ -62,6 +62,8 @@ struct ViewFactory {
             StateController(model: model, constraints: constraints)
         case .customView(let model):
             CustomView(model: model, constraints: constraints)
+        case .buttonLayout(let model):
+            ButtonLayout(model: model, constraints: constraints)
         }
     }
 

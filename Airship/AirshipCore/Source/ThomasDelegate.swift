@@ -44,9 +44,10 @@ public protocol ThomasDelegate: Sendable {
 
     /// Called when the view is dismissed.
     /// - Parameters:
+    ///     - cancel: If the view should be cancelled.
     ///     - layoutContext: The layout context.
     @MainActor
-    func onDismissed(layoutContext: ThomasLayoutContext?)
+    func onDismissed(cancel: Bool, layoutContext: ThomasLayoutContext?)
 
     /// Called when the view is dismissed from a button tap.
     /// - Parameters:

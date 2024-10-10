@@ -32,7 +32,8 @@ struct Pager: View {
 
     private static let flingSpeed: CGFloat = 150.0
     private static let offsetPercent: CGFloat = 0.50
-    private static let timerTransition = 0.01
+    private static let timerTransition: CGFloat = 0.01
+    private static let minDragDistance: CGFloat = 60.0
 
     static let animationSpeed: TimeInterval = 0.75
 
@@ -160,6 +161,15 @@ struct Pager: View {
         }
     }
 
+    private var containsDragGestures: Bool {
+        if self.model.isDefaultSwipeEnabled {
+            return true
+        }
+
+        let dragGestures = self.model.retrieveGestures(type: PagerDragGesture.self)
+        return !dragGestures.isEmpty
+    }
+
     private func accessibilityActionContentDescription(action: AccessibilityAction) -> String {
         let nameKey = action.localizedContentDescription?.descriptionKey
         let fallback = action.localizedContentDescription?.fallbackDescription
@@ -216,13 +226,8 @@ struct Pager: View {
             }
 #endif
 #if !os(tvOS)
-            .applyIf(true) { view in
-                view.onTouch { isPressed in
-                    handleTouch(isPressed: isPressed, index: index)
-                }
-            }
-            .applyIf(true) { view in
-                view.simultaneousGesture(makeSwipeGesture(index: index))
+            .applyIf(self.containsDragGestures) { view in
+                view.highPriorityGesture(makeSwipeGesture(index: index))
             }
             .applyIf(self.model.isDefaultSwipeEnabled) { view in
                 view.accessibilityScrollAction  { edge in
@@ -245,9 +250,14 @@ struct Pager: View {
             }
             .applyIf(true) { view in
                 if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
-                    view.simultaneousGesture(makeTapGesture(index: index))
+                    view.onTouch { isPressed in
+                            handleTouch(isPressed: isPressed, index: index)
+                        }
+                        .simultaneousGesture(makeTapGesture(index: index))
                 } else {
-                    view
+                    view.onTouch { isPressed in
+                        handleTouch(isPressed: isPressed, index: index)
+                    }
                 }
             }
 #endif
@@ -264,16 +274,25 @@ struct Pager: View {
     private func makeSwipeGesture(
         index: Binding<Int>
     ) -> some Gesture {
-        return DragGesture(minimumDistance: 30)
+        return DragGesture(minimumDistance: Self.minDragDistance)
             .updating(self.$translation) { value, state, _ in
                 if (self.model.isDefaultSwipeEnabled) {
-                    state = value.translation.width
+                    if (abs(value.translation.width) > Self.minDragDistance) {
+                        state = if (value.translation.width > 0) {
+                            value.translation.width - Self.minDragDistance
+                        } else {
+                            value.translation.width + Self.minDragDistance
+                        }
+                    } else {
+                        state = 0
+                    }
                 }
             }
             .onEnded { value in
                 guard let size = self.size else {
                     return
                 }
+
                 let xVelocity = value.predictedEndLocation.x - value.location.x
                 let yVelocity = value.predictedEndLocation.y - value.location.y
                 let widthOffset = value.translation.width / size.width
@@ -680,7 +699,6 @@ struct Pager: View {
 
     private func calcDragOffset(index: Int) -> CGFloat {
         var dragOffSet = self.translation
-
         if index <= 0 {
             dragOffSet = min(dragOffSet, 0)
         } else if index >= self.model.items.count - 1 {

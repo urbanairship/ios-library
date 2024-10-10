@@ -3,14 +3,14 @@
 import Foundation
 import SwiftUI
 
-/// Button view.
-struct LabelButton : View {
+/// Button layout view.
+struct ButtonLayout : View {
 
-    let model: LabelButtonModel
+    let model: ButtonLayoutModel
     let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
-    
-    init(model: LabelButtonModel, constraints: ViewConstraints) {
+
+    init(model: ButtonLayoutModel, constraints: ViewConstraints) {
         self.model = model
         self.constraints = constraints
     }
@@ -19,21 +19,14 @@ struct LabelButton : View {
         AirshipButton(
             identifier: self.model.identifier,
             reportingMetadata: self.model.reportingMetadata,
-            description: self.model.contentDescription ?? self.model.label.text,
+            description: self.model.contentDescription ?? self.model.localizedContentDescription?.localized ?? self.model.identifier,
             clickBehaviors: self.model.clickBehaviors,
             eventHandlers: self.model.eventHandlers,
             actions: self.model.actions,
             tapEffect: self.model.tapEffect
         ) {
-            Label(model: self.model.label, constraints: constraints)
+            ViewFactory.createView(model: self.model.view, constraints: constraints)
                 .padding(self.model.border?.strokeWidth ?? 0)
-                .constraints(constraints, fixedSize: true)
-                .applyIf(self.constraints.height == nil) { view in
-                    view.padding([.bottom, .top], 12)
-                }
-                .applyIf(self.constraints.width == nil) { view in
-                    view.padding([.leading, .trailing], 12)
-                }
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
                 .accessible(self.model)

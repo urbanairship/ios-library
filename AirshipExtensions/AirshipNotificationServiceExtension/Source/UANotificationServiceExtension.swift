@@ -40,13 +40,16 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
         self.deliverHandler = contentHandler
         
         Task {
-            await withTaskGroup(of: UNNotificationAttachment?.self) { [weak self, loader = self.load] group in
+            await withTaskGroup(of: UNNotificationAttachment?.self) { [weak self] group in
                 self?.loadingTasks = group
                 var attachemnts: [UNNotificationAttachment] = []
                 
                 payload.media.forEach { media in
-                    group.addTask {
-                        return await loader(media, payload.options, payload.thumbnailID)
+                    group.addTask { [weak self] in
+                        return await self?.load(
+                            attachment: media,
+                            defaultOptions: payload.options,
+                            thumbnailID: payload.thumbnailID)
                     }
                 }
                 

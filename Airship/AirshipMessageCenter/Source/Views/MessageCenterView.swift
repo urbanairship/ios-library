@@ -118,7 +118,7 @@ internal struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
 
     @ViewBuilder
     internal func makeBody(configuration: Configuration) -> some View {
-        let containerBackgroundColor: Color? = configuration.theme.messageListContainerBackgroundColor?.adaptiveColor(for: configuration.colorScheme, darkVariation: configuration.theme.messageListContainerBackgroundColorDark)
+        let containerBackgroundColor: Color? = configuration.colorScheme.resolveColor(light: configuration.theme.messageListContainerBackgroundColor, dark: configuration.theme.messageListContainerBackgroundColorDark)
 
         let content = configuration.content
             .applyIf(containerBackgroundColor != nil) { view in

@@ -25,13 +25,15 @@ struct ImageButton : View {
             description: self.model.contentDescription ?? self.model.localizedContentDescription?.localized ?? self.model.identifier,
             clickBehaviors: self.model.clickBehaviors,
             eventHandlers: self.model.eventHandlers,
-            actions: self.model.actions
+            actions: self.model.actions,
+            tapEffect: self.model.tapEffect
         ) {
             makeInnerButton()
                 .constraints(constraints, fixedSize: true)
                 .background(self.model.backgroundColor)
                 .border(self.model.border)
                 .accessible(self.model)
+                .background(Color.airshipTappableClear)
         }
         .commonButton(self.model)
         .environment(
@@ -49,11 +51,13 @@ struct ImageButton : View {
             ThomasAsyncImage(
                 url: model.url,
                 imageLoader: thomasEnvironment.imageLoader,
-                image: { image, _ in
-                    image
-                        .renderingMode(.original)
-                        .resizable()
-                        .scaledToFit()
+                image: { image, imageSize in
+                    image.fitMedia(
+                        mediaFit: model.mediaFit ?? .centerInside,
+                        cropPosition: model.cropPosition,
+                        constraints: constraints,
+                        imageSize: imageSize
+                    )
                 },
                 placeholder: {
                     AirshipProgressView()

@@ -260,7 +260,7 @@ final class FeatureFlagInfoTest: XCTestCase {
             },
             "reporting_metadata": "superseded",
             "type": "variables",
-            "variables": "variables_override"
+            "data": "variables_override"
           }
         """
         

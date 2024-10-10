@@ -1,6 +1,16 @@
 
 # iOS Changelog
 
+## Version 18.10.0 Oct 3, 2024
+Minor release with accessibility updates, Message Center theming improvements and several bug fixes.
+
+### Changes
+- Fixed Message Center background color and back button theming.
+- Fixed tap events in Scenes being registered by their containers in some instances.
+- Improved accessibility support in Scenes, Message Center and Preference Center with paging actions, localized content descriptions and traits.
+- Added ability to theme Message Center with a custom style.
+- Updated webview backgrounds to be clear when displaying media.
+
 ## Version 18.9.2 September 23, 2024
 Patch release to fix an issue with high energy usage for In-App Automations, Scenes, and Surveys that was introduced in 18.0.0. This issue is
 not very common but it can occur if the device is unable to connect to our backend to fetch an update to the In-App rules on the device after an SDK

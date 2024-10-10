@@ -1131,6 +1131,9 @@
 		6ED80794273CA0C800D1F455 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */; };
 		6ED8079A273DA56000D1F455 /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
 		6ED8079B273DA56000D1F455 /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
+		6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
+		6EDAFB272CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
+		6EDAFB282CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
 		6EDE293F2A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
 		6EDE29402A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
 		6EDE29412A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
@@ -2744,6 +2747,7 @@
 		6ED735E526CAEABC003B0A7D /* TestLocaleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLocaleManager.swift; sourceTree = "<group>"; };
 		6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		6ED80799273DA56000D1F455 /* ThomasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewController.swift; sourceTree = "<group>"; };
+		6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayout.swift; sourceTree = "<group>"; };
 		6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionRunner.swift; sourceTree = "<group>"; };
 		6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxMessageData.swift; sourceTree = "<group>"; };
 		6EDE5F4E2BA248FF00E33D04 /* TouchViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchViewModifier.swift; sourceTree = "<group>"; };
@@ -3803,6 +3807,7 @@
 		6E1C9C42271F744E009EF9EF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */,
 				60C1DB0A2A8B741C00A1D3DA /* Embedded */,
 				6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */,
 				6E94761429BBC0230025F364 /* AirshipButton.swift */,
@@ -6599,6 +6604,7 @@
 				6E4326012B7C327C00A9B000 /* AirshipEvents.swift in Sources */,
 				6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */,
 				6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
+				6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */,
 				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
 				6EE49C0C2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				6E91B4692689327D00DDB1A8 /* CustomEvent.swift in Sources */,
@@ -7354,6 +7360,7 @@
 				A6722A57281A9EB80033F54D /* ApplicationState.swift in Sources */,
 				A6722A58281A9EB80033F54D /* AppStateTracker.swift in Sources */,
 				A6722A59281A9EB80033F54D /* AppStateTrackerAdapter.swift in Sources */,
+				6EDAFB272CB463C5000BD4AA /* ButtonLayout.swift in Sources */,
 				A6722A5C281A9EB80033F54D /* AttributeUpdate.swift in Sources */,
 				A6722A5D281A9EB80033F54D /* AttributesEditor.swift in Sources */,
 				A6722A5E281A9EB80033F54D /* AttributeMutations.swift in Sources */,
@@ -7851,6 +7858,7 @@
 				6E4325F92B7C223000A9B000 /* AirshipAnalyticsFeed.swift in Sources */,
 				6E4326032B7C328400A9B000 /* AirshipEvents.swift in Sources */,
 				6E5A64DA2AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */,
+				6EDAFB282CB463C5000BD4AA /* ButtonLayout.swift in Sources */,
 				6E510C232721DA86006D9126 /* BorderViewModifier.swift in Sources */,
 				6E510C1E2721DA77006D9126 /* ViewConstraints.swift in Sources */,
 				6E91B44126868C3400DDB1A8 /* RegionEvent.swift in Sources */,

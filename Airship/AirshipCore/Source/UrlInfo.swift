@@ -86,6 +86,8 @@ extension AirshipLayout {
             return nil
         case .customView(_):
             return nil
+        case .buttonLayout(let model):
+            return extractUrlInfos(model: model.view)
         }
     }
 }

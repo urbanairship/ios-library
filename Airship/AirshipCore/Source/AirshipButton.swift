@@ -18,26 +18,44 @@ struct AirshipButton<Label> : View  where Label : View {
     let clickBehaviors:[ButtonClickBehavior]?
     let eventHandlers: [EventHandler]?
     let actions: ActionsPayload?
+    let tapEffect: ButtonTapEffect?
     let label: () -> Label
 
     var body: some View {
-
         Button(
             action: {
                 doButtonActions()
             },
             label: self.label
-        ).accessibilityLabel(self.description)
+        )
+        .accessibilityLabel(self.description)
+        .buttonTapEffect(self.tapEffect)
     }
 
     private func doButtonActions() {
+        let taps = self.eventHandlers?.filter { $0.type == .tap }
+
+        // Button reporting
         thomasEnvironment.buttonTapped(
             buttonIdentifier: self.identifier,
             reportingMetatda: self.reportingMetadata,
             layoutState: layoutState
         )
 
-        clickBehaviors?.sorted { first, second in
+        // Buttons
+        handleBehaviors(self.clickBehaviors ?? [])
+        handleActions(self.actions)
+
+        /// Tap handlers
+        taps?.forEach { tap in
+            handleStateActions(tap.stateActions)
+        }
+    }
+
+    private func handleBehaviors(
+        _ behaviors: [ButtonClickBehavior]?
+    ) {
+        behaviors?.sorted { first, second in
             first.sortOrder < second.sortOrder
         }.forEach { behavior in
             switch(behavior) {
@@ -94,69 +112,59 @@ struct AirshipButton<Label> : View  where Label : View {
                         pagerState.pageIndex = max(pagerState.pageIndex + 1, 0)
                     }
                 }
-                
+
             case .pagerPause:
                 pagerState.pause()
-                
+
             case .pagerResume:
                 pagerState.resume()
-                
+
             case .formSubmit:
                 let formState = formState.topFormState
                 thomasEnvironment.submitForm(formState, layoutState: layoutState)
                 formState.markSubmitted()
             }
         }
-
-        if let actions = actions {
-            thomasEnvironment.runActions(actions, layoutState: layoutState)
-        }
-
-        applyEventHandlers(type: .tap)
     }
 
-    private func applyEventHandlers(type: EventHandlerType) {
-        self.eventHandlers?.forEach { eventHandler in
-            if eventHandler.type == type {
-                eventHandler.stateActions.forEach { action in
-                    switch action {
-                    case .setState(let details):
-                        viewState.updateState(
-                            key: details.key,
-                            value: details.value?.unWrap()
-                        )
-                    case .clearState:
-                        viewState.clearState()
-                    case .formValue(_):
-                        AirshipLogger.error("Unable to process form value")
-                    }
-                }
+    private func handleActions(_ actionPayload: ActionsPayload?) {
+        if let actionPayload {
+            thomasEnvironment.runActions(actionPayload, layoutState: layoutState)
+        }
+    }
+
+    private func handleStateActions(_ stateActions: [StateAction]) {
+        stateActions.forEach { action in
+            switch action {
+            case .setState(let details):
+                viewState.updateState(
+                    key: details.key,
+                    value: details.value?.unWrap()
+                )
+            case .clearState:
+                viewState.clearState()
+            case .formValue(_):
+                AirshipLogger.error("Unable to process form value")
             }
         }
     }
 }
 
-extension ButtonClickBehavior {
-    var sortOrder: Int {
-        switch self {
-        case .dismiss:
-            return 3
-        case .cancel:
-            return 3
-        case .pagerPause:
-            return 2
-        case .pagerResume:
-            return 2
-        case .pagerNextOrFirst:
-            return 1
-        case .pagerNextOrDismiss:
-            return 1
-        case .pagerNext:
-            return 1
-        case .pagerPrevious:
-            return 1
-        case .formSubmit:
-            return 0
+
+fileprivate struct AirshipButtonEmptyStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+    }
+}
+
+fileprivate extension View {
+    @ViewBuilder
+    func buttonTapEffect(_ tapEffect: ButtonTapEffect?) -> some View {
+        switch(tapEffect ??  .default) {
+        case .default:
+            self.buttonStyle(.plain)
+        case .none:
+            self.buttonStyle(AirshipButtonEmptyStyle())
         }
     }
 }

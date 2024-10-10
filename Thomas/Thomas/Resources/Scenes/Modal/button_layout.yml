@@ -1,0 +1,1122 @@
+presentation:
+  type: modal
+  android:
+    disable_back_button: false
+  default_placement:
+    ignore_safe_area: true
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.2
+        type: hex
+    size:
+      height: 100%
+      width: 100%
+    web:
+      ignore_shade: true
+  dismiss_on_touch_outside: false
+  placement_selectors: []
+version: 1
+view:
+  type: pager_controller
+  identifier: 682cbf3f-2932-4531-a505-92a45610f643
+  view:
+    type: container
+    items:
+      - ignore_safe_area: true
+        position:
+          horizontal: center
+          vertical: center
+        size:
+          height: 100%
+          width: 100%
+        view:
+          type: pager
+          disable_swipe: false
+          items:
+            #
+            # PAGE 1
+            #
+            - type: pager_item
+              identifier: 8520c6a6-8775-4850-97d0-43a448356b23
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#FFCBCB'
+                    alpha: 1
+                    type: hex
+                items:
+                  - size:
+                      height: 100%
+                      width: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    view:
+                      type: container
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                              - identifier: scroll_container
+                                size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  type: scroll_layout
+                                  direction: vertical
+                                  view:
+                                    type: button_layout
+                                    identifier: page_1_button_layout
+                                    content_description: Page 1 Button Layout
+                                    tap_effect:
+                                      type: none
+                                    actions:
+                                      toast_action: Page 1 tapped!
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                        - identifier: 141247f5-f335-4c83-aefa-143ce00d7297
+                                          margin:
+                                            bottom: 8
+                                            end: 36
+                                            start: 8
+                                            top: 8
+                                          size:
+                                            height: auto
+                                            width: auto
+                                          view:
+                                            type: label
+                                            content_description: Page 1
+                                            text: Page 1 (Button Layout inside Scroll Container)
+                                            text_appearance:
+                                              alignment: start
+                                              color:
+                                                default:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                selectors:
+                                                  - color:
+                                                      hex: '#000000'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: false
+                                                  - color:
+                                                      hex: '#FFFFFF'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: true
+                                              font_families:
+                                                - sans-serif
+                                              font_size: 24
+                                              styles:
+                                                - bold
+                                        - identifier: eba93362-710e-4a6c-93bb-176e90ca8cbf
+                                          margin:
+                                            bottom: 8
+                                            end: 16
+                                            start: 16
+                                            top: 36
+                                          size:
+                                            height: auto
+                                            width: 100%
+                                          view:
+                                            type: label
+                                            content_description: Lorem ipsum dolor sit amet, te
+                                              eruditi indoctum per, amet blandit ne quo. Id mea
+                                              insolens maluisset mediocritatem, in putent omnium
+                                              dissentias eum, mel eu dolores definitiones. Pri meis
+                                              consequat te. Mea ne case adhuc recteque. Sit debet
+                                              ullamcorper ei, an mea platonem dissentiet. His quas
+                                              laoreet postulant te, usu magna antiopam ad, id eruditi
+                                              reprimique qui.
+                                            text: Lorem ipsum dolor sit amet, te eruditi indoctum
+                                              per, amet blandit ne quo. Id mea insolens maluisset
+                                              mediocritatem, in putent omnium dissentias eum, mel
+                                              eu dolores definitiones. Pri meis consequat te. Mea
+                                              ne case adhuc recteque. Sit debet ullamcorper ei,
+                                              an mea platonem dissentiet. His quas laoreet postulant
+                                              te, usu magna antiopam ad, id eruditi reprimique qui.
+                                            text_appearance:
+                                              alignment: start
+                                              color:
+                                                default:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                selectors:
+                                                  - color:
+                                                      hex: '#000000'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: false
+                                                  - color:
+                                                      hex: '#FFFFFF'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: true
+                                              font_families:
+                                                - sans-serif
+                                              font_size: 20
+                                        - identifier: c6b202e0-cb3d-40ce-991e-dc1add73fd6a
+                                          margin:
+                                            bottom: 8
+                                            end: 16
+                                            start: 16
+                                            top: 8
+                                          size:
+                                            height: auto
+                                            width: 100%
+                                          view:
+                                            type: label_button
+                                            identifier: next--Show Toast
+                                            background_color:
+                                              default:
+                                                hex: '#63AFF1'
+                                                alpha: 1
+                                                type: hex
+                                            border:
+                                              stroke_color:
+                                                default:
+                                                  hex: '#63AFF1'
+                                                  alpha: 1
+                                                  type: hex
+                                              stroke_width: 16
+                                            actions:
+                                              toast_action: Toast 1!
+                                            label:
+                                              type: label
+                                              content_description: Show Toast
+                                              text: Show Toast
+                                              text_appearance:
+                                                alignment: center
+                                                color:
+                                                  default:
+                                                    hex: '#000000'
+                                                    alpha: 1
+                                                    type: hex
+                                                  selectors:
+                                                    - color:
+                                                        hex: '#000000'
+                                                        alpha: 1
+                                                        type: hex
+                                                      dark_mode: false
+                                                    - color:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                        type: hex
+                                                      dark_mode: true
+                                                font_families:
+                                                  - sans-serif
+                                                font_size: 16
+                                            reporting_metadata:
+                                              trigger_link_id: c6b202e0-cb3d-40ce-991e-dc1add73fd6a
+                                        - identifier: 13eeb12a-e12d-48e2-825c-f3da649ba222
+                                          margin:
+                                            bottom: 8
+                                            end: 16
+                                            start: 16
+                                            top: 8
+                                          size:
+                                            height: auto
+                                            width: 100%
+                                          view:
+                                            type: label
+                                            content_description: Sit in erant sanctus. Eam ne legendos
+                                              partiendo reprehendunt, his aeterno alienum omnesque
+                                              in, per probo persius no. Sea augue harum ea, solum
+                                              repudiandae eam an. Cu integre scaevola sit, mea assum
+                                              instructior ut. Ipsum lorem laoreet mea ei, vim an
+                                              electram iudicabit. Vis solum falli an, erant regione
+                                              eu nam.
+                                            text: Sit in erant sanctus. Eam ne legendos partiendo
+                                              reprehendunt, his aeterno alienum omnesque in, per
+                                              probo persius no. Sea augue harum ea, solum repudiandae
+                                              eam an. Cu integre scaevola sit, mea assum instructior
+                                              ut. Ipsum lorem laoreet mea ei, vim an electram iudicabit.
+                                              Vis solum falli an, erant regione eu nam.
+                                            text_appearance:
+                                              alignment: start
+                                              color:
+                                                default:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                selectors:
+                                                  - color:
+                                                      hex: '#000000'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: false
+                                                  - color:
+                                                      hex: '#FFFFFF'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: true
+                                              font_families:
+                                                - sans-serif
+                                              font_size: 20
+                                              styles: [ ]
+                                        - identifier: 14f31557-6cba-434c-9a01-fba32864d71e
+                                          margin:
+                                            bottom: 8
+                                            end: 16
+                                            start: 16
+                                            top: 8
+                                          size:
+                                            height: auto
+                                            width: 100%
+                                          view:
+                                            type: label_button
+                                            identifier: share--share
+                                            background_color:
+                                              default:
+                                                hex: '#63AFF1'
+                                                alpha: 1
+                                                type: hex
+                                            border:
+                                              radius: 0
+                                              stroke_color:
+                                                default:
+                                                  hex: '#63AFF1'
+                                                  alpha: 1
+                                                  type: hex
+                                              stroke_width: 16
+                                            actions:
+                                              share_action: Causae vulputate duo ex. Case erroribus
+                                                ut mea, etiam putant nusquam ex eum. Sea ea illud
+                                                tantas, populo facilis sententiae at per. Id vis
+                                                quando docendi pertinacia.
+                                            button_click: [ ]
+                                            content_description: Share
+                                            enabled: [ ]
+                                            label:
+                                              type: label
+                                              content_description: Share
+                                              text: Share
+                                              text_appearance:
+                                                alignment: center
+                                                color:
+                                                  default:
+                                                    hex: '#000000'
+                                                    alpha: 1
+                                                    type: hex
+                                                  selectors:
+                                                    - color:
+                                                        hex: '#000000'
+                                                        alpha: 1
+                                                        type: hex
+                                                      dark_mode: false
+                                                    - color:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                        type: hex
+                                                      dark_mode: true
+                                                font_families:
+                                                  - sans-serif
+                                                font_size: 16
+                                            reporting_metadata:
+                                              trigger_link_id: 14f31557-6cba-434c-9a01-fba32864d71e
+                                        - identifier: c0469a5e-8561-4f6b-aabb-9d0e93e6e729
+                                          margin:
+                                            bottom: 8
+                                            end: 16
+                                            start: 16
+                                            top: 8
+                                          size:
+                                            height: auto
+                                            width: 100%
+                                          view:
+                                            type: label
+                                            content_description: Aeterno partiendo nec an. Sed id
+                                              errem albucius, ut tale vocent vituperata sit. At
+                                              pro malis elaboraret, pri in suas dicit vivendum,
+                                              pertinax erroribus elaboraret duo ne. Vim ei solum
+                                              omnium pertinax, has exerci offendit volutpat no,
+                                              cu per quis deseruisse voluptatum. Pro vide reque
+                                              voluptua ne, homero legimus invenire ei eam. Per ne
+                                              sumo persecuti, et nam duis postulant vituperatoribus.
+                                            text: Aeterno partiendo nec an. Sed id errem albucius,
+                                              ut tale vocent vituperata sit. At pro malis elaboraret,
+                                              pri in suas dicit vivendum, pertinax erroribus elaboraret
+                                              duo ne. Vim ei solum omnium pertinax, has exerci offendit
+                                              volutpat no, cu per quis deseruisse voluptatum. Pro
+                                              vide reque voluptua ne, homero legimus invenire ei
+                                              eam. Per ne sumo persecuti, et nam duis postulant
+                                              vituperatoribus.
+                                            text_appearance:
+                                              alignment: start
+                                              color:
+                                                default:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                selectors:
+                                                  - color:
+                                                      hex: '#000000'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: false
+                                                  - color:
+                                                      hex: '#FFFFFF'
+                                                      alpha: 1
+                                                      type: hex
+                                                    dark_mode: true
+                                              font_families:
+                                                - sans-serif
+                                              font_size: 20
+                                        - identifier: cbcfe457-022e-48d6-9e24-3b5ebe2400ee
+                                          margin:
+                                            bottom: 36
+                                            end: 16
+                                            start: 16
+                                            top: 8
+                                          size:
+                                            height: auto
+                                            width: 100%
+                                          view:
+                                            type: label_button
+                                            identifier: next--Next Screen
+                                            background_color:
+                                              default:
+                                                hex: '#63AFF1'
+                                                alpha: 1
+                                                type: hex
+                                            border:
+                                              radius: 0
+                                              stroke_color:
+                                                default:
+                                                  hex: '#63AFF1'
+                                                  alpha: 1
+                                                  type: hex
+                                              stroke_width: 16
+                                            actions: { }
+                                            button_click:
+                                              - pager_next
+                                            enabled:
+                                              - pager_next
+                                            label:
+                                              type: label
+                                              content_description: Next Screen
+                                              text: Next Screen
+                                              text_appearance:
+                                                alignment: center
+                                                color:
+                                                  default:
+                                                    hex: '#000000'
+                                                    alpha: 1
+                                                    type: hex
+                                                  selectors:
+                                                    - color:
+                                                        hex: '#000000'
+                                                        alpha: 1
+                                                        type: hex
+                                                      dark_mode: false
+                                                    - color:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                        type: hex
+                                                      dark_mode: true
+                                                font_families:
+                                                  - sans-serif
+                                                font_size: 16
+                                                styles: [ ]
+                                            reporting_metadata:
+                                              trigger_link_id: cbcfe457-022e-48d6-9e24-3b5ebe2400ee
+            #
+            # PAGE 2
+            #
+            - type: pager_item
+              identifier: 7d7433ef-f7f0-46e3-8d79-043fc8d3db2d
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#F1F7B5'
+                    alpha: 1
+                    type: hex
+                items:
+                  - ignore_safe_area: false
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      type: button_layout
+                      identifier: page_2_button_layout
+                      content_description: Page 2 Button Layout
+                      tap_effect:
+                        type: none
+                      actions:
+                        toast_action: Page 2 tapped!
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - identifier: scroll_container
+                            size:
+                              height: 100%
+                              width: 100%
+                            view:
+                              type: scroll_layout
+                              direction: vertical
+                              view:
+                                type: linear_layout
+                                direction: vertical
+                                items:
+                                  - identifier: a814df98-88e0-4761-a682-f766bd7248eb
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label
+                                      content_description: Page 2
+                                      text: Page 2 (Button Layout wraps Scroll Container)
+                                      text_appearance:
+                                        alignment: start
+                                        color:
+                                          default:
+                                            hex: '#000000'
+                                            alpha: 1
+                                            type: hex
+                                          selectors:
+                                            - color:
+                                                hex: '#000000'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: false
+                                            - color:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: true
+                                        font_families:
+                                          - sans-serif
+                                        font_size: 24
+                                        styles:
+                                          - bold
+                                  - identifier: 1f089e11-0108-411d-b038-ffdf469360e7
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 36
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label_button
+                                      identifier: previous--Previous Screen
+                                      background_color:
+                                        default:
+                                          hex: '#63AFF1'
+                                          alpha: 1
+                                          type: hex
+                                      border:
+                                        radius: 0
+                                        stroke_color:
+                                          default:
+                                            hex: '#63AFF1'
+                                            alpha: 1
+                                            type: hex
+                                        stroke_width: 16
+                                      actions: { }
+                                      button_click:
+                                        - pager_previous
+                                      enabled:
+                                        - pager_previous
+                                      label:
+                                        type: label
+                                        content_description: Previous Screen
+                                        text: Previous Screen
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              hex: '#000000'
+                                              alpha: 1
+                                              type: hex
+                                            selectors:
+                                              - color:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                dark_mode: false
+                                              - color:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                                  type: hex
+                                                dark_mode: true
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 16
+                                          styles: [ ]
+                                      reporting_metadata:
+                                        trigger_link_id: 1f089e11-0108-411d-b038-ffdf469360e7
+                                  - identifier: bba18808-a1c2-4475-a740-d99f0b460b95
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label
+                                      content_description: Causae vulputate duo ex. Case erroribus
+                                        ut mea, etiam putant nusquam ex eum. Sea ea illud
+                                        tantas, populo facilis sententiae at per. Id vis quando
+                                        docendi pertinacia.
+                                      text: Causae vulputate duo ex. Case erroribus ut mea,
+                                        etiam putant nusquam ex eum. Sea ea illud tantas,
+                                        populo facilis sententiae at per. Id vis quando docendi
+                                        pertinacia.
+                                      text_appearance:
+                                        alignment: start
+                                        color:
+                                          default:
+                                            hex: '#000000'
+                                            alpha: 1
+                                            type: hex
+                                          selectors:
+                                            - color:
+                                                hex: '#000000'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: false
+                                            - color:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: true
+                                        font_families:
+                                          - sans-serif
+                                        font_size: 20
+                                        styles: [ ]
+                                  - identifier: 520aa9e5-3a1c-4e84-baa9-5c5ec6e00965
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label_button
+                                      identifier: next--Show Toast
+                                      background_color:
+                                        default:
+                                          hex: '#63AFF1'
+                                          alpha: 1
+                                          type: hex
+                                      border:
+                                        radius: 0
+                                        stroke_color:
+                                          default:
+                                            hex: '#63AFF1'
+                                            alpha: 1
+                                            type: hex
+                                        stroke_width: 16
+                                      actions:
+                                        toast_action: Toast 2!
+                                      label:
+                                        type: label
+                                        content_description: Show Toast
+                                        text: Show Toast
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              hex: '#000000'
+                                              alpha: 1
+                                              type: hex
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 16
+                                          styles: [ ]
+                                      reporting_metadata:
+                                        trigger_link_id: 520aa9e5-3a1c-4e84-baa9-5c5ec6e00965
+                                  - identifier: 82962ef9-5c05-4824-9658-d4dfd4bd45d8
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label
+                                      content_description: Sit in erant sanctus. Eam ne legendos
+                                        partiendo reprehendunt, his aeterno alienum omnesque
+                                        in, per probo persius no. Sea augue harum ea, solum
+                                        repudiandae eam an. Cu integre scaevola sit, mea assum
+                                        instructior ut. Ipsum lorem laoreet mea ei, vim an
+                                        electram iudicabit. Vis solum falli an, erant regione
+                                        eu nam.
+                                      text: Sit in erant sanctus. Eam ne legendos partiendo
+                                        reprehendunt, his aeterno alienum omnesque in, per
+                                        probo persius no. Sea augue harum ea, solum repudiandae
+                                        eam an. Cu integre scaevola sit, mea assum instructior
+                                        ut. Ipsum lorem laoreet mea ei, vim an electram iudicabit.
+                                        Vis solum falli an, erant regione eu nam.
+                                      text_appearance:
+                                        alignment: start
+                                        color:
+                                          default:
+                                            hex: '#000000'
+                                            alpha: 1
+                                            type: hex
+                                          selectors:
+                                            - color:
+                                                hex: '#000000'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: false
+                                            - color:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: true
+                                        font_families:
+                                          - sans-serif
+                                        font_size: 20
+                                        styles: [ ]
+                                  - identifier: 32235177-c70b-430f-bd2b-0c1bfecc80e7
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label_button
+                                      identifier: share--share
+                                      background_color:
+                                        default:
+                                          hex: '#63AFF1'
+                                          alpha: 1
+                                          type: hex
+                                      border:
+                                        radius: 0
+                                        stroke_color:
+                                          default:
+                                            hex: '#63AFF1'
+                                            alpha: 1
+                                            type: hex
+                                        stroke_width: 16
+                                      actions:
+                                        share_action: Causae vulputate duo ex. Case erroribus
+                                          ut mea, etiam putant nusquam ex eum. Sea ea illud
+                                          tantas, populo facilis sententiae at per. Id vis
+                                          quando docendi pertinacia.
+                                      button_click: [ ]
+                                      content_description: Share
+                                      enabled: [ ]
+                                      label:
+                                        type: label
+                                        content_description: Share
+                                        text: Share
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              hex: '#000000'
+                                              alpha: 1
+                                              type: hex
+                                            selectors:
+                                              - color:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                dark_mode: false
+                                              - color:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                                  type: hex
+                                                dark_mode: true
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 16
+                                          styles: [ ]
+                                      reporting_metadata:
+                                        trigger_link_id: 32235177-c70b-430f-bd2b-0c1bfecc80e7
+                                  - identifier: 2d0346d2-ecf6-451d-a48f-04f8202b9e64
+                                    margin:
+                                      bottom: 8
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label
+                                      content_description: Aeterno partiendo nec an. Sed id
+                                        errem albucius, ut tale vocent vituperata sit. At
+                                        pro malis elaboraret, pri in suas dicit vivendum,
+                                        pertinax erroribus elaboraret duo ne. Vim ei solum
+                                        omnium pertinax, has exerci offendit volutpat no,
+                                        cu per quis deseruisse voluptatum. Pro vide reque
+                                        voluptua ne, homero legimus invenire ei eam. Per ne
+                                        sumo persecuti, et nam duis postulant vituperatoribus.
+                                      text: Aeterno partiendo nec an. Sed id errem albucius,
+                                        ut tale vocent vituperata sit. At pro malis elaboraret,
+                                        pri in suas dicit vivendum, pertinax erroribus elaboraret
+                                        duo ne. Vim ei solum omnium pertinax, has exerci offendit
+                                        volutpat no, cu per quis deseruisse voluptatum. Pro
+                                        vide reque voluptua ne, homero legimus invenire ei
+                                        eam. Per ne sumo persecuti, et nam duis postulant
+                                        vituperatoribus.
+                                      text_appearance:
+                                        alignment: start
+                                        color:
+                                          default:
+                                            hex: '#000000'
+                                            alpha: 1
+                                            type: hex
+                                          selectors:
+                                            - color:
+                                                hex: '#000000'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: false
+                                            - color:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                                type: hex
+                                              dark_mode: true
+                                        font_families:
+                                          - sans-serif
+                                        font_size: 20
+                                        styles: [ ]
+                                  - identifier: 63356835-3d1d-4bcf-8bc7-08616769bab4
+                                    margin:
+                                      bottom: 36
+                                      end: 16
+                                      start: 16
+                                      top: 8
+                                    size:
+                                      height: auto
+                                      width: 100%
+                                    view:
+                                      type: label_button
+                                      identifier: next--Next Screen
+                                      background_color:
+                                        default:
+                                          hex: '#63AFF1'
+                                          alpha: 1
+                                          type: hex
+                                      border:
+                                        radius: 0
+                                        stroke_color:
+                                          default:
+                                            hex: '#63AFF1'
+                                            alpha: 1
+                                            type: hex
+                                        stroke_width: 16
+                                      actions: { }
+                                      button_click:
+                                        - pager_next
+                                      enabled:
+                                        - pager_next
+                                      label:
+                                        type: label
+                                        content_description: Next Screen
+                                        text: Next Screen
+                                        text_appearance:
+                                          alignment: center
+                                          color:
+                                            default:
+                                              hex: '#000000'
+                                              alpha: 1
+                                              type: hex
+                                            selectors:
+                                              - color:
+                                                  hex: '#000000'
+                                                  alpha: 1
+                                                  type: hex
+                                                dark_mode: false
+                                              - color:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                                  type: hex
+                                                dark_mode: true
+                                          font_families:
+                                            - sans-serif
+                                          font_size: 16
+                                          styles: [ ]
+                                      reporting_metadata:
+                                        trigger_link_id: 63356835-3d1d-4bcf-8bc7-08616769bab4
+
+            #
+            # PAGE 3
+            #
+            - type: pager_item
+              identifier: 6db51464-64bc-4437-845d-0e9be5267a18
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#DFEBEB'
+                    alpha: 1
+                    type: hex
+                items:
+                  - ignore_safe_area: false
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      height: 100%
+                      width: 100%
+                    view:
+                      type: container
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            height: 100%
+                            width: 100%
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                              - size:
+                                  height: 100%
+                                  width: 100%
+                                view:
+                                  type: linear_layout
+                                  direction: vertical
+                                  items:
+                                    - identifier: 4d10fc1e-0df6-49a2-80ab-1d2f9514813d
+                                      size:
+                                        height: 100%
+                                        width: 100%
+                                      view:
+                                        type: button_layout
+                                        identifier: page_3_button_layout
+                                        content_description: Page 3 Button Layout
+                                        tap_effect:
+                                          type: none
+                                        actions:
+                                          show_toast: Page 3 tapped!
+                                        view:
+                                          type: linear_layout
+                                          direction: vertical
+                                          items:
+                                            - identifier: 9e4a96f2-2dcb-40df-96b5-4f53bcb60e23
+                                              margin:
+                                                bottom: 8
+                                                end: 16
+                                                start: 16
+                                                top: 8
+                                              size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                type: label
+                                                content_description: Page 3 (Button Layout wraps WebView)
+                                                text: Page 3
+                                                text_appearance:
+                                                  alignment: start
+                                                  color:
+                                                    default:
+                                                      hex: '#000000'
+                                                      alpha: 1
+                                                      type: hex
+                                                    selectors:
+                                                      - color:
+                                                          hex: '#000000'
+                                                          alpha: 1
+                                                          type: hex
+                                                        dark_mode: false
+                                                      - color:
+                                                          hex: '#FFFFFF'
+                                                          alpha: 1
+                                                          type: hex
+                                                        dark_mode: true
+                                                  font_families:
+                                                    - sans-serif
+                                                  font_size: 24
+                                                  styles:
+                                                    - bold
+                                            - identifier: page3-webview
+                                              size:
+                                                width: 100%
+                                                height: 100%
+                                              view:
+                                                type: web_view
+                                                url: "https://docs.airship.com"
+                                                background_color:
+                                                  default:
+                                                      hex: '#FFFFFF'
+                                                      alpha: 1
+                                                      type: hex
+                                            - identifier: 71f57cef-270d-4311-85a5-d2f9726d5cc1
+                                              margin:
+                                                bottom: 36
+                                                end: 16
+                                                start: 16
+                                                top: 8
+                                              size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                type: label_button
+                                                identifier: dismiss--Dismiss
+                                                background_color:
+                                                  default:
+                                                    hex: '#63AFF1'
+                                                    alpha: 1
+                                                    type: hex
+                                                border:
+                                                  stroke_color:
+                                                    default:
+                                                      hex: '#63AFF1'
+                                                      alpha: 1
+                                                      type: hex
+                                                  stroke_width: 16
+                                                button_click:
+                                                  - dismiss
+                                                label:
+                                                  type: label
+                                                  content_description: Dismiss
+                                                  text: Dismiss
+                                                  text_appearance:
+                                                    alignment: center
+                                                    color:
+                                                      default:
+                                                        hex: '#000000'
+                                                        alpha: 1
+                                                        type: hex
+                                                      selectors:
+                                                        - color:
+                                                            hex: '#000000'
+                                                            alpha: 1
+                                                            type: hex
+                                                          dark_mode: false
+                                                        - color:
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                            type: hex
+                                                          dark_mode: true
+                                                    font_families:
+                                                      - sans-serif
+                                                    font_size: 16
+                                                reporting_metadata:
+                                                  trigger_link_id: 71f57cef-270d-4311-85a5-d2f9726d5cc1
+      - ignore_safe_area: false
+        position:
+          horizontal: end
+          vertical: top
+        size:
+          height: 48
+          width: 48
+        view:
+          type: image_button
+          identifier: dismiss_button
+          button_click:
+            - dismiss
+          image:
+            type: icon
+            color:
+              default:
+                hex: '#000000'
+                alpha: 1
+                type: hex
+              selectors:
+                - color:
+                    hex: '#000000'
+                    alpha: 1
+                    type: hex
+                  dark_mode: false
+                - color:
+                    hex: '#FFFFFF'
+                    alpha: 1
+                    type: hex
+                  dark_mode: true
+            icon: close
+            scale: 0.4
+      - ignore_safe_area: false
+        margin:
+          bottom: 4
+          end: 4
+          start: 4
+          top: 4
+        position:
+          horizontal: center
+          vertical: bottom
+        size:
+          height: 7
+          width: 100%
+        view:
+          type: pager_indicator
+          bindings:
+            selected:
+              shapes:
+                - type: ellipse
+                  aspect_ratio: 1
+                  color:
+                    default:
+                      hex: '#7B7C84'
+                      alpha: 1
+                      type: hex
+                    selectors:
+                      - color:
+                          hex: '#7B7C84'
+                          alpha: 1
+                          type: hex
+                        dark_mode: false
+                      - color:
+                          hex: '#FFFFFF'
+                          alpha: 1
+                          type: hex
+                        dark_mode: true
+                  scale: 1
+            unselected:
+              shapes:
+                - type: ellipse
+                  aspect_ratio: 1
+                  color:
+                    default:
+                      hex: '#BCBDC2'
+                      alpha: 1
+                      type: hex
+                    selectors:
+                      - color:
+                          hex: '#BCBDC2'
+                          alpha: 1
+                          type: hex
+                        dark_mode: false
+                      - color:
+                          hex: '#FFFFFF'
+                          alpha: 1
+                          type: hex
+                        dark_mode: true
+                  scale: 1
+          spacing: 6
