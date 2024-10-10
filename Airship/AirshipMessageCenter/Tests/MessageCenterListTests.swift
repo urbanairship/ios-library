@@ -14,6 +14,7 @@ final class MessageCenterListTest: XCTestCase {
         config: AirshipConfig(),
         dataStore: dataStore
     )
+    
     private lazy var store: MessageCenterStore = {
         let modelURL = MessageCenterResources.bundle?
             .url(
@@ -34,25 +35,33 @@ final class MessageCenterListTest: XCTestCase {
             return MessageCenterStore(
                 config: self.config,
                 dataStore: self.dataStore,
-                coreData: coreData
+                coreData: coreData,
+                date: self.date
             )
         }
         return MessageCenterStore(
             config: self.config,
-            dataStore: self.dataStore
+            dataStore: self.dataStore,
+            date: self.date
         )
     }()
 
     private let channel = TestChannel()
     private let workManager: TestWorkManager = TestWorkManager()
     private let client: TestMessageCenterAPIClient = TestMessageCenterAPIClient()
-
+    private let sleeper = TestTaskSleeper()
+    private let notificationCenter = NotificationCenter()
+    private let date = UATestDate(offset: 0, dateOverride: Date())
+    
     private lazy var inbox = MessageCenterInbox(
         channel: channel,
         client: client,
         config: config,
         store: store,
-        workManager: workManager
+        notificationCenter: notificationCenter,
+        date: date,
+        workManager: workManager,
+        taskSleeper: sleeper
     )
 
     func testMessageCenterInboxUser() async throws {
@@ -405,6 +414,180 @@ final class MessageCenterListTest: XCTestCase {
         let result = await self.inbox.refreshMessages()
         XCTAssertFalse(result)
     }
+    
+    func testRefreshOnMessageExpiresOnAfterUpdate() async throws {
+        self.channel.identifier = UUID().uuidString
+        
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+        
+        let message = MessageCenterMessage.generateMessage(
+            sentDate: self.date.now.addingTimeInterval(-1),
+            expiry: self.date.now.addingTimeInterval(1)
+        )
+        
+        let refresh = self.expectation(description: "client called")
+        refresh.assertForOverFulfill = false
+        
+        self.client.onCreateUser = { _ in
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        var isRefreshed = false
+        self.client.onRetrieve = { _, _, _ in
+            defer { isRefreshed = true }
+            
+            refresh.fulfill()
+            return AirshipHTTPResponse(
+                result: isRefreshed ? [] : [message],
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        
+        XCTAssert(self.workManager.workRequests.isEmpty)
+        
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+        
+        await self.inbox.refreshMessages()
+        
+        await fulfillment(of: [refresh], timeout: 5)
+        
+        let saved = await self.inbox.message(forID: message.id)
+        XCTAssertNotNil(saved)
+        
+        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
+        
+        XCTAssertEqual(1, sleeper.sleeps.first)
+        XCTAssertEqual(3, self.workManager.workRequests.count)
+    }
+    
+    func testRefreshOnMessageExpiresTakesEarliestDate() async throws {
+        self.channel.identifier = UUID().uuidString
+        
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+        
+        let messages = [
+            MessageCenterMessage.generateMessage(
+                sentDate: self.date.now.addingTimeInterval(-1),
+                expiry: self.date.now.addingTimeInterval(2)
+            ),
+            MessageCenterMessage.generateMessage(
+                sentDate: self.date.now.addingTimeInterval(-1),
+                expiry: self.date.now.addingTimeInterval(3)
+            )
+        ]
+        
+        let refresh = self.expectation(description: "client called")
+        refresh.assertForOverFulfill = false
+        
+        self.client.onCreateUser = { _ in
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        var isRefreshed = false
+        self.client.onRetrieve = { _, _, _ in
+            defer { isRefreshed = true }
+            
+            refresh.fulfill()
+            return AirshipHTTPResponse(
+                result: isRefreshed ? [] : messages,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        
+        XCTAssert(self.workManager.workRequests.isEmpty)
+        
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+        
+        await self.inbox.refreshMessages()
+        
+        await fulfillment(of: [refresh], timeout: 5)
+        
+        let saved = await self.inbox.message(forID: messages.first!.id)
+        XCTAssertNotNil(saved)
+        
+        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
+        
+        XCTAssertEqual(2, sleeper.sleeps.first)
+        XCTAssertEqual(3, self.workManager.workRequests.count)
+    }
+    
+    func testNoRefreshWithNoExpirationDate() async throws {
+        self.channel.identifier = UUID().uuidString
+        
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+        
+        let messages = [
+            MessageCenterMessage.generateMessage(
+                sentDate: self.date.now.addingTimeInterval(-1)
+            ),
+            MessageCenterMessage.generateMessage(
+                sentDate: self.date.now.addingTimeInterval(-2)
+            )
+        ]
+        
+        let refresh = self.expectation(description: "client called")
+        refresh.assertForOverFulfill = false
+        
+        self.client.onCreateUser = { _ in
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        var isRefreshed = false
+        self.client.onRetrieve = { _, _, _ in
+            defer { isRefreshed = true }
+            
+            refresh.fulfill()
+            return AirshipHTTPResponse(
+                result: isRefreshed ? [] : messages,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+        
+        XCTAssert(self.workManager.workRequests.isEmpty)
+        
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+        
+        await self.inbox.refreshMessages()
+        
+        await fulfillment(of: [refresh], timeout: 5)
+        
+        let saved = await self.inbox.message(forID: messages.first!.id)
+        XCTAssertNotNil(saved)
+        
+        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
+        
+        XCTAssert(sleeper.sleeps.isEmpty)
+        XCTAssertEqual(2, self.workManager.workRequests.count)
+    }
 }
 
 
@@ -435,4 +618,12 @@ fileprivate final class TestMessageCenterAPIClient : MessageCenterAPIClientProto
         return try await self.onUpdateUser!(user, channelID)
     }
     
+}
+
+final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
+    var sleeps : [TimeInterval] = []
+
+    func sleep(timeInterval: TimeInterval) async throws {
+        sleeps.append(timeInterval)
+    }
 }
