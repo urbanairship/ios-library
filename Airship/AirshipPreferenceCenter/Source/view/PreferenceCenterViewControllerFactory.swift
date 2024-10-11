@@ -80,15 +80,19 @@ public class PreferenceCenterViewControllerFactory: NSObject {
         preferenceCenterTheme: PreferenceCenterTheme?,
         dismissAction: (() -> Void)? = nil
     ) -> UIViewController {
-
         let theme = preferenceCenterTheme ?? PreferenceCenterTheme()
+    
+        let isLight = UITraitCollection.current.userInterfaceStyle == .light
+
+        let resolvedBackgroundColor = isLight ? theme.viewController?.backgroundColor : theme.viewController?.backgroundColorDark
+
         return PreferenceCenterViewController(
             rootView: view
                 .preferenceCenterTheme(theme)
                 .addPreferenceCenterDismissAction(
                     action: dismissAction
                 ),
-            backgroundColor: theme.viewController?.backgroundColor
+            backgroundColor: resolvedBackgroundColor
         )
     }
 }

@@ -12,6 +12,9 @@ public enum AddChannelState {
 }
 
 struct AddChannelPromptView: View, @unchecked Sendable {
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @StateObject
     private var viewModel: AddChannelPromptViewModel
 
@@ -77,7 +80,8 @@ struct AddChannelPromptView: View, @unchecked Sendable {
         Text(self.viewModel.item.display.title)
             .textAppearance(
                 viewModel.theme?.titleAppearance,
-                base: DefaultContactManagementSectionStyle.titleAppearance
+                base: DefaultContactManagementSectionStyle.titleAppearance,
+                colorScheme: colorScheme
             ).accessibilityAddTraits(.isHeader)
     }
 
@@ -87,7 +91,8 @@ struct AddChannelPromptView: View, @unchecked Sendable {
             Text(bodyText)
                 .textAppearance(
                     viewModel.theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
+                    base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                    colorScheme: colorScheme
                 )
         }
     }
@@ -157,13 +162,19 @@ struct AddChannelPromptView: View, @unchecked Sendable {
         }
     }
 
+    @ViewBuilder
     private var promptView: some View {
+        let dismissButtonColor = colorScheme.airshipResolveColor(light: viewModel.theme?.buttonLabelAppearance?.color, dark: viewModel.theme?.buttonLabelAppearance?.colorDark)
+
         GeometryReader { proxy in
             promptViewContent
                 .padding(16)
-                .addBackground(theme: viewModel.theme)
+                .addBackground(
+                    theme: viewModel.theme,
+                    colorScheme: colorScheme
+                )
                 .addPreferenceCloseButton(
-                    dismissButtonColor: .primary,
+                    dismissButtonColor: dismissButtonColor ?? .primary,
                     dismissIconResource: "xmark",
                     contentDescription: nil,
                     onUserDismissed: {

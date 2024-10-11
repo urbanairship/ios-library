@@ -3,6 +3,7 @@
 import AirshipCore
 import Combine
 import SwiftUI
+import AirshipPreferenceCenter
 
 #if canImport(AirshipDebug)
 import AirshipDebug
@@ -57,13 +58,27 @@ struct HomeView: View {
 
                 Divider()
 
+                let view = PreferenceCenterView(
+                    preferenceCenterID: MainApp.preferenceCenterID
+                ).navigationViewStyle(.stack)
+                    .tabItem {
+                        Label(
+                            "Preferences",
+                            systemImage: "person.fill"
+                        )
+                    }
+                    .onAppear {
+                        Airship.analytics.trackScreen("preference_center")
+                    }
+                    .tag(SampleTabs.preferenceCenter)
+
                 NavigationLink(
-                    destination: NamedUserView(),
+                    destination: view,
                     tag: HomeDestination.namedUser,
                     selection: self.$appState.homeDestination
                 ) {
                     makeQuickSettingItem(
-                        title: "Named User",
+                        title: "Preferences",
                         value: self.viewModel.namedUserID ?? "Not Set"
                     )
                 }
@@ -106,7 +121,7 @@ struct HomeView: View {
                     .strokeBorder(Color.accentColor, lineWidth: 2.0)
                     .frame(height: 44, alignment: .center)
                 let title =
-                    self.viewModel.pushEnabled ? "Disable Push" : "Enable Push"
+                self.viewModel.pushEnabled ? "Disable Push" : "Enable Push"
                 Text(title)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)

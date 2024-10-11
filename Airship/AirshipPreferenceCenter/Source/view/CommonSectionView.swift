@@ -26,6 +26,9 @@ public struct CommonSectionView: View {
     @State
     private var displayConditionsMet: Bool = true
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     init(
         section: PreferenceCenterConfig.CommonSection,
         state: PreferenceCenterState
@@ -40,7 +43,8 @@ public struct CommonSectionView: View {
             section: self.section, 
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
-            preferenceCenterTheme: self.preferenceCenterTheme
+            preferenceCenterTheme: self.preferenceCenterTheme,
+            colorScheme: self.colorScheme
         )
 
         style.makeBody(configuration: configuration)
@@ -77,6 +81,9 @@ public struct CommonSectionViewStyleConfiguration {
 
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
+
+    /// The color scheme
+    public let colorScheme: ColorScheme
 }
 
 /// Common section view style
@@ -116,6 +123,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     public func makeBody(configuration: Configuration) -> some View {
         let section = configuration.section
         let sectionTheme = configuration.preferenceCenterTheme.commonSection
+        let colorScheme = configuration.colorScheme
 
         if configuration.displayConditionsMet {
             VStack(alignment: .leading) {
@@ -127,7 +135,8 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                             .textAppearance(
                                 sectionTheme?.titleAppearance,
                                 base: DefaultCommonSectionViewStyle
-                                    .titleAppearance
+                                    .titleAppearance,
+                                colorScheme: colorScheme
                             ).accessibilityAddTraits(.isHeader)
                     }
 
@@ -136,7 +145,8 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                             .textAppearance(
                                 sectionTheme?.subtitleAppearance,
                                 base: DefaultCommonSectionViewStyle
-                                    .subtitleAppearance
+                                    .subtitleAppearance,
+                                colorScheme: colorScheme
                             )
                     }
 

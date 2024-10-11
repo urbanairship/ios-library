@@ -9,7 +9,6 @@ import AirshipCore
 
 /// Contact subscription group item view
 public struct ContactSubscriptionGroupView: View {
-
     /// The item's config
     public let item: PreferenceCenterConfig.ContactSubscriptionGroup
 
@@ -23,8 +22,12 @@ public struct ContactSubscriptionGroupView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @State
     private var displayConditionsMet: Bool = true
+    
 
     public init(item: PreferenceCenterConfig.ContactSubscriptionGroup, state: PreferenceCenterState) {
         self.item = item
@@ -50,7 +53,8 @@ public struct ContactSubscriptionGroupView: View {
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme,
-            componentStates: componentStates
+            componentStates: componentStates,
+            colorScheme: self.colorScheme
         )
 
         style.makeBody(configuration: configuration)
@@ -89,6 +93,9 @@ public struct ContactSubscriptionGroupStyleConfiguration {
     /// Component enabled states
     public let componentStates: [ComponentState]
 
+    /// Color scheme
+    public let colorScheme: ColorScheme
+
     /// Component state
     public struct ComponentState {
         /// The component
@@ -116,12 +123,7 @@ where Self == DefaultContactSubscriptionGroupStyle {
 }
 
 /// The default subscription group item style
-public struct DefaultContactSubscriptionGroupStyle:
-    ContactSubscriptionGroupStyle
-{
-
-    @Environment(\.airshipPreferenceCenterTheme)
-    private var preferenceCenterTheme
+public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
 
     private static let chipLabelAppearance =
         PreferenceCenterTheme.TextAppearance(
@@ -140,6 +142,7 @@ public struct DefaultContactSubscriptionGroupStyle:
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
+        let colorScheme = configuration.colorScheme
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme
             .contactSubscriptionGroup
@@ -151,7 +154,8 @@ public struct DefaultContactSubscriptionGroupStyle:
                         .textAppearance(
                             itemTheme?.titleAppearance,
                             base: DefaultContactSubscriptionGroupStyle
-                                .titleAppearance
+                                .titleAppearance,
+                            colorScheme: colorScheme
                         )
                 }
 
@@ -160,7 +164,8 @@ public struct DefaultContactSubscriptionGroupStyle:
                         .textAppearance(
                             itemTheme?.subtitleAppearance,
                             base: DefaultContactSubscriptionGroupStyle
-                                .subtitleAppearance
+                                .subtitleAppearance,
+                            colorScheme: colorScheme
                         )
                 }
 
@@ -173,6 +178,9 @@ public struct DefaultContactSubscriptionGroupStyle:
     }
 
     private struct ComponentsView: View {
+        @Environment(\.colorScheme)
+        private var colorScheme
+
         let componentStates: [Configuration.ComponentState]
         let chipTheme: PreferenceCenterTheme.Chip?
 
@@ -235,6 +243,8 @@ public struct DefaultContactSubscriptionGroupStyle:
                 .Component,
             isOn: Binding<Bool>
         ) -> some View {
+            let onColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.checkColor, dark: chipTheme?.checkColorDark) ?? .green
+            let offColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary
 
             Button(action: {
                 isOn.wrappedValue.toggle()
@@ -244,13 +254,11 @@ public struct DefaultContactSubscriptionGroupStyle:
                         if isOn.wrappedValue {
                             Image(systemName: "checkmark.circle.fill")
                                 .font(.system(size: 24))
-                                .foregroundColor(chipTheme?.checkColor)
+                                .foregroundColor(onColor)
                         } else {
                             Image(systemName: "circle")
                                 .font(.system(size: 24))
-                                .foregroundColor(
-                                    chipTheme?.borderColor ?? .secondary
-                                )
+                                .foregroundColor(offColor)
                         }
                     }
 
@@ -258,7 +266,8 @@ public struct DefaultContactSubscriptionGroupStyle:
                         .textAppearance(
                             chipTheme?.labelAppearance,
                             base: DefaultContactSubscriptionGroupStyle
-                                .chipLabelAppearance
+                                .chipLabelAppearance,
+                            colorScheme: colorScheme
                         )
                         .padding(.trailing, 8)
                 }
@@ -269,7 +278,7 @@ public struct DefaultContactSubscriptionGroupStyle:
                         style: .circular
                     )
                     .strokeBorder(
-                        self.chipTheme?.borderColor ?? .secondary,
+                        colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary,
                         lineWidth: 1
                     )
                 )

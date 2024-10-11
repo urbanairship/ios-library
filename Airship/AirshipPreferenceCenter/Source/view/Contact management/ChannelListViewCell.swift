@@ -84,6 +84,9 @@ struct ChannelListViewCell: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme: PreferenceCenterTheme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     init(viewModel: ChannelListCellViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -94,7 +97,8 @@ struct ChannelListViewCell: View {
             if let pendingText = viewModel.pendingLabelModel?.message {
                 Text(pendingText).textAppearance(
                     theme.contactManagement?.listSubtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.listSubtitleAppearance
+                    base: DefaultContactManagementSectionStyle.listSubtitleAppearance,
+                    colorScheme: colorScheme
                 )
             }
 
@@ -115,7 +119,8 @@ struct ChannelListViewCell: View {
             } label: {
                 Text(resendTitle).textAppearance(
                     theme.contactManagement?.listSubtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.resendButtonTitleAppearance
+                    base: DefaultContactManagementSectionStyle.resendButtonTitleAppearance,
+                    colorScheme: colorScheme
                 )
             }
         }
@@ -138,7 +143,8 @@ struct ChannelListViewCell: View {
                 .foregroundColor(theme.contactManagement?.titleAppearance?.color ?? DefaultColors.secondaryText)
             Text(labelText).textAppearance(
                 theme.contactManagement?.listSubtitleAppearance,
-                base: DefaultContactManagementSectionStyle.listTitleAppearance
+                base: DefaultContactManagementSectionStyle.listTitleAppearance,
+                colorScheme: colorScheme
             )
             .lineLimit(1)
             .truncationMode(.middle)

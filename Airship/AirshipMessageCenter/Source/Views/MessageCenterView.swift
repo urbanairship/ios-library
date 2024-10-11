@@ -23,6 +23,9 @@ public struct MessageCenterView: View {
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
+    @Environment(\.airshipMessageCenterNavigationStack)
+    private var navigationStack
+
     @Environment(\.messageCenterViewStyle)
     private var style
 
@@ -52,6 +55,7 @@ public struct MessageCenterView: View {
             content: content,
             theme: self.theme,
             colorScheme: self.colorScheme,
+            navigationStack: self.navigationStack,
             dismissAction: self.dismissAction
         )
 
@@ -95,24 +99,16 @@ public struct MessageCenterStyleConfiguration {
     public let content: Content
     public let theme: MessageCenterTheme
     public let colorScheme: ColorScheme
+    public let navigationStack: MessageCenterNavigationStack
     public let dismissAction: (() -> Void)?
 }
 
 /// Default Message Center style
-public struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
-
-    private let includeNavigation: Bool
-
-    /// Default constructor
-    /// - Parameters:
-    ///     - includeNavigation: `true` if the view should create its own NavigationView or NavigationStack (iOS 16+)
-    public init(includeNavigation: Bool = true) {
-        self.includeNavigation = includeNavigation
-    }
+struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
 
     @ViewBuilder
     private func makeBackButton(configuration: Configuration) -> some View {
-        let backButtonColor = configuration.colorScheme.resolveColor(
+        let backButtonColor = configuration.colorScheme.airshipResolveColor(
             light: configuration.theme.backButtonColor,
             dark: configuration.theme.backButtonColorDark
         )
@@ -129,15 +125,13 @@ public struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
-        let containerBackgroundColor: Color? = configuration.colorScheme.resolveColor(
+        let containerBackgroundColor: Color? = configuration.colorScheme.airshipResolveColor(
             light: configuration.theme.messageListContainerBackgroundColor,
             dark: configuration.theme.messageListContainerBackgroundColorDark
         )
 
         let content = configuration.content
-            .applyIf(containerBackgroundColor != nil) { view in
-                view.background(containerBackgroundColor!)
-            }.applyIf(configuration.dismissAction != nil) { view in
+            .applyIf(configuration.dismissAction != nil) { view in
                 view.toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         makeBackButton(configuration: configuration)
@@ -147,24 +141,36 @@ public struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
                 configuration.theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
             )
 
-        if (includeNavigation) {
-            if #available(iOS 16.0, *) {
+
+        if #available(iOS 16.0, *) {
+            let themedContent = content.applyIf(containerBackgroundColor != nil) { view in
+                view.toolbarBackground(containerBackgroundColor!, for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+            }
+
+            switch (configuration.navigationStack) {
+            case .default:
                 NavigationStack {
-                    content
+                    themedContent
                 }
-            } else {
+            case .none:
+                themedContent
+            }
+
+        } else {
+            switch (configuration.navigationStack) {
+            case .default:
                 NavigationView {
-                    content
+                    content.background(containerBackgroundColor)
                 }
                 .navigationViewStyle(.stack)
+            case .none:
+                content
             }
-        } else  {
-            content
         }
+
     }
 }
-
-
 
 // Type-erased wrapper for MessageCenterViewStyle
 private struct AnyMessageCenterViewStyle: MessageCenterViewStyle {
@@ -197,6 +203,8 @@ fileprivate extension EnvironmentValues {
     }
 }
 
+/// Sets the style for `MessageCenter`.
+/// - Parameter style: The `MessageCenterViewStyle` to apply.
 public extension View {
     func messageCenterViewStyle<S: MessageCenterViewStyle>(_ style: S) -> some View {
         self.environment(\.messageCenterViewStyle, AnyMessageCenterViewStyle(style))
@@ -215,15 +223,35 @@ internal extension View {
     }
 }
 
-extension ColorScheme {
-    func resolveColor(light: Color?, dark: Color?) -> Color? {
-        switch(self) {
-        case .light:
-            return light
-        case .dark:
-            return dark ?? light
-        @unknown default:
-            return light
-        }
+
+/// Message Center Navigation stack
+public enum MessageCenterNavigationStack {
+    /// The Message Center will not be wrapped in a navigation stack
+    case none
+
+    /// The Message Center will be wrapped in either a NavigationStack on iOS 16+, or a NavigationView.
+    case `default`
+}
+
+struct MessageCenterNavigationStackKey: EnvironmentKey {
+    static let defaultValue: MessageCenterNavigationStack = .default
+}
+
+extension EnvironmentValues {
+    /// Airship preference theme environment value
+    public var airshipMessageCenterNavigationStack: MessageCenterNavigationStack {
+        get { self[MessageCenterNavigationStackKey.self] }
+        set { self[MessageCenterNavigationStackKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Sets the navigation stack for the Message Center.
+    /// - Parameters:
+    ///     - stack: The navigation stack
+    public func messageeCenterNavigationStack(
+        _ stack: MessageCenterNavigationStack
+    )-> some View {
+        environment(\.airshipMessageCenterNavigationStack, stack)
     }
 }

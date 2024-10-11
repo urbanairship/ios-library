@@ -9,6 +9,9 @@ import AirshipCore
 
 // MARK: Channel list view for a given section
 struct ChannelListView: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     let item: PreferenceCenterConfig.ContactManagementItem
 
     @ObservedObject
@@ -93,7 +96,8 @@ struct ChannelListView: View {
         Text(self.item.display.title)
             .textAppearance(
                 theme.contactManagement?.titleAppearance,
-                base: DefaultContactManagementSectionStyle.titleAppearance
+                base: DefaultContactManagementSectionStyle.titleAppearance,
+                colorScheme: colorScheme
             )
     }
 
@@ -103,7 +107,8 @@ struct ChannelListView: View {
             Text(subtitle)
                 .textAppearance(
                     theme.contactManagement?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
+                    base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                    colorScheme: colorScheme
                 )
         }
     }

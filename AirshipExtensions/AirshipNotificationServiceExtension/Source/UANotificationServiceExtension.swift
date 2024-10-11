@@ -38,7 +38,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
         
         self.bestAttemptContent = request.content.mutableCopy() as? UNMutableNotificationContent
         self.deliverHandler = contentHandler
-        
+    
         Task {
             await withTaskGroup(of: UNNotificationAttachment?.self) { [weak self] group in
                 self?.loadingTasks = group

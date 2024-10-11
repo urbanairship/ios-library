@@ -69,18 +69,28 @@ public struct ChannelTextField: View {
 
     @ViewBuilder
     private var countryPicker: some View {
+        /// Use text field color for picker accent. May want to expose this separately at some point.
+        let pickerAccent = colorScheme.airshipResolveColor(light: theme?.textFieldTextAppearance?.color, dark: theme?.textFieldTextAppearance?.colorDark)
         if let senders = self.senders, (senders.count >= 1) {
             HStack(spacing:10) {
                 if let smsOptions = smsOptions {
-                    Text(smsOptions.countryLabel)
+                    Text(smsOptions.countryLabel).textAppearance(
+                        theme?.textFieldPlaceholderAppearance,
+                        base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                        colorScheme: colorScheme
+                    )
                 }
                 Spacer()
                 Picker("senders", selection: $selectedSenderID) {
                     ForEach(senders, id: \.self) {
-                        Text($0.displayName).tag($0.senderId)
+                        Text($0.displayName).textAppearance(
+                            theme?.textFieldPlaceholderAppearance,
+                            base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                            colorScheme: colorScheme
+                        ).tag($0.senderId)
                     }
                 }
-                .accentColor(DefaultColors.primaryText)
+                .accentColor(pickerAccent ?? DefaultColors.primaryText)
                 .airshipOnChangeOf(self.selectedSenderID, { newVal in
                     if let sender = senders.first(where: { $0.senderId == newVal }) {
                         selectedSender = sender
@@ -100,8 +110,12 @@ public struct ChannelTextField: View {
         }
     }
 
+    @ViewBuilder
     private var textField: some View {
+        let textColor = colorScheme.airshipResolveColor(light: theme?.textFieldTextAppearance?.color, dark: theme?.textFieldTextAppearance?.colorDark)
+
         TextField(makePlaceholder(), text: $inputText)
+            .foregroundColor(textColor)
             .padding(self.placeHolderPadding)
             .keyboardType(keyboardType)
     }
@@ -110,14 +124,24 @@ public struct ChannelTextField: View {
     private var textFieldLabel: some View {
         if let smsOptions = smsOptions {
             Text(smsOptions.msisdnLabel)
+                .textAppearance(
+                    theme?.textFieldPlaceholderAppearance,
+                    base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                    colorScheme: colorScheme
+                )
         } else if let emailOptions = emailOptions {
             Text(emailOptions.addressLabel)
+                .textAppearance(
+                theme?.textFieldPlaceholderAppearance,
+                base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                colorScheme: colorScheme
+            )
         }
     }
 
     @ViewBuilder
     private var backgroundView: some View {
-        let backgroundColor = theme?.backgroundColor ?? DefaultContactManagementSectionStyle.backgroundColor
+        let backgroundColor = colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark) ?? DefaultContactManagementSectionStyle.backgroundColor
 
         RoundedRectangle(cornerRadius: fieldCornerRadius).foregroundColor(backgroundColor.secondaryVariant(for: colorScheme).opacity(0.2))
     }

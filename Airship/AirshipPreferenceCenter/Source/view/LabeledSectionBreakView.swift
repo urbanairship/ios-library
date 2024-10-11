@@ -23,6 +23,9 @@ public struct LabeledSectionBreakView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @State
     private var displayConditionsMet: Bool = true
 
@@ -37,7 +40,8 @@ public struct LabeledSectionBreakView: View {
             section: self.section,
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
-            preferenceCenterTheme: self.preferenceCenterTheme
+            preferenceCenterTheme: self.preferenceCenterTheme,
+            colorScheme: self.colorScheme
         )
 
         style.makeBody(configuration: configuration)
@@ -74,6 +78,9 @@ public struct LabeledSectionBreakStyleConfiguration {
 
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
+
+    /// The color scheme
+    public let colorScheme: ColorScheme
 }
 
 /// Labeled section break style
@@ -95,26 +102,28 @@ where Self == DefaultLabeledSectionBreakStyle {
 /// Default labeled section break style
 public struct DefaultLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 
-    static let defaultTitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 14),
-        color: .white
-    )
-
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
+        let colorScheme = configuration.colorScheme
         let section = configuration.section
         let sectionTheme = configuration.preferenceCenterTheme
             .labeledSectionBreak
+        let backgroundColor = colorScheme.airshipResolveColor(light: sectionTheme?.backgroundColor, dark: sectionTheme?.backgroundColorDark) ?? .gray
 
         if configuration.displayConditionsMet {
             Text(section.display?.title ?? "")
                 .textAppearance(
                     sectionTheme?.titleAppearance,
-                    base: DefaultLabeledSectionBreakStyle.defaultTitleAppearance
+                    base: PreferenceCenterTheme.TextAppearance(
+                        font: .system(size: 14),
+                        color: Color.black,
+                        colorDark: Color.white
+                    ),
+                    colorScheme: colorScheme
                 )
                 .padding(.vertical, 2)
                 .padding(.horizontal, 4)
-                .background(sectionTheme?.backgroundColor ?? .gray)
+                .background(backgroundColor)
         }
     }
 }

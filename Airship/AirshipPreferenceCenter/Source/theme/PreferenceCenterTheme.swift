@@ -21,7 +21,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
 
     /// Alert theme
     public var alert: Alert? = nil
-    
+
     /// Contact management theme
     public var contactManagement: ContactManagement? = nil
 
@@ -39,24 +39,38 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// The default title
         public var title: String? = nil
 
-        /// Override the preference center config title. If `false`, preference center will dispaly the config title if exists otherwise the default title
+        /// Override the preference center config title. If `false`, preference center will display the config title if exists otherwise the default title
         /// Defaults to `true`
         public var overrideConfigTitle: Bool?  = true
-        
+
         /// Navigation bar background color
         public var backgroundColor: UIColor? = nil
+
+        /// Navigation bar background color for dark mode
+        public var backgroundColorDark: UIColor? = nil
         
+        /// Navigation bar back button color
+        public var backButtonColor: UIColor? = nil
+
+        /// Navigation bar back button color for dark mode
+        public var backButtonColorDark: UIColor? = nil
+
         public init(
             title: String? = nil,
             overrideConfigTitle: Bool? = true,
-            backgroundColor: UIColor? = nil
+            backgroundColor: UIColor? = nil,
+            backgroundColorDark: UIColor? = nil,
+            backButtonColor: UIColor? = nil,
+            backButtonColorDark: UIColor? = nil
         ) {
             self.title = title
             self.overrideConfigTitle = overrideConfigTitle
             self.backgroundColor = backgroundColor
+            self.backgroundColorDark = backgroundColorDark
+            self.backButtonColor = backButtonColor
+            self.backButtonColorDark = backButtonColorDark
         }
     }
-
     /// View controller theme
     public struct ViewController: Equatable, Sendable {
         /// Navigation bar theme
@@ -65,12 +79,17 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Window background color
         public var backgroundColor: UIColor? = nil
 
+        /// Window background color for dark mode
+        public var backgroundColorDark: UIColor? = nil
+
         public init(
             navigationBar: NavigationBar? = nil,
-            backgroundColor: UIColor? = nil
+            backgroundColor: UIColor? = nil,
+            backgroundColorDark: UIColor? = nil
         ) {
             self.navigationBar = navigationBar
             self.backgroundColor = backgroundColor
+            self.backgroundColorDark = backgroundColorDark
         }
     }
 
@@ -81,6 +100,9 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
 
         /// The retry button background color
         public var retryButtonBackgroundColor: Color? = nil
+
+        /// The retry button background color for dark mode
+        public var retryButtonBackgroundColorDark: Color? = nil
 
         /// The retry button label appearance
         public var retryButtonLabelAppearance: TextAppearance? = nil
@@ -97,13 +119,15 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         public init(
             subtitleAppearance: TextAppearance? = nil,
             retryButtonBackgroundColor: Color? = nil,
+            retryButtonBackgroundColorDark: Color? = nil,
             retryButtonLabelAppearance: TextAppearance? = nil,
-            retryButtonLabel: String? = nil, 
+            retryButtonLabel: String? = nil,
             retryMessage: String? = nil,
             retryMessageAppearance: TextAppearance? = nil
         ) {
             self.subtitleAppearance = subtitleAppearance
             self.retryButtonBackgroundColor = retryButtonBackgroundColor
+            self.retryButtonBackgroundColorDark = retryButtonBackgroundColorDark
             self.retryButtonLabelAppearance = retryButtonLabelAppearance
             self.retryButtonLabel = retryButtonLabel
             self.retryMessage = retryMessage
@@ -119,12 +143,17 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// The text color
         public var color: Color? = nil
 
+        /// The text color for dark mode
+        public var colorDark: Color? = nil
+
         public init(
             font: Font? = nil,
-            color: Color? = nil
+            color: Color? = nil,
+            colorDark: Color? = nil
         ) {
             self.font = font
             self.color = color
+            self.colorDark = colorDark
         }
     }
 
@@ -133,22 +162,33 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// The check color
         public var checkColor: Color? = nil
 
+        /// The check color for dark mode
+        public var checkColorDark: Color? = nil
+
         /// Border color around the full chip and check area
         public var borderColor: Color? = nil
+
+        /// Border color around the full chip and check area for dark mode
+        public var borderColorDark: Color? = nil
 
         /// Chip label appearance
         public var labelAppearance: TextAppearance? = nil
 
         public init(
             checkColor: Color? = nil,
+            checkColorDark: Color? = nil,
             borderColor: Color? = nil,
+            borderColorDark: Color? = nil,
             labelAppearance: TextAppearance? = nil
         ) {
             self.checkColor = checkColor
+            self.checkColorDark = checkColorDark
             self.borderColor = borderColor
+            self.borderColorDark = borderColorDark
             self.labelAppearance = labelAppearance
         }
     }
+
 
     /// Common section theme
     public struct CommonSection: Equatable, Sendable {
@@ -175,12 +215,17 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Background color
         public var backgroundColor: Color? = nil
 
+        /// Background color for dark mode
+        public var backgroundColorDark: Color? = nil
+
         public init(
             titleAppearance: TextAppearance? = nil,
-            backgroundColor: Color? = nil
+            backgroundColor: Color? = nil,
+            backgroundColorDark: Color? = nil
         ) {
             self.titleAppearance = titleAppearance
             self.backgroundColor = backgroundColor
+            self.backgroundColorDark = backgroundColorDark
         }
     }
 
@@ -192,30 +237,37 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Subtitle appearance
         public var subtitleAppearance: TextAppearance? = nil
 
-        /// Button label  appearance
+        /// Button label appearance
         public var buttonLabelAppearance: TextAppearance? = nil
 
         /// Button background color
         public var buttonBackgroundColor: Color? = nil
 
+        /// Button background color for dark mode
+        public var buttonBackgroundColorDark: Color? = nil
+
         public init(
             titleAppearance: TextAppearance? = nil,
             subtitleAppearance: TextAppearance? = nil,
             buttonLabelAppearance: TextAppearance? = nil,
-            buttonBackgroundColor: Color? = nil
+            buttonBackgroundColor: Color? = nil,
+            buttonBackgroundColorDark: Color? = nil
         ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.buttonLabelAppearance = buttonLabelAppearance
             self.buttonBackgroundColor = buttonBackgroundColor
+            self.buttonBackgroundColorDark = buttonBackgroundColorDark
         }
     }
 
     /// Contact management item theme
     public struct ContactManagement: Equatable, Sendable {
-
         /// Background color
         public var backgroundColor: Color? = nil
+
+        /// Background color for dark mode
+        public var backgroundColorDark: Color? = nil
 
         /// Title appearance
         public var titleAppearance: TextAppearance? = nil
@@ -232,30 +284,57 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Error appearance
         public var errorAppearance: TextAppearance? = nil
 
-        /// Button label  appearance
+        /// Text field placeholder appearance
+        public var textFieldTextAppearance: TextAppearance? = nil
+
+        /// Text field placeholder appearance
+        public var textFieldPlaceholderAppearance: TextAppearance? = nil
+
+        /// Button label appearance
         public var buttonLabelAppearance: TextAppearance? = nil
 
         /// Button background color
         public var buttonBackgroundColor: Color? = nil
 
+        /// Button background color for dark mode
+        public var buttonBackgroundColorDark: Color? = nil
+
         /// Destructive button background color - used submit button background color when removing channels
         public var buttonDestructiveBackgroundColor: Color? = nil
 
+        /// Destructive button background color for dark mode
+        public var buttonDestructiveBackgroundColorDark: Color? = nil
+
         public init(
             backgroundColor: Color? = nil,
+            backgroundColorDark: Color? = nil,
             titleAppearance: TextAppearance? = nil,
             subtitleAppearance: TextAppearance? = nil,
+            listTitleAppearance: TextAppearance? = nil,
+            listSubtitleAppearance: TextAppearance? = nil,
             errorAppearance: TextAppearance? = nil,
+            textFieldTextAppearance: TextAppearance? = nil,
+            textFieldPlaceholderAppearance: TextAppearance? = nil,
             buttonLabelAppearance: TextAppearance? = nil,
             buttonBackgroundColor: Color? = nil,
-            buttonDestructiveBackgroundColor: Color? = nil
+            buttonBackgroundColorDark: Color? = nil,
+            buttonDestructiveBackgroundColor: Color? = nil,
+            buttonDestructiveBackgroundColorDark: Color? = nil
         ) {
+            self.backgroundColor = backgroundColor
+            self.backgroundColorDark = backgroundColorDark
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
+            self.listTitleAppearance = listTitleAppearance
+            self.listSubtitleAppearance = listSubtitleAppearance
             self.errorAppearance = errorAppearance
+            self.textFieldTextAppearance = textFieldTextAppearance
+            self.textFieldPlaceholderAppearance = textFieldPlaceholderAppearance
             self.buttonLabelAppearance = buttonLabelAppearance
             self.buttonBackgroundColor = buttonBackgroundColor
+            self.buttonBackgroundColorDark = buttonBackgroundColorDark
             self.buttonDestructiveBackgroundColor = buttonDestructiveBackgroundColor
+            self.buttonDestructiveBackgroundColorDark = buttonDestructiveBackgroundColorDark
         }
     }
 
@@ -273,14 +352,21 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
 
+        /// Toggle tint color for dark mode
+        public var toggleTintColorDark: Color? = nil
+
         public init(
             titleAppearance: TextAppearance? = nil,
             subtitleAppearance: TextAppearance? = nil,
-            toggleTintColor: Color? = nil
+            emptyTextAppearance: TextAppearance? = nil,
+            toggleTintColor: Color? = nil,
+            toggleTintColorDark: Color? = nil
         ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
+            self.emptyTextAppearance = emptyTextAppearance
             self.toggleTintColor = toggleTintColor
+            self.toggleTintColorDark = toggleTintColorDark
         }
     }
 
@@ -295,14 +381,19 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         /// Toggle tint color
         public var toggleTintColor: Color? = nil
 
+        /// Toggle tint color for dark mode
+        public var toggleTintColorDark: Color? = nil
+
         public init(
             titleAppearance: TextAppearance? = nil,
             subtitleAppearance: TextAppearance? = nil,
-            toggleTintColor: Color? = nil
+            toggleTintColor: Color? = nil,
+            toggleTintColorDark: Color? = nil
         ) {
             self.titleAppearance = titleAppearance
             self.subtitleAppearance = subtitleAppearance
             self.toggleTintColor = toggleTintColor
+            self.toggleTintColorDark = toggleTintColorDark
         }
     }
 
@@ -367,9 +458,9 @@ extension View {
     /// Overrides the preference center theme
     /// - Parameters:
     ///     - theme: The preference center theme
-    public func preferenceCenterTheme(_ theme: PreferenceCenterTheme)
-        -> some View
-    {
+    public func preferenceCenterTheme(
+        _ theme: PreferenceCenterTheme
+    )-> some View {
         environment(\.airshipPreferenceCenterTheme, theme)
     }
 }
@@ -378,9 +469,9 @@ extension PreferenceCenterTheme {
     /// Loads a preference center theme from a plist file
     /// - Parameters:
     ///     - plist: The name of the plist in the bundle
-    public static func fromPlist(_ plist: String) throws
-        -> PreferenceCenterTheme
-    {
+    public static func fromPlist(
+        _ plist: String
+    ) throws -> PreferenceCenterTheme {
         return try PreferenceCenterThemeLoader.fromPlist(plist)
     }
 }
@@ -397,13 +488,18 @@ extension ProgressView {
 }
 
 extension Color {
-
+    
     /// Inverts the color - used for inverted primary and secondary colors on LabeledButtons
     func inverted() -> Color {
         let uiColor = UIColor(self)
         var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
         uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        let invertedColor = Color(red: Double(1 - red), green: Double(1 - green), blue: Double(1 - blue), opacity: Double(alpha))
+        let invertedColor = Color(
+            red: Double(1 - red),
+            green: Double(1 - green),
+            blue: Double(1 - blue),
+            opacity: Double(alpha)
+        )
         return invertedColor
     }
 

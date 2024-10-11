@@ -8,10 +8,12 @@ extension Text {
     @ViewBuilder
     func textAppearance(
         _ overrides: PreferenceCenterTheme.TextAppearance?,
-        base: PreferenceCenterTheme.TextAppearance? = nil
+        base: PreferenceCenterTheme.TextAppearance? = nil,
+        colorScheme: ColorScheme
     ) -> Text {
+        let overridesColor = colorScheme.airshipResolveColor(light: overrides?.color, dark: overrides?.colorDark)
         self.font(overrides?.font ?? base?.font)
-            .foregroundColor(overrides?.color ?? base?.color)
+            .foregroundColor(overridesColor ?? base?.color)
     }
 }
 

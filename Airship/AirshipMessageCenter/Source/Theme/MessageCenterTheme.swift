@@ -135,6 +135,19 @@ public struct MessageCenterTheme {
     /// The dark mode background of the message list container.
     public var messageListContainerBackgroundColorDark: Color? = nil
 
+
+    /// The background of the message view.
+    public var messageViewBackgroundColor: Color? = nil
+
+    /// The dark mode background of the message view.
+    public var messageViewBackgroundColorDark: Color? = nil
+
+    /// The background of the message view container.
+    public var messageViewContainerBackgroundColor: Color? = nil
+
+    /// The dark mode background of the message view container.
+    public var messageViewContainerBackgroundColorDark: Color? = nil
+
     public init(
         refreshTintColor: Color? = nil,
         refreshTintColorDark: Color? = nil,
@@ -172,7 +185,11 @@ public struct MessageCenterTheme {
         messageListBackgroundColor: Color? = nil,
         messageListBackgroundColorDark: Color? = nil,
         messageListContainerBackgroundColor: Color? = nil,
-        messageListContainerBackgroundColorDark: Color? = nil
+        messageListContainerBackgroundColorDark: Color? = nil,
+        messageViewBackgroundColor: Color? = nil,
+        messageViewBackgroundColorDark: Color? = nil,
+        messageViewContainerBackgroundColor: Color? = nil,
+        messageViewContainerBackgroundColorDark: Color? = nil
     ) {
         self.refreshTintColor = refreshTintColor
         self.refreshTintColorDark = refreshTintColorDark
@@ -211,6 +228,10 @@ public struct MessageCenterTheme {
         self.messageListBackgroundColorDark = messageListBackgroundColorDark
         self.messageListContainerBackgroundColor = messageListContainerBackgroundColor
         self.messageListContainerBackgroundColorDark = messageListContainerBackgroundColorDark
+        self.messageViewBackgroundColor = messageViewBackgroundColor
+        self.messageViewBackgroundColorDark = messageViewBackgroundColorDark
+        self.messageViewContainerBackgroundColor = messageViewContainerBackgroundColor
+        self.messageViewContainerBackgroundColorDark = messageViewContainerBackgroundColorDark
     }
 }
 

@@ -501,3 +501,31 @@ internal extension LocalizedContentDescription {
         self.descriptionKey?.airshipLocalizedString(fallback: self.fallbackDescription)
     }
 }
+
+public extension ColorScheme {
+    func airshipResolveColor(light: UIColor?, dark: UIColor?) -> Color? {
+        return self.airshipResolveColor(light: light.map { Color($0) }, dark: dark.map { Color($0) })
+    }
+
+    func airshipResolveColor(light: Color?, dark: Color?) -> Color? {
+        switch(self) {
+        case .light:
+            return light
+        case .dark:
+            return dark ?? light
+        @unknown default:
+            return light
+        }
+    }
+
+    func airshipResolveUIColor(light: UIColor?, dark: UIColor?) -> UIColor? {
+        switch(self) {
+        case .light:
+            return light
+        case .dark:
+            return dark ?? light
+        @unknown default:
+            return light
+        }
+    }
+}

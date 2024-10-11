@@ -3,13 +3,19 @@
 import SwiftUI
 
 struct FooterView: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     let text: String
     let textAppearance: PreferenceCenterTheme.TextAppearance
 
     var body: some View {
         /// Footer
         Text(LocalizedStringKey(text)) /// Markdown parsing in iOS15+
-            .textAppearance(textAppearance)
+            .textAppearance(
+                textAppearance,
+                colorScheme: colorScheme
+            )
             .fixedSize(horizontal: false, vertical: true)
             .lineLimit(2)
             .applyIf(containsMarkdownLink(text: text)) { view in

@@ -3,6 +3,9 @@
 import SwiftUI
 
 struct EmptySectionLabel: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
+    
     static let padding = EdgeInsets(top: 0, leading: 25, bottom: 5, trailing: 0)
 
     // The empty message
@@ -24,7 +27,8 @@ struct EmptySectionLabel: View {
                     Text(label)
                         .textAppearance(
                             theme?.emptyTextAppearance,
-                            base: DefaultContactManagementSectionStyle.subtitleAppearance
+                            base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                            colorScheme: colorScheme
                         )
                     Spacer()
                 }
