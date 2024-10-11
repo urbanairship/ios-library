@@ -1,6 +1,14 @@
 
 # iOS Changelog
 
+## Version 18.11.0 Oct 11, 2024
+Minor release with Message Center and Preference center theming bug fixes and improvements, and a bug fix for IAA videos. Applications that send IAA videos or theme the Message Center or Preference Center and should update.
+
+### Changes
+- Improved Message Center theming with a focus on improving nagivation components.
+- Improved Preference Center theming with a focus on improving nagivation components.
+- Fixed an issue that prevented IAA videos from properly displaying.
+
 ## Version 18.10.0 Oct 3, 2024
 Minor release with accessibility updates, Message Center theming improvements and several bug fixes.
 
