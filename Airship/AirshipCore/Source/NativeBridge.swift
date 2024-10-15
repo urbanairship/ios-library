@@ -7,7 +7,8 @@ import AirshipBasement
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
-@preconcurrency import WebKit
+@preconcurrency
+public import WebKit
 
 /// The native bridge will automatically load the Airship JavaScript environment into whitlelisted sites. The native
 /// bridge must be assigned as the navigation delegate on a `WKWebView` in order to function.

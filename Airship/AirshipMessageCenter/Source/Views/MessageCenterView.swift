@@ -2,7 +2,7 @@
 
 import Combine
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 #if canImport(AirshipCore)
 import AirshipCore

@@ -202,14 +202,9 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(timeout), execute: cancel)
         
-        do {
-            let result = try await collectTask.result.get()
-            cancel.cancel()
-            return result
-        } catch {
-            print("failed to get results \(error)")
-            return []
-        }
+        let result = await collectTask.result.get()
+        cancel.cancel()
+        return result
     }
 }
 

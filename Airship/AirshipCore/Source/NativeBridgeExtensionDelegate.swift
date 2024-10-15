@@ -4,7 +4,7 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
-import WebKit
+public import WebKit
 
 /// Delegate to extend the native bridge.
 public protocol NativeBridgeExtensionDelegate: AnyObject {

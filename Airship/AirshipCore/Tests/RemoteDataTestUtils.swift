@@ -2,7 +2,7 @@
 import Foundation
 
 @testable
-import AirshipCore
+public import AirshipCore
 
 public class RemoteDataTestUtils: NSObject {
     public class func generatePayload(

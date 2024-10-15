@@ -3,7 +3,7 @@
 import Foundation
 import UIKit
 import UserNotifications
-import Combine
+public import Combine
 
 /// Airship Push protocol.
 public protocol AirshipBasePushProtocol: AnyObject, Sendable {

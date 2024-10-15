@@ -2,7 +2,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
-import WebKit
+public import WebKit
 
 /// Action runner used in the `NativeBridge`.
 public protocol NativeBridgeActionRunner {

@@ -2,7 +2,8 @@
 
 import XCTest
 
-@testable import AirshipCore
+@testable
+public import AirshipCore
 
 public extension AirshipHTTPResponse {
     

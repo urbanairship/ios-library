@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @testable
-import AirshipCore
+public import AirshipCore
 
 public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 

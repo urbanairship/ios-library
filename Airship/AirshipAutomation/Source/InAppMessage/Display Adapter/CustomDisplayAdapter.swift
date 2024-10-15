@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import UIKit
+public import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore

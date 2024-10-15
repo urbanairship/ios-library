@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipMessageCenter
+public import AirshipMessageCenter
 
 /// Delegate protocol for receiving callbacks related to message center.
 @objc(OUAMessageCenterDisplayDelegate)

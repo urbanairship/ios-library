@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+public import Combine
 import Foundation
 
 /// Airship Channel protocol.
@@ -90,7 +90,7 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
 }
 
 #if canImport(ActivityKit)
-import ActivityKit
+public import ActivityKit
 #endif
 
 /// Airship Channel protocol.

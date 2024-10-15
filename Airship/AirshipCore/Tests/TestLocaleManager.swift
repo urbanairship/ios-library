@@ -1,6 +1,6 @@
 import Foundation
 
-@testable import AirshipCore
+@testable public import AirshipCore
 
 public class TestLocaleManager: AirshipLocaleManagerProtocol, @unchecked Sendable {
 

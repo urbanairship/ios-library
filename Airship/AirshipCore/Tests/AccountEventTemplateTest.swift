@@ -5,6 +5,7 @@ import XCTest
 
 final class AccountEventTemplateTest: XCTestCase {
     
+    @MainActor
     override func setUp() {
         super.setUp()
         

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency
-import Combine
+public import Combine
 import Foundation
 
 

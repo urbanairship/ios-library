@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import UIKit
+public import UIKit
 
 /// View factories for Preference Center view controllers
 public class PreferenceCenterViewControllerFactory: NSObject {

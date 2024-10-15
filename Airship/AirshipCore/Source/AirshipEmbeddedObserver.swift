@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-import Combine
+public import Combine
 
 /// Observable model for Airship embedded views
 @MainActor

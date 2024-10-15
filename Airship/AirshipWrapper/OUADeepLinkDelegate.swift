@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
+public import AirshipCore
 
 @objc
 public protocol OUADeepLinkDelegate {

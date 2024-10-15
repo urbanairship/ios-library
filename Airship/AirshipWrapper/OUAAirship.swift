@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
+public import AirshipCore
 
 /**
  * Airship manages the shared state for all Airship services. Airship.takeOff should be

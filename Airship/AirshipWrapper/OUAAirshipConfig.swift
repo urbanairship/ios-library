@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
+public import AirshipCore
 
 /// The Config object provides an interface for passing common configurable values to `UAirship`.
 /// The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set

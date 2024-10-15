@@ -10,12 +10,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
     private let engine = TestAutomationEngine()
     private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
     private let date = UATestDate(offset: 0, dateOverride: Date())
-    private let airshipTestInstance = TestAirshipInstance()
+    private var airshipTestInstance: TestAirshipInstance!
 
     private var subject: LegacyInAppMessaging!
 
     @MainActor
     override func setUp() async throws {
+        airshipTestInstance = TestAirshipInstance()
         let push = TestPush()
         push.combinedCategories = NotificationCategories.defaultCategories()
 

@@ -3,7 +3,7 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
-import WebKit
+public import WebKit
 
 /// A standard protocol for handling commands from the NativeBridge..
 public protocol JavaScriptCommandDelegate: AnyObject {

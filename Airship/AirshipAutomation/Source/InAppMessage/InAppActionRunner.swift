@@ -1,5 +1,5 @@
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 import Foundation

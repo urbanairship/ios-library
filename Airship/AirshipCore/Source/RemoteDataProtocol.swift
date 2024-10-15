@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+public import Combine
 
 /// NOTE: For internal use only. :nodoc:
 public protocol RemoteDataProtocol: AnyObject, Sendable {

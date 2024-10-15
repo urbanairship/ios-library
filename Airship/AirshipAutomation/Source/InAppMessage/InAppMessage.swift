@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 enum InAppMessageSource: String, Codable, Equatable, Sendable {

@@ -1,7 +1,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Automation device audience

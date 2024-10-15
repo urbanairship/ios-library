@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+public import Combine
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Preference Center State

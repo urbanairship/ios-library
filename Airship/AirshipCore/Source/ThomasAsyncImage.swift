@@ -2,7 +2,7 @@
 
 import Combine
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
+public import SwiftUI
 
 /// Prompt that appears within the Add Channel Prompt View when an opt-in operation is initiated
 /// Subject to configuration by the user it tells users to check their email inbox, message app, etc.

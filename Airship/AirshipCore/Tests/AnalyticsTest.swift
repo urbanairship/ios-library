@@ -21,11 +21,12 @@ class AnalyticsTest: XCTestCase {
 
     private var privacyManager: AirshipPrivacyManager!
     private var analytics: AirshipAnalytics!
-    private let testAirship = TestAirshipInstance()
+    private var testAirship: TestAirshipInstance!
 
 
     @MainActor
     override func setUp() async throws {
+        testAirship = TestAirshipInstance()
         self.permissionsManager = AirshipPermissionsManager()
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,

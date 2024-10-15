@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
+public import SwiftUI
 
 /// - Note: For internal use only. :nodoc:
 public final class AirshipColorUtils {

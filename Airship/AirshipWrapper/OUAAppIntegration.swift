@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
+public import AirshipCore
 
 /// Application hooks required by Airship. If `automaticSetupEnabled` is enabled
 /// (enabled by default), Airship will automatically integrate these calls into

@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
-import WebKit
+public import AirshipCore
+public import WebKit
 
 @objc(OUANativeBridge)
 public class OUANativeBridge: NSObject {

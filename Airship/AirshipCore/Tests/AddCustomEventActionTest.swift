@@ -8,10 +8,12 @@ import AirshipCore
 final class AddCustomEventActionTest: AirshipBaseTest {
     
     private let analytics = TestAnalytics()
-    private let airship = TestAirshipInstance()
+    private var airship: TestAirshipInstance!
     private let action = AddCustomEventAction()
 
+    @MainActor
     override func setUpWithError() throws {
+        airship = TestAirshipInstance()
         self.airship.components = [analytics]
         self.airship.makeShared()
     }

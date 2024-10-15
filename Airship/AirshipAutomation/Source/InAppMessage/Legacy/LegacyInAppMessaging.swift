@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-public typealias MessageConvertor = @Sendable (LegacyInAppMessage) -> AutomationSchedule?
+public typealias MessageConvertor = @MainActor @Sendable (LegacyInAppMessage) -> AutomationSchedule?
 public typealias MessageExtender = @Sendable (inout InAppMessage) -> Void
 public typealias ScheduleExtender = @Sendable (inout AutomationSchedule) -> Void
 

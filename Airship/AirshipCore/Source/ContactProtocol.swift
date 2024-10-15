@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+public import Combine
 
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"

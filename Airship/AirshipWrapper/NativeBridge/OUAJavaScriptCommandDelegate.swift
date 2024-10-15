@@ -3,8 +3,8 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
-import WebKit
-import AirshipCore
+public import WebKit
+public import AirshipCore
 
 /// A standard protocol for handling commands from the NativeBridge.
 @objc

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import CoreData
+public import CoreData
 
 
 /// - Note: For internal use only. :nodoc:

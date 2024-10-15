@@ -2,7 +2,7 @@
 
 import XCTest
 @testable
-import AirshipCore
+public import AirshipCore
 
 import WebKit
 
@@ -218,7 +218,7 @@ final class TestActionRunner: NativeBridgeActionRunner {
     }
 }
 
-extension ActionArguments: Equatable {
+extension ActionArguments: @retroactive Equatable {
     public static func == (lhs: AirshipCore.ActionArguments, rhs: AirshipCore.ActionArguments) -> Bool {
         lhs.value == rhs.value && lhs.situation == rhs.situation && NSDictionary(dictionary: lhs.metadata) == NSDictionary(dictionary: rhs.metadata)
     }

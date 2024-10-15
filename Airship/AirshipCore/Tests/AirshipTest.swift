@@ -4,10 +4,12 @@ import XCTest
 import AirshipCore
 
 class UAirshipTest: XCTestCase {
-    private let airshipInstance: TestAirshipInstance = TestAirshipInstance()
+    private var airshipInstance: TestAirshipInstance!
     private let deepLinkHandler: TestDeepLinkDelegateHandler = TestDeepLinkDelegateHandler()
 
+    @MainActor
     override func setUp() {
+        airshipInstance = TestAirshipInstance()
         self.airshipInstance.makeShared()
     }
 

@@ -1,5 +1,5 @@
 import Foundation
-import SwiftUI
+public import SwiftUI
 /**
   * Internal only
   * :nodoc:

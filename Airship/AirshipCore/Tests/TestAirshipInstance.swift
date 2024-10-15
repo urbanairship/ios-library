@@ -2,11 +2,10 @@
 
 import Foundation
 
-@testable import AirshipCore
+@testable
+import AirshipCore
 
 class TestAirshipInstance: AirshipInstanceProtocol {
-
-
 
     var _permissionsManager: AirshipPermissionsManager?
     var permissionsManager: AirshipPermissionsManager {
@@ -24,8 +23,6 @@ class TestAirshipInstance: AirshipInstanceProtocol {
             _config = newValue
         }
     }
-
-    public var permissionsManager: AirshipPermissionsManager = AirshipPermissionsManager()
 
     private var _actionRegistry: ActionRegistry?
     public var actionRegistry: ActionRegistry {
@@ -104,5 +101,10 @@ class TestAirshipInstance: AirshipInstanceProtocol {
     }
 
     public func airshipReady() {
+    }
+    
+    @MainActor
+    init() {
+        _permissionsManager = AirshipPermissionsManager()
     }
 }

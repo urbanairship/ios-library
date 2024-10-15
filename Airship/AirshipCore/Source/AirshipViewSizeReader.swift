@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
+public import SwiftUI
 import Foundation
 
 

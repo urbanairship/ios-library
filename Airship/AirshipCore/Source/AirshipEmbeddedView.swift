@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
+public import SwiftUI
 import Combine
 
 /// Airship embedded view - a scene that can be embedded in an app and managed remotely

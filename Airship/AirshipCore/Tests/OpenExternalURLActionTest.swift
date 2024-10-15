@@ -8,11 +8,13 @@ class OpenExternalURLActionTest: XCTestCase {
 
     private let testURLOpener: TestURLOpener = TestURLOpener()
     private let urlAllowList: TestURLAllowList = TestURLAllowList()
-    private let airship: TestAirshipInstance = TestAirshipInstance()
+    private var airship: TestAirshipInstance!
 
     private var action: OpenExternalURLAction!
 
+    @MainActor
     override func setUp() {
+        airship = TestAirshipInstance()
         self.action = OpenExternalURLAction(urlOpener: self.testURLOpener)
         self.airship.urlAllowList = self.urlAllowList
         self.airship.makeShared()

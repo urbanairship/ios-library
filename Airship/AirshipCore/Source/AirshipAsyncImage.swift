@@ -2,7 +2,7 @@
 
 import Combine
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 /// - Note: for internal use only.  :nodoc:
 public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {

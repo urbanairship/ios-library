@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 private struct OrientationKey: EnvironmentKey {
     static let defaultValue: Orientation? = nil

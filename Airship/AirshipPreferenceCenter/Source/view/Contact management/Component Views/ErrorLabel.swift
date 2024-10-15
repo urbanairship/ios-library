@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
+public import SwiftUI
 
 /// Error text view that appears under the add channel fields when an error occurs
 public struct ErrorLabel: View {

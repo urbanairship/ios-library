@@ -2,7 +2,7 @@
 
 import XCTest
 
-@testable import AirshipCore
+@testable public import AirshipCore
 
 class PermissionsManagerTests: XCTestCase {
 

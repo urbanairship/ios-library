@@ -1,4 +1,4 @@
-import AirshipCore
+public import AirshipCore
 import Foundation
 import Combine
 

@@ -1,5 +1,5 @@
 #if canImport(ActivityKit)
-import ActivityKit
+public import ActivityKit
 
 /// Restores live activity tracking
 @available(iOS 16.1, *)

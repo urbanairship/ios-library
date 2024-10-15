@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
-import SwiftUI
+public import SwiftUI
 import Foundation
 
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #elseif canImport(AirshipKit)
 import AirshipKit
 #endif

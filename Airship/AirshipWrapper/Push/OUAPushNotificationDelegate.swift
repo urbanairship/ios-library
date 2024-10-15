@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
+public import AirshipCore
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 @objc

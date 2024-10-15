@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import Combine
+public import Combine
 
 /// Analytics protocol
 public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {

@@ -5,6 +5,7 @@ import XCTest
 
 final class SearchEventTemplateTest: XCTestCase {
     
+    @MainActor
     override func setUp() {
         super.setUp()
         

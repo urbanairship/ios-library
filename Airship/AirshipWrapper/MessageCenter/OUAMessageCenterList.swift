@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipMessageCenter
+public import AirshipMessageCenter
 import Combine
 
 /// Airship Message Center inbox base protocol.

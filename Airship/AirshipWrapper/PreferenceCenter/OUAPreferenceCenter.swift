@@ -2,7 +2,7 @@
 
 import Foundation
 import AirshipCore
-import AirshipPreferenceCenter
+public import AirshipPreferenceCenter
 
 /// Open delegate.
 @objc

@@ -2,7 +2,8 @@
 
 import Foundation
 
-@testable import AirshipCore
+@testable
+public import AirshipCore
 
 public final class TestAirshipRequestSession: AirshipRequestSession, @unchecked Sendable {
 

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import AirshipCore
+public import AirshipCore
 
 public class TestURLAllowList: URLAllowListProtocol {
 

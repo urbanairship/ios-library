@@ -1,4 +1,4 @@
-import CoreData
+public import CoreData
 import Foundation
 
 @objc(EventData)

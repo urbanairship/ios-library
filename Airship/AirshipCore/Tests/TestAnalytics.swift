@@ -1,7 +1,8 @@
 import Foundation
 
-@testable import AirshipCore
-import Combine
+@testable
+public import AirshipCore
+public import Combine
 
 public class TestAnalytics: InternalAnalyticsProtocol, AirshipComponent, @unchecked Sendable {
     public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed { true }

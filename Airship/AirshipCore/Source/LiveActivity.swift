@@ -26,7 +26,7 @@ protocol LiveActivityProtocol: Sendable {
 
 #if canImport(ActivityKit)
 
-import ActivityKit
+public import ActivityKit
 
 @available(iOS 17.2, *)
 struct LiveActivityPushToStartTracker<T: ActivityAttributes>: LiveActivityPushToStartTrackerProtocol {

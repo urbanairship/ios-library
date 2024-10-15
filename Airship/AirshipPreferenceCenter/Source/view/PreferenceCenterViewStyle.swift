@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 /// Preference Center view style configuration
 public struct PreferenceCenterViewStyleConfiguration {

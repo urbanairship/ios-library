@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
+public import AirshipCore
 
 /// Implement this protocol and add as a Push.registrationDelegate to receive
 /// registration success and failure callbacks.

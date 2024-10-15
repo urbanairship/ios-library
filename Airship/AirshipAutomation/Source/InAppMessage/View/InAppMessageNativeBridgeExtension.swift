@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import WebKit
+public import WebKit
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Airship native bridge extension for an InAppMessage

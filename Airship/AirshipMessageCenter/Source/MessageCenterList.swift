@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency
-import Combine
+public import Combine
 
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Airship Message Center inbox base protocol.

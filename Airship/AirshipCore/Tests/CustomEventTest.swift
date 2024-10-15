@@ -7,10 +7,11 @@ final class CustomEventTest: XCTestCase {
     
     private let analytics = TestAnalytics()
     
+    @MainActor
     override func setUp() {
         super.setUp()
         
-        let airship =  TestAirshipInstance()
+        let airship = TestAirshipInstance()
         airship.components = [analytics]
         airship.makeShared()
     }
