@@ -137,7 +137,7 @@ public struct PreferenceCenterView: View {
         let resolvedBackButtonColor = colorScheme.airshipResolveColor(
             light: theme?.backButtonColor,
             dark: theme?.backButtonColorDark
-        ) ?? Color(UINavigationBar.appearance().tintColor)
+        )
 
         Button(action: {
             self.dismissAction?()
