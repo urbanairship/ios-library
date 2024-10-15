@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 18.12.0 Oct 15, 2024
+Patch release to avoid implicit unwrap when UINavigationBar appearance tintColor is unset. Applications that use the PreferenceCenter should update.
+
+### Changes
+- Removes implicit unwrap of the UINavigationBar appearance tintColor.
+
 ## Version 18.11.0 Oct 11, 2024
 Minor release with Message Center and Preference center theming bug fixes and improvements, and a bug fix for IAA videos. Applications that send IAA videos or theme the Message Center or Preference Center and should update.
 
