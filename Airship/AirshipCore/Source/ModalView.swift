@@ -42,6 +42,8 @@ struct ModalView: View {
     }
     #endif
 
+
+
     private func calculateKeyboardOverlap(
         placement: ModalPlacement,
         keyboardHeight: Double,
@@ -67,9 +69,9 @@ struct ModalView: View {
         }
     }
 
-    private func createModal(placement: ModalPlacement, metrics: GeometryProxy)
-        -> some View
-    {
+    private func createModal(
+        placement: ModalPlacement,
+        metrics: GeometryProxy) -> some View {
         let ignoreSafeArea = placement.ignoreSafeArea == true
         let safeAreaInsets =
             ignoreSafeArea
@@ -127,7 +129,7 @@ struct ModalView: View {
                 constraints: contentConstraints
             )
             .background(placement.backgroundColor)
-            .border(placement.border)
+            .border(placement.border, shadow: placement.shadow)
             .margin(placement.margin)
             .background(
                 GeometryReader(content: { contentMetrics -> Color in

@@ -13,17 +13,28 @@ presentation:
       default:
         hex: "#444444"
         alpha: .3
+    background_color:
+      default:
+        hex: "#FFFFFF"
+        alpha: 1
+    border:
+      stroke_color:
+        default:
+          hex: "#00FF00"
+          alpha: .3
+      stroke_width: 3
+      radius: 15
+    shadow:
+        default:
+          box_shadow:
+            color:
+              default:
+                hex: "#0000FF"
+                alpha: 1
+            blur_radius: 20
+            radius: 20
 view:
   type: container
-  background_color:
-    default:
-      hex: "#FFFFFF"
-  border:
-    stroke_color:
-      default:
-        hex: "#00FF00"
-    stroke_width: 3
-    radius: 15
   items:
     - position:
         horizontal: end
