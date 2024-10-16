@@ -110,11 +110,13 @@ private struct DefaultAppRater: AppRaterProtocol {
             )
         }
 
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, visionOS 1.0, *) {
             AppStore.requestReview(in: scene)
         } else {
+            #if !os(visionOS)
             /// Deprecated - remove when no longer needed
             SKStoreReviewController.requestReview()
+            #endif
         }
     }
 

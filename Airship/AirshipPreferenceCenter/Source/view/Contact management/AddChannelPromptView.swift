@@ -183,7 +183,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                 .padding(16)
                 .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                 .transition(.opacity)
-                .onChange(of: viewModel.inputText) { newValue in
+                .airshipOnChangeOf(viewModel.inputText) { newValue in
                     let isValid = viewModel.validateInputFormat()
 
                     withAnimation {
