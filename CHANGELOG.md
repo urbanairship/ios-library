@@ -1,7 +1,7 @@
 
 # iOS Changelog
 
-## Version 18.12.0 Oct 15, 2024
+## Version 18.11.1 Oct 15, 2024
 Patch release to avoid implicit unwrap when UINavigationBar appearance tintColor is unset. Applications that use the PreferenceCenter should update.
 
 ### Changes
