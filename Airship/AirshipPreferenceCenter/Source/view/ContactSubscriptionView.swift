@@ -23,6 +23,9 @@ public struct ContactSubscriptionView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @State
     private var displayConditionsMet: Bool = true
 
@@ -43,7 +46,8 @@ public struct ContactSubscriptionView: View {
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme,
-            isSubscribed: isSubscribed
+            isSubscribed: isSubscribed,
+            colorScheme: self.colorScheme
         )
 
         style.makeBody(configuration: configuration)
@@ -83,6 +87,9 @@ public struct ContactSubscriptionViewStyleConfiguration {
 
     /// The item's subscription binding
     public let isSubscribed: Binding<Bool>
+
+    /// Color scheme
+    public let colorScheme: ColorScheme
 }
 
 /// Contact subcription view style
@@ -101,9 +108,7 @@ where Self == DefaultContactSubscriptionViewStyle {
 }
 
 /// Default contact subscription view style
-public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle
-{
-
+public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
         color: .primary
@@ -116,6 +121,7 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
+        let colorScheme = configuration.colorScheme
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.contactSubscription
 
@@ -127,7 +133,8 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle
                             .textAppearance(
                                 itemTheme?.titleAppearance,
                                 base: DefaultContactSubscriptionViewStyle
-                                    .titleAppearance
+                                    .titleAppearance,
+                                colorScheme: colorScheme
                             ).accessibilityAddTraits(.isHeader)
                     }
 
@@ -136,12 +143,13 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle
                             .textAppearance(
                                 itemTheme?.subtitleAppearance,
                                 base: DefaultContactSubscriptionViewStyle
-                                    .subtitleAppearance
+                                    .subtitleAppearance,
+                                colorScheme: colorScheme
                             )
                     }
                 }
             }
-            .toggleStyle(tint: itemTheme?.toggleTintColor)
+            .toggleStyle(tint: colorScheme.airshipResolveColor(light: itemTheme?.toggleTintColor, dark: itemTheme?.toggleTintColorDark))
             .padding(.trailing, 2)
         }
     }

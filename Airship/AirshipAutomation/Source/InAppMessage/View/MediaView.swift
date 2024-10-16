@@ -42,6 +42,8 @@ struct MediaView: View {
 
     private var webView: some View {
         InAppMessageMediaWebView(mediaInfo: mediaInfo)
+            .aspectRatio(16.0/9.0, contentMode: .fill)
+            .frame(maxWidth: .infinity)
             .padding(mediaTheme.padding)
     }
 }
@@ -50,9 +52,18 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
     let mediaInfo: InAppMessageMediaInfo
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        let config = WKWebViewConfiguration()
+        config.allowsInlineMediaPlayback = true
+        config.allowsPictureInPictureMediaPlayback = true
+
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.isAccessibilityElement = true
         webView.scrollView.isScrollEnabled = false
+        webView.isOpaque = false
+        webView.backgroundColor = UIColor.clear
+        webView.scrollView.backgroundColor = UIColor.clear
         webView.navigationDelegate = context.coordinator
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled

@@ -92,14 +92,14 @@ public struct MessageCenterListView: View {
         )
 
         if #available(iOS 15.0, *) {
-            cell.listRowBackground(colorScheme.resolveColor(light: theme.cellColor, dark: theme.cellColorDark))
+            cell.listRowBackground(colorScheme.airshipResolveColor(light: theme.cellColor, dark: theme.cellColorDark))
                 .listRowSeparator(
                     (theme.cellSeparatorStyle == SeparatorStyle.none)
                         ? .hidden : .automatic
                 )
-                .listRowSeparatorTint(colorScheme.resolveColor(light: theme.cellSeparatorColor, dark: theme.cellSeparatorColorDark))
+                .listRowSeparatorTint(colorScheme.airshipResolveColor(light: theme.cellSeparatorColor, dark: theme.cellSeparatorColorDark))
         } else {
-            cell.listRowBackground(colorScheme.resolveColor(light: theme.cellColor, dark: theme.cellColorDark))
+            cell.listRowBackground(colorScheme.airshipResolveColor(light: theme.cellColor, dark: theme.cellColorDark))
         }
     }
 
@@ -108,10 +108,8 @@ public struct MessageCenterListView: View {
         if let item = self.viewModel.messageItem(forID: messageID) {
             makeCell(item: item, messageID: messageID)
                 .tag(messageID)
-                .opacity(self.listOpacity)
         } else {
             EmptyView()
-                .opacity(self.listOpacity)
         }
     }
 
@@ -145,6 +143,7 @@ public struct MessageCenterListView: View {
             }
         }
 
+
         if #available(iOS 15.0, *) {
             list.refreshable {
                 await self.viewModel.refreshList()
@@ -157,10 +156,11 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeContent() -> some View {
-        let listBackgroundColor = colorScheme.resolveColor(light: theme.messageListBackgroundColor, dark: theme.messageListBackgroundColorDark)
+        let listBackgroundColor = colorScheme.airshipResolveColor(light: theme.messageListBackgroundColor, dark: theme.messageListBackgroundColorDark)
 
         let content = ZStack {
             makeList()
+                .opacity(self.listOpacity)
                 .listBackground(listBackgroundColor)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
                 .onChange(of: self.messageIDs) { ids in
@@ -212,10 +212,10 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_delete_messages".messageCenterLocalizedString) (\(self.selection.count))"
                     )
-                    .foregroundColor(colorScheme.resolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
+                    .foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
                 } else {
                     Text("ua_delete_messages".messageCenterLocalizedString)
-                        .foregroundColor(colorScheme.resolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
+                        .foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
                 }
             }
         )
@@ -234,10 +234,10 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_mark_messages_read".messageCenterLocalizedString) (\(self.selection.count))"
                     )
-                    .foregroundColor(colorScheme.resolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
+                    .foregroundColor(colorScheme.airshipResolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
                 } else {
                     Text("ua_mark_messages_read".messageCenterLocalizedString)
-                        .foregroundColor(colorScheme.resolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
+                        .foregroundColor(colorScheme.airshipResolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
                 }
             }
         )
@@ -259,7 +259,7 @@ public struct MessageCenterListView: View {
             self.selection = Set(self.messageIDs)
         } label: {
             Text("ua_select_all_messages".messageCenterLocalizedString)
-                .foregroundColor(colorScheme.resolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
+                .foregroundColor(colorScheme.airshipResolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
         }
         .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
@@ -269,7 +269,12 @@ public struct MessageCenterListView: View {
             self.selection = Set()
         } label: {
             Text("ua_select_none_messages".messageCenterLocalizedString)
-                .foregroundColor(colorScheme.resolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
+                .foregroundColor(
+                    colorScheme.airshipResolveColor(
+                        light: theme.selectAllButtonTitleColor,
+                        dark: theme.selectAllButtonTitleColorDark
+                    )
+                )
         }
         .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
@@ -292,8 +297,8 @@ public struct MessageCenterListView: View {
         let isEditMode = self.editMode?.wrappedValue.isEditing ?? false
         let color =
             isEditMode
-        ? colorScheme.resolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark) :
-        colorScheme.resolveColor(light: theme.editButtonTitleColor, dark: theme.editButtonTitleColorDark)
+        ? colorScheme.airshipResolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark) :
+        colorScheme.airshipResolveColor(light: theme.editButtonTitleColor, dark: theme.editButtonTitleColorDark)
 
         return EditButton()
             .foregroundColor(color)
@@ -302,7 +307,10 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func toolbarRefreshButton() -> some View {
-        let refreshColor = colorScheme.resolveColor(light: theme.refreshTintColor, dark: theme.refreshTintColorDark)
+        let refreshColor = colorScheme.airshipResolveColor(
+            light: theme.refreshTintColor,
+            dark: theme.refreshTintColorDark
+        )
 
         Button {
             Task { @MainActor in
@@ -316,7 +324,7 @@ public struct MessageCenterListView: View {
                     .appearanceTint()
             } else {
                 Image(systemName: "arrow.clockwise")
-                    .foregroundColor(refreshColor)
+                    .foregroundColor(refreshColor ?? .primary)
             }
         }
         .disabled(isRefreshing)
@@ -324,7 +332,10 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func emptyMessageListMessage() -> some View {
-        let refreshColor = colorScheme.resolveColor(light: theme.refreshTintColor, dark: theme.refreshTintColorDark)
+        let refreshColor = colorScheme.airshipResolveColor(
+            light: theme.refreshTintColor,
+            dark: theme.refreshTintColorDark
+        )
 
         VStack {
             Button {
@@ -341,7 +352,7 @@ public struct MessageCenterListView: View {
                             .appearanceTint()
                     } else {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundColor(refreshColor)
+                            .foregroundColor(refreshColor ?? .primary)
                     }
                 }
                 .frame(height: 44)
@@ -350,6 +361,7 @@ public struct MessageCenterListView: View {
             .disabled(isRefreshing)
 
             Text("ua_empty_message_list".messageCenterLocalizedString)
+                .foregroundColor(refreshColor ?? .primary)
         }
         .opacity(1.0 - self.listOpacity)
 

@@ -4,6 +4,8 @@ public import SwiftUI
 
 /// Error text view that appears under the add channel fields when an error occurs
 public struct ErrorLabel: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     public var message: String?
     var theme: PreferenceCenterTheme.ContactManagement?
@@ -22,7 +24,8 @@ public struct ErrorLabel: View {
                 Text(errorMessage)
                     .textAppearance(
                         theme?.errorAppearance,
-                        base: DefaultContactManagementSectionStyle.errorAppearance
+                        base: DefaultContactManagementSectionStyle.errorAppearance,
+                        colorScheme: colorScheme
                     )
                     .lineLimit(2)
             }

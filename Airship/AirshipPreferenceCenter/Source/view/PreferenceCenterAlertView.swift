@@ -23,6 +23,9 @@ public struct PreferenceCenterAlertView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @State
     private var displayConditionsMet: Bool = true
 
@@ -37,7 +40,8 @@ public struct PreferenceCenterAlertView: View {
             item: self.item,
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
-            preferenceCenterTheme: self.preferenceCenterTheme
+            preferenceCenterTheme: self.preferenceCenterTheme,
+            colorScheme: self.colorScheme
         )
 
         style.makeBody(configuration: configuration)
@@ -56,7 +60,7 @@ extension View {
     where S: PreferenceCenterAlertStyle {
         self.environment(
             \.airshipPreferenceCenterAlertStyle,
-            AnyPreferenceCenterAlertStyle(style: style)
+             AnyPreferenceCenterAlertStyle(style: style)
         )
     }
 }
@@ -74,6 +78,9 @@ public struct PreferenceCenterAlertStyleConfiguration {
 
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
+
+    /// The color scheme
+    public let colorScheme: ColorScheme
 }
 
 /// Preference Center alert style
@@ -94,7 +101,6 @@ where Self == DefaultPreferenceCenterAlertStyle {
 
 /// The default Preference Center alert style
 public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
-
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
         color: .primary
@@ -105,12 +111,9 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
         color: .primary
     )
 
-    static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        color: .white
-    )
-
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
+        let colorScheme = configuration.colorScheme
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.alert
 
@@ -138,7 +141,8 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                                 .textAppearance(
                                     itemTheme?.titleAppearance,
                                     base: DefaultPreferenceCenterAlertStyle
-                                        .titleAppearance
+                                        .titleAppearance,
+                                    colorScheme: colorScheme
                                 )
                         }
 
@@ -147,7 +151,8 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                                 .textAppearance(
                                     itemTheme?.subtitleAppearance,
                                     base: DefaultPreferenceCenterAlertStyle
-                                        .subtitleAppearance
+                                        .subtitleAppearance,
+                                    colorScheme: colorScheme
                                 )
                         }
 
@@ -167,18 +172,18 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                                     Text(button.text)
                                         .textAppearance(
                                             itemTheme?.buttonLabelAppearance,
-                                            base:
-                                                DefaultPreferenceCenterAlertStyle
-                                                .buttonLabelAppearance
+                                            base: DefaultContactManagementSectionStyle.buttonLabelAppearance,
+                                            colorScheme: colorScheme
                                         )
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 4)
                                         .background(
                                             Capsule()
                                                 .fill(
-                                                    itemTheme?
-                                                        .buttonBackgroundColor
-                                                        ?? Color.blue
+                                                    colorScheme.airshipResolveColor(
+                                                        light: itemTheme?.buttonBackgroundColor,
+                                                        dark: itemTheme?.buttonBackgroundColorDark
+                                                    ) ?? Color.blue
                                                 )
                                         )
                                         .cornerRadius(8)

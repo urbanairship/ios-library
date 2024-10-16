@@ -23,6 +23,9 @@ public struct ChannelSubscriptionView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     @State
     private var displayConditionsMet: Bool = true
 
@@ -40,7 +43,8 @@ public struct ChannelSubscriptionView: View {
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme,
-            isSubscribed: isSubscribed
+            isSubscribed: isSubscribed,
+            colorScheme: self.colorScheme
         )
 
         style.makeBody(configuration: configuration)
@@ -80,6 +84,9 @@ public struct ChannelSubscriptionViewStyleConfiguration {
 
     /// The item's subscription binding
     public let isSubscribed: Binding<Bool>
+
+    /// Color scheme
+    public let colorScheme: ColorScheme
 }
 
 public protocol ChannelSubscriptionViewStyle {
@@ -98,9 +105,7 @@ where Self == DefaultChannelSubscriptionViewStyle {
 }
 
 /// The default channel subscription view style
-public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
-{
-
+public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
     static let titleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
         color: .primary
@@ -111,13 +116,13 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
         color: .primary
     )
 
-    @Environment(\.airshipPreferenceCenterTheme)
-    private var preferenceCenterTheme
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.channelSubscription
+        let colorScheme = configuration.colorScheme
+        let resolvedToggleTintColor: Color? = colorScheme.airshipResolveColor(light:  itemTheme?.toggleTintColor, dark:  itemTheme?.toggleTintColorDark)
 
         if configuration.displayConditionsMet {
             Toggle(isOn: configuration.isSubscribed) {
@@ -127,7 +132,8 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
                             .textAppearance(
                                 itemTheme?.titleAppearance,
                                 base: DefaultChannelSubscriptionViewStyle
-                                    .titleAppearance
+                                    .titleAppearance,
+                                colorScheme: colorScheme
                             )
                             .accessibilityAddTraits(.isHeader)
                     }
@@ -137,13 +143,14 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle
                             .textAppearance(
                                 itemTheme?.subtitleAppearance,
                                 base: DefaultChannelSubscriptionViewStyle
-                                    .subtitleAppearance
+                                    .subtitleAppearance,
+                                colorScheme: colorScheme
                             )
 
                     }
                 }
             }
-            .toggleStyle(tint: itemTheme?.toggleTintColor)
+            .toggleStyle(tint: resolvedToggleTintColor)
             .padding(.trailing, 2)
         }
     }

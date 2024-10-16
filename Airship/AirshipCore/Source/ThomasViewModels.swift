@@ -152,15 +152,62 @@ struct ModalPresentationModel: Codable, Equatable, Sendable {
     }
 }
 
+struct ThomasShadow: Codable, Equatable, Sendable {
+    let defaultShadow: Shadow
+    let selectors: [Selector]?
+
+    enum CodingKeys: String, CodingKey {
+        case defaultShadow = "default"
+        case selectors = "selectors"
+    }
+
+    struct Selector: Codable, Equatable, Sendable {
+        var shadow: Shadow
+        var platform: ThomasPlatform?
+
+        enum CodingKeys: String, CodingKey {
+            case platform = "platform"
+            case shadow = "color"
+        }
+    }
+
+    struct Shadow: Codable, Equatable, Sendable {
+        var boxShadow: BoxShadow?
+
+        enum CodingKeys: String, CodingKey, Sendable {
+            case boxShadow = "box_shadow"
+        }
+    }
+
+
+    struct BoxShadow: Codable, Equatable, Sendable {
+        var color: ThomasColor
+        var radius: Double
+        var blurRadius: Double
+        var offsetY: Double?
+        var offsetX: Double?
+
+        enum CodingKeys: String, CodingKey, Sendable {
+            case color
+            case radius
+            case blurRadius = "blur_radius"
+            case offsetY = "offset_y"
+            case offsetX = "offset_x"
+        }
+    }
+}
+
+
 struct ModalPlacement: Codable, Equatable, Sendable {
-    let margin: Margin?
-    let size: ConstrainedSize
-    let position: Position?
-    let shade: ThomasColor?
-    let ignoreSafeArea: Bool?
-    let device: Device?
-    let border: Border?
-    let backgroundColor: ThomasColor?
+    var margin: Margin?
+    var size: ConstrainedSize
+    var position: Position?
+    var shade: ThomasColor?
+    var ignoreSafeArea: Bool?
+    var device: Device?
+    var border: Border?
+    var backgroundColor: ThomasColor?
+    var shadow: ThomasShadow?
 
     enum CodingKeys: String, CodingKey, Sendable {
         case margin = "margin"
@@ -171,6 +218,7 @@ struct ModalPlacement: Codable, Equatable, Sendable {
         case device = "device"
         case border = "border"
         case backgroundColor = "background_color"
+        case shadow
     }
 
     struct Device: Codable, Equatable, Sendable {

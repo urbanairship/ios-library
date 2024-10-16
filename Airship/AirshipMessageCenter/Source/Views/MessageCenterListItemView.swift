@@ -28,8 +28,22 @@ extension View {
     /// Sets the list item style
     /// - Parameters:
     ///     - style: The style
-    public func setMessageCenterItemViewStyle<S>(_ style: S) -> some View
-    where S: MessageCenterListItemViewStyle {
+    @available(*, deprecated, message: "Use messageCenterItemViewStyle(_:) instead")
+    public func setMessageCenterItemViewStyle<S>(
+        _ style: S
+    ) -> some View where S: MessageCenterListItemViewStyle {
+        self.environment(
+            \.airshipMessageCenterListItemStyle,
+            AnyListItemViewStyle(style: style)
+        )
+    }
+
+    /// Sets the list item style
+    /// - Parameters:
+    ///     - style: The style
+    public func messageCenterItemViewStyle<S>(
+        _ style: S
+    ) -> some View where S: MessageCenterListItemViewStyle {
         self.environment(
             \.airshipMessageCenterListItemStyle,
             AnyListItemViewStyle(style: style)
@@ -139,7 +153,7 @@ private struct MessageCenterListContentView: View {
 
     @ViewBuilder
     func makeUnreadIndicator() -> some View {
-        let foregroundColor = colorScheme.resolveColor(light: theme.unreadIndicatorColor, dark: theme.unreadIndicatorColorDark) ?? colorScheme.resolveColor(light: theme.cellTintColor, dark: theme.cellTintColorDark)
+        let foregroundColor = colorScheme.airshipResolveColor(light: theme.unreadIndicatorColor, dark: theme.unreadIndicatorColorDark) ?? colorScheme.airshipResolveColor(light: theme.cellTintColor, dark: theme.cellTintColorDark)
 
         if self.message.unread {
             Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
@@ -158,7 +172,7 @@ private struct MessageCenterListContentView: View {
         VStack(alignment: .leading, spacing: 5) {
             Text(self.message.title)
                 .font(theme.cellTitleFont)
-                .foregroundColor(colorScheme.resolveColor(light: theme.cellTitleColor, dark: theme.cellTitleColorDark))
+                .foregroundColor(colorScheme.airshipResolveColor(light: theme.cellTitleColor, dark: theme.cellTitleColorDark))
                 .accessibilityHidden(true)
 
             if let subtitle = self.message.subtitle {
@@ -170,7 +184,7 @@ private struct MessageCenterListContentView: View {
 
             Text(self.message.sentDate, style: .date)
                 .font(theme.cellDateFont)
-                .foregroundColor(colorScheme.resolveColor(light: theme.cellDateColor, dark: theme.cellDateColorDark))
+                .foregroundColor(colorScheme.airshipResolveColor(light: theme.cellDateColor, dark: theme.cellDateColorDark))
                 .accessibilityHidden(true)
         }
     }

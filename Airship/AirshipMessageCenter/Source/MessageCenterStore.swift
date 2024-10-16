@@ -33,6 +33,7 @@ actor MessageCenterStore {
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let keychainAccess: AirshipKeychainAccessProtocol
+    private let date: AirshipDateProtocol
 
     private nonisolated let inMemory: Bool
     
@@ -89,7 +90,7 @@ actor MessageCenterStore {
             let predicate = AirshipCoreDataPredicate(
                 format:
                     "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
-                args: [AirshipDate().now]
+                args: [self.date.now]
             )
             
             let messages = try? await fetchMessages(withPredicate: predicate)
@@ -99,11 +100,14 @@ actor MessageCenterStore {
 
     init(
         config: RuntimeConfig,
-        dataStore: PreferenceDataStore
+        dataStore: PreferenceDataStore,
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.config = config
         self.dataStore = dataStore
         self.keychainAccess = AirshipKeychainAccess.shared
+        self.date = date
+        
         let modelURL = MessageCenterResources.bundle?
             .url(
                 forResource: "UAInbox",
@@ -129,13 +133,15 @@ actor MessageCenterStore {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        coreData: UACoreData
+        coreData: UACoreData,
+        date: AirshipDateProtocol = AirshipDate.shared
     ) {
         self.inMemory = coreData.inMemory
         self.config = config
         self.dataStore = dataStore
         self.coreData = coreData
         self.keychainAccess = AirshipKeychainAccess.shared
+        self.date = date
     }
 
     var unreadCount: Int {
@@ -164,7 +170,7 @@ actor MessageCenterStore {
                 "messageID == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
             args: [
                 messageID,
-                AirshipDate().now
+                self.date.now
             ]
         )
 
@@ -179,7 +185,7 @@ actor MessageCenterStore {
                 "messageBodyURL == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
             args: [
                 bodyURL,
-                AirshipDate().now
+                self.date.now
             ]
         )
 

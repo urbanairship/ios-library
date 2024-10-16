@@ -59,10 +59,23 @@ public struct MessageCenterMessageView: View {
 
 extension View {
 
-    /// Sets the message style
+    /// Sets the Message Center message style
     /// - Parameters:
     ///     - style: The style
+    @available(*, deprecated, message: "Use messageCenterMessageViewStyle(_:) instead")
     public func setMessageCenterMessageViewStyle<S>(
+        _ style: S
+    ) -> some View where S: MessageViewStyle {
+        self.environment(
+            \.airshipMessageViewStyle,
+            AnyMessageViewStyle(style: style)
+        )
+    }
+
+    /// Sets the Message Center message style
+    /// - Parameters:
+    ///     - style: The style
+    public func messageCenterMessageViewStyle<S>(
         _ style: S
     ) -> some View where S: MessageViewStyle {
         self.environment(
@@ -374,7 +387,21 @@ private struct MessageCenterMessageContentView: View {
     }
 
     var body: some View {
+        let backgroundColor = self.colorScheme.airshipResolveColor(
+            light: self.theme.messageViewBackgroundColor,
+            dark: self.theme.messageViewBackgroundColorDark
+        )
+
+        let containerColor = self.colorScheme.airshipResolveColor(
+            light: self.theme.messageViewContainerBackgroundColor,
+            dark: self.theme.messageViewContainerBackgroundColorDark
+        )
+
         ZStack {
+            if let backgroundColor {
+                backgroundColor.ignoresSafeArea()
+            }
+
             MessageCenterWebView(
                 phase: self.$webViewPhase,
                 nativeBridgeExtension: {
@@ -449,6 +476,14 @@ private struct MessageCenterMessageContentView: View {
             deleteButton
         }
         .navigationBarTitleDisplayMode(.inline)
+        .applyIf(containerColor != nil) { view in
+            if #available(iOS 16.0, *) {
+                view.toolbarBackground(containerColor!, for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+            } else {
+                view.background(containerColor!)
+            }
+        }
     }
 
     @ViewBuilder
@@ -461,7 +496,7 @@ private struct MessageCenterMessageContentView: View {
                     )
                 }
                 dismiss()
-            }.foregroundColor(colorScheme.resolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
+            }.foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
         }
     }
 
@@ -473,7 +508,7 @@ private struct MessageCenterMessageContentView: View {
             Image(systemName: "chevron.backward")
                 .scaleEffect(0.68)
                 .font(Font.title.weight(.medium))
-                .foregroundColor(colorScheme.resolveColor(light: theme.backButtonColor, dark: theme.backButtonColorDark))
+                .foregroundColor(colorScheme.airshipResolveColor(light: theme.backButtonColor, dark: theme.backButtonColorDark))
         }
     }
 

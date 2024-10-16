@@ -161,6 +161,16 @@ public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyl
         color: DefaultColors.alertRed
     )
 
+    static let textFieldTextAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .body,
+        color: DefaultColors.primaryText
+    )
+
+    static let textFieldPlaceholderAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .body,
+        color: DefaultColors.primaryText /// It's a prominent placeholder by design
+    )
+
     static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline.weight(.bold),
         color: DefaultColors.primaryInvertedText

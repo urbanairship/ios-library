@@ -100,6 +100,11 @@ struct MessageCenterThemeLoader {
         let messageListContainerBackgroundColor: String?
         let messageListContainerBackgroundColorDark: String?
 
+        let messageViewBackgroundColor: String?
+        let messageViewBackgroundColorDark: String?
+        let messageViewContainerBackgroundColor: String?
+        let messageViewContainerBackgroundColorDark: String?
+
         let navigationBarTitle: String?
     }
 
@@ -220,6 +225,10 @@ extension MessageCenterThemeLoader.Config {
         theme.messageListBackgroundColorDark = self.messageListBackgroundColorDark?.airshipToColor(bundle)
         theme.messageListContainerBackgroundColor = self.messageListContainerBackgroundColor?.airshipToColor(bundle)
         theme.messageListContainerBackgroundColorDark = self.messageListContainerBackgroundColorDark?.airshipToColor(bundle)
+        theme.messageViewBackgroundColor = self.messageViewBackgroundColor?.airshipToColor(bundle)
+        theme.messageViewBackgroundColorDark = self.messageViewBackgroundColorDark?.airshipToColor(bundle)
+        theme.messageViewContainerBackgroundColor = self.messageViewContainerBackgroundColor?.airshipToColor(bundle)
+        theme.messageViewContainerBackgroundColorDark = self.messageViewContainerBackgroundColorDark?.airshipToColor(bundle)
         return theme
     }
 }

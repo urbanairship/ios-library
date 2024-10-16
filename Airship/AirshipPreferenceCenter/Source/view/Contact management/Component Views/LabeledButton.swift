@@ -12,6 +12,9 @@ enum LabeledButtonType {
 }
 
 struct LabeledButton: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     var item: PreferenceCenterConfig.ContactManagementItem.LabeledButton
     var type: LabeledButtonType = .defaultType
 
@@ -45,19 +48,25 @@ struct LabeledButton: View {
     }
 
     private var backgroundColor: Color {
-        return theme?.buttonBackgroundColor ?? DefaultContactManagementSectionStyle.buttonBackgroundColor
+        let color = colorScheme.airshipResolveColor(light: theme?.buttonBackgroundColor, dark: theme?.buttonBackgroundColorDark)
+        return color ?? DefaultContactManagementSectionStyle.buttonBackgroundColor
     }
 
     private var destructiveBackgroundColor: Color {
-        return theme?.buttonDestructiveBackgroundColor ?? DefaultContactManagementSectionStyle.buttonDestructiveBackgroundColor
+        let color = colorScheme.airshipResolveColor(light: theme?.buttonDestructiveBackgroundColor, dark: theme?.buttonDestructiveBackgroundColorDark)
+
+        return color ?? DefaultContactManagementSectionStyle.buttonDestructiveBackgroundColor
     }
 
     @ViewBuilder
     private var buttonLabel: some View {
+        let tintColor = colorScheme.airshipResolveColor(light: theme?.buttonLabelAppearance?.color, dark: theme?.buttonLabelAppearance?.colorDark)
+
         Text(self.item.text)
             .textAppearance(
                 theme?.buttonLabelAppearance,
-                base: typedAppearance
+                base: typedAppearance,
+                colorScheme: colorScheme
             )
             .opacity((isEnabled ? 1 : disabledOpacity))
             .airshipApplyIf(isLoading) {
@@ -65,7 +74,7 @@ struct LabeledButton: View {
                     .opacity(0) /// Hide the text underneath the loader
                     .overlay(
                         ProgressView()
-                            .airshipSetTint(color: typedAppearance.color ?? DefaultColors.primaryInvertedText)
+                            .airshipSetTint(color: tintColor ?? DefaultColors.primaryInvertedText)
                     )
             }
     }
@@ -92,7 +101,10 @@ struct LabeledButton: View {
         }
     }
 
+    @ViewBuilder
     var body: some View {
+        let buttonBackgroundColor = colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark)
+
         Button {
             action()
         } label: {
@@ -104,7 +116,7 @@ struct LabeledButton: View {
         .cornerRadius(cornerRadius)
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
-                .stroke(type == .outlineType ? DefaultColors.primaryText : Color.clear, lineWidth: type == .outlineType ? outlineWidth : 0)
+                .stroke(type == .outlineType ? buttonBackgroundColor ?? DefaultColors.primaryText : buttonBackgroundColor ?? Color.clear, lineWidth: type == .outlineType ? outlineWidth : 0)
         )
         .accessibilityLabel(item.contentDescription ?? "")
         .disabled(!isEnabled)

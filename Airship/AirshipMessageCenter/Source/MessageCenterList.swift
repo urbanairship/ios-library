@@ -112,6 +112,8 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     private let workManager: AirshipWorkManagerProtocol
     private let startUpTask: Task<Void, Never>?
     private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
+    private let refreshOnExpireTask: AirshipAtomicValue<Task<Void, Error>?> = AirshipAtomicValue(nil)
+    private let taskSleeper: AirshipTaskSleeper
     
     var enabled: Bool {
         get {
@@ -228,7 +230,8 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         store: MessageCenterStore,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: AirshipDateProtocol = AirshipDate.shared,
-        workManager: AirshipWorkManagerProtocol
+        workManager: AirshipWorkManagerProtocol,
+        taskSleeper: AirshipTaskSleeper? = nil
     ) {
         self.channel = channel
         self.client = client
@@ -237,6 +240,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         self.notificationCenter = notificationCenter
         self.date = date
         self.workManager = workManager
+        self.taskSleeper = taskSleeper ?? DefaultAirshipTaskSleeper.shared
 
         self.startUpTask = if channel.identifier == nil, !config.restoreMessageCenterOnReinstall {
             Task { [weak store] in
@@ -252,6 +256,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             updateWorkID,
             type: .serial
         ) { [weak self] request in
+            self?.refreshOnExpireTask.value?.cancel()
             return try await self?.updateInbox() ?? .success
         }
 
@@ -269,6 +274,14 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             queue: nil
         ) { [weak self] _ in
             self?.dispatchUpdateWorkRequest()
+        }
+        
+        notificationCenter.addObserver(
+            forName: AppStateTracker.didEnterBackgroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.refreshOnExpireTask.value?.cancel()
         }
 
         notificationCenter.addObserver(
@@ -289,6 +302,8 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
                     name: AirshipNotifications.MessageCenterListUpdated.name,
                     object: nil
                 )
+                
+                await self?.setupRefreshOnMessageExpires()
             }
         }
 
@@ -337,6 +352,26 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
 
     private func sendUpdate(_ update: UpdateType) async {
         await self.updateChannel.send(update)
+    }
+    
+    private func setupRefreshOnMessageExpires() async {
+        self.refreshOnExpireTask.value?.cancel()
+        
+        guard
+            let refresh = await self.messages
+                .compactMap({ $0.expirationDate })
+                .sorted()
+                .first
+        else {
+            return
+        }
+        
+        let delay = refresh.timeIntervalSince(self.date.now)
+        
+        self.refreshOnExpireTask.value = Task { [weak self] in
+            try await self?.taskSleeper.sleep(timeInterval: delay)
+            self?.dispatchUpdateWorkRequest()
+        }
     }
 
     public func _getMessages() async -> [MessageCenterMessage] {

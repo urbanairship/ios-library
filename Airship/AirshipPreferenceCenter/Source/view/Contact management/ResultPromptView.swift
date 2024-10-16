@@ -6,6 +6,9 @@ public import SwiftUI
 /// Subject to configuration by the user it tells users to check their email inbox, message app, etc.
 /// Purely informational and it's only behavior is dismissing itself and it's parent the AddChannelPromptView
 public struct ResultPromptView: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     var item: PreferenceCenterConfig.ContactManagementItem.ActionableMessage?
 
     /// The preference center theme
@@ -40,7 +43,8 @@ public struct ResultPromptView: View {
                 Text(item.title)
                     .textAppearance(
                         theme?.titleAppearance,
-                        base: DefaultContactManagementSectionStyle.titleAppearance
+                        base: DefaultContactManagementSectionStyle.titleAppearance,
+                        colorScheme: colorScheme
                     )
                     .accessibilityAddTraits(.isHeader)
 
@@ -49,7 +53,8 @@ public struct ResultPromptView: View {
                     Text(body)
                         .textAppearance(
                             theme?.subtitleAppearance,
-                            base: DefaultContactManagementSectionStyle.subtitleAppearance
+                            base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                            colorScheme: colorScheme
                         )
                 }
 
@@ -66,7 +71,7 @@ public struct ResultPromptView: View {
             .padding(alertInternalPadding)
             .background(
                 BackgroundShape(
-                    color: theme?.backgroundColor ?? DefaultContactManagementSectionStyle.backgroundColor
+                    color: colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark)  ?? DefaultContactManagementSectionStyle.backgroundColor
                 )
             )
             .padding(alertExternalPadding)

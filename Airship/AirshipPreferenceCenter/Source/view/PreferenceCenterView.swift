@@ -20,11 +20,11 @@ public enum PreferenceCenterViewPhase: Sendable {
 
 /// Preference center view
 @preconcurrency @MainActor
+// PreferenceCenterContent
 public struct PreferenceCenterList: View {
 
     @StateObject
-    private var loader: PreferenceCenterViewLoader =
-        PreferenceCenterViewLoader()
+    private var loader: PreferenceCenterViewLoader = PreferenceCenterViewLoader()
 
     @State
     private var initialLoadCalled = false
@@ -37,6 +37,9 @@ public struct PreferenceCenterList: View {
 
     @Environment(\.airshipPreferenceCenterTheme)
     private var preferenceCenterTheme
+
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     private let preferenceCenterID: String
     private let onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)?
@@ -71,6 +74,7 @@ public struct PreferenceCenterList: View {
         let configuration = PreferenceCenterViewStyleConfiguration(
             phase: phase,
             preferenceCenterTheme: self.preferenceCenterTheme,
+            colorScheme: self.colorScheme,
             refresh: refresh
         )
 
@@ -112,6 +116,12 @@ public struct PreferenceCenterView: View {
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme
 
+    @Environment(\.colorScheme)
+    private var colorScheme
+
+    @Environment(\.airshipPreferenceCenterNavigationStack)
+    private var navigationStack
+
     private let preferenceCenterID: String
 
     /// Default constructor
@@ -123,19 +133,24 @@ public struct PreferenceCenterView: View {
 
     @ViewBuilder
     private func makeBackButton() -> some View {
+        let theme = theme.viewController?.navigationBar
+        let resolvedBackButtonColor = colorScheme.airshipResolveColor(
+            light: theme?.backButtonColor,
+            dark: theme?.backButtonColorDark
+        )
+
         Button(action: {
             self.dismissAction?()
         }) {
             Image(systemName: "chevron.backward")
                 .scaleEffect(0.68)
                 .font(Font.title.weight(.medium))
-                .foregroundColor(Color(UINavigationBar.appearance().tintColor ?? UIColor.systemBlue))
+                .foregroundColor(resolvedBackButtonColor)
         }
     }
 
     @ViewBuilder
     public var body: some View {
-
         let content = PreferenceCenterList(preferenceCenterID: preferenceCenterID)
             .airshipApplyIf(self.dismissAction != nil) { view in
                 view.toolbar {
@@ -146,24 +161,43 @@ public struct PreferenceCenterView: View {
             }
 
         if #available(iOS 16.0, *) {
-            NavigationStack {
-                ZStack{
+            let resolvedNavigationBarColor = colorScheme.airshipResolveColor(
+                light: theme.viewController?.navigationBar?.backgroundColor,
+                dark: theme.viewController?.navigationBar?.backgroundColorDark
+            )
+
+            let themedContent = content.applyIf(resolvedNavigationBarColor != nil) { view in
+                view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
+                    .toolbarBackground(.visible, for: .navigationBar)
+            }
+
+            switch (navigationStack) {
+            case .default:
+                NavigationStack {
+                    themedContent
+                }
+            case .none:
+                themedContent
+            }
+
+        } else {
+            switch (navigationStack) {
+            case .default:
+                NavigationView {
                     content
                 }
-            }
-        } else {
-            NavigationView {
+                .navigationViewStyle(.stack)
+            case .none:
                 content
             }
-            .navigationViewStyle(.stack)
         }
     }
 }
 
+
 private struct PreferenceCenterDismissActionKey: EnvironmentKey {
     static let defaultValue: (() -> Void)? = nil
 }
-
 
 extension EnvironmentValues {
     var preferenceCenterDismissAction: (() -> Void)? {
@@ -187,6 +221,38 @@ extension View {
         } else {
             self
         }
+    }
+}
+
+/// Preference Center Navigation stack
+public enum PreferenceCenterNavigationStack {
+    /// The Preference Center will not be wrapped in a navigation stack
+    case none
+
+    /// The Preference Center will be wrapped in either a NavigationStack on iOS 16+, or a NavigationView.
+    case `default`
+}
+
+struct PreferenceCenterNavigationStackKey: EnvironmentKey {
+    static let defaultValue: PreferenceCenterNavigationStack = .default
+}
+
+extension EnvironmentValues {
+    /// Airship preference theme environment value
+    public var airshipPreferenceCenterNavigationStack: PreferenceCenterNavigationStack {
+        get { self[PreferenceCenterNavigationStackKey.self] }
+        set { self[PreferenceCenterNavigationStackKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Sets the navigation stack for the Preference Center.
+    /// - Parameters:
+    ///     - stack: The navigation stack
+    public func preferenceCenterNavigationStack(
+        _ stack: PreferenceCenterNavigationStack
+    )-> some View {
+        environment(\.airshipPreferenceCenterNavigationStack, stack)
     }
 }
 

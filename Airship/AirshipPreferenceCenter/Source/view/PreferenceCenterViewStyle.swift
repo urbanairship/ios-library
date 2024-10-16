@@ -11,6 +11,9 @@ public struct PreferenceCenterViewStyleConfiguration {
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
 
+    /// The colorScheme
+    public let colorScheme: ColorScheme
+
     /// A block that can be called to refresh the view
     public let refresh: () -> Void
 }
@@ -22,8 +25,7 @@ public protocol PreferenceCenterViewStyle {
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-extension PreferenceCenterViewStyle
-where Self == DefaultPreferenceCenterViewStyle {
+extension PreferenceCenterViewStyle where Self == DefaultPreferenceCenterViewStyle {
     /// Default style
     public static var defaultStyle: Self {
         return .init()
@@ -35,10 +37,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
 
     static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .subheadline
-    )
-
-    static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        color: .white
     )
 
     private func navigationBarTitle(
@@ -69,6 +67,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
 
     @ViewBuilder
     public func makeErrorView(configuration: Configuration) -> some View {
+        let colorScheme = configuration.colorScheme
         let theme = configuration.preferenceCenterTheme.preferenceCenter
         let retry = theme?.retryButtonLabel ?? "ua_retry_button".preferenceCenterLocalizedString
         let errorMessage =
@@ -76,7 +75,10 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
 
         VStack {
             Text(errorMessage)
-                .textAppearance(theme?.retryMessageAppearance)
+                .textAppearance(
+                    theme?.retryMessageAppearance,
+                    colorScheme: colorScheme
+                )
                 .padding(16)
 
             Button(
@@ -87,16 +89,23 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     Text(retry)
                         .textAppearance(
                             theme?.retryButtonLabelAppearance,
-                            base: DefaultPreferenceCenterViewStyle
-                                .buttonLabelAppearance
+                            base: PreferenceCenterTheme.TextAppearance(
+                                color: colorScheme.airshipResolveColor(
+                                    light: Color.white,
+                                    dark: Color.black
+                                )
+                            ),
+                            colorScheme: colorScheme
                         )
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(
                             Capsule()
                                 .fill(
-                                    theme?.retryButtonBackgroundColor
-                                    ?? Color.blue
+                                    colorScheme.airshipResolveColor(
+                                        light: theme?.retryButtonBackgroundColor,
+                                        dark: theme?.retryButtonBackgroundColorDark
+                                    ) ?? Color.blue
                                 )
                         )
                         .cornerRadius(8)
@@ -107,19 +116,22 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
         .navigationTitle(navigationBarTitle(configuration: configuration))
     }
 
+    @ViewBuilder
     public func makePreferenceCenterView(
         configuration: Configuration,
         state: PreferenceCenterState
     ) -> some View {
+        let colorScheme = configuration.colorScheme
         let theme = configuration.preferenceCenterTheme
-        return ScrollView {
+        ScrollView {
             LazyVStack(alignment: .leading) {
                 if let subtitle = state.config.display?.subtitle {
                     Text(subtitle)
                         .textAppearance(
                             theme.preferenceCenter?.subtitleAppearance,
                             base: DefaultPreferenceCenterViewStyle
-                                .subtitleAppearance
+                                .subtitleAppearance,
+                            colorScheme: colorScheme
                         )
                         .padding(.bottom, 16)
                 }
@@ -135,18 +147,29 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             Spacer()
         }
         .navigationTitle(navigationBarTitle(configuration: configuration, state: state))
+
     }
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
+        let resolvedBackgroundColor: Color? = configuration.colorScheme.airshipResolveColor(
+            light: configuration.preferenceCenterTheme.viewController?.backgroundColor,
+            dark: configuration.preferenceCenterTheme.viewController?.backgroundColorDark
+        )
 
-        switch configuration.phase {
-        case .loading:
-            makeProgressView(configuration: configuration)
-        case .error(_):
-            makeErrorView(configuration: configuration)
-        case .loaded(let state):
-            makePreferenceCenterView(configuration: configuration, state: state)
+        ZStack {
+            if let resolvedBackgroundColor {
+                resolvedBackgroundColor.ignoresSafeArea()
+            }
+
+            switch configuration.phase {
+            case .loading:
+                makeProgressView(configuration: configuration)
+            case .error(_):
+                makeErrorView(configuration: configuration)
+            case .loaded(let state):
+                makePreferenceCenterView(configuration: configuration, state: state)
+            }
         }
     }
 

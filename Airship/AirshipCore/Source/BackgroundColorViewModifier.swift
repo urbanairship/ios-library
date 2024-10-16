@@ -17,7 +17,7 @@ struct BackgroundColorViewModifier: ViewModifier {
 extension View {
     @ViewBuilder
     func background(_ color: ThomasColor?) -> some View {
-        if let color = color {
+        if let color {
             self.modifier(BackgroundColorViewModifier(color: color))
         } else {
             self

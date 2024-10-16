@@ -5,6 +5,9 @@ import SwiftUI
 
 /// Prompt that appears when a opt-out button tap occurs.
 struct RemoveChannelPromptView: View {
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     var item: PreferenceCenterConfig.ContactManagementItem.RemoveChannel
 
     /// The preference center theme
@@ -33,13 +36,16 @@ struct RemoveChannelPromptView: View {
         }
     }
 
+    @ViewBuilder
     var promptView: some View {
+        let dismissButtonColor = colorScheme.airshipResolveColor(light: theme?.buttonLabelAppearance?.color, dark: theme?.buttonLabelAppearance?.colorDark)
+
         GeometryReader { proxy in
             promptViewContent
                 .padding(16)
-                .addBackground(theme: theme)
+                .addBackground(theme: theme, colorScheme: colorScheme)
                 .addPreferenceCloseButton(
-                    dismissButtonColor: .primary,
+                    dismissButtonColor: dismissButtonColor ?? .primary,
                     dismissIconResource: "xmark",
                     contentDescription: item.view.closeButton?.contentDescription,
                     onUserDismissed: {
@@ -57,7 +63,8 @@ struct RemoveChannelPromptView: View {
         Text(item.view.display.title)
             .textAppearance(
                 theme?.titleAppearance,
-                base: DefaultContactManagementSectionStyle.titleAppearance
+                base: DefaultContactManagementSectionStyle.titleAppearance,
+                colorScheme: colorScheme
             )
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityAddTraits(.isHeader)
@@ -70,7 +77,8 @@ struct RemoveChannelPromptView: View {
             Text(body)
                 .textAppearance(
                     theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance
+                    base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                    colorScheme: colorScheme
                 )
                 .multilineTextAlignment(.leading)
         }
