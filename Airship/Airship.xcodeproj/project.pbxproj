@@ -196,6 +196,7 @@
 		608B16F22C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */; };
 		608B16F32C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */; };
 		60A292112CB7C5C30096F5EB /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
+		60956D862CBE7CFA00950172 /* AirshipLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* AirshipLock.swift */; };
 		60A364ED2C3479BF00B05E26 /* ExecutionWindowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A364EC2C3479BF00B05E26 /* ExecutionWindowTest.swift */; };
 		60A5CC082B28DC500017EDB2 /* NotificationCategoriesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A5CC072B28DC500017EDB2 /* NotificationCategoriesTest.swift */; };
 		60A5CC0C2B29AE890017EDB2 /* ProximityRegionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A5CC0B2B29AE890017EDB2 /* ProximityRegionTest.swift */; };
@@ -7086,6 +7087,7 @@
 				6E1892C8268D15C300417887 /* PreferenceCenterTest.swift in Sources */,
 				6E8BDF022A684FC700F816D9 /* TestRemoteData.swift in Sources */,
 				6EF13FFE2A16F391009A125D /* AirshipBaseTest.swift in Sources */,
+				60956D862CBE7CFA00950172 /* AirshipLock.swift in Sources */,
 				6EB5159528A5B96300870C5A /* PreferenceThemeLoaderTest.swift in Sources */,
 				6EB515A328A5F1C600870C5A /* PreferenceCenterStateTest.swift in Sources */,
 			);
@@ -9078,6 +9080,14 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_DISABLE_OUTWARD_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_IMPLICIT_OPEN_EXISTENTIALS = YES;
+				SWIFT_UPCOMING_FEATURE_ISOLATED_DEFAULT_VALUES = YES;
+				SWIFT_UPCOMING_FEATURE_REGION_BASED_ISOLATION = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
@@ -9116,6 +9126,14 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_DISABLE_OUTWARD_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_IMPLICIT_OPEN_EXISTENTIALS = YES;
+				SWIFT_UPCOMING_FEATURE_ISOLATED_DEFAULT_VALUES = YES;
+				SWIFT_UPCOMING_FEATURE_REGION_BASED_ISOLATION = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;

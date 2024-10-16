@@ -46,10 +46,12 @@ class ConditionsMonitor: ObservableObject {
 
         switch condition {
         case .notificationOptIn(_):
-            return Airship.push.notificationStatusPublisher.map { status in
-                status.isUserOptedIn
-            }
-            .eraseToAnyPublisher()
+            return Airship.push.notificationStatusPublisher
+                .receive(on: RunLoop.main)
+                .map { status in
+                    status.isUserOptedIn
+                }
+                .eraseToAnyPublisher()
         }
     }
 

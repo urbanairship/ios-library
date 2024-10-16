@@ -106,27 +106,33 @@ class PreferenceCenterTest: XCTestCase {
     }
 
     @MainActor
-    func testOpenDelegate() {
+    func testOpenDelegate() async throws {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate
         self.preferenceCenter.open("some-form")
-        XCTAssertEqual("some-form", delegate.lastOpenId)
+        
+        let openedId = await delegate.getLastOpenId()
+        XCTAssertEqual("some-form", openedId)
     }
 
     @MainActor
-    func testDeepLink() {
+    func testDeepLink() async throws {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate
 
         let valid = URL(string: "uairship://preferences/some-id")!
         XCTAssertTrue(self.preferenceCenter.deepLink(valid))
-        XCTAssertEqual("some-id", delegate.lastOpenId)
+        
+        var openedId = await delegate.getLastOpenId()
+        XCTAssertEqual("some-id", openedId)
 
         let trailingSlash = URL(
             string: "uairship://preferences/some-other-id/"
         )!
         XCTAssertTrue(self.preferenceCenter.deepLink(trailingSlash))
-        XCTAssertEqual("some-other-id", delegate.lastOpenId)
+        
+        openedId = await delegate.getLastOpenId()
+        XCTAssertEqual("some-other-id", openedId)
     }
 
     @MainActor

@@ -89,9 +89,11 @@ public struct ChannelSubscriptionViewStyleConfiguration {
     public let colorScheme: ColorScheme
 }
 
-public protocol ChannelSubscriptionViewStyle {
+public protocol ChannelSubscriptionViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = ChannelSubscriptionViewStyleConfiguration
+    
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -118,6 +120,7 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
 
 
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let item = configuration.item
         let itemTheme = configuration.preferenceCenterTheme.channelSubscription
@@ -158,10 +161,10 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
 
 struct AnyChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: ChannelSubscriptionViewStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -173,7 +176,7 @@ struct AnyChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
 }
 
 struct ChannelSubscriptionViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyChannelSubscriptionViewStyle(
+    static let defaultValue = AnyChannelSubscriptionViewStyle(
         style: .defaultStyle
     )
 }

@@ -84,7 +84,7 @@ public struct LabeledSectionBreakStyleConfiguration {
 }
 
 /// Labeled section break style
-public protocol LabeledSectionBreakStyle {
+public protocol LabeledSectionBreakStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = LabeledSectionBreakStyleConfiguration
     func makeBody(configuration: Self.Configuration) -> Self.Body
@@ -130,7 +130,7 @@ public struct DefaultLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 
 struct AnyLabeledSectionBreakStyle: LabeledSectionBreakStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @Sendable (Configuration) -> AnyView
 
     init<S: LabeledSectionBreakStyle>(style: S) {
         _makeBody = { configuration in
@@ -145,7 +145,7 @@ struct AnyLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 }
 
 struct LabeledSectionBreakStyleKey: EnvironmentKey {
-    static var defaultValue = AnyLabeledSectionBreakStyle(style: .defaultStyle)
+    static let defaultValue = AnyLabeledSectionBreakStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

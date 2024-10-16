@@ -28,7 +28,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
         notificationStatusSubject
             .prepend(Future { promise in
-                Task {
+                Task { 
                     return await promise(.success(self.notificationStatus))
                 }
             })

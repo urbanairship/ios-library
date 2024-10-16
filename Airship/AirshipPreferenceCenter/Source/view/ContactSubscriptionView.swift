@@ -93,9 +93,11 @@ public struct ContactSubscriptionViewStyleConfiguration {
 }
 
 /// Contact subcription view style
-public protocol ContactSubscriptionViewStyle {
+public protocol ContactSubscriptionViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = ContactSubscriptionViewStyleConfiguration
+    
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -120,6 +122,7 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle 
     )
 
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let colorScheme = configuration.colorScheme
         let item = configuration.item
@@ -157,10 +160,10 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle 
 
 struct AnyContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: ContactSubscriptionViewStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -172,7 +175,7 @@ struct AnyContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
 }
 
 struct ContactSubscriptionViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyContactSubscriptionViewStyle(
+    static let defaultValue = AnyContactSubscriptionViewStyle(
         style: .defaultStyle
     )
 }

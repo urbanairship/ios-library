@@ -107,9 +107,11 @@ public struct ContactSubscriptionGroupStyleConfiguration {
     }
 }
 
-public protocol ContactSubscriptionGroupStyle {
+public protocol ContactSubscriptionGroupStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = ContactSubscriptionGroupStyleConfiguration
+    
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -141,6 +143,7 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
     )
 
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let colorScheme = configuration.colorScheme
         let item = configuration.item
@@ -189,8 +192,8 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
 
         @ViewBuilder
         var body: some View {
-            var dx = CGFloat.zero
-            var dy = CGFloat.zero
+            let dx = AirshipAtomicValue(CGFloat.zero)
+            let dy = AirshipAtomicValue(CGFloat.zero)
             let hSpacing = 8.0
 
             GeometryReader { geometry in
@@ -198,29 +201,32 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                     ForEach(0..<self.componentStates.count, id: \.self) {
                         index in
                         let state = self.componentStates[index]
+                        let size = geometry.size
+                        
                         makeComponent(state.component, isOn: state.isSubscribed)
                             .alignmentGuide(HorizontalAlignment.leading) {
                                 viewDimensions in
+                                
                                 if index == 0 {
-                                    dx = 0
-                                    dy = 0
+                                    dx.value = 0
+                                    dy.value = 0
                                 }
 
-                                var offSet = dx
+                                var offSet = dx.value
                                 if abs(offSet - viewDimensions.width)
-                                    > geometry.size.width
+                                    > size.width
                                 {
                                     offSet = 0
-                                    dx = 0
-                                    dy -= viewDimensions.height
+                                    dx.value = 0
+                                    dy.value -= viewDimensions.height
                                 }
 
-                                dx -= (viewDimensions.width + hSpacing)
+                                dx.value -= (viewDimensions.width + hSpacing)
                                 return offSet
                             }
                             .alignmentGuide(VerticalAlignment.top) {
                                 viewDimensions in
-                                return dy
+                                return dy.value
                             }
                     }
                 }
@@ -296,10 +302,10 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
 
 struct AnyContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: ContactSubscriptionGroupStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -311,7 +317,7 @@ struct AnyContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
 }
 
 struct ContactSubscriptionGroupStyleKey: EnvironmentKey {
-    static var defaultValue = AnyContactSubscriptionGroupStyle(
+    static let defaultValue = AnyContactSubscriptionGroupStyle(
         style: .defaultStyle
     )
 }

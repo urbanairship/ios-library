@@ -22,7 +22,7 @@ public class PreferenceCenterState: ObservableObject {
     var channelsList: [ContactChannel] = []
 
     private var subscriptions: Set<AnyCancellable> = []
-    private let subscriber: PreferenceSubscriber
+    private let subscriber: any PreferenceSubscriber
 
     /// Default constructor.
     /// - Parameters:
@@ -52,7 +52,7 @@ public class PreferenceCenterState: ObservableObject {
         contactSubscriptions: [String: Set<ChannelScope>] = [:],
         channelSubscriptions: Set<String> = Set(),
         channelUpdates: AsyncStream<ContactChannelsResult>? = nil,
-        subscriber: PreferenceSubscriber
+        subscriber: any PreferenceSubscriber
     ) {
         self.config = config
         self.contactSubscriptions = contactSubscriptions
@@ -214,7 +214,7 @@ public class PreferenceCenterState: ObservableObject {
         }
     }
 
-    static func makeSubscriber() -> PreferenceSubscriber {
+    static func makeSubscriber() -> any PreferenceSubscriber {
         guard Airship.isFlying else {
             return PreviewPreferenceSubscriber()
         }

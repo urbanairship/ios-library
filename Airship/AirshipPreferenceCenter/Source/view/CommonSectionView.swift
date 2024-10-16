@@ -87,9 +87,11 @@ public struct CommonSectionViewStyleConfiguration {
 }
 
 /// Common section view style
-public protocol CommonSectionViewStyle {
+public protocol CommonSectionViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = CommonSectionViewStyleConfiguration
+    
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -120,6 +122,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     )
 
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let section = configuration.section
         let sectionTheme = configuration.preferenceCenterTheme.commonSection
@@ -165,6 +168,7 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
     }
 
     @ViewBuilder
+    @MainActor
     func makeItem(
         _ item: PreferenceCenterConfig.Item,
         state: PreferenceCenterState
@@ -193,10 +197,10 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
 struct AnyCommonSectionViewStyle: CommonSectionViewStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private var _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: CommonSectionViewStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -208,7 +212,7 @@ struct AnyCommonSectionViewStyle: CommonSectionViewStyle {
 }
 
 struct CommonSectionViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyCommonSectionViewStyle(
+    static let defaultValue = AnyCommonSectionViewStyle(
         style: DefaultCommonSectionViewStyle()
     )
 }

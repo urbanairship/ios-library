@@ -15,7 +15,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     /// The config's sections.
     public let sections: [Section]
 
-    public var _sections: [PreferenceCenterConfigSection] {
+    public var _sections: [any PreferenceCenterConfigSection] {
         self.sections.map { $0.info }
     }
 
@@ -81,7 +81,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             self.mergeChannelDataToContact = mergeChannelDataToContact
         }
 
-        public required init(from decoder: Decoder) throws {
+        public required init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             if let mergeChannelDataToContact = try? container.decode(
@@ -157,7 +157,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             self.optInStatus = optInStatus
         }
 
-        public required init(from decoder: Decoder) throws {
+        public required init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let optInStatus = try container.decode(
                 String.self,
@@ -193,7 +193,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case type = "type"
         }
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let type = try PreferenceCenterConfigConditionType.fromString(
                 container.decode(String.self, forKey: .type)
@@ -225,7 +225,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The section's items.
         public let items: [Item]
 
-        public var _items: [PreferenceCenterConfigItem] {
+        public var _items: [any PreferenceCenterConfigItem] {
             return self.items.map { $0.info }
         }
 
@@ -235,7 +235,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The section's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -295,7 +295,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The section's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -341,7 +341,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The section's items.
         public let items: [Item]
 
-        public var _items: [PreferenceCenterConfigItem] {
+        public var _items: [any PreferenceCenterConfigItem] {
             return self.items.map { $0.info }
         }
 
@@ -351,7 +351,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The section's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -399,7 +399,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case type = "type"
         }
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let type = try PreferenceCenterConfigSectionType.fromString(
                 container.decode(String.self, forKey: .type)
@@ -448,7 +448,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -508,7 +508,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -601,7 +601,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -665,7 +665,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [PreferenceConfigCondition]? {
+        public var _conditions: [any PreferenceConfigCondition]? {
             self.conditions?.map { $0.info }
         }
 
@@ -800,7 +800,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case type = "type"
         }
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let type = try PreferenceCenterConfigItemType.fromString(
                 container.decode(String.self, forKey: .type)
@@ -980,7 +980,7 @@ public protocol PreferenceCenterConfigSection: Sendable {
 }
 
 extension PreferenceCenterConfig.Item {
-    var info: PreferenceCenterConfigItem {
+    var info: any PreferenceCenterConfigItem {
         switch self {
         case .channelSubscription(let info): return info
         case .contactSubscription(let info): return info
@@ -992,7 +992,7 @@ extension PreferenceCenterConfig.Item {
 }
 
 extension PreferenceCenterConfig.Section {
-    var info: PreferenceCenterConfigSection {
+    var info: any PreferenceCenterConfigSection {
         switch self {
         case .common(let info): return info
         case .labeledSectionBreak(let info): return info
@@ -1001,7 +1001,7 @@ extension PreferenceCenterConfig.Section {
 }
 
 extension PreferenceCenterConfig.Condition {
-    var info: PreferenceConfigCondition {
+    var info: any PreferenceConfigCondition {
         switch self {
         case .notificationOptIn(let info): return info
         }
@@ -1057,7 +1057,7 @@ extension PreferenceCenterConfig {
 }
 
 extension PreferenceCenterConfig: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(identifier, forKey: .identifier)
         try container.encode(sections, forKey: .sections)
@@ -1071,14 +1071,14 @@ extension PreferenceCenterConfig.Options: Encodable {}
 extension PreferenceCenterConfig.CommonDisplay: Encodable {}
 
 extension PreferenceCenterConfig.NotificationOptInCondition: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(optInStatus.rawValue, forKey: .optInStatus)
     }
 }
 
 extension PreferenceCenterConfig.Condition: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .notificationOptIn(let condition):
@@ -1093,7 +1093,7 @@ extension PreferenceCenterConfig.CommonSection: Encodable {}
 extension PreferenceCenterConfig.LabeledSectionBreak: Encodable {}
 
 extension PreferenceCenterConfig.Section: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .common(let section):
@@ -1111,7 +1111,7 @@ extension PreferenceCenterConfig.ChannelSubscription: Encodable {}
 extension PreferenceCenterConfig.ContactSubscriptionGroup: Encodable {}
 
 extension PreferenceCenterConfig.ContactSubscriptionGroup.Component: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(_scopes, forKey: ._scopes)
         try container.encode(display, forKey: .display)
@@ -1119,7 +1119,7 @@ extension PreferenceCenterConfig.ContactSubscriptionGroup.Component: Encodable {
 }
 
 extension PreferenceCenterConfig.ContactSubscription: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(identifier, forKey: .identifier)
@@ -1140,7 +1140,7 @@ extension PreferenceCenterConfigConditionType : Encodable {}
 extension PreferenceCenterConfig.Alert.Display: Encodable {}
 
 extension PreferenceCenterConfig.ContactManagementItem: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(identifier, forKey: .identifier)
@@ -1154,7 +1154,7 @@ extension PreferenceCenterConfig.ContactManagementItem: Encodable {
 }
 
 extension PreferenceCenterConfig.Item: Encodable {
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .channelSubscription(let item):

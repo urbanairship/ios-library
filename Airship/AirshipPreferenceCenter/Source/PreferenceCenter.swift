@@ -8,6 +8,7 @@ import AirshipCore
 #endif
 
 /// Open delegate.
+@MainActor
 public protocol PreferenceCenterOpenDelegate {
 
     /**
@@ -30,6 +31,7 @@ public final class PreferenceCenter: NSObject, Sendable {
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
 
+    @MainActor
     private let delegates: Delegates = Delegates()
     /**
      * Open delegate.
@@ -38,7 +40,7 @@ public final class PreferenceCenter: NSObject, Sendable {
      * on the main actor.
      */
     @MainActor
-    public var openDelegate: PreferenceCenterOpenDelegate? {
+    public var openDelegate: (any PreferenceCenterOpenDelegate)? {
         get {
             self.delegates.openDelegate
         }
@@ -49,10 +51,10 @@ public final class PreferenceCenter: NSObject, Sendable {
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
-    private let remoteData: RemoteDataProtocol
+    private let remoteData: any RemoteDataProtocol
 
     @MainActor
-    private let currentDisplay: AirshipMainActorValue<AirshipMainActorCancellable?> = AirshipMainActorValue(nil)
+    private let currentDisplay: AirshipMainActorValue<(any AirshipMainActorCancellable)?> = AirshipMainActorValue(nil)
 
     private let _theme: AirshipMainActorValue<PreferenceCenterTheme?> = AirshipMainActorValue(nil)
     /**
@@ -77,7 +79,7 @@ public final class PreferenceCenter: NSObject, Sendable {
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
-        remoteData: RemoteDataProtocol
+        remoteData: any RemoteDataProtocol
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
@@ -166,9 +168,9 @@ public final class PreferenceCenter: NSObject, Sendable {
 }
 
 /// Delegates holder so I can keep the executor sendable
-private final class Delegates: @unchecked Sendable {
-    @MainActor
-    var openDelegate: PreferenceCenterOpenDelegate?
+@MainActor
+private final class Delegates {
+    var openDelegate: (any PreferenceCenterOpenDelegate)?
 }
 
 extension PreferenceCenter {
@@ -178,7 +180,7 @@ extension PreferenceCenter {
         _ preferenceCenterID: String,
         scene: UIWindowScene,
         theme: PreferenceCenterTheme?
-    ) -> AirshipMainActorCancellable {
+    ) -> any AirshipMainActorCancellable {
 
         var window: UIWindow? = UIWindow(windowScene: scene)
 

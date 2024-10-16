@@ -65,7 +65,7 @@ public extension PreferenceCenterConfig {
             self.conditions = conditions
         }
 
-        public required init(from decoder: Decoder) throws {
+        public required init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             self.identifier = try container.decode(String.self, forKey: .identifier)
@@ -528,7 +528,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// The info used to populate the add channel prompt sender input for SMS.
-        public struct SMSSenderInfo: Decodable, Identifiable, Equatable, Hashable {
+        public struct SMSSenderInfo: Decodable, Identifiable, Equatable, Hashable, Sendable {
             public var id: String {
                 return senderId
             }

@@ -13,14 +13,13 @@ public enum PreferenceCenterViewPhase: Sendable {
     /// The view is loading
     case loading
     /// The view failed to load the config
-    case error(Error)
+    case error(any Error)
     /// The view is loaded with the state
     case loaded(PreferenceCenterState)
 }
 
 /// Preference center view
-@preconcurrency @MainActor
-// PreferenceCenterContent
+@MainActor
 public struct PreferenceCenterList: View {
 
     @StateObject
@@ -64,7 +63,7 @@ public struct PreferenceCenterList: View {
     public var body: some View {
         let phase = self.loader.phase
 
-        let refresh = {
+        let refresh: @MainActor @Sendable () -> Void = { @MainActor in
             self.loader.load(
                 preferenceCenterID: preferenceCenterID,
                 onLoad: onLoad
@@ -111,7 +110,7 @@ public struct PreferenceCenterList: View {
 public struct PreferenceCenterView: View {
 
     @Environment(\.preferenceCenterDismissAction)
-    private var dismissAction: (() -> Void)?
+    private var dismissAction: (@MainActor @Sendable () -> Void)?
 
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme
@@ -196,18 +195,18 @@ public struct PreferenceCenterView: View {
 
 
 private struct PreferenceCenterDismissActionKey: EnvironmentKey {
-    static let defaultValue: (() -> Void)? = nil
+    static let defaultValue: (@MainActor @Sendable () -> Void)? = nil
 }
 
 extension EnvironmentValues {
-    var preferenceCenterDismissAction: (() -> Void)? {
+    var preferenceCenterDismissAction: (@MainActor @Sendable () -> Void)? {
         get { self[PreferenceCenterDismissActionKey.self] }
         set { self[PreferenceCenterDismissActionKey.self] = newValue }
     }
 }
 
 extension View {
-    func addPreferenceCenterDismissAction(action: (() -> Void)?) -> some View {
+    func addPreferenceCenterDismissAction(action: (@MainActor @Sendable () -> Void)?) -> some View {
         environment(\.preferenceCenterDismissAction, action)
     }
     
@@ -225,7 +224,7 @@ extension View {
 }
 
 /// Preference Center Navigation stack
-public enum PreferenceCenterNavigationStack {
+public enum PreferenceCenterNavigationStack: Sendable {
     /// The Preference Center will not be wrapped in a navigation stack
     case none
 

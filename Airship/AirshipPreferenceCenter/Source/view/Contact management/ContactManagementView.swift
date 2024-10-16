@@ -51,7 +51,7 @@ public struct PreferenceCenterContactManagementView: View {
 }
 
 /// The labeled section break style configuration
-public struct ContactManagementSectionStyleConfiguration {
+public struct ContactManagementSectionStyleConfiguration: Sendable {
 
     /// The section config
     public let section: PreferenceCenterConfig.ContactManagementItem
@@ -81,7 +81,7 @@ extension View {
 }
 
 /// Contact management section style
-public protocol ContactManagementSectionStyle {
+public protocol ContactManagementSectionStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = ContactManagementSectionStyleConfiguration
     func makeBody(configuration: Self.Configuration) -> Self.Body
@@ -213,7 +213,7 @@ private struct DefaultContactManagementView: View {
 
 struct AnyContactManagementSectionStyle: ContactManagementSectionStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @Sendable (Configuration) -> AnyView
 
     init<S: ContactManagementSectionStyle>(style: S) {
         _makeBody = { configuration in
@@ -228,7 +228,7 @@ struct AnyContactManagementSectionStyle: ContactManagementSectionStyle {
 }
 
 struct ContactManagementSectionStyleKey: EnvironmentKey {
-    static var defaultValue = AnyContactManagementSectionStyle(style: .defaultStyle)
+    static let defaultValue = AnyContactManagementSectionStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

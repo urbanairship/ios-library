@@ -84,9 +84,11 @@ public struct PreferenceCenterAlertStyleConfiguration {
 }
 
 /// Preference Center alert style
-public protocol PreferenceCenterAlertStyle {
+public protocol PreferenceCenterAlertStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = PreferenceCenterAlertStyleConfiguration
+    
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -112,6 +114,7 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
     )
 
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let colorScheme = configuration.colorScheme
         let item = configuration.item
@@ -203,10 +206,10 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
 
 struct AnyPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private var _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: PreferenceCenterAlertStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -218,7 +221,7 @@ struct AnyPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
 }
 
 struct PreferenceCenterAlertStyleKey: EnvironmentKey {
-    static var defaultValue = AnyPreferenceCenterAlertStyle(style: .defaultStyle)
+    static let defaultValue = AnyPreferenceCenterAlertStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {
