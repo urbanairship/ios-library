@@ -31,7 +31,7 @@ public final class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExt
     }
 
     public func extendJavaScriptEnvironment(
-        _ js: JavaScriptEnvironmentProtocol,
+        _ js: any JavaScriptEnvironmentProtocol,
         webView: WKWebView
     ) async {
         js.add("getMessageId", string: self.message.id)

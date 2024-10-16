@@ -17,9 +17,9 @@ public class MessageCenterViewControllerFactory: NSObject {
     @MainActor
     public class func make(
         theme: MessageCenterTheme? = nil,
-        predicate: MessageCenterPredicate? = nil,
+        predicate: (any MessageCenterPredicate)? = nil,
         controller: MessageCenterController,
-        dismissAction: (() -> Void)? = nil
+        dismissAction: (@MainActor @Sendable () -> Void)? = nil
     ) -> UIViewController {
         let theme = theme ?? MessageCenterTheme()
         return MessageCenterViewController(
@@ -44,7 +44,7 @@ public class MessageCenterViewControllerFactory: NSObject {
     public class func make(
         themePlist: String?,
         controller: MessageCenterController,
-        dismissAction: (() -> Void)? = nil
+        dismissAction: (@Sendable () -> Void)? = nil
     ) throws -> UIViewController {
         
         if let themePlist = themePlist {
@@ -71,9 +71,9 @@ public class MessageCenterViewControllerFactory: NSObject {
     @MainActor
     public class func make(
         themePlist: String?,
-        predicate: MessageCenterPredicate?,
+        predicate: (any MessageCenterPredicate)?,
         controller: MessageCenterController,
-        dismissAction: (() -> Void)? = nil
+        dismissAction: (@Sendable () -> Void)? = nil
     ) throws -> UIViewController {
 
         if let themePlist = themePlist {

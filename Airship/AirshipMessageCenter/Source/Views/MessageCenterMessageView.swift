@@ -27,7 +27,7 @@ public struct MessageCenterMessageView: View {
     private let title: String?
 
     /// The dismiss action callback
-    private let dismissAction: (() -> Void)?
+    private let dismissAction: (@MainActor @Sendable () -> Void)?
 
     /// Default constructor
     /// - Parameters:
@@ -37,7 +37,7 @@ public struct MessageCenterMessageView: View {
     public init(
         messageID: String,
         title: String?,
-        dismissAction: (() -> Void)? = nil
+        dismissAction: (@MainActor @Sendable () -> Void)? = nil
     ) {
         self.messageID = messageID
         self.title = title
@@ -86,15 +86,16 @@ extension View {
 }
 
 /// Message view style configuration
-public struct MessageViewStyleConfiguration {
+public struct MessageViewStyleConfiguration: Sendable {
     public let messageID: String
     public let title: String?
-    public let dismissAction: (() -> Void)?
+    public let dismissAction: (@MainActor @Sendable () -> Void)?
 }
 
-public protocol MessageViewStyle {
+public protocol MessageViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = MessageViewStyleConfiguration
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -109,6 +110,7 @@ extension MessageViewStyle where Self == DefaultMessageViewStyle {
 /// The default message view view style
 public struct DefaultMessageViewStyle: MessageViewStyle {
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         MessageCenterMessageContentView(
             messageID: configuration.messageID,
@@ -120,10 +122,10 @@ public struct DefaultMessageViewStyle: MessageViewStyle {
 
 struct AnyMessageViewStyle: MessageViewStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: MessageViewStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -139,7 +141,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 
     enum Phase {
         case loading
-        case error(Error)
+        case error(any Error)
         case loaded
     }
 
@@ -218,7 +220,7 @@ struct MessageCenterWebView: UIViewRepresentable {
     }
 
     @MainActor
-    private func pageFinished(error: Error? = nil) async {
+    private func pageFinished(error: (any Error)? = nil) async {
         self.isWebViewLoading = false
 
         if let error = error {
@@ -237,7 +239,7 @@ struct MessageCenterWebView: UIViewRepresentable {
         private let parent: MessageCenterWebView
         private let challengeResolver: ChallengeResolver
         let nativeBridge: NativeBridge
-        var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate? {
+        var nativeBridgeExtensionDelegate: (any NativeBridgeExtensionDelegate)? {
             didSet {
                 self.nativeBridge.nativeBridgeExtensionDelegate = self.nativeBridgeExtensionDelegate
             }
@@ -269,7 +271,7 @@ struct MessageCenterWebView: UIViewRepresentable {
         func webView(
             _ webView: WKWebView,
             didFail navigation: WKNavigation!,
-            withError error: Error
+            withError error: any Error
         ) {
             Task { @MainActor in
                 await parent.pageFinished(error: error)
@@ -288,7 +290,7 @@ struct MessageCenterWebView: UIViewRepresentable {
             return false
         }
 
-        func close() {
+        nonisolated func close() {
             Task { @MainActor in
                 await parent.dismiss()
             }
@@ -297,7 +299,7 @@ struct MessageCenterWebView: UIViewRepresentable {
 }
 
 struct MessageViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyMessageViewStyle(style: .defaultStyle)
+    static let defaultValue = AnyMessageViewStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

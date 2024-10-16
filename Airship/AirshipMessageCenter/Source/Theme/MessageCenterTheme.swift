@@ -8,7 +8,7 @@ import UIKit
 import AirshipCore
 #endif
 
-public enum SeparatorStyle {
+public enum SeparatorStyle: Sendable {
     case none
     case singleLine
 }
@@ -22,7 +22,7 @@ public enum SeparatorStyle {
 ///     )
 ///     .messageCenterTheme(theme)
 ///
-public struct MessageCenterTheme {
+public struct MessageCenterTheme: Sendable {
 
     /// The tint color of the "pull to refresh" control
     public var refreshTintColor: Color? = nil

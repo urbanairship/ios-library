@@ -7,7 +7,7 @@ import AirshipCore
 
 class MessageCenterResources {
 
-    static var bundle: Bundle? = findBundle()
+    static let bundle: Bundle? = findBundle()
 
     private static func findBundle() -> Bundle? {
         let mainBundle = Bundle.main

@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-@preconcurrency
 public import Combine
 
 import Foundation
@@ -65,12 +64,14 @@ public protocol MessageCenterInboxBaseProtocol: AnyObject, Sendable {
 /// Airship Message Center inbox protocol.
 public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
     /// Publisher that emits messages.
+    @MainActor
     var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> { get }
     
     /// Async Stream on messages' updates
     var messageUpdates: AsyncStream<[MessageCenterMessage]> { get }
     
     /// Publisher that emits unread counts.
+    @MainActor
     var unreadCountPublisher: AnyPublisher<Int, Never> { get }
     
     /// Async Stream of unread count updates
@@ -104,16 +105,16 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     private let updateWorkID = "Airship.MessageCenterInbox#update"
 
     private let store: MessageCenterStore
-    private let channel: InternalAirshipChannelProtocol
-    private let client: MessageCenterAPIClientProtocol
+    private let channel: any InternalAirshipChannelProtocol
+    private let client: any MessageCenterAPIClientProtocol
     private let config: RuntimeConfig
     private let notificationCenter: NotificationCenter
-    private let date: AirshipDateProtocol
-    private let workManager: AirshipWorkManagerProtocol
+    private let date: any AirshipDateProtocol
+    private let workManager: any AirshipWorkManagerProtocol
     private let startUpTask: Task<Void, Never>?
     private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
-    private let refreshOnExpireTask: AirshipAtomicValue<Task<Void, Error>?> = AirshipAtomicValue(nil)
-    private let taskSleeper: AirshipTaskSleeper
+    private let refreshOnExpireTask: AirshipAtomicValue<Task<Void, any Error>?> = AirshipAtomicValue(nil)
+    private let taskSleeper: any AirshipTaskSleeper
     
     var enabled: Bool {
         get {
@@ -126,6 +127,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
     }
 
+    @MainActor
     public var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> {
         let messagesSubject = CurrentValueSubject<[MessageCenterMessage]?, Never>(nil)
         let messageUpdates = self.messageUpdates
@@ -164,6 +166,7 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
         }
     }
 
+    @MainActor
     public var unreadCountPublisher: AnyPublisher<Int, Never> {
         let unreadCountSubject = CurrentValueSubject<Int?, Never>(nil)
         let unreadCountUpdates = self.unreadCountUpdates
@@ -224,14 +227,14 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     }
     
     init(
-        channel: InternalAirshipChannelProtocol,
-        client: MessageCenterAPIClientProtocol,
+        channel: any InternalAirshipChannelProtocol,
+        client: any MessageCenterAPIClientProtocol,
         config: RuntimeConfig,
         store: MessageCenterStore,
         notificationCenter: NotificationCenter = NotificationCenter.default,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        workManager: AirshipWorkManagerProtocol,
-        taskSleeper: AirshipTaskSleeper? = nil
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        workManager: any AirshipWorkManagerProtocol,
+        taskSleeper: (any AirshipTaskSleeper)? = nil
     ) {
         self.channel = channel
         self.client = client
@@ -332,8 +335,8 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
     convenience init(
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: InternalAirshipChannelProtocol,
-        workManager: AirshipWorkManagerProtocol
+        channel: any InternalAirshipChannelProtocol,
+        workManager: any AirshipWorkManagerProtocol
     ) {
         self.init(
             channel: channel,

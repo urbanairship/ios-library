@@ -18,7 +18,7 @@ public struct MessageCenterView: View {
     private var colorScheme
 
     @Environment(\.messageCenterDismissAction)
-    private var dismissAction: (() -> Void)?
+    private var dismissAction: (@MainActor @Sendable () -> Void)?
 
     @Environment(\.airshipMessageCenterTheme)
     private var theme
@@ -73,14 +73,14 @@ public struct MessageCenterView: View {
 
 // MARK: Styling
 
-public protocol MessageCenterViewStyle {
+public protocol MessageCenterViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = MessageCenterStyleConfiguration
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-
-public struct MessageCenterStyleConfiguration {
+public struct MessageCenterStyleConfiguration: Sendable {
     public struct Content: View {
         let controller: MessageCenterController
         let theme: MessageCenterTheme
@@ -100,7 +100,7 @@ public struct MessageCenterStyleConfiguration {
     public let theme: MessageCenterTheme
     public let colorScheme: ColorScheme
     public let navigationStack: MessageCenterNavigationStack
-    public let dismissAction: (() -> Void)?
+    public let dismissAction: (@MainActor @Sendable () -> Void)?
 }
 
 /// Default Message Center style
@@ -123,6 +123,7 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
         }
     }
 
+    @MainActor
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         let containerBackgroundColor: Color? = configuration.colorScheme.airshipResolveColor(
@@ -174,10 +175,10 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
 
 // Type-erased wrapper for MessageCenterViewStyle
 private struct AnyMessageCenterViewStyle: MessageCenterViewStyle {
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: MessageCenterViewStyle>(_ style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -197,7 +198,7 @@ fileprivate extension EnvironmentValues {
         set { self[MessageCenterViewStyleKey.self] = newValue }
     }
 
-    var messageCenterDismissAction: (() -> Void)? {
+    var messageCenterDismissAction: (@MainActor @Sendable () -> Void)? {
         get { self[MessageCenterDismissActionKey.self] }
         set { self[MessageCenterDismissActionKey.self] = newValue }
     }
@@ -214,18 +215,18 @@ public extension View {
 
 // MARK: Message center dismiss action
 private struct MessageCenterDismissActionKey: EnvironmentKey {
-    static let defaultValue: (() -> Void)? = nil
+    static let defaultValue: (@MainActor @Sendable () -> Void)? = nil
 }
 
 internal extension View {
-    func addMessageCenterDismissAction(action: (() -> Void)?) -> some View {
+    func addMessageCenterDismissAction(action: (@MainActor @Sendable () -> Void)?) -> some View {
         environment(\.messageCenterDismissAction, action)
     }
 }
 
 
 /// Message Center Navigation stack
-public enum MessageCenterNavigationStack {
+public enum MessageCenterNavigationStack: Sendable {
     /// The Message Center will not be wrapped in a navigation stack
     case none
 

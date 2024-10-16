@@ -5,6 +5,7 @@ import SwiftUI
 
 extension ProgressView {
     @ViewBuilder
+    @MainActor
     func appearanceTint() -> some View {
         if let color = UIRefreshControl.appearance().tintColor {
             let color = Color(color)

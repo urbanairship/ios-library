@@ -116,7 +116,7 @@ struct MessageCenterThemeLoader {
             case string(String)
             case cgFloat(CGFloat)
 
-            init(from decoder: Decoder) throws {
+            init(from decoder: any Decoder) throws {
                 let container = try decoder.singleValueContainer()
                 if let value = try? container.decode(String.self) {
                     self = .string(value)

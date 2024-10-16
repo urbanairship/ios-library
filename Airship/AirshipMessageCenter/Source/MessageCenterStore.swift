@@ -32,8 +32,8 @@ actor MessageCenterStore {
     private let coreData: UACoreData?
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let keychainAccess: AirshipKeychainAccessProtocol
-    private let date: AirshipDateProtocol
+    private let keychainAccess: any AirshipKeychainAccessProtocol
+    private let date: any AirshipDateProtocol
 
     private nonisolated let inMemory: Bool
     
@@ -101,7 +101,7 @@ actor MessageCenterStore {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.config = config
         self.dataStore = dataStore
@@ -134,7 +134,7 @@ actor MessageCenterStore {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         coreData: UACoreData,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.inMemory = coreData.inMemory
         self.config = config

@@ -9,8 +9,8 @@ public import AirshipCore
 @objc(UAMessageCenterSDKModule)
 public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
 
-    public let actionsManifest: ActionsManifest? = MessageCenterActionsManifest()
-    public let components: [AirshipComponent]
+    public let actionsManifest: (any ActionsManifest)? = MessageCenterActionsManifest()
+    public let components: [any AirshipComponent]
 
     init(messageCenter: MessageCenter) {
         self.components = [MessageCenterComponent(messageCenter: messageCenter)]
@@ -18,12 +18,12 @@ public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
 
     public static func load(
         dependencies: [String: Any]
-    ) -> AirshipSDKModule? {
+    ) -> (any AirshipSDKModule)? {
         let dataStore = dependencies[SDKDependencyKeys.dataStore] as? PreferenceDataStore
         let config = dependencies[SDKDependencyKeys.config] as? RuntimeConfig
-        let channel = dependencies[SDKDependencyKeys.channel] as? InternalAirshipChannelProtocol
+        let channel = dependencies[SDKDependencyKeys.channel] as? (any InternalAirshipChannelProtocol)
         let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as? AirshipPrivacyManager
-        let workManager = dependencies[SDKDependencyKeys.workManager] as? AirshipWorkManagerProtocol
+        let workManager = dependencies[SDKDependencyKeys.workManager] as? (any AirshipWorkManagerProtocol)
 
         guard let dataStore = dataStore,
               let config = config,

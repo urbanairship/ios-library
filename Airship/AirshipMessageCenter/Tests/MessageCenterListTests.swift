@@ -211,6 +211,7 @@ final class MessageCenterListTest: XCTestCase {
 
     }
 
+    @MainActor
     func testUpdateMessages() async throws {
         self.inbox.enabled = true
 

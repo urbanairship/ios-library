@@ -2,7 +2,7 @@
 
 import CommonCrypto
 import Foundation
-import SwiftUI
+public import SwiftUI
 
 #if !os(watchOS)
 import SystemConfiguration

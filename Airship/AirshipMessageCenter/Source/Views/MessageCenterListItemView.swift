@@ -56,7 +56,7 @@ public struct ListItemViewStyleConfiguration {
     public let message: MessageCenterMessage
 }
 
-public protocol MessageCenterListItemViewStyle {
+public protocol MessageCenterListItemViewStyle: Sendable {
     associatedtype Body: View
 
     typealias Configuration = ListItemViewStyleConfiguration
@@ -83,7 +83,7 @@ public struct DefaultListItemViewStyle: MessageCenterListItemViewStyle {
 
 struct AnyListItemViewStyle: MessageCenterListItemViewStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @Sendable (Configuration) -> AnyView
 
     init<S: MessageCenterListItemViewStyle>(style: S) {
         _makeBody = { configuration in
@@ -98,7 +98,7 @@ struct AnyListItemViewStyle: MessageCenterListItemViewStyle {
 }
 
 struct ListItemViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyListItemViewStyle(style: .defaultStyle)
+    static let defaultValue = AnyListItemViewStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

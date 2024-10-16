@@ -30,7 +30,7 @@ public protocol MessageCenterDisplayDelegate {
 public final class MessageCenter: NSObject, Sendable {
     /// Message center display delegate.
     @MainActor
-    public var displayDelegate: MessageCenterDisplayDelegate? {
+    public var displayDelegate: (any MessageCenterDisplayDelegate)? {
         get {
             mutable.displayDelegate
         }
@@ -43,12 +43,12 @@ public final class MessageCenter: NSObject, Sendable {
     private let privacyManager: AirshipPrivacyManager
 
     /// Message center inbox.
-    var _inbox: MessageCenterInboxBaseProtocol {
+    var _inbox: any MessageCenterInboxBaseProtocol {
         return self.inbox
     }
 
     /// Message center inbox.
-    public let inbox: MessageCenterInboxProtocol
+    public let inbox: any MessageCenterInboxProtocol
 
     /// The message center controller.
     @MainActor
@@ -85,7 +85,7 @@ public final class MessageCenter: NSObject, Sendable {
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
     @MainActor
-    public var predicate: MessageCenterPredicate? {
+    public var predicate: (any MessageCenterPredicate)? {
         get {
             self.mutable.predicate
         }
@@ -141,9 +141,9 @@ public final class MessageCenter: NSObject, Sendable {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: InternalAirshipChannelProtocol,
+        channel: any InternalAirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
-        workManager: AirshipWorkManagerProtocol
+        workManager: any AirshipWorkManagerProtocol
     ) {
 
         let controller = MessageCenterController()
@@ -219,18 +219,18 @@ public final class MessageCenter: NSObject, Sendable {
 
     @MainActor
     final class MutableValues: Sendable {
-        var displayDelegate: MessageCenterDisplayDelegate?
+        var displayDelegate: (any MessageCenterDisplayDelegate)?
         var controller: MessageCenterController
-        var predicate: MessageCenterPredicate?
+        var predicate: (any MessageCenterPredicate)?
         var theme: MessageCenterTheme?
-        var currentDisplay: AirshipMainActorCancellable?
+        var currentDisplay: (any AirshipMainActorCancellable)?
 
         init(
-            displayDelegate: MessageCenterDisplayDelegate? = nil,
+            displayDelegate: (any MessageCenterDisplayDelegate)? = nil,
             controller: MessageCenterController,
-            predicate: MessageCenterPredicate? = nil,
+            predicate: (any MessageCenterPredicate)? = nil,
             theme: MessageCenterTheme? = nil,
-            currentDisplay: AirshipMainActorCancellable? = nil
+            currentDisplay: (any AirshipMainActorCancellable)? = nil
         ) {
             self.displayDelegate = displayDelegate
             self.controller = controller
@@ -271,7 +271,7 @@ extension MessageCenter {
         return true
     }
 
-    @preconcurrency @MainActor
+    @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void

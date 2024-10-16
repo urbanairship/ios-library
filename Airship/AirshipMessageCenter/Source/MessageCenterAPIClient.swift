@@ -70,9 +70,9 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
     private static let lastModifiedIDHeader = "If-Modified-Since"
 
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }
