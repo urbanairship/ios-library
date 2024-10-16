@@ -28,11 +28,11 @@ public final class FeatureFlagManager: Sendable {
         return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
     }
 
-    private let remoteDataAccess: FeatureFlagRemoteDataAccessProtocol
-    private let audienceChecker: DeviceAudienceChecker
-    private let analytics: FeatureFlagAnalyticsProtocol
-    private let deviceInfoProviderFactory: @Sendable () -> AudienceDeviceInfoProvider
-    private let deferredResolver: FeatureFlagDeferredResolverProtocol
+    private let remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol
+    private let audienceChecker: any DeviceAudienceChecker
+    private let analytics: any FeatureFlagAnalyticsProtocol
+    private let deviceInfoProviderFactory: @Sendable () -> any AudienceDeviceInfoProvider
+    private let deferredResolver: any FeatureFlagDeferredResolverProtocol
     private let privacyManager: AirshipPrivacyManager
 
     private var enabled: Bool {
@@ -41,11 +41,11 @@ public final class FeatureFlagManager: Sendable {
     
     init(
         dataStore: PreferenceDataStore,
-        remoteDataAccess: FeatureFlagRemoteDataAccessProtocol,
-        analytics: FeatureFlagAnalyticsProtocol,
-        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
-        deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
-        deferredResolver: FeatureFlagDeferredResolverProtocol,
+        remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol,
+        analytics: any FeatureFlagAnalyticsProtocol,
+        audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
+        deferredResolver: any FeatureFlagDeferredResolverProtocol,
         privacyManager: AirshipPrivacyManager
     ) {
         self.remoteDataAccess = remoteDataAccess
@@ -194,7 +194,7 @@ public final class FeatureFlagManager: Sendable {
     
     private func flag(_ flag: FeatureFlag, 
                       applyingControlFrom info: FeatureFlagInfo,
-                      deviceInfoProvider: AudienceDeviceInfoProvider
+                      deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> FeatureFlag {
         
         guard
@@ -241,7 +241,7 @@ public final class FeatureFlagManager: Sendable {
 
     private func isLocallyEligible(
         flagInfo: FeatureFlagInfo,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> Bool {
         guard let audienceSelector = flagInfo.audienceSelector else {
             return true
@@ -258,7 +258,7 @@ public final class FeatureFlagManager: Sendable {
         flagInfo: FeatureFlagInfo,
         isLocallyEligible: Bool,
         deferredInfo: FeatureFlagPayload.DeferredInfo,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> FeatureFlag {
 
         guard isLocallyEligible else {
@@ -310,7 +310,7 @@ public final class FeatureFlagManager: Sendable {
         flagInfo: FeatureFlagInfo,
         isLocallyEligible: Bool,
         staticInfo: FeatureFlagPayload.StaticInfo,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> FeatureFlag {
         let variables = await evaluateVariables(
             staticInfo.variables,
@@ -332,7 +332,7 @@ public final class FeatureFlagManager: Sendable {
         _ variables: FeatureFlagVariables?,
         flagInfo: FeatureFlagInfo,
         isEligible: Bool,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async -> VariableResult? {
         guard let variables = variables, isEligible else {
             return nil
@@ -388,7 +388,7 @@ fileprivate extension FeatureFlag {
     static func makeFound(
         name: String,
         isEligible: Bool,
-        deviceInfoProvider: AudienceDeviceInfoProvider,
+        deviceInfoProvider: any AudienceDeviceInfoProvider,
         reportingMetadata: AirshipJSON,
         variables: VariableResult?
     ) async throws -> FeatureFlag {

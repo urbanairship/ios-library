@@ -11,19 +11,19 @@ import Foundation
 
 @objc(UAFeatureFlagsSDKModule)
 public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
-    public let actionsManifest: ActionsManifest? = nil
+    public let actionsManifest: (any ActionsManifest)? = nil
 
-    public let components: [AirshipComponent]
+    public let components: [any AirshipComponent]
 
-    public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
+    public static func load(dependencies: [String : Any]) -> (any AirshipSDKModule)? {
         let dataStore =
             dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
         let remoteData =
-            dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
+        dependencies[SDKDependencyKeys.remoteData] as! (any RemoteDataProtocol)
 
-        let airshipAnalytcs = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
-        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! AirshipDeferredResolverProtocol
-        let cache = dependencies[SDKDependencyKeys.cache] as! AirshipCache
+        let airshipAnalytcs = dependencies[SDKDependencyKeys.analytics] as! (any InternalAnalyticsProtocol)
+        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! (any AirshipDeferredResolverProtocol)
+        let cache = dependencies[SDKDependencyKeys.cache] as! (any AirshipCache)
         let privacyManager =
             dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
         
@@ -42,7 +42,7 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         return AirshipFeatureFlagsSDKModule(components: [component])
     }
 
-    init(components: [AirshipComponent]) {
+    init(components: [any AirshipComponent]) {
         self.components = components
     }
 }

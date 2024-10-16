@@ -100,7 +100,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
     }
 
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: FeatureFlagObjectCodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
 
@@ -186,7 +186,7 @@ enum FeatureFlagPayload: Decodable, Equatable {
         case deferredType = "deferred"
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(FeatureFlagPayloadType.self, forKey: .type)
         let singleValueContainer = try decoder.singleValueContainer()
@@ -234,7 +234,7 @@ enum FeatureFlagVariables: Codable, Equatable {
         case data
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(FeatureFlagVariableType.self, forKey: .type)
 

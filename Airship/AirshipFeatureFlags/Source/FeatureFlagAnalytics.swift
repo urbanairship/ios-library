@@ -12,7 +12,7 @@ protocol FeatureFlagAnalyticsProtocol: Sendable {
 }
 
 final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
-    private let airshipAnalytics: InternalAnalyticsProtocol
+    private let airshipAnalytics: any InternalAnalyticsProtocol
 
     private enum FlagKeys {
         static let name = "flag_name"
@@ -28,7 +28,7 @@ final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
     }
 
     init(
-        airshipAnalytics: InternalAnalyticsProtocol
+        airshipAnalytics: any InternalAnalyticsProtocol
     ) {
         self.airshipAnalytics = airshipAnalytics
     }

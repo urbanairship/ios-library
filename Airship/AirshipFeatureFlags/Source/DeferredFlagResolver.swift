@@ -18,19 +18,19 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
     private static let defaultBackoff: TimeInterval = 30.0
     private static let immediateBackoffRetryCutoff: TimeInterval = 5.0
 
-    private let cache: AirshipCache
-    private let deferredResolver: AirshipDeferredResolverProtocol
-    private let date: AirshipDateProtocol
-    private let taskSleeper: AirshipTaskSleeper
+    private let cache: any AirshipCache
+    private let deferredResolver: any AirshipDeferredResolverProtocol
+    private let date: any AirshipDateProtocol
+    private let taskSleeper: any AirshipTaskSleeper
 
-    private var pendingTasks: [String: Task<DeferredFlagResponse, Error>] = [:]
+    private var pendingTasks: [String: Task<DeferredFlagResponse, any Error>] = [:]
     private var backOffDates: [String: Date] = [:]
 
     init(
-        cache: AirshipCache,
-        deferredResolver: AirshipDeferredResolverProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared
+        cache: any AirshipCache,
+        deferredResolver: any AirshipDeferredResolverProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.cache = cache
         self.deferredResolver = deferredResolver

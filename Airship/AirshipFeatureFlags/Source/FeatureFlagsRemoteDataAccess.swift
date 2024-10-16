@@ -16,12 +16,12 @@ protocol FeatureFlagRemoteDataAccessProtocol: Sendable {
 
 final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
 
-    private let remoteData: RemoteDataProtocol
-    private let date: AirshipDateProtocol
+    private let remoteData: any RemoteDataProtocol
+    private let date: any AirshipDateProtocol
 
     init(
-        remoteData: RemoteDataProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared
+        remoteData: any RemoteDataProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.remoteData = remoteData
         self.date = date
