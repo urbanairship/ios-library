@@ -11,6 +11,7 @@ struct AirshipButton<Label> : View  where Label : View {
     @EnvironmentObject private var viewState: ViewState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) private var layoutState
+    @Environment(\.isButtonActionsEnabled) private var isButtonActionsEnabled
 
     let identifier: String
     let reportingMetadata: AirshipJSON?
@@ -24,12 +25,14 @@ struct AirshipButton<Label> : View  where Label : View {
     var body: some View {
         Button(
             action: {
-                doButtonActions()
+                if (isButtonActionsEnabled) {
+                    doButtonActions()
+                }
             },
             label: self.label
         )
         .accessibilityLabel(self.description)
-        .buttonTapEffect(self.tapEffect)
+        .buttonTapEffect(tapEffect ?? .default)
     }
 
     private func doButtonActions() {
@@ -159,8 +162,8 @@ fileprivate struct AirshipButtonEmptyStyle: ButtonStyle {
 
 fileprivate extension View {
     @ViewBuilder
-    func buttonTapEffect(_ tapEffect: ButtonTapEffect?) -> some View {
-        switch(tapEffect ??  .default) {
+    func buttonTapEffect(_ tapEffect: ButtonTapEffect) -> some View {
+        switch(tapEffect) {
         case .default:
             self.buttonStyle(.plain)
         case .none:

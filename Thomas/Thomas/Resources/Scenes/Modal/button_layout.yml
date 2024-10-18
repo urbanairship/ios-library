@@ -460,8 +460,6 @@ view:
                       type: button_layout
                       identifier: page_2_button_layout
                       content_description: Page 2 Button Layout
-                      tap_effect:
-                        type: none
                       actions:
                         toast_action: Page 2 tapped!
                       view:
@@ -775,45 +773,19 @@ view:
                                       height: auto
                                       width: 100%
                                     view:
-                                      type: label
-                                      content_description: Aeterno partiendo nec an. Sed id
-                                        errem albucius, ut tale vocent vituperata sit. At
-                                        pro malis elaboraret, pri in suas dicit vivendum,
-                                        pertinax erroribus elaboraret duo ne. Vim ei solum
-                                        omnium pertinax, has exerci offendit volutpat no,
-                                        cu per quis deseruisse voluptatum. Pro vide reque
-                                        voluptua ne, homero legimus invenire ei eam. Per ne
-                                        sumo persecuti, et nam duis postulant vituperatoribus.
-                                      text: Aeterno partiendo nec an. Sed id errem albucius,
-                                        ut tale vocent vituperata sit. At pro malis elaboraret,
-                                        pri in suas dicit vivendum, pertinax erroribus elaboraret
-                                        duo ne. Vim ei solum omnium pertinax, has exerci offendit
-                                        volutpat no, cu per quis deseruisse voluptatum. Pro
-                                        vide reque voluptua ne, homero legimus invenire ei
-                                        eam. Per ne sumo persecuti, et nam duis postulant
-                                        vituperatoribus.
-                                      text_appearance:
-                                        alignment: start
-                                        color:
+                                      media_fit: fit_crop
+                                      border:
+                                        stroke_color:
                                           default:
-                                            hex: '#000000'
+                                            hex: "#000000"
                                             alpha: 1
-                                            type: hex
-                                          selectors:
-                                            - color:
-                                                hex: '#000000'
-                                                alpha: 1
-                                                type: hex
-                                              dark_mode: false
-                                            - color:
-                                                hex: '#FFFFFF'
-                                                alpha: 1
-                                                type: hex
-                                              dark_mode: true
-                                        font_families:
-                                          - sans-serif
-                                        font_size: 20
-                                        styles: [ ]
+                                        stroke_width: 1
+                                      media_type: image
+                                      type: media
+                                      position:
+                                        horizontal: end
+                                        vertical: bottom
+                                      url: https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Multnomah_Falls_and_Bridge.jpg/768px-Multnomah_Falls_and_Bridge.jpg
                                   - identifier: 63356835-3d1d-4bcf-8bc7-08616769bab4
                                     margin:
                                       bottom: 36
