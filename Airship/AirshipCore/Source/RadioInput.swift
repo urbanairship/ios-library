@@ -45,8 +45,10 @@ struct RadioInput: View {
     var body: some View {
         createToggle()
             .constraints(constraints)
-            .background(model.backgroundColor)
-            .border(model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
             .formElement()
     }

@@ -188,13 +188,6 @@ view:
                                                 hex: '#63AFF1'
                                                 alpha: 1
                                                 type: hex
-                                            border:
-                                              stroke_color:
-                                                default:
-                                                  hex: '#63AFF1'
-                                                  alpha: 1
-                                                  type: hex
-                                              stroke_width: 16
                                             actions:
                                               toast_action: Toast 1!
                                             label:

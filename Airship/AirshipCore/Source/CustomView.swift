@@ -25,8 +25,10 @@ struct CustomView: View {
                 .constraints(constraints)
                 .frame(height:model.height)
                 .clipped() /// Clip to view frame to ensure we don't overflow when the view has an intrinsic size it's trying to enforce
-                .background(self.model.backgroundColor)
-                .border(self.model.border)
+                .background(
+                    color: self.model.backgroundColor,
+                    border: self.model.border
+                )
                 .common(self.model)
         }
     }

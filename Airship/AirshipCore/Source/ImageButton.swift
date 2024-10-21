@@ -30,8 +30,10 @@ struct ImageButton : View {
         ) {
             makeInnerButton()
                 .constraints(constraints, fixedSize: true)
-                .background(self.model.backgroundColor)
-                .border(self.model.border)
+                .background(
+                    color: self.model.backgroundColor,
+                    border: self.model.border
+                )
                 .accessible(self.model)
                 .background(Color.airshipTappableClear)
         }

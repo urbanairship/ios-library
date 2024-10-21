@@ -39,8 +39,10 @@ struct AirshipWebView: View {
             }
         }
         .constraints(constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
+        .background(
+            color: self.model.backgroundColor,
+            border: self.model.border
+        )
         .common(self.model)
     }
 }

@@ -24,8 +24,10 @@ struct CheckboxController: View {
     var body: some View {
         ViewFactory.createView(model: self.model.view, constraints: constraints)
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model, formInputID: self.model.identifier)
             .accessible(self.model)
             .formElement()

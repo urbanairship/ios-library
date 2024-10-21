@@ -136,8 +136,10 @@ struct EmbeddedView: View {
     private func createView(constraints: ViewConstraints, placement: EmbeddedPlacement) -> some View {
         return ViewFactory
             .createView(model: layout.view, constraints: constraints)
-            .background(placement.backgroundColor)
-            .border(placement.border)
+            .background(
+                color: placement.backgroundColor,
+                border: placement.border
+            )
             .margin(placement.margin)
             .constraints(constraints)
     }

@@ -27,7 +27,6 @@ struct LinearLayout: View {
                 childItem(items[index], parentConstraints: parentConstraints)
             }
         }
-        .padding(self.model.border?.strokeWidth ?? 0)
         .constraints(self.constraints, alignment: .top)
     }
 
@@ -42,7 +41,6 @@ struct LinearLayout: View {
                 childItem(items[index], parentConstraints: parentConstraints)
             }
         }
-        .padding(self.model.border?.strokeWidth ?? 0)
         .constraints(constraints, alignment: .leading)
     }
 
@@ -65,8 +63,10 @@ struct LinearLayout: View {
     var body: some View {
         makeStack()
             .clipped()
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
     }
 

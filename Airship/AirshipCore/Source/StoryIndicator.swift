@@ -96,8 +96,10 @@ struct StoryIndicator: View {
             childConstraints: childConstraints)
         .animation(nil, value: self.model)
         .constraints(constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
+        .background(
+            color: self.model.backgroundColor,
+            border: self.model.border
+        )
         .common(self.model)
     }
     

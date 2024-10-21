@@ -63,8 +63,10 @@ struct PagerIndicator: View {
         }
         .animation(.interactiveSpring(duration: Pager.animationSpeed), value: self.model)
         .constraints(constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
+        .background(
+            color: self.model.backgroundColor,
+            border: self.model.border
+        )
         .common(self.model)
 
         .applyIf(announcePage(model: model), transform: { view in

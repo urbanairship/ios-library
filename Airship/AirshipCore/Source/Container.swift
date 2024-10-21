@@ -24,8 +24,10 @@ struct Container: View {
         }
         .constraints(constraints)
         .clipped()
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
+        .background(
+            color: self.model.backgroundColor,
+            border: self.model.border
+        )
         .background(
             GeometryReader(content: { contentMetrics -> Color in
                 let size = contentMetrics.size
@@ -66,7 +68,6 @@ struct Container: View {
         .applyIf(consumeSafeAreaInsets) {
             $0.padding(self.constraints.safeAreaInsets)
         }
-        .padding(borderPadding)
         .frame(
             idealWidth: placementWidth,
             maxWidth: placementWidth,

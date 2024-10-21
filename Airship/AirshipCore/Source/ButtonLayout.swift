@@ -26,9 +26,10 @@ struct ButtonLayout : View {
             tapEffect: self.model.tapEffect
         ) {
             ViewFactory.createView(model: self.model.view, constraints: constraints)
-                .padding(self.model.border?.strokeWidth ?? 0)
-                .background(self.model.backgroundColor)
-                .border(self.model.border)
+                .background(
+                    color: self.model.backgroundColor,
+                    border: self.model.border
+                )
                 .accessible(self.model)
                 .background(Color.airshipTappableClear)
         }

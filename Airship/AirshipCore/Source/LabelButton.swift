@@ -26,16 +26,16 @@ struct LabelButton : View {
             tapEffect: self.model.tapEffect
         ) {
             Label(model: self.model.label, constraints: constraints)
-                .padding(self.model.border?.strokeWidth ?? 0)
-                .constraints(constraints, fixedSize: true)
                 .applyIf(self.constraints.height == nil) { view in
                     view.padding([.bottom, .top], 12)
                 }
                 .applyIf(self.constraints.width == nil) { view in
                     view.padding([.leading, .trailing], 12)
                 }
-                .background(self.model.backgroundColor)
-                .border(self.model.border)
+                .background(
+                    color: self.model.backgroundColor,
+                    border: self.model.border
+                )
                 .accessible(self.model)
                 .background(Color.airshipTappableClear)
         }

@@ -49,8 +49,10 @@ struct Media: View {
                 AirshipProgressView()
             }
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
             .accessible(self.model, hideIfNotSet: true)
         case .video, .youtube:
@@ -67,8 +69,10 @@ struct Media: View {
                 $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: .fit)
             }
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
             #endif
         }
