@@ -108,9 +108,11 @@ struct ScrollLayout: View {
         var childConstraints = constraints
         if self.model.direction == .vertical {
             childConstraints.height = nil
+            childConstraints.maxHeight = nil
             childConstraints.isVerticalFixedSize = false
         } else {
             childConstraints.width = nil
+            childConstraints.maxWidth = nil
             childConstraints.isHorizontalFixedSize = false
         }
 

@@ -23,6 +23,8 @@ struct ViewConstraints: Equatable {
         trailing: 0
     )
 
+    var maxWidth: CGFloat?
+    var maxHeight: CGFloat?
     var width: CGFloat?
     var height: CGFloat?
     var safeAreaInsets: EdgeInsets
@@ -32,6 +34,8 @@ struct ViewConstraints: Equatable {
     init(
         width: CGFloat? = nil,
         height: CGFloat? = nil,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil,
         isHorizontalFixedSize: Bool = false,
         isVerticalFixedSize: Bool = false,
         safeAreaInsets: EdgeInsets = emptyEdgeSet
@@ -39,6 +43,8 @@ struct ViewConstraints: Equatable {
 
         self.width = width
         self.height = height
+        self.maxWidth = maxWidth
+        self.maxHeight = maxHeight
         self.safeAreaInsets = safeAreaInsets
         self.isHorizontalFixedSize = isHorizontalFixedSize
         self.isVerticalFixedSize = isVerticalFixedSize
@@ -46,8 +52,7 @@ struct ViewConstraints: Equatable {
 
     init(size: CGSize, safeAreaInsets: EdgeInsets) {
         self.init(
-            width: size.width + safeAreaInsets.trailing
-                + safeAreaInsets.leading,
+            width: size.width + safeAreaInsets.trailing + safeAreaInsets.leading,
             height: size.height + safeAreaInsets.top + safeAreaInsets.bottom,
             isHorizontalFixedSize: true,
             isVerticalFixedSize: true,
@@ -128,6 +133,8 @@ struct ViewConstraints: Equatable {
         return ViewConstraints(
             width: childWidth,
             height: childHeight,
+            maxWidth: childWidth ?? parentWidth,
+            maxHeight: childHeight ?? parentHeight,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             safeAreaInsets: self.safeAreaInsets
@@ -182,9 +189,14 @@ struct ViewConstraints: Equatable {
             self.isHorizontalFixedSize
         )
 
+        let maxWidth = (parentWidth ?? self.maxWidth?.subtract(padding * 2))?.subtract(horizontalMargins)
+        let maxHeight = (parentHeight ?? self.maxHeight?.subtract(padding * 2))?.subtract(verticalMargins)
+
         return ViewConstraints(
             width: childWidth,
             height: childHeight,
+            maxWidth: childWidth ?? maxWidth,
+            maxHeight: childHeight ?? maxHeight,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             safeAreaInsets: safeAreaInsets

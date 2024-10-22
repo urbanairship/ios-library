@@ -5,25 +5,21 @@ presentation:
   placement_selectors: []
   default_placement:
     size:
-      width: 100%
-      height: auto
-    margin:
-      start: 16
-      end: 16
-      top: 16
-      bottom: 16
+      width: 90%
+      height: 90%
+    border:
+      radius: 0
   embedded_id: home_image
-
 view:
   type: pager_controller
-  identifier: cd21507b-c0b1-4094-9cc6-a1c7e0713c82
+  identifier: 3e3a8863-a365-46c3-aa42-4d10e4bf1b23
   view:
     type: linear_layout
     direction: vertical
     items:
     - size:
         width: 100%
-        height: auto
+        height: 100%
       view:
         type: container
         items:
@@ -32,34 +28,19 @@ view:
             vertical: center
           size:
             width: 100%
-            height: auto
+            height: 100%
           view:
             type: pager
             disable_swipe: true
             items:
-            - identifier: f32abdc4-00ff-4aab-a26b-72a903584e89
+            - identifier: 5caeef0f-2c44-4dd5-8021-6ee1f0535a5c
               type: pager_item
               view:
                 type: container
                 items:
-                - margin:
-                    start: 0
-                    end: 0
-                  position:
-                    horizontal: center
-                    vertical: center
-                  size:
-                    width: 100%
-                    height: auto
-                  view:
-                    type: media
-                    media_fit: center_inside
-                    url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/5e1bfa33-9f17-4fd9-8c8a-c2a6b1c44408
-                    media_type: image
-                  ignore_safe_area: true
                 - size:
                     width: 100%
-                    height: auto
+                    height: 100%
                   position:
                     horizontal: center
                     vertical: center
@@ -77,7 +58,7 @@ view:
                         vertical: center
                       size:
                         width: 100%
-                        height: auto
+                        height: 100%
                       view:
                         type: linear_layout
                         direction: vertical
@@ -85,153 +66,73 @@ view:
                         - identifier: layout_container
                           size:
                             width: 100%
-                            height: auto
+                            height: 100%
                           view:
                             type: linear_layout
                             direction: vertical
+                            border:
+                              stroke_width: 8
+                              stroke_color:
+                                default:
+                                  hex: "#ff0000"
+                                  alpha: 1
                             items:
-                            - identifier: 498df534-5de0-44a3-b258-4a5a27704454
-                              size:
-                                width: 100%
-                                height: auto
-                              margin:
-                                top: 30
-                                bottom: 8
-                                start: 16
-                                end: 16
-                              view:
-                                type: label
-                                text: You'll love these
-                                text_appearance:
-                                  font_size: 44
-                                  color:
-                                    default:
-                                      type: hex
-                                      hex: "#000000"
-                                      alpha: 1
-                                  alignment: start
-                                  styles: []
-                                  font_families:
-                                  - sans-serif
-                            - identifier: 5533c7d7-44ad-421c-9324-cd292f32dab4
-                              size:
-                                width: 100%
-                                height: auto
-                              margin:
-                                top: 8
-                                bottom: 8
-                                start: 16
-                                end: 16
-                              view:
-                                type: label
-                                text: Check out your recommendations
-                                text_appearance:
-                                  font_size: 22
-                                  color:
-                                    default:
-                                      type: hex
-                                      hex: "#000000"
-                                      alpha: 1
-                                  alignment: start
-                                  styles: []
-                                  font_families:
-                                  - sans-serif
-                            - identifier: b9487399-1156-4070-822a-59a050cfd667
-                              margin:
-                                top: 0
-                                bottom: 0
-                                start: 70
-                                end: 70
-                              size:
-                                height: auto
-                                width: 100%
-                              view:
-                                type: linear_layout
-                                direction: horizontal
-                                items:
-                                - margin:
-                                    top: 4
-                                    bottom: 16
-                                    start: 0
-                                    end: 0
-                                  size:
-                                    width: 100%
-                                    height: 48
-                                  view:
-                                    type: label_button
-                                    identifier: dismiss--EXPLORE
-                                    reporting_metadata:
-                                      trigger_link_id: 33669c6e-50f6-4392-ba75-a5f3cd8254bf
-                                    label:
-                                      type: label
-                                      text: EXPLORE
-                                      text_appearance:
-                                        font_size: 20
-                                        color:
-                                          default:
-                                            type: hex
-                                            hex: "#000000"
-                                            alpha: 1
-                                        alignment: center
-                                        styles:
-                                        - bold
-                                        font_families:
-                                        - sans-serif
-                                    actions: {}
-                                    enabled: []
-                                    button_click:
-                                    - dismiss
-                                    background_color:
-                                      default:
-                                        type: hex
-                                        hex: "#FFFFFF"
-                                        alpha: 1
-                                    border:
-                                      radius: 15
-                                      stroke_width: 1
-                                      stroke_color:
-                                        default:
-                                          type: hex
-                                          hex: "#FFFFFF"
-                                          alpha: 0
-                                        selectors:
-                                        - platform: ios
-                                          dark_mode: true
-                                          color:
-                                            type: hex
-                                            hex: "#000000"
-                                            alpha: 0
-                                        - platform: android
-                                          dark_mode: true
-                                          color:
-                                            type: hex
-                                            hex: "#000000"
-                                            alpha: 0
                             - size:
                                 width: 100%
                                 height: auto
                               view:
-                                type: linear_layout
-                                direction: horizontal
-                                items: []
+                                type: media
+                                media_fit: center_crop
+                                url: https://hangar-dl.urbanairship.com/binary/public/ISex_TTJRuarzs9-o_Gkhg/5cd5c3b4-9cbf-488c-af32-79145a349fc9
+                                media_type: image
+                              identifier: ed77bcab-4861-437f-a412-7255abb0340a
+                              margin:
+                                top: 0
+                                bottom: 0
+                                start: 0
+                                end: 0
                 background_color:
                   default:
                     type: hex
-                    hex: "#FFFFFF"
-                    alpha: 0
+                    hex: "#BCBDC2"
+                    alpha: 1
                   selectors:
+                  - platform: ios
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#BCBDC2"
+                      alpha: 1
                   - platform: ios
                     dark_mode: true
                     color:
                       type: hex
-                      hex: "#000000"
-                      alpha: 0
+                      hex: "#FFFFFF"
+                      alpha: 0.5
+                  - platform: android
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#BCBDC2"
+                      alpha: 1
                   - platform: android
                     dark_mode: true
                     color:
                       type: hex
-                      hex: "#000000"
-                      alpha: 0
+                      hex: "#FFFFFF"
+                      alpha: 0.5
+                  - platform: web
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#BCBDC2"
+                      alpha: 1
+                  - platform: web
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 0.5
           ignore_safe_area: true
         - position:
             horizontal: end
@@ -248,8 +149,45 @@ view:
               color:
                 default:
                   type: hex
-                  hex: "#FFFFFF"
+                  hex: "#000000"
                   alpha: 1
+                selectors:
+                - platform: ios
+                  dark_mode: false
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: ios
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                - platform: android
+                  dark_mode: false
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: android
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                - platform: web
+                  dark_mode: false
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: web
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
             identifier: dismiss_button
             button_click:
             - dismiss
