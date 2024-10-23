@@ -7,7 +7,7 @@ import AirshipCore
 final class RemoteDataURLFactoryTest: XCTestCase {
 
     let runtimeConfig: RuntimeConfig = {
-        let airshipConfig = AirshipConfig()
+        var airshipConfig = AirshipConfig()
         airshipConfig.remoteDataAPIURL = "https://example.com"
 
         return RuntimeConfig(

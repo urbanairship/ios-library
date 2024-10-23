@@ -10,7 +10,7 @@ class RuntimeConfigTest: XCTestCase {
     let session: TestAirshipRequestSession = TestAirshipRequestSession()
 
     func testUSSiteURLS() throws {
-        let appConfig = AirshipConfig()
+        var appConfig = AirshipConfig()
         appConfig.site = .us
         appConfig.requireInitialRemoteConfigEnabled = false
 
@@ -27,7 +27,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testEUSiteURLS() throws {
-        let appConfig = AirshipConfig()
+        var appConfig = AirshipConfig()
         appConfig.site = .eu
         appConfig.requireInitialRemoteConfigEnabled = false
 
@@ -41,7 +41,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testURLOverrides() throws {
-        let appConfig = AirshipConfig()
+        var appConfig = AirshipConfig()
         appConfig.deviceAPIURL = "cool://devices"
         appConfig.analyticsURL = "cool://analytics"
         appConfig.remoteDataAPIURL = "cool://remote"
@@ -53,7 +53,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testInitialConfigURL() throws {
-        let appConfig = AirshipConfig()
+        var appConfig = AirshipConfig()
         appConfig.initialConfigURL = "cool://remote"
 
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
@@ -61,7 +61,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testInitialConfigURLOverridesRemoteDataAPIURL() throws {
-        let appConfig = AirshipConfig()
+        var appConfig = AirshipConfig()
         appConfig.initialConfigURL = "cool://remote-good"
         appConfig.remoteDataAPIURL = "cool://remote-bad"
 
@@ -70,7 +70,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testRequireInitialRemoteConfigEnabled() throws {
-        let appConfig = AirshipConfig()
+        var appConfig = AirshipConfig()
         appConfig.requireInitialRemoteConfigEnabled = true
 
         let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)

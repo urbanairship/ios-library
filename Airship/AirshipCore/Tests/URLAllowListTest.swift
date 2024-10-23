@@ -27,7 +27,7 @@ class UAURLAllowListTest: XCTestCase {
 
     @MainActor
     func testDefaultURLAllowList() {
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.inProduction = false
         config.developmentAppKey = "test-app-key"
         config.developmentAppSecret = "test-app-secret"
@@ -65,7 +65,7 @@ class UAURLAllowListTest: XCTestCase {
 
     @MainActor
     func testDefaultURLAllowListNoOpenScopeSet() {
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.inProduction = false
         config.developmentAppKey = "test-app-key"
         config.developmentAppSecret = "test-app-secret"

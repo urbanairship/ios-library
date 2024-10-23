@@ -11,7 +11,7 @@ final class ChannelAPIClientTest: XCTestCase {
     private let encoder = JSONEncoder()
 
     override func setUpWithError() throws {
-        let airshipConfig = AirshipConfig()
+        var airshipConfig = AirshipConfig()
         airshipConfig.deviceAPIURL = "http://example.com"
         airshipConfig.requireInitialRemoteConfigEnabled = false
         self.config = RuntimeConfig(

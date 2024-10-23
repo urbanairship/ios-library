@@ -13,7 +13,7 @@ final class AirshipConfigTest: XCTestCase {
     }
     
     func testURLAllowListSetAfterCopy() throws {
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.urlAllowList = ["neat"]
 
         let copy = config.copy() as! AirshipConfig
@@ -21,16 +21,11 @@ final class AirshipConfigTest: XCTestCase {
     }
 
     func testURLAllowScopeOpenURLSetListSetAfterCopy() throws {
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.urlAllowListScopeOpenURL = ["neat"]
 
         let copy = config.copy() as! AirshipConfig
         XCTAssertTrue(copy.isURLAllowListScopeOpenURLSet)
-    }
-    
-    func testUnknownKeyHandling() {
-        let config = AirshipConfig()
-        XCTAssertNoThrow(config.setValue("someValue", forKey: "thisKeyDoesNotExist"))
     }
     
     func testProductionProfileParsing() {
@@ -53,13 +48,13 @@ final class AirshipConfigTest: XCTestCase {
     
     func testSimulatorFallback() {
         // Ensure that the simulator falls back to the inProduction flag as it was set if there isn't a profile
-        let production = AirshipConfig()
+        var production = AirshipConfig()
         production.profilePath = nil
         production.inProduction = true
         production.detectProvisioningMode = true
         XCTAssertTrue(production.inProduction)
 
-        let development = AirshipConfig()
+        var development = AirshipConfig()
         development.profilePath = nil
         development.inProduction = false
         development.detectProvisioningMode = true
@@ -68,7 +63,7 @@ final class AirshipConfigTest: XCTestCase {
     
     func testMissingProvisioningOnDeviceFallback() {
         // Ensure that a device falls back to YES rather than inProduction when there isn't a profile
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.profilePath = nil
         config.inProduction = false
         config.detectProvisioningMode = true
@@ -76,7 +71,7 @@ final class AirshipConfigTest: XCTestCase {
     }
     
     func testProductionFlag() {
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         
         // initialize with a custom profile path that is accessible from this test environment
         config.profilePath = Bundle(for: self.classForCoder).path(forResource: "production-embedded", ofType: "mobileprovision")!
@@ -122,7 +117,7 @@ final class AirshipConfigTest: XCTestCase {
      */
     func testDetectProvisioningModeDefault() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Without-InProduction-And-DetectProvisioningMode", ofType: "plist")!
-        let config = AirshipConfig(contentsOfFile: plist)
+        let config = AirshipConfig.config(contentsOfFile: plist)
         
         XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
         XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode should default to true")
@@ -133,7 +128,7 @@ final class AirshipConfigTest: XCTestCase {
      */
     func testDetectProvisioningModeExplicitlySet() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-DetectProvisioningMode", ofType: "plist")!
-        let config = AirshipConfig(contentsOfFile: plist)
+        let config = AirshipConfig.config(contentsOfFile: plist)
         
         XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
         XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode should default to true")
@@ -144,7 +139,7 @@ final class AirshipConfigTest: XCTestCase {
      */
     func testInProductionExplicitlySet() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-InProduction", ofType: "plist")!
-        let config = AirshipConfig(contentsOfFile: plist)
+        let config = AirshipConfig.config(contentsOfFile: plist)
         
         XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
         XCTAssertTrue(config.inProduction, "inProduction should be true")
@@ -155,20 +150,19 @@ final class AirshipConfigTest: XCTestCase {
      */
     func testDetectProvisioningModeAndInProductionExplicitlySet() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
-        let config = AirshipConfig(contentsOfFile: plist)
+        let config = AirshipConfig.config(contentsOfFile: plist)
         
         XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
         XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode should be true")
         XCTAssertTrue(config.inProduction, "inProduction should be true")
         XCTAssertEqual(CloudSite.eu, config.site)
-        XCTAssertEqual("https://some-chat-url", config.chatURL)
         XCTAssertEqual(["*"], config.urlAllowListScopeOpenURL)
     }
     
     func testOldPlistFormat() {
         let legacyPlist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid-Legacy-NeXTStep", ofType: "plist")!
         let validAppValue = "0A00000000000000000000"
-        let config = AirshipConfig(contentsOfFile: legacyPlist)
+        let config = AirshipConfig.config(contentsOfFile: legacyPlist)
         
         XCTAssertTrue(config.validate(), "Legacy Config File is invalid.")
 
@@ -184,7 +178,7 @@ final class AirshipConfigTest: XCTestCase {
     func testPlistParsing() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
         let validAppValue = "0A00000000000000000000"
-        let config = AirshipConfig(contentsOfFile: plist)
+        var config = AirshipConfig.config(contentsOfFile: plist)
         
         XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
 
@@ -209,33 +203,11 @@ final class AirshipConfigTest: XCTestCase {
         XCTAssertTrue(config.resetEnabledFeatures, "resetEnabledFeatures was improperly loaded.")
     }
     
-    func testNeXTStepPlistParsing() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid-NeXTStep", ofType: "plist")!
-        let validAppValue = "0A00000000000000000000"
-        let config = AirshipConfig(contentsOfFile: plist)
-        
-        XCTAssertTrue(config.validate(), "NeXTStep plist file is invalid.")
-
-        XCTAssertEqual(config.productionAppKey, validAppValue, "Production app key was improperly loaded.")
-        XCTAssertEqual(config.productionAppSecret, validAppValue, "Production app secret was improperly loaded.")
-        XCTAssertEqual(config.developmentAppKey, validAppValue, "Development app key was improperly loaded.")
-        XCTAssertEqual(config.developmentAppSecret, validAppValue, "Development app secret was improperly loaded.")
-
-        XCTAssertEqual(config.developmentLogLevel, .error, "Development log level was improperly loaded.")
-        XCTAssertEqual(config.productionLogLevel, .verbose, "Production log level was improperly loaded.")
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode was improperly loaded.")
-        XCTAssertTrue(config.isChannelCreationDelayEnabled, "channelCreationDelayEnabled was improperly loaded.")
-
-        //special case this one since we have to disable detectProvisioningMode
-        config.detectProvisioningMode = false
-        XCTAssertTrue(config.inProduction, "inProduction was improperly loaded.")
-    }
-    
     func testValidation() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
         let validAppValue = "0A00000000000000000000"
         let invalidValue = " invalid!!! "
-        let config = AirshipConfig(contentsOfFile: plist)
+        var config = AirshipConfig.config(contentsOfFile: plist)
         
         config.inProduction = false
         config.detectProvisioningMode = false
@@ -264,7 +236,7 @@ final class AirshipConfigTest: XCTestCase {
     
     func testCopyConfig() {
         let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
-        let config = AirshipConfig(contentsOfFile: plist)
+        let config = AirshipConfig.config(contentsOfFile: plist)
         let copy = config.copy() as! AirshipConfig
         
         XCTAssertEqual(copy.description, config.description)

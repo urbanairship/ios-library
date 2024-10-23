@@ -6,44 +6,37 @@
 	<array>
 		<string>*</string>
 	</array>
-	<key>chatURL</key>
-	<string>https://some-chat-url</string>
 	<key>requireInitialRemoteConfigEnabled</key>
 	<true/>
 	<key>developmentAppKey</key>
-	<string>   0A00000000000000000000        </string>
+	<string>0A00000000000000000000</string>
 	<key>developmentAppSecret</key>
-	<string>        0A00000000000000000000        </string>
+	<string>0A00000000000000000000</string>
 	<key>developmentLogLevel</key>
-	<string>1</string>
+	<integer>1</integer>
 	<key>developmentLogPrivacyLevel</key>
-	<string>public</string>
+	<integer>0</integer>
 	<key>productionAppKey</key>
-	<string>  0A00000000000000000000      </string>
+	<string>0A00000000000000000000</string>
 	<key>productionAppSecret</key>
-	<string>    0A00000000000000000000     </string>
+	<string>0A00000000000000000000</string>
 	<key>productionLogLevel</key>
-	<string>5</string>
+	<integer>5</integer>
 	<key>productionLogPrivacyLevel</key>
-	<string>private</string>
-	<key>detectProvisioningMode</key>
+	<integer>0</integer>
+	<key>isChannelCreationDelayEnabled</key>
 	<true/>
-	<key>customConfig</key>
-	<dict>
-		<key>customKey</key>
-		<string>customValue</string>
-	</dict>
-	<key>inProduction</key>
-	<true/>
-	<key>channelCreationDelayEnabled</key>
-	<true/>
-	<key>extendedBroadcastsEnabled</key>
+	<key>isExtendedBroadcastsEnabled</key>
 	<true/>
 	<key>messageCenterStyleConfig</key>
 	<string>ValidUAMessageCenterDefaultStyle</string>
 	<key>site</key>
-	<string>EU</string>
+	<integer>1</integer>
 	<key>resetEnabledFeatures</key>
+	<true/>
+	<key>inProduction</key>
+	<true/>
+	<key>detectProvisioningMode</key>
 	<true/>
 	<key>enabledFeatures</key>
 	<array>

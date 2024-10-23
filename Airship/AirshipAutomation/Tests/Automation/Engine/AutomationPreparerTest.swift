@@ -37,7 +37,7 @@ final class AutomationPreparerTest: XCTestCase {
             actionRunner: TestInAppActionRunner()
         )
 
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.requireInitialRemoteConfigEnabled = false
         self.runtimeConfig = RuntimeConfig(
             config: config,

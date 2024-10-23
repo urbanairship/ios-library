@@ -12,7 +12,7 @@ class SubscriptionListAPIClientTest: XCTestCase {
     var client: SubscriptionListAPIClient!
 
     override func setUpWithError() throws {
-        let airshipConfig = AirshipConfig()
+        var airshipConfig = AirshipConfig()
         airshipConfig.requireInitialRemoteConfigEnabled = false
         self.config = RuntimeConfig(
             config: airshipConfig,

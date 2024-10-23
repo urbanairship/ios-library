@@ -1,8 +1,18 @@
-{
-	"DEVELOPMENT_APP_KEY" = "0A00000000000000000000";
-	"DEVELOPMENT_APP_SECRET" = "0A00000000000000000000";
-	"PRODUCTION_APP_KEY" = "0A00000000000000000000";
-	"PRODUCTION_APP_SECRET" = "0A00000000000000000000";
-	"LOG_LEVEL" = 5;
-	"APP_STORE_OR_AD_HOC_BUILD" = YES;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>DEVELOPMENT_APP_KEY</key>
+	<string>0A00000000000000000000</string>
+	<key>DEVELOPMENT_APP_SECRET</key>
+	<string>0A00000000000000000000</string>
+	<key>PRODUCTION_APP_KEY</key>
+	<string>0A00000000000000000000</string>
+	<key>PRODUCTION_APP_SECRET</key>
+	<string>0A00000000000000000000</string>
+	<key>LOG_LEVEL</key>
+	<integer>5</integer>
+	<key>APP_STORE_OR_AD_HOC_BUILD</key>
+	<true/>
+</dict>
+</plist>

@@ -12,7 +12,7 @@ final class ContactSubscriptionListAPIClientTest: XCTestCase {
     private var config: RuntimeConfig!
 
     override func setUpWithError() throws {
-        let airshipConfig = AirshipConfig()
+        var airshipConfig = AirshipConfig()
         airshipConfig.deviceAPIURL = "https://example.com"
         airshipConfig.requireInitialRemoteConfigEnabled = false
         self.config = RuntimeConfig(

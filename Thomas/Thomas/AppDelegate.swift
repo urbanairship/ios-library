@@ -17,7 +17,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
         // or set runtime properties here.
-        let config = AirshipConfig.default()
+        var config = AirshipConfig.default()
         config.isWebViewInspectionEnabled = true
 
         if config.validate() != true {

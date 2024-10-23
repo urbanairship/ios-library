@@ -8,7 +8,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
 
     private let client: TestRemoteDataAPIClient = TestRemoteDataAPIClient()
     private let config: RuntimeConfig = {
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.defaultAppKey = "test-app-key";
         config.defaultAppSecret = "test-app-secret";
         return RuntimeConfig(

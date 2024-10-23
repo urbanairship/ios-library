@@ -109,7 +109,7 @@ final class MessageCenterListTest: XCTestCase {
 
     func testMessageCenterIdenityHintRestoreMessageCenterDisabled() async throws {
         self.channel.extenders.removeAll()
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.restoreMessageCenterOnReinstall = false
 
         let user = MessageCenterUser(
@@ -140,7 +140,7 @@ final class MessageCenterListTest: XCTestCase {
 
     func testRestoreMessageCenterDisabled() async throws {
         self.channel.extenders.removeAll()
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.restoreMessageCenterOnReinstall = false
 
         let user = MessageCenterUser(

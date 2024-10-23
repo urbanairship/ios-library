@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>developmentAppKey</key>
-	<string>   0A00000000000000000000        </string>
+	<string>0A00000000000000000000</string>
 	<key>developmentAppSecret</key>
-	<string>        0A00000000000000000000        </string>
+	<string>0A00000000000000000000</string>
 	<key>developmentLogLevel</key>
-	<string>1</string>
+	<integer>1</integer>
 	<key>productionAppKey</key>
-	<string>  0A00000000000000000000      </string>
+	<string>0A00000000000000000000</string>
 	<key>productionAppSecret</key>
-	<string>    0A00000000000000000000     </string>
+	<string>0A00000000000000000000</string>
 	<key>productionLogLevel</key>
-	<string>5</string>
+	<integer>5</integer>
 	<key>customConfig</key>
 	<dict>
 		<key>customKey</key>

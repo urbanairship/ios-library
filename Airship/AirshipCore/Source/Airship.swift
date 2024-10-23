@@ -288,7 +288,7 @@ public class Airship: NSObject {
 
         UALegacyLoggingBridge.logger = { logLevel, function, line, message in
             AirshipLogger.log(
-                logLevel: AirshipLogLevel(rawValue: logLevel) ?? .none,
+                logLevel: AirshipLogLevel(rawValue: String(logLevel)) ?? .none,
                 message: message(),
                 fileID: "",
                 line: line,

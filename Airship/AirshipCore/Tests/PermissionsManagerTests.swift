@@ -6,10 +6,10 @@ import XCTest
 
 class PermissionsManagerTests: XCTestCase {
 
+    let delegate = TestPermissionsDelegate()
 
     var systemSettingsNavigator: TestSystemSettingsNavigator!
     var permissionsManager: AirshipPermissionsManager!
-    let delegate = TestPermissionsDelegate()
     let appStateTracker = TestAppStateTracker()
     override func setUp() async throws {
         self.systemSettingsNavigator = await TestSystemSettingsNavigator()

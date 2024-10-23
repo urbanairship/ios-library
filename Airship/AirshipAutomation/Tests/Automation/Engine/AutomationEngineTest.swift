@@ -57,7 +57,7 @@ final class AutomationEngineTest: XCTestCase {
             notificationCenter: self.notificationCenter
         )
         
-        let config = AirshipConfig()
+        var config = AirshipConfig()
         config.requireInitialRemoteConfigEnabled = false
         self.runtimeConfig = RuntimeConfig(
             config: config,
