@@ -17,7 +17,7 @@ view:
     type: container
     border:
       radius: 30
-      stroke_width: 2
+      stroke_width: 8
       stroke_color:
         default:
           hex: "#333333"
@@ -33,8 +33,6 @@ view:
       size:
         height: 100%
         width: 100%
-      border:
-        radius: 25
       view:
         type: pager
         items:

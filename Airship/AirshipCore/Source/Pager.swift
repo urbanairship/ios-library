@@ -49,6 +49,7 @@ struct Pager: View {
 
     @State var lastIndex = -1
 
+
     @GestureState private var translation: CGFloat = 0
     @State var size: CGSize?
 
@@ -100,6 +101,7 @@ struct Pager: View {
                 width: metrics.size.width,
                 height: metrics.size.height
             )
+            .environment(\.isButtonActionsEnabled, self.translation == 0)
         }
     }
 
@@ -227,7 +229,9 @@ struct Pager: View {
 #endif
 #if !os(tvOS)
             .applyIf(self.containsDragGestures) { view in
-                view.highPriorityGesture(makeSwipeGesture(index: index))
+                view.simultaneousGesture(
+                    makeSwipeGesture(index: index)
+                )
             }
             .applyIf(self.model.isDefaultSwipeEnabled) { view in
                 view.accessibilityScrollAction  { edge in
@@ -262,8 +266,10 @@ struct Pager: View {
             }
 #endif
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
     }
 

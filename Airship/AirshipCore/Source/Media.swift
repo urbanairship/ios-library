@@ -15,22 +15,7 @@ struct Media: View {
     private let defaultAspectRatio = 16.0 / 9.0
     @EnvironmentObject var pagerState: PagerState
     @Environment(\.pageIndex) var pageIndex
- 
 
-    fileprivate static func isUnbounded(_ constraints: ViewConstraints) -> Bool {
-        if constraints.width != nil && constraints.height != nil {
-            return false
-        }
-
-        if constraints.width == nil && constraints.height == nil {
-            return true
-        }
-
-        guard constraints.width != nil else {
-            return !constraints.isHorizontalFixedSize
-        }
-        return !constraints.isVerticalFixedSize
-    }
 
     var body: some View {
         switch model.mediaType {
@@ -44,13 +29,15 @@ struct Media: View {
                     cropPosition: self.model.cropPosition,
                     constraints: constraints,
                     imageSize: imageSize
-                )
+                ).allowsHitTesting(false)
             } placeholder: {
                 AirshipProgressView()
             }
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
             .accessible(self.model, hideIfNotSet: true)
         case .video, .youtube:
@@ -67,8 +54,10 @@ struct Media: View {
                 $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: .fit)
             }
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
             #endif
         }
@@ -84,21 +73,13 @@ extension Image {
         constraints: ViewConstraints,
         imageSize: CGSize
     ) -> some View {
-
-
         switch mediaFit {
         case .center:
-            cropAligned(constraints: constraints)
+            cropAligned(constraints: constraints, imageSize: imageSize)
         case .fitCrop:
-            cropAligned(constraints: constraints, alignment: cropPositionToAlignment(position: cropPosition))
+            cropAligned(constraints: constraints, imageSize: imageSize, alignment: cropPositionToAlignment(position: cropPosition))
         case .centerCrop:
-            // If we do not have a fixed size in any direction then we should
-            // use centerInside instead to match Android
-            if Media.isUnbounded(constraints) {
-                centerInside(constraints: constraints)
-            } else {
-                cropAligned(constraints: constraints)
-            }
+            cropAligned(constraints: constraints, imageSize: imageSize)
         case .centerInside:
             centerInside(constraints: constraints)
         }
@@ -112,11 +93,38 @@ extension Image {
         )
     }
 
-    private func cropAligned(constraints: ViewConstraints, alignment: Alignment = .center) -> some View {
-           self.resizable()
-            .scaledToFill()
-            .constraints(constraints, alignment: alignment)
-            .clipped()
+    private func shouldCenterInside(constraints: ViewConstraints, imageSize: CGSize) -> Bool {
+        guard constraints.height == nil || constraints.width == nil else {
+            return false
+        }
+
+        let aspectRatio = imageSize.width/imageSize.height
+
+        if let height = constraints.height, let maxWidth = constraints.maxWidth {
+            let fitWidth = height * aspectRatio
+            return fitWidth <= maxWidth
+        }
+
+        if let width = constraints.width, let maxHeight = constraints.maxHeight {
+            let fitHeight = width / aspectRatio
+            return fitHeight <= maxHeight
+        }
+
+        return false
+    }
+
+    @ViewBuilder
+    private func cropAligned(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .center) -> some View {
+        // If we have an auto bound constraint and we can fit the image then centerInside
+        if shouldCenterInside(constraints: constraints, imageSize: imageSize) {
+            centerInside(constraints: constraints)
+        } else {
+            self.resizable()
+             .scaledToFill()
+             .constraints(constraints, alignment: alignment)
+             .frame(maxWidth: constraints.maxWidth, maxHeight: constraints.maxHeight)
+             .clipped()
+        }
     }
 
     private func centerInside(constraints: ViewConstraints) -> some View {

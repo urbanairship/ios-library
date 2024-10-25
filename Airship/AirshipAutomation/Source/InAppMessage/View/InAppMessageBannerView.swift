@@ -13,13 +13,13 @@ struct InAppMessageBannerView: View {
     /// Used to transmit self sizing info to UIKit host
     @ObservedObject
     var bannerConstraints: InAppMessageBannerConstraints
+
     /// A state variable to prevent endless size refreshing
     @State private var lastSize: CGSize?
 
     @State var isShowing: Bool = false
-    @State var isPressed: Bool = false /// Tracks state of current touch down
-    @State var messageBodyOpacity: CGFloat = 1
     @State var swipeOffset: CGFloat = 0
+    @State var isButtonTapsDisabled: Bool = false
 
     var theme: InAppMessageTheme.Banner
 
@@ -56,21 +56,27 @@ struct InAppMessageBannerView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: self.theme.media, imageLoader: environment.imageLoader)
-                .padding(.horizontal, -theme.media.padding.leading)
-                .frame(
-                    maxWidth: mediaMaxWidth,
-                    minHeight: mediaMinHeight,
-                    maxHeight: mediaMaxHeight
-                )
-                .fixedSize(horizontal: false, vertical: true)
+            MediaView(
+                mediaInfo: media,
+                mediaTheme: self.theme.media,
+                imageLoader: environment.imageLoader
+            )
+            .padding(.horizontal, -theme.media.padding.leading)
+            .frame(
+                maxWidth: mediaMaxWidth,
+                minHeight: mediaMinHeight,
+                maxHeight: mediaMaxHeight
+            )
+            .fixedSize(horizontal: false, vertical: true)
         }
+
     }
 
     @ViewBuilder
     private var buttonsView: some View {
         if let buttons = displayContent.buttons, !buttons.isEmpty {
             ButtonGroup(
+                isDisabled: $isButtonTapsDisabled,
                 layout: displayContent.buttonLayoutType ?? .stacked,
                 buttons: buttons,
                 theme: self.theme.buttons
@@ -135,13 +141,8 @@ struct InAppMessageBannerView: View {
     private var messageBody: some View {
         let itemSpacing: CGFloat = 16
 
-        VStack(spacing:itemSpacing) {
-            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
-                contentBody.geometryGroup()
-            } else {
-                contentBody.transformEffect(.identity)
-            }
-
+        let body = VStack(spacing: itemSpacing) {
+            contentBody
             buttonsView
         }
         .padding([.top, .horizontal], itemSpacing)
@@ -150,6 +151,25 @@ struct InAppMessageBannerView: View {
             nub: AnyView(nub),
             itemSpacing: itemSpacing
         )
+        .geometryGroupCompat()
+
+        if let actions = displayContent.actions {
+            Button(
+                action: {
+                    if (!self.isButtonTapsDisabled) {
+                        environment.onUserDismissed()
+                        environment.runActions(actions: actions)
+                    }
+                },
+                label: {
+                    body.background(Color.airshipTappableClear)
+                }
+            ).buttonStyle(
+                InAppMessageCustomOpacityButtonStyle(pressedOpacity: theme.tapOpacity)
+            )
+        } else {
+            body
+        }
     }
 
     private func setShowing(state:Bool, completion: (() -> Void)? = nil) {
@@ -160,13 +180,6 @@ struct InAppMessageBannerView: View {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + InAppMessageBannerView.animationInOutDuration, execute: {
             completion?()
         })
-    }
-
-    private func bannerOnTapAction() {
-        if let actions = displayContent.actions {
-            environment.onUserDismissed()
-            environment.runActions(actions: actions)
-        }
     }
 
     private var banner: some View {
@@ -198,33 +211,144 @@ struct InAppMessageBannerView: View {
             )
             .padding(theme.padding)
             .applyTransitioningPlacement(placement: displayContent.placement ?? .bottom)
-            .addTapAndSwipeDismiss(
-                placement: displayContent.placement ?? .bottom,
-                isPressed: $isPressed,
-                tapAction: bannerOnTapAction,
-                swipeOffset: $swipeOffset,
-                onDismiss: environment.onUserDismissed
-            )
+            .offset(x: 0, y: swipeOffset)
+            .simultaneousGesture(swipeGesture)
             .onAppear {
                 setShowing(state: true)
+                self.environment.onAppear()
+            }
+            .airshipOnChangeOf(swipeOffset) { value in
+                self.isButtonTapsDisabled = value != 0
             }
             .airshipOnChangeOf(environment.isDismissed) { _ in
                 setShowing(state: false) {
                     onDismiss()
                 }
             }
-            .onAppear {
-                self.environment.onAppear()
-            }
+            .frame(width: self.width)
+    }
+
+    var width: CGFloat {
+#if os(visionOS)
+        min(1280, theme.maxWidth)
+#else
+        min(UIScreen.main.bounds.size.width, theme.maxWidth)
+#endif
     }
 
     var body: some View {
         InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
-            #if os(visionOS)
-            banner.frame(width: min(1280, theme.maxWidth))
-            #else
-            banner.frame(width: min(UIScreen.main.bounds.size.width, theme.maxWidth))
-            #endif
-        }.opacity(isPressed && displayContent.actions != nil ? theme.tapOpacity : 1)
+            banner
+        }
+    }
+
+    private var swipeGesture: some Gesture {
+        let minSwipeDistance: CGFloat = 100.0
+        let placement = displayContent.placement ?? .bottom
+
+        return DragGesture(minimumDistance: 20)
+            .onChanged { gesture in
+                withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
+                    let offset = gesture.translation.height
+
+                    let upwardSwipeTopPlacement = (placement == .top && offset < 0)
+                    let downwardSwipeBottomPlacement = (placement == .bottom && offset > 0)
+
+                    if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
+                        self.swipeOffset = gesture.translation.height
+                    }
+                }
+            }
+            .onEnded { gesture in
+                withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
+                    let offset = gesture.translation.height
+                    swipeOffset = offset
+
+                    let upwardSwipeTopPlacement = (placement == .top && offset < -minSwipeDistance)
+                    let downwardSwipeBottomPlacement = (placement == .bottom && offset > minSwipeDistance)
+
+                    if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
+                        self.environment.onUserDismissed()
+                    } else {
+                        /// Return to origin and do nothing
+                        self.swipeOffset = 0
+                    }
+                }
+            }
+    }
+}
+
+fileprivate extension View {
+    @ViewBuilder
+    func geometryGroupCompat() -> some View {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            self.geometryGroup()
+        } else {
+            self.transformEffect(.identity)
+        }
+    }
+    @ViewBuilder
+    func addNub(
+        placement: InAppMessageDisplayContent.Banner.Placement,
+        nub: AnyView,
+        itemSpacing: CGFloat
+    ) -> some View {
+        VStack(spacing: 0) {
+            switch(placement) {
+            case .top:
+                self
+                nub.padding(.vertical, itemSpacing / 2)
+            case .bottom:
+                nub.padding(.vertical, itemSpacing / 2)
+                self
+            }
+        }
+    }
+
+    @ViewBuilder
+    func applyTransitioningPlacement(
+        placement: InAppMessageDisplayContent.Banner.Placement
+    ) -> some View {
+        switch placement {
+        case .top:
+            VStack {
+                self.applyTransition(placement: .top)
+                Spacer()
+            }
+        case .bottom:
+            VStack {
+                Spacer()
+                self.applyTransition(placement: .bottom)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func applyTransition(
+        placement: InAppMessageDisplayContent.Banner.Placement
+    ) -> some View {
+        switch(placement) {
+        case .top:
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: .top),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                )
+            )
+        case .bottom:
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: .bottom),
+                    removal: .move(edge: .bottom).combined(with: .opacity)
+                )
+            )
+        }
+    }
+}
+
+fileprivate struct InAppMessageCustomOpacityButtonStyle: ButtonStyle {
+    let pressedOpacity: Double
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.opacity(configuration.isPressed ? pressedOpacity : 1.0)
     }
 }

@@ -15,6 +15,10 @@ private struct VisibleEnvironmentKey: EnvironmentKey {
     static let defaultValue: Bool = false
 }
 
+private struct ButtonActionsEnabledKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
 private struct PagerPageIndexKey: EnvironmentKey {
     static let defaultValue: Int = -1
 }
@@ -38,6 +42,11 @@ public extension EnvironmentValues {
     var isVisible: Bool {
         get { self[VisibleEnvironmentKey.self] }
         set { self[VisibleEnvironmentKey.self] = newValue }
+    }
+
+    var isButtonActionsEnabled: Bool {
+        get { self[ButtonActionsEnabledKey.self] }
+        set { self[ButtonActionsEnabledKey.self] = newValue }
     }
 
     var pageIndex: Int {

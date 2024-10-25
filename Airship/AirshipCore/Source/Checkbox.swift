@@ -52,8 +52,10 @@ struct Checkbox: View {
                 < self.checkboxState.maxSelection
         createToggle()
             .constraints(constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
             .accessible(self.model, isSelected: self.checkboxState.selectedItems.contains(self.model.value))
             .formElement()

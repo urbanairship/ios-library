@@ -80,12 +80,14 @@ struct TextInput: View {
             createTextEditor()
                 .id(self.model.identifier)
         }
-        .padding(self.model.border?.strokeWidth ?? 0)
+        .background(
+            color: self.model.backgroundColor,
+            border: self.model.border
+        )
         #if !os(watchOS)
         .keyboardType(keyboardType)
         #endif
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
+
         .common(self.model, formInputID: self.model.identifier)
         .accessible(self.model)
         .formElement()

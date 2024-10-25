@@ -15,8 +15,10 @@ struct AirshipToggle: View {
     var body: some View {
         createToggle()
             .constraints(self.constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model, formInputID: self.model.identifier)
             .accessible(self.model, isSelected: self.isOn)
             .formElement()

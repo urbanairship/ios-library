@@ -640,16 +640,16 @@ view:
                             background_color:
                               default:
                                 alpha: 1
-                                hex: "#eae9e9"
+                                hex: "#000099"
                                 type: hex
                             border:
-                              radius: 2
+                              radius: 15
                               stroke_color:
                                 default:
                                   alpha: 1
-                                  hex: "#63656b"
+                                  hex: "#ff0000"
                                   type: hex
-                              stroke_width: 1
+                              stroke_width: 10
                             identifier: 4a2e9284-9321-4176-9173-7f10b648e2e3
                             input_type: text
                             required: false

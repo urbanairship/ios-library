@@ -105,8 +105,10 @@ struct BannerView: View {
                 model: layout.view,
                 constraints: contentConstraints
             )
-            .background(placement.backgroundColor)
-            .border(placement.border)
+            .background(
+                color: placement.backgroundColor,
+                border: placement.border
+            )
             .margin(placement.margin)
             .shadow(radius: 5)
             .background(

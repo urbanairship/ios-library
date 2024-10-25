@@ -378,7 +378,6 @@
 		6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDC2719FC0A0038399E /* ViewFactory.swift */; };
 		6E1BACE7271E1B6E0038399E /* ThomasViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */; };
 		6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */; };
-		6E1C9C45271F74E7009EF9EF /* BorderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C44271F74E7009EF9EF /* BorderViewModifier.swift */; };
 		6E1C9C47271F76E9009EF9EF /* ViewConstraintsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */; };
 		6E1C9C49271F77F2009EF9EF /* ForegroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */; };
 		6E1C9C4B271F7878009EF9EF /* BackgroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */; };
@@ -630,7 +629,6 @@
 		6E510C202721DA7C006D9126 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D0627165709001A74A1 /* Label.swift */; };
 		6E510C212721DA7E006D9126 /* LinearLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D04271656F8001A74A1 /* LinearLayout.swift */; };
 		6E510C222721DA80006D9126 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
-		6E510C232721DA86006D9126 /* BorderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C44271F74E7009EF9EF /* BorderViewModifier.swift */; };
 		6E510C242721DA86006D9126 /* ViewConstraintsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */; };
 		6E510C252721DA86006D9126 /* MarginViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C4C271F78AE009EF9EF /* MarginViewModifier.swift */; };
 		6E510C262721DA86006D9126 /* ForegroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */; };
@@ -1429,7 +1427,6 @@
 		A67229D2281A9E640033F54D /* RadioInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE52730E77300548DA3 /* RadioInputState.swift */; };
 		A67229D3281A9E640033F54D /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */; };
 		A67229D4281A9E640033F54D /* FormInputViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */; };
-		A67229D5281A9E640033F54D /* BorderViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C44271F74E7009EF9EF /* BorderViewModifier.swift */; };
 		A67229D6281A9E640033F54D /* FontViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A684939C273436370021675E /* FontViewModifier.swift */; };
 		A67229D7281A9E640033F54D /* ViewConstraintsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */; };
 		A67229D8281A9E640033F54D /* ForegroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */; };
@@ -2290,7 +2287,6 @@
 		6E1BACDC2719FC0A0038399E /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		6E1BACE6271E1B6E0038399E /* ThomasViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewModels.swift; sourceTree = "<group>"; };
 		6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModelsTest.swift; sourceTree = "<group>"; };
-		6E1C9C44271F74E7009EF9EF /* BorderViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorderViewModifier.swift; sourceTree = "<group>"; };
 		6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstraintsViewModifier.swift; sourceTree = "<group>"; };
 		6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundColorViewModifier.swift; sourceTree = "<group>"; };
 		6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundColorViewModifier.swift; sourceTree = "<group>"; };
@@ -3837,7 +3833,6 @@
 				6E7112962880DACB004942E4 /* EventHandlerViewModifier.swift */,
 				6E7112992880DACB004942E4 /* VisibilityViewModifier.swift */,
 				6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */,
-				6E1C9C44271F74E7009EF9EF /* BorderViewModifier.swift */,
 				A684939C273436370021675E /* FontViewModifier.swift */,
 				6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */,
 				6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */,
@@ -6700,7 +6695,6 @@
 				6E062D092716571F001A74A1 /* LabelButton.swift in Sources */,
 				A6A8077C26C1566E00CB266E /* AirshipColorUtils.swift in Sources */,
 				6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */,
-				6E1C9C45271F74E7009EF9EF /* BorderViewModifier.swift in Sources */,
 				6E1589502AFEF19F00954A04 /* SessionTracker.swift in Sources */,
 				6EC7E48D26A738C80038CFDD /* ContactConflictEvent.swift in Sources */,
 				60C1DB102A8B743C00A1D3DA /* AirshipEmbeddedViewManager.swift in Sources */,
@@ -7440,7 +7434,6 @@
 				A67229D3281A9E640033F54D /* EnvironmentValues.swift in Sources */,
 				6ECDDE6E29B7EEE9009D79DB /* AuthToken.swift in Sources */,
 				A67229D4281A9E640033F54D /* FormInputViewModifier.swift in Sources */,
-				A67229D5281A9E640033F54D /* BorderViewModifier.swift in Sources */,
 				99E433962C9A03DB006436B9 /* Pager.swift in Sources */,
 				A67229D6281A9E640033F54D /* FontViewModifier.swift in Sources */,
 				6E91E44828EF423400B6F25E /* AirshipWorkManagerProtocol.swift in Sources */,
@@ -7800,7 +7793,6 @@
 				6E4326032B7C328400A9B000 /* AirshipEvents.swift in Sources */,
 				6E5A64DA2AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */,
 				6EDAFB282CB463C5000BD4AA /* ButtonLayout.swift in Sources */,
-				6E510C232721DA86006D9126 /* BorderViewModifier.swift in Sources */,
 				6E510C1E2721DA77006D9126 /* ViewConstraints.swift in Sources */,
 				6E91B44126868C3400DDB1A8 /* RegionEvent.swift in Sources */,
 				6EE49C0D2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,

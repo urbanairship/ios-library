@@ -128,8 +128,11 @@ struct ModalView: View {
                 model: self.layout.view,
                 constraints: contentConstraints
             )
-            .background(placement.backgroundColor)
-            .border(placement.border, shadow: placement.shadow)
+            .background(
+                color: placement.backgroundColor,
+                border: placement.border,
+                shadow: placement.shadow
+            )
             .margin(placement.margin)
             .background(
                 GeometryReader(content: { contentMetrics -> Color in

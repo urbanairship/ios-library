@@ -42,8 +42,10 @@ struct PagerIndicator: View {
     }
 
     var body: some View {
+        let size = (constraints.height ?? 32.0) - (model.border?.strokeWidth ?? 0)
         let childConstraints = ViewConstraints(
-            height: constraints.height ?? 32.0
+            width: size,
+            height: size
         )
 
         HStack(spacing: self.model.spacing) {
@@ -61,10 +63,13 @@ struct PagerIndicator: View {
                 }
             }
         }
+        .padding(.horizontal, self.model.spacing)
         .animation(.interactiveSpring(duration: Pager.animationSpeed), value: self.model)
         .constraints(constraints)
-        .background(self.model.backgroundColor)
-        .border(self.model.border)
+        .background(
+            color: self.model.backgroundColor,
+            border: self.model.border
+        )
         .common(self.model)
 
         .applyIf(announcePage(model: model), transform: { view in

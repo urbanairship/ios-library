@@ -23,18 +23,31 @@ struct ButtonGroup: View {
     @State private var buttonMinHeight: CGFloat = 33
     @State private var lastButtonHeight: CGFloat?
     @EnvironmentObject var environment: InAppMessageEnvironment
+    @Binding private var isDisabled: Bool
 
     let layout: InAppMessageButtonLayoutType
     let buttons: [InAppMessageButtonInfo]
     let theme: InAppMessageTheme.Button
 
+    init(
+        isDisabled: Binding<Bool>? = nil,
+        layout: InAppMessageButtonLayoutType,
+        buttons: [InAppMessageButtonInfo],
+        theme: InAppMessageTheme.Button
+    ) {
+        self._isDisabled = isDisabled ?? Binding.constant(false)
+        self.layout = layout
+        self.buttons = buttons
+        self.theme = theme
+    }
 
     private func makeButtonView(buttonInfo: InAppMessageButtonInfo, roundedEdge: RoundedEdge = .all) -> some View {
         return ButtonView(
             buttonInfo: buttonInfo,
             roundedEdge: roundedEdge,
             relativeMinHeight: $buttonMinHeight,
-            minHeight: theme.height
+            minHeight: theme.height,
+            isDisabled: $isDisabled
         )
         .frame(minHeight:buttonMinHeight)
         .environmentObject(environment)
@@ -101,9 +114,8 @@ struct ButtonGroup: View {
 struct ButtonView: View {
     @EnvironmentObject var environment: InAppMessageEnvironment
     @ScaledMetric var scaledPadding: CGFloat = 12
-    @State private var isPressed = false
-    private let pressedOpacity: Double = 0.7
 
+    @Binding var isDisabled: Bool
     let buttonInfo: InAppMessageButtonInfo
     let roundedEdge: RoundedEdge
     let minHeight: CGFloat
@@ -116,12 +128,14 @@ struct ButtonView: View {
         buttonInfo: InAppMessageButtonInfo,
         roundedEdge:RoundedEdge = .all,
         relativeMinHeight: Binding<CGFloat>? = nil,
-        minHeight: CGFloat = 33
+        minHeight: CGFloat = 33,
+        isDisabled: Binding<Bool>? = nil
     ) {
         self.buttonInfo = buttonInfo
         self.roundedEdge = roundedEdge
         _relativeMinHeight = relativeMinHeight ?? Binding.constant(CGFloat(0))
         self.minHeight = minHeight
+        _isDisabled = isDisabled ?? Binding.constant(false)
     }
 
 
@@ -135,7 +149,6 @@ struct ButtonView: View {
                padding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
             )
         )
-        .opacity(isPressed ? pressedOpacity : 1.0)
     }
 
     var body: some View {
@@ -148,13 +161,15 @@ struct ButtonView: View {
                            edge: roundedEdge,
                            borderColor: buttonInfo.borderColor?.color ?? .clear,
                            borderWidth: 2)
-        }.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-            .pressable(isPressed: $isPressed)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
 
     private func onTap() {
-        environment.onButtonDismissed(buttonInfo: self.buttonInfo)
-        environment.runActions(actions: self.buttonInfo.actions)
+        if (!isDisabled) {
+            environment.onButtonDismissed(buttonInfo: self.buttonInfo)
+            environment.runActions(actions: self.buttonInfo.actions)
+        }
     }
 }
 

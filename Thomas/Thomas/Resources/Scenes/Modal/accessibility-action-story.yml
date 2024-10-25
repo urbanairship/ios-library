@@ -121,7 +121,9 @@ view:
               view:
                 type: label
                 text: This is the first page about stuff.
-                role: heading
+                accessible_role:
+                  type: heading
+                  level: 1
                 text_appearance:
                   alignment: center
                   color:
@@ -140,6 +142,8 @@ view:
                 end: 8
               view:
                 type: image_button
+                accessible_role:
+                  type: button
                 identifier: close_button_1
                 button_click: [ dismiss ]
                 image:
@@ -198,6 +202,9 @@ view:
               view:
                 type: label
                 text: More stuff is here on the second page.
+                accessible_role:
+                  type: heading
+                  level: 2
                 text_appearance:
                   alignment: center
                   color:
@@ -216,6 +223,8 @@ view:
                 end: 8
               view:
                 type: image_button
+                accessible_role:
+                  type: button
                 identifier: close_button_2
                 button_click: [ dismiss ]
                 image:

@@ -97,8 +97,10 @@ struct ScrollLayout: View {
     var body: some View {
         makeScrollView()
             .constraints(self.constraints)
-            .background(self.model.backgroundColor)
-            .border(self.model.border)
+            .background(
+                color: self.model.backgroundColor,
+                border: self.model.border
+            )
             .common(self.model)
     }
 
@@ -106,9 +108,11 @@ struct ScrollLayout: View {
         var childConstraints = constraints
         if self.model.direction == .vertical {
             childConstraints.height = nil
+            childConstraints.maxHeight = nil
             childConstraints.isVerticalFixedSize = false
         } else {
             childConstraints.width = nil
+            childConstraints.maxWidth = nil
             childConstraints.isHorizontalFixedSize = false
         }
 
