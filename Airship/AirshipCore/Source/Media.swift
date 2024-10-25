@@ -29,7 +29,7 @@ struct Media: View {
                     cropPosition: self.model.cropPosition,
                     constraints: constraints,
                     imageSize: imageSize
-                )
+                ).allowsHitTesting(false)
             } placeholder: {
                 AirshipProgressView()
             }
