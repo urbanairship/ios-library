@@ -987,7 +987,7 @@ struct MediaModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let video: Video?
     let cropPosition: Position?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case mediaType = "media_type"
@@ -1003,7 +1003,7 @@ struct MediaModel: BaseModel, Accessible, Codable {
         case video = "video"
         case cropPosition = "position"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1035,7 +1035,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
     let markdown: MarkDownOptions?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case text = "text"
@@ -1049,7 +1049,7 @@ struct LabelModel: BaseModel, Accessible, Codable {
         case enableBehaviors = "enabled"
         case type
         case markdown
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1082,7 +1082,7 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
     var visibility: VisibilityInfo?
     var eventHandlers: [EventHandler]?
     var reportingMetadata: AirshipJSON?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
     var tapEffect: ButtonTapEffect?
 
 
@@ -1100,7 +1100,6 @@ struct LabelButtonModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
         case type
-        case role
         case tapEffect = "tap_effect"
     }
 }
@@ -1118,7 +1117,7 @@ struct ButtonLayoutModel: BaseModel, Accessible, Codable {
     var visibility: VisibilityInfo?
     var eventHandlers: [EventHandler]?
     var reportingMetadata: AirshipJSON?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
     var view: ViewModel
     var tapEffect: ButtonTapEffect?
 
@@ -1136,8 +1135,8 @@ struct ButtonLayoutModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
         case type
-        case role
         case tapEffect = "tap_effect"
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1285,7 +1284,7 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
     var visibility: VisibilityInfo?
     var eventHandlers: [EventHandler]?
     var reportingMetadata: AirshipJSON?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
     var tapEffect: ButtonTapEffect?
 
     enum CodingKeys: String, CodingKey {
@@ -1302,8 +1301,8 @@ struct ImageButtonModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case reportingMetadata = "reporting_metadata"
         case type
-        case role
         case tapEffect = "tap_effect"
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1454,7 +1453,8 @@ struct AccessibilityAction: Codable, Equatable, Sendable, Hashable, Identifiable
     let actions: [ActionsPayload]?
     let behaviors: [ButtonClickBehavior]?
 
-    let role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
+
     let contentDescription: String?
     let localizedContentDescription: LocalizedContentDescription?
 
@@ -1463,7 +1463,6 @@ struct AccessibilityAction: Codable, Equatable, Sendable, Hashable, Identifiable
         case reportingMetadata = "reporting_metadata"
         case actions
         case behaviors
-        case role
         case contentDescription = "content_description"
         case localizedContentDescription = "localized_content_description"
     }
@@ -1754,7 +1753,7 @@ struct CheckboxControllerModel: BaseModel, Accessible {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1770,11 +1769,12 @@ struct CheckboxControllerModel: BaseModel, Accessible {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
 struct RadioInputControllerModel: BaseModel, Accessible {
+
     let type = ViewModelType.radioInputController
     let identifier: String
     let submit: FormSubmitBehavior?
@@ -1788,7 +1788,7 @@ struct RadioInputControllerModel: BaseModel, Accessible {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case identifier = "identifier"
@@ -1804,18 +1804,84 @@ struct RadioInputControllerModel: BaseModel, Accessible {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
-enum AccessibilityRole: String, Codable {
+enum AccessibleRoleType: String, Codable {
     case heading
+    case button
+    case checkbox
+    case form
+    case radio
+    case radioGroup = "radioGroup"
+    case presentation
+}
+
+enum AccessibleRole: Codable, Equatable, Hashable {
+    case heading(level: Int)
     case checkbox
     case button
     case form
     case radio
-    case radioGroup = "radiogroup"
+    case radioGroup
     case presentation
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case level
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+
+        switch type {
+        case "heading":
+            let level = try container.decode(Int.self, forKey: .level)
+            self = .heading(level: level)
+        case "checkbox":
+            self = .checkbox
+        case "button":
+            self = .button
+        case "form":
+            self = .form
+        case "radio":
+            self = .radio
+        case "radiogroup":
+            self = .radioGroup
+        case "presentation":
+            self = .presentation
+        default:
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "Invalid type value: \(type)"
+            )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        switch self {
+        case .heading(let level):
+            try container.encode("heading", forKey: .type)
+            try container.encode(level, forKey: .level)
+        case .checkbox:
+            try container.encode("checkbox", forKey: .type)
+        case .button:
+            try container.encode("button", forKey: .type)
+        case .form:
+            try container.encode("form", forKey: .type)
+        case .radio:
+            try container.encode("radio", forKey: .type)
+        case .radioGroup:
+            try container.encode("radiogroup", forKey: .type)
+        case .presentation:
+            try container.encode("presentation", forKey: .type)
+        }
+    }
 }
 
 struct LocalizedContentDescription: Codable, Equatable, Sendable, Hashable {
@@ -1833,7 +1899,7 @@ protocol Accessible {
 
     var localizedContentDescription: LocalizedContentDescription? { get }
 
-    var role: AccessibilityRole? { get }
+    var accessibleRole: AccessibleRole? { get }
 }
 
 struct TextInputModel: BaseModel, Accessible, Codable {
@@ -1851,7 +1917,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let inputType: TextInputType
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case attributeName = "attribute_name"
@@ -1868,7 +1934,7 @@ struct TextInputModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case inputType = "input_type"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1886,7 +1952,7 @@ struct ToggleModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1902,7 +1968,7 @@ struct ToggleModel: BaseModel, Accessible, Codable {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1917,7 +1983,7 @@ struct CheckboxModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -1930,7 +1996,7 @@ struct CheckboxModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -1946,7 +2012,7 @@ struct RadioInputModel: BaseModel, Accessible, Codable {
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
     let enableBehaviors: [EnableBehavior]?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case style = "style"
@@ -1960,7 +2026,7 @@ struct RadioInputModel: BaseModel, Accessible, Codable {
         case eventHandlers = "event_handlers"
         case enableBehaviors = "enabled"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
@@ -2050,7 +2116,7 @@ struct ScoreModel: BaseModel, Accessible, Codable {
     let enableBehaviors: [EnableBehavior]?
     let visibility: VisibilityInfo?
     let eventHandlers: [EventHandler]?
-    var role: AccessibilityRole?
+    var accessibleRole: AccessibleRole?
 
     enum CodingKeys: String, CodingKey {
         case border = "border"
@@ -2065,7 +2131,7 @@ struct ScoreModel: BaseModel, Accessible, Codable {
         case visibility = "visibility"
         case eventHandlers = "event_handlers"
         case type
-        case role
+        case accessibleRole = "accessible_role"
     }
 }
 
