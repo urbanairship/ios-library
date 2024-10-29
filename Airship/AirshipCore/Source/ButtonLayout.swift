@@ -23,14 +23,14 @@ struct ButtonLayout : View {
             clickBehaviors: self.model.clickBehaviors,
             eventHandlers: self.model.eventHandlers,
             actions: self.model.actions,
-            tapEffect: self.model.tapEffect
+            tapEffect: self.model.tapEffect,
+            useTapGestureForVoiceOver: true
         ) {
             ViewFactory.createView(model: self.model.view, constraints: constraints)
                 .background(
                     color: self.model.backgroundColor,
                     border: self.model.border
                 )
-                .accessible(self.model)
                 .background(Color.airshipTappableClear)
         }
         .commonButton(self.model)

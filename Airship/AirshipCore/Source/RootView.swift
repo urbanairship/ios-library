@@ -5,15 +5,21 @@ import SwiftUI
 
 struct RootView<Content: View>: View {
 
-    #if !os(tvOS) && !os(watchOS)
+#if !os(tvOS) && !os(watchOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    #endif
+#endif
 
     @State private var currentOrientation: Orientation = RootView.resolveOrientation()
 
     @State private var isForeground: Bool = true
     @State private var isVisible: Bool = false
+
+#if !os(watchOS)
+    @State private var isVoiceOverRunning: Bool = UIAccessibility.isVoiceOverRunning
+#else
+    @State private var isVoiceOverRunning: Bool = false
+#endif
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
 
@@ -34,39 +40,46 @@ struct RootView<Content: View>: View {
     @ViewBuilder
     var body: some View {
         content(currentOrientation, resolveWindowSize())
-        .environmentObject(thomasEnvironment)
-        .environmentObject(thomasEnvironment.defaultFormState)
-        .environmentObject(thomasEnvironment.defaultViewState)
-        .environmentObject(thomasEnvironment.defaultPagerState)
-        .environment(\.orientation, currentOrientation)
-        .environment(\.windowSize, resolveWindowSize())
-        .environment(\.isVisible, isVisible)
-        .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
-            self.isForeground = true
-            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToBackground)) { (_) in
-            self.isForeground = false
-            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
-        }
-        .onAppear {
-            self.currentOrientation = RootView.resolveOrientation()
-            self.isVisible = true
-            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
-        }
-        .onDisappear {
-            self.isVisible = false
-            self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
-        }
-        #if os(iOS)
-        .onReceive(
-            NotificationCenter.default.publisher(
-                for: UIDevice.orientationDidChangeNotification
-            )
-        ) { _ in
-            self.currentOrientation = RootView.resolveOrientation()
-        }
-        #endif
+            .environmentObject(thomasEnvironment)
+            .environmentObject(thomasEnvironment.defaultFormState)
+            .environmentObject(thomasEnvironment.defaultViewState)
+            .environmentObject(thomasEnvironment.defaultPagerState)
+            .environment(\.orientation, currentOrientation)
+            .environment(\.windowSize, resolveWindowSize())
+            .environment(\.isVisible, isVisible)
+            .environment(\.isVoiceOverRunning, isVoiceOverRunning)
+            .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
+                self.isForeground = true
+                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToBackground)) { (_) in
+                self.isForeground = false
+                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+#if !os(watchOS)
+            .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
+                updateVoiceoverRunningState()
+            }
+#endif
+            .onAppear {
+                updateVoiceoverRunningState()
+                self.currentOrientation = RootView.resolveOrientation()
+                self.isVisible = true
+                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+            .onDisappear {
+                self.isVisible = false
+                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+#if os(iOS)
+            .onReceive(
+                NotificationCenter.default.publisher(
+                    for: UIDevice.orientationDidChangeNotification
+                )
+            ) { _ in
+                self.currentOrientation = RootView.resolveOrientation()
+            }
+#endif
     }
 
     /// Uses the vertical and horizontal class size to determine small, medium, large window size:
@@ -74,9 +87,9 @@ struct RootView<Content: View>: View {
     /// - medium: regular x compact or compact x regular
     /// - small: compact x compact
     func resolveWindowSize() -> WindowSize {
-        #if os(tvOS) || os(watchOS)
+#if os(tvOS) || os(watchOS)
         return .large
-        #else
+#else
         switch (verticalSizeClass, horizontalSizeClass) {
         case (.regular, .regular):
             return .large
@@ -85,13 +98,13 @@ struct RootView<Content: View>: View {
         default:
             return .medium
         }
-        #endif
+#endif
     }
 
     static func resolveOrientation() -> Orientation {
-        #if os(tvOS) || os(watchOS)
+#if os(tvOS) || os(watchOS)
         return .landscape
-        #else
+#else
         let scene = try? AirshipSceneManager.shared.lastActiveScene
 
         if let scene = scene {
@@ -102,6 +115,14 @@ struct RootView<Content: View>: View {
             }
         }
         return .portrait
-        #endif
+#endif
+    }
+
+    private func updateVoiceoverRunningState() {
+#if !os(watchOS)
+        isVoiceOverRunning = UIAccessibility.isVoiceOverRunning
+#else
+        isVoiceOverRunning = false
+#endif
     }
 }

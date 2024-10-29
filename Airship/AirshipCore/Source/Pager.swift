@@ -26,6 +26,7 @@ struct Pager: View {
     @Environment(\.isVisible) var isVisible
     @Environment(\.layoutState) var layoutState
     @Environment(\.layoutDirection) var layoutDirection
+    @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
     let model: PagerModel
     let constraints: ViewConstraints
@@ -33,7 +34,6 @@ struct Pager: View {
     @State private var lastReportedIndex = -1
     @GestureState private var translation: CGFloat = 0
     @State private var size: CGSize?
-    @State private var isVoiceOverRunning: Bool = false
     @State private var scrollPosition: Int?
     @State private var clearPagingRequestTask: Task<Void, Never>?
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
@@ -277,7 +277,8 @@ struct Pager: View {
                     let fallback = accessibilityAction.localizedContentDescription?.fallbackDescription
                     let text = nameKey?.airshipLocalizedString(fallback: fallback) ?? "unknown" /// Action fallback description should always be defined
                     Text(text)
-                }.accessibilityRemoveTraits(.isButton)
+                }
+                .accessibilityRemoveTraits(.isButton)
             }
         }
     }
@@ -300,13 +301,6 @@ struct Pager: View {
             .onReceive(self.timer) { _ in
                 onTimer()
             }
-#if !os(watchOS)
-            .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
-                updateVoiceoverRunningState()
-            }.onAppear {
-                updateVoiceoverRunningState()
-            }
-#endif
 #if !os(tvOS)
             .applyIf(self.shouldAddSwipeGesture) { view in
                 view.simultaneousGesture(
@@ -414,21 +408,6 @@ struct Pager: View {
 #endif
 
     // MARK: Utils methods
-
-    private func updateVoiceoverRunningState() {
-        #if !os(watchOS)
-            isVoiceOverRunning = UIAccessibility.isVoiceOverRunning
-        #else
-            isVoiceOverRunning = false
-        #endif
-
-        /// Pause pager when voiceover is active
-        if isVoiceOverRunning {
-            pagerState.pause()
-        } else {
-            pagerState.resume()
-        }
-    }
 
     private func handleSwipe(
         direction: PagerSwipeDirection,

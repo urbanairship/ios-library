@@ -11,6 +11,7 @@ struct AirshipButton<Label> : View  where Label : View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) private var layoutState
     @Environment(\.isButtonActionsEnabled) private var isButtonActionsEnabled
+    @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
 
     let identifier: String
     let reportingMetadata: AirshipJSON?
@@ -19,19 +20,59 @@ struct AirshipButton<Label> : View  where Label : View {
     let eventHandlers: [EventHandler]?
     let actions: ActionsPayload?
     let tapEffect: ButtonTapEffect?
+    let useTapGestureForVoiceOver: Bool
     let label: () -> Label
 
+    init(
+        identifier: String,
+        reportingMetadata: AirshipJSON? = nil,
+        description: String,
+        clickBehaviors: [ButtonClickBehavior]? = nil,
+        eventHandlers: [EventHandler]? = nil,
+        actions: ActionsPayload? = nil,
+        tapEffect: ButtonTapEffect? = nil,
+        useTapGestureForVoiceOver: Bool = false,
+        label: @escaping () -> Label
+    ) {
+        self.identifier = identifier
+        self.reportingMetadata = reportingMetadata
+        self.description = description
+        self.clickBehaviors = clickBehaviors
+        self.eventHandlers = eventHandlers
+        self.actions = actions
+        self.tapEffect = tapEffect
+        self.useTapGestureForVoiceOver = useTapGestureForVoiceOver
+        self.label = label
+    }
+
     var body: some View {
-        Button(
-            action: {
-                if (isButtonActionsEnabled) {
-                    doButtonActions()
-                }
-            },
-            label: self.label
-        )
-        .accessibilityLabel(self.description)
-        .buttonTapEffect(tapEffect ?? .default)
+        if isVoiceOverRunning, useTapGestureForVoiceOver {
+            ZStack {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .accessibilityElement()
+                    .accessibilityLabel(self.description)
+                    .accessibilityAddTraits([.isButton])
+                    .accessibilityAction {
+                        if (isButtonActionsEnabled) {
+                            doButtonActions()
+                        }
+                    }
+                self.label()
+            }
+            .accessibilityElement(children: .contain)
+        } else {
+            Button(
+                action: {
+                    if (isButtonActionsEnabled) {
+                        doButtonActions()
+                    }
+                },
+                label: self.label
+            )
+            .accessibilityLabel(self.description)
+            .buttonTapEffect(tapEffect ?? .default)
+        }
     }
 
     private func doButtonActions() {

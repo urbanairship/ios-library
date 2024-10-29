@@ -53,6 +53,9 @@ class PagerState: ObservableObject {
     
     private var isManuallyPaused = false
 
+    @Published
+    var isVoiceOverRunning = false
+
     private var mediaReadyState: [MediaKey: Bool] = [:]
 
     var currentPage: PageState {
@@ -126,7 +129,7 @@ class PagerState: ObservableObject {
             key.pageIndex == pageIndex && isReady == false
         })
 
-        let update = isMediaReady && !isManuallyPaused
+        let update = isMediaReady && !isManuallyPaused && !isVoiceOverRunning
         if self.inProgress != update {
             self.inProgress = update
         }
