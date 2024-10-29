@@ -455,10 +455,12 @@ public class Airship: NSObject {
                 )
 
                 if component != nil {
+                    AirshipLogger.debug("Handling Airship deep link: \(deepLink)")
                     return true
                 }
 
                 if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
+                    AirshipLogger.debug("Handling deep link by receivedDeepLink: \(deepLink) on delegate: \(deepLinkDelegate)")
                     await deepLinkDelegate.receivedDeepLink(deepLink)
                     return true
                 }
@@ -476,8 +478,9 @@ public class Airship: NSObject {
             return  false
         }
 
+        AirshipLogger.debug("Handling deep link via receivedDeepLink: \(deepLink) on delegate: \(deepLinkDelegate)")
         await deepLinkDelegate.receivedDeepLink(deepLink)
-        
+
         return true
     }
 
@@ -489,15 +492,19 @@ public class Airship: NSObject {
     /// - Returns: `true` if the deeplink is handled, `false` otherwise.
     @MainActor
     private func handleAirshipDeeplink(_ deeplink: URL) -> Bool {
+
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
             #if !os(watchOS)
+            AirshipLogger.debug("Handling Settings deep link: \(deeplink)")
             if let url = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(url)
             }
             #endif
             return true
         case Airship.appStoreDeepLinkHost:
+            AirshipLogger.debug("Handling App Store deep link: \(deeplink)")
+
             let appStoreUrl = "itms-apps://itunes.apple.com/app/"
             guard let itunesID = getItunesID(deeplink) else {
                 return true
