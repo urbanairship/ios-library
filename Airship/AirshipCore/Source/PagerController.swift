@@ -8,6 +8,7 @@ struct PagerController: View {
     let constraints: ViewConstraints
     @StateObject var pagerState: PagerState
     @Environment(\.layoutState) var layoutState
+    @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
     @MainActor
     init(model: PagerControllerModel, constraints: ViewConstraints) {
@@ -23,6 +24,12 @@ struct PagerController: View {
                 color: self.model.backgroundColor,
                 border: self.model.border
             )
+            .airshipOnChangeOf(self.isVoiceOverRunning, initial: true) { value in
+                pagerState.isVoiceOverRunning = value
+            }
+            .onAppear {
+                pagerState.isVoiceOverRunning = isVoiceOverRunning
+            }
             .common(self.model)
             .environmentObject(pagerState)
             .environment(

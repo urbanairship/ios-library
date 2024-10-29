@@ -82,6 +82,15 @@ public extension View {
         }
     }
 
+    @ViewBuilder
+    internal func accessibilityActionsCompat<Content>(@ViewBuilder _ content: () -> Content) -> some View where Content : View {
+        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+            self.accessibilityActions(content)
+        } else {
+            self
+        }
+    }
+
     /// Common modifier for buttons so event handlers can be added separately to prevent tap issues
     @ViewBuilder
     internal func commonButton<Content: BaseModel>(

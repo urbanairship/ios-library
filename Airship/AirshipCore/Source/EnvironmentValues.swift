@@ -11,6 +11,10 @@ private struct WindowSizeKey: EnvironmentKey {
     static let defaultValue: WindowSize? = nil
 }
 
+private struct VoiceOverRunningKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
 private struct VisibleEnvironmentKey: EnvironmentKey {
     static let defaultValue: Bool = false
 }
@@ -37,6 +41,11 @@ public extension EnvironmentValues {
     var windowSize: WindowSize? {
         get { self[WindowSizeKey.self] }
         set { self[WindowSizeKey.self] = newValue }
+    }
+
+    var isVoiceOverRunning: Bool {
+        get { self[VoiceOverRunningKey.self] }
+        set { self[VoiceOverRunningKey.self] = newValue }
     }
 
     var isVisible: Bool {

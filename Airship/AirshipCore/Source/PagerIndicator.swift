@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-
 struct PagerIndicator: View {
 
     let model: PagerIndicatorModel
@@ -42,7 +41,12 @@ struct PagerIndicator: View {
     }
 
     var body: some View {
-        let size = (constraints.height ?? 32.0) - (model.border?.strokeWidth ?? 0)
+        let size: Double = if let height = constraints.height {
+            height - (self.model.border?.strokeWidth ?? 0)
+        } else {
+            32.0
+        }
+        
         let childConstraints = ViewConstraints(
             width: size,
             height: size

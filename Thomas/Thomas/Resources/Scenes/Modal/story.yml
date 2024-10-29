@@ -60,6 +60,12 @@ view:
       view:
         type: pager
         gestures:
+        - behavior:
+            behaviors:
+              - dismiss
+          direction: up
+          identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_swipe_up
+          type: swipe
         - type: tap
           identifier: "tap-gesture-start-id"
           location: start
