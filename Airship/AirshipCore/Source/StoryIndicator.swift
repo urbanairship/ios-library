@@ -108,7 +108,7 @@ struct StoryIndicator: View {
             return model.style.progressColor.toColor(colorScheme)
         }
         
-        if pagerState.isLastPage() && pagerState.progress >= 1 {
+        if pagerState.isLastPage && pagerState.progress >= 1 {
             return model.style.progressColor.toColor(colorScheme)
         }
         

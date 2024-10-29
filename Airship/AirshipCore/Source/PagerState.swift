@@ -29,13 +29,21 @@ struct PageState: Sendable {
     }
 }
 
+enum PageRequest {
+    case next
+    case back
+    case first
+}
+
 @MainActor
 class PagerState: ObservableObject {
-    @Published var pageIndex: Int = 0 {
+    @Published private(set) var pageIndex: Int = 0 {
         didSet {
             updateInProgress()
         }
     }
+
+    @Published var pageRequest: PageRequest?
     @Published var pages: [PageState] = []
     @Published var progress: Double = 0.0
     @Published var completed: Bool = false
@@ -57,10 +65,6 @@ class PagerState: ObservableObject {
     init(identifier: String) {
         self.identifier = identifier
     }
-    
-    func isLastPage() -> Bool {
-        return pageIndex == (pages.count - 1)
-    }
 
     func pause() {
         self.isManuallyPaused = true
@@ -71,9 +75,34 @@ class PagerState: ObservableObject {
         self.isManuallyPaused = false
         updateInProgress()
     }
-    
-    func preparePageChange() {
+
+    func setPageIndex(_ pageIndex: Int) {
+        guard
+            pageIndex >= 0,
+            pageIndex != self.pageIndex,
+            pageIndex < self.pages.count
+        else {
+            return
+        }
+
         self.progress = 0.0
+        self.pageIndex = pageIndex
+    }
+
+    var isFirstPage: Bool {
+        return pageIndex == 0
+    }
+    
+    var isLastPage: Bool {
+        return pageIndex == (pages.count - 1)
+    }
+
+    var nextPageIndex: Int {
+        min(pageIndex + 1, pages.count - 1)
+    }
+
+    var previousPageIndex: Int {
+        max(pageIndex - 1, 0)
     }
 
     func registerMedia(pageIndex: Int, id: UUID) {

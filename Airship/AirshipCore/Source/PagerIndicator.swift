@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-
 struct PagerIndicator: View {
 
     let model: PagerIndicatorModel

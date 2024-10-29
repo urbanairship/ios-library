@@ -5,7 +5,6 @@ import SwiftUI
 
 /// Button view.
 struct AirshipButton<Label> : View  where Label : View {
-
     @EnvironmentObject private var formState: FormState
     @EnvironmentObject private var pagerState: PagerState
     @EnvironmentObject private var viewState: ViewState
@@ -79,20 +78,13 @@ struct AirshipButton<Label> : View  where Label : View {
                   )
 
             case .pagerNext:
-                withAnimation {
-                    pagerState.pageIndex = min(
-                        pagerState.pageIndex + 1,
-                        pagerState.pages.count - 1
-                    )
-                }
+                pagerState.pageRequest = .next
 
             case .pagerPrevious:
-                withAnimation {
-                    pagerState.pageIndex = max(pagerState.pageIndex - 1, 0)
-                }
+                pagerState.pageRequest = .back
 
             case .pagerNextOrDismiss:
-                if pagerState.isLastPage() {
+                if pagerState.isLastPage {
                     thomasEnvironment.dismiss(
                         buttonIdentifier: self.identifier,
                         buttonDescription: self.description,
@@ -100,20 +92,14 @@ struct AirshipButton<Label> : View  where Label : View {
                         layoutState: layoutState
                     )
                 } else {
-                    withAnimation {
-                        pagerState.pageIndex = max(pagerState.pageIndex + 1, 0)
-                    }
+                    pagerState.pageRequest = .next
                 }
 
             case .pagerNextOrFirst:
-                if pagerState.isLastPage() {
-                    withAnimation {
-                        pagerState.pageIndex = 0
-                    }
+                if pagerState.isLastPage {
+                    pagerState.pageRequest = .first
                 } else {
-                    withAnimation {
-                        pagerState.pageIndex = max(pagerState.pageIndex + 1, 0)
-                    }
+                    pagerState.pageRequest = .next
                 }
 
             case .pagerPause:
