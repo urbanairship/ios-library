@@ -15,9 +15,9 @@ public import AirshipCore
 public class OUAAirship: NSObject {
     
     /// A user configurable deep link delegate.
-    private var _deepLinkDelegate: DeepLinkDelegate?
+    private static var _deepLinkDelegate: DeepLinkDelegate?
     @objc
-    public var deepLinkDelegate: OUADeepLinkDelegate? {
+    public static var deepLinkDelegate: OUADeepLinkDelegate? {
         didSet {
             if let deepLinkDelegate {
                 _deepLinkDelegate = OUADeepLinkDelegateWrapper(delegate: deepLinkDelegate)

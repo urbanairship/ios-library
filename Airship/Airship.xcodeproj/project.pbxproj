@@ -195,8 +195,8 @@
 		608B16F12C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */; };
 		608B16F22C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */; };
 		608B16F32C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */; };
-		60A292112CB7C5C30096F5EB /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		60956D862CBE7CFA00950172 /* AirshipLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* AirshipLock.swift */; };
+		60A292112CB7C5C30096F5EB /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		60A364ED2C3479BF00B05E26 /* ExecutionWindowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A364EC2C3479BF00B05E26 /* ExecutionWindowTest.swift */; };
 		60A5CC082B28DC500017EDB2 /* NotificationCategoriesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A5CC072B28DC500017EDB2 /* NotificationCategoriesTest.swift */; };
 		60A5CC0C2B29AE890017EDB2 /* ProximityRegionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A5CC0B2B29AE890017EDB2 /* ProximityRegionTest.swift */; };
@@ -1943,6 +1943,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 847BFFF3267CD739007CD249;
 			remoteInfo = AirshipPreferenceCenter;
+		};
+		A60235352CCB9E3C00CF412B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
+			remoteInfo = AirshipBasement;
 		};
 		A61F3A762A5DBA0E00EE94CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5871,6 +5878,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				A60235362CCB9E3C00CF412B /* PBXTargetDependency */,
 				A641E1572BDBF5FF00DE6FAA /* PBXTargetDependency */,
 				A641E1592BDBF5FF00DE6FAA /* PBXTargetDependency */,
 				A641E15B2BDBF5FF00DE6FAA /* PBXTargetDependency */,
@@ -8161,6 +8169,11 @@
 			isa = PBXTargetDependency;
 			target = 847BFFF3267CD739007CD249 /* AirshipPreferenceCenter */;
 			targetProxy = 847BFFFE267CD73A007CD249 /* PBXContainerItemProxy */;
+		};
+		A60235362CCB9E3C00CF412B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E431F6B26EA814F009228AB /* AirshipBasement */;
+			targetProxy = A60235352CCB9E3C00CF412B /* PBXContainerItemProxy */;
 		};
 		A61F3A772A5DBA0E00EE94CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

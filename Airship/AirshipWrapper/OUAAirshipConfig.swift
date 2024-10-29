@@ -65,17 +65,10 @@ public class OUAAirshipConfig: NSObject {
     @objc
     public var developmentLogLevel: OUAAirshipLogLevel {
         get {
-            if let level = OUAAirshipLogLevel(rawValue: config.developmentLogLevel.rawValue) {
-                return level
-            } else {
-                return OUAAirshipLogLevel.undefined
-            }
+            return OUAHelpers.toLogLevel(level: config.developmentLogLevel)
         }
         set {
-            let value = newValue.rawValue
-            if let level = AirshipLogLevel(rawValue: value) {
-                config.developmentLogLevel = level
-            }
+            config.developmentLogLevel = OUAHelpers.toAirshipLogLevel(level: newValue)
         }
     }
 
@@ -83,17 +76,10 @@ public class OUAAirshipConfig: NSObject {
     @objc
     public var productionLogLevel: OUAAirshipLogLevel {
         get {
-            if let level = OUAAirshipLogLevel(rawValue: config.productionLogLevel.rawValue) {
-                return level
-            } else {
-                return OUAAirshipLogLevel.undefined
-            }
+            return OUAHelpers.toLogLevel(level: config.productionLogLevel)
         }
         set {
-            let value = newValue.rawValue
-            if let level = AirshipLogLevel(rawValue: value) {
-                config.productionLogLevel = level
-            }
+            config.productionLogLevel = OUAHelpers.toAirshipLogLevel(level: newValue)
         }
     }
     /// Auto pause InAppAutomation on launch. Defaults to `false`
@@ -111,17 +97,10 @@ public class OUAAirshipConfig: NSObject {
     @objc
     public var site: OUACloudSite {
         get {
-            if let site = OUACloudSite(rawValue: config.site.rawValue) {
-                return site
-            } else {
-                return OUACloudSite.us
-            }
+            return OUAHelpers.toSite(site: config.site)
         }
         set {
-            let value = newValue.rawValue
-            if let site = CloudSite(rawValue: value) {
-                config.site = site
-            }
+            config.site = OUAHelpers.toAirshipSite(site: newValue)
         }
     }
 
@@ -500,11 +479,7 @@ public class OUAAirshipConfig: NSObject {
     @objc
     public var logLevel: OUAAirshipLogLevel {
         get {
-            if let level = OUAAirshipLogLevel(rawValue: config.logLevel.rawValue) {
-                return level
-            } else {
-                return OUAAirshipLogLevel.undefined
-            }
+            return OUAHelpers.toLogLevel(level: config.logLevel)
         }
     }
 
@@ -525,7 +500,7 @@ public class OUAAirshipConfig: NSObject {
     @objc
     public class func config(contentsOfFile path: String?) -> OUAAirshipConfig {
         let airshipConfig = OUAAirshipConfig()
-        airshipConfig.config = AirshipConfig(contentsOfFile: path)
+        airshipConfig.config = AirshipConfig.config(contentsOfFile: path)
         return airshipConfig
     }
 
@@ -546,7 +521,7 @@ public class OUAAirshipConfig: NSObject {
     @objc
     public convenience init(contentsOfFile path: String?) {
         self.init()
-        self.config = AirshipConfig.init(contentsOfFile: path)
+        self.config = AirshipConfig.config(contentsOfFile: path)
     }
 
     /// Creates an instance with empty values.
@@ -636,4 +611,71 @@ public enum OUACloudSite: Int, Sendable {
     /// Represents the EU cloud site.
     /// Projects available at go.airship.eu must use this value.
     case eu = 1
+}
+
+public class OUAHelpers: NSObject {
+    
+    public static func toLogLevel(level: AirshipLogLevel) -> OUAAirshipLogLevel {
+        switch(level){
+        case AirshipLogLevel.undefined:
+            return OUAAirshipLogLevel.undefined
+        case AirshipLogLevel.none:
+            return OUAAirshipLogLevel.none
+        case AirshipLogLevel.error:
+            return OUAAirshipLogLevel.error
+        case AirshipLogLevel.warn:
+            return OUAAirshipLogLevel.warn
+        case AirshipLogLevel.info:
+            return OUAAirshipLogLevel.info
+        case AirshipLogLevel.debug:
+            return OUAAirshipLogLevel.debug
+        case AirshipLogLevel.verbose:
+            return OUAAirshipLogLevel.verbose
+        default:
+            return OUAAirshipLogLevel.undefined
+        }
+    }
+    
+    public static func toAirshipLogLevel(level: OUAAirshipLogLevel) -> AirshipLogLevel {
+        switch(level){
+        case OUAAirshipLogLevel.undefined:
+            return AirshipLogLevel.undefined
+        case OUAAirshipLogLevel.none:
+            return AirshipLogLevel.none
+        case OUAAirshipLogLevel.error:
+            return AirshipLogLevel.error
+        case OUAAirshipLogLevel.warn:
+            return AirshipLogLevel.warn
+        case OUAAirshipLogLevel.info:
+            return AirshipLogLevel.info
+        case OUAAirshipLogLevel.debug:
+            return AirshipLogLevel.debug
+        case OUAAirshipLogLevel.verbose:
+            return AirshipLogLevel.verbose
+        default:
+            return AirshipLogLevel.undefined
+        }
+    }
+    
+    public static func toSite(site: CloudSite) -> OUACloudSite {
+        switch(site){
+        case CloudSite.us:
+            return OUACloudSite.us
+        case CloudSite.eu:
+            return OUACloudSite.eu
+        default:
+            return OUACloudSite.us
+        }
+    }
+    
+    public static func toAirshipSite(site: OUACloudSite) -> CloudSite {
+        switch(site){
+        case OUACloudSite.us:
+            return CloudSite.us
+        case OUACloudSite.eu:
+            return CloudSite.eu
+        default:
+            return CloudSite.us
+        }
+    }
 }
