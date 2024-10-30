@@ -153,11 +153,9 @@ struct ModalPresentationModel: Codable, Equatable, Sendable {
 }
 
 struct ThomasShadow: Codable, Equatable, Sendable {
-    let defaultShadow: Shadow
     let selectors: [Selector]?
 
     enum CodingKeys: String, CodingKey {
-        case defaultShadow = "default"
         case selectors = "selectors"
     }
 
@@ -167,7 +165,7 @@ struct ThomasShadow: Codable, Equatable, Sendable {
 
         enum CodingKeys: String, CodingKey {
             case platform = "platform"
-            case shadow = "color"
+            case shadow = "shadow"
         }
     }
 

@@ -107,16 +107,11 @@ fileprivate extension View {
 
 fileprivate extension ThomasShadow {
     var resolvedBoxShadow: ThomasShadow.BoxShadow? {
-        let selected = self.selectors?.first(
+        self.selectors?.first(
             where: { selector in
                 selector.platform == nil || selector.platform == .ios
             }
-        )
-
-        guard let selected else {
-            return self.defaultShadow.boxShadow
-        }
-        return selected.shadow.boxShadow
+        )?.shadow.boxShadow
     }
 }
 
