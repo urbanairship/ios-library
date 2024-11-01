@@ -3,7 +3,10 @@
 import Combine
 import Foundation
 public import SwiftUI
+
+#if canImport(WebKit)
 import WebKit
+#endif
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -136,6 +139,7 @@ struct AnyMessageViewStyle: MessageViewStyle {
     }
 }
 
+#if canImport(WebKit)
 struct MessageCenterWebView: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
@@ -297,6 +301,7 @@ struct MessageCenterWebView: UIViewRepresentable {
         }
     }
 }
+#endif
 
 struct MessageViewStyleKey: EnvironmentKey {
     static let defaultValue = AnyMessageViewStyle(style: .defaultStyle)
@@ -319,9 +324,12 @@ private struct MessageCenterMessageContentView: View {
 
     @Environment(\.airshipMessageCenterTheme)
     private var theme
-    
+
+#if canImport(webKit)
+
     @State
     private var webViewPhase: MessageCenterWebView.Phase = .loading
+#endif
 
     @State
     private var message: MessageCenterMessage? = nil
@@ -372,6 +380,8 @@ private struct MessageCenterMessageContentView: View {
         return request
     }
 
+#if canImport(webKit)
+
     @MainActor
     private func makeExtensionDelegate(messageID: String) async throws
         -> MessageCenterNativeBridgeExtension
@@ -387,6 +397,7 @@ private struct MessageCenterMessageContentView: View {
             user: user
         )
     }
+    #endif
 
     var body: some View {
         let backgroundColor = self.colorScheme.airshipResolveColor(
@@ -403,6 +414,8 @@ private struct MessageCenterMessageContentView: View {
             if let backgroundColor {
                 backgroundColor.ignoresSafeArea()
             }
+
+#if canImport(webKit)
 
             MessageCenterWebView(
                 phase: self.$webViewPhase,
@@ -464,6 +477,9 @@ private struct MessageCenterMessageContentView: View {
                     }
                 }
             }
+#else
+            Text("Not supported")
+            #endif
         }
         .navigationTitle(
             Text(title ?? self.message?.title ?? "")
@@ -477,9 +493,8 @@ private struct MessageCenterMessageContentView: View {
         .toolbar {
             deleteButton
         }
-        .navigationBarTitleDisplayMode(.inline)
         .applyIf(containerColor != nil) { view in
-            if #available(iOS 16.0, *) {
+            if #available(iOS 16.0, tvOS 16.0, *) {
                 view.toolbarBackground(containerColor!, for: .navigationBar)
                     .toolbarBackground(.visible, for: .navigationBar)
             } else {
@@ -522,3 +537,4 @@ private struct MessageCenterMessageContentView: View {
         }
     }
 }
+

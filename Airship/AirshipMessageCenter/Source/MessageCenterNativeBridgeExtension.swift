@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+#if !os(tvOS)
 import Foundation
 public import WebKit
 
@@ -50,3 +51,5 @@ public final class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExt
         js.add("getUserId", string: self.user.username)
     }
 }
+
+#endif

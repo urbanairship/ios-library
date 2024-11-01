@@ -20,7 +20,6 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         return InAppAutomation.shared.inAppMessaging.themeManager
     }
 
-
     init(
         message: InAppMessage,
         priority: Int,
@@ -137,7 +136,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 #endif
     }
 
+
     private func makeInAppExtensions() -> InAppMessageExtensions {
+#if !os(tvOS)
         InAppMessageExtensions(
             nativeBridgeExtension: InAppMessageNativeBridgeExtension(
                 message: message
@@ -145,6 +146,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             imageProvider: AssetCacheImageProvider(assets: assets),
             actionRunner: actionRunner
         )
+#else
+        InAppMessageExtensions(
+            imageProvider: AssetCacheImageProvider(assets: assets),
+            actionRunner: actionRunner
+        )
+#endif
     }
 
     @MainActor
@@ -154,7 +161,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
-    
+
             guard let window = AirshipUtils.mainWindow(scene: scene)
             else {
                 continuation.resume(
@@ -169,7 +176,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 holder.value?.removeFromParent()
                 holder.value = nil
             }
-            
+
             var viewController: InAppMessageBannerViewController?
 
             let listener = InAppMessageDisplayListener(
@@ -214,7 +221,6 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             }
         }
     }
-
 
     @MainActor
     private func displayModal(
@@ -292,6 +298,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         scene: UIWindowScene,
         analytics: InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
+#if !os(tvOS)
         return await withCheckedContinuation { continuation in
             let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
 
@@ -319,6 +326,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
             window.airshipAnimateIn()
         }
+#else
+        return .cancel
+#endif
     }
 
     @MainActor
@@ -332,6 +342,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 continuation.resume(returning: result)
             }
 
+#if !os(tvOS)
             let extensions = ThomasExtensions(
                 nativeBridgeExtension: InAppMessageNativeBridgeExtension(
                     message: message
@@ -340,6 +351,12 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 actionRunner: actionRunner
             )
 
+#else
+            let extensions = ThomasExtensions(
+                imageProvider: AssetCacheImageProvider(assets: assets),
+                actionRunner: actionRunner
+            )
+#endif
             do {
                 try Thomas.display(
                     layout: layout,
@@ -361,7 +378,7 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
     init(assets: AirshipCachedAssetsProtocol) {
         self.assets = assets
     }
-
+    
     func get(url: URL) -> AirshipImageData? {
         guard 
             let url = assets.cachedURL(remoteURL: url),
@@ -370,7 +387,7 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
         else {
             return nil
         }
-
+        
         return imageData
     }
 }

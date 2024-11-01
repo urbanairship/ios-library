@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+#if !os(tvOS)
 import Foundation
 import SwiftUI
 import WebKit
@@ -160,3 +161,4 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         }
     }
 }
+#endif

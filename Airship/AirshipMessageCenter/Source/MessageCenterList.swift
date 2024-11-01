@@ -94,7 +94,7 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
 }
 
 /// Airship Message Center inbox.
-final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
+final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
     
     private enum UpdateType: Sendable {
         case local
@@ -253,8 +253,6 @@ final class MessageCenterInbox: NSObject, MessageCenterInboxProtocol, Sendable {
             nil
         }
         
-        super.init()
-
         workManager.registerWorker(
             updateWorkID,
             type: .serial

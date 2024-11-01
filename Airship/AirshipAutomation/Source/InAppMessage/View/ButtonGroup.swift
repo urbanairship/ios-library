@@ -144,15 +144,15 @@ struct ButtonView: View {
         TextView(
             textInfo: buttonInfo.label,
             textTheme: InAppMessageTheme.Text(
-               letterSpacing: 0,
-               lineSpacing: 0,
-               padding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+                letterSpacing: 0,
+                lineSpacing: 0,
+                padding: EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
             )
         )
     }
 
     var body: some View {
-        Button(action:onTap) {
+        Button(action: onTap) {
             buttonLabel
                 .padding(scaledPadding)
                 .frame(maxWidth: .infinity, minHeight: max(relativeMinHeight, minHeight))
@@ -170,15 +170,6 @@ struct ButtonView: View {
             environment.onButtonDismissed(buttonInfo: self.buttonInfo)
             environment.runActions(actions: self.buttonInfo.actions)
         }
-    }
-}
-
-extension View {
-    func pressable(isPressed: Binding<Bool>) -> some View {
-        self.simultaneousGesture(DragGesture(minimumDistance: 0)
-            .onChanged({ _ in isPressed.wrappedValue = true })
-            .onEnded({ _ in isPressed.wrappedValue = false })
-        )
     }
 }
 

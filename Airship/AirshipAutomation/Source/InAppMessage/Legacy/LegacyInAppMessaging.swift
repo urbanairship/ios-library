@@ -31,7 +31,9 @@ public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
 }
 
 protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
+#if !os(tvOS)
     func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)
+#endif
 
     func receivedRemoteNotification(_ notification: [AnyHashable : Any],
                                     completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
@@ -42,8 +44,8 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
     private let dataStore: PreferenceDataStore
     private let analytics: LegacyInAppAnalyticsProtocol
     private let automationEngine: AutomationEngineProtocol
-    
-    @MainActor 
+
+    @MainActor
     public var customMessageConverter: MessageConvertor?
 
     @MainActor
@@ -53,7 +55,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
     public var scheduleExtender: ScheduleExtender?
 
     private let date: AirshipDateProtocol
-    
+
     init(
         analytics: LegacyInAppAnalyticsProtocol,
         dataStore: PreferenceDataStore,
@@ -76,28 +78,28 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             dataStore.setObject(newValue, forKey: Keys.CurrentStorage.pendingMessageIds.rawValue)
         }
     }
-    
+
     /**
      * Sets whether legacy messages will display immediately upon arrival, instead of waiting
      * until the following foreground. Defaults to `YES`.
      */
     @MainActor
     var displayASAPEnabled: Bool = true
-    
+
     private func cleanUpOldData() {
         self.dataStore.removeObject(forKey: Keys.LegacyStorage.pendingMessages.rawValue)
         self.dataStore.removeObject(forKey: Keys.LegacyStorage.autoDisplayMessage.rawValue)
         self.dataStore.removeObject(forKey: Keys.LegacyStorage.lastDisplayedMessageId.rawValue)
     }
-    
+
     private func schedule(message: LegacyInAppMessage) async {
         let generator = await customMessageConverter ?? generateScheduleFor
-        
+
         guard let schedule = await generator(message) else {
             AirshipLogger.error("Failed to convert legacy in-app automation: \(message)")
             return
         }
-        
+
         if let pending = self.pendingMessageID {
             if await self.scheduleExists(identifier: pending) {
                 AirshipLogger.debug("Pending in-app message replaced")
@@ -109,7 +111,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
 
             await self.cancelSchedule(identifier: pending)
         }
-        
+
         self.pendingMessageID = schedule.identifier
 
         do {
@@ -141,7 +143,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
     private func generateScheduleFor(message: LegacyInAppMessage) -> AutomationSchedule? {
         let primaryColor = InAppMessageColor(hexColorString: message.primaryColor ?? Defaults.primaryColor)
         let secondaryColor = InAppMessageColor(hexColorString: message.secondaryColor ?? Defaults.secondaryColor)
-        
+#if !os(tvOS)
         let buttons = message
             .notificationActions?
             .prefix(Defaults.notificationButtonsCount)
@@ -158,7 +160,10 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
                     borderRadius: Defaults.borderRadius
                 )
             })
-        
+#else
+        let buttons: [InAppMessageButtonInfo] = []
+#endif
+
         let displayContent = InAppMessageDisplayContent.Banner(
             body: InAppMessageTextInfo(text: message.alert, color: secondaryColor),
             buttons: buttons,
@@ -170,22 +175,22 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
             placement: message.position.bannerPlacement,
             actions: message.onClick
         )
-        
+
         var inAppMessage = InAppMessage(
             name: message.alert,
             displayContent: .banner(displayContent),
             source: .legacyPush,
             extras: message.extra
         )
-        
+
         self.messageExtender?(&inAppMessage)
 
         // In terms of the scheduled message model, displayASAP means using an active session trigger.
         // Otherwise the closest analog to the v1 behavior is the foreground trigger.
         let trigger = self.displayASAPEnabled ?
-            AutomationTrigger.activeSession(count: 1) :
-            AutomationTrigger.foreground(count: 1)
-        
+        AutomationTrigger.activeSession(count: 1) :
+        AutomationTrigger.foreground(count: 1)
+
         var schedule = AutomationSchedule(
             identifier: message.identifier,
             data: .inAppMessage(inAppMessage),
@@ -203,9 +208,10 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
 
 extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
 
+#if !os(tvOS)
     func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
-        
+
         guard
             userInfo.keys.contains(Keys.incomingMessageKey.rawValue),
             let messageID = userInfo["_"] as? String,
@@ -214,7 +220,7 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
             completionHandler()
             return
         }
-        
+
         self.pendingMessageID = nil
 
         Task {
@@ -227,14 +233,15 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
             completionHandler()
         }
     }
-    
-    func receivedRemoteNotification(_ notification: [AnyHashable : Any], 
+#endif
+
+    func receivedRemoteNotification(_ notification: [AnyHashable : Any],
                                     completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         guard let payload = notification[Keys.incomingMessageKey.rawValue] as? [String: Any] else {
             completionHandler(.noData)
             return
         }
-        
+
         let overrideId = notification["_"] as? String
         let messageCenterAction: AirshipJSON?
 
@@ -254,7 +261,7 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
             overrideOnClick: messageCenterAction,
             date: self.date
         )
-        
+
         if let message = message {
             Task {
                 await schedule(message: message)
@@ -264,28 +271,28 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
             completionHandler(.noData)
         }
     }
-    
+
     private enum Keys: String {
         enum LegacyStorage: String {
             // User defaults key for storing and retrieving pending messages
             case pendingMessages = "UAPendingInAppMessage"
-            
+
             // User defaults key for storing and retrieving auto display enabled
             case autoDisplayMessage = "UAAutoDisplayInAppMessageDataStoreKey"
-            
+
             // Legacy key for the last displayed message ID
             case lastDisplayedMessageId = "UALastDisplayedInAppMessageID"
         }
-        
+
         enum CurrentStorage: String {
             // Data store key for storing and retrieving pending message IDs
             case pendingMessageIds = "UAPendingInAppMessageID"
         }
-        
+
         case incomingMessageKey = "com.urbanairship.in_app"
         case messageCenterActionKey = "_uamid"
     }
-    
+
     private enum Defaults {
         static let primaryColor = "#FFFFFF"
         static let secondaryColor = "#1C1C1C"

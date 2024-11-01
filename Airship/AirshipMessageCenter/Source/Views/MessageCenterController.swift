@@ -14,7 +14,7 @@ public enum MessageCenterState: Equatable {
 }
 
 /// Controller for the Message Center View.
-public class MessageCenterController: NSObject, ObservableObject {
+public class MessageCenterController: ObservableObject {
 
     @Published
     var messageID: String? = nil
@@ -43,8 +43,7 @@ public class MessageCenterController: NSObject, ObservableObject {
         self.messageID = messageID
     }
 
-    public override init() {
-        super.init()
+    public init() {
         Publishers
             .CombineLatest($visibleMessageID, $isMessageCenterVisible)
             .sink {[updateSubject] (visibleMessageID, isMessageCenterVisible) in

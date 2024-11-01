@@ -10,8 +10,8 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
     
     var options: ThomasViewControllerOptions
     var onDismiss: (() -> Void)?
-    private var bounceDisabled: Bool = false
-
+    private var scrollViewsUpdated: Bool = false
+    
     init(rootView: Content, options: ThomasViewControllerOptions = ThomasViewControllerOptions()) {
         self.options = options
         super.init(rootView: rootView)
@@ -46,27 +46,30 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
         return self.options.orientation == nil
     }
 #endif
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if !bounceDisabled {
-            disableBounce(view: self.view)
-            bounceDisabled = true
+        if !scrollViewsUpdated {
+            updateScrollViews(view: self.view)
+            scrollViewsUpdated = true
         }
     }
-
-    func disableBounce(view: UIView) {
+    
+    func updateScrollViews(view: UIView) {
         view.subviews.forEach { subView in
             if let subView = subView as? UIScrollView {
                 if (subView.bounces) {
                     subView.bounces = false
+#if os(tvOS)
+                    subView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+#endif
                 }
             }
-
-            disableBounce(view: subView)
+            
+            updateScrollViews(view: subView)
         }
     }
-
+    
 }
 
 

@@ -1,5 +1,5 @@
 /* Copyright Airship and Contributors */
-
+#if !os(tvOS)
 import Foundation
 public import WebKit
 
@@ -37,3 +37,4 @@ public class InAppMessageNativeBridgeExtension: NativeBridgeExtensionDelegate {
         )
     }
 }
+#endif

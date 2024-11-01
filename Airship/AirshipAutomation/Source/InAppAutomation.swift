@@ -92,7 +92,7 @@ public final class InAppAutomation: Sendable {
     public func cancelSchedules(group: String) async throws {
         try await self.engine.cancelSchedules(group: group)
     }
-    
+
     func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws {
         try await self.engine.cancelSchedulesWith(type: type)
     }
@@ -145,9 +145,11 @@ extension InAppAutomation {
         self._legacyInAppMessaging.receivedRemoteNotification(notification, completionHandler: completionHandler)
     }
 
+#if !os(tvOS)
     func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         self._legacyInAppMessaging.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
+#endif
 }
 
 

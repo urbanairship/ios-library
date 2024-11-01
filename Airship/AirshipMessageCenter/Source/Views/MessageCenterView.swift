@@ -143,7 +143,7 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
             )
 
 
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, tvOS 16.0, *) {
             let themedContent = content.applyIf(containerBackgroundColor != nil) { view in
                 view.toolbarBackground(containerBackgroundColor!, for: .navigationBar)
                     .toolbarBackground(.visible, for: .navigationBar)

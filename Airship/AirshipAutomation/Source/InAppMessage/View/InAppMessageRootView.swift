@@ -31,7 +31,7 @@ struct InAppMessageRootView<Content: View>: View {
             .onAppear {
                 self.currentOrientation = InAppMessageRootView.resolveOrientation()
             }
-        #if os(iOS)
+#if os(iOS)
             .onReceive(
                 NotificationCenter.default.publisher(
                     for: UIDevice.orientationDidChangeNotification
@@ -39,10 +39,13 @@ struct InAppMessageRootView<Content: View>: View {
             ) { _ in
                 self.currentOrientation = InAppMessageRootView.resolveOrientation()
             }
-        #endif
+#endif
     }
 
     static func resolveOrientation() -> Orientation {
+#if os(tvOS)
+        return .landscape
+#else
         if let scene = try? AirshipSceneManager.shared.lastActiveScene {
             if scene.interfaceOrientation.isLandscape {
                 return .landscape
@@ -51,5 +54,6 @@ struct InAppMessageRootView<Content: View>: View {
             }
         }
         return .portrait
+#endif
     }
 }

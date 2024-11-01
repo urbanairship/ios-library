@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+#if !os(tvOS)
+
 import SwiftUI
 
 #if canImport(AirshipCore)
@@ -93,3 +95,5 @@ struct HTMLView: View {
     let displayContent = InAppMessageDisplayContent.HTML(url: "www.airship.com")
     return HTMLView(displayContent: displayContent, theme: InAppMessageTheme.HTML.defaultTheme)
 }
+
+#endif

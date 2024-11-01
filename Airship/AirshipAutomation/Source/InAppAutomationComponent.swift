@@ -27,8 +27,10 @@ final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent
         self.inAppAutomation.receivedRemoteNotification(notification, completionHandler: completionHandler)
     }
 
+#if !os(tvOS)
     func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
         self.inAppAutomation.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
+#endif
 }
 

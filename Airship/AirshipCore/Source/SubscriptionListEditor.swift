@@ -3,14 +3,13 @@
 import Foundation
 
 /// Subscription list editor.
-public class SubscriptionListEditor: NSObject {
+public class SubscriptionListEditor {
 
     private var subscriptionListUpdates: [SubscriptionListUpdate] = []
     private let completionHandler: ([SubscriptionListUpdate]) -> Void
 
     init(completionHandler: @escaping ([SubscriptionListUpdate]) -> Void) {
         self.completionHandler = completionHandler
-        super.init()
     }
 
     /**

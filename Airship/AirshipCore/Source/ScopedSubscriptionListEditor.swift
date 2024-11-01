@@ -3,7 +3,7 @@
 import Foundation
 
 /// Scoped subscription list editor.
-public class ScopedSubscriptionListEditor: NSObject {
+public class ScopedSubscriptionListEditor {
 
     private var subscriptionListUpdates: [ScopedSubscriptionListUpdate] = []
     private let date: AirshipDateProtocol
@@ -15,7 +15,6 @@ public class ScopedSubscriptionListEditor: NSObject {
     ) {
         self.date = date
         self.completionHandler = completionHandler
-        super.init()
     }
 
     /**

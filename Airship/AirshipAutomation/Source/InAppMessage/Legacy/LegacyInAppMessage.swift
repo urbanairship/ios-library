@@ -10,7 +10,7 @@ public import AirshipCore
  * Model object representing in-app message data.
  */
 public struct LegacyInAppMessage: Sendable, Equatable {
-    
+
     /**
      * Enumeration of in-app message screen positions.
      */
@@ -18,23 +18,23 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         case top
         case bottom
     }
-    
+
     /**
      * Enumeration of in-app message display types.
      */
     public enum DisplayType: String, Sendable {
         case banner
     }
-    
+
     ///---------------------------------------------------------------------------------------
     /// @name Legacy In App Message Properties
     ///---------------------------------------------------------------------------------------
-    
+
     /**
      * The unique identifier for the message
      */
     public let identifier: String
-    
+
     ///---------------------------------------------------------------------------------------
     /// @name Legacy In App Message Top Level Properties
     ///---------------------------------------------------------------------------------------
@@ -44,16 +44,16 @@ public struct LegacyInAppMessage: Sendable, Equatable {
      * Unless otherwise specified, defaults to 30 days from construction.
      */
     public let expiry: Date
-    
+
     /**
      * Optional key value extra.
      */
     public let extra: AirshipJSON?
-    
+
     ///---------------------------------------------------------------------------------------
     /// @name Legacy In App Message Display Properties
     ///---------------------------------------------------------------------------------------
-    
+
     /**
      * The display type. Defaults to `LegacyInAppMessage.DisplayType.banner`
      * when built with the default class constructor.
@@ -61,33 +61,33 @@ public struct LegacyInAppMessage: Sendable, Equatable {
      * the message will be nil.
      */
     public let displayType: DisplayType
-    
+
     /**
      * The alert message.
      */
     public let alert: String
-    
+
     /**
      * The screen position. Defaults to `LegacyInAppMessage.Position.bottom`.
      */
     public let position: Position
-    
+
     /**
      * The amount of time to wait before automatically dismissing
      * the message.
      */
     public let duration: TimeInterval
-    
+
     /**
      * The primary color. hex
      */
     public let primaryColor: String?
-    
+
     /**
      * The secondary color hex.
      */
     public let secondaryColor: String?
-    
+
     ///---------------------------------------------------------------------------------------
     /// @name Legacy In App Message Actions Properties
     ///---------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
      * localized titles.
      */
     public let buttonGroup: String?
-    
+
     /**
      * A dictionary mapping button group keys to dictionaries
      * mapping action names to action arguments. The relevant
@@ -106,26 +106,26 @@ public struct LegacyInAppMessage: Sendable, Equatable {
      * button.
      */
     public let buttonActions: [String: AirshipJSON]?
-    
+
     /**
      * A dictionary mapping an action name to an action argument.
      * The relevant action will be run when the user taps or "clicks"
      * on the message.
      */
     public let onClick: AirshipJSON?
-    
+
     let campaigns: AirshipJSON?
     let messageType: String?
-    
-    
+
     /*
      // Default values unless otherwise specified
-             self.displayType = UALegacyInAppMessageDisplayTypeBanner;
-             self.expiry = [NSDate dateWithTimeIntervalSinceNow:kUADefaultInAppMessageExpiryInterval];
-             self.position = UALegacyInAppMessagePositionBottom;
-             self.duration = kUADefaultInAppMessageDurationInterval;
+     self.displayType = UALegacyInAppMessageDisplayTypeBanner;
+     self.expiry = [NSDate dateWithTimeIntervalSinceNow:kUADefaultInAppMessageExpiryInterval];
+     self.position = UALegacyInAppMessagePositionBottom;
+     self.duration = kUADefaultInAppMessageDurationInterval;
      */
-    
+
+#if !os(tvOS)
     /**
      * An array of UNNotificationAction instances corresponding to the left-to-right order
      * of interactive message buttons.
@@ -134,7 +134,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
     var notificationActions: [UNNotificationAction]? {
         return self.buttonCategory?.actions
     }
-    
+
     /**
      * A UNNotificationCategory instance,
      * corresponding to the button group of the message.
@@ -143,10 +143,11 @@ public struct LegacyInAppMessage: Sendable, Equatable {
     @MainActor
     public var buttonCategory: UNNotificationCategory? {
         guard let group = buttonGroup else { return nil }
-        
+
         return Airship.push.combinedCategories.first(where: { $0.identifier == group })
     }
-    
+#endif
+
     init?(
         payload: [String: Any],
         overrideId: String? = nil,
@@ -162,11 +163,11 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         else {
             return nil
         }
-        
-        
+
+
         let wrapJson: (Any?) -> AirshipJSON? = { input in
             guard let input = input else { return nil }
-            
+
             do {
                 return try AirshipJSON.wrap(input)
             } catch {
@@ -174,12 +175,12 @@ public struct LegacyInAppMessage: Sendable, Equatable {
                 return nil
             }
         }
-        
+
         self.identifier = identifier
         self.campaigns = wrapJson(payload[ParseKey.campaigns.rawValue])
         self.messageType = payload[ParseKey.messageType.rawValue] as? String
-        
-        if 
+
+        if
             let rawDate = payload[ParseKey.expiry.rawValue] as? String,
             let date = AirshipDateFormatter.date(fromISOString: rawDate)
         {
@@ -187,13 +188,13 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         } else {
             self.expiry = date.now.addingTimeInterval(Defaults.expiry)
         }
-        
+
         self.extra = wrapJson(payload[ParseKey.extra.rawValue])
         self.displayType = displayType
-        
+
         self.alert = alert
         self.duration = displayInfo[ParseKey.Display.duration.rawValue] as? Double ?? Defaults.duration
-        
+
         if
             let positionRaw = displayInfo[ParseKey.Display.position.rawValue] as? String,
             let position = Position(rawValue: positionRaw) {
@@ -201,10 +202,10 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         } else {
             self.position = .bottom
         }
-        
+
         self.primaryColor = displayInfo[ParseKey.Display.primaryColor.rawValue] as? String
         self.secondaryColor = displayInfo[ParseKey.Display.secondaryColor.rawValue] as? String
-        
+
         if let actionsInfo = payload[ParseKey.actions.rawValue] as? [String: Any] {
             self.buttonGroup = actionsInfo[ParseKey.Action.buttonGroup.rawValue] as? String
             if let actions = actionsInfo[ParseKey.Action.buttonActions.rawValue] as? [String: Any] {
@@ -232,13 +233,13 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         case extra = "extra"
         case display = "display"
         case actions = "actions"
-        
+
         enum Action: String {
             case buttonGroup = "button_group"
             case buttonActions = "button_actions"
             case onClick = "on_click"
         }
-        
+
         enum Display: String {
             case type = "type"
             case position = "position"
@@ -248,7 +249,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
             case secondaryColor = "secondary_color"
         }
     }
-    
+
     private enum Defaults {
         static let expiry: TimeInterval = 60 * 60 * 24 * 30 // 30 days in seconds
         static let duration: TimeInterval = 15 // seconds

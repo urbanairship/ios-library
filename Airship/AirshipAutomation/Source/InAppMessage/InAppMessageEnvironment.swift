@@ -14,7 +14,9 @@ class InAppMessageEnvironment: ObservableObject {
     private let delegate: InAppMessageViewDelegate
 
     @Published var imageLoader: AirshipImageLoader?
+#if !os(tvOS)
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+#endif
     let actionRunner: InAppActionRunner?
 
     @Published var isDismissed = false
@@ -32,7 +34,10 @@ class InAppMessageEnvironment: ObservableObject {
             nil
         }
 
+#if !os(tvOS)
+
         self.nativeBridgeExtension = extensions?.nativeBridgeExtension
+#endif
         self.actionRunner = extensions?.actionRunner
     }
 
@@ -59,15 +64,14 @@ class InAppMessageEnvironment: ObservableObject {
             self.delegate.onButtonDismissed(buttonInfo: buttonInfo)
         }
     }
-    
+
     func runActions(actions: AirshipJSON?) {
         guard let actions = actions else { return }
-        
+
         Task {
             await ActionRunner.run(actionsPayload: actions, situation: .automation, metadata: [:])
         }
     }
-
 
     @MainActor
     func runActions(_ actions: AirshipJSON?) {
@@ -112,7 +116,7 @@ class InAppMessageEnvironment: ObservableObject {
     @MainActor
     func onUserDismissed() {
         tryDismiss {
-           self.delegate.onUserDismissed()
+            self.delegate.onUserDismissed()
         }
     }
 

@@ -159,7 +159,7 @@ public struct PreferenceCenterView: View {
                 }
             }
 
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
             let resolvedNavigationBarColor = colorScheme.airshipResolveColor(
                 light: theme.viewController?.navigationBar?.backgroundColor,
                 dark: theme.viewController?.navigationBar?.backgroundColorDark

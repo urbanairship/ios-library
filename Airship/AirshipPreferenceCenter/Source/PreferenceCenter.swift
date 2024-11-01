@@ -21,7 +21,7 @@ public protocol PreferenceCenterOpenDelegate {
 }
 
 /// Airship PreferenceCenter module.
-public final class PreferenceCenter: NSObject, Sendable {
+public final class PreferenceCenter: Sendable {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     public static var shared: PreferenceCenter {
@@ -85,7 +85,6 @@ public final class PreferenceCenter: NSObject, Sendable {
         self.privacyManager = privacyManager
         self.remoteData = remoteData
         self._theme.set(PreferenceCenterThemeLoader.defaultPlist())
-        super.init()
         AirshipLogger.info("PreferenceCenter initialized")
     }
 
@@ -209,13 +208,12 @@ extension PreferenceCenter {
     }
 }
 
-
 extension PreferenceCenter {
     @MainActor
     func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == Airship.deepLinkScheme,
-            deepLink.host == "preferences",
-            deepLink.pathComponents.count == 2
+              deepLink.host == "preferences",
+              deepLink.pathComponents.count == 2
         else {
             return false
         }

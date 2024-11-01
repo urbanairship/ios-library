@@ -70,7 +70,7 @@ public protocol OUAMessageCenterInboxBaseProtocol: AnyObject, Sendable {
 
 @objc
 final public class OUAMessageCenterInbox: NSObject {
-    
+
     @objc
     @discardableResult
     public func refreshMessages() async -> Bool {
@@ -102,5 +102,4 @@ final public class OUAMessageCenterInbox: NSObject {
     {
         return await MessageCenter.shared.inbox.message(forBodyURL: bodyURL)
     }
-
 }

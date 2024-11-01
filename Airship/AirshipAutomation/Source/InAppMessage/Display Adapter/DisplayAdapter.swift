@@ -21,7 +21,6 @@ protocol DisplayAdapter: Sendable {
     ) async throws -> DisplayResult
 }
 
-
 enum DisplayResult: Sendable, Equatable {
     case cancel
     case finished

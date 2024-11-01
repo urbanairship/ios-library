@@ -144,7 +144,7 @@ public struct MessageCenterListView: View {
         }
 
 
-        if #available(iOS 15.0, *) {
+        if #available(iOS 15.0, tvOS 16.0, *) {
             list.refreshable {
                 await self.viewModel.refreshList()
             }
@@ -186,7 +186,7 @@ public struct MessageCenterListView: View {
             title: self.viewModel.messageItem(forID: selected)?.message.title
         )
 
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.0, tvOS 16.0, *) {
             content.background(
                 NavigationLink("", value: selected)
                 .accessibilityHidden(true)
@@ -279,6 +279,7 @@ public struct MessageCenterListView: View {
         .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
 
+    @available(tvOS 18.0, *)
     private func bottomToolBar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             if self.editMode?.wrappedValue.isEditing == true {
@@ -293,6 +294,8 @@ public struct MessageCenterListView: View {
         }
     }
 
+    #if !os(tvOS)
+
     private func editButton() -> some View {
         let isEditMode = self.editMode?.wrappedValue.isEditing ?? false
         let color =
@@ -304,6 +307,7 @@ public struct MessageCenterListView: View {
             .foregroundColor(color)
             .accessibilityHint("ua_edit_messages_description".messageCenterLocalizedString)
     }
+    #endif
 
     @ViewBuilder
     private func toolbarRefreshButton() -> some View {
@@ -367,6 +371,7 @@ public struct MessageCenterListView: View {
 
     }
 
+    #if !os(tvOS)
     private func leadingToolbar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
             editButton()
@@ -375,6 +380,7 @@ public struct MessageCenterListView: View {
             }
         }
     }
+    #endif
 
     @ViewBuilder
     public var body: some View {
@@ -393,7 +399,9 @@ fileprivate extension View {
     func listBackground(_ color: Color?) -> some View {
         if let color {
             if #available(iOS 16.0, watchOS 9.0, *) {
+                #if !os(tvOS)
                 self.scrollContentBackground(.hidden).background(color)
+                #endif
             } else {
                 self.background(color)
             }

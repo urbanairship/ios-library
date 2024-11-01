@@ -6,7 +6,7 @@ import Foundation
 ///
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need
 /// to be configured by the app by providing a `PermissionDelegate` for the given permissions.
-public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
+public final class AirshipPermissionsManager: @unchecked Sendable {
     private let lock = AirshipLock()
     private var delegateMap: [AirshipPermission: AirshipPermissionDelegate] = [:]
     private var airshipEnablers: [
@@ -30,7 +30,6 @@ public final class AirshipPermissionsManager: NSObject, @unchecked Sendable {
     ) {
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.systemSettingsNavigator = systemSettingsNavigator
-        super.init()
 
         Task { @MainActor [weak self] in
             guard let updates = self?.appStateTracker.stateUpdates else { return }

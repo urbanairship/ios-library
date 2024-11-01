@@ -1,7 +1,11 @@
 /* Copyright Airship and Contributors */
 
+
 import SwiftUI
+
+#if canImport(WebKit)
 import WebKit
+#endif
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -17,7 +21,11 @@ struct MediaView: View {
         case .image:
             mediaImageView
         default:
+#if canImport(WebKit)
             webView
+#else
+            EmptyView()
+#endif
         }
     }
 
@@ -40,14 +48,18 @@ struct MediaView: View {
         }
     }
 
+#if canImport(WebKit)
     private var webView: some View {
         InAppMessageMediaWebView(mediaInfo: mediaInfo)
             .aspectRatio(16.0/9.0, contentMode: .fill)
             .frame(maxWidth: .infinity)
             .padding(mediaTheme.padding)
     }
+#endif
+
 }
 
+#if canImport(WebKit)
 struct InAppMessageMediaWebView: UIViewRepresentable {
     let mediaInfo: InAppMessageMediaInfo
 
@@ -87,23 +99,24 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
             break // Do nothing for images
         }
     }
-    
+
     func makeCoordinator() -> Coordinator {
         return Coordinator()
     }
-    
+
     class Coordinator: NSObject, WKNavigationDelegate {
         let challengeResolver: ChallengeResolver
 
         init(resolver: ChallengeResolver = .shared) {
             self.challengeResolver = resolver
         }
-        
+
         func webView(_ webView: WKWebView, respondTo challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
             return await challengeResolver.resolve(challenge)
         }
     }
 }
+#endif
 
 struct MediaInfo {
     let url: String
@@ -113,3 +126,4 @@ struct MediaInfo {
 enum InAppMediaType {
     case video, youtube, image
 }
+
