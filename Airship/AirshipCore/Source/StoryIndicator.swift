@@ -68,6 +68,8 @@ struct StoryIndicator: View {
         if self.model.style.type == .linearProgress {
             Rectangle()
                 .fill(indicatorColor(index))
+                .applyIf(progressDelay == nil) { view in
+                    view.frame(height: (constraints.height ?? StoryIndicator.defaultHeight) * 0.5) }
                 .overlayView {
                     if let progressDelay = progressDelay {
                         GeometryReader { metrics in
