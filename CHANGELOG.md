@@ -7,7 +7,7 @@ Minor release with several enhancements to Scenes.
 ### Changes
 - Added box shadow support for modal Scenes
 - Added a new implementation of the Scene pager to lazily load pages on iOS 17+, reducing the overall memory while a Scene is displaying
-- Added new Scene layout to make anything clickable within a Scene
+- Added new Scene layout to allow adding actions to anything within a Scene
 - Added additional logging to deep link handling to make it obvious how the deep link is being processed
 - Updated border handling on Scenes. Borders are no longer overlaid to avoid issues with borders that are not fully opaque and button borders being overdrawn when tapped
 - Improved accessibility of scene story indicator. Indicator has been updated to make it obvious which page is active by reducing the height of the inactive pages. Previously this was conveyed only through color
