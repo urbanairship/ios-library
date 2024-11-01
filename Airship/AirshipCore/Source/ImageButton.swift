@@ -22,7 +22,7 @@ struct ImageButton : View {
         AirshipButton(
             identifier: self.model.identifier,
             reportingMetadata: self.model.reportingMetadata,
-            description: self.model.contentDescription ?? self.model.localizedContentDescription?.localized ?? self.model.identifier,
+            description: self.model.contentDescription ?? self.model.localizedContentDescription?.localized,
             clickBehaviors: self.model.clickBehaviors,
             eventHandlers: self.model.eventHandlers,
             actions: self.model.actions,
@@ -44,6 +44,8 @@ struct ImageButton : View {
                 buttonState: ButtonState(identifier: self.model.identifier)
              )
         )
+        .accessibilityHidden(model.accessibilityHidden ?? false)
+
     }
     
     @ViewBuilder

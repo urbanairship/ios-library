@@ -34,51 +34,31 @@ public extension View {
     }
 
     @ViewBuilder
-    private func applyAccessibleRole(
+    internal func accessible(
         _ accessible: Accessible?,
-        isSelected: Bool = false
+        fallbackContentDescription: String? = nil,
+        hideIfDescriptionIsMissing: Bool = true
     ) -> some View {
-        Group {
-            switch accessible?.accessibleRole {
-            case .heading(let level):
-                self.applyIf(true) { view in
-                    if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-                        view.accessibilityAddTraits(.isHeader)
-                            .accessibilityHeading(level.toAccessibilityHeadingLevel())
-                    } else {
-                        view.accessibilityAddTraits(.isHeader)
-                    }
-                }
-            case .checkbox:
-                self.accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : [.isButton])
-            case .button:
-                self.accessibilityAddTraits(.isButton)
-            case .form:
-                self
-            case .radio:
-                self.accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : [.isButton])
-            case .radioGroup:
-                self
-            case .presentation:
-                self
-            default:
-                self
-            }
+        let label = accessible?.contentDescription ?? accessible?.localizedContentDescription?.localized ?? fallbackContentDescription
+        if accessible?.accessibilityHidden == true {
+            self.accessibilityHidden(true)
+        } else if let label {
+            self.accessibility(label: Text(label))
+        } else if hideIfDescriptionIsMissing {
+            self.accessibilityHidden(true)
+        } else {
+            self
         }
     }
 
     @ViewBuilder
-    internal func accessible(
-        _ accessible: Accessible?,
-        hideIfNotSet: Bool = false,
-        isSelected: Bool = false
+    internal func addSelectedTrait(
+        _ isSelected: Bool
     ) -> some View {
-        if let label = accessible?.contentDescription {
-            self.accessibility(label: Text(label))
-                .applyAccessibleRole(accessible, isSelected: isSelected)
+        if isSelected {
+            self.accessibilityAddTraits(.isSelected)
         } else {
-            self.accessibilityHidden(hideIfNotSet)
-                .applyAccessibleRole(accessible, isSelected: isSelected)
+            self
         }
     }
 
@@ -210,25 +190,3 @@ struct AirshipViewModifierBuilder {
     }
 }
 
-extension Int {
-    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    func toAccessibilityHeadingLevel() -> AccessibilityHeadingLevel {
-        switch self {
-        case 1:
-            return .h1
-        case 2:
-            return .h2
-        case 3:
-            return .h1
-        case 4:
-            return .h4
-        case 5:
-            return .h5
-        case 6:
-            return .h6
-        default:
-            return .unspecified
-        }
-    }
-
-}

@@ -46,5 +46,6 @@ struct LabelButton : View {
                 buttonState: ButtonState(identifier: self.model.identifier)
              )
         )
+        .accessibilityHidden(model.accessibilityHidden ?? false)
     }
 }

@@ -39,7 +39,7 @@ struct Media: View {
                 border: self.model.border
             )
             .common(self.model)
-            .accessible(self.model, hideIfNotSet: true)
+            .accessible(self.model, hideIfDescriptionIsMissing: true)
         case .video, .youtube:
             #if !os(tvOS) && !os(watchOS)
             MediaWebView(

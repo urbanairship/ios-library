@@ -11,27 +11,24 @@ struct AirshipButton<Label> : View  where Label : View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) private var layoutState
     @Environment(\.isButtonActionsEnabled) private var isButtonActionsEnabled
-    @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
 
     let identifier: String
     let reportingMetadata: AirshipJSON?
-    let description: String
+    let description: String?
     let clickBehaviors:[ButtonClickBehavior]?
     let eventHandlers: [EventHandler]?
     let actions: ActionsPayload?
     let tapEffect: ButtonTapEffect?
-    let useTapGestureForVoiceOver: Bool
     let label: () -> Label
 
     init(
         identifier: String,
         reportingMetadata: AirshipJSON? = nil,
-        description: String,
+        description: String?,
         clickBehaviors: [ButtonClickBehavior]? = nil,
         eventHandlers: [EventHandler]? = nil,
         actions: ActionsPayload? = nil,
         tapEffect: ButtonTapEffect? = nil,
-        useTapGestureForVoiceOver: Bool = false,
         label: @escaping () -> Label
     ) {
         self.identifier = identifier
@@ -41,38 +38,20 @@ struct AirshipButton<Label> : View  where Label : View {
         self.eventHandlers = eventHandlers
         self.actions = actions
         self.tapEffect = tapEffect
-        self.useTapGestureForVoiceOver = useTapGestureForVoiceOver
         self.label = label
     }
 
     var body: some View {
-        if isVoiceOverRunning, useTapGestureForVoiceOver {
-            ZStack {
-                Color.clear
-                    .contentShape(Rectangle())
-                    .accessibilityElement()
-                    .accessibilityLabel(self.description)
-                    .accessibilityAddTraits([.isButton])
-                    .accessibilityAction {
-                        if (isButtonActionsEnabled) {
-                            doButtonActions()
-                        }
-                    }
-                self.label()
-            }
-            .accessibilityElement(children: .contain)
-        } else {
-            Button(
-                action: {
-                    if (isButtonActionsEnabled) {
-                        doButtonActions()
-                    }
-                },
-                label: self.label
-            )
-            .accessibilityLabel(self.description)
-            .buttonTapEffect(tapEffect ?? .default)
-        }
+        Button(
+            action: {
+                if (isButtonActionsEnabled) {
+                    doButtonActions()
+                }
+            },
+            label: self.label
+        )
+        .optionalAccessibilityLabel(self.description)
+        .buttonTapEffect(tapEffect ?? .default)
     }
 
     private func doButtonActions() {
@@ -105,7 +84,7 @@ struct AirshipButton<Label> : View  where Label : View {
             case .dismiss:
                 thomasEnvironment.dismiss(
                     buttonIdentifier: self.identifier,
-                    buttonDescription: self.description,
+                    buttonDescription: self.description ?? self.identifier,
                     cancel: false,
                     layoutState: layoutState
                 )
@@ -113,7 +92,7 @@ struct AirshipButton<Label> : View  where Label : View {
             case .cancel:
                   thomasEnvironment.dismiss(
                     buttonIdentifier: self.identifier,
-                    buttonDescription: self.description,
+                    buttonDescription: self.description ?? self.identifier,
                     cancel: true,
                     layoutState: layoutState
                   )
@@ -128,7 +107,7 @@ struct AirshipButton<Label> : View  where Label : View {
                 if pagerState.isLastPage {
                     thomasEnvironment.dismiss(
                         buttonIdentifier: self.identifier,
-                        buttonDescription: self.description,
+                        buttonDescription: self.description ?? self.identifier,
                         cancel: false,
                         layoutState: layoutState
                     )
@@ -197,4 +176,15 @@ fileprivate extension View {
             self.buttonStyle(AirshipButtonEmptyStyle())
         }
     }
+
+    @ViewBuilder
+    func optionalAccessibilityLabel(_ label: String?) -> some View {
+        if let label {
+            self.accessibilityLabel(label)
+        } else {
+            self
+        }
+    }
+
+
 }

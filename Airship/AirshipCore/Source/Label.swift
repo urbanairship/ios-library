@@ -78,9 +78,9 @@ struct Label: View {
             )
             .common(self.model)
             .accessible(self.model)
+            .accessibilityRole(self.model.accessibilityRole)
     }
 }
-
 
 extension TextAlignement {
     func toFrameAlignment() -> Alignment {
@@ -115,4 +115,42 @@ extension TextAlignement {
             return .center
         }
     }
+}
+
+extension View {
+    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+    fileprivate func headingLevel(_ int: Int) -> AccessibilityHeadingLevel {
+        switch int {
+        case 1:
+            return .h1
+        case 2:
+            return .h2
+        case 3:
+            return .h1
+        case 4:
+            return .h4
+        case 5:
+            return .h5
+        case 6:
+            return .h6
+        default:
+            return .unspecified
+        }
+    }
+
+    @ViewBuilder
+    fileprivate func accessibilityRole(_ role: LabelModel.AccessibilityRole?) -> some View  {
+        switch role {
+        case .heading(let level):
+            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+                self.accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(headingLevel(level))
+             } else {
+                 self.accessibilityAddTraits(.isHeader)
+             }
+        case .none:
+            self
+        }
+    }
+
 }

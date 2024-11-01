@@ -13,8 +13,7 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let colors = self.model.colors
-        let fill = configuration.isOn
-            ? colors.on.toColor(colorScheme) : colors.off.toColor(colorScheme)
+        let fill = configuration.isOn ? colors.on.toColor(colorScheme) : colors.off.toColor(colorScheme)
         Button(action: { configuration.isOn.toggle() }) {}
             .buttonStyle(
                 AirshipSwitchButtonStyle(
@@ -28,6 +27,7 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
             .applyIf(disabled) {  view in
                 view.colorMultiply(HexColor.disabled.toColor())
             }
+            .addSelectedTrait(configuration.isOn)
     }
 
     struct AirshipSwitchButtonStyle: ButtonStyle {

@@ -79,7 +79,9 @@ view:
                                   view:
                                     type: button_layout
                                     identifier: page_1_button_layout
-                                    content_description: Page 1 Button Layout
+                                    accessibility_role:
+                                        type: button
+                                    content_description: Page 1 Content Description
                                     tap_effect:
                                       type: none
                                     actions:
@@ -135,21 +137,8 @@ view:
                                             width: 100%
                                           view:
                                             type: label
-                                            content_description: Lorem ipsum dolor sit amet, te
-                                              eruditi indoctum per, amet blandit ne quo. Id mea
-                                              insolens maluisset mediocritatem, in putent omnium
-                                              dissentias eum, mel eu dolores definitiones. Pri meis
-                                              consequat te. Mea ne case adhuc recteque. Sit debet
-                                              ullamcorper ei, an mea platonem dissentiet. His quas
-                                              laoreet postulant te, usu magna antiopam ad, id eruditi
-                                              reprimique qui.
-                                            text: Lorem ipsum dolor sit amet, te eruditi indoctum
-                                              per, amet blandit ne quo. Id mea insolens maluisset
-                                              mediocritatem, in putent omnium dissentias eum, mel
-                                              eu dolores definitiones. Pri meis consequat te. Mea
-                                              ne case adhuc recteque. Sit debet ullamcorper ei,
-                                              an mea platonem dissentiet. His quas laoreet postulant
-                                              te, usu magna antiopam ad, id eruditi reprimique qui.
+                                            content_description: First text
+                                            text: First text
                                             text_appearance:
                                               alignment: start
                                               color:
@@ -228,19 +217,8 @@ view:
                                             width: 100%
                                           view:
                                             type: label
-                                            content_description: Sit in erant sanctus. Eam ne legendos
-                                              partiendo reprehendunt, his aeterno alienum omnesque
-                                              in, per probo persius no. Sea augue harum ea, solum
-                                              repudiandae eam an. Cu integre scaevola sit, mea assum
-                                              instructior ut. Ipsum lorem laoreet mea ei, vim an
-                                              electram iudicabit. Vis solum falli an, erant regione
-                                              eu nam.
-                                            text: Sit in erant sanctus. Eam ne legendos partiendo
-                                              reprehendunt, his aeterno alienum omnesque in, per
-                                              probo persius no. Sea augue harum ea, solum repudiandae
-                                              eam an. Cu integre scaevola sit, mea assum instructior
-                                              ut. Ipsum lorem laoreet mea ei, vim an electram iudicabit.
-                                              Vis solum falli an, erant regione eu nam.
+                                            content_description: Second text
+                                            text: Second text
                                             text_appearance:
                                               alignment: start
                                               color:
@@ -334,22 +312,8 @@ view:
                                             width: 100%
                                           view:
                                             type: label
-                                            content_description: Aeterno partiendo nec an. Sed id
-                                              errem albucius, ut tale vocent vituperata sit. At
-                                              pro malis elaboraret, pri in suas dicit vivendum,
-                                              pertinax erroribus elaboraret duo ne. Vim ei solum
-                                              omnium pertinax, has exerci offendit volutpat no,
-                                              cu per quis deseruisse voluptatum. Pro vide reque
-                                              voluptua ne, homero legimus invenire ei eam. Per ne
-                                              sumo persecuti, et nam duis postulant vituperatoribus.
-                                            text: Aeterno partiendo nec an. Sed id errem albucius,
-                                              ut tale vocent vituperata sit. At pro malis elaboraret,
-                                              pri in suas dicit vivendum, pertinax erroribus elaboraret
-                                              duo ne. Vim ei solum omnium pertinax, has exerci offendit
-                                              volutpat no, cu per quis deseruisse voluptatum. Pro
-                                              vide reque voluptua ne, homero legimus invenire ei
-                                              eam. Per ne sumo persecuti, et nam duis postulant
-                                              vituperatoribus.
+                                            content_description: 3rd text
+                                            text: 3rd text
                                             text_appearance:
                                               alignment: start
                                               color:
@@ -575,14 +539,8 @@ view:
                                       width: 100%
                                     view:
                                       type: label
-                                      content_description: Causae vulputate duo ex. Case erroribus
-                                        ut mea, etiam putant nusquam ex eum. Sea ea illud
-                                        tantas, populo facilis sententiae at per. Id vis quando
-                                        docendi pertinacia.
-                                      text: Causae vulputate duo ex. Case erroribus ut mea,
-                                        etiam putant nusquam ex eum. Sea ea illud tantas,
-                                        populo facilis sententiae at per. Id vis quando docendi
-                                        pertinacia.
+                                      content_description: Some other text
+                                      text: Some other text
                                       text_appearance:
                                         alignment: start
                                         color:
@@ -660,13 +618,7 @@ view:
                                       width: 100%
                                     view:
                                       type: label
-                                      content_description: Sit in erant sanctus. Eam ne legendos
-                                        partiendo reprehendunt, his aeterno alienum omnesque
-                                        in, per probo persius no. Sea augue harum ea, solum
-                                        repudiandae eam an. Cu integre scaevola sit, mea assum
-                                        instructior ut. Ipsum lorem laoreet mea ei, vim an
-                                        electram iudicabit. Vis solum falli an, erant regione
-                                        eu nam.
+                                      content_description: Some text
                                       text: Sit in erant sanctus. Eam ne legendos partiendo
                                         reprehendunt, his aeterno alienum omnesque in, per
                                         probo persius no. Sea augue harum ea, solum repudiandae
