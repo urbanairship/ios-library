@@ -412,7 +412,7 @@ actor ContactManager: ContactManagerProtocol {
     private func performResolveOperation() async throws -> Bool {
         let response = try await self.apiClient.resolve(
             channelID: try requireChannelID(),
-            contactID: nil,
+            contactID: self.lastContactInfo?.contactID,
             possiblyOrphanedContactID: possiblyOrphanedContactID
         )
 

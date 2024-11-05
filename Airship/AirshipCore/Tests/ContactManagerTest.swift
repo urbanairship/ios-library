@@ -164,6 +164,35 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
+    func testResolveWithContactID() async throws {
+        await self.contactManager.generateDefaultContactIDIfNotSet()
+        await self.contactManager.addOperation(.resolve)
+
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            XCTAssertEqual(self.channel.identifier, channelID)
+            XCTAssertNotNil(contactID)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+        await fulfillmentCompat(of: [resolve])
+
+        let contactInfo = await self.contactManager.currentContactIDInfo()
+        XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
+    }
+
     func testResolvedFailed() async throws {
         await self.contactManager.addOperation(.resolve)
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
