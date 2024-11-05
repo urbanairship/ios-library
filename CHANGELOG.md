@@ -1,18 +1,24 @@
 
 # iOS Changelog
 
+## Version 18.12.0 November 5, 2024
+Patch release that resolves an issue with Firebase integrations in React Native and Flutter.
+
+### Changes
+- Fixed issues caused by swizzling conflicts with some Firebase framework integrations.
+
 ## Version 18.12.0 November 1, 2024
 Minor release with several enhancements to Scenes.
 
 ### Changes
-- Added box shadow support for modal Scenes
-- Added a new implementation of the Scene pager to lazily load pages on iOS 17+, reducing the overall memory while a Scene is displaying
-- Added new Scene layout to allow adding actions to anything within a Scene
+- Added box shadow support for modal Scenes.
+- Added a new implementation of the Scene pager to lazily load pages on iOS 17+, reducing the overall memory while a Scene is displaying.
+- Added new Scene layout to allow adding actions to anything within a Scene.
 - Added additional logging to deep link handling to make it obvious how the deep link is being processed
-- Updated border handling on Scenes. Borders are no longer overlaid to avoid issues with borders that are not fully opaque and button borders being overdrawn when tapped
-- Improved accessibility of scene story indicator. Indicator has been updated to make it obvious which page is active by reducing the height of the inactive pages. Previously this was conveyed only through color
-- Fixed center_crop scaling in a Scene when a dimension is `auto` but the image is unable to fully fit in the container
-- Fixed IAA banners drag to dismiss gesture when the gestures starts within a button
+- Updated border handling on Scenes. Borders are no longer overlaid to avoid issues with borders that are not fully opaque and button borders being overdrawn when tapped.
+- Improved accessibility of scene story indicator. Indicator has been updated to make it obvious which page is active by reducing the height of the inactive pages. Previously this was conveyed only through color.
+- Fixed center_crop scaling in a Scene when a dimension is `auto` but the image is unable to fully fit in the container.
+- Fixed IAA banners drag to dismiss gesture when the gestures starts within a button.
 
 ## Version 18.11.1 October 15, 2024
 Patch release to avoid implicit unwrap when UINavigationBar appearance tintColor is unset. Applications that use the PreferenceCenter should update.
