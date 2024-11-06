@@ -277,6 +277,24 @@ class PushTest: XCTestCase {
         await self.fulfillmentCompat(of: [disabled], timeout: 10.0)
     }
 
+    func testEnableUserNotificationsAppHandlingAuth() async throws {
+        self.config.requestAuthorizationToUseNotifications = false
+        self.push = await createPush()
+
+        self.permissionsManager.addRequestExtender(
+            permission: .displayNotifications
+        ) { _ in
+            XCTFail("Should be skipped")
+        }
+
+        self.notificationRegistrar.onCheckStatus = {
+            return(.authorized, [])
+        }
+
+        let success = await self.push.enableUserPushNotifications()
+        XCTAssertTrue(success)
+    }
+
     func testEnableUserNotificationsAuthorized() async throws {
         // Make sure updates are called through permissions manager
         let permissionsManagerCalled = self.expectation(
@@ -732,7 +750,7 @@ class PushTest: XCTestCase {
         self.config.requestAuthorizationToUseNotifications = false
         self.push = createPush()
 
-        XCTAssertFalse(
+        XCTAssertTrue(
             self.permissionsManager.configuredPermissions.contains(
                 .displayNotifications
             )

@@ -328,6 +328,15 @@ public enum PromptPermissionFallback: Sendable {
     case callback(@MainActor @Sendable () async -> Void)
 }
 
+extension PromptPermissionFallback {
+    var isNone: Bool {
+        switch self {
+        case .none: return true
+        default: return false
+        }
+    }
+}
+
 
 
 protocol SystemSettingsNavigatorProtocol: Sendable {
