@@ -1091,6 +1091,7 @@ extension String {
 }
 
 class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
+    
     var onReceivedForegroundNotification:
         (([AnyHashable: Any], () -> Void) -> Void)?
     var onReceivedBackgroundNotification:
@@ -1145,6 +1146,8 @@ class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
 }
 
 class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
+    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, status: UAAuthorizationStatus) {}
+    
 
     var onNotificationRegistrationFinished:
         (

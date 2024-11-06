@@ -6,8 +6,8 @@ public import AirshipCore
 /// The Config object provides an interface for passing common configurable values to `UAirship`.
 /// The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set
 /// the desired options.
-@objc(OUAConfig)
-public class OUAAirshipConfig: NSObject {
+@objc(UAConfig)
+public class UAAirshipConfig: NSObject {
    
     var config: AirshipConfig
     
@@ -63,23 +63,23 @@ public class OUAAirshipConfig: NSObject {
 
     /// The log level used for development apps. Defaults to `debug`.
     @objc
-    public var developmentLogLevel: OUAAirshipLogLevel {
+    public var developmentLogLevel: UAAirshipLogLevel {
         get {
-            return OUAHelpers.toLogLevel(level: config.developmentLogLevel)
+            return UAHelpers.toLogLevel(level: config.developmentLogLevel)
         }
         set {
-            config.developmentLogLevel = OUAHelpers.toAirshipLogLevel(level: newValue)
+            config.developmentLogLevel = UAHelpers.toAirshipLogLevel(level: newValue)
         }
     }
 
     /// The log level used for production apps. Defaults to `error`.
     @objc
-    public var productionLogLevel: OUAAirshipLogLevel {
+    public var productionLogLevel: UAAirshipLogLevel {
         get {
-            return OUAHelpers.toLogLevel(level: config.productionLogLevel)
+            return UAHelpers.toLogLevel(level: config.productionLogLevel)
         }
         set {
-            config.productionLogLevel = OUAHelpers.toAirshipLogLevel(level: newValue)
+            config.productionLogLevel = UAHelpers.toAirshipLogLevel(level: newValue)
         }
     }
     /// Auto pause InAppAutomation on launch. Defaults to `false`
@@ -95,12 +95,12 @@ public class OUAAirshipConfig: NSObject {
 
     /// The airship cloud site. Defaults to `us`.
     @objc
-    public var site: OUACloudSite {
+    public var site: UACloudSite {
         get {
-            return OUAHelpers.toSite(site: config.site)
+            return UAHelpers.toSite(site: config.site)
         }
         set {
-            config.site = OUAHelpers.toAirshipSite(site: newValue)
+            config.site = UAHelpers.toAirshipSite(site: newValue)
         }
     }
 
@@ -477,17 +477,17 @@ public class OUAAirshipConfig: NSObject {
     /// Returns the resolved log level.
     /// - Returns: The resolved log level.
     @objc
-    public var logLevel: OUAAirshipLogLevel {
+    public var logLevel: UAAirshipLogLevel {
         get {
-            return OUAHelpers.toLogLevel(level: config.logLevel)
+            return UAHelpers.toLogLevel(level: config.logLevel)
         }
     }
 
     /// Creates an instance using the values set in the `AirshipConfig.plist` file.
     /// - Returns: A config with values from `AirshipConfig.plist` file.
     @objc(defaultConfig)
-    public class func `default`() -> OUAAirshipConfig {
-        let airshipConfig = OUAAirshipConfig()
+    public class func `default`() -> UAAirshipConfig {
+        let airshipConfig = UAAirshipConfig()
         airshipConfig.config = AirshipConfig.default()
         return airshipConfig
     }
@@ -498,8 +498,8 @@ public class OUAAirshipConfig: NSObject {
      * - Returns: A config with values from the specified file.
      */
     @objc
-    public class func config(contentsOfFile path: String?) -> OUAAirshipConfig {
-        let airshipConfig = OUAAirshipConfig()
+    public class func config(contentsOfFile path: String?) -> UAAirshipConfig {
+        let airshipConfig = UAAirshipConfig()
         airshipConfig.config = AirshipConfig.config(contentsOfFile: path)
         return airshipConfig
     }
@@ -507,8 +507,8 @@ public class OUAAirshipConfig: NSObject {
     /// Creates an instance with empty values.
     /// - Returns: A config with empty values.
     @objc
-    public class func config() -> OUAAirshipConfig {
-        let airshipConfig = OUAAirshipConfig()
+    public class func config() -> UAAirshipConfig {
+        let airshipConfig = UAAirshipConfig()
         airshipConfig.config = AirshipConfig()
         return airshipConfig
     }
@@ -554,7 +554,7 @@ extension _UAFeatures {
 
 @objc
 /// Represents the possible log levels.
-public enum OUAAirshipLogLevel: Int, Sendable {
+public enum UAAirshipLogLevel: Int, Sendable {
     /**
      * Undefined log level.
      */
@@ -604,7 +604,7 @@ public enum OUAAirshipLogLevel: Int, Sendable {
 
 @objc
 /// Represents the possible sites.
-public enum OUACloudSite: Int, Sendable {
+public enum UACloudSite: Int, Sendable {
     /// Represents the US cloud site. This is the default value.
     /// Projects available at go.airship.com must use this value.
     case us = 0
@@ -613,66 +613,66 @@ public enum OUACloudSite: Int, Sendable {
     case eu = 1
 }
 
-public class OUAHelpers: NSObject {
+public class UAHelpers: NSObject {
     
-    public static func toLogLevel(level: AirshipLogLevel) -> OUAAirshipLogLevel {
+    public static func toLogLevel(level: AirshipLogLevel) -> UAAirshipLogLevel {
         switch(level){
         case AirshipLogLevel.undefined:
-            return OUAAirshipLogLevel.undefined
+            return UAAirshipLogLevel.undefined
         case AirshipLogLevel.none:
-            return OUAAirshipLogLevel.none
+            return UAAirshipLogLevel.none
         case AirshipLogLevel.error:
-            return OUAAirshipLogLevel.error
+            return UAAirshipLogLevel.error
         case AirshipLogLevel.warn:
-            return OUAAirshipLogLevel.warn
+            return UAAirshipLogLevel.warn
         case AirshipLogLevel.info:
-            return OUAAirshipLogLevel.info
+            return UAAirshipLogLevel.info
         case AirshipLogLevel.debug:
-            return OUAAirshipLogLevel.debug
+            return UAAirshipLogLevel.debug
         case AirshipLogLevel.verbose:
-            return OUAAirshipLogLevel.verbose
+            return UAAirshipLogLevel.verbose
         default:
-            return OUAAirshipLogLevel.undefined
+            return UAAirshipLogLevel.undefined
         }
     }
     
-    public static func toAirshipLogLevel(level: OUAAirshipLogLevel) -> AirshipLogLevel {
+    public static func toAirshipLogLevel(level: UAAirshipLogLevel) -> AirshipLogLevel {
         switch(level){
-        case OUAAirshipLogLevel.undefined:
+        case UAAirshipLogLevel.undefined:
             return AirshipLogLevel.undefined
-        case OUAAirshipLogLevel.none:
+        case UAAirshipLogLevel.none:
             return AirshipLogLevel.none
-        case OUAAirshipLogLevel.error:
+        case UAAirshipLogLevel.error:
             return AirshipLogLevel.error
-        case OUAAirshipLogLevel.warn:
+        case UAAirshipLogLevel.warn:
             return AirshipLogLevel.warn
-        case OUAAirshipLogLevel.info:
+        case UAAirshipLogLevel.info:
             return AirshipLogLevel.info
-        case OUAAirshipLogLevel.debug:
+        case UAAirshipLogLevel.debug:
             return AirshipLogLevel.debug
-        case OUAAirshipLogLevel.verbose:
+        case UAAirshipLogLevel.verbose:
             return AirshipLogLevel.verbose
         default:
             return AirshipLogLevel.undefined
         }
     }
     
-    public static func toSite(site: CloudSite) -> OUACloudSite {
+    public static func toSite(site: CloudSite) -> UACloudSite {
         switch(site){
         case CloudSite.us:
-            return OUACloudSite.us
+            return UACloudSite.us
         case CloudSite.eu:
-            return OUACloudSite.eu
+            return UACloudSite.eu
         default:
-            return OUACloudSite.us
+            return UACloudSite.us
         }
     }
     
-    public static func toAirshipSite(site: OUACloudSite) -> CloudSite {
+    public static func toAirshipSite(site: UACloudSite) -> CloudSite {
         switch(site){
-        case OUACloudSite.us:
+        case UACloudSite.us:
             return CloudSite.us
-        case OUACloudSite.eu:
+        case UACloudSite.eu:
             return CloudSite.eu
         default:
             return CloudSite.us

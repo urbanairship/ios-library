@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUACustomEvent)
-public class OUACustomEvent: NSObject {
+@objc
+public class UACustomEvent: NSObject {
     
     private var customEvent: CustomEvent
     
@@ -142,9 +142,9 @@ public class OUACustomEvent: NSObject {
      * - Returns: A Custom event instance
      */
     @objc(eventWithName:)
-    public class func event(name: String) -> OUACustomEvent {
+    public class func event(name: String) -> UACustomEvent {
         let customEvent = CustomEvent(name: name)
-        return OUACustomEvent(event: customEvent)
+        return UACustomEvent(event: customEvent)
     }
 
     /**
@@ -157,9 +157,9 @@ public class OUACustomEvent: NSObject {
      * - Returns: A Custom event instance
      */
     @objc(eventWithName:valueFromString:)
-    public class func event(name: String, string: String?) -> OUACustomEvent {
+    public class func event(name: String, string: String?) -> UACustomEvent {
         let customEvent = CustomEvent(name: name, stringValue: string)
-        return OUACustomEvent(event: customEvent)
+        return UACustomEvent(event: customEvent)
     }
 
     /**
@@ -172,9 +172,9 @@ public class OUACustomEvent: NSObject {
      * - Returns: A Custom event instance
      */
     @objc(eventWithName:value:)
-    public class func event(name: String, value: NSNumber?) -> OUACustomEvent {
+    public class func event(name: String, value: NSNumber?) -> UACustomEvent {
         let customEvent = CustomEvent(name: name, value: value)
-        return OUACustomEvent(event: customEvent)
+        return UACustomEvent(event: customEvent)
     }
 
     @objc

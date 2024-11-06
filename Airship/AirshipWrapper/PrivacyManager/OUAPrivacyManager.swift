@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 @objc
-public class OUAPrivacyManager: NSObject {
+public class UAPrivacyManager: NSObject {
     
     /// The current set of enabled features.
     @objc(enabledFeatures)

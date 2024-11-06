@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 /**
  * Airship manages the shared state for all Airship services. Airship.takeOff should be
@@ -11,16 +11,16 @@ public import AirshipCore
 
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
 /// before accessing any instances on Airship or Airship modules.
-@objc(OUAAirship)
-public class OUAAirship: NSObject {
+@objc
+public class UAAirship: NSObject {
     
     /// A user configurable deep link delegate.
     private static var _deepLinkDelegate: DeepLinkDelegate?
     @objc
-    public static var deepLinkDelegate: OUADeepLinkDelegate? {
+    public static var deepLinkDelegate: UADeepLinkDelegate? {
         didSet {
             if let deepLinkDelegate {
-                _deepLinkDelegate = OUADeepLinkDelegateWrapper(delegate: deepLinkDelegate)
+                _deepLinkDelegate = UADeepLinkDelegateWrapper(delegate: deepLinkDelegate)
                 Airship.deepLinkDelegate = _deepLinkDelegate
             } else {
                 Airship.deepLinkDelegate = nil
@@ -48,7 +48,7 @@ public class OUAAirship: NSObject {
     @objc
     @MainActor
     public class func takeOff(
-        _ config: OUAAirshipConfig?,
+        _ config: UAAirshipConfig?,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) {
         Airship.takeOff(config?.config, launchOptions: launchOptions)
@@ -77,12 +77,12 @@ public class OUAAirship: NSObject {
 }
 
 /// NSNotificationCenter keys event names
-@objc(OUAAirshipNotifications)
-public final class OUAAirshipNotifications: NSObject {
+@objc(UAAirshipNotifications)
+public final class UAAirshipNotifications: NSObject {
 
     /// Notification when Airship is ready.
-    @objc(OUAAirshipNotificationsAirshipReady)
-    public final class OUAAirshipReady: NSObject {
+    @objc(UAAirshipNotificationsAirshipReady)
+    public final class UAAirshipReady: NSObject {
         /// Notification name
         @objc
         public static let name = NSNotification.Name(

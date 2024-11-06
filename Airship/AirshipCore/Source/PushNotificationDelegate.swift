@@ -7,15 +7,13 @@ import WatchKit
 #endif
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
-@objc(UAPushNotificationDelegate)
 public protocol PushNotificationDelegate: NSObjectProtocol {
     /// Called when a notification is received in the foreground.
     ///
     /// - Parameters:
     ///   - userInfo: The notification info
     ///   - completionHandler: the completion handler to execute when notification processing is complete.
-    @objc
-    optional func receivedForegroundNotification(
+    func receivedForegroundNotification(
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping () -> Void
     )
@@ -25,8 +23,7 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
     /// - Parameters:
     ///   - userInfo: The notification info
     ///   - completionHandler: the completion handler to execute when notification processing is complete.
-    @objc
-    optional func receivedBackgroundNotification(
+    func receivedBackgroundNotification(
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     )
@@ -36,8 +33,7 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
     /// - Parameters:
     ///   - userInfo: The notification info
     ///   - completionHandler: the completion handler to execute when notification processing is complete.
-    @objc
-    optional func receivedBackgroundNotification(
+    func receivedBackgroundNotification(
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
     )
@@ -52,8 +48,7 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
     /// to the notification and the associated notification contents.
     ///
     ///   - completionHandler: the completion handler to execute when processing the user's response has completed.
-    @objc
-    optional func receivedNotificationResponse(
+    func receivedNotificationResponse(
         _ notificationResponse: UNNotificationResponse,
         completionHandler: @escaping () -> Void
     )
@@ -64,8 +59,7 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
     ///   - options: The notification presentation options.
     ///   - notification: The notification.
     /// - Returns: a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
-    @objc(extendPresentationOptions:notification:)
-    optional func extend(
+    func extend(
         _ options: UNNotificationPresentationOptions,
         notification: UNNotification
     ) -> UNNotificationPresentationOptions
@@ -77,10 +71,55 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
     ///   - options: The notification presentation options.
     ///   - notification: The notification.
     ///   - completionHandler: The completion handler.
-    @objc(extendPresentationOptions:notification:completionHandler:)
-    optional func extendPresentationOptions(
+    func extendPresentationOptions(
         _ options: UNNotificationPresentationOptions,
         notification: UNNotification,
         completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     )
+}
+
+public extension PushNotificationDelegate {
+    func extendPresentationOptions(_ options: UNNotificationPresentationOptions, notification: UNNotification, completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([])
+    }
+
+    func receivedForegroundNotification(
+        _ userInfo: [AnyHashable: Any],
+        completionHandler: @escaping () -> Void
+    ) {
+        completionHandler()
+    }
+
+    #if !os(watchOS)
+    func receivedBackgroundNotification(
+        _ userInfo: [AnyHashable: Any],
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        completionHandler(UIBackgroundFetchResult.noData)
+    }
+    
+    #else
+    func receivedBackgroundNotification(
+        _ userInfo: [AnyHashable: Any],
+        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+    ) {
+        completionHandler(WKBackgroundFetchResult.noData)
+    }
+    #endif
+
+    #if !os(tvOS)
+    func receivedNotificationResponse(
+        _ notificationResponse: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    ) {
+        completionHandler()
+    }
+    #endif
+
+    func extend(
+        _ options: UNNotificationPresentationOptions,
+        notification: UNNotification
+    ) -> UNNotificationPresentationOptions {
+        return []
+    }
 }

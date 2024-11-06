@@ -1,14 +1,14 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 /// Application hooks required by Airship. If `automaticSetupEnabled` is enabled
 /// (enabled by default), Airship will automatically integrate these calls into
 /// the application by swizzling methods. If `automaticSetupEnabled` is disabled,
 /// the application must call through to every method provided by this class.
 @objc
-public class OUAAppIntegration: NSObject {
+public class UAAppIntegration: NSObject {
 
     #if !os(watchOS)
     /**

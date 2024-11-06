@@ -4,7 +4,7 @@ import Foundation
 public import AirshipCore
 
 @objc
-public class OUAAirshipContact: NSObject {
+public class UAAirshipContact: NSObject {
     
     /// Identifies the contact.
     /// - Parameter namedUserID: The named user ID.
@@ -30,8 +30,8 @@ public class OUAAirshipContact: NSObject {
     /// Begins a tag groups editing session.
     /// - Returns: A TagGroupsEditor
     @objc
-    public func editTagGroups() -> OUATagGroupsEditor? {
-        let tagGroupsEditor = OUATagGroupsEditor()
+    public func editTagGroups() -> UATagGroupsEditor? {
+        let tagGroupsEditor = UATagGroupsEditor()
         tagGroupsEditor.editor = Airship.contact.editTagGroups()
         return tagGroupsEditor
     }
@@ -39,8 +39,8 @@ public class OUAAirshipContact: NSObject {
     /// Begins an attribute editing session.
     /// - Returns: An AttributesEditor
     @objc
-    public func editAttributes() -> OUAAttributesEditor? {
-        let attributesEditor =  OUAAttributesEditor()
+    public func editAttributes() -> UAAttributesEditor? {
+        let attributesEditor =  UAAttributesEditor()
         attributesEditor.editor = Airship.contact.editAttributes()
         return attributesEditor
     }
@@ -52,7 +52,7 @@ public class OUAAirshipContact: NSObject {
      *   - type: The channel type.
      */
     @objc
-    public func associateChannel(_ channelID: String, type: OUAChannelType) {
+    public func associateChannel(_ channelID: String, type: UAChannelType) {
         if let type = ChannelType(rawValue: type.rawValue) {
             Airship.contact.associateChannel(channelID, type: type)
         }
@@ -62,8 +62,8 @@ public class OUAAirshipContact: NSObject {
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
     @objc
-    public func editSubscriptionLists() -> OUAScopedSubscriptionListEditor {
-        let subscriptionListEditor = OUAScopedSubscriptionListEditor()
+    public func editSubscriptionLists() -> UAScopedSubscriptionListEditor {
+        let subscriptionListEditor = UAScopedSubscriptionListEditor()
         subscriptionListEditor.editor = Airship.contact.editSubscriptionLists()
         return subscriptionListEditor
     }
@@ -81,7 +81,7 @@ public class OUAAirshipContact: NSObject {
 
 @objc
 /// Channel type
-public enum OUAChannelType: Int, Sendable, Equatable {
+public enum UAChannelType: Int, Sendable, Equatable {
 
     /**
      * Email channel

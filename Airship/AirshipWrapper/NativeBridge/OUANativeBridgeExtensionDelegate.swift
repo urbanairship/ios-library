@@ -8,7 +8,7 @@ public import AirshipCore
 
 /// Delegate to extend the native bridge.
 @objc
-public protocol OUANativeBridgeExtensionDelegate {
+public protocol UANativeBridgeExtensionDelegate {
 
     /// Called when an action is triggered from the JavaScript Environment. This method should return the metadata used in the `ActionArgument`.
     /// - Parameter command The JavaScript command.
@@ -28,16 +28,16 @@ public protocol OUANativeBridgeExtensionDelegate {
     @objc
     @MainActor
     func extendJavaScriptEnvironment(
-        _ js: OUAJavaScriptEnvironment,
+        _ js: UAJavaScriptEnvironment,
         webView: WKWebView
     ) async
 
 }
 
-public class OUANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExtensionDelegate {
-    private let delegate: OUANativeBridgeExtensionDelegate
+public class UANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExtensionDelegate {
+    private let delegate: UANativeBridgeExtensionDelegate
     
-    init(delegate: OUANativeBridgeExtensionDelegate) {
+    init(delegate: UANativeBridgeExtensionDelegate) {
         self.delegate = delegate
     }
     
@@ -46,13 +46,13 @@ public class OUANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExte
     }
     
     public func extendJavaScriptEnvironment(_ js: JavaScriptEnvironmentProtocol, webView: WKWebView) async {
-        let jse = OUAJavaScriptEnvironment(delegate: js)
+        let jse = UAJavaScriptEnvironment(delegate: js)
         await self.delegate.extendJavaScriptEnvironment(jse, webView: webView)
     }
 }
 
 @objc
-public class OUAJavaScriptEnvironment: NSObject {
+public class UAJavaScriptEnvironment: NSObject {
     private let delegate: JavaScriptEnvironmentProtocol
     
     init(delegate: JavaScriptEnvironmentProtocol) {

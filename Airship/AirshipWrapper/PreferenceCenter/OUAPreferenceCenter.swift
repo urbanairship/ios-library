@@ -6,7 +6,7 @@ public import AirshipPreferenceCenter
 
 /// Open delegate.
 @objc
-public protocol OUAPreferenceCenterOpenDelegate {
+public protocol UAPreferenceCenterOpenDelegate {
 
     /**
      * Opens the Preference Center with the given ID.
@@ -18,10 +18,10 @@ public protocol OUAPreferenceCenterOpenDelegate {
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
-public class OUAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
-    private let delegate: OUAPreferenceCenterOpenDelegate
+public class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
+    private let delegate: UAPreferenceCenterOpenDelegate
     
-    init(delegate: OUAPreferenceCenterOpenDelegate) {
+    init(delegate: UAPreferenceCenterOpenDelegate) {
         self.delegate = delegate
     }
     
@@ -31,7 +31,7 @@ public class OUAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterO
 }
 
 @objc
-public class OUAPreferenceCenter: NSObject {
+public class UAPreferenceCenter: NSObject {
     
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @objc
@@ -49,10 +49,10 @@ public class OUAPreferenceCenter: NSObject {
     private var _openDelegate: PreferenceCenterOpenDelegate?
     @objc
     @MainActor
-    public var openDelegate: OUAPreferenceCenterOpenDelegate? {
+    public var openDelegate: UAPreferenceCenterOpenDelegate? {
         didSet {
             if let openDelegate {
-                _openDelegate = OUAPreferenceCenterOpenDelegateWrapper(delegate: openDelegate)
+                _openDelegate = UAPreferenceCenterOpenDelegateWrapper(delegate: openDelegate)
                 
                 PreferenceCenter.shared.openDelegate = _openDelegate
             } else {

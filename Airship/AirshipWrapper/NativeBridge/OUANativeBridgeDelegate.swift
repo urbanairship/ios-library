@@ -4,15 +4,15 @@ import Foundation
 public import AirshipCore
 
 @objc
-public protocol OUANativeBridgeDelegate {
+public protocol UANativeBridgeDelegate {
     /// Called when `UAirship.close()` is triggered from the JavaScript environment.
     func close()
 }
 
-public class OUANativeBridgeDelegateWrapper: NSObject, NativeBridgeDelegate {
-    private let delegate: OUANativeBridgeDelegate
+public class UANativeBridgeDelegateWrapper: NSObject, NativeBridgeDelegate {
+    private let delegate: UANativeBridgeDelegate
     
-    init(delegate: OUANativeBridgeDelegate) {
+    init(delegate: UANativeBridgeDelegate) {
         self.delegate = delegate
     }
     

@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUAAccountEventTemplate)
-public class OUAAccountEventTemplate: NSObject {
+@objc(UAAccountEventTemplate)
+public class UAAccountEventTemplate: NSObject {
    
     private var template: AccountEventTemplate
     
@@ -82,7 +82,7 @@ public class OUAAccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc
-    public class func registeredTemplate() -> OUAAccountEventTemplate {
+    public class func registeredTemplate() -> UAAccountEventTemplate {
         return registeredTemplate(value: nil)
     }
 
@@ -95,7 +95,7 @@ public class OUAAccountEventTemplate: NSObject {
      */
     @objc(registeredTemplateWithValueFromString:)
     public class func registeredTemplate(valueString: String?)
-        -> OUAAccountEventTemplate
+        -> UAAccountEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -111,13 +111,13 @@ public class OUAAccountEventTemplate: NSObject {
      */
     @objc(registeredTemplateWithValue:)
     public class func registeredTemplate(value: NSNumber?)
-        -> OUAAccountEventTemplate
+        -> UAAccountEventTemplate
     {
         let template = AccountEventTemplate(
             eventName: "registered_account",
             value: value
         )
-        return OUAAccountEventTemplate(template: template)
+        return UAAccountEventTemplate(template: template)
     }
 
     /**
@@ -125,7 +125,7 @@ public class OUAAccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc
-    public class func loggedInTemplate() -> OUAAccountEventTemplate {
+    public class func loggedInTemplate() -> UAAccountEventTemplate {
         return loggedInTemplate(value: nil)
     }
 
@@ -138,7 +138,7 @@ public class OUAAccountEventTemplate: NSObject {
      */
     @objc(loggedInTemplateWithValueFromString:)
     public class func loggedInTemplate(valueString: String?)
-        -> OUAAccountEventTemplate
+        -> UAAccountEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -153,10 +153,10 @@ public class OUAAccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc(loggedInTemplateWithValue:)
-    public class func loggedInTemplate(value: NSNumber?) -> OUAAccountEventTemplate
+    public class func loggedInTemplate(value: NSNumber?) -> UAAccountEventTemplate
     {
         let template = AccountEventTemplate(eventName: "logged_in", value: value)
-        return OUAAccountEventTemplate(template: template)
+        return UAAccountEventTemplate(template: template)
     }
 
     /**
@@ -164,7 +164,7 @@ public class OUAAccountEventTemplate: NSObject {
      * - Returns: An Account event template instance
      */
     @objc
-    public class func loggedOutTemplate() -> OUAAccountEventTemplate {
+    public class func loggedOutTemplate() -> UAAccountEventTemplate {
         return loggedOutTemplate(value: nil)
     }
 
@@ -177,7 +177,7 @@ public class OUAAccountEventTemplate: NSObject {
      */
     @objc(loggedOutTemplateWithValueFromString:)
     public class func loggedOutTemplate(valueString: String?)
-        -> OUAAccountEventTemplate
+        -> UAAccountEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -193,10 +193,10 @@ public class OUAAccountEventTemplate: NSObject {
      */
     @objc(loggedOutTemplateWithValue:)
     public class func loggedOutTemplate(value: NSNumber?)
-        -> OUAAccountEventTemplate
+        -> UAAccountEventTemplate
     {
         let template = AccountEventTemplate(eventName: "logged_out", value: value)
-        return OUAAccountEventTemplate(template: template)
+        return UAAccountEventTemplate(template: template)
     }
 
     /**

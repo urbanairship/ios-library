@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUARegionEvent)
-public class OUARegionEvent: NSObject {
+@objc
+public class UARegionEvent: NSObject {
     
     private var regionEvent: RegionEvent?
     
@@ -29,7 +29,7 @@ public class OUARegionEvent: NSObject {
     public convenience init?(
         regionID: String,
         source: String,
-        boundaryEvent: UABoundaryEvent,
+        boundaryEvent: AirshipBoundaryEvent,
         circularRegion: CircularRegion? = nil,
         proximityRegion: ProximityRegion? = nil
     ) {
@@ -55,10 +55,10 @@ public class OUARegionEvent: NSObject {
     public class func regionEvent(
         regionID: String,
         source: String,
-        boundaryEvent: OUABoundaryEvent
-    ) -> OUARegionEvent {
+        boundaryEvent: UABoundaryEvent
+    ) -> UARegionEvent {
         let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent.event)
-        return OUARegionEvent(event: regionEvent)
+        return UARegionEvent(event: regionEvent)
     }
     
     /**
@@ -82,20 +82,20 @@ public class OUARegionEvent: NSObject {
     public class func regionEvent(
         regionID: String,
         source: String,
-        boundaryEvent: OUABoundaryEvent,
+        boundaryEvent: UABoundaryEvent,
         circularRegion: CircularRegion?,
         proximityRegion: ProximityRegion?
-    ) -> OUARegionEvent {
+    ) -> UARegionEvent {
         let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent.event, circularRegion: circularRegion, proximityRegion: proximityRegion)
-        return OUARegionEvent(event: regionEvent)
+        return UARegionEvent(event: regionEvent)
     }
 }
 
 @objc
-public class OUABoundaryEvent: NSObject {
-    var event: UABoundaryEvent
+public class UABoundaryEvent: NSObject {
+    var event: AirshipBoundaryEvent
     
-    public init(boundaryEvent: UABoundaryEvent) {
+    public init(boundaryEvent: AirshipBoundaryEvent) {
         event = boundaryEvent
     }
 }

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// Represents the boundary crossing event type.
-public enum UABoundaryEvent: Int, Sendable {
+public enum AirshipBoundaryEvent: Int, Sendable {
     /**
      * Enter event
      */
@@ -47,7 +47,7 @@ public class RegionEvent: NSObject {
     /**
      * The type of boundary event.
      */
-    public let boundaryEvent: UABoundaryEvent
+    public let boundaryEvent: AirshipBoundaryEvent
 
     /**
      * A circular region with a radius, and latitude/longitude from its center.
@@ -73,7 +73,7 @@ public class RegionEvent: NSObject {
     public init?(
         regionID: String,
         source: String,
-        boundaryEvent: UABoundaryEvent,
+        boundaryEvent: AirshipBoundaryEvent,
         circularRegion: CircularRegion? = nil,
         proximityRegion: ProximityRegion? = nil
     ) {
@@ -106,7 +106,7 @@ public class RegionEvent: NSObject {
     public class func regionEvent(
         regionID: String,
         source: String,
-        boundaryEvent: UABoundaryEvent
+        boundaryEvent: AirshipBoundaryEvent
     ) -> RegionEvent? {
         return RegionEvent(
             regionID: regionID,
@@ -129,7 +129,7 @@ public class RegionEvent: NSObject {
     public class func regionEvent(
         regionID: String,
         source: String,
-        boundaryEvent: UABoundaryEvent,
+        boundaryEvent: AirshipBoundaryEvent,
         circularRegion: CircularRegion?,
         proximityRegion: ProximityRegion?
     ) -> RegionEvent? {

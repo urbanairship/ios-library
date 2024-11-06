@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUARetailEventTemplate)
-public class OUARetailEventTemplate: NSObject {
+@objc
+public class UARetailEventTemplate: NSObject {
     
     private var template: RetailEventTemplate
     
@@ -112,7 +112,7 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(browsedTemplate)
-    public class func browsedTemplate() -> OUARetailEventTemplate {
+    public class func browsedTemplate() -> UARetailEventTemplate {
         return browsedTemplate(value: nil)
     }
 
@@ -125,7 +125,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(browsedTemplateWithValueFromString:)
     public class func browsedTemplate(valueString: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -140,9 +140,9 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(browsedTemplateWithValue:)
-    public class func browsedTemplate(value: NSNumber?) -> OUARetailEventTemplate {
+    public class func browsedTemplate(value: NSNumber?) -> UARetailEventTemplate {
         let template = RetailEventTemplate("browsed", value: value)
-        return OUARetailEventTemplate(template: template)
+        return UARetailEventTemplate(template: template)
     }
 
     /**
@@ -150,7 +150,7 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(addedToCartTemplate)
-    public class func addedToCartTemplate() -> OUARetailEventTemplate {
+    public class func addedToCartTemplate() -> UARetailEventTemplate {
         return addedToCartTemplate(value: nil)
     }
 
@@ -163,7 +163,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(addedToCartTemplateWithValueFromString:)
     public class func addedToCartTemplate(valueString: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -179,10 +179,10 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(addedToCartTemplateWithValue:)
     public class func addedToCartTemplate(value: NSNumber?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let template = RetailEventTemplate("added_to_cart", value: value)
-        return OUARetailEventTemplate(template: template)
+        return UARetailEventTemplate(template: template)
     }
 
     /**
@@ -190,7 +190,7 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(starredProductTemplate)
-    public class func starredProductTemplate() -> OUARetailEventTemplate {
+    public class func starredProductTemplate() -> UARetailEventTemplate {
         return starredProductTemplate(value: nil)
     }
 
@@ -203,7 +203,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(starredProductTemplateWithValueFromString:)
     public class func starredProductTemplate(valueString: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -219,10 +219,10 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(starredProductTemplateWithValue:)
     public class func starredProductTemplate(value: NSNumber?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let template = RetailEventTemplate("starred_product", value: value)
-        return OUARetailEventTemplate(template: template)
+        return UARetailEventTemplate(template: template)
     }
 
     /**
@@ -230,7 +230,7 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplate)
-    public class func purchasedTemplate() -> OUARetailEventTemplate {
+    public class func purchasedTemplate() -> UARetailEventTemplate {
         return purchasedTemplate(value: nil)
     }
 
@@ -243,7 +243,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(purchasedTemplateWithValueFromString:)
     public class func purchasedTemplate(valueString: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -258,10 +258,10 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(purchasedTemplateWithValue:)
-    public class func purchasedTemplate(value: NSNumber?) -> OUARetailEventTemplate
+    public class func purchasedTemplate(value: NSNumber?) -> UARetailEventTemplate
     {
         let template = RetailEventTemplate("purchased", value: value)
-        return OUARetailEventTemplate(template: template)
+        return UARetailEventTemplate(template: template)
     }
 
     /**
@@ -269,7 +269,7 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(sharedProductTemplate)
-    public class func sharedProductTemplate() -> OUARetailEventTemplate {
+    public class func sharedProductTemplate() -> UARetailEventTemplate {
         return sharedProductTemplate(value: nil, source: nil, medium: nil)
     }
 
@@ -282,7 +282,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(sharedProductTemplateWithValueFromString:)
     public class func sharedProductTemplate(valueString: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -302,7 +302,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(sharedProductTemplateWithValue:)
     public class func sharedProductTemplate(value: NSNumber?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         return sharedProductTemplate(value: value, source: nil, medium: nil)
     }
@@ -315,7 +315,7 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(sharedProductTemplateWithSource:withMedium:)
     public class func sharedProductTemplate(source: String?, medium: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         return sharedProductTemplate(value: nil, source: source, medium: medium)
     }
@@ -334,7 +334,7 @@ public class OUARetailEventTemplate: NSObject {
         valueString: String?,
         source: String?,
         medium: String?
-    ) -> OUARetailEventTemplate {
+    ) -> UARetailEventTemplate {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
         return sharedProductTemplate(
@@ -358,14 +358,14 @@ public class OUARetailEventTemplate: NSObject {
         value: NSNumber?,
         source: String?,
         medium: String?
-    ) -> OUARetailEventTemplate {
+    ) -> UARetailEventTemplate {
         let template = RetailEventTemplate(
             "shared_product",
             value: value,
             source: source,
             medium: medium
         )
-        return OUARetailEventTemplate(template: template)
+        return UARetailEventTemplate(template: template)
     }
 
     /**
@@ -373,7 +373,7 @@ public class OUARetailEventTemplate: NSObject {
      * - Returns: A Retail event template instance
      */
     @objc(wishlistTemplate)
-    public class func wishlistTemplate() -> OUARetailEventTemplate {
+    public class func wishlistTemplate() -> UARetailEventTemplate {
         return wishlistTemplate(name: nil, wishlistID: nil)
     }
 
@@ -386,14 +386,14 @@ public class OUARetailEventTemplate: NSObject {
      */
     @objc(wishlistTemplateWithName:wishlistID:)
     public class func wishlistTemplate(name: String?, wishlistID: String?)
-        -> OUARetailEventTemplate
+        -> UARetailEventTemplate
     {
         let template = RetailEventTemplate(
             "wishlist",
             wishlistName: name,
             wishlistID: wishlistID
         )
-        return OUARetailEventTemplate(template: template)
+        return UARetailEventTemplate(template: template)
     }
 
     /**

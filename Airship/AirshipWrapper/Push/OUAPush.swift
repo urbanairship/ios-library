@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUAPush)
-public class OUAPush: NSObject {
+@objc
+public class UAPush: NSObject {
     
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
@@ -118,24 +118,24 @@ public class OUAPush: NSObject {
         }
     }
 
-    private var _pushNotificationDelegate: OUAPushNotificationDelegate?
+    private var _pushNotificationDelegate: UAPushNotificationDelegate?
     @objc
-    public var pushNotificationDelegate: OUAPushNotificationDelegate? {
+    public var pushNotificationDelegate: UAPushNotificationDelegate? {
         didSet {
             if let pushNotificationDelegate {
-                Airship.push.pushNotificationDelegate = OUAPushNotificationDelegateWrapper(delegate: pushNotificationDelegate)
+                Airship.push.pushNotificationDelegate = UAPushNotificationDelegateWrapper(delegate: pushNotificationDelegate)
             } else {
                 Airship.push.pushNotificationDelegate = nil
             }
         }
     }
 
-    private var _registrationDelegate: OUARegistrationDelegate?
+    private var _registrationDelegate: UARegistrationDelegate?
     @objc
-    public var registrationDelegate: OUARegistrationDelegate? {
+    public var registrationDelegate: UARegistrationDelegate? {
         didSet {
             if let registrationDelegate {
-                Airship.push.registrationDelegate = OUARegistrationDelegateWrapper(delegate: registrationDelegate)
+                Airship.push.registrationDelegate = UARegistrationDelegateWrapper(delegate: registrationDelegate)
             } else {
                 Airship.push.registrationDelegate = nil
             }
@@ -277,10 +277,10 @@ public class OUAPush: NSObject {
    
 }
 
-public extension OUAAirshipNotifications {
+public extension UAAirshipNotifications {
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    @objc(OUAAirshipNotificationReceivedNotificationResponse)
+    @objc(UAAirshipNotificationReceivedNotificationResponse)
     final class ReceivedNotificationResponse: NSObject {
 
         /// NSNotification name.
@@ -292,7 +292,7 @@ public extension OUAAirshipNotifications {
 
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    @objc(OUAAirshipNotificationRecievedNotification)
+    @objc(UAAirshipNotificationRecievedNotification)
     final class RecievedNotification: NSObject {
 
         /// NSNotification name.

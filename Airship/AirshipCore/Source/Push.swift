@@ -439,10 +439,8 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    @objc
     public weak var pushNotificationDelegate: PushNotificationDelegate?
 
-    @objc
     public weak var registrationDelegate: RegistrationDelegate?
 
     #if !os(tvOS)
@@ -532,7 +530,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
             if self.authorizedNotificationSettings != settings {
                 self.authorizedNotificationSettings = settings
-                self.registrationDelegate?.notificationAuthorizedSettingsDidChange?(
+                self.registrationDelegate?.notificationAuthorizedSettingsDidChange(
                     settings
                 )
                 settingsChanged = true
@@ -712,7 +710,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
         #if !os(tvOS)
         self.registrationDelegate?
-            .notificationRegistrationFinished?(
+            .notificationRegistrationFinished(
                 withAuthorizedSettings: settings,
                 categories: self.combinedCategories,
                 status: status
@@ -720,7 +718,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
         #else
         self.registrationDelegate?
-            .notificationRegistrationFinished?(
+            .notificationRegistrationFinished(
                 withAuthorizedSettings: settings,
                 status: status
             )
@@ -1026,7 +1024,7 @@ extension AirshipPush: InternalPushProtocol {
         AirshipLogger.info("Device token string: \(tokenString)")
         self.deviceToken = tokenString
         self.channel.updateRegistration()
-        self.registrationDelegate?.apnsRegistrationSucceeded?(
+        self.registrationDelegate?.apnsRegistrationSucceeded(
             withDeviceToken: deviceToken
         )
     }
@@ -1036,7 +1034,7 @@ extension AirshipPush: InternalPushProtocol {
             return
         }
 
-        self.registrationDelegate?.apnsRegistrationFailedWithError?(error)
+        self.registrationDelegate?.apnsRegistrationFailedWithError(error)
     }
 
     public func presentationOptionsForNotification(
@@ -1080,7 +1078,7 @@ extension AirshipPush: InternalPushProtocol {
             options = self.defaultPresentationOptions
         }
 
-        if let extendedOptions = self.pushNotificationDelegate?.extend?(
+        if let extendedOptions = self.pushNotificationDelegate?.extend(
             options,
             notification: notification
         ) {

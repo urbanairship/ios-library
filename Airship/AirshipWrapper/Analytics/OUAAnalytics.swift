@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUAAnalytics)
-public class OUAAnalytics: NSObject {
+@objc
+public class UAAnalytics: NSObject {
 
     /// The current session ID.
     @objc

@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUAMediaEventTemplate)
-public class OUAMediaEventTemplate: NSObject {
+@objc
+public class UAMediaEventTemplate: NSObject {
     
     private var template: MediaEventTemplate
     
@@ -112,9 +112,9 @@ public class OUAMediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func browsedTemplate() -> OUAMediaEventTemplate {
+    public class func browsedTemplate() -> UAMediaEventTemplate {
         let template = MediaEventTemplate("browsed_content")
-        return OUAMediaEventTemplate(template: template)
+        return UAMediaEventTemplate(template: template)
     }
 
     /**
@@ -122,9 +122,9 @@ public class OUAMediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func starredTemplate() -> OUAMediaEventTemplate {
+    public class func starredTemplate() -> UAMediaEventTemplate {
         let template = MediaEventTemplate("starred_content")
-        return OUAMediaEventTemplate(template: template)
+        return UAMediaEventTemplate(template: template)
     }
 
     /**
@@ -132,7 +132,7 @@ public class OUAMediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func sharedTemplate() -> OUAMediaEventTemplate {
+    public class func sharedTemplate() -> UAMediaEventTemplate {
         return sharedTemplate(source: nil, medium: nil)
     }
 
@@ -146,7 +146,7 @@ public class OUAMediaEventTemplate: NSObject {
      */
     @objc(sharedTemplateWithSource:withMedium:)
     public class func sharedTemplate(source: String?, medium: String?)
-        -> OUAMediaEventTemplate
+        -> UAMediaEventTemplate
     {
         let template = MediaEventTemplate(
             "shared_content",
@@ -154,7 +154,7 @@ public class OUAMediaEventTemplate: NSObject {
             source: source,
             medium: medium
         )
-        return OUAMediaEventTemplate(template: template)
+        return UAMediaEventTemplate(template: template)
     }
 
     /**
@@ -162,7 +162,7 @@ public class OUAMediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc
-    public class func consumedTemplate() -> OUAMediaEventTemplate {
+    public class func consumedTemplate() -> UAMediaEventTemplate {
         return consumedTemplate(value: nil)
     }
 
@@ -175,7 +175,7 @@ public class OUAMediaEventTemplate: NSObject {
      */
     @objc(consumedTemplateWithValueFromString:)
     public class func consumedTemplate(valueString: String?)
-        -> OUAMediaEventTemplate
+        -> UAMediaEventTemplate
     {
         let decimalValue =
             valueString != nil ? NSDecimalNumber(string: valueString) : nil
@@ -190,9 +190,9 @@ public class OUAMediaEventTemplate: NSObject {
      * - Returns: A Media event template instance
      */
     @objc(consumedTemplateWithValue:)
-    public class func consumedTemplate(value: NSNumber?) -> OUAMediaEventTemplate {
+    public class func consumedTemplate(value: NSNumber?) -> UAMediaEventTemplate {
         let template = MediaEventTemplate("consumed_content", value: value)
-        return OUAMediaEventTemplate(template: template)
+        return UAMediaEventTemplate(template: template)
     }
 
     /**

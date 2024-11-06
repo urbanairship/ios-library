@@ -4,7 +4,7 @@ import Foundation
 public import AirshipCore
 
 @objc
-public protocol OUADeepLinkDelegate {
+public protocol UADeepLinkDelegate {
     
     /// Called when a deep link has been triggered from Airship. If implemented, the delegate is responsible for processing the provided url.
     /// - Parameters:
@@ -14,11 +14,11 @@ public protocol OUADeepLinkDelegate {
     
 }
 
-public class OUADeepLinkDelegateWrapper: NSObject, DeepLinkDelegate {
+public class UADeepLinkDelegateWrapper: NSObject, DeepLinkDelegate {
     
-    private let delegate: OUADeepLinkDelegate
+    private let delegate: UADeepLinkDelegate
     
-    init(delegate: OUADeepLinkDelegate) {
+    init(delegate: UADeepLinkDelegate) {
         self.delegate = delegate
     }
     

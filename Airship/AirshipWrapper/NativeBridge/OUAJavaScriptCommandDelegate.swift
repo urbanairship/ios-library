@@ -8,7 +8,7 @@ public import AirshipCore
 
 /// A standard protocol for handling commands from the NativeBridge.
 @objc
-public protocol OUAJavaScriptCommandDelegate {
+public protocol UAJavaScriptCommandDelegate {
     /// Delegates must implement this method. Implementations take a model object representing
     /// the JavaScript command which includes the command name, an array of string arguments,
     /// and a dictionary of key-value pairs (all strings).
@@ -35,10 +35,10 @@ public protocol OUAJavaScriptCommandDelegate {
     func performCommand(_ command: JavaScriptCommand, webView: WKWebView) -> Bool
 }
 
-public class OUAJavaScriptCommandDelegateWrapper: NSObject, JavaScriptCommandDelegate {
-    private let delegate: OUAJavaScriptCommandDelegate
+public class UAJavaScriptCommandDelegateWrapper: NSObject, JavaScriptCommandDelegate {
+    private let delegate: UAJavaScriptCommandDelegate
     
-    init(delegate: OUAJavaScriptCommandDelegate) {
+    init(delegate: UAJavaScriptCommandDelegate) {
         self.delegate = delegate
     }
     

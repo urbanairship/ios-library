@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 @objc
-public class OUASubscriptionListEditor: NSObject {
+public class UASubscriptionListEditor: NSObject {
     
     var editor: SubscriptionListEditor?
     

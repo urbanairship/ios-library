@@ -4,8 +4,8 @@ import Foundation
 public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-@objc(OUASearchEventTemplate)
-public class OUASearchEventTemplate: NSObject {
+@objc
+public class UASearchEventTemplate: NSObject {
     
     private var template: SearchEventTemplate
     
@@ -112,9 +112,9 @@ public class OUASearchEventTemplate: NSObject {
      * - Returns: SearchEventTemplate instance.
      */
     @objc(templateWithValue:)
-    public class func template(value: NSNumber) -> OUASearchEventTemplate {
+    public class func template(value: NSNumber) -> UASearchEventTemplate {
         let template = SearchEventTemplate(value: value)
-        return OUASearchEventTemplate(template: template)
+        return UASearchEventTemplate(template: template)
     }
 
     /**
@@ -122,9 +122,9 @@ public class OUASearchEventTemplate: NSObject {
      * - Returns: SearchEventTemplate instance.
      */
     @objc(template)
-    public class func template() -> OUASearchEventTemplate {
+    public class func template() -> UASearchEventTemplate {
         let template = SearchEventTemplate()
-        return OUASearchEventTemplate(template: template)
+        return UASearchEventTemplate(template: template)
     }
 
     /**

@@ -86,7 +86,7 @@ struct WebViewView: UIViewRepresentable {
     }
 
     
-    class Coordinator: NSObject, UANavigationDelegate,
+    class Coordinator: NSObject, AirshipWKNavigationDelegate,
         JavaScriptCommandDelegate, NativeBridgeDelegate
     {
         private let parent: WebViewView

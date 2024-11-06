@@ -5,7 +5,7 @@ public import AirshipCore
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 @objc
-public protocol OUAPushNotificationDelegate {
+public protocol UAPushNotificationDelegate {
     /// Called when a notification is received in the foreground.
     ///
     /// - Parameters:
@@ -82,10 +82,10 @@ public protocol OUAPushNotificationDelegate {
     )
 }
 
-public class OUAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
-    private let delegate: OUAPushNotificationDelegate
+public class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
+    private let delegate: UAPushNotificationDelegate
     
-    init(delegate: OUAPushNotificationDelegate) {
+    init(delegate: UAPushNotificationDelegate) {
         self.delegate = delegate
     }
     

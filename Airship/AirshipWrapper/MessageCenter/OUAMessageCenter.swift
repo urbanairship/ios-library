@@ -4,8 +4,8 @@ import Foundation
 public import AirshipMessageCenter
 
 /// Delegate protocol for receiving callbacks related to message center.
-@objc(OUAMessageCenterDisplayDelegate)
-public protocol OUAMessageCenterDisplayDelegate {
+@objc(UAMessageCenterDisplayDelegate)
+public protocol UAMessageCenterDisplayDelegate {
 
     /// Called when a message is requested to be displayed.
     ///
@@ -27,7 +27,7 @@ public protocol OUAMessageCenterDisplayDelegate {
 }
 
 @objc
-public protocol OUAMessageCenterPredicate {
+public protocol UAMessageCenterPredicate {
     /// Evaluate the message center message. Used to filter the message center list
     /// - Parameters:
     ///     - message: The message center message
@@ -36,16 +36,16 @@ public protocol OUAMessageCenterPredicate {
 }
 
 @objc
-public class OUAMessageCenter: NSObject {
+public class UAMessageCenter: NSObject {
     
-    private var _displayDelegate: OUAMessageCenterDisplayDelegate?
+    private var _displayDelegate: UAMessageCenterDisplayDelegate?
     /// Message center display delegate.
     @objc
     @MainActor
-    public var displayDelegate: OUAMessageCenterDisplayDelegate? {
+    public var displayDelegate: UAMessageCenterDisplayDelegate? {
         didSet {
             if let displayDelegate {
-                MessageCenter.shared.displayDelegate = OUAMessageCenterDisplayDelegateWrapper(delegate: displayDelegate)
+                MessageCenter.shared.displayDelegate = UAMessageCenterDisplayDelegateWrapper(delegate: displayDelegate)
             } else {
                 MessageCenter.shared.displayDelegate = nil
             }
@@ -54,9 +54,9 @@ public class OUAMessageCenter: NSObject {
     
     /// Message center inbox.
     @objc
-    var inbox: OUAMessageCenterInbox {
+    var inbox: UAMessageCenterInbox {
         get {
-            return OUAMessageCenterInbox()
+            return UAMessageCenterInbox()
         }
     }
 
@@ -70,15 +70,15 @@ public class OUAMessageCenter: NSObject {
         try MessageCenter.shared.setThemeFromPlist(plist)
     }
 
-    private var _predicate: OUAMessageCenterPredicate?
+    private var _predicate: UAMessageCenterPredicate?
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
     @objc
     @MainActor
-    public var predicate: OUAMessageCenterPredicate? {
+    public var predicate: UAMessageCenterPredicate? {
         didSet {
             if let predicate {
-                MessageCenter.shared.predicate = OUAMessageCenterPredicateWrapper(delegate: predicate)
+                MessageCenter.shared.predicate = UAMessageCenterPredicateWrapper(delegate: predicate)
             } else {
                 MessageCenter.shared.predicate = nil
             }
@@ -110,10 +110,10 @@ public class OUAMessageCenter: NSObject {
 
 }
 
-public class OUAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisplayDelegate {
-    private let delegate: OUAMessageCenterDisplayDelegate
+public class UAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisplayDelegate {
+    private let delegate: UAMessageCenterDisplayDelegate
     
-    init(delegate: OUAMessageCenterDisplayDelegate) {
+    init(delegate: UAMessageCenterDisplayDelegate) {
         self.delegate = delegate
     }
     
@@ -130,10 +130,10 @@ public class OUAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisp
     }
 }
 
-public class OUAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
-    private let delegate: OUAMessageCenterPredicate
+public class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
+    private let delegate: UAMessageCenterPredicate
     
-    init(delegate: OUAMessageCenterPredicate) {
+    init(delegate: UAMessageCenterPredicate) {
         self.delegate = delegate
     }
     

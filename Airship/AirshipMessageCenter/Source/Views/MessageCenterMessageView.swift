@@ -234,7 +234,7 @@ struct MessageCenterWebView: UIViewRepresentable {
         }
     }
 
-    class Coordinator: NSObject, UANavigationDelegate,
+    class Coordinator: NSObject, AirshipWKNavigationDelegate,
         JavaScriptCommandDelegate,
         NativeBridgeDelegate
     {

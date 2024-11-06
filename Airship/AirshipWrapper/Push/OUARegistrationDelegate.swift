@@ -7,7 +7,7 @@ public import AirshipCore
 /// registration success and failure callbacks.
 ///
 @objc
-public protocol OUARegistrationDelegate {
+public protocol UARegistrationDelegate {
     #if !os(tvOS)
     /// Called when APNS registration completes.
     ///
@@ -61,10 +61,11 @@ public protocol OUARegistrationDelegate {
     func apnsRegistrationFailedWithError(_ error: Error)
 }
 
-public class OUARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
-    private let delegate: OUARegistrationDelegate
+public class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
     
-    init(delegate: OUARegistrationDelegate) {
+    private let delegate: UARegistrationDelegate
+    
+    init(delegate: UARegistrationDelegate) {
         self.delegate = delegate
     }
     
@@ -93,5 +94,9 @@ public class OUARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
     
     public func apnsRegistrationFailedWithError(_ error: Error) {
         self.delegate.apnsRegistrationFailedWithError(error)
+    }
+    
+    public func notificationAuthorizedSettingsDidChange(_ authorizedSettings: UAAuthorizedNotificationSettings) {
+        self.delegate.notificationAuthorizedSettingsDidChange(authorizedSettings)
     }
 }

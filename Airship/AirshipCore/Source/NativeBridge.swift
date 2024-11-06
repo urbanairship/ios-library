@@ -35,7 +35,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     public weak var nativeBridgeDelegate: NativeBridgeDelegate?
 
     /// Optional delegate to forward any WKNavigationDelegate calls.
-    public weak var forwardNavigationDelegate: UANavigationDelegate?
+    public weak var forwardNavigationDelegate: AirshipWKNavigationDelegate?
 
     /// Optional delegate to support custom JavaScript commands.
     public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
@@ -508,7 +508,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 }
 
 @objc
-public protocol UANavigationDelegate: WKNavigationDelegate {
+public protocol AirshipWKNavigationDelegate: WKNavigationDelegate {
     @objc optional func closeWindow(_ animated: Bool)
 }
 

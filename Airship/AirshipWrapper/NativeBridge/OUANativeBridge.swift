@@ -4,19 +4,19 @@ import Foundation
 public import AirshipCore
 public import WebKit
 
-@objc(OUANativeBridge)
-public class OUANativeBridge: NSObject {
+@objc
+public class UANativeBridge: NSObject {
     
     private let bridge: NativeBridge
     
     private var _nativeBridgeDelegate: NativeBridgeDelegate?
     /// Delegate to support additional native bridge features such as `close()`.
     @objc
-    public var nativeBridgeDelegate: OUANativeBridgeDelegate? {
+    public var nativeBridgeDelegate: UANativeBridgeDelegate? {
         didSet {
             if let nativeBridgeDelegate {
                 
-                _nativeBridgeDelegate = OUANativeBridgeDelegateWrapper(delegate: nativeBridgeDelegate)
+                _nativeBridgeDelegate = UANativeBridgeDelegateWrapper(delegate: nativeBridgeDelegate)
                 
                 self.bridge.nativeBridgeDelegate = _nativeBridgeDelegate
             } else {
@@ -26,14 +26,14 @@ public class OUANativeBridge: NSObject {
     }
 
     
-    private var _forwardNavigationDelegate: UANavigationDelegate?
+    private var _forwardNavigationDelegate: AirshipWKNavigationDelegate?
     /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
-    public var forwardNavigationDelegate: OUANavigationDelegate?
+    public var forwardNavigationDelegate: UANavigationDelegate?
  {
         didSet {
             if let forwardNavigationDelegate {
-                _forwardNavigationDelegate = OUANavigationDelegateWrapper(delegate: forwardNavigationDelegate)
+                _forwardNavigationDelegate = UANavigationDelegateWrapper(delegate: forwardNavigationDelegate)
                 
                 self.bridge.forwardNavigationDelegate = _forwardNavigationDelegate
             } else {
@@ -45,11 +45,11 @@ public class OUANativeBridge: NSObject {
     private var _javaScriptCommandDelegate: JavaScriptCommandDelegate?
     /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
-    public var javaScriptCommandDelegate: OUAJavaScriptCommandDelegate?
+    public var javaScriptCommandDelegate: UAJavaScriptCommandDelegate?
  {
         didSet {
             if let javaScriptCommandDelegate {
-                _javaScriptCommandDelegate = OUAJavaScriptCommandDelegateWrapper(delegate: javaScriptCommandDelegate)
+                _javaScriptCommandDelegate = UAJavaScriptCommandDelegateWrapper(delegate: javaScriptCommandDelegate)
                 
                 self.bridge.javaScriptCommandDelegate = _javaScriptCommandDelegate
             } else {
@@ -62,11 +62,11 @@ public class OUANativeBridge: NSObject {
     private var _nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
     /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
-    public var nativeBridgeExtensionDelegate: OUANativeBridgeExtensionDelegate?
+    public var nativeBridgeExtensionDelegate: UANativeBridgeExtensionDelegate?
  {
         didSet {
             if let nativeBridgeExtensionDelegate {
-                _nativeBridgeExtensionDelegate = OUANativeBridgeExtensionDelegateWrapper(delegate: nativeBridgeExtensionDelegate)
+                _nativeBridgeExtensionDelegate = UANativeBridgeExtensionDelegateWrapper(delegate: nativeBridgeExtensionDelegate)
                 
                 self.bridge.nativeBridgeExtensionDelegate = _nativeBridgeExtensionDelegate
             } else {
@@ -84,14 +84,14 @@ public class OUANativeBridge: NSObject {
 }
 
 @objc
-public protocol OUANavigationDelegate: WKNavigationDelegate {
+public protocol UANavigationDelegate: WKNavigationDelegate {
     @objc optional func closeWindow(_ animated: Bool)
 }
 
-public class OUANavigationDelegateWrapper: NSObject, UANavigationDelegate {
-    private let delegate: OUANavigationDelegate
+public class UANavigationDelegateWrapper: NSObject, AirshipWKNavigationDelegate {
+    private let delegate: UANavigationDelegate
     
-    init(delegate: OUANavigationDelegate) {
+    init(delegate: UANavigationDelegate) {
         self.delegate = delegate
     }
 }

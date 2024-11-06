@@ -5,7 +5,7 @@ import UIKit
 import Combine
 
 class PushSettingsViewController: UITableViewController, RegistrationDelegate {
-
+    
     @IBOutlet weak var pushEnabledCell: UITableViewCell!
     @IBOutlet weak var channelIDCell: UITableViewCell!
     @IBOutlet weak var namedUserCell: UITableViewCell!

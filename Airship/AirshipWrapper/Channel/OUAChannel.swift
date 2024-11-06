@@ -5,11 +5,11 @@ public import AirshipCore
 
 
 @objc
-public class OUAChannel: NSObject {
+public class UAChannel: NSObject {
     
     @objc
-    public func editTags() -> OUATagEditor? {
-        let tagEditor = OUATagEditor()
+    public func editTags() -> UATagEditor? {
+        let tagEditor = UATagEditor()
         tagEditor.editor = Airship.channel.editTags()
         return tagEditor
     }
@@ -20,8 +20,8 @@ public class OUAChannel: NSObject {
     }
     
     @objc
-    public func editTagGroups() -> OUATagGroupsEditor? {
-        let tagGroupsEditor = OUATagGroupsEditor()
+    public func editTagGroups() -> UATagGroupsEditor? {
+        let tagGroupsEditor = UATagGroupsEditor()
         tagGroupsEditor.editor = Airship.channel.editTagGroups()
         return tagGroupsEditor
     }
@@ -32,8 +32,8 @@ public class OUAChannel: NSObject {
     }
     
     @objc
-    public func editSubscriptionLists() -> OUASubscriptionListEditor? {
-        let subscriptionListEditor = OUASubscriptionListEditor()
+    public func editSubscriptionLists() -> UASubscriptionListEditor? {
+        let subscriptionListEditor = UASubscriptionListEditor()
         subscriptionListEditor.editor = Airship.channel.editSubscriptionLists()
         return subscriptionListEditor
     }
@@ -51,8 +51,8 @@ public class OUAChannel: NSObject {
     }
     
     @objc
-    public func editAttributes() -> OUAAttributesEditor? {
-        let attributesEditor =  OUAAttributesEditor()
+    public func editAttributes() -> UAAttributesEditor? {
+        let attributesEditor =  UAAttributesEditor()
         attributesEditor.editor = Airship.channel.editAttributes()
         return attributesEditor
     }

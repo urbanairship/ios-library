@@ -2,7 +2,7 @@ import Foundation
 import AirshipCore
 
 @objc
-public class OUAScopedSubscriptionListEditor: NSObject {
+public class UAScopedSubscriptionListEditor: NSObject {
     
     var editor: ScopedSubscriptionListEditor?
     
@@ -13,7 +13,7 @@ public class OUAScopedSubscriptionListEditor: NSObject {
      *   - scope: Defines the channel types that the change applies to.
      */
     @objc(subscribe:scope:)
-    public func subscribe(_ subscriptionListID: String, scope: OUAChannelScope) {
+    public func subscribe(_ subscriptionListID: String, scope: UAChannelScope) {
         if let scope = ChannelScope(rawValue: scope.rawValue) {
             self.editor?.subscribe(subscriptionListID, scope: scope)
         }
@@ -26,7 +26,7 @@ public class OUAScopedSubscriptionListEditor: NSObject {
      *   - scope: Defines the channel types that the change applies to.
      */
     @objc(unsubscribe:scope:)
-    public func unsubscribe(_ subscriptionListID: String, scope: OUAChannelScope) {
+    public func unsubscribe(_ subscriptionListID: String, scope: UAChannelScope) {
         if let scope = ChannelScope(rawValue: scope.rawValue) {
             self.editor?.unsubscribe(subscriptionListID, scope: scope)
         }
@@ -43,7 +43,7 @@ public class OUAScopedSubscriptionListEditor: NSObject {
     
 @objc
 /// Channel scope.
-public enum OUAChannelScope: Int, Sendable, Equatable {
+public enum UAChannelScope: Int, Sendable, Equatable {
     /**
      * App channels - amazon, android, iOS
      */

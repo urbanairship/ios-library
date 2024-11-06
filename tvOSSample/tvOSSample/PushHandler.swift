@@ -5,6 +5,8 @@ import AirshipCore
 import UIKit
 
 class PushHandler: NSObject, PushNotificationDelegate {
+    func extendPresentationOptions(_ options: UNNotificationPresentationOptions, notification: UNNotification, completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {}
+    
 
     func receivedBackgroundNotification(
         _ userInfo: [AnyHashable: Any],

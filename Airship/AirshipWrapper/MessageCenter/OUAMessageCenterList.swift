@@ -5,8 +5,8 @@ public import AirshipMessageCenter
 import Combine
 
 /// Airship Message Center inbox base protocol.
-@objc(OUAMessageCenterInboxProtocol)
-public protocol OUAMessageCenterInboxBaseProtocol: AnyObject, Sendable {
+@objc(UAMessageCenterInboxProtocol)
+public protocol UAMessageCenterInboxBaseProtocol: AnyObject, Sendable {
 
     /// Gets the list of messages in the inbox.
     /// - Returns: the list of messages in the inbox.
@@ -69,8 +69,8 @@ public protocol OUAMessageCenterInboxBaseProtocol: AnyObject, Sendable {
 }
 
 @objc
-final public class OUAMessageCenterInbox: NSObject {
-
+final public class UAMessageCenterInbox: NSObject {
+    
     @objc
     @discardableResult
     public func refreshMessages() async -> Bool {
