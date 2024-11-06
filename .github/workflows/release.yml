@@ -64,22 +64,88 @@ jobs:
       - name: Build samples
         run: make build-samples
 
-  run-tests:
+  run-tests-core:
     needs: check-version
     runs-on: macos-15-xlarge
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - name: Install xcodegen
         run: brew install xcodegen
       - name: Test
-        run: make test
+        run: make test-core
+        
+  run-tests-preference-center:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test
+        run: make test-preference-center
+        
+  run-tests-message-center:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test
+        run: make test-message-center
+
+  run-tests-automation:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test
+        run: make test-automation
+
+  run-tests-feature-flags:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test
+        run: make test-feature-flags
+
+  run-tests-service-extension:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test
+        run: make test-service-extension
+
+  run-tests-content-extension:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test
+        run: make test-content-extension
 
   deploy-github:
     permissions:
       contents: write
     runs-on: macos-15-xlarge
-    needs: [run-tests, build-package, build-samples]
+    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-content-extension, run-tests-service-extension, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -124,7 +190,7 @@ jobs:
 
   deploy-pods:
     runs-on: macos-15-xlarge
-    needs: [run-tests, build-package, build-samples]
+    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-content-extension, run-tests-service-extension, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -145,7 +211,7 @@ jobs:
 
   deploy-docs:
     runs-on: macos-15-xlarge
-    needs: [run-tests, build-package, build-samples]
+    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-content-extension, run-tests-service-extension, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
