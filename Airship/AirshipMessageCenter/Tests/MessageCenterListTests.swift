@@ -525,7 +525,7 @@ final class MessageCenterListTest: XCTestCase {
         let saved = await self.inbox.message(forID: messages.first!.id)
         XCTAssertNotNil(saved)
         
-        self.date.advance(by: 1)
+        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
 
         XCTAssertEqual(3, self.workManager.workRequests.count)
     }
