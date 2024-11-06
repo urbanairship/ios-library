@@ -138,7 +138,7 @@ extension MessageCenterMessage {
         return (0..<count)
             .map { index in
                 generateMessage(
-                    sentDate: date.addingTimeInterval(Double(-index))
+                    sentDate: date.advanced(by: Double(-index))
                 )
             }
     }

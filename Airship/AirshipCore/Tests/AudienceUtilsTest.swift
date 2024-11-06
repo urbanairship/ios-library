@@ -118,45 +118,45 @@ class AudienceUtilsTest: XCTestCase {
                 listId: "foo",
                 type: .subscribe,
                 scope: .sms,
-                date: now.addingTimeInterval(1)
+                date: now.advanced(by: 1)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .app,
-                date: now.addingTimeInterval(2)
+                date: now.advanced(by: 2)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "bar",
                 type: .subscribe,
                 scope: .web,
-                date: now.addingTimeInterval(3)
+                date: now.advanced(by: 3)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .sms,
-                date: now.addingTimeInterval(4)
+                date: now.advanced(by: 4)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .app,
-                date: now.addingTimeInterval(5)
+                date: now.advanced(by: 5)
             ),
 
             ScopedSubscriptionListUpdate(
                 listId: "bar",
                 type: .subscribe,
                 scope: .app,
-                date: now.addingTimeInterval(6)
+                date: now.advanced(by: 6)
             ),
 
             ScopedSubscriptionListUpdate(
                 listId: "bar",
                 type: .unsubscribe,
                 scope: .app,
-                date: now.addingTimeInterval(7)
+                date: now.advanced(by: 7)
             ),
         ]
 
@@ -165,25 +165,25 @@ class AudienceUtilsTest: XCTestCase {
                 listId: "bar",
                 type: .subscribe,
                 scope: .web,
-                date: now.addingTimeInterval(3)
+                date: now.advanced(by: 3)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .sms,
-                date: now.addingTimeInterval(4)
+                date: now.advanced(by: 4)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .app,
-                date: now.addingTimeInterval(5)
+                date: now.advanced(by: 5)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "bar",
                 type: .unsubscribe,
                 scope: .app,
-                date: now.addingTimeInterval(7)
+                date: now.advanced(by: 7)
             ),
         ]
 
@@ -200,25 +200,25 @@ class AudienceUtilsTest: XCTestCase {
                 listId: "bar",
                 type: .subscribe,
                 scope: .web,
-                date: now.addingTimeInterval(3)
+                date: now.advanced(by: 3)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .sms,
-                date: now.addingTimeInterval(4)
+                date: now.advanced(by: 4)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .app,
-                date: now.addingTimeInterval(5)
+                date: now.advanced(by: 5)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "bar",
                 type: .unsubscribe,
                 scope: .app,
-                date: now.addingTimeInterval(7)
+                date: now.advanced(by: 7)
             ),
         ]
 
@@ -245,25 +245,25 @@ class AudienceUtilsTest: XCTestCase {
                 listId: "bar",
                 type: .subscribe,
                 scope: .web,
-                date: now.addingTimeInterval(3)
+                date: now.advanced(by: 3)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .sms,
-                date: now.addingTimeInterval(4)
+                date: now.advanced(by: 4)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "foo",
                 type: .subscribe,
                 scope: .app,
-                date: now.addingTimeInterval(5)
+                date: now.advanced(by: 5)
             ),
             ScopedSubscriptionListUpdate(
                 listId: "bar",
                 type: .unsubscribe,
                 scope: .app,
-                date: now.addingTimeInterval(7)
+                date: now.advanced(by: 7)
             ),
         ]
 

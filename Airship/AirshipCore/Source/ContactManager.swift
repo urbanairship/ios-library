@@ -945,7 +945,7 @@ actor ContactManager: ContactManagerProtocol {
         operationType: ContactOperation.OperationType,
         resolveDate: Date? = nil
     ) async {
-        let expiration = self.date.now.addingTimeInterval(
+        let expiration = self.date.now.advanced(by: 
             Double(result.tokenExpiresInMilliseconds)/1000.0
         )
 

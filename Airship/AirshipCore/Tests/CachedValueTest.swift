@@ -27,7 +27,7 @@ class CachedValueTest: XCTestCase {
 
     func testValueExpiration() throws {
         let cachedValue = CachedValue<String>(date: date)
-        cachedValue.set(value: "Hello!", expiration: date.now.addingTimeInterval(1.0))
+        cachedValue.set(value: "Hello!", expiration: date.now.advanced(by: 1.0))
 
         XCTAssertEqual(1.0, cachedValue.timeRemaining)
         XCTAssertEqual("Hello!", cachedValue.value)

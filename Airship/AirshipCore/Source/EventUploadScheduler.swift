@@ -77,7 +77,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
             minBatchInterval: minBatchInterval
         )
 
-        let proposedScheduleDate = self.date.now.addingTimeInterval(delay)
+        let proposedScheduleDate = self.date.now.advanced(by: delay)
         guard !self.isScheduled || self.nextScheduleDate >= proposedScheduleDate else {
             AirshipLogger.trace(
                 "Upload already scheduled for an earlier time."

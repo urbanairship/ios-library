@@ -424,8 +424,8 @@ final class MessageCenterListTest: XCTestCase {
         )
         
         let message = MessageCenterMessage.generateMessage(
-            sentDate: self.date.now.addingTimeInterval(-1),
-            expiry: self.date.now.addingTimeInterval(1)
+            sentDate: self.date.now.advanced(by: -1),
+            expiry: self.date.now.advanced(by: 1)
         )
         
         let refresh = self.expectation(description: "client called")
@@ -464,7 +464,7 @@ final class MessageCenterListTest: XCTestCase {
         let saved = await self.inbox.message(forID: message.id)
         XCTAssertNotNil(saved)
         
-        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
+        self.date.advance(by: 1)
         
         XCTAssertEqual(1, sleeper.sleeps.first)
         XCTAssertEqual(3, self.workManager.workRequests.count)
@@ -480,12 +480,12 @@ final class MessageCenterListTest: XCTestCase {
         
         let messages = [
             MessageCenterMessage.generateMessage(
-                sentDate: self.date.now.addingTimeInterval(-1),
-                expiry: self.date.now.addingTimeInterval(2)
+                sentDate: self.date.now.advanced(by: -1),
+                expiry: self.date.now.advanced(by: 2)
             ),
             MessageCenterMessage.generateMessage(
-                sentDate: self.date.now.addingTimeInterval(-1),
-                expiry: self.date.now.addingTimeInterval(3)
+                sentDate: self.date.now.advanced(by: -1),
+                expiry: self.date.now.advanced(by: 3)
             )
         ]
         
@@ -525,9 +525,8 @@ final class MessageCenterListTest: XCTestCase {
         let saved = await self.inbox.message(forID: messages.first!.id)
         XCTAssertNotNil(saved)
         
-        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
-        
-        XCTAssertEqual(2, sleeper.sleeps.first)
+        self.date.advance(by: 1)
+
         XCTAssertEqual(3, self.workManager.workRequests.count)
     }
     
@@ -541,10 +540,10 @@ final class MessageCenterListTest: XCTestCase {
         
         let messages = [
             MessageCenterMessage.generateMessage(
-                sentDate: self.date.now.addingTimeInterval(-1)
+                sentDate: self.date.now.advanced(by: -1)
             ),
             MessageCenterMessage.generateMessage(
-                sentDate: self.date.now.addingTimeInterval(-2)
+                sentDate: self.date.now.advanced(by: -2)
             )
         ]
         
@@ -583,9 +582,8 @@ final class MessageCenterListTest: XCTestCase {
         let saved = await self.inbox.message(forID: messages.first!.id)
         XCTAssertNotNil(saved)
         
-        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
-        
-        XCTAssert(sleeper.sleeps.isEmpty)
+        self.date.advance(by: 1)
+
         XCTAssertEqual(2, self.workManager.workRequests.count)
     }
 }

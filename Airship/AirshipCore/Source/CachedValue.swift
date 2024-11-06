@@ -40,7 +40,7 @@ final class CachedValue<Value>: @unchecked Sendable where Value: Any {
 
     func set(value: Value, expiresIn: TimeInterval) {
         lock.sync {
-            self.expiration = self.date.now.addingTimeInterval(expiresIn)
+            self.expiration = self.date.now.advanced(by: expiresIn)
             self._value = value
         }
     }

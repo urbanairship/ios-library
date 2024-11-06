@@ -35,7 +35,7 @@ final class PushDataManager: Sendable {
     private func trimDatabase() async {
         
         let storageDaysInterval = Date()
-            .addingTimeInterval(-self.maxAge)
+            .advanced(by: -self.maxAge)
             .timeIntervalSince1970
 
         do {

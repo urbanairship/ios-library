@@ -114,7 +114,7 @@ protocol AirshipPasteboardProtocol {
 extension UIPasteboard: AirshipPasteboardProtocol {
 
     func copy(value: String, expiry: TimeInterval) {
-        let expirationDate = Date().addingTimeInterval(expiry)
+        let expirationDate = Date().advanced(by: expiry)
         self.setItems(
             [[UIPasteboard.typeAutomatic: value]],
             options: [

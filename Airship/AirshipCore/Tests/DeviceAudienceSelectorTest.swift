@@ -37,14 +37,14 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
 
         try await assertTrue {
             try await audience.evaluate(
-                newUserEvaluationDate: now.addingTimeInterval(-1.0),
+                newUserEvaluationDate: now.advanced(by: -1.0),
                 deviceInfoProvider: self.testDeviceInfo
             )
         }
 
         try await assertFalse {
             try await audience.evaluate(
-                newUserEvaluationDate: now.addingTimeInterval(1.0),
+                newUserEvaluationDate: now.advanced(by: 1.0),
                 deviceInfoProvider: self.testDeviceInfo
             )
         }

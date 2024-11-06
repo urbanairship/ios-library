@@ -12,11 +12,14 @@ public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 
     private var _offSet: AirshipAtomicValue<TimeInterval>
 
+    public func advance(by: TimeInterval) {
+        self._offSet.value += by
+    }
+
     public var offset: TimeInterval {
         get {
             return self._offSet.value
         }
-
         set {
             self._offSet.value = newValue
         }
@@ -26,7 +29,7 @@ public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 
     public var now: Date {
         let date = dateOverride ?? Date()
-        return date.addingTimeInterval(offset)
+        return date.advanced(by: offset)
     }
-
 }
+

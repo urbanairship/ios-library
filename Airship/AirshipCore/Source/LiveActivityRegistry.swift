@@ -235,7 +235,7 @@ actor LiveActivityRegistry {
 
         shouldClear.forEach { info in
             var date = self.date.now
-            let maxActiveDate = info.startDate.addingTimeInterval(Self.maxActiveTime)
+            let maxActiveDate = info.startDate.advanced(by: Self.maxActiveTime)
 
             if date > maxActiveDate {
                 date = maxActiveDate

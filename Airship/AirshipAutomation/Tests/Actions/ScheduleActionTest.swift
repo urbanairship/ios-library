@@ -54,7 +54,7 @@ final class ScheduleActionTest: XCTestCase {
     
     func testSchedule() async throws {
         let start = Date(timeIntervalSince1970: 1709138610)
-        let end = Date(timeIntervalSince1970: 1709138610).addingTimeInterval(1)
+        let end = Date(timeIntervalSince1970: 1709138610).advanced(by: 1)
         let json = AirshipJSON.object([
             "id": .string("test-id"),
             "type": .string("actions"),
