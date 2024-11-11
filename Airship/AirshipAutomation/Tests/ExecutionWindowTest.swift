@@ -1171,7 +1171,7 @@ final class ExectutionWindowTest: XCTestCase {
 
 extension Date {
     func local(calendar: Calendar) -> Date {
-        return self.addingTimeInterval(Double(calendar.timeZone.secondsFromGMT()))
+        return self.advanced(by: Double(calendar.timeZone.secondsFromGMT()))
     }
     
     static func fromMidnight(seconds: TimeInterval, calendar: Calendar) -> Date {

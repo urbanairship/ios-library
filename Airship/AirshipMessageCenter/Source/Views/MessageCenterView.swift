@@ -132,7 +132,7 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
         )
 
         let content = configuration.content
-            .applyIf(configuration.dismissAction != nil) { view in
+            .airshipApplyIf(configuration.dismissAction != nil) { view in
                 view.toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         makeBackButton(configuration: configuration)
@@ -142,9 +142,8 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
                 configuration.theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
             )
 
-
-        if #available(iOS 16.0, tvOS 16.0, *) {
-            let themedContent = content.applyIf(containerBackgroundColor != nil) { view in
+        if #available(iOS 16.0, *) {
+            let themedContent = content.airshipApplyIf(containerBackgroundColor != nil) { view in
                 view.toolbarBackground(containerBackgroundColor!, for: .navigationBar)
                     .toolbarBackground(.visible, for: .navigationBar)
             }

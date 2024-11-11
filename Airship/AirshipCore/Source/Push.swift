@@ -154,25 +154,22 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
         super.init()
 
-        if config.requestAuthorizationToUseNotifications {
-            let permissionDelegate = NotificationPermissionDelegate(
-                registrar: self.notificationRegistrar
-            ) {
-                let options = self.notificationOptions
-                let skipIfEphemeral = !self
-                    .requestExplicitPermissionWhenEphemeral
-                return NotificationPermissionDelegate.Config(
-                    options: options,
-                    skipIfEphemeral: skipIfEphemeral
-                )
-            }
-
-            self.permissionsManager.setDelegate(
-                permissionDelegate,
-                permission: .displayNotifications
+        let permissionDelegate = NotificationPermissionDelegate(
+            registrar: self.notificationRegistrar
+        ) {
+            let options = self.notificationOptions
+            let skipIfEphemeral = !self
+                .requestExplicitPermissionWhenEphemeral
+            return NotificationPermissionDelegate.Config(
+                options: options,
+                skipIfEphemeral: skipIfEphemeral
             )
         }
 
+        self.permissionsManager.setDelegate(
+            permissionDelegate,
+            permission: .displayNotifications
+        )
         self.permissionsManager.addRequestExtender(
             permission: .displayNotifications
         ) { status in
@@ -553,6 +550,18 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     public func enableUserPushNotifications(
         fallback: PromptPermissionFallback
     ) async -> Bool {
+        guard self.config.requestAuthorizationToUseNotifications else {
+            self.userPushNotificationsEnabled = true
+
+            if !fallback.isNone {
+                AirshipLogger.error(
+                    "Airship.push.enableUserPushNotifications(fallback:) called but the AirshipConfig.requestAuthorizationToUseNotifications is disabled. Unable to request permissions. Use Airship.permissionsManager.requestPermission(.displayNotifications, enableAirshipUsageOnGrant: true, fallback: fallback) instead."
+                )
+            }
+
+            return await self.permissionsManager.checkPermissionStatus(.displayNotifications) == .granted
+        }
+
         self.dataStore.setBool(
             true,
             forKey: AirshipPush.userPushNotificationsEnabledKey

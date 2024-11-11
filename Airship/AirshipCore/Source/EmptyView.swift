@@ -7,16 +7,12 @@ import SwiftUI
 
 struct AirshipEmptyView: View {
 
-    let model: EmptyViewModel
+    let info: ThomasViewInfo.EmptyView
     let constraints: ViewConstraints
 
     var body: some View {
         Color.clear
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
     }
 }

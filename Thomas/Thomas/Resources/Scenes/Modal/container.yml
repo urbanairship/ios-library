@@ -25,14 +25,15 @@ presentation:
       stroke_width: 3
       radius: 15
     shadow:
-        default:
-          box_shadow:
-            color:
-              default:
-                hex: "#0000FF"
-                alpha: 1
-            blur_radius: 20
-            radius: 20
+        selectors:
+          - shadow:
+              box_shadow:
+                color:
+                  default:
+                    hex: "#0000FF"
+                    alpha: 1
+                blur_radius: 20
+                radius: 20
 view:
   type: container
   items:

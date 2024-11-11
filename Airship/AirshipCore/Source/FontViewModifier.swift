@@ -3,10 +3,10 @@
 import Foundation
 import SwiftUI
 
-struct TextAppearanceViewModifier<Appearance: BaseTextAppearance>: ViewModifier
+struct TextAppearanceViewModifier: ViewModifier
 {
-    let textAppearance: Appearance
-    
+    let textAppearance: ThomasTextAppearance
+
     // Needed for dynamic font size
     @Environment(\.sizeCategory) var sizeCategory
     
@@ -64,7 +64,7 @@ struct TextAppearanceViewModifier<Appearance: BaseTextAppearance>: ViewModifier
 
 extension Text {
     
-    private func applyTextStyles(styles: [TextStyle]?) -> Text {
+    private func applyTextStyles(styles: [ThomasTextAppearance.TextStyle]?) -> Text {
         var text = self
         if let styles = styles {
             if styles.contains(.bold) {
@@ -83,8 +83,8 @@ extension Text {
     }
     
     @ViewBuilder
-    func textAppearance<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance?
+    func textAppearance(
+        _ textAppearance: ThomasTextAppearance?
     ) -> some View {
         if let textAppearance = textAppearance {
             self.applyTextStyles(styles: textAppearance.styles)
@@ -104,8 +104,8 @@ extension Text {
 extension View {
     
     @ViewBuilder
-    func applyViewAppearance<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance?
+    func applyViewAppearance(
+        _ textAppearance: ThomasTextAppearance?
     ) -> some View {
         if let textAppearance = textAppearance {
             self
@@ -140,8 +140,8 @@ extension UIFont {
         return withTraits(traits: .traitItalic)
     }
     
-    static func resolveUIFont<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance
+    static func resolveUIFont(
+        _ textAppearance: ThomasTextAppearance
     ) -> UIFont {
         var font = UIFont()
         let scaledSize = UIFontMetrics.default.scaledValue(for: textAppearance.fontSize)
@@ -172,8 +172,8 @@ extension UIFont {
         return font
     }
     
-    static func resolveFont<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance
+    static func resolveFont(
+        _ textAppearance: ThomasTextAppearance
     ) -> Font {
         var font: Font
         let scaledSize = UIFontMetrics.default.scaledValue(for: textAppearance.fontSize)

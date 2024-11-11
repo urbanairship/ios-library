@@ -10,7 +10,7 @@ struct RootView<Content: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
 
-    @State private var currentOrientation: Orientation = RootView.resolveOrientation()
+    @State private var currentOrientation: ThomasOrientation = RootView.resolveOrientation()
 
     @State private var isForeground: Bool = true
     @State private var isVisible: Bool = false
@@ -24,12 +24,12 @@ struct RootView<Content: View>: View {
     @ObservedObject var thomasEnvironment: ThomasEnvironment
 
     let layout: AirshipLayout
-    let content: (Orientation, WindowSize) -> Content
+    let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
     init(
         thomasEnvironment: ThomasEnvironment,
         layout: AirshipLayout,
-        @ViewBuilder content: @escaping (Orientation, WindowSize) -> Content
+        @ViewBuilder content: @escaping (ThomasOrientation, ThomasWindowSize) -> Content
     ) {
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
@@ -86,7 +86,7 @@ struct RootView<Content: View>: View {
     /// - large: regular x regular = large
     /// - medium: regular x compact or compact x regular
     /// - small: compact x compact
-    func resolveWindowSize() -> WindowSize {
+    func resolveWindowSize() -> ThomasWindowSize {
 #if os(tvOS) || os(watchOS)
         return .large
 #else
@@ -101,7 +101,7 @@ struct RootView<Content: View>: View {
 #endif
     }
 
-    static func resolveOrientation() -> Orientation {
+    static func resolveOrientation() -> ThomasOrientation {
 #if os(tvOS) || os(watchOS)
         return .landscape
 #else

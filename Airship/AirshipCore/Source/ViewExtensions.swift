@@ -3,15 +3,41 @@
 import Foundation
 public import SwiftUI
 
-
-public extension View {
+extension View {
     @ViewBuilder
     internal func ignoreKeyboardSafeArea() -> some View {
         self.ignoresSafeArea(.keyboard)
     }
 
     @ViewBuilder
-    func applyIf<Content: View>(
+    internal func thomasToggleStyle(
+        _ style: ThomasToggleStyleInfo,
+        colorScheme: ColorScheme,
+        constraints: ViewConstraints,
+        disabled: Bool
+    ) -> some View {
+        switch style {
+        case .checkboxStyle(let style):
+            self.toggleStyle(
+                AirshipCheckboxToggleStyle(
+                    viewConstraints: constraints,
+                    info: style,
+                    colorScheme: colorScheme,
+                    disabled: disabled
+                )
+            )
+        case .switchStyle(let style):
+            self.toggleStyle(
+                AirshipSwitchToggleStyle(
+                    info: style,
+                    colorScheme: colorScheme,
+                    disabled: disabled
+                )
+            )
+        }
+    }
+    @ViewBuilder
+    public func airshipApplyIf<Content: View>(
         _ predicate: @autoclosure () -> Bool,
         @ViewBuilder transform: (Self) -> Content
     ) -> some View {
@@ -34,51 +60,31 @@ public extension View {
     }
 
     @ViewBuilder
-    private func applyAccessibleRole(
-        _ accessible: Accessible?,
-        isSelected: Bool = false
+    internal func accessible(
+        _ accessible: ThomasAccessibleInfo?,
+        fallbackContentDescription: String? = nil,
+        hideIfDescriptionIsMissing: Bool = true
     ) -> some View {
-        Group {
-            switch accessible?.accessibleRole {
-            case .heading(let level):
-                self.applyIf(true) { view in
-                    if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-                        view.accessibilityAddTraits(.isHeader)
-                            .accessibilityHeading(level.toAccessibilityHeadingLevel())
-                    } else {
-                        view.accessibilityAddTraits(.isHeader)
-                    }
-                }
-            case .checkbox:
-                self.accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : [.isButton])
-            case .button:
-                self.accessibilityAddTraits(.isButton)
-            case .form:
-                self
-            case .radio:
-                self.accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : [.isButton])
-            case .radioGroup:
-                self
-            case .presentation:
-                self
-            default:
-                self
-            }
+        let label = accessible?.resolveContentDescription ?? fallbackContentDescription
+        if accessible?.accessibilityHidden == true {
+            self.accessibilityHidden(true)
+        } else if let label {
+            self.accessibility(label: Text(label))
+        } else if hideIfDescriptionIsMissing {
+            self.accessibilityHidden(true)
+        } else {
+            self
         }
     }
 
     @ViewBuilder
-    internal func accessible(
-        _ accessible: Accessible?,
-        hideIfNotSet: Bool = false,
-        isSelected: Bool = false
+    internal func addSelectedTrait(
+        _ isSelected: Bool
     ) -> some View {
-        if let label = accessible?.contentDescription {
-            self.accessibility(label: Text(label))
-                .applyAccessibleRole(accessible, isSelected: isSelected)
+        if isSelected {
+            self.accessibilityAddTraits(.isSelected)
         } else {
-            self.accessibilityHidden(hideIfNotSet)
-                .applyAccessibleRole(accessible, isSelected: isSelected)
+            self
         }
     }
 
@@ -91,26 +97,21 @@ public extension View {
         }
     }
 
-    /// Common modifier for buttons so event handlers can be added separately to prevent tap issues
     @ViewBuilder
-    internal func commonButton<Content: BaseModel>(
-        _ model: Content
-    ) -> some View {
-        self.enableBehaviors(model.enableBehaviors)
-        .visibility(model.visibility)
-    }
-
-    @ViewBuilder
-    internal func common<Content: BaseModel>(
-        _ model: Content,
+    internal func thomasCommon(
+        _ info: some ThomasViewInfo.BaseInfo,
         formInputID: String? = nil
     ) -> some View {
-        self.eventHandlers(
-            model.eventHandlers,
+        self.background(
+            color: info.commonProperties.backgroundColor,
+            border: info.commonProperties.border
+        )
+        .thomasEventHandlers(
+            info.commonProperties.eventHandlers,
             formInputID: formInputID
         )
-        .enableBehaviors(model.enableBehaviors)
-        .visibility(model.visibility)
+        .thomasEnableBehaviors(info.commonProperties.enabled)
+        .thomasVisibility(info.commonProperties.visibility)
     }
 
     internal func viewModifiers<Modifiers: ViewModifier>(
@@ -210,25 +211,3 @@ struct AirshipViewModifierBuilder {
     }
 }
 
-extension Int {
-    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
-    func toAccessibilityHeadingLevel() -> AccessibilityHeadingLevel {
-        switch self {
-        case 1:
-            return .h1
-        case 2:
-            return .h2
-        case 3:
-            return .h1
-        case 4:
-            return .h4
-        case 5:
-            return .h5
-        case 6:
-            return .h6
-        default:
-            return .unspecified
-        }
-    }
-
-}

@@ -4,30 +4,26 @@ import SwiftUI
 
 
 struct RadioInputController: View {
-    let model: RadioInputControllerModel
+    let info: ThomasViewInfo.RadioInputController
     let constraints: ViewConstraints
 
     @EnvironmentObject var parentFormState: FormState
     @StateObject var radioInputState: RadioInputState = RadioInputState()
 
     var body: some View {
-        ViewFactory.createView(model: self.model.view, constraints: constraints)
+        ViewFactory.createView(self.info.properties.view, constraints: constraints)
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .accessible(self.model)
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .accessible(self.info.accessible)
             .formElement()
             .environmentObject(radioInputState)
-            .airshipOnChangeOf(self.radioInputState.selectedItem) { [weak parentFormState, model, weak radioInputState] incoming in
+            .airshipOnChangeOf(self.radioInputState.selectedItem) { [weak parentFormState, weak radioInputState] incoming in
                 let data = FormInputData(
-                    model.identifier,
+                    self.info.properties.identifier,
                     value: .radio(incoming),
-                    attributeName: model.attributeName,
+                    attributeName: self.info.properties.attributeName,
                     attributeValue: radioInputState?.attributeValue,
-                    isValid: incoming != nil || model.isRequired != true
+                    isValid: incoming != nil || self.info.validation.isRequired != true
                 )
                 parentFormState?.updateFormInput(data)
             }
@@ -39,7 +35,7 @@ struct RadioInputController: View {
     private func restoreFormState() {
         guard
             case let .radio(value) = self.parentFormState.data.formValue(
-                identifier: self.model.identifier
+                identifier: self.info.properties.identifier
             ),
             let value = value
         else {

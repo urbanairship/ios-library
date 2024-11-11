@@ -186,7 +186,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         {
             self.expiry = date
         } else {
-            self.expiry = date.now.addingTimeInterval(Defaults.expiry)
+            self.expiry = date.now.advanced(by: Defaults.expiry)
         }
 
         self.extra = wrapJson(payload[ParseKey.extra.rawValue])

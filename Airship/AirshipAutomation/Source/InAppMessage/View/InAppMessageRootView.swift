@@ -8,16 +8,13 @@ import AirshipCore
 #endif
 
 struct InAppMessageRootView<Content: View>: View {
-    @State private var currentOrientation: Orientation = InAppMessageRootView.resolveOrientation()
-    @State private var displayedCalled: Bool = false
-
     @ObservedObject var inAppMessageEnvironment: InAppMessageEnvironment
 
-    let content: (Orientation) -> Content
+    let content: () -> Content
 
     init(
         inAppMessageEnvironment: InAppMessageEnvironment,
-        @ViewBuilder content: @escaping (Orientation) -> Content
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.inAppMessageEnvironment = inAppMessageEnvironment
         self.content = content
@@ -25,35 +22,8 @@ struct InAppMessageRootView<Content: View>: View {
 
     @ViewBuilder
     var body: some View {
-        content(currentOrientation)
+        content()
             .environmentObject(inAppMessageEnvironment)
-            .environment(\.orientation, currentOrientation)
-            .onAppear {
-                self.currentOrientation = InAppMessageRootView.resolveOrientation()
-            }
-#if os(iOS)
-            .onReceive(
-                NotificationCenter.default.publisher(
-                    for: UIDevice.orientationDidChangeNotification
-                )
-            ) { _ in
-                self.currentOrientation = InAppMessageRootView.resolveOrientation()
-            }
-#endif
-    }
-
-    static func resolveOrientation() -> Orientation {
-#if os(tvOS)
-        return .landscape
-#else
-        if let scene = try? AirshipSceneManager.shared.lastActiveScene {
-            if scene.interfaceOrientation.isLandscape {
-                return .landscape
-            } else if scene.interfaceOrientation.isPortrait {
-                return .portrait
-            }
-        }
-        return .portrait
-#endif
     }
 }
+

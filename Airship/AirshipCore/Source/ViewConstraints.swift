@@ -61,9 +61,9 @@ struct ViewConstraints: Equatable {
     }
 
     func contentConstraints(
-        _ constrainedSize: ConstrainedSize,
+        _ constrainedSize: ThomasConstrainedSize,
         contentSize: CGSize?,
-        margin: Margin?
+        margin: ThomasMargin?
     ) -> ViewConstraints {
 
         let verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
@@ -142,8 +142,8 @@ struct ViewConstraints: Equatable {
     }
 
     func childConstraints(
-        _ size: Size,
-        margin: Margin?,
+        _ size: ThomasSize,
+        margin: ThomasMargin?,
         padding: Double = 0,
         safeAreaInsetsMode: SafeAreaInsetsMode = .ignore
     ) -> ViewConstraints {
@@ -204,7 +204,7 @@ struct ViewConstraints: Equatable {
     }
 }
 
-extension SizeConstraint {
+extension ThomasSizeConstraint {
     func calculateSize(_ parentSize: CGFloat?) -> CGFloat? {
         switch self {
         case .points(let points):
@@ -253,7 +253,7 @@ extension SizeConstraint {
     }
 }
 
-extension Margin {
+extension ThomasMargin {
     var verticalMargins: CGFloat {
         return (self.bottom ?? 0.0) + (self.top ?? 0.0)
     }

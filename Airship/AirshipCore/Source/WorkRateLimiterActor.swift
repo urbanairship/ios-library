@@ -97,7 +97,7 @@ actor WorkRateLimiter {
     {
         guard let hits = hits else { return nil }
         return hits.filter { hit in
-            return hit.addingTimeInterval(rule.timeInterval) > date
+            return hit.advanced(by: rule.timeInterval) > date
         }
     }
 }

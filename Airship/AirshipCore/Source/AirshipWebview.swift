@@ -9,7 +9,7 @@ import WebKit
 /// Airship Webview
 struct AirshipWebView: View {
 
-    let model: WebViewModel
+    let info: ThomasViewInfo.WebView
 
     let constraints: ViewConstraints
 
@@ -21,7 +21,7 @@ struct AirshipWebView: View {
 
         ZStack {
             WebViewView(
-                url: self.model.url,
+                url: self.info.properties.url,
                 nativeBridgeExtension: self.thomasEnvironment.extensions?
                     .nativeBridgeExtension,
                 isWebViewLoading: self.$isWebViewLoading,
@@ -39,11 +39,7 @@ struct AirshipWebView: View {
             }
         }
         .constraints(constraints)
-        .background(
-            color: self.model.backgroundColor,
-            border: self.model.border
-        )
-        .common(self.model)
+        .thomasCommon(self.info)
     }
 }
 

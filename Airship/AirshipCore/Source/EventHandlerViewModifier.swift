@@ -13,19 +13,19 @@ internal struct EventHandlerViewModifier: ViewModifier {
 
     @Environment(\.layoutState) private var layoutState
 
-    let eventHandlers: [EventHandler]
+    let eventHandlers: [ThomasEventHandler]
     let formInputID: String?
 
     @ViewBuilder
     func body(content: Content) -> some View {
         let types = eventHandlers.map { $0.type }
 
-        content.applyIf(types.contains(.tap)) { view in
+        content.airshipApplyIf(types.contains(.tap)) { view in
             view.addTapGesture {
                 handleEvent(type: .tap)
             }
         }
-        .applyIf(types.contains(.formInput) && formInputID != nil) { view in
+        .airshipApplyIf(types.contains(.formInput) && formInputID != nil) { view in
             view.onReceive(self.formState.$data) { incoming in
                 handleEvent(type: .formInput, formInputData: incoming)
             }
@@ -44,7 +44,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
         }
     }
 
-    private func handleEvent(type: EventHandlerType, formInputData: FormInputData? = nil) {
+    private func handleEvent(type: ThomasEventHandler.EventType, formInputData: FormInputData? = nil) {
         let handlers = eventHandlers.filter { $0.type == type }
 
         // Process
@@ -54,7 +54,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
     }
     
     private func handleStateAction(
-        _ stateActions: [StateAction],
+        _ stateActions: [ThomasStateAction],
         formInputData: FormInputData? = nil
     ) {
         stateActions.forEach { action in
@@ -81,8 +81,8 @@ internal struct EventHandlerViewModifier: ViewModifier {
 extension View {
 
     @ViewBuilder
-    func eventHandlers(
-        _ eventHandlers: [EventHandler]?,
+    func thomasEventHandlers(
+        _ eventHandlers: [ThomasEventHandler]?,
         formInputID: String? = nil
     ) -> some View {
 

@@ -8,7 +8,7 @@ struct ModalView: View {
     static let keyboardPadding = 1.0
     @Environment(\.colorScheme) var colorScheme
 
-    let presentation: ModalPresentationModel
+    let presentation: ThomasPresentationInfo.Modal
     let layout: AirshipLayout
     @ObservedObject
     var thomasEnvironment: ThomasEnvironment
@@ -45,7 +45,7 @@ struct ModalView: View {
 
 
     private func calculateKeyboardOverlap(
-        placement: ModalPlacement,
+        placement: ThomasPresentationInfo.Modal.Placement,
         keyboardHeight: Double,
         containerHeight: Double,
         contentHeight: Double
@@ -70,7 +70,7 @@ struct ModalView: View {
     }
 
     private func createModal(
-        placement: ModalPlacement,
+        placement: ThomasPresentationInfo.Modal.Placement,
         metrics: GeometryProxy) -> some View {
         let ignoreSafeArea = placement.ignoreSafeArea == true
         let safeAreaInsets =
@@ -78,8 +78,8 @@ struct ModalView: View {
             ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
 
         var alignment = Alignment(
-            horizontal: placement.position?.horizontal.toAlignment() ?? .center,
-            vertical: placement.position?.vertical.toAlignment() ?? .center
+            horizontal: placement.position?.horizontal.alignment ?? .center,
+            vertical: placement.position?.vertical.alignment ?? .center
         )
 
         let windowConstraints = ViewConstraints(
@@ -125,7 +125,7 @@ struct ModalView: View {
 
         return VStack {
             ViewFactory.createView(
-                model: self.layout.view,
+                self.layout.view,
                 constraints: contentConstraints
             )
             .background(
@@ -153,14 +153,14 @@ struct ModalView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transaction { $0.animation = nil }
         )
-        .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+        .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         .opacity(self.contentSize == nil ? 0 : 1)
         .animation(nil, value: self.contentSize?.1 ?? CGSize.zero)
         
     }
 
     @ViewBuilder
-    private func modalBackground(_ placement: ModalPlacement) -> some View {
+    private func modalBackground(_ placement: ThomasPresentationInfo.Modal.Placement) -> some View {
         GeometryReader { reader in
             VStack(spacing: 0) {
                 if placement.isFullscreen, placement.ignoreSafeArea != true {
@@ -171,7 +171,7 @@ struct ModalView: View {
                 Rectangle()
                     .foreground(placement.shade)
                     .edgesIgnoringSafeArea(.all)
-                    .applyIf(self.presentation.dismissOnTouchOutside == true) {
+                    .airshipApplyIf(self.presentation.dismissOnTouchOutside == true) {
                         view in
                         // Add tap gesture outside of view to dismiss
                         view.addTapGesture {
@@ -190,9 +190,9 @@ struct ModalView: View {
 
 
     private func resolvePlacement(
-        orientation: Orientation,
-        windowSize: WindowSize
-    ) -> ModalPlacement {
+        orientation: ThomasOrientation,
+        windowSize: ThomasWindowSize
+    ) -> ThomasPresentationInfo.Modal.Placement {
         var placement = self.presentation.defaultPlacement
 
         #if !os(watchOS)
@@ -255,7 +255,7 @@ struct ModalView: View {
 }
 
 
-extension ModalPlacement {
+extension ThomasPresentationInfo.Modal.Placement {
     fileprivate var isFullscreen: Bool {
         if let horiztonalMargins = self.margin?.horiztonalMargins, horiztonalMargins > 0 {
             return false

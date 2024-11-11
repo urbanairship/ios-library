@@ -185,7 +185,7 @@ class AirshipContactTest: XCTestCase {
                 contactID: "some-other-contact-id",
                 isStable: false,
                 namedUserID: nil,
-                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVerifiedContactIDAge)
+                resolveDate: date.advanced(by: -AirshipContact.defaultVerifiedContactIDAge)
             )
         )
 
@@ -194,7 +194,7 @@ class AirshipContactTest: XCTestCase {
                 contactID: "some-stable-contact-id",
                 isStable: true,
                 namedUserID: nil,
-                resolveDate: date.addingTimeInterval(-AirshipContact.defaultVerifiedContactIDAge)
+                resolveDate: date.advanced(by: -AirshipContact.defaultVerifiedContactIDAge)
             )
         )
         await contactManager.setCurrentContactIDInfo(
@@ -233,7 +233,7 @@ class AirshipContactTest: XCTestCase {
         let date = self.date.now
 
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil, resolveDate: date.addingTimeInterval(-1))
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil, resolveDate: date.advanced(by: -1))
         )
 
         let contactManager = self.contactManager

@@ -5,7 +5,7 @@ import SwiftUI
 
 
 struct RadioInput: View {
-    let model: RadioInputModel
+    let info: ThomasViewInfo.RadioInput
     let constraints: ViewConstraints
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var radioInputState: RadioInputState
@@ -14,42 +14,28 @@ struct RadioInput: View {
     @ViewBuilder
     private func createToggle() -> some View {
         let isOn = Binding<Bool>(
-            get: { self.radioInputState.selectedItem == self.model.value },
+            get: { self.radioInputState.selectedItem == self.info.properties.reportingValue },
             set: {
                 if $0 {
-                    self.radioInputState.updateSelectedItem(self.model)
+                    self.radioInputState.updateSelectedItem(self.info)
                 }
             }
         )
 
-        let toggle = Toggle(isOn: isOn.animation()) {}
-
-        switch self.model.style {
-        case .checkboxStyle(let style):
-            toggle.toggleStyle(
-                AirshipCheckboxToggleStyle(
-                    viewConstraints: self.constraints,
-                    model: style,
-                    colorScheme: colorScheme,
-                    disabled: !formState.isFormInputEnabled
-                )
+        Toggle(isOn: isOn.animation()) {}
+            .thomasToggleStyle(
+                self.info.properties.style,
+                colorScheme: colorScheme,
+                constraints: self.constraints,
+                disabled: !formState.isFormInputEnabled
             )
-        case .switchStyle(let style):
-            toggle.toggleStyle(
-                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme, disabled: !formState.isFormInputEnabled)
-            )
-        }
     }
 
     @ViewBuilder
     var body: some View {
         createToggle()
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
             .formElement()
     }
 }

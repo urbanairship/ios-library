@@ -138,7 +138,7 @@ class FormStateTest: XCTestCase {
             FormInputData(
                 "some-input",
                 value: .radio("some-radio-input-value"),
-                attributeName: AttributeName(
+                attributeName: ThomasAttributeName(
                     channel: "some-input-channel-name",
                     contact: "some-input-contact-name"
                 ),
@@ -151,7 +151,7 @@ class FormStateTest: XCTestCase {
             FormInputData(
                 "missing-attribute-value",
                 value: .text("some child text"),
-                attributeName: AttributeName(
+                attributeName: ThomasAttributeName(
                     channel: "missing",
                     contact: "missing"
                 ),
@@ -180,7 +180,7 @@ class FormStateTest: XCTestCase {
         let childData = FormInputData(
             "some-child-input",
             value: .text("some child text"),
-            attributeName: AttributeName(
+            attributeName: ThomasAttributeName(
                 channel: "some-child-input-channel-name",
                 contact: "some-child-input-contact-name"
             ),
@@ -200,7 +200,7 @@ class FormStateTest: XCTestCase {
         let childScore = FormInputData(
             "some-child-score",
             value: .score(8),
-            attributeName: AttributeName(
+            attributeName: ThomasAttributeName(
                 channel: "some-nps-child-input-channel-name",
                 contact: "some-nps-child-input-contact-name"
             ),
@@ -215,23 +215,23 @@ class FormStateTest: XCTestCase {
             )
         )
 
-        let expected: [(AttributeName, AttributeValue)] = [
+        let expected: [(ThomasAttributeName, ThomasAttributeValue)] = [
             (
-                AttributeName(
+                ThomasAttributeName(
                     channel: "some-input-channel-name",
                     contact: "some-input-contact-name"
                 ),
                 .number(10.0)
             ),
             (
-                AttributeName(
+                ThomasAttributeName(
                     channel: "some-child-input-channel-name",
                     contact: "some-child-input-contact-name"
                 ),
                 .string("hello form")
             ),
             (
-                AttributeName(
+                ThomasAttributeName(
                     channel: "some-nps-child-input-channel-name",
                     contact: "some-nps-child-input-contact-name"
                 ),

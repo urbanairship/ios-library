@@ -9,7 +9,7 @@ struct Pager: View {
     private enum PagerEvent {
         case gesture(identifier: String, reportingMetadata: AirshipJSON?)
         case automated(identifier: String, reportingMetadata: AirshipJSON?)
-        case accessibilityAction(type: AccessibilityActionType, reportingMetadata: AirshipJSON?)
+        case accessibilityAction(ThomasAccessibilityAction)
         case defaultSwipe(from: Int, to: Int)
     }
 
@@ -28,7 +28,7 @@ struct Pager: View {
     @Environment(\.layoutDirection) var layoutDirection
     @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
-    let model: PagerModel
+    let info: ThomasViewInfo.Pager
     let constraints: ViewConstraints
 
     @State private var lastReportedIndex = -1
@@ -41,33 +41,33 @@ struct Pager: View {
     private var isLegacyPageSwipeEnabled: Bool {
         if #available(iOS 17.0, *) {
             return if Self.forceLegacyPager {
-                self.model.isDefaultSwipeEnabled
+                self.info.isDefaultSwipeEnabled
             } else {
                 false
             }
         }
 
-        return self.model.isDefaultSwipeEnabled
+        return self.info.isDefaultSwipeEnabled
     }
 
     private var shouldAddSwipeGesture: Bool {
         if isLegacyPageSwipeEnabled { return true }
-        if self.model.containsGestures([.swipe]) { return true }
+        if self.info.containsGestures([.swipe]) { return true }
         return false
     }
 
     private var shouldAddA11ySwipeActions: Bool {
-        if self.model.isDefaultSwipeEnabled { return true }
-        if self.model.containsGestures([.swipe]) { return true }
+        if self.info.isDefaultSwipeEnabled { return true }
+        if self.info.containsGestures([.swipe]) { return true }
         return false
     }
 
 
     init(
-        model: PagerModel,
+        info: ThomasViewInfo.Pager,
         constraints: ViewConstraints
     ) {
-        self.model = model
+        self.info = info
         self.constraints = constraints
         self.timer = Timer.publish(
             every: Pager.timerTransition,
@@ -79,7 +79,7 @@ struct Pager: View {
 
     @ViewBuilder
     func makePager() -> some View {
-        if (self.model.items.count == 1) {
+        if (self.info.properties.items.count == 1) {
             self.makeSinglePagePager()
         } else {
             GeometryReader { metrics in
@@ -107,7 +107,7 @@ struct Pager: View {
     @ViewBuilder
     func makeSinglePagePager() -> some View {
         ViewFactory.createView(
-            model: self.model.items[0].view,
+            self.info.properties.items[0].view,
             constraints: constraints
         )
         .environment(\.isVisible, true)
@@ -233,17 +233,17 @@ struct Pager: View {
 
     @ViewBuilder
     private func makePageViews(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
-        ForEach(0..<self.model.items.count, id: \.self) { i in
+        ForEach(0..<self.info.properties.items.count, id: \.self) { i in
             VStack {
                 ViewFactory.createView(
-                    model: self.model.items[i].view,
+                    info.properties.items[i].view,
                     constraints: childConstraints
                 )
                 .allowsHitTesting(self.isVisible && i == pagerState.pageIndex)
                 .environment(\.isVisible, self.isVisible && i == pagerState.pageIndex)
                 .environment(\.pageIndex, i)
                 .accessibilityActionsCompat {
-                    makeAccessibilityActions(pageItem: model.items[i])
+                    makeAccessibilityActions(pageItem: self.info.properties.items[i])
                 }
                 .accessibilityHidden(!(self.isVisible && i == pagerState.pageIndex))
                 .id(i)
@@ -260,23 +260,18 @@ struct Pager: View {
     }
 
     @ViewBuilder
-    private func makeAccessibilityActions(pageItem: PagerItem) -> some View {
+    private func makeAccessibilityActions(pageItem: ThomasViewInfo.Pager.Item) -> some View {
         if let actions = pageItem.accessibilityActions {
-            ForEach(actions) { accessibilityAction in
+            ForEach(0..<actions.count, id: \.self) { i in
+                let action = actions[i]
                 Button {
-                    handleEvents(
-                        .accessibilityAction(
-                            type: accessibilityAction.type,
-                            reportingMetadata: accessibilityAction.reportingMetadata
-                        )
-                    )
-                    handleActions(accessibilityAction.actions)
-                    handleBehavior(accessibilityAction.behaviors)
+                    handleEvents(.accessibilityAction(action))
+                    handleActions(action.properties.actions)
+                    handleBehavior(action.properties.behaviors)
                 } label: {
-                    let nameKey = accessibilityAction.localizedContentDescription?.descriptionKey
-                    let fallback = accessibilityAction.localizedContentDescription?.fallbackDescription
-                    let text = nameKey?.airshipLocalizedString(fallback: fallback) ?? "unknown" /// Action fallback description should always be defined
-                    Text(text)
+                    Text(
+                        action.accessible.resolveContentDescription ?? "unknown"
+                    )
                 }
                 .accessibilityRemoveTraits(.isButton)
             }
@@ -287,7 +282,7 @@ struct Pager: View {
     var body: some View {
         makePager()
             .onReceive(pagerState.$pageIndex) { value in
-                pagerState.pages = self.model.items.map {
+                pagerState.pages = self.info.properties.items.map {
                     PageState(
                         identifier: $0.identifier,
                         delay: $0.automatedActions?.earliestNavigationAction?.delay ?? 0.0,
@@ -302,12 +297,12 @@ struct Pager: View {
                 onTimer()
             }
 #if !os(tvOS)
-            .applyIf(self.shouldAddSwipeGesture) { view in
+            .airshipApplyIf(self.shouldAddSwipeGesture) { view in
                 view.simultaneousGesture(
                     makeSwipeGesture()
                 )
             }
-            .applyIf(self.shouldAddA11ySwipeActions) { view in
+            .airshipApplyIf(self.shouldAddA11ySwipeActions) { view in
                 view.accessibilityScrollAction  { edge in
                     let swipeDirection = PagerSwipeDirection.from(
                         edge: edge,
@@ -316,7 +311,7 @@ struct Pager: View {
                     handleSwipe(direction: swipeDirection, isAccessibilityScrollAction: true)
                 }
             }
-            .applyIf(self.model.containsGestures([.hold, .tap])) { view in
+            .airshipApplyIf(self.info.containsGestures([.hold, .tap])) { view in
                 view.addPagerTapGesture(
                     onTouch: { isPressed in
                         handleTouch(isPressed: isPressed)
@@ -328,11 +323,7 @@ struct Pager: View {
             }
 #endif
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
     }
 
     // MARK: Handle Gesture
@@ -390,7 +381,7 @@ struct Pager: View {
         )
 
         locations.forEach { location in
-            self.model.retrieveGestures(type: PagerTapGesture.self)
+            self.info.retrieveGestures(type: ThomasViewInfo.Pager.Gesture.Tap.self)
                 .filter { $0.location == location }
                 .forEach { gesture in
                     handleBehavior(gesture.behavior.behaviors)
@@ -416,7 +407,7 @@ struct Pager: View {
         switch(direction) {
         case .up: fallthrough
         case .down:
-            self.model.retrieveGestures(type: PagerDragGesture.self)
+            self.info.retrieveGestures(type: ThomasViewInfo.Pager.Gesture.Swipe.self)
                 .filter {
                     if ($0.direction == .up && direction == .up) {
                         return true
@@ -484,7 +475,7 @@ struct Pager: View {
     }
 
     private func handleTouch(isPressed: Bool) {
-        self.model.retrieveGestures(type: PagerHoldGesture.self).forEach { gesture in
+        self.info.retrieveGestures(type: ThomasViewInfo.Pager.Gesture.Hold.self).forEach { gesture in
             let behavior = isPressed ? gesture.pressBehavior : gesture.releaseBehavior
             if !isPressed {
                 handleEvents(
@@ -501,15 +492,15 @@ struct Pager: View {
 
     private func onTimer() {
         guard !isVoiceOverRunning,
-              let automatedActions = self.model.items[self.pagerState.pageIndex].automatedActions
+              let automatedActions = self.info.properties.items[self.pagerState.pageIndex].automatedActions
         else {
             return
         }
 
         let duration = pagerState.pages[pagerState.pageIndex].delay
         
-        if self.pagerState.inProgress && (self.pagerState.pageIndex < self.model.items.count) {
-            
+        if self.pagerState.inProgress && (self.pagerState.pageIndex < self.info.properties.items.count) {
+
             if (self.pagerState.progress < 1) {
                 self.pagerState.progress += Pager.timerTransition / duration
             }
@@ -559,13 +550,13 @@ struct Pager: View {
                 reportingMetatda: reportingMetadata,
                 layoutState: layoutState
             )
-        case .accessibilityAction(type: _, reportingMetadata: _):
+        case .accessibilityAction(_):
             /// TODO add accessibility action analytics event
             break
         }
     }
     
-    private func handleActions(_ actions: [ActionsPayload]?) {
+    private func handleActions(_ actions: [ThomasActionsPayload]?) {
         if let actions = actions {
             actions.forEach { action in
                 thomasEnvironment.runActions(action, layoutState: layoutState)
@@ -574,7 +565,7 @@ struct Pager: View {
     }
     
     private func handleBehavior(
-        _ behaviors: [ButtonClickBehavior]?
+        _ behaviors: [ThomasButtonClickBehavior]?
     ) {
         behaviors?.sorted { first, second in
             first.sortOrder < second.sortOrder
@@ -623,7 +614,7 @@ struct Pager: View {
 
     private func reportPage(_ index: Int) {
         if self.lastReportedIndex != index {
-            if index == self.model.items.count - 1 {
+            if index == self.info.properties.items.count - 1 {
                 self.pagerState.completed = true
             }
             self.thomasEnvironment.pageViewed(
@@ -633,7 +624,7 @@ struct Pager: View {
             self.lastReportedIndex = index
 
             // Run any actions set on the current page
-            let page = self.model.items[index]
+            let page = self.info.properties.items[index]
             self.thomasEnvironment.runActions(
                 page.displayActions,
                 layoutState: layoutState
@@ -654,7 +645,7 @@ struct Pager: View {
         var dragOffSet = self.translation
         if index <= 0 {
             dragOffSet = min(dragOffSet, 0)
-        } else if index >= self.model.items.count - 1 {
+        } else if index >= self.info.properties.items.count - 1 {
             dragOffSet = max(dragOffSet, 0)
         }
 

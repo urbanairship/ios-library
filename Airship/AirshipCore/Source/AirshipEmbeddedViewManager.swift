@@ -6,7 +6,7 @@ import SwiftUI
 protocol AirshipEmbeddedViewManagerProtocol {
     @MainActor
     func addPending(
-        presentation: EmbeddedPresentationModel,
+        presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate,
@@ -32,7 +32,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
     @MainActor
     func addPending(
-        presentation: EmbeddedPresentationModel,
+        presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: ThomasDelegate,
@@ -79,7 +79,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
 struct PendingEmbedded {
     fileprivate let id: String
-    let presentation: EmbeddedPresentationModel
+    let presentation: ThomasPresentationInfo.Embedded
     let layout: AirshipLayout
     let environment: ThomasEnvironment
     let embeddedInfo: AirshipEmbeddedInfo

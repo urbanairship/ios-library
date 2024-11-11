@@ -245,7 +245,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 extensions: makeInAppExtensions()
             )
 
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) {
                 InAppMessageModalView(displayContent: modal, theme: theme)
             }
 
@@ -280,7 +280,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 extensions: makeInAppExtensions()
             )
 
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) {
                 FullscreenView(displayContent: fullscreen, theme: theme)
             }
 
@@ -316,7 +316,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 extensions: makeInAppExtensions()
             )
 
-            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
+            let rootView = InAppMessageRootView(inAppMessageEnvironment: environment) {
                 HTMLView(displayContent: html, theme: theme)
             }
 

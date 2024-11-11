@@ -18,7 +18,7 @@ struct BannerView: View {
     static let animationOutDuration = 0.2
 
     let viewControllerOptions: ThomasViewControllerOptions
-    let presentation: BannerPresentationModel
+    let presentation: ThomasPresentationInfo.Banner
     let layout: AirshipLayout
 
     @ObservedObject
@@ -70,7 +70,7 @@ struct BannerView: View {
     }
 
     private func createBanner(
-        placement: BannerPlacement,
+        placement: ThomasPresentationInfo.Banner.Placement,
         metrics: GeometryProxy
     ) -> some View {
         
@@ -102,7 +102,7 @@ struct BannerView: View {
 
         return VStack {
             ViewFactory.createView(
-                model: layout.view,
+                layout.view,
                 constraints: contentConstraints
             )
             .background(
@@ -127,13 +127,13 @@ struct BannerView: View {
             y: calculateOffset(height: height, placement: placement)
         )
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
-        .applyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
+        .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
     }
 
     private func resolvePlacement(
-        orientation: Orientation,
-        windowSize: WindowSize
-    ) -> BannerPlacement {
+        orientation: ThomasOrientation,
+        windowSize: ThomasWindowSize
+    ) -> ThomasPresentationInfo.Banner.Placement {
 
         var placement = self.presentation.defaultPlacement
         for placementSelector in self.presentation.placementSelectors ?? [] {
@@ -158,7 +158,7 @@ struct BannerView: View {
         return placement
     }
 
-    private func calculateOffset(height: CGFloat, placement: BannerPlacement) -> CGFloat {
+    private func calculateOffset(height: CGFloat, placement: ThomasPresentationInfo.Banner.Placement) -> CGFloat {
         switch(self.positionState) {
         case .hidden:
             return placement.position == .top ? -height : height

@@ -112,15 +112,15 @@ public struct FormInputData {
 
     let identifier: String
     let value: FormValue
-    let attributeName: AttributeName?
-    let attributeValue: AttributeValue?
+    let attributeName: ThomasAttributeName?
+    let attributeValue: ThomasAttributeValue?
     let isValid: Bool
 
     init(
         _ identifier: String,
         value: FormValue,
-        attributeName: AttributeName? = nil,
-        attributeValue: AttributeValue? = nil,
+        attributeName: ThomasAttributeName? = nil,
+        attributeValue: ThomasAttributeValue? = nil,
         isValid: Bool
     ) {
         self.identifier = identifier
@@ -148,8 +148,8 @@ public struct FormInputData {
         return formData(identifier: identifier)?.value
     }
 
-    func attributes() -> [(AttributeName, AttributeValue)] {
-        var result: [(AttributeName, AttributeValue)] = []
+    func attributes() -> [(ThomasAttributeName, ThomasAttributeValue)] {
+        var result: [(ThomasAttributeName, ThomasAttributeValue)] = []
         if let attributeName = attributeName,
             let attributeValue = attributeValue
         {

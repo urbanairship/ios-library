@@ -88,7 +88,7 @@ final class PreparedTriggerTest: XCTestCase {
         instance.activate()
         instance.update(
             trigger: .event(trigger),
-            startDate: self.date.now.addingTimeInterval(1),
+            startDate: self.date.now.advanced(by: 1),
             endDate: nil,
             priority: 0
         )

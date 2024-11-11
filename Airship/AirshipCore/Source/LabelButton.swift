@@ -6,45 +6,47 @@ import SwiftUI
 /// Button view.
 struct LabelButton : View {
 
-    let model: LabelButtonModel
+    let info: ThomasViewInfo.LabelButton
     let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
     
-    init(model: LabelButtonModel, constraints: ViewConstraints) {
-        self.model = model
+    init(info: ThomasViewInfo.LabelButton, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
     }
 
     var body: some View {
         AirshipButton(
-            identifier: self.model.identifier,
-            reportingMetadata: self.model.reportingMetadata,
-            description: self.model.contentDescription ?? self.model.label.text,
-            clickBehaviors: self.model.clickBehaviors,
-            eventHandlers: self.model.eventHandlers,
-            actions: self.model.actions,
-            tapEffect: self.model.tapEffect
+            identifier: self.info.properties.identifier,
+            reportingMetadata: self.info.properties.reportingMetadata,
+            description: self.info.accessible.contentDescription ?? self.info.properties.label.properties.text,
+            clickBehaviors: self.info.properties.clickBehaviors,
+            eventHandlers: self.info.commonProperties.eventHandlers,
+            actions: self.info.properties.actions,
+            tapEffect: self.info.properties.tapEffect
         ) {
-            Label(model: self.model.label, constraints: constraints)
-                .applyIf(self.constraints.height == nil) { view in
+            Label(info: self.info.properties.label, constraints: constraints)
+                .airshipApplyIf(self.constraints.height == nil) { view in
                     view.padding([.bottom, .top], 12)
                 }
-                .applyIf(self.constraints.width == nil) { view in
+                .airshipApplyIf(self.constraints.width == nil) { view in
                     view.padding([.leading, .trailing], 12)
                 }
                 .background(
-                    color: self.model.backgroundColor,
-                    border: self.model.border
+                    color: self.info.commonProperties.backgroundColor,
+                    border: self.info.commonProperties.border
                 )
-                .accessible(self.model)
+                .accessible(self.info.accessible)
                 .background(Color.airshipTappableClear)
         }
-        .commonButton(self.model)
+        .thomasEnableBehaviors(self.info.commonProperties.enabled)
+        .thomasVisibility(self.info.commonProperties.visibility)
         .environment(
             \.layoutState,
              layoutState.override(
-                buttonState: ButtonState(identifier: self.model.identifier)
+                buttonState: ButtonState(identifier: self.info.properties.identifier)
              )
         )
+        .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
     }
 }

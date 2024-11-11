@@ -289,7 +289,7 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                     )
                 )
                 .frame(minHeight: 44)
-            }.applyIf(true) { view in
+            }.airshipApplyIf(true) { view in
                 if #available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *) {
                     view.accessibilityAddTraits(isOn.wrappedValue ? [.isToggle, .isSelected] : .isToggle)
                 } else {

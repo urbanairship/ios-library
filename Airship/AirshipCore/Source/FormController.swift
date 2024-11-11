@@ -7,33 +7,33 @@ import SwiftUI
 
 struct FormController: View {
 
-    let model: FormControllerModel
+    let info: ThomasViewInfo.FormController
     let constraints: ViewConstraints
     @StateObject var formState: FormState
 
     @MainActor
-    init(model: FormControllerModel, constraints: ViewConstraints) {
-        self.model = model
+    init(info: ThomasViewInfo.FormController, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
         self._formState = StateObject(
             wrappedValue: FormState(
-                identifier: model.identifier,
+                identifier: info.properties.identifier,
                 formType: .form,
-                formResponseType: model.responseType
+                formResponseType: info.properties.responseType
             )
         )
     }
 
     var body: some View {
-        if model.submit != nil {
+        if info.properties.submit != nil {
             ParentFormController(
-                model: model,
+                info: info,
                 constraints: constraints,
                 formState: formState
             )
         } else {
             ChildFormController(
-                model: model,
+                info: info,
                 constraints: constraints,
                 formState: formState
             )
@@ -44,7 +44,7 @@ struct FormController: View {
 
 private struct ParentFormController: View {
 
-    let model: FormControllerModel
+    let info: ThomasViewInfo.FormController
     let constraints: ViewConstraints
 
     @ObservedObject var formState: FormState
@@ -52,13 +52,9 @@ private struct ParentFormController: View {
     @Environment(\.layoutState) var layoutState
 
     var body: some View {
-        ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+        ViewFactory.createView(self.info.properties.view, constraints: constraints)
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .thomasEnableBehaviors(self.info.properties.formEnableBehaviors) { enabled in
                 self.formState.isEnabled = enabled
             }
             .environment(
@@ -82,7 +78,7 @@ private struct ParentFormController: View {
 
 
 private struct ChildFormController: View {
-    let model: FormControllerModel
+    let info: ThomasViewInfo.FormController
     let constraints: ViewConstraints
 
     @EnvironmentObject var parentFormState: FormState
@@ -91,15 +87,11 @@ private struct ChildFormController: View {
     var body: some View {
         return
             ViewFactory.createView(
-                model: self.model.view,
+                self.info.properties.view,
                 constraints: constraints
             )
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .thomasEnableBehaviors(self.info.properties.formEnableBehaviors) { enabled in
                 self.formState.isEnabled = enabled
             }
             .environmentObject(formState)
@@ -112,10 +104,10 @@ private struct ChildFormController: View {
     private func restoreFormState() {
         guard
             let formData = self.parentFormState.data.formData(
-                identifier: self.model.identifier
+                identifier: self.info.properties.identifier
             ),
             case let .form(responseType, formType, children) = formData.value,
-            responseType == self.model.responseType,
+            responseType == self.info.properties.responseType,
             case .form = formType
         else {
             return

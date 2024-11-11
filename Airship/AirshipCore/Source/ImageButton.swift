@@ -8,8 +8,8 @@ import Combine
 struct ImageButton : View {
  
     /// Image Button model.
-    let model: ImageButtonModel
-  
+    let info: ThomasViewInfo.ImageButton
+
     /// View constraints.
     let constraints: ViewConstraints
   
@@ -20,43 +20,45 @@ struct ImageButton : View {
     @ViewBuilder
     var body: some View {
         AirshipButton(
-            identifier: self.model.identifier,
-            reportingMetadata: self.model.reportingMetadata,
-            description: self.model.contentDescription ?? self.model.localizedContentDescription?.localized ?? self.model.identifier,
-            clickBehaviors: self.model.clickBehaviors,
-            eventHandlers: self.model.eventHandlers,
-            actions: self.model.actions,
-            tapEffect: self.model.tapEffect
+            identifier: self.info.properties.identifier,
+            reportingMetadata: self.info.properties.reportingMetadata,
+            description: self.info.accessible.resolveContentDescription,
+            clickBehaviors: self.info.properties.clickBehaviors,
+            eventHandlers: self.info.commonProperties.eventHandlers,
+            actions: self.info.properties.actions,
+            tapEffect: self.info.properties.tapEffect
         ) {
             makeInnerButton()
                 .constraints(constraints, fixedSize: true)
                 .background(
-                    color: self.model.backgroundColor,
-                    border: self.model.border
+                    color: self.info.commonProperties.backgroundColor,
+                    border: self.info.commonProperties.border
                 )
-                .accessible(self.model)
+                .accessible(self.info.accessible)
                 .background(Color.airshipTappableClear)
         }
-        .commonButton(self.model)
+        .thomasEnableBehaviors(self.info.commonProperties.enabled)
+        .thomasVisibility(self.info.commonProperties.visibility)
         .environment(
             \.layoutState,
              layoutState.override(
-                buttonState: ButtonState(identifier: self.model.identifier)
+                buttonState: ButtonState(identifier: self.info.properties.identifier)
              )
         )
+        .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
     }
     
     @ViewBuilder
     private func makeInnerButton() -> some View {
-        switch(model.image) {
-        case .url(let model):
+        switch(self.info.properties.image) {
+        case .url(let info):
             ThomasAsyncImage(
-                url: model.url,
+                url: info.url,
                 imageLoader: thomasEnvironment.imageLoader,
                 image: { image, imageSize in
                     image.fitMedia(
-                        mediaFit: model.mediaFit ?? .centerInside,
-                        cropPosition: model.cropPosition,
+                        mediaFit: info.mediaFit ?? .centerInside,
+                        cropPosition: info.cropPosition,
                         constraints: constraints,
                         imageSize: imageSize
                     )
@@ -65,8 +67,8 @@ struct ImageButton : View {
                     AirshipProgressView()
                 }
             )
-        case .icon(let model):
-            Icons.icon(model: model, colorScheme: colorScheme)
+        case .icon(let info):
+            Icons.icon(info: info, colorScheme: colorScheme)
         }
     }
 }

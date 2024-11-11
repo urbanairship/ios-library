@@ -165,7 +165,7 @@ public struct PreferenceCenterView: View {
                 dark: theme.viewController?.navigationBar?.backgroundColorDark
             )
 
-            let themedContent = content.applyIf(resolvedNavigationBarColor != nil) { view in
+            let themedContent = content.airshipApplyIf(resolvedNavigationBarColor != nil) { view in
                 view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
                     .toolbarBackground(.visible, for: .navigationBar)
             }
@@ -208,18 +208,6 @@ extension EnvironmentValues {
 extension View {
     func addPreferenceCenterDismissAction(action: (@MainActor @Sendable () -> Void)?) -> some View {
         environment(\.preferenceCenterDismissAction, action)
-    }
-    
-    @ViewBuilder
-    func airshipApplyIf<Content: View>(
-        _ predicate: @autoclosure () -> Bool,
-        transform: (Self) -> Content
-    ) -> some View {
-        if predicate() {
-            transform(self)
-        } else {
-            self
-        }
     }
 }
 

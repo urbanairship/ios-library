@@ -26,8 +26,6 @@ struct HTMLView: View {
     #endif
 
     @EnvironmentObject private var environment: InAppMessageEnvironment
-    @Environment(\.orientation) private var orientation
-
 
     init(displayContent: InAppMessageDisplayContent.HTML, theme: InAppMessageTheme.HTML) {
         self.displayContent = displayContent
@@ -38,7 +36,7 @@ struct HTMLView: View {
         let allowAspectLock = displayContent.width != nil && displayContent.height != nil && displayContent.aspectLock == true
 
         InAppMessageWebView(displayContent: displayContent, accessibilityLabel: "In-app web view")
-            .applyIf(!theme.hideDismissIcon){
+            .airshipApplyIf(!theme.hideDismissIcon){
                 $0.addCloseButton(
                     dismissIconResource: theme.dismissIconResource,
                     dismissButtonColor: displayContent.dismissButtonColor?.color,
@@ -48,7 +46,7 @@ struct HTMLView: View {
                         environment.onUserDismissed()
                     }
                 )
-            }.applyIf(isModal && allowAspectLock) {
+            }.airshipApplyIf(isModal && allowAspectLock) {
                 $0.cornerRadius(displayContent.borderRadius ?? 0)
                     .aspectResize(
                         width: displayContent.width,
@@ -57,7 +55,7 @@ struct HTMLView: View {
                     .parentClampingResize(maxWidth: theme.maxWidth, maxHeight: theme.maxHeight)
                     .padding(theme.padding)
                     .addBackground(color: .airshipShadowColor)
-            }.applyIf(isModal && !allowAspectLock) {
+            }.airshipApplyIf(isModal && !allowAspectLock) {
                 $0.cornerRadius(displayContent.borderRadius ?? 0)
                     .parentClampingResize(
                         maxWidth: min(theme.maxWidth, (displayContent.width ?? .infinity)),
@@ -65,7 +63,7 @@ struct HTMLView: View {
                     )
                     .padding(theme.padding)
                     .addBackground(color: .airshipShadowColor)
-            }.applyIf(!isModal) {
+            }.airshipApplyIf(!isModal) {
                 /// Add system background color by default - clear color will be parsed by the display content if it's set
                 $0.addBackground(color: displayContent.backgroundColor?.color ?? Color(.systemBackground))
             }
@@ -86,9 +84,7 @@ struct HTMLView: View {
         #else
         return verticalSizeClass == .regular && horizontalSizeClass == .regular
         #endif
-    }
-
-            
+    }            
 }
 
 #Preview {

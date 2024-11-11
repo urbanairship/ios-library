@@ -221,7 +221,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private func applicationDidForeground() {
         let now = self.date.now
 
-        let nextUpdate = self.lastActiveRefreshDate.value.addingTimeInterval(
+        let nextUpdate = self.lastActiveRefreshDate.value.advanced(by: 
             self.refreshInterval
         )
 

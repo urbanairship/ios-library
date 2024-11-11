@@ -35,7 +35,7 @@ class EventDataManager {
 
     private func trimDatabase() async {
         
-        let cutOffDate = Date().addingTimeInterval(-self.maxAge)
+        let cutOffDate = Date().advanced(by: -self.maxAge)
         
         do {
             try await coreData.perform(skipIfStoreNotCreated: true) { context in

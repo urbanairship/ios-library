@@ -72,7 +72,7 @@ struct AirshipEvents {
         }
 
         let startTime = startDate.timeIntervalSince1970
-        let endTime = startDate.addingTimeInterval(duration).timeIntervalSince1970
+        let endTime = startDate.advanced(by: duration).timeIntervalSince1970
 
         return AirshipEvent(
             priority: .normal,

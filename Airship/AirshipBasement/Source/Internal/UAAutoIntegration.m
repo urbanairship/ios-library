@@ -12,7 +12,16 @@ static UAAutoIntegration *instance_;
 @end
 
 @implementation UAAutoIntegrationDummyDelegate
-static dispatch_once_t onceToken;
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
+    completionHandler(UNNotificationPresentationOptionNone);
+}
+
+#if !TARGET_OS_TV
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
+    completionHandler();
+}
+#endif
+
 @end
 
 @interface UAAutoIntegration()
@@ -26,6 +35,7 @@ static dispatch_once_t onceToken;
 @end
 
 @implementation UAAutoIntegration
+static dispatch_once_t onceToken;
 
 + (void)integrateWithDelegate:(id<UAAppIntegrationDelegate>)delegate {
     dispatch_once(&onceToken, ^{
@@ -147,7 +157,6 @@ static dispatch_once_t onceToken;
 #endif
 
 - (void)swizzleNotificationCenterDelegate:(id<UNUserNotificationCenterDelegate>)delegate {
-
     self.notificationDelegateSwizzler = [UASwizzler swizzler];
 
     [self.notificationDelegateSwizzler swizzleInstance:delegate selector:@selector(userNotificationCenter:willPresentNotification:withCompletionHandler:)
@@ -194,7 +203,16 @@ static dispatch_once_t onceToken;
 #pragma mark UNUserNotificationCenterDelegate swizzled methods
 
 void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotification *notification, void (^handler)(UNNotificationPresentationOptions)) {
-    
+
+    // Check that we are currently the active delegate, otherwise it means something swapped
+    // the delegate and is calling through to the original that did not have a implementation
+    // to unswizzle back, so our method is stuck on it. This should be safe to ignore.
+    if (self != [UNUserNotificationCenter currentNotificationCenter].delegate) {
+        UA_LTRACE(@"Received UserNotificationCenterWillPresentNotificationWithCompletionHandler on an inactive delegate, ignoring.");
+        handler(UNNotificationPresentationOptionNone);
+        return;
+    }
+
     __block UNNotificationPresentationOptions mergedPresentationOptions = UNNotificationPresentationOptionNone;
     NSRecursiveLock *lock = [[NSRecursiveLock alloc] init];
     
@@ -252,6 +270,16 @@ void UserNotificationCenterWillPresentNotificationWithCompletionHandler(id self,
 
 #if !TARGET_OS_TV  // Delegate method not supported on tvOS
 void UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler(id self, SEL _cmd, UNUserNotificationCenter *notificationCenter, UNNotificationResponse *response, void (^handler)(void)) {
+
+
+    // Check that we are currently the active delegate, otherwise it means something swapped
+    // the delegate and is calling through to the original that did not have a implementation
+    // to unswizzle back, so our method is stuck on it. This should be safe to ignore.
+    if (self != [UNUserNotificationCenter currentNotificationCenter].delegate) {
+        UA_LTRACE(@"Received UserNotificationCenterDidReceiveNotificationResponseWithCompletionHandler on an inactive delegate, ignoring.");
+        handler();
+        return;
+    }
 
     dispatch_group_t dispatchGroup = dispatch_group_create();
 

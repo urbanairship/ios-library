@@ -107,7 +107,7 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
             let backoff = retryAfter ?? FeatureFlagDeferredResolver.defaultBackoff
 
             guard allowRetry, backoff <= FeatureFlagDeferredResolver.immediateBackoffRetryCutoff else {
-                backOffDates[requestID] = self.date.now.addingTimeInterval(backoff)
+                backOffDates[requestID] = self.date.now.advanced(by: backoff)
                 throw FeatureFlagEvaluationError.connectionError
             }
 

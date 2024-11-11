@@ -6,7 +6,7 @@ import SwiftUI
 
 struct Score: View {
 
-    let model: ScoreModel
+    let info: ThomasViewInfo.Score
     let constraints: ViewConstraints
 
     @State var score: Int?
@@ -15,7 +15,7 @@ struct Score: View {
 
     @ViewBuilder
     private func createScore(_ constraints: ViewConstraints) -> some View {
-        switch self.model.style {
+        switch self.info.properties.style {
         case .numberRange(let style):
             HStack(spacing: style.spacing ?? 0) {
                 ForEach((style.start...style.end), id: \.self) { index in
@@ -43,12 +43,8 @@ struct Score: View {
         let constraints = modifiedConstraints()
         createScore(constraints)
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .accessible(self.model)
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .accessible(self.info.accessible)
             .formElement()
             .onAppear {
                 self.restoreFormState()
@@ -61,7 +57,7 @@ struct Score: View {
         if self.constraints.width == nil && self.constraints.height == nil {
             constraints.height = 32
         } else {
-            switch self.model.style {
+            switch self.info.properties.style {
             case .numberRange(let style):
                 constraints.height = self.calculateHeight(
                     style: style,
@@ -72,7 +68,7 @@ struct Score: View {
         return constraints
     }
 
-    func calculateHeight(style: ScoreNumberRangeStyle, width: CGFloat?)
+    func calculateHeight(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, width: CGFloat?)
         -> CGFloat?
     {
         guard let width = width else {
@@ -90,17 +86,17 @@ struct Score: View {
 
     private func updateScore(_ value: Int?) {
         self.score = value
-        let isValid = value != nil || self.model.isRequired != true
+        let isValid = value != nil || self.info.validation.isRequired != true
 
-        var attributeValue: AttributeValue?
+        var attributeValue: ThomasAttributeValue?
         if let value = value {
-            attributeValue = AttributeValue.number(Double(value))
+            attributeValue = ThomasAttributeValue.number(Double(value))
         }
 
         let data = FormInputData(
-            self.model.identifier,
+            self.info.properties.identifier,
             value: .score(value),
-            attributeName: self.model.attributeName,
+            attributeName: self.info.properties.attributeName,
             attributeValue: attributeValue,
             isValid: isValid
         )
@@ -110,7 +106,7 @@ struct Score: View {
 
     private func restoreFormState() {
         let formValue = self.formState.data.formValue(
-            identifier: self.model.identifier
+            identifier: self.info.properties.identifier
         )
 
         guard
@@ -128,7 +124,7 @@ struct Score: View {
 
 private struct AirshipNumberRangeToggleStyle: ToggleStyle {
 
-    let style: ScoreNumberRangeStyle
+    let style: ThomasViewInfo.Score.ScoreStyle.NumberRange
     let viewConstraints: ViewConstraints
     let value: Int
     let colorScheme: ColorScheme
@@ -144,7 +140,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                     if let shapes = style.bindings.selected.shapes {
                         ForEach(0..<shapes.count, id: \.self) { index in
                             Shapes.shape(
-                                model: shapes[index],
+                                info: shapes[index],
                                 constraints: viewConstraints,
                                 colorScheme: colorScheme
                             )
@@ -156,15 +152,15 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         )
                 }
                 .opacity(isOn ? 1 : 0)
-                .applyIf(disabled) {  view in
-                    view.colorMultiply(HexColor.disabled.toColor())
+                .airshipApplyIf(disabled) {  view in
+                    view.colorMultiply(ThomasConstants.disabledColor)
                 }
 
                 Group {
                     if let shapes = style.bindings.unselected.shapes {
                         ForEach(0..<shapes.count, id: \.self) { index in
                             Shapes.shape(
-                                model: shapes[index],
+                                info: shapes[index],
                                 constraints: viewConstraints,
                                 colorScheme: colorScheme
                             )

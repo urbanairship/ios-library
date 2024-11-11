@@ -8,62 +8,62 @@ import SwiftUI
 struct ViewFactory {
     @MainActor
     @ViewBuilder
-    static func createView(model: ViewModel, constraints: ViewConstraints)
+    static func createView(_ viewInfo: ThomasViewInfo, constraints: ViewConstraints)
         -> some View
     {
-        switch model {
-        case .container(let model):
-            Container(model: model, constraints: constraints)
-        case .linearLayout(let model):
-            LinearLayout(model: model, constraints: constraints)
-        case .scrollLayout(let model):
-            ScrollLayout(model: model, constraints: constraints)
-        case .label(let model):
-            Label(model: model, constraints: constraints)
-        case .media(let model):
-            Media(model: model, constraints: constraints)
-        case .labelButton(let model):
-            LabelButton(model: model, constraints: constraints)
-        case .emptyView(let model):
-            AirshipEmptyView(model: model, constraints: constraints)
-        case .formController(let model):
-            FormController(model: model, constraints: constraints)
-        case .npsController(let model):
-            NpsController(model: model, constraints: constraints)
-        case .textInput(let model):
-            TextInput(model: model, constraints: constraints)
-        case .pagerController(let model):
-            PagerController(model: model, constraints: constraints)
-        case .pagerIndicator(let model):
-            PagerIndicator(model: model, constraints: constraints)
-        case .storyIndicator(let model):
-            StoryIndicator(model: model, constraints: constraints)
-        case .pager(let model):
-            Pager(model: model, constraints: constraints)
+        switch viewInfo {
+        case .container(let info):
+            Container(info: info, constraints: constraints)
+        case .linearLayout(let info):
+            LinearLayout(info: info, constraints: constraints)
+        case .scrollLayout(let info):
+            ScrollLayout(info: info, constraints: constraints)
+        case .label(let info):
+            Label(info: info, constraints: constraints)
+        case .media(let info):
+            Media(info: info, constraints: constraints)
+        case .labelButton(let info):
+            LabelButton(info: info, constraints: constraints)
+        case .emptyView(let info):
+            AirshipEmptyView(info: info, constraints: constraints)
+        case .formController(let info):
+            FormController(info: info, constraints: constraints)
+        case .npsController(let info):
+            NpsController(info: info, constraints: constraints)
+        case .textInput(let info):
+            TextInput(info: info, constraints: constraints)
+        case .pagerController(let info):
+            PagerController(info: info, constraints: constraints)
+        case .pagerIndicator(let info):
+            PagerIndicator(info: info, constraints: constraints)
+        case .storyIndicator(let info):
+            StoryIndicator(info: info, constraints: constraints)
+        case .pager(let info):
+            Pager(info: info, constraints: constraints)
         #if !os(tvOS) && !os(watchOS)
-        case .webView(let model):
-            AirshipWebView(model: model, constraints: constraints)
+        case .webView(let info):
+            AirshipWebView(info: info, constraints: constraints)
         #endif
-        case .imageButton(let model):
-            ImageButton(model: model, constraints: constraints)
-        case .checkbox(let model):
-            Checkbox(model: model, constraints: constraints)
-        case .checkboxController(let model):
-            CheckboxController(model: model, constraints: constraints)
-        case .toggle(let model):
-            AirshipToggle(model: model, constraints: constraints)
-        case .radioInputController(let model):
-            RadioInputController(model: model, constraints: constraints)
-        case .radioInput(let model):
-            RadioInput(model: model, constraints: constraints)
-        case .score(let model):
-            Score(model: model, constraints: constraints)
-        case .stateController(let model):
-            StateController(model: model, constraints: constraints)
-        case .customView(let model):
-            CustomView(model: model, constraints: constraints)
-        case .buttonLayout(let model):
-            ButtonLayout(model: model, constraints: constraints)
+        case .imageButton(let info):
+            ImageButton(info: info, constraints: constraints)
+        case .checkbox(let info):
+            Checkbox(info: info, constraints: constraints)
+        case .checkboxController(let info):
+            CheckboxController(info: info, constraints: constraints)
+        case .toggle(let info):
+            AirshipToggle(info: info, constraints: constraints)
+        case .radioInputController(let info):
+            RadioInputController(info: info, constraints: constraints)
+        case .radioInput(let info):
+            RadioInput(info: info, constraints: constraints)
+        case .score(let info):
+            Score(info: info, constraints: constraints)
+        case .stateController(let info):
+            StateController(info: info, constraints: constraints)
+        case .customView(let info):
+            CustomView(info: info, constraints: constraints)
+        case .buttonLayout(let info):
+            ButtonLayout(info: info, constraints: constraints)
         }
     }
 

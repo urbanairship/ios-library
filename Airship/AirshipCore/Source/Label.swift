@@ -6,11 +6,11 @@ import SwiftUI
 /// Text/Label view
 
 struct Label: View {
-    /// Label model.
-    let model: LabelModel
+    let info: ThomasViewInfo.Label
 
     /// View constraints.
     let constraints: ViewConstraints
+
 
     @Environment(\.colorScheme) var colorScheme
 
@@ -18,13 +18,13 @@ struct Label: View {
     private var markdownText: Text {
         get throws {
             var text = try AttributedString(
-                markdown: self.model.text,
+                markdown: self.info.properties.text,
                 options: .init(
                     interpretedSyntax: .inlineOnlyPreservingWhitespace
                 )
             )
 
-            let anchorAppearance = self.model.markdown?.appearance?.anchor
+            let anchorAppearance = self.info.properties.markdown?.appearance?.anchor
             let anchorColor = anchorAppearance?.color?.toColor(self.colorScheme)
             // Currently we only support underlined styles
             let underline = anchorAppearance?.styles?.contains(.underlined) ?? false
@@ -44,27 +44,27 @@ struct Label: View {
 
     private var text: Text {
         guard 
-            self.model.markdown?.disabled != true,
+            self.info.properties.markdown?.disabled != true,
             #available(iOS 15, tvOS 15, watchOS 8, *)
         else {
-            return Text(verbatim: self.model.text)
+            return Text(verbatim: self.info.properties.text)
         }
 
         do {
             return try markdownText
         } catch {
-            AirshipLogger.error("Failed to parse markdown text \(error) text \(self.model.text)")
-            return Text(verbatim: self.model.text)
+            AirshipLogger.error("Failed to parse markdown text \(error) text \(self.info.properties.text)")
+            return Text(verbatim: self.info.properties.text)
         }
     }
 
     var body: some View {
         self.text
-            .textAppearance(self.model.textAppearance)
+            .textAppearance(self.info.properties.textAppearance)
             .truncationMode(.tail)
             .constraints(
                 constraints,
-                alignment: self.model.textAppearance.alignment?
+                alignment: self.info.properties.textAppearance.alignment?
                     .toFrameAlignment()
                     ?? Alignment.center
             )
@@ -72,17 +72,13 @@ struct Label: View {
                 horizontal: false,
                 vertical: self.constraints.height == nil
             )
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
-            .accessible(self.model)
+            .thomasCommon(self.info)
+            .accessible(self.info.accessible)
+            .accessibilityRole(self.info.properties.accessibilityRole)
     }
 }
 
-
-extension TextAlignement {
+extension ThomasTextAppearance.TextAlignement {
     func toFrameAlignment() -> Alignment {
         switch self {
         case .start:
@@ -115,4 +111,42 @@ extension TextAlignement {
             return .center
         }
     }
+}
+
+extension View {
+    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
+    fileprivate func headingLevel(_ int: Int) -> AccessibilityHeadingLevel {
+        switch int {
+        case 1:
+            return .h1
+        case 2:
+            return .h2
+        case 3:
+            return .h1
+        case 4:
+            return .h4
+        case 5:
+            return .h5
+        case 6:
+            return .h6
+        default:
+            return .unspecified
+        }
+    }
+
+    @ViewBuilder
+    fileprivate func accessibilityRole(_ role: ThomasViewInfo.Label.AccessibilityRole?) -> some View  {
+        switch role {
+        case .heading(let level):
+            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
+                self.accessibilityAddTraits(.isHeader)
+                    .accessibilityHeading(headingLevel(level))
+             } else {
+                 self.accessibilityAddTraits(.isHeader)
+             }
+        case .none:
+            self
+        }
+    }
+
 }

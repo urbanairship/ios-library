@@ -209,7 +209,7 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func runActions(_ actionsPayload: ActionsPayload?, layoutState: LayoutState?) {
+    func runActions(_ actionsPayload: ThomasActionsPayload?, layoutState: LayoutState?) {
         guard let actionsPayload = actionsPayload?.value else { return }
         guard let runner = extensions?.actionRunner else {
             Task {
@@ -365,7 +365,7 @@ extension LayoutState {
 }
 
 extension AttributesEditor {
-    fileprivate func set(attributeValue: AttributeValue, attribute: String) {
+    fileprivate func set(attributeValue: ThomasAttributeValue, attribute: String) {
         switch attributeValue {
         case .string(let value):
             self.set(string: value, attribute: attribute)

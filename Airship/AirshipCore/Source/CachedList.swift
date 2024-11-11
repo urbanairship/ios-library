@@ -20,7 +20,7 @@ final class CachedList<Value> where Value: Any {
     }
 
     func append(_ value: Value, expiresIn: TimeInterval) {
-        let expiration = self.date.now.addingTimeInterval(expiresIn)
+        let expiration = self.date.now.advanced(by: expiresIn)
         lock.sync {
             self.cachedValues.append((value, expiration))
         }

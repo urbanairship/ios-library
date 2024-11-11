@@ -48,7 +48,7 @@ final class ChannelAuthTokenProvider: AuthTokenProvider {
         let token = AuthToken(
             identifier: identifier,
             token: result.token,
-            expiration: self.date.now.addingTimeInterval(
+            expiration: self.date.now.advanced(by: 
                 Double(result.expiresInMillseconds/1000)
             )
         )
