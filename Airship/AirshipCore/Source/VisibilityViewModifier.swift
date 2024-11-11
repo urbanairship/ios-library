@@ -3,7 +3,7 @@ import SwiftUI
 
 
 internal struct VisibilityViewModifier: ViewModifier {
-    let visibilityInfo: VisibilityInfo
+    let visibilityInfo: ThomasVisibilityInfo
 
     @EnvironmentObject var viewState: ViewState
 
@@ -27,7 +27,7 @@ internal struct VisibilityViewModifier: ViewModifier {
 extension View {
 
     @ViewBuilder
-    func visibility(_ visibilityInfo: VisibilityInfo?) -> some View {
+    func thomasVisibility(_ visibilityInfo: ThomasVisibilityInfo?) -> some View {
         if let visibilityInfo = visibilityInfo {
             self.modifier(
                 VisibilityViewModifier(visibilityInfo: visibilityInfo)

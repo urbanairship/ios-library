@@ -6,13 +6,13 @@ import SwiftUI
 
 struct AirshipCheckboxToggleStyle: ToggleStyle {
     let viewConstraints: ViewConstraints
-    let model: CheckboxToggleStyleModel
+    let info: ThomasToggleStyleInfo.Checkbox
     let colorScheme: ColorScheme
     let disabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
-        let binding = isOn ? model.bindings.selected : model.bindings.unselected
+        let binding = isOn ? info.bindings.selected : info.bindings.unselected
 
         var constraints = self.viewConstraints
         constraints.width = constraints.width ?? 24
@@ -23,21 +23,21 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
         return Button(action: { configuration.isOn.toggle() }) {
             ZStack {
                 if let shapes = binding.shapes {
-                    if binding == model.bindings.selected {
+                    if binding == info.bindings.selected {
                         ForEach(0..<shapes.count, id: \.self) { index in
                             Shapes.shape(
-                                model: shapes[index],
+                                info: shapes[index],
                                 constraints: constraints,
                                 colorScheme: colorScheme
                             )
                         }
-                        .applyIf(disabled) {  view in
-                            view.colorMultiply(HexColor.disabled.toColor())
+                        .airshipApplyIf(disabled) {  view in
+                            view.colorMultiply(ThomasConstants.disabledColor)
                         }
                     } else {
                         ForEach(0..<shapes.count, id: \.self) { index in
                             Shapes.shape(
-                                model: shapes[index],
+                                info: shapes[index],
                                 constraints: constraints,
                                 colorScheme: colorScheme
                             )
@@ -46,7 +46,7 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                 }
 
                 if let iconModel = binding.icon {
-                    Icons.icon(model: iconModel, colorScheme: colorScheme)
+                    Icons.icon(info: iconModel, colorScheme: colorScheme)
                 }
             }
             .constraints(constraints, fixedSize: true)

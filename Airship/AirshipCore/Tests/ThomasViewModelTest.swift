@@ -5,9 +5,8 @@ import XCTest
 @testable import AirshipCore
 
 final class ThomasViewModelTest: XCTestCase {
-    
+
     func testShapeModelCoding() throws {
-        
         let rectangle = """
         {
           "type": "rectangle",
@@ -15,6 +14,7 @@ final class ThomasViewModelTest: XCTestCase {
           "aspect_ratio": 1,
           "color": {
             "default": {
+              "type": "hex",
               "hex": "#66FF66",
               "alpha": 1
             }
@@ -24,6 +24,7 @@ final class ThomasViewModelTest: XCTestCase {
             "radius": 5,
             "stroke_color": {
               "default": {
+                "type": "hex",
                 "hex": "#333333",
                 "alpha": 1
               }
@@ -32,14 +33,15 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: rectangle, type: ShapeModel.self)
-        
+        try decodeEncodeCompare(source: rectangle, type: ThomasShapeInfo.self)
+
         let ellipse = """
         {
           "border": {
             "radius": 2,
             "stroke_color": {
               "default": {
+                "type": "hex",
                 "alpha": 1,
                 "hex": "#000000",
               }
@@ -48,6 +50,7 @@ final class ThomasViewModelTest: XCTestCase {
           },
           "color": {
             "default": {
+              "type": "hex",
               "alpha": 1,
               "hex": "#DDDDDD",
             }
@@ -57,15 +60,65 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: ellipse, type: ShapeModel.self)
+        try decodeEncodeCompare(source: ellipse, type: ThomasShapeInfo.self)
     }
-    
+
+
+    func testLabelInfo() throws {
+        let json = """
+        {
+          "type": "label",
+          "text": "You'll love these",
+          "content_description": "Love it",
+          "border": {
+            "radius": 15,
+            "stroke_width": 1,
+            "stroke_color": {
+              "default": {
+                "type": "hex",
+                "hex": "#FFFFFF",
+                "alpha": 0
+              }
+            }
+          },
+          "text_appearance": {
+            "font_size": 44,
+            "color": {
+              "default": {
+                "type": "hex",
+                "hex": "#000000",
+                "alpha": 1
+              }
+            },
+            "alignment": "start",
+            "styles": [],
+            "font_families": ["sans-serif"]
+          },
+          "view_overrides": {
+            "background_color": {
+            },
+            "text": {
+              "when_state_matches": {
+                "scope": ["some-id:error"],
+                "value": {
+                  "equals": true
+                }
+              },
+              "value": "neat"
+            }
+          }
+        }
+        """
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.Label.self)
+
+        
+    }
     func testSizeCoding() throws {
         let autoPercent = "{\"width\": \"auto\", \"height\":\"101%\"}"
         let percentToPoints = "{\"width\":\"101%\", \"height\":45}"
         
-        try decodeEncodeCompare(source: autoPercent, type: Size.self)
-        try decodeEncodeCompare(source: percentToPoints, type: Size.self)
+        try decodeEncodeCompare(source: autoPercent, type: ThomasSize.self)
+        try decodeEncodeCompare(source: percentToPoints, type: ThomasSize.self)
     }
     
     func testVisibilityInfoCoding() throws {
@@ -91,7 +144,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: VisibilityInfo.self)
+        try decodeEncodeCompare(source: json, type: ThomasVisibilityInfo.self)
     }
     
     func testEventHandlerCodable() throws {
@@ -115,7 +168,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: EventHandler.self)
+        try decodeEncodeCompare(source: json, type: ThomasEventHandler.self)
     }
     
     func testWebViewModelCodable() throws {
@@ -138,7 +191,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: WebViewModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testCustomViewModelCodable() throws {
@@ -146,8 +199,7 @@ final class ThomasViewModelTest: XCTestCase {
         {
           "type": "custom_view",
           "name": "ad_custom_view",
-          "height": 88,
-          "keys": {
+          "json": {
             "ad_type": "fashion"
           },
           "background_color": {
@@ -156,6 +208,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "platform": "ios",
                 "dark_mode": false,
                 "color": {
+                  "type": "hex",
                   "hex": "#FFFFFF",
                   "alpha": 1
                 }
@@ -164,12 +217,14 @@ final class ThomasViewModelTest: XCTestCase {
                 "platform": "ios",
                 "dark_mode": true,
                 "color": {
+                  "type": "hex",
                   "hex": "#000000",
                   "alpha": 1
                 }
               }
             ],
             "default": {
+              "type": "hex",
               "hex": "#FF00FF",
               "alpha": 1
             }
@@ -177,7 +232,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: CustomViewModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testMediaViewModelCodable() throws {
@@ -190,8 +245,8 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: image, type: MediaModel.self)
-        
+        try decodeEncodeCompare(source: image, type: ThomasViewInfo.self)
+
         let video = """
         {
           "type": "media",
@@ -208,8 +263,8 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: video, type: MediaModel.self)
-        
+        try decodeEncodeCompare(source: video, type: ThomasViewInfo.self)
+
         let youtube = """
         {
           "media_fit": "center_inside",
@@ -226,7 +281,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: youtube, type: MediaModel.self)
+        try decodeEncodeCompare(source: youtube, type: ThomasViewInfo.self)
     }
     
     func testLabelModelCodable() throws {
@@ -238,6 +293,7 @@ final class ThomasViewModelTest: XCTestCase {
             "font_size": 14,
             "color": {
               "default": {
+                "type": "hex",
                 "hex": "#333333"
               }
             },
@@ -253,7 +309,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: LabelModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testLabelButtonModelCodable() throws {
@@ -263,6 +319,7 @@ final class ThomasViewModelTest: XCTestCase {
           "identifier": "button1",
           "background_color": {
             "default": {
+              "type": "hex",
               "hex": "#D32F2F",
               "alpha": 1
             }
@@ -275,6 +332,7 @@ final class ThomasViewModelTest: XCTestCase {
               "alignment": "center",
               "color": {
                 "default": {
+                  "type": "hex",
                   "hex": "#000000",
                   "alpha": 1
                 }
@@ -284,7 +342,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: LabelButtonModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testButtonImageModelCodable() throws {
@@ -295,6 +353,7 @@ final class ThomasViewModelTest: XCTestCase {
           "icon": "close",
           "color": {
             "default": {
+              "type": "hex",
               "hex": "#000000",
               "alpha": 1
             },
@@ -303,6 +362,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "platform": "ios",
                 "dark_mode": true,
                 "color": {
+                  "type": "hex",
                   "hex": "#FFFFFF",
                   "alpha": 1
                 }
@@ -311,6 +371,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "platform": "android",
                 "dark_mode": true,
                 "color": {
+                  "type": "hex",
                   "hex": "#FFFFFF",
                   "alpha": 1
                 }
@@ -320,8 +381,8 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: icon, type: ButtonImageModel.self)
-        
+        try decodeEncodeCompare(source: icon, type:  ThomasViewInfo.ImageButton.ButtonImage.self)
+
         let url = """
         {
           "type": "url",
@@ -329,7 +390,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: url, type: ButtonImageModel.self)
+        try decodeEncodeCompare(source: url, type: ThomasViewInfo.ImageButton.ButtonImage.self)
     }
     
     func testImageButtonCodable() throws {
@@ -342,6 +403,7 @@ final class ThomasViewModelTest: XCTestCase {
             "icon": "close",
             "color": {
               "default": {
+                "type": "hex",
                 "hex": "#000000",
                 "alpha": 1
               },
@@ -350,6 +412,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "platform": "ios",
                   "dark_mode": true,
                   "color": {
+                    "type": "hex",
                     "hex": "#FFFFFF",
                     "alpha": 1
                   }
@@ -358,6 +421,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "platform": "android",
                   "dark_mode": true,
                   "color": {
+                    "type": "hex",
                     "hex": "#FFFFFF",
                     "alpha": 1
                   }
@@ -372,7 +436,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: ImageButtonModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testEmptyViewModelCodable() throws {
@@ -381,6 +445,7 @@ final class ThomasViewModelTest: XCTestCase {
           "type": "empty_view",
           "background_color": {
             "default": {
+              "type": "hex",
               "hex": "#00FF00",
               "alpha": 0.5
             }
@@ -388,7 +453,7 @@ final class ThomasViewModelTest: XCTestCase {
         }
         """
         
-        try decodeEncodeCompare(source: json, type: EmptyViewModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testPagerGestureModelCodable() throws {
@@ -404,8 +469,8 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: swipe, type: PagerGestureModel.self)
-        
+        try decodeEncodeCompare(source: swipe, type: ThomasViewInfo.Pager.Gesture.self)
+
         let tap = """
         {
           "identifier": "63a41161-9322-4425-a940-fa928665459e_tap_start",
@@ -418,8 +483,8 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: tap, type: PagerGestureModel.self)
-        
+        try decodeEncodeCompare(source: tap, type: ThomasViewInfo.Pager.Gesture.self)
+
         let hold = """
         {
           "type": "hold",
@@ -436,7 +501,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: hold, type: PagerGestureModel.self)
+        try decodeEncodeCompare(source: hold, type: ThomasViewInfo.Pager.Gesture.self)
     }
     
     func testPagerIndicatorModelCodable() throws {
@@ -456,6 +521,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "scale": 0.75,
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#000000",
                       "alpha": 1
                     }
@@ -473,6 +539,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "stroke_width": 1,
                     "stroke_color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#333333",
                         "alpha": 1
                       }
@@ -480,6 +547,7 @@ final class ThomasViewModelTest: XCTestCase {
                   },
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#ffffff",
                       "alpha": 1
                     }
@@ -490,7 +558,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: PagerIndicatorModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testStoryIndicatorModelCodable() throws {
@@ -507,12 +575,14 @@ final class ThomasViewModelTest: XCTestCase {
             "spacing": 4,
             "progress_color": {
               "default": {
+                "type": "hex",
                 "hex": "#AAAAAA",
                 "alpha": 1
               }
             },
             "track_color": {
               "default": {
+                "type": "hex",
                 "hex": "#AAAAAA",
                 "alpha": 0.5
               }
@@ -520,7 +590,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: StoryIndicatorModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testToggleStyleModelCodable() throws {
@@ -530,12 +600,14 @@ final class ThomasViewModelTest: XCTestCase {
           "toggle_colors": {
             "on": {
               "default": {
+                "type": "hex",
                 "hex": "#00FF00",
                 "alpha": 1
               }
             },
             "off": {
               "default": {
+                "type": "hex",
                 "hex": "#FF0000",
                 "alpha": 1
               }
@@ -543,8 +615,8 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: switchStyle, type: ToggleStyleModel.self)
-        
+        try decodeEncodeCompare(source: switchStyle, type: ThomasToggleStyleInfo.self)
+
         let checkbox = """
         {
           "bindings": {
@@ -555,6 +627,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "radius": 2,
                     "stroke_color": {
                       "default": {
+                        "type": "hex",
                         "alpha": 1,
                         "hex": "#000000",
                       }
@@ -563,6 +636,7 @@ final class ThomasViewModelTest: XCTestCase {
                   },
                   "color": {
                     "default": {
+                      "type": "hex",
                       "alpha": 1,
                       "hex": "#DDDDDD",
                     }
@@ -579,6 +653,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "radius": 2,
                     "stroke_color": {
                       "default": {
+                        "type": "hex",
                         "alpha": 1,
                         "hex": "#000000",
                       }
@@ -587,6 +662,7 @@ final class ThomasViewModelTest: XCTestCase {
                   },
                   "color": {
                     "default": {
+                      "type": "hex",
                       "alpha": 1,
                       "hex": "#FFFFFF",
                     }
@@ -600,7 +676,7 @@ final class ThomasViewModelTest: XCTestCase {
           "type": "checkbox"
         }
         """
-        try decodeEncodeCompare(source: checkbox, type: ToggleStyleModel.self)
+        try decodeEncodeCompare(source: checkbox, type: ThomasToggleStyleInfo.self)
     }
     
     func testCheckboxModelCodable() throws {
@@ -619,6 +695,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "aspect_ratio": 1,
                     "color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#66FF66",
                         "alpha": 1
                       }
@@ -628,6 +705,7 @@ final class ThomasViewModelTest: XCTestCase {
                       "radius": 5,
                       "stroke_color": {
                         "default": {
+                          "type": "hex",
                           "hex": "#333333",
                           "alpha": 1
                         }
@@ -640,6 +718,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "icon": "checkmark",
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#333333",
                       "alpha": 1
                     }
@@ -655,6 +734,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "aspect_ratio": 1,
                     "color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#FF6666",
                         "alpha": 1
                       }
@@ -664,6 +744,7 @@ final class ThomasViewModelTest: XCTestCase {
                       "radius": 5,
                       "stroke_color": {
                         "default": {
+                          "type": "hex",
                           "hex": "#333333",
                           "alpha": 1
                         }
@@ -676,6 +757,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "icon": "close",
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#333333",
                       "alpha": 1
                     }
@@ -687,7 +769,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: CheckboxModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testRadioModelCodable() throws {
@@ -704,6 +786,7 @@ final class ThomasViewModelTest: XCTestCase {
                       "radius": 2,
                       "stroke_color": {
                         "default": {
+                          "type": "hex",
                           "alpha": 1,
                           "hex": "#000000",
                         }
@@ -712,6 +795,7 @@ final class ThomasViewModelTest: XCTestCase {
                     },
                     "color": {
                       "default": {
+                        "type": "hex",
                         "alpha": 1,
                         "hex": "#DDDDDD",
                       }
@@ -728,6 +812,7 @@ final class ThomasViewModelTest: XCTestCase {
                       "radius": 2,
                       "stroke_color": {
                         "default": {
+                          "type": "hex",
                           "alpha": 1,
                           "hex": "#000000",
                         }
@@ -736,6 +821,7 @@ final class ThomasViewModelTest: XCTestCase {
                     },
                     "color": {
                       "default": {
+                        "type": "hex",
                         "alpha": 1,
                         "hex": "#FFFFFF",
                       }
@@ -751,7 +837,7 @@ final class ThomasViewModelTest: XCTestCase {
           "type": "radio_input"
         }
         """
-        try decodeEncodeCompare(source: json, type: RadioInputModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testTextInputModelCodable() throws {
@@ -759,6 +845,7 @@ final class ThomasViewModelTest: XCTestCase {
         {
           "background_color": {
             "default": {
+              "type": "hex",
               "hex": "#eae9e9",
               "alpha": 1
             }
@@ -768,6 +855,7 @@ final class ThomasViewModelTest: XCTestCase {
             "stroke_width": 1,
             "stroke_color": {
               "default": {
+                "type": "hex",
                 "hex": "#63656b",
                 "alpha": 1
               }
@@ -779,6 +867,7 @@ final class ThomasViewModelTest: XCTestCase {
             "font_size": 14,
             "color": {
               "default": {
+                "type": "hex",
                 "hex": "#000000",
                 "alpha": 1
               }
@@ -789,7 +878,7 @@ final class ThomasViewModelTest: XCTestCase {
           "required": false
         }
         """
-        try decodeEncodeCompare(source: json, type: TextInputModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testScoreStyleModelCodable() throws {
@@ -808,6 +897,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "scale": 1,
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#000000",
                       "alpha": 1
                     }
@@ -821,6 +911,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "stroke_width": 2,
                     "stroke_color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#999999",
                         "alpha": 1
                       }
@@ -828,6 +919,7 @@ final class ThomasViewModelTest: XCTestCase {
                   },
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#FFFFFF",
                       "alpha": 0
                     }
@@ -838,6 +930,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "font_size": 14,
                 "color": {
                   "default": {
+                    "type": "hex",
                     "hex": "#FFFFFF",
                     "alpha": 1
                   }
@@ -857,6 +950,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "stroke_width": 2,
                     "stroke_color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#999999",
                         "alpha": 1
                       }
@@ -864,6 +958,7 @@ final class ThomasViewModelTest: XCTestCase {
                   },
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#FFFFFF",
                       "alpha": 1
                     }
@@ -877,6 +972,7 @@ final class ThomasViewModelTest: XCTestCase {
                 ],
                 "color": {
                   "default": {
+                    "type": "hex",
                     "hex": "#333333",
                     "alpha": 1
                   }
@@ -886,7 +982,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: ScoreStyleModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.Score.ScoreStyle.self)
     }
     
     func testScoreModelCodable() throws {
@@ -907,6 +1003,7 @@ final class ThomasViewModelTest: XCTestCase {
                     "type": "rectangle",
                     "color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#000000",
                         "alpha": 1
                       }
@@ -920,6 +1017,7 @@ final class ThomasViewModelTest: XCTestCase {
                   ],
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#ffffff",
                       "alpha": 1
                     }
@@ -934,6 +1032,7 @@ final class ThomasViewModelTest: XCTestCase {
                       "stroke_width": 1,
                       "stroke_color": {
                         "default": {
+                          "type": "hex",
                           "hex": "#999999",
                           "alpha": 1
                         }
@@ -941,6 +1040,7 @@ final class ThomasViewModelTest: XCTestCase {
                     },
                     "color": {
                       "default": {
+                        "type": "hex",
                         "hex": "#dedede",
                         "alpha": 1
                       }
@@ -951,6 +1051,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "font_size": 12,
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#666666",
                       "alpha": 1
                     }
@@ -961,7 +1062,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: ScoreModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.Score.self)
     }
     
     func testToggleModelCodable() throws {
@@ -985,12 +1086,14 @@ final class ThomasViewModelTest: XCTestCase {
             "toggle_colors": {
               "on": {
                 "default": {
+                  "type": "hex",
                   "hex": "#00FF00",
                   "alpha": 1
                 }
               },
               "off": {
                 "default": {
+                  "type": "hex",
                   "hex": "#FF0000",
                   "alpha": 1
                 }
@@ -999,7 +1102,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: ToggleModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.Toggle.self)
     }
     
     func testContainerModelCodable() throws {
@@ -1029,6 +1132,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "font_size": 14,
                   "color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#333333"
                     }
                   },
@@ -1046,7 +1150,7 @@ final class ThomasViewModelTest: XCTestCase {
           ]
         }
         """
-        try decodeEncodeCompare(source: json, type: ContainerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.Container.self)
     }
     
     func testLinearLayoutModelCodable() throws {
@@ -1112,7 +1216,7 @@ final class ThomasViewModelTest: XCTestCase {
           "direction": "vertical"
         }
         """
-        try decodeEncodeCompare(source: json, type: LinearLayoutModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testScrollLayoutModelCodable() throws {
@@ -1144,7 +1248,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: ScrollLayoutModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testPagerModelCodable() throws {
@@ -1158,6 +1262,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "type": "empty_view",
                 "background_color": {
                   "default": {
+                    "type": "hex",
                     "hex": "#00FF00",
                     "alpha": 0.5
                   }
@@ -1170,6 +1275,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "type": "empty_view",
                 "background_color": {
                   "default": {
+                    "type": "hex",
                     "hex": "#FFFF00",
                     "alpha": 0.5
                   }
@@ -1182,6 +1288,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "type": "empty_view",
                 "background_color": {
                   "default": {
+                    "type": "hex",
                     "hex": "#FF00FF",
                     "alpha": 0.5
                   }
@@ -1191,7 +1298,7 @@ final class ThomasViewModelTest: XCTestCase {
           ]
         }
         """
-        try decodeEncodeCompare(source: json, type: PagerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testPagerControllerModelCodable() throws {
@@ -1287,6 +1394,7 @@ final class ThomasViewModelTest: XCTestCase {
                                                           "font_size": 30,
                                                           "color": {
                                                             "default": {
+                                                              "type": "hex",
                                                               "hex": "#000000",
                                                               "alpha": 1
                                                             },
@@ -1295,6 +1403,7 @@ final class ThomasViewModelTest: XCTestCase {
                                                                 "platform": "ios",
                                                                 "dark_mode": true,
                                                                 "color": {
+                                                                  "type": "hex",
                                                                   "hex": "#FFFFFF",
                                                                   "alpha": 1
                                                                 }
@@ -1303,6 +1412,7 @@ final class ThomasViewModelTest: XCTestCase {
                                                                 "platform": "android",
                                                                 "dark_mode": true,
                                                                 "color": {
+                                                                  "type": "hex",
                                                                   "hex": "#FFFFFF",
                                                                   "alpha": 1
                                                                 }
@@ -1362,6 +1472,7 @@ final class ThomasViewModelTest: XCTestCase {
                           "icon": "close",
                           "color": {
                             "default": {
+                              "type": "hex",
                               "hex": "#000000",
                               "alpha": 1
                             },
@@ -1370,6 +1481,7 @@ final class ThomasViewModelTest: XCTestCase {
                                 "platform": "ios",
                                 "dark_mode": true,
                                 "color": {
+                                  "type": "hex",
                                   "hex": "#FFFFFF",
                                   "alpha": 1
                                 }
@@ -1378,6 +1490,7 @@ final class ThomasViewModelTest: XCTestCase {
                                 "platform": "android",
                                 "dark_mode": true,
                                 "color": {
+                                  "type": "hex",
                                   "hex": "#FFFFFF",
                                   "alpha": 1
                                 }
@@ -1398,7 +1511,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: PagerControllerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testFormControllerModelCodable() throws {
@@ -1412,6 +1525,7 @@ final class ThomasViewModelTest: XCTestCase {
             "direction": "vertical",
             "background_color": {
               "default": {
+                "type": "hex",
                 "hex": "#ffffff",
                 "alpha": 1
               }
@@ -1448,6 +1562,7 @@ final class ThomasViewModelTest: XCTestCase {
                               "type": "rectangle",
                               "color": {
                                 "default": {
+                                  "type": "hex",
                                   "hex": "#000000",
                                   "alpha": 1
                                 }
@@ -1461,6 +1576,7 @@ final class ThomasViewModelTest: XCTestCase {
                             ],
                             "color": {
                               "default": {
+                                "type": "hex",
                                 "hex": "#ffffff",
                                 "alpha": 1
                               }
@@ -1475,6 +1591,7 @@ final class ThomasViewModelTest: XCTestCase {
                                 "stroke_width": 1,
                                 "stroke_color": {
                                   "default": {
+                                    "type": "hex",
                                     "hex": "#999999",
                                     "alpha": 1
                                   }
@@ -1482,6 +1599,7 @@ final class ThomasViewModelTest: XCTestCase {
                               },
                               "color": {
                                 "default": {
+                                  "type": "hex",
                                   "hex": "#dedede",
                                   "alpha": 1
                                 }
@@ -1492,6 +1610,7 @@ final class ThomasViewModelTest: XCTestCase {
                             "font_size": 12,
                             "color": {
                               "default": {
+                                "type": "hex",
                                 "hex": "#666666",
                                 "alpha": 1
                               }
@@ -1534,6 +1653,7 @@ final class ThomasViewModelTest: XCTestCase {
                               "type": "ellipse",
                               "color": {
                                 "default": {
+                                  "type": "hex",
                                   "hex": "#FFDD33",
                                   "alpha": 1
                                 }
@@ -1544,6 +1664,7 @@ final class ThomasViewModelTest: XCTestCase {
                             "font_size": 14,
                             "color": {
                               "default": {
+                                "type": "hex",
                                 "hex": "#000000",
                                 "alpha": 1
                               }
@@ -1556,6 +1677,7 @@ final class ThomasViewModelTest: XCTestCase {
                               "type": "ellipse",
                               "color": {
                                 "default": {
+                                  "type": "hex",
                                   "hex": "#3333ff",
                                   "alpha": 1
                                 }
@@ -1566,6 +1688,7 @@ final class ThomasViewModelTest: XCTestCase {
                             "font_size": 14,
                             "color": {
                               "default": {
+                                "type": "hex",
                                 "hex": "#ffffff",
                                 "alpha": 1
                               }
@@ -1608,6 +1731,7 @@ final class ThomasViewModelTest: XCTestCase {
                               "type": "ellipse",
                               "color": {
                                 "default": {
+                                  "type": "hex",
                                   "hex": "#FF0000",
                                   "alpha": 1
                                 }
@@ -1618,6 +1742,7 @@ final class ThomasViewModelTest: XCTestCase {
                             "font_size": 14,
                             "color": {
                               "default": {
+                                "type": "hex",
                                 "hex": "#000000",
                                 "alpha": 1
                               }
@@ -1630,6 +1755,7 @@ final class ThomasViewModelTest: XCTestCase {
                               "type": "ellipse",
                               "color": {
                                 "default": {
+                                  "type": "hex",
                                   "hex": "#0000FF",
                                   "alpha": 1
                                 }
@@ -1640,6 +1766,7 @@ final class ThomasViewModelTest: XCTestCase {
                             "font_size": 14,
                             "color": {
                               "default": {
+                                "type": "hex",
                                 "hex": "#ffffff",
                                 "alpha": 1
                               }
@@ -1667,6 +1794,7 @@ final class ThomasViewModelTest: XCTestCase {
                   "identifier": "SUBMIT_BUTTON",
                   "background_color": {
                     "default": {
+                      "type": "hex",
                       "hex": "#000000",
                       "alpha": 1
                     }
@@ -1686,6 +1814,7 @@ final class ThomasViewModelTest: XCTestCase {
                       "alignment": "center",
                       "color": {
                         "default": {
+                          "type": "hex",
                           "hex": "#ffffff",
                           "alpha": 1
                         }
@@ -1698,7 +1827,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: FormControllerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testCheckboxControllerModelCodable() throws {
@@ -1751,6 +1880,7 @@ final class ThomasViewModelTest: XCTestCase {
                                 "icon": "checkmark",
                                 "color": {
                                   "default": {
+                                    "type": "hex",
                                     "hex": "#000000",
                                     "alpha": 1
                                   }
@@ -1763,6 +1893,7 @@ final class ThomasViewModelTest: XCTestCase {
                                     "radius": 5,
                                     "stroke_color": {
                                       "default": {
+                                        "type": "hex",
                                         "hex": "#000000",
                                         "alpha": 1
                                       }
@@ -1771,6 +1902,7 @@ final class ThomasViewModelTest: XCTestCase {
                                   },
                                   "color": {
                                     "default": {
+                                      "type": "hex",
                                       "hex": "#00ffff",
                                       "alpha": 1
                                     }
@@ -1787,6 +1919,7 @@ final class ThomasViewModelTest: XCTestCase {
                                     "radius": 5,
                                     "stroke_color": {
                                       "default": {
+                                        "type": "hex",
                                         "hex": "#000000",
                                         "alpha": 0.5
                                       }
@@ -1795,6 +1928,7 @@ final class ThomasViewModelTest: XCTestCase {
                                   },
                                   "color": {
                                     "default": {
+                                      "type": "hex",
                                       "hex": "#00ffff",
                                       "alpha": 0.5
                                     }
@@ -1822,6 +1956,7 @@ final class ThomasViewModelTest: XCTestCase {
                         "text_appearance": {
                           "color": {
                             "default": {
+                              "type": "hex",
                               "hex": "#000000",
                               "alpha": 1
                             }
@@ -1854,6 +1989,7 @@ final class ThomasViewModelTest: XCTestCase {
                         "text_appearance": {
                           "color": {
                             "default": {
+                              "type": "hex",
                               "hex": "#000000",
                               "alpha": 1
                             }
@@ -1916,6 +2052,7 @@ final class ThomasViewModelTest: XCTestCase {
                                 "icon": "checkmark",
                                 "color": {
                                   "default": {
+                                    "type": "hex",
                                     "hex": "#000000",
                                     "alpha": 1
                                   }
@@ -1928,6 +2065,7 @@ final class ThomasViewModelTest: XCTestCase {
                                     "radius": 5,
                                     "stroke_color": {
                                       "default": {
+                                        "type": "hex",
                                         "hex": "#000000",
                                         "alpha": 1
                                       }
@@ -1936,6 +2074,7 @@ final class ThomasViewModelTest: XCTestCase {
                                   },
                                   "color": {
                                     "default": {
+                                      "type": "hex",
                                       "hex": "#ff00ff",
                                       "alpha": 1
                                     }
@@ -1952,6 +2091,7 @@ final class ThomasViewModelTest: XCTestCase {
                                     "radius": 5,
                                     "stroke_color": {
                                       "default": {
+                                        "type": "hex",
                                         "hex": "#000000",
                                         "alpha": 0.5
                                       }
@@ -1960,6 +2100,7 @@ final class ThomasViewModelTest: XCTestCase {
                                   },
                                   "color": {
                                     "default": {
+                                      "type": "hex",
                                       "hex": "#ff00ff",
                                       "alpha": 0.5
                                     }
@@ -1987,6 +2128,7 @@ final class ThomasViewModelTest: XCTestCase {
                         "text_appearance": {
                           "color": {
                             "default": {
+                              "type": "hex",
                               "hex": "#000000",
                               "alpha": 1
                             }
@@ -2019,6 +2161,7 @@ final class ThomasViewModelTest: XCTestCase {
                         "text_appearance": {
                           "color": {
                             "default": {
+                              "type": "hex",
                               "hex": "#000000",
                               "alpha": 1
                             }
@@ -2044,7 +2187,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: CheckboxControllerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testRadioInputControllerModelCodable() throws {
@@ -2073,6 +2216,7 @@ final class ThomasViewModelTest: XCTestCase {
                 "font_size": 14,
                 "color": {
                   "default": {
+                    "type": "hex",
                     "hex": "#333333"
                   }
                 },
@@ -2088,7 +2232,7 @@ final class ThomasViewModelTest: XCTestCase {
             }
         }
         """
-        try decodeEncodeCompare(source: json, type: RadioInputControllerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testStateControllerModelCodable() throws {
@@ -2111,6 +2255,7 @@ final class ThomasViewModelTest: XCTestCase {
                           "font_size":14,
                           "color":{
                              "default":{
+                                "type": "hex",
                                 "hex":"#333333"
                              }
                           },
@@ -2129,18 +2274,18 @@ final class ThomasViewModelTest: XCTestCase {
            }
         }
         """
-        try decodeEncodeCompare(source: json, type: StateControllerModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
     
     func testActionPayload() throws {
-        let payload = ActionsPayload(value: try AirshipJSON.wrap(["foo": "bar"]))
+        let payload = ThomasActionsPayload(value: try AirshipJSON.wrap(["foo": "bar"]))
         let encoded = try AirshipJSON.defaultEncoder.encode(payload)
-        let decoded = try AirshipJSON.defaultDecoder.decode(ActionsPayload.self, from: encoded)
+        let decoded = try AirshipJSON.defaultDecoder.decode(ThomasActionsPayload.self, from: encoded)
         XCTAssertEqual(payload, decoded)
     }
     
     func testActionPayloadPlatformOverrides() throws {
-        let payload = ActionsPayload(value: try AirshipJSON.wrap([
+        let payload = ThomasActionsPayload(value: try AirshipJSON.wrap([
             "foo": "bar",
             "shouldnt_change": "value",
             "platform_action_overrides": [
@@ -2151,7 +2296,7 @@ final class ThomasViewModelTest: XCTestCase {
             ]
         ]))
         let encoded = try AirshipJSON.defaultEncoder.encode(payload)
-        let decoded = try AirshipJSON.defaultDecoder.decode(ActionsPayload.self, from: encoded)
+        let decoded = try AirshipJSON.defaultDecoder.decode(ThomasActionsPayload.self, from: encoded)
         XCTAssertEqual(payload, decoded)
         
         XCTAssertEqual("bar2", payload.value.object?["foo"]?.string)
@@ -2175,3 +2320,5 @@ final class ThomasViewModelTest: XCTestCase {
         XCTAssertEqual(inputJson.toNsDictionary(), encodedJson.toNsDictionary())
     }
 }
+
+

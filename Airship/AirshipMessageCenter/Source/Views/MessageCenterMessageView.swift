@@ -476,7 +476,7 @@ private struct MessageCenterMessageContentView: View {
             deleteButton
         }
         .navigationBarTitleDisplayMode(.inline)
-        .applyIf(containerColor != nil) { view in
+        .airshipApplyIf(containerColor != nil) { view in
             if #available(iOS 16.0, *) {
                 view.toolbarBackground(containerColor!, for: .navigationBar)
                     .toolbarBackground(.visible, for: .navigationBar)

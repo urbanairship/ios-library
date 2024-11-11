@@ -2,13 +2,13 @@
 
 import SwiftUI
 
-extension PagerModel {
+extension ThomasViewInfo.Pager {
     var isDefaultSwipeEnabled: Bool {
-        return disableSwipe != true && self.items.count > 1
+        return self.properties.disableSwipe != true && self.properties.items.count > 1
     }
 
-    func retrieveGestures<T: PagerGesture>(type: T.Type) -> [T] {
-        guard let gestures = self.gestures else {
+    func retrieveGestures<T: ThomasViewInfo.Pager.Gesture.Info>(type: T.Type) -> [T] {
+        guard let gestures = self.properties.gestures else {
             return []
         }
 
@@ -24,8 +24,8 @@ extension PagerModel {
         }
     }
 
-    func containsGestures(_ types: [PagerGestureType]) -> Bool {
-        guard let gestures = gestures else {
+    func containsGestures(_ types: [ThomasViewInfo.Pager.Gesture.GestureType]) -> Bool {
+        guard let gestures = self.properties.gestures else {
             return false
         }
 
@@ -39,8 +39,8 @@ extension PagerModel {
     }
 }
 
-extension Array where Element == AutomatedAction {
-    var earliestNavigationAction: AutomatedAction? {
+extension Array where Element == ThomasAutomatedAction {
+    var earliestNavigationAction: ThomasAutomatedAction? {
         return self.first {
             return $0.behaviors?.filter {
                 return switch($0) {

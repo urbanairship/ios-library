@@ -98,7 +98,7 @@ struct PagerGestureMapExplorer {
     func location(
         layoutDirection: LayoutDirection,
         forPoint point: CGPoint
-    ) -> [PagerGestureLocation] {
+    ) -> [ThomasViewInfo.Pager.Gesture.GestureLocation] {
         if topTrapezoidPath.contains(point) {
             return [.top, .any]
         }

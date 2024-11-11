@@ -49,7 +49,7 @@ public final class Thomas {
 
     @MainActor
     private class func displayBanner(
-        _ presentation: BannerPresentationModel,
+        _ presentation: ThomasPresentationInfo.Banner,
         scene: UIWindowScene,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
@@ -111,7 +111,7 @@ public final class Thomas {
 
     @MainActor
     private class func displayModal(
-        _ presentation: ModalPresentationModel,
+        _ presentation: ThomasPresentationInfo.Modal,
         scene: UIWindowScene,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,

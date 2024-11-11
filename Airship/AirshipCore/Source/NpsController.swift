@@ -6,34 +6,34 @@ import SwiftUI
 
 
 struct NpsController: View {
-    let model: NpsControllerModel
+    let info: ThomasViewInfo.NPSController
     let constraints: ViewConstraints
 
     @StateObject var formState: FormState
 
     @MainActor
-    init(model: NpsControllerModel, constraints: ViewConstraints) {
-        self.model = model
+    init(info: ThomasViewInfo.NPSController, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
         self._formState = StateObject(
             wrappedValue: FormState(
-                identifier: model.identifier,
-                formType: .nps(model.npsIdentifier),
-                formResponseType: model.responseType
+                identifier: info.properties.identifier,
+                formType: .nps(info.properties.npsIdentifier),
+                formResponseType: info.properties.responseType
             )
         )
     }
 
     var body: some View {
-        if model.submit != nil {
+        if self.info.properties.submit != nil {
             ParentNpsController(
-                model: model,
+                info: self.info,
                 constraints: constraints,
                 formState: formState
             )
         } else {
             ChildNpsController(
-                model: model,
+                info: self.info,
                 constraints: constraints,
                 formState: formState
             )
@@ -43,7 +43,7 @@ struct NpsController: View {
 
 
 private struct ParentNpsController: View {
-    let model: NpsControllerModel
+    let info: ThomasViewInfo.NPSController
     let constraints: ViewConstraints
 
     @ObservedObject var formState: FormState
@@ -51,13 +51,9 @@ private struct ParentNpsController: View {
     @Environment(\.layoutState) var layoutState
 
     var body: some View {
-        ViewFactory.createView(model: self.model.view, constraints: constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+        ViewFactory.createView(self.info.properties.view, constraints: constraints)
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .thomasEnableBehaviors(self.info.properties.formEnableBehaviors) { enabled in
                 self.formState.isEnabled = enabled
             }
             .environmentObject(formState)
@@ -81,7 +77,7 @@ private struct ParentNpsController: View {
 
 
 private struct ChildNpsController: View {
-    let model: NpsControllerModel
+    let info: ThomasViewInfo.NPSController
     let constraints: ViewConstraints
 
     @EnvironmentObject var parentFormState: FormState
@@ -90,15 +86,11 @@ private struct ChildNpsController: View {
     var body: some View {
         return
             ViewFactory.createView(
-                model: self.model.view,
+                self.info.properties.view,
                 constraints: constraints
             )
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .enableBehaviors(self.model.formEnableBehaviors) { enabled in
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .thomasEnableBehaviors(self.info.properties.formEnableBehaviors) { enabled in
                 self.formState.isEnabled = enabled
             }
             .environmentObject(formState)
@@ -111,12 +103,12 @@ private struct ChildNpsController: View {
     private func restoreFormState() {
         guard
             let formData = self.parentFormState.data.formData(
-                identifier: self.model.identifier
+                identifier: self.info.properties.identifier
             ),
             case let .form(responseType, formType, children) = formData.value,
-            responseType == self.model.responseType,
+            responseType == self.info.properties.responseType,
             case let .nps(scoreID) = formType,
-            scoreID == self.model.npsIdentifier
+            scoreID == self.info.properties.npsIdentifier
         else {
             return
         }

@@ -13,6 +13,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
        "text_appearance":{
           "font_size":14,
           "color":{
+             "type": "hex",
              "default":{
                 "hex":"#333333"
              }
@@ -57,7 +58,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: BannerPresentationModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
     }
     
     func testModalPresentationModelCodable() throws {
@@ -77,6 +78,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
             },
             "shade_color": {
               "default": {
+                "type": "hex",
                 "alpha": 0.2,
                 "hex": "#000000"
               }
@@ -91,7 +93,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
           "dismiss_on_touch_outside": false
         }
         """
-        try decodeEncodeCompare(source: json, type: ModalPresentationModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
     }
     
     func testEmbeddedPresentationModelCodable() throws {
@@ -113,7 +115,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
           }
         }
         """
-        try decodeEncodeCompare(source: json, type: EmbeddedPresentationModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.Embedded.self)
     }
     
     func testPresentationModelCodable() throws {
@@ -133,6 +135,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
             },
             "shade_color": {
               "default": {
+                "type": "hex",
                 "alpha": 0.2,
                 "hex": "#000000"
               }
@@ -147,7 +150,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
           "dismiss_on_touch_outside": false
         }
         """
-        try decodeEncodeCompare(source: json, type: PresentationModel.self)
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
     }
     
     func testAirshipLayoutCodable() throws {
@@ -175,6 +178,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
             "border": {
               "stroke_color": {
                 "default": {
+                  "type": "hex",
                   "hex": "#FF0D49",
                   "alpha": 1
                 }
@@ -187,6 +191,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
                   "platform": "ios",
                   "dark_mode": false,
                   "color": {
+                    "type": "hex",
                     "hex": "#FFFFFF",
                     "alpha": 1
                   }
@@ -195,12 +200,14 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
                   "platform": "ios",
                   "dark_mode": true,
                   "color": {
+                    "type": "hex",
                     "hex": "#000000",
                     "alpha": 1
                   }
                 }
               ],
               "default": {
+                "type": "hex",
                 "hex": "#FF00FF",
                 "alpha": 1
               }
@@ -226,6 +233,7 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
                           "platform": "ios",
                           "dark_mode": true,
                           "color": {
+                            "type": "hex",
                             "hex": "#FFFFFF",
                             "alpha": 1
                           }
@@ -234,12 +242,14 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
                           "platform": "ios",
                           "dark_mode": false,
                           "color": {
+                            "type": "hex",
                             "hex": "#000000",
                             "alpha": 1
                           }
                         }
                       ],
                       "default": {
+                        "type": "hex",
                         "hex": "#FF00FF",
                         "alpha": 1
                       }

@@ -3,23 +3,19 @@ import SwiftUI
 
 
 struct StateController: View {
-    let model: StateControllerModel
+    let info: ThomasViewInfo.StateController
     let constraints: ViewConstraints
     @StateObject var state: ViewState = ViewState()
 
-    init(model: StateControllerModel, constraints: ViewConstraints) {
-        self.model = model
+    init(info: ThomasViewInfo.StateController, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
     }
 
     var body: some View {
-        ViewFactory.createView(model: self.model.view, constraints: constraints)
+        ViewFactory.createView(self.info.properties.view, constraints: constraints)
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
             .environmentObject(state)
     }
 }

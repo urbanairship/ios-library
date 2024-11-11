@@ -8,7 +8,7 @@ struct BackgroundViewModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
 
     var color: ThomasColor?
-    var border: Border?
+    var border: ThomasBorder?
     var shadow: ThomasShadow?
 
     func body(content: Content) -> some View {
@@ -31,7 +31,7 @@ fileprivate extension View {
     }
 
     @ViewBuilder
-    func applyShadow(_ shadow: ThomasShadow?, border: Border?, colorScheme: ColorScheme) -> some View {
+    func applyShadow(_ shadow: ThomasShadow?, border: ThomasBorder?, colorScheme: ColorScheme) -> some View {
         if let boxShadow = shadow?.resolvedBoxShadow {
             if let borderShape = border?.borderShape {
                 self.background(
@@ -74,7 +74,7 @@ fileprivate extension View {
     @ViewBuilder
     func applyBackground(
         color: ThomasColor?,
-        border: Border?,
+        border: ThomasBorder?,
         colorScheme: ColorScheme
     ) -> some View {
         // Defaults to black to match Android & Web
@@ -115,7 +115,7 @@ fileprivate extension ThomasShadow {
     }
 }
 
-fileprivate extension Border {
+fileprivate extension ThomasBorder {
     var borderShape: RoundedRectangle? {
         guard let cornerRadius = self.radius, cornerRadius > 0 else {
             return nil
@@ -133,7 +133,7 @@ extension View {
     @ViewBuilder
     func background(
         color: ThomasColor? = nil,
-        border: Border? = nil,
+        border: ThomasBorder? = nil,
         shadow: ThomasShadow? = nil
     ) -> some View {
         if border != nil || shadow != nil || color != nil {
@@ -151,7 +151,7 @@ extension View {
 
     @ViewBuilder
     fileprivate func clipContent(
-        border: Border?
+        border: ThomasBorder?
     ) -> some View {
         if let width = border?.strokeWidth,
            let cornerRadius = border?.radius,

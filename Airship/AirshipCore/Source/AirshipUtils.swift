@@ -496,11 +496,6 @@ internal extension Collection {
     }
 }
 
-internal extension LocalizedContentDescription {
-    var localized: String? {
-        self.descriptionKey?.airshipLocalizedString(fallback: self.fallbackDescription)
-    }
-}
 
 public extension ColorScheme {
     func airshipResolveColor(light: UIColor?, dark: UIColor?) -> Color? {

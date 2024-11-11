@@ -5,7 +5,7 @@ import SwiftUI
 
 
 struct AirshipToggle: View {
-    let model: ToggleModel
+    let info: ThomasViewInfo.Toggle
     let constraints: ViewConstraints
 
     @EnvironmentObject var formState: FormState
@@ -15,12 +15,8 @@ struct AirshipToggle: View {
     var body: some View {
         createToggle()
             .constraints(self.constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .accessible(self.model)
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .accessible(self.info.accessible)
             .addSelectedTrait(isOn)
             .formElement()
             .onAppear {
@@ -39,32 +35,22 @@ struct AirshipToggle: View {
             }
         )
 
-        let toggle = Toggle(isOn: binding.animation()) {}
-
-        switch self.model.style {
-        case .checkboxStyle(let style):
-            toggle.toggleStyle(
-                AirshipCheckboxToggleStyle(
-                    viewConstraints: self.constraints,
-                    model: style,
-                    colorScheme: colorScheme,
-                    disabled: !formState.isFormInputEnabled
-                )
+        Toggle(isOn: binding.animation()) {}
+            .thomasToggleStyle(
+                self.info.properties.style,
+                colorScheme: colorScheme,
+                constraints: self.constraints,
+                disabled: !formState.isFormInputEnabled
             )
-        case .switchStyle(let style):
-            toggle.toggleStyle(
-                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme, disabled: !formState.isFormInputEnabled)
-            )
-        }
     }
 
     private func updateValue(_ isOn: Bool) {
-        let isValid = isOn || !(self.model.isRequired ?? false)
+        let isValid = isOn || !(self.info.validation.isRequired ?? false)
         let data = FormInputData(
-            self.model.identifier,
+            self.info.properties.identifier,
             value: .toggle(isOn),
-            attributeName: self.model.attributeName,
-            attributeValue: isOn ? self.model.attributeValue : nil,
+            attributeName: self.info.properties.attributeName,
+            attributeValue: isOn ? self.info.properties.attributeValue : nil,
             isValid: isValid
         )
 
@@ -73,7 +59,7 @@ struct AirshipToggle: View {
 
     private func restoreFormState() {
         let formValue = self.formState.data.formValue(
-            identifier: self.model.identifier
+            identifier: self.info.properties.identifier
         )
 
         guard case let .toggle(value) = formValue

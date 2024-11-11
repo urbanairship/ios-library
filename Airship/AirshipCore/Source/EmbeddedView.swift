@@ -5,7 +5,7 @@ import SwiftUI
 @available(iOS 16, tvOS 16, watchOS 9.0, *)
 struct AdoptLayout: SwiftUI.Layout {
 
-    let placement: EmbeddedPlacement
+    let placement: ThomasPresentationInfo.Embedded.Placement
 
     @Binding var viewConstraints: ViewConstraints?
     let embeddedSize: AirshipEmbeddedSize?
@@ -57,7 +57,7 @@ struct AdoptLayout: SwiftUI.Layout {
         return size
     }
 
-    private func size(constraint: SizeConstraint, parent: CGFloat?, proposal: CGFloat?, sizeThataFits: CGFloat? = nil) -> CGFloat? {
+    private func size(constraint: ThomasSizeConstraint, parent: CGFloat?, proposal: CGFloat?, sizeThataFits: CGFloat? = nil) -> CGFloat? {
         switch (constraint) {
         case .auto:
             return sizeThataFits ?? proposal
@@ -93,7 +93,7 @@ struct AdoptLayout: SwiftUI.Layout {
 }
 
 struct EmbeddedView: View {
-    let model: EmbeddedPresentationModel
+    let presentation: ThomasPresentationInfo.Embedded
     let layout: AirshipLayout
     let thomasEnvironment: ThomasEnvironment
 
@@ -133,9 +133,12 @@ struct EmbeddedView: View {
     }
 
     @MainActor
-    private func createView(constraints: ViewConstraints, placement: EmbeddedPlacement) -> some View {
+    private func createView(
+        constraints: ViewConstraints,
+        placement: ThomasPresentationInfo.Embedded.Placement
+    ) -> some View {
         return ViewFactory
-            .createView(model: layout.view, constraints: constraints)
+            .createView(layout.view, constraints: constraints)
             .background(
                 color: placement.backgroundColor,
                 border: placement.border
@@ -144,9 +147,12 @@ struct EmbeddedView: View {
             .constraints(constraints)
     }
 
-    private func resolvePlacement(orientation: Orientation, windowSize: WindowSize) -> EmbeddedPlacement {
-        var placement = self.model.defaultPlacement
-        for placementSelector in self.model.placementSelectors ?? [] {
+    private func resolvePlacement(
+        orientation: ThomasOrientation,
+        windowSize: ThomasWindowSize
+    ) -> ThomasPresentationInfo.Embedded.Placement {
+        var placement = self.presentation.defaultPlacement
+        for placementSelector in self.presentation.placementSelectors ?? [] {
             if placementSelector.windowSize != nil
                 && placementSelector.windowSize != windowSize
             {

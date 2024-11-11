@@ -8,7 +8,6 @@ import AirshipCore
 
 struct InAppMessageModalView: View {
     @EnvironmentObject var environment: InAppMessageEnvironment
-    @Environment(\.orientation) var orientation
 
 #if !os(tvOS) && !os(watchOS)
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -115,7 +114,7 @@ struct InAppMessageModalView: View {
                     }
                 )
             }
-            .applyIf(isModal) {
+            .airshipApplyIf(isModal) {
                 $0.frame(maxHeight: scrollViewContentSize.height)
             }
             VStack(spacing:24) {
@@ -140,13 +139,13 @@ struct InAppMessageModalView: View {
             }
         )
         .background(displayContent.backgroundColor?.color ?? Color.black)
-        .applyIf(isModal) {
+        .airshipApplyIf(isModal) {
             $0.cornerRadius(displayContent.borderRadius ?? 0)
             .parentClampingResize(maxWidth: theme.maxWidth, maxHeight: theme.maxHeight)
             .padding(theme.padding)
             .addBackground(color: .airshipShadowColor)
         }
-        .applyIf(!isModal) {
+        .airshipApplyIf(!isModal) {
             $0.frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear {
@@ -168,3 +167,4 @@ struct InAppMessageModalView: View {
         #endif
     }
 }
+

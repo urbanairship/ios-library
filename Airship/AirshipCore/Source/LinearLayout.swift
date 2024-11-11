@@ -8,7 +8,7 @@ import SwiftUI
 struct LinearLayout: View {
 
     /// LinearLayout model.
-    let model: LinearLayoutModel
+    let info: ThomasViewInfo.LinearLayout
 
     /// View constraints.
     let constraints: ViewConstraints
@@ -19,7 +19,7 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeVStack(
-        items: [LinearLayoutItem],
+        items: [ThomasViewInfo.LinearLayout.Item],
         parentConstraints: ViewConstraints
     ) -> some View {
         VStack(alignment: .center, spacing: 0) {
@@ -33,7 +33,7 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeHStack(
-        items: [LinearLayoutItem],
+        items: [ThomasViewInfo.LinearLayout.Item],
         parentConstraints: ViewConstraints
     ) -> some View {
         HStack(spacing: 0) {
@@ -47,7 +47,7 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeStack() -> some View {
-        if self.model.direction == .vertical {
+        if self.info.properties.direction == .vertical {
             makeVStack(
                 items: orderedItems(),
                 parentConstraints: parentConstraints()
@@ -63,34 +63,30 @@ struct LinearLayout: View {
     var body: some View {
         makeStack()
             .clipped()
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
     }
 
     @ViewBuilder
     @MainActor
     private func childItem(
-        _ item: LinearLayoutItem,
+        _ item: ThomasViewInfo.LinearLayout.Item,
         parentConstraints: ViewConstraints
     ) -> some View {
         let constraints = parentConstraints.childConstraints(
             item.size,
             margin: item.margin,
-            padding: self.model.border?.strokeWidth ?? 0,
+            padding: self.info.commonProperties.border?.strokeWidth ?? 0,
             safeAreaInsetsMode: .consume
         )
 
-        ViewFactory.createView(model: item.view, constraints: constraints)
+        ViewFactory.createView(item.view, constraints: constraints)
             .margin(item.margin)
     }
 
     private func parentConstraints() -> ViewConstraints {
         var constraints = self.constraints
 
-        if self.model.direction == .vertical {
+        if self.info.properties.direction == .vertical {
             constraints.isVerticalFixedSize = false
         } else {
             constraints.isHorizontalFixedSize = false
@@ -99,13 +95,13 @@ struct LinearLayout: View {
         return constraints
     }
 
-    private func orderedItems() -> [LinearLayoutItem] {
-        guard self.model.randomizeChildren == true else {
-            return self.model.items
+    private func orderedItems() -> [ThomasViewInfo.LinearLayout.Item] {
+        guard self.info.properties.randomizeChildren == true else {
+            return self.info.properties.items
         }
         var generator = self.numberGenerator
         generator.repeatNumbers()
-        return model.items.shuffled(using: &generator)
+        return self.info.properties.items.shuffled(using: &generator)
     }
 }
 

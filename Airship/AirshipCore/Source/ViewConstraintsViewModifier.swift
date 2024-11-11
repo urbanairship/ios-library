@@ -16,7 +16,7 @@ struct ViewConstraintsViewModifier: ViewModifier {
             maxHeight: viewConstraints.height,
             alignment: alignment ?? .center
         )
-        .applyIf(fixedSize) { view in
+        .airshipApplyIf(fixedSize) { view in
             view.fixedSize(
                 horizontal: viewConstraints.isHorizontalFixedSize
                     && viewConstraints.width != nil,

@@ -16,47 +16,47 @@ extension AirshipLayout {
         return extractUrlInfos(model: self.view) ?? []
     }
 
-    private func extractUrlInfos(model: ViewModel) -> [URLInfo]? {
+    private func extractUrlInfos(model: ThomasViewInfo) -> [URLInfo]? {
         switch model {
-        case .container(let model):
-            return model.items
+        case .container(let info):
+            return info.properties.items
                 .compactMap { extractUrlInfos(model: $0.view) }
                 .reduce([], +)
         case .linearLayout(let model):
-            return model.items
+            return model.properties.items
                 .compactMap { extractUrlInfos(model: $0.view) }
                 .reduce([], +)
         case .pager(let model):
-            return model.items
+            return model.properties.items
                 .compactMap { extractUrlInfos(model: $0.view) }
                 .reduce([], +)
         case .scrollLayout(let model):
-            return extractUrlInfos(model: model.view)
+            return extractUrlInfos(model: model.properties.view)
         case .checkboxController(let model):
-            return extractUrlInfos(model: model.view)
+            return extractUrlInfos(model: model.properties.view)
         case .radioInputController(let model):
-            return extractUrlInfos(model: model.view)
+            return extractUrlInfos(model: model.properties.view)
         case .formController(let model):
-            return extractUrlInfos(model: model.view)
+            return extractUrlInfos(model: model.properties.view)
         case .npsController(let model):
-            return extractUrlInfos(model: model.view)
+            return extractUrlInfos(model: model.properties.view)
         case .pagerController(let model):
-            return extractUrlInfos(model: model.view)
-        case .media(let model):
-            switch model.mediaType {
+            return extractUrlInfos(model: model.properties.view)
+        case .media(let info):
+            switch info.properties.mediaType {
             case .image:
-                return [.image(url: model.url)]
+                return [.image(url: info.properties.url)]
             case .youtube:
-                return [.video(url: model.url)]
+                return [.video(url: info.properties.url)]
             case .video:
-                return [.video(url: model.url)]
+                return [.video(url: info.properties.url)]
             }
         #if !os(tvOS) && !os(watchOS)
-        case .webView(let model):
-            return [.web(url: model.url)]
+        case .webView(let info):
+            return [.web(url: info.properties.url)]
         #endif
         case .imageButton(let model):
-            switch model.image {
+            switch model.properties.image {
             case .url(let imageModel):
                 return [.image(url: imageModel.url)]
             case .icon(_):
@@ -87,7 +87,7 @@ extension AirshipLayout {
         case .customView(_):
             return nil
         case .buttonLayout(let model):
-            return extractUrlInfos(model: model.view)
+            return extractUrlInfos(model: model.properties.view)
         }
     }
 }

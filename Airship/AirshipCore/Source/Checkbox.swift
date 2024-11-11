@@ -5,7 +5,7 @@ import SwiftUI
 
 
 struct Checkbox: View {
-    let model: CheckboxModel
+    let info: ThomasViewInfo.Checkbox
     let constraints: ViewConstraints
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var checkboxState: CheckboxState
@@ -15,50 +15,36 @@ struct Checkbox: View {
     private func createToggle() -> some View {
         let isOn = Binding<Bool>(
             get: {
-                self.checkboxState.selectedItems.contains(self.model.value)
+                self.checkboxState.selectedItems.contains(self.info.properties.reportingValue)
             },
             set: {
                 if $0 {
-                    self.checkboxState.selectedItems.insert(self.model.value)
+                    self.checkboxState.selectedItems.insert(self.info.properties.reportingValue)
                 } else {
-                    self.checkboxState.selectedItems.remove(self.model.value)
+                    self.checkboxState.selectedItems.remove(self.info.properties.reportingValue)
                 }
             }
         )
 
-        let toggle = Toggle(isOn: isOn.animation()) {}
-
-        switch self.model.style {
-        case .checkboxStyle(let style):
-            toggle.toggleStyle(
-                AirshipCheckboxToggleStyle(
-                    viewConstraints: self.constraints,
-                    model: style,
-                    colorScheme: colorScheme,
-                    disabled: !formState.isFormInputEnabled
-                )
+        Toggle(isOn: isOn.animation()) {}
+            .thomasToggleStyle(
+                self.info.properties.style,
+                colorScheme: colorScheme,
+                constraints: self.constraints,
+                disabled: !formState.isFormInputEnabled
             )
-        case .switchStyle(let style):
-            toggle.toggleStyle(
-                AirshipSwitchToggleStyle(model: style, colorScheme: colorScheme, disabled: !formState.isFormInputEnabled)
-            )
-        }
     }
 
     var body: some View {
         let enabled =
-            self.checkboxState.selectedItems.contains(self.model.value)
+        self.checkboxState.selectedItems.contains(self.info.properties.reportingValue)
             || self.checkboxState.selectedItems.count
                 < self.checkboxState.maxSelection
         createToggle()
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
-            .accessible(self.model)
-            .addSelectedTrait(self.checkboxState.selectedItems.contains(self.model.value))
+            .thomasCommon(self.info)
+            .accessible(self.info.accessible)
+            .addSelectedTrait(self.checkboxState.selectedItems.contains(self.info.properties.reportingValue))
             .formElement()
             .disabled(!enabled)
     }

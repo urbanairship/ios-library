@@ -5,7 +5,7 @@ import Foundation
 import SwiftUI
 
 struct TextInput: View {
-    let model: TextInputModel
+    let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
 
     @Environment(\.sizeCategory) var sizeCategory
@@ -19,7 +19,7 @@ struct TextInput: View {
     
     #if !os(watchOS)
     private var keyboardType: UIKeyboardType {
-        switch self.model.inputType {
+        switch self.info.properties.inputType {
         case .email:
             return .emailAddress
         case .number:
@@ -44,7 +44,7 @@ struct TextInput: View {
 
         if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
             AirshipTexField(
-                model: self.model,
+                info: self.info,
                 constraints: constraints,
                 binding: binding,
                 isEditing: $isEditing
@@ -53,13 +53,13 @@ struct TextInput: View {
             // Fallback on earlier versions
             #if !os(watchOS)
             AirshipTextView(
-                textAppearance: self.model.textAppearance,
+                textAppearance: self.info.properties.textAppearance,
                 text: binding,
                 isEditing: $isEditing
             )
             .constraints(constraints, alignment: .topLeading)
             .airshipOnChangeOf(self.isEditing) { newValue in
-                let focusedID = newValue ? self.model.identifier : nil
+                let focusedID = newValue ? self.info.properties.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
             }
             #endif
@@ -69,27 +69,22 @@ struct TextInput: View {
     @ViewBuilder
     var body: some View {
         ZStack {
-            if let hint = self.model.placeHolder {
+            if let hint = self.info.properties.placeholder {
                 Text(hint)
                     .textAppearance(placeHolderTextAppearance())
                     .padding(5)
-                    .constraints(constraints, alignment: .topLeading)
+                    .constraints(constraints, alignment: self.info.properties.textAppearance.alignment?.placeholderAlignment ?? .topLeading)
                     .opacity(input.isEmpty && !isEditing ? 1 : 0)
-                    .animation(.linear(duration: 0.1), value: self.model.placeHolder)
+                    .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
             }
             createTextEditor()
-                .id(self.model.identifier)
+                .id(self.info.properties.identifier)
         }
-        .background(
-            color: self.model.backgroundColor,
-            border: self.model.border
-        )
         #if !os(watchOS)
         .keyboardType(keyboardType)
         #endif
-
-        .common(self.model, formInputID: self.model.identifier)
-        .accessible(self.model)
+        .thomasCommon(self.info)
+        .accessible(self.info.accessible)
         .formElement()
         .onAppear {
             restoreFormState()
@@ -100,7 +95,7 @@ struct TextInput: View {
     private func restoreFormState() {
         guard
             case let .text(value) = self.formState.data.formValue(
-                identifier: self.model.identifier
+                identifier: self.info.properties.identifier
             ),
             let value = value
         else {
@@ -112,23 +107,23 @@ struct TextInput: View {
 
     private func updateValue(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
-        let isValid = !trimmed.isEmpty || !(self.model.isRequired ?? false)
+        let isValid = !trimmed.isEmpty || !(self.info.validation.isRequired ?? false)
         let data = FormInputData(
-            self.model.identifier,
+            self.info.properties.identifier,
             value: .text(trimmed.isEmpty ? nil : trimmed),
-            attributeName: self.model.attributeName,
+            attributeName: self.info.properties.attributeName,
             attributeValue: trimmed.isEmpty ? nil : .string(trimmed),
             isValid: isValid
         )
         self.formState.updateFormInput(data)
     }
 
-    private func placeHolderTextAppearance() -> some BaseTextAppearance {
-        guard let color = self.model.textAppearance.placeHolderColor else {
-            return self.model.textAppearance
+    private func placeHolderTextAppearance() -> ThomasTextAppearance {
+        guard let color = self.info.properties.textAppearance.placeHolderColor else {
+            return self.info.properties.textAppearance
         }
 
-        var appearance = self.model.textAppearance
+        var appearance = self.info.properties.textAppearance
         appearance.color = color
         return appearance
     }
@@ -137,7 +132,7 @@ struct TextInput: View {
 @available(iOS 16.0, tvOS 16, watchOS 9.0, *)
 struct AirshipTexField: View {
     
-    let model: TextInputModel
+    let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
 
     @Binding var binding: String
@@ -149,7 +144,7 @@ struct AirshipTexField: View {
     @FocusState private var focused: Bool
 
     var body: some View {
-        let axis: Axis = self.model.inputType == .textMultiline ? .vertical : .horizontal
+        let axis: Axis = self.info.properties.inputType == .textMultiline ? .vertical : .horizontal
         TextField("", text: $binding, axis: axis)
             .padding(5)
             .airshipOnChangeOf( binding) { [binding] newValue in
@@ -165,19 +160,19 @@ struct AirshipTexField: View {
             }
             .constraints(constraints, alignment: .topLeading)
             .focused($focused)
-            .foregroundColor(self.model.textAppearance.color.toColor(colorScheme))
+            .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
             .contentShape(Rectangle())
             .onTapGesture {
                 self.focused = true
             }
-            .applyViewAppearance(self.model.textAppearance)
-            .applyIf(isUnderlined, transform: { content in
+            .applyViewAppearance(self.info.properties.textAppearance)
+            .airshipApplyIf(isUnderlined, transform: { content in
                 content.underline()
             })
             .airshipOnChangeOf( focused) { newValue in
                 if (newValue) {
-                    self.thomasEnvironment.focusedID = self.model.identifier
-                } else if (self.thomasEnvironment.focusedID == self.model.identifier) {
+                    self.thomasEnvironment.focusedID = self.info.properties.identifier
+                } else if (self.thomasEnvironment.focusedID == self.info.properties.identifier) {
                     self.thomasEnvironment.focusedID = nil
                 }
 
@@ -186,7 +181,7 @@ struct AirshipTexField: View {
     }
     
     private var isUnderlined : Bool {
-        if let styles = self.model.textAppearance.styles {
+        if let styles = self.info.properties.textAppearance.styles {
             if styles.contains(.underlined) {
                 return true
             }
@@ -200,7 +195,7 @@ struct AirshipTexField: View {
 /// TextView
 
 internal struct AirshipTextView: UIViewRepresentable {
-    let textAppearance: TextInputTextAppearance
+    let textAppearance: ThomasTextAppearance
     @Binding var text: String
     @Binding var isEditing: Bool
 
@@ -279,8 +274,8 @@ internal struct AirshipTextView: UIViewRepresentable {
 }
 
 extension UITextView {
-    func applyTextAppearance<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance?,
+    func applyTextAppearance(
+        _ textAppearance: ThomasTextAppearance?,
         _ colorScheme: ColorScheme
     ) {
         if let textAppearance = textAppearance {
@@ -292,14 +287,14 @@ extension UITextView {
         }
     }
 
-    func textModifyAppearance<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance
+    func textModifyAppearance(
+        _ textAppearance: ThomasTextAppearance
     ) {
         underlineText(textAppearance)
     }
 
-    func underlineText<Appearance: BaseTextAppearance>(
-        _ textAppearance: Appearance
+    func underlineText(
+        _ textAppearance: ThomasTextAppearance
     ) {
         if let styles = textAppearance.styles {
             if styles.contains(.underlined) {
@@ -322,3 +317,16 @@ extension UITextView {
     }
 }
 #endif
+
+extension ThomasTextAppearance.TextAlignement {
+    fileprivate var placeholderAlignment: Alignment {
+        switch self {
+        case .start:
+            return Alignment.topLeading
+        case .end:
+            return Alignment.topTrailing
+        case .center:
+            return Alignment.top
+        }
+    }
+}

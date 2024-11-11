@@ -8,7 +8,7 @@ import SwiftUI
 struct Container: View {
 
     /// Container model.
-    let model: ContainerModel
+    let info: ThomasViewInfo.Container
 
     /// View constraints.
     let constraints: ViewConstraints
@@ -17,17 +17,13 @@ struct Container: View {
 
     var body: some View {
         ZStack {
-            ForEach(0..<self.model.items.count, id: \.self) { index in
-                childItem(index, item: self.model.items[index])
+            ForEach(0..<self.info.properties.items.count, id: \.self) { index in
+                childItem(index, item: self.info.properties.items[index])
                     .zIndex(Double(index))
             }
         }
         .constraints(constraints)
         .clipped()
-        .background(
-            color: self.model.backgroundColor,
-            border: self.model.border
-        )
         .background(
             GeometryReader(content: { contentMetrics -> Color in
                 let size = contentMetrics.size
@@ -37,22 +33,17 @@ struct Container: View {
                 return Color.clear
             })
         )
-        .common(self.model)
+        .thomasCommon(self.info)
     }
 
     @ViewBuilder
     @MainActor
-    private func childItem(_ index: Int, item: ContainerItem) -> some View {
+    private func childItem(_ index: Int, item: ThomasViewInfo.Container.Item) -> some View {
         let placementWidth = placementWidth(item.position.horizontal)
         let placementHeight = placementHeight(item.position.vertical)
         let consumeSafeAreaInsets = item.ignoreSafeArea != true
 
-        let alignment = Alignment(
-            horizontal: item.position.horizontal.toAlignment(),
-            vertical: item.position.vertical.toAlignment()
-        )
-
-        let borderPadding = self.model.border?.strokeWidth ?? 0
+        let borderPadding = self.info.commonProperties.border?.strokeWidth ?? 0
         let childConstraints = self.constraints.childConstraints(
             item.size,
             margin: item.margin,
@@ -61,11 +52,11 @@ struct Container: View {
         )
 
         ViewFactory.createView(
-            model: item.view,
+            item.view,
             constraints: childConstraints
         )
         .margin(item.margin)
-        .applyIf(consumeSafeAreaInsets) {
+        .airshipApplyIf(consumeSafeAreaInsets) {
             $0.padding(self.constraints.safeAreaInsets)
         }
         .frame(
@@ -73,11 +64,11 @@ struct Container: View {
             maxWidth: placementWidth,
             idealHeight: placementHeight,
             maxHeight: placementHeight,
-            alignment: alignment
+            alignment: item.position.alignment
         )
     }
 
-    private func placementWidth(_ position: HorizontalPosition) -> CGFloat? {
+    private func placementWidth(_ position: ThomasPosition.Horizontal) -> CGFloat? {
         guard constraints.width == nil else { return constraints.width }
         guard position != .center else { return nil }
 
@@ -88,7 +79,7 @@ struct Container: View {
         return nil
     }
 
-    private func placementHeight(_ position: VerticalPosition) -> CGFloat? {
+    private func placementHeight(_ position: ThomasPosition.Vertical) -> CGFloat? {
         guard constraints.height == nil else { return constraints.height }
         guard position != .center else { return nil }
 

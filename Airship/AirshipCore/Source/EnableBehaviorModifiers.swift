@@ -5,7 +5,7 @@ import Foundation
 import SwiftUI
 
 internal struct FormSubmissionEnableBehavior: ViewModifier {
-    let onApply: ((Bool, EnableBehavior) -> Void)?
+    let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
     @EnvironmentObject var formState: FormState
 
@@ -22,7 +22,7 @@ internal struct FormSubmissionEnableBehavior: ViewModifier {
 }
 
 internal struct ValidFormButtonEnableBehavior: ViewModifier {
-    let onApply: ((Bool, EnableBehavior) -> Void)?
+    let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
     @EnvironmentObject var formState: FormState
 
@@ -40,7 +40,7 @@ internal struct ValidFormButtonEnableBehavior: ViewModifier {
 
 
 internal struct PagerNextButtonEnableBehavior: ViewModifier {
-    let onApply: ((Bool, EnableBehavior) -> Void)?
+    let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
     @EnvironmentObject var pagerState: PagerState
 
@@ -60,7 +60,7 @@ internal struct PagerNextButtonEnableBehavior: ViewModifier {
 
 
 struct PagerPreviousButtonEnableBehavior: ViewModifier {
-    let onApply: ((Bool, EnableBehavior) -> Void)?
+    let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
     @EnvironmentObject var pagerState: PagerState
 
@@ -78,10 +78,10 @@ struct PagerPreviousButtonEnableBehavior: ViewModifier {
 
 
 internal struct AggregateEnableBehavior: ViewModifier {
-    let behaviors: [EnableBehavior]
+    let behaviors: [ThomasEnableBehavior]
     let onApply: ((Bool) -> Void)
 
-    @State private var enabledBehaviors: [EnableBehavior: Bool] = [:]
+    @State private var enabledBehaviors: [ThomasEnableBehavior: Bool] = [:]
     @State private var enabled: Bool?
 
     @ViewBuilder
@@ -104,8 +104,8 @@ internal struct AggregateEnableBehavior: ViewModifier {
 extension View {
     @ViewBuilder
     fileprivate func addBehaviorModifiers(
-        _ behaviors: [EnableBehavior]?,
-        onApply: ((Bool, EnableBehavior) -> Void)? = nil
+        _ behaviors: [ThomasEnableBehavior]?,
+        onApply: ((Bool, ThomasEnableBehavior) -> Void)? = nil
     ) -> some View {
         if let behaviors = behaviors {
             self.viewModifiers {
@@ -131,8 +131,8 @@ extension View {
     }
 
     @ViewBuilder
-    func enableBehaviors(
-        _ behaviors: [EnableBehavior]?,
+    func thomasEnableBehaviors(
+        _ behaviors: [ThomasEnableBehavior]?,
         onApply: ((Bool) -> Void)? = nil
     ) -> some View {
 

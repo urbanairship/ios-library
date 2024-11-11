@@ -58,7 +58,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
                     embeddedInfo: pending.embeddedInfo,
                     view: {
                         EmbeddedView(
-                            model: pending.presentation,
+                            presentation: pending.presentation,
                             layout: pending.layout,
                             thomasEnvironment: pending.environment,
                             embeddedSize: embeddedSize

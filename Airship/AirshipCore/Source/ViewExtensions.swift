@@ -3,15 +3,41 @@
 import Foundation
 import SwiftUI
 
-
-public extension View {
+extension View {
     @ViewBuilder
     internal func ignoreKeyboardSafeArea() -> some View {
         self.ignoresSafeArea(.keyboard)
     }
 
     @ViewBuilder
-    func applyIf<Content: View>(
+    internal func thomasToggleStyle(
+        _ style: ThomasToggleStyleInfo,
+        colorScheme: ColorScheme,
+        constraints: ViewConstraints,
+        disabled: Bool
+    ) -> some View {
+        switch style {
+        case .checkboxStyle(let style):
+            self.toggleStyle(
+                AirshipCheckboxToggleStyle(
+                    viewConstraints: constraints,
+                    info: style,
+                    colorScheme: colorScheme,
+                    disabled: disabled
+                )
+            )
+        case .switchStyle(let style):
+            self.toggleStyle(
+                AirshipSwitchToggleStyle(
+                    info: style,
+                    colorScheme: colorScheme,
+                    disabled: disabled
+                )
+            )
+        }
+    }
+    @ViewBuilder
+    public func airshipApplyIf<Content: View>(
         _ predicate: @autoclosure () -> Bool,
         @ViewBuilder transform: (Self) -> Content
     ) -> some View {
@@ -35,11 +61,11 @@ public extension View {
 
     @ViewBuilder
     internal func accessible(
-        _ accessible: Accessible?,
+        _ accessible: ThomasAccessibleInfo?,
         fallbackContentDescription: String? = nil,
         hideIfDescriptionIsMissing: Bool = true
     ) -> some View {
-        let label = accessible?.contentDescription ?? accessible?.localizedContentDescription?.localized ?? fallbackContentDescription
+        let label = accessible?.resolveContentDescription ?? fallbackContentDescription
         if accessible?.accessibilityHidden == true {
             self.accessibilityHidden(true)
         } else if let label {
@@ -71,26 +97,21 @@ public extension View {
         }
     }
 
-    /// Common modifier for buttons so event handlers can be added separately to prevent tap issues
     @ViewBuilder
-    internal func commonButton<Content: BaseModel>(
-        _ model: Content
-    ) -> some View {
-        self.enableBehaviors(model.enableBehaviors)
-        .visibility(model.visibility)
-    }
-
-    @ViewBuilder
-    internal func common<Content: BaseModel>(
-        _ model: Content,
+    internal func thomasCommon(
+        _ info: some ThomasViewInfo.BaseInfo,
         formInputID: String? = nil
     ) -> some View {
-        self.eventHandlers(
-            model.eventHandlers,
+        self.background(
+            color: info.commonProperties.backgroundColor,
+            border: info.commonProperties.border
+        )
+        .thomasEventHandlers(
+            info.commonProperties.eventHandlers,
             formInputID: formInputID
         )
-        .enableBehaviors(model.enableBehaviors)
-        .visibility(model.visibility)
+        .thomasEnableBehaviors(info.commonProperties.enabled)
+        .thomasVisibility(info.commonProperties.visibility)
     }
 
     internal func viewModifiers<Modifiers: ViewModifier>(

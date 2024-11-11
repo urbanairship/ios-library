@@ -5,14 +5,14 @@ import SwiftUI
 
 
 struct AirshipSwitchToggleStyle: ToggleStyle {
-    let model: SwitchToggleStyleModel
+    let info: ThomasToggleStyleInfo.Switch
     let colorScheme: ColorScheme
     let disabled: Bool
 
     @Environment(\.isEnabled) var isEnabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
-        let colors = self.model.colors
+        let colors = self.info.colors
         let fill = configuration.isOn ? colors.on.toColor(colorScheme) : colors.off.toColor(colorScheme)
         Button(action: { configuration.isOn.toggle() }) {}
             .buttonStyle(
@@ -21,11 +21,11 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
                     isOn: configuration.isOn
                 )
             )
-            .applyIf(!isEnabled) {
+            .airshipApplyIf(!isEnabled) {
                 $0.saturation(0.5)
             }
-            .applyIf(disabled) {  view in
-                view.colorMultiply(HexColor.disabled.toColor())
+            .airshipApplyIf(disabled) {  view in
+                view.colorMultiply(ThomasConstants.disabledColor)
             }
             .addSelectedTrait(configuration.isOn)
     }

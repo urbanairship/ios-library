@@ -6,18 +6,18 @@ import SwiftUI
 /// Button layout view.
 struct ButtonLayout : View {
     @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
-
-    let model: ButtonLayoutModel
-    let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
 
-    init(model: ButtonLayoutModel, constraints: ViewConstraints) {
-        self.model = model
+    let info: ThomasViewInfo.ButtonLayout
+    let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.ButtonLayout, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
     }
 
     private var isButtonForAccessibility: Bool {
-        guard let role = model.accessibilityRole else {
+        guard let role = info.properties.accessibilityRole else {
             // Default to button
             return true
         }
@@ -32,37 +32,38 @@ struct ButtonLayout : View {
 
     var body: some View {
         if isVoiceOverRunning, !isButtonForAccessibility {
-            ViewFactory.createView(model: self.model.view, constraints: constraints)
+            ViewFactory.createView(self.info.properties.view, constraints: constraints)
                 .background(
-                    color: self.model.backgroundColor,
-                    border: self.model.border
+                    color: self.info.commonProperties.backgroundColor,
+                    border: self.info.commonProperties.border
                 )
-                .accessibilityHidden(model.accessibilityHidden ?? false)
+                .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
         } else {
             AirshipButton(
-                identifier: self.model.identifier,
-                reportingMetadata: self.model.reportingMetadata,
-                description: self.model.contentDescription ?? self.model.localizedContentDescription?.localized,
-                clickBehaviors: self.model.clickBehaviors,
-                eventHandlers: self.model.eventHandlers,
-                actions: self.model.actions,
-                tapEffect: self.model.tapEffect
+                identifier: self.info.properties.identifier,
+                reportingMetadata: self.info.properties.reportingMetadata,
+                description: self.info.accessible.resolveContentDescription,
+                clickBehaviors: self.info.properties.clickBehaviors,
+                eventHandlers: self.info.commonProperties.eventHandlers,
+                actions: self.info.properties.actions,
+                tapEffect: self.info.properties.tapEffect
             ) {
-                ViewFactory.createView(model: self.model.view, constraints: constraints)
+                ViewFactory.createView(self.info.properties.view, constraints: constraints)
                     .background(
-                        color: self.model.backgroundColor,
-                        border: self.model.border
+                        color: self.info.commonProperties.backgroundColor,
+                        border: self.info.commonProperties.border
                     )
                     .background(Color.airshipTappableClear)
             }
-            .commonButton(self.model)
+            .thomasEnableBehaviors(self.info.commonProperties.enabled)
+            .thomasVisibility(self.info.commonProperties.visibility)
             .environment(
                 \.layoutState,
                  layoutState.override(
-                    buttonState: ButtonState(identifier: self.model.identifier)
+                    buttonState: ButtonState(identifier: self.info.properties.identifier)
                  )
             )
-            .accessibilityHidden(model.accessibilityHidden ?? false)
+            .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
         }
     }
 }

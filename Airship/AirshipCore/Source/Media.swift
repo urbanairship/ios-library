@@ -8,7 +8,7 @@ import SwiftUI
 struct Media: View {
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
-    let model: MediaModel
+    let info: ThomasViewInfo.Media
     let constraints: ViewConstraints
     @State
     private var mediaID: UUID = UUID()
@@ -16,17 +16,20 @@ struct Media: View {
     @EnvironmentObject var pagerState: PagerState
     @Environment(\.pageIndex) var pageIndex
 
+    var videoAspectRatio: CGFloat {
+        CGFloat(self.info.properties.video?.aspectRatio ?? defaultAspectRatio)
+    }
 
     var body: some View {
-        switch model.mediaType {
+        switch self.info.properties.mediaType {
         case .image:
             ThomasAsyncImage(
-                url: self.model.url,
+                url: self.info.properties.url,
                 imageLoader: thomasEnvironment.imageLoader
             ) { image, imageSize in
                 image.fitMedia(
-                    mediaFit: self.model.mediaFit,
-                    cropPosition: self.model.cropPosition,
+                    mediaFit: self.info.properties.mediaFit,
+                    cropPosition: self.info.properties.cropPosition,
                     constraints: constraints,
                     imageSize: imageSize
                 ).allowsHitTesting(false)
@@ -34,31 +37,23 @@ struct Media: View {
                 AirshipProgressView()
             }
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
-            .accessible(self.model, hideIfDescriptionIsMissing: true)
+            .thomasCommon(self.info)
+            .accessible(self.info.accessible, hideIfDescriptionIsMissing: true)
         case .video, .youtube:
             #if !os(tvOS) && !os(watchOS)
             MediaWebView(
-                model: model
+                info: self.info
             ) {
                 pagerState.setMediaReady(pageIndex: pageIndex, id: mediaID, isReady: true)
             }
             .onAppear {
                 pagerState.registerMedia(pageIndex: pageIndex, id: mediaID)
             }
-            .applyIf(self.constraints.width == nil || self.constraints.height == nil) {
-                $0.aspectRatio(CGFloat(model.video?.aspectRatio ?? defaultAspectRatio), contentMode: .fit)
+            .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
+                $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)
             }
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
             #endif
         }
     }
@@ -68,8 +63,8 @@ extension Image {
 
     @ViewBuilder
     func fitMedia(
-        mediaFit: MediaFit,
-        cropPosition: Position?,
+        mediaFit: ThomasMediaFit,
+        cropPosition: ThomasPosition?,
         constraints: ViewConstraints,
         imageSize: CGSize
     ) -> some View {
@@ -77,20 +72,12 @@ extension Image {
         case .center:
             cropAligned(constraints: constraints, imageSize: imageSize)
         case .fitCrop:
-            cropAligned(constraints: constraints, imageSize: imageSize, alignment: cropPositionToAlignment(position: cropPosition))
+            cropAligned(constraints: constraints, imageSize: imageSize, alignment: cropPosition?.alignment ?? .center)
         case .centerCrop:
             cropAligned(constraints: constraints, imageSize: imageSize)
         case .centerInside:
             centerInside(constraints: constraints)
         }
-    }
-    
-    private func cropPositionToAlignment(position: Position?) -> Alignment {
-        guard let position = position else { return .center }
-        return Alignment(
-            horizontal: position.horizontal.toAlignment(),
-            vertical: position.vertical.toAlignment()
-        )
     }
 
     private func shouldCenterInside(constraints: ViewConstraints, imageSize: CGSize) -> Bool {

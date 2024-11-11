@@ -167,8 +167,8 @@ class ThomasModalViewController : ThomasViewController<ModalView> {
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewControllerOptions {
-    var orientation: Orientation?
-    var bannerPlacement: BannerPlacement?
+    var orientation: ThomasOrientation?
+    var bannerPlacement: ThomasPresentationInfo.Banner.Placement?
     var bannerSize: CGSize?
 }
 

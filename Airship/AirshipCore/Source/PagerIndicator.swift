@@ -5,7 +5,7 @@ import SwiftUI
 
 struct PagerIndicator: View {
 
-    let model: PagerIndicatorModel
+    let info: ThomasViewInfo.PagerIndicator
     let constraints: ViewConstraints
 
     @EnvironmentObject var pagerState: PagerState
@@ -13,14 +13,14 @@ struct PagerIndicator: View {
 
     @ViewBuilder
     private func createChild(
-        binding: PagerIndicatorModel.Binding,
+        binding: ThomasViewInfo.PagerIndicator.Properties.Binding,
         constraints: ViewConstraints
     ) -> some View {
         ZStack {
             if let shapes = binding.shapes {
                 ForEach(0..<shapes.count, id: \.self) { index in
                     Shapes.shape(
-                        model: shapes[index],
+                        info: shapes[index],
                         constraints: constraints,
                         colorScheme: colorScheme
                     )
@@ -29,20 +29,20 @@ struct PagerIndicator: View {
 
             if let iconModel = binding.icon {
                 Icons.icon(
-                    model: iconModel,
+                    info: iconModel,
                     colorScheme: colorScheme
                 )
             }
         }
     }
 
-    func announcePage(model: PagerIndicatorModel) -> Bool {
-        return model.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
+    func announcePage(info: ThomasViewInfo.PagerIndicator) -> Bool {
+        return info.properties.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
     }
 
     var body: some View {
         let size: Double = if let height = constraints.height {
-            height - (self.model.border?.strokeWidth ?? 0)
+            height - (self.info.commonProperties.border?.strokeWidth ?? 0)
         } else {
             32.0
         }
@@ -52,31 +52,26 @@ struct PagerIndicator: View {
             height: size
         )
 
-        HStack(spacing: self.model.spacing) {
+        HStack(spacing: self.info.properties.spacing) {
             ForEach(0..<self.pagerState.pages.count, id: \.self) { index in
                 if self.pagerState.pageIndex == index {
                     createChild(
-                        binding: self.model.bindings.selected,
+                        binding: self.info.properties.bindings.selected,
                         constraints: childConstraints
                     )
                 } else {
                     createChild(
-                        binding: self.model.bindings.unselected,
+                        binding: self.info.properties.bindings.unselected,
                         constraints: childConstraints
                     )
                 }
             }
         }
-        .padding(.horizontal, self.model.spacing)
-        .animation(.interactiveSpring(duration: Pager.animationSpeed), value: self.model)
+        .padding(.horizontal, self.info.properties.spacing)
+        .animation(.interactiveSpring(duration: Pager.animationSpeed), value: self.info)
         .constraints(constraints)
-        .background(
-            color: self.model.backgroundColor,
-            border: self.model.border
-        )
-        .common(self.model)
-
-        .applyIf(announcePage(model: model), transform: { view in
+        .thomasCommon(self.info)
+        .airshipApplyIf(announcePage(info: self.info), transform: { view in
             view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
         })
     }

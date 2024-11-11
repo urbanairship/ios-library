@@ -5,7 +5,7 @@ import SwiftUI
 
 
 struct MarginViewModifier: ViewModifier {
-    let margin: Margin
+    let margin: ThomasMargin
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -17,9 +17,7 @@ struct MarginViewModifier: ViewModifier {
     }
 }
 
-
 extension View {
-
     @ViewBuilder
     internal func applyMargin(edge: Edge.Set, margin: CGFloat?) -> some View {
         if let margin = margin {
@@ -30,7 +28,7 @@ extension View {
     }
 
     @ViewBuilder
-    func margin(_ margin: Margin?) -> some View {
+    func margin(_ margin: ThomasMargin?) -> some View {
         if let margin = margin {
             self.modifier(MarginViewModifier(margin: margin))
         } else {

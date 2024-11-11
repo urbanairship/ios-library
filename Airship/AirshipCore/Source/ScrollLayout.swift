@@ -8,7 +8,7 @@ import SwiftUI
 struct ScrollLayout: View {
 
     /// ScrollLayout model.
-    let model: ScrollLayoutModel
+    let info: ThomasViewInfo.ScrollLayout
 
     /// View constraints.
     let constraints: ViewConstraints
@@ -19,8 +19,8 @@ struct ScrollLayout: View {
 
     private static let scrollInterval: TimeInterval = 0.01
 
-    init(model: ScrollLayoutModel, constraints: ViewConstraints) {
-        self.model = model
+    init(info: ThomasViewInfo.ScrollLayout, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
     }
 
@@ -45,7 +45,7 @@ struct ScrollLayout: View {
 
     @ViewBuilder
     private func makeScrollView() -> some View {
-        let isVertical = self.model.direction == .vertical
+        let isVertical = self.info.properties.direction == .vertical
         let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
 
         ScrollViewReader { proxy in
@@ -82,12 +82,12 @@ struct ScrollLayout: View {
     func makeContent() -> some View {
         ZStack {
             ViewFactory.createView(
-                model: self.model.view,
+                self.info.properties.view,
                 constraints: self.childConstraints()
             )
             .fixedSize(
-                horizontal: self.model.direction == .horizontal,
-                vertical: self.model.direction == .vertical
+                horizontal: self.info.properties.direction == .horizontal,
+                vertical: self.info.properties.direction == .vertical
             )
         }
         .frame(alignment: .topLeading)
@@ -97,16 +97,12 @@ struct ScrollLayout: View {
     var body: some View {
         makeScrollView()
             .constraints(self.constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model)
+            .thomasCommon(self.info)
     }
 
     private func childConstraints() -> ViewConstraints {
         var childConstraints = constraints
-        if self.model.direction == .vertical {
+        if self.info.properties.direction == .vertical {
             childConstraints.height = nil
             childConstraints.maxHeight = nil
             childConstraints.isVerticalFixedSize = false

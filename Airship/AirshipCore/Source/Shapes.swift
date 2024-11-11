@@ -8,20 +8,20 @@ struct Shapes {
 
     @ViewBuilder
     static func shape(
-        model: ShapeModel,
+        info: ThomasShapeInfo,
         constraints: ViewConstraints,
         colorScheme: ColorScheme
     ) -> some View {
-        switch model {
-        case .ellipse(let ellipseModel):
+        switch info {
+        case .ellipse(let info):
             ellipse(
-                model: ellipseModel,
+                info: info,
                 constraints: constraints,
                 colorScheme: colorScheme
             )
-        case .rectangle(let rectangleModel):
+        case .rectangle(let info):
             rectangle(
-                model: rectangleModel,
+                info: info,
                 constraints: constraints,
                 colorScheme: colorScheme
             )
@@ -29,9 +29,10 @@ struct Shapes {
     }
 
     @ViewBuilder
-    private static func rectangle(colorScheme: ColorScheme, border: Border?)
-        -> some View
-    {
+    private static func rectangle(
+        colorScheme: ColorScheme,
+        border: ThomasBorder?
+    ) -> some View {
         let strokeColor = border?.strokeColor?.toColor(colorScheme) ?? Color.clear
         let strokeWidth = border?.strokeWidth ?? 0
         let cornerRadius = border?.radius ?? 0
@@ -55,9 +56,10 @@ struct Shapes {
     }
 
     @ViewBuilder
-    private static func rectangleBackground(border: Border?, color: Color)
-        -> some View
-    {
+    private static func rectangleBackground(
+        border: ThomasBorder?,
+        color: Color
+    ) -> some View {
         let cornerRadius = border?.radius ?? 0
         if cornerRadius > 0 {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -70,30 +72,30 @@ struct Shapes {
 
     @ViewBuilder
     private static func rectangle(
-        model: RectangleShapeModel,
+        info: ThomasShapeInfo.Rectangle,
         constraints: ViewConstraints,
         colorScheme: ColorScheme
     ) -> some View {
-        let resolvedColor = model.color?.toColor(colorScheme) ?? Color.clear
-        if let border = model.border {
+        let resolvedColor = info.color?.toColor(colorScheme) ?? Color.clear
+        if let border = info.border {
             rectangle(colorScheme: colorScheme, border: border)
                 .background(
                     rectangleBackground(border: border, color: resolvedColor)
                 )
-                .aspectRatio(model.aspectRatio ?? 1, contentMode: .fit)
-                .applyIf(model.scale != nil) { view in
+                .aspectRatio(info.aspectRatio ?? 1, contentMode: .fit)
+                .airshipApplyIf(info.scale != nil) { view in
                     view.constraints(
-                        scaledConstraints(constraints, scale: model.scale)
+                        scaledConstraints(constraints, scale: info.scale)
                     )
                 }
                 .constraints(constraints)
         } else {
             Rectangle()
                 .fill(resolvedColor)
-                .aspectRatio(model.aspectRatio ?? 1, contentMode: .fit)
-                .applyIf(model.scale != nil) { view in
+                .aspectRatio(info.aspectRatio ?? 1, contentMode: .fit)
+                .airshipApplyIf(info.scale != nil) { view in
                     view.constraints(
-                        scaledConstraints(constraints, scale: model.scale)
+                        scaledConstraints(constraints, scale: info.scale)
                     )
                 }
                 .constraints(constraints)
@@ -119,7 +121,7 @@ struct Shapes {
     }
 
     @ViewBuilder
-    private static func ellipse(colorScheme: ColorScheme, border: Border?)
+    private static func ellipse(colorScheme: ColorScheme, border: ThomasBorder?)
         -> some View
     {
         let strokeColor = border?.strokeColor?.toColor(colorScheme)
@@ -134,25 +136,25 @@ struct Shapes {
 
     @ViewBuilder
     private static func ellipse(
-        model: EllipseShapeModel,
+        info: ThomasShapeInfo.Ellipse,
         constraints: ViewConstraints,
         colorScheme: ColorScheme
     ) -> some View {
-        let scaled = scaledConstraints(constraints, scale: model.scale)
-        let color = model.color?.toColor(colorScheme) ?? Color.clear
-        if let border = model.border {
+        let scaled = scaledConstraints(constraints, scale: info.scale)
+        let color = info.color?.toColor(colorScheme) ?? Color.clear
+        if let border = info.border {
             ellipse(colorScheme: colorScheme, border: border)
-                .aspectRatio(model.aspectRatio ?? 1, contentMode: .fit)
+                .aspectRatio(info.aspectRatio ?? 1, contentMode: .fit)
                 .background(Ellipse().fill(color))
-                .applyIf(model.scale != nil) { view in
+                .airshipApplyIf(info.scale != nil) { view in
                     view.constraints(scaled)
                 }
                 .constraints(constraints)
         } else {
             Ellipse()
                 .fill(color)
-                .aspectRatio(model.aspectRatio ?? 1, contentMode: .fit)
-                .applyIf(model.scale != nil) { view in
+                .aspectRatio(info.aspectRatio ?? 1, contentMode: .fit)
+                .airshipApplyIf(info.scale != nil) { view in
                     view.constraints(scaled)
                 }
                 .constraints(constraints)

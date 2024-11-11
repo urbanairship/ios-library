@@ -50,10 +50,10 @@ class LayoutModelsTest: XCTestCase {
             return
         }
 
-        let size = container.items.first?.size
+        let size = container.properties.items.first?.size
 
-        XCTAssertEqual(SizeConstraint.auto, size?.height)
-        XCTAssertEqual(SizeConstraint.percent(75), size?.width)
+        XCTAssertEqual(ThomasSizeConstraint.auto, size?.height)
+        XCTAssertEqual(ThomasSizeConstraint.percent(75), size?.width)
     }
 
     func testComplexExample() throws {

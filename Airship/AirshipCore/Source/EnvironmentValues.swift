@@ -4,11 +4,11 @@ import Foundation
 import SwiftUI
 
 private struct OrientationKey: EnvironmentKey {
-    static let defaultValue: Orientation? = nil
+    static let defaultValue: ThomasOrientation? = nil
 }
 
 private struct WindowSizeKey: EnvironmentKey {
-    static let defaultValue: WindowSize? = nil
+    static let defaultValue: ThomasWindowSize? = nil
 }
 
 private struct VoiceOverRunningKey: EnvironmentKey {
@@ -32,13 +32,13 @@ private struct LayoutStateEnvironmentKey: EnvironmentKey {
     static let defaultValue: LayoutState = LayoutState.empty
 }
 
-public extension EnvironmentValues {
-    var orientation: Orientation? {
+extension EnvironmentValues {
+    var orientation: ThomasOrientation? {
         get { self[OrientationKey.self] }
         set { self[OrientationKey.self] = newValue }
     }
 
-    var windowSize: WindowSize? {
+    var windowSize: ThomasWindowSize? {
         get { self[WindowSizeKey.self] }
         set { self[WindowSizeKey.self] = newValue }
     }

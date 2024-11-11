@@ -4,48 +4,44 @@ import SwiftUI
 
 
 struct CheckboxController: View {
-    let model: CheckboxControllerModel
+    let info: ThomasViewInfo.CheckboxController
     let constraints: ViewConstraints
 
     @EnvironmentObject var formState: FormState
     @StateObject var checkboxState: CheckboxState
 
-    init(model: CheckboxControllerModel, constraints: ViewConstraints) {
-        self.model = model
+    init(info: ThomasViewInfo.CheckboxController, constraints: ViewConstraints) {
+        self.info = info
         self.constraints = constraints
         self._checkboxState = StateObject(
             wrappedValue: CheckboxState(
-                minSelection: model.minSelection,
-                maxSelection: model.maxSelection
+                minSelection: info.properties.minSelection,
+                maxSelection: info.properties.maxSelection
             )
         )
     }
 
     var body: some View {
-        ViewFactory.createView(model: self.model.view, constraints: constraints)
+        ViewFactory.createView(self.info.properties.view, constraints: constraints)
             .constraints(constraints)
-            .background(
-                color: self.model.backgroundColor,
-                border: self.model.border
-            )
-            .common(self.model, formInputID: self.model.identifier)
-            .accessible(self.model)
+            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .accessible(self.info.accessible)
             .formElement()
             .environmentObject(checkboxState)
-            .airshipOnChangeOf(self.checkboxState.selectedItems) { [model, weak formState] incoming in
+            .airshipOnChangeOf(self.checkboxState.selectedItems) { [info, weak formState] incoming in
                 let selected = Array(incoming)
                 let isFilled =
-                    selected.count >= (model.minSelection ?? 0)
+                selected.count >= (info.properties.minSelection ?? 0)
                     && selected.count
-                        <= (model.maxSelection ?? Int.max)
+                <= (info.properties.maxSelection ?? Int.max)
 
                 let isValid =
                     isFilled
                     || (selected.count == 0
-                        && model.isRequired == false)
+                        && info.validation.isRequired == false)
 
                 let data = FormInputData(
-                    model.identifier,
+                    self.info.properties.identifier,
                     value: .multipleCheckbox(selected),
                     isValid: isValid
                 )
@@ -59,7 +55,7 @@ struct CheckboxController: View {
 
     private func restoreFormState() {
         let formValue = self.formState.data.formValue(
-            identifier: self.model.identifier
+            identifier: self.info.properties.identifier
         )
 
         guard case let .multipleCheckbox(value) = formValue,

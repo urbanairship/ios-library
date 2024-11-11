@@ -18,7 +18,7 @@ struct FooterView: View {
             )
             .fixedSize(horizontal: false, vertical: true)
             .lineLimit(2)
-            .applyIf(containsMarkdownLink(text: text)) { view in
+            .airshipApplyIf(containsMarkdownLink(text: text)) { view in
                 view.accessibilityAddTraits(.isLink)
             }
     }

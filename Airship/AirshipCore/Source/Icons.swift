@@ -6,7 +6,7 @@ import SwiftUI
 
 struct Icons {
 
-    private static func createImage(icon: Icon) -> Image {
+    private static func createImage(icon: ThomasIconInfo.Icon) -> Image {
         switch icon {
         case .checkmark:
             return Image(systemName: "checkmark")
@@ -21,15 +21,15 @@ struct Icons {
 
     @ViewBuilder
     static func icon(
-        model: IconModel,
+        info: ThomasIconInfo,
         colorScheme: ColorScheme
     ) -> some View {
-        createImage(icon: model.icon)
+        createImage(icon: info.icon)
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .foregroundColor(model.color.toColor(colorScheme))
-            .applyIf(model.scale != nil) { view in
-                view.scaleEffect(model.scale ?? 1)
+            .foregroundColor(info.color.toColor(colorScheme))
+            .airshipApplyIf(info.scale != nil) { view in
+                view.scaleEffect(info.scale ?? 1)
             }
     }
 }

@@ -237,7 +237,7 @@ struct InAppMessageBannerView: View {
     }
 
     var body: some View {
-        InAppMessageRootView(inAppMessageEnvironment: environment) { orientation in
+        InAppMessageRootView(inAppMessageEnvironment: environment) { 
             banner
         }
     }

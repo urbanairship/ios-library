@@ -125,7 +125,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                 viewModel.attemptSubmission()
             }
             .disabled(isLoading)
-            .applyIf(isLoading) { content in
+            .airshipApplyIf(isLoading) { content in
                 content.overlay(
                     ProgressView(),
                     alignment: .center

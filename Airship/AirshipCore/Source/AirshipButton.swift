@@ -15,20 +15,20 @@ struct AirshipButton<Label> : View  where Label : View {
     let identifier: String
     let reportingMetadata: AirshipJSON?
     let description: String?
-    let clickBehaviors:[ButtonClickBehavior]?
-    let eventHandlers: [EventHandler]?
-    let actions: ActionsPayload?
-    let tapEffect: ButtonTapEffect?
+    let clickBehaviors:[ThomasButtonClickBehavior]?
+    let eventHandlers: [ThomasEventHandler]?
+    let actions: ThomasActionsPayload?
+    let tapEffect: ThomasButtonTapEffect?
     let label: () -> Label
 
     init(
         identifier: String,
         reportingMetadata: AirshipJSON? = nil,
         description: String?,
-        clickBehaviors: [ButtonClickBehavior]? = nil,
-        eventHandlers: [EventHandler]? = nil,
-        actions: ActionsPayload? = nil,
-        tapEffect: ButtonTapEffect? = nil,
+        clickBehaviors: [ThomasButtonClickBehavior]? = nil,
+        eventHandlers: [ThomasEventHandler]? = nil,
+        actions: ThomasActionsPayload? = nil,
+        tapEffect: ThomasButtonTapEffect? = nil,
         label: @escaping () -> Label
     ) {
         self.identifier = identifier
@@ -75,7 +75,7 @@ struct AirshipButton<Label> : View  where Label : View {
     }
 
     private func handleBehaviors(
-        _ behaviors: [ButtonClickBehavior]?
+        _ behaviors: [ThomasButtonClickBehavior]?
     ) {
         behaviors?.sorted { first, second in
             first.sortOrder < second.sortOrder
@@ -136,13 +136,13 @@ struct AirshipButton<Label> : View  where Label : View {
         }
     }
 
-    private func handleActions(_ actionPayload: ActionsPayload?) {
+    private func handleActions(_ actionPayload: ThomasActionsPayload?) {
         if let actionPayload {
             thomasEnvironment.runActions(actionPayload, layoutState: layoutState)
         }
     }
 
-    private func handleStateActions(_ stateActions: [StateAction]) {
+    private func handleStateActions(_ stateActions: [ThomasStateAction]) {
         stateActions.forEach { action in
             switch action {
             case .setState(let details):
@@ -168,7 +168,7 @@ fileprivate struct AirshipButtonEmptyStyle: ButtonStyle {
 
 fileprivate extension View {
     @ViewBuilder
-    func buttonTapEffect(_ tapEffect: ButtonTapEffect) -> some View {
+    func buttonTapEffect(_ tapEffect: ThomasButtonTapEffect) -> some View {
         switch(tapEffect) {
         case .default:
             self.buttonStyle(.plain)

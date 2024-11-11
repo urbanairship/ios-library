@@ -11,7 +11,7 @@ struct MediaWebView: UIViewRepresentable {
 
     typealias UIViewType = WKWebView
 
-    let model: MediaModel
+    let info: ThomasViewInfo.Media
     let onMediaReady: @MainActor () -> Void
     @Environment(\.isVisible) var isVisible
     @State private var isLoaded: Bool = false
@@ -20,22 +20,22 @@ struct MediaWebView: UIViewRepresentable {
     @Environment(\.layoutDirection) var layoutDirection
 
 
-    private var video: Video? {
-        model.video
+    private var video: ThomasViewInfo.Media.Video? {
+        self.info.properties.video
     }
 
     private var url: String {
-        model.url
+        self.info.properties.url
     }
 
     private var styleForVideo: String {
-        switch(model.mediaFit) {
+        switch(self.info.properties.mediaFit) {
         case .centerInside:
             return "object-fit: contain"
         case .center:
             return "object-fit: none"
         case .fitCrop:
-            guard let position = model.cropPosition else {
+            guard let position = self.info.properties.cropPosition else {
                 return "object-fit: cover"
             }
 
@@ -106,7 +106,7 @@ struct MediaWebView: UIViewRepresentable {
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.isAccessibilityElement = true
-        webView.accessibilityLabel = model.contentDescription
+        webView.accessibilityLabel = self.info.accessible.contentDescription
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
         webView.backgroundColor = UIColor.clear
@@ -118,8 +118,8 @@ struct MediaWebView: UIViewRepresentable {
             webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
         }
 
-        let video = model.video
-        if model.mediaType == .video {
+        let video = self.info.properties.video
+        if self.info.properties.mediaType == .video {
             let html = String(
                 format: """
                     <body style="margin:0">
@@ -143,7 +143,7 @@ struct MediaWebView: UIViewRepresentable {
             )
             guard let mediaUrl = URL(string: url) else { return webView }
             webView.loadHTMLString(html, baseURL: mediaUrl)
-        } else if model.mediaType == .youtube {
+        } else if self.info.properties.mediaType == .youtube {
             if let videoID = retrieveVideoID(url: url) {
                 let html = String(
                     format: """
@@ -235,9 +235,9 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func pauseMedias(uiView: WKWebView) {
-        if model.mediaType == .video {
+        if self.info.properties.mediaType == .video {
             uiView.evaluateJavaScript("videoElement.pause();")
-        } else if model.mediaType == .youtube {
+        } else if self.info.properties.mediaType == .youtube {
             uiView.evaluateJavaScript("player.pauseVideo();")
         }
     }
@@ -245,9 +245,9 @@ struct MediaWebView: UIViewRepresentable {
     @MainActor
     func resetMedias(uiView: WKWebView) {
         if video?.autoplay ?? false {
-            if model.mediaType == .video {
+            if self.info.properties.mediaType == .video {
                 uiView.evaluateJavaScript("videoElement.currentTime = 0;")
-            } else if model.mediaType == .youtube {
+            } else if self.info.properties.mediaType == .youtube {
                 uiView.evaluateJavaScript("player.seekTo(0);")
             }
         }
@@ -255,9 +255,9 @@ struct MediaWebView: UIViewRepresentable {
 
     @MainActor
     func playMedias(uiView: WKWebView) {
-        if model.mediaType == .video {
+        if self.info.properties.mediaType == .video {
             uiView.evaluateJavaScript("videoElement.play();")
-        } else if model.mediaType == .youtube {
+        } else if self.info.properties.mediaType == .youtube {
             uiView.evaluateJavaScript("player.playVideo();")
             uiView.evaluateJavaScript("player.addEventListener(\"onReady\", \"onPlayerReady\");")
         }
