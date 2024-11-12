@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasAttributeValue: ThomasSerailizable, Hashable {
+enum ThomasAttributeValue: ThomasSerializable, Hashable {
     case string(String)
     case number(Double)
 

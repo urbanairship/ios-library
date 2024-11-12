@@ -2,6 +2,6 @@
 
 import Foundation
 
-enum ThomasFormSubmitBehavior: String, ThomasSerailizable {
+enum ThomasFormSubmitBehavior: String, ThomasSerializable {
     case submitEvent = "submit_event"
 }

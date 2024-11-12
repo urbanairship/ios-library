@@ -2,14 +2,14 @@
 
 import Foundation
 
-struct ThomasAccessibilityAction: ThomasSerailizable {
+struct ThomasAccessibilityAction: ThomasSerializable {
 
-    enum ActionType: String, ThomasSerailizable {
+    enum ActionType: String, ThomasSerializable {
         case `default` = "default"
         case escape = "escape"
     }
 
-    struct Properties: ThomasSerailizable {
+    struct Properties: ThomasSerializable {
         var type: ActionType
         var reportingMetadata: AirshipJSON?
         var actions: [ThomasActionsPayload]?

@@ -3,7 +3,7 @@
 import SwiftUI
 
 /// AirshipLayout
-public struct AirshipLayout: ThomasSerailizable {
+public struct AirshipLayout: ThomasSerializable {
     /// The view DSL
     let view: ThomasViewInfo
 

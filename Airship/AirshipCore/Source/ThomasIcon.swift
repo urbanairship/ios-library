@@ -2,13 +2,13 @@
 
 import Foundation
 
-struct ThomasIconInfo: ThomasSerailizable {
+struct ThomasIconInfo: ThomasSerializable {
     let type: String = "icon"
     var icon: Icon
     var color: ThomasColor
     var scale: Double?
 
-    enum Icon: String, ThomasSerailizable {
+    enum Icon: String, ThomasSerializable {
         case close
         case checkmark
         case forwardArrow = "forward_arrow"

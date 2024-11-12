@@ -2,4 +2,4 @@
 
 import Foundation
 
-protocol ThomasSerailizable: Codable, Sendable, Equatable {}
+protocol ThomasSerializable: Codable, Sendable, Equatable {}

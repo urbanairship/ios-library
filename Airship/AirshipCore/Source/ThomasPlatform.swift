@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-enum ThomasPlatform: String, ThomasSerailizable {
+enum ThomasPlatform: String, ThomasSerializable {
     case android
     case ios
     case web

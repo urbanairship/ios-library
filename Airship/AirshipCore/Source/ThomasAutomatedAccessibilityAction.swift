@@ -2,10 +2,10 @@
 
 import Foundation
 
-struct ThomasAutomatedAccessibilityAction: ThomasSerailizable {
+struct ThomasAutomatedAccessibilityAction: ThomasSerializable {
     let type: ActionType
 
-    enum ActionType: String, ThomasSerailizable {
+    enum ActionType: String, ThomasSerializable {
         case announce = "announce"
     }
 }

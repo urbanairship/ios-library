@@ -1,11 +1,11 @@
 /* Copyright Airship and Contributors */
 
-struct ThomasAccessibleInfo: ThomasSerailizable {
+struct ThomasAccessibleInfo: ThomasSerializable {
     var contentDescription: String?
     var localizedContentDescription: Localized?
     var accessibilityHidden: Bool?
 
-    struct Localized: ThomasSerailizable {
+    struct Localized: ThomasSerializable {
         var descriptionKey: String?
         var fallbackDescription: String
 

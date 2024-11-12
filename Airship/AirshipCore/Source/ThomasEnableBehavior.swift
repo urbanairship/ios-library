@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasEnableBehavior: String, ThomasSerailizable {
+enum ThomasEnableBehavior: String, ThomasSerializable {
     case formValidation = "form_validation"
     case formSubmission = "form_submission"
     case pagerNext = "pager_next"

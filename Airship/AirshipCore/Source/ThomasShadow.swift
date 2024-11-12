@@ -2,14 +2,14 @@
 
 import Foundation
 
-struct ThomasShadow: ThomasSerailizable {
+struct ThomasShadow: ThomasSerializable {
     let selectors: [Selector]?
 
     enum CodingKeys: String, CodingKey {
         case selectors
     }
 
-    struct Selector: ThomasSerailizable {
+    struct Selector: ThomasSerializable {
         var shadow: Shadow
         var platform: ThomasPlatform?
 
@@ -19,7 +19,7 @@ struct ThomasShadow: ThomasSerailizable {
         }
     }
 
-    struct Shadow: ThomasSerailizable {
+    struct Shadow: ThomasSerializable {
         var boxShadow: BoxShadow?
 
         private enum CodingKeys: String, CodingKey {
@@ -27,7 +27,7 @@ struct ThomasShadow: ThomasSerailizable {
         }
     }
 
-    struct BoxShadow: ThomasSerailizable {
+    struct BoxShadow: ThomasSerializable {
         var color: ThomasColor
         var radius: Double
         var blurRadius: Double

@@ -2,11 +2,11 @@
 
 import Foundation
 
-struct ThomasEventHandler: ThomasSerailizable {
+struct ThomasEventHandler: ThomasSerializable {
     let type: EventType
     let stateActions: [ThomasStateAction]
 
-    enum EventType: String, ThomasSerailizable {
+    enum EventType: String, ThomasSerializable {
         case tap
         case formInput = "form_input"
     }

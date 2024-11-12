@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasShapeInfo: ThomasSerailizable {
+enum ThomasShapeInfo: ThomasSerializable {
     case rectangle(Rectangle)
     case ellipse(Ellipse)
 
@@ -27,7 +27,7 @@ enum ThomasShapeInfo: ThomasSerailizable {
         }
     }
 
-    enum ShapeType: String, ThomasSerailizable {
+    enum ShapeType: String, ThomasSerializable {
         case rectangle
         case ellipse
     }

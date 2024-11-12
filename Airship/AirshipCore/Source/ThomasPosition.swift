@@ -3,17 +3,17 @@
 import Foundation
 import SwiftUI
 
-struct ThomasPosition: ThomasSerailizable {
+struct ThomasPosition: ThomasSerializable {
     var horizontal: Horizontal
     var vertical: Vertical
 
-    enum Horizontal: String, ThomasSerailizable {
+    enum Horizontal: String, ThomasSerializable {
         case center
         case start
         case end
     }
 
-    enum Vertical: String, ThomasSerailizable {
+    enum Vertical: String, ThomasSerializable {
         case center
         case top
         case bottom

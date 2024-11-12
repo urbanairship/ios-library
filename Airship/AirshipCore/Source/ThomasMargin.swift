@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ThomasMargin: ThomasSerailizable {
+struct ThomasMargin: ThomasSerializable {
     var top: CGFloat?
     var bottom: CGFloat?
     var start: CGFloat?

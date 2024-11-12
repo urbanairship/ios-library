@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasSizeConstraint: ThomasSerailizable {
+enum ThomasSizeConstraint: ThomasSerializable {
     case points(Double)
     case percent(Double)
     case auto

@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasButtonClickBehavior: String, ThomasSerailizable {
+enum ThomasButtonClickBehavior: String, ThomasSerializable {
     case dismiss
     case cancel
     case pagerNext = "pager_next"
