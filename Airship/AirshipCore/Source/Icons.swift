@@ -16,6 +16,8 @@ struct Icons {
             return Image(systemName: "arrow.backward")
         case .forwardArrow:
             return Image(systemName: "arrow.forward")
+        case .exclamationmarkCircleFill:
+            return Image(systemName: "exclamationmark.circle.fill")
         }
     }
 

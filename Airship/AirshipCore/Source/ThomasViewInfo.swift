@@ -1232,6 +1232,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             self.commonOverrides = try decoder.decodeOverrides()
         }
 
+
         struct Properties: ThomasSerializable {
             let type: ViewType = .textInput
             var identifier: String
@@ -1239,6 +1240,16 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var placeholder: String?
             var textAppearance: ThomasTextAppearance
             var inputType: TextInputType
+            var iconEnd: IconEndInfo?
+
+            enum IconEndType: String, Codable {
+                case floating = "floating"
+            }
+
+            struct IconEndInfo: ThomasSerializable {
+                var type: IconEndType = .floating
+                var icon: ThomasIconInfo
+            }
 
             enum CodingKeys: String, CodingKey {
                 case attributeName = "attribute_name"
@@ -1247,6 +1258,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case placeholder = "place_holder"
                 case inputType = "input_type"
                 case type
+                case iconEnd = "icon_end"
             }
         }
 

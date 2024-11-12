@@ -32,7 +32,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: rectangle, type: ThomasShapeInfo.self)
 
         let ellipse = """
@@ -59,7 +59,7 @@ final class ThomasViewModelTest: XCTestCase {
           "type": "ellipse"
         }
         """
-        
+
         try decodeEncodeCompare(source: ellipse, type: ThomasShapeInfo.self)
     }
 
@@ -111,16 +111,16 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.Label.self)
 
-        
+
     }
     func testSizeCoding() throws {
         let autoPercent = "{\"width\": \"auto\", \"height\":\"101%\"}"
         let percentToPoints = "{\"width\":\"101%\", \"height\":45}"
-        
+
         try decodeEncodeCompare(source: autoPercent, type: ThomasSize.self)
         try decodeEncodeCompare(source: percentToPoints, type: ThomasSize.self)
     }
-    
+
     func testVisibilityInfoCoding() throws {
         let json = """
         {
@@ -143,10 +143,10 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasVisibilityInfo.self)
     }
-    
+
     func testEventHandlerCodable() throws {
         let json = """
         {
@@ -167,10 +167,10 @@ final class ThomasViewModelTest: XCTestCase {
           ]
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasEventHandler.self)
     }
-    
+
     func testWebViewModelCodable() throws {
         let json = """
         {
@@ -190,10 +190,10 @@ final class ThomasViewModelTest: XCTestCase {
           ]
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testCustomViewModelCodable() throws {
         let json = """
         {
@@ -231,10 +231,10 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testMediaViewModelCodable() throws {
         let image = """
         {
@@ -244,7 +244,7 @@ final class ThomasViewModelTest: XCTestCase {
           "url": "https://example.com"
         }
         """
-        
+
         try decodeEncodeCompare(source: image, type: ThomasViewInfo.self)
 
         let video = """
@@ -262,7 +262,7 @@ final class ThomasViewModelTest: XCTestCase {
           "url": "https://hangar-dl.urbanairshi.com"
         }
         """
-        
+
         try decodeEncodeCompare(source: video, type: ThomasViewInfo.self)
 
         let youtube = """
@@ -280,10 +280,10 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: youtube, type: ThomasViewInfo.self)
     }
-    
+
     func testLabelModelCodable() throws {
         let json = """
         {
@@ -308,10 +308,10 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testLabelButtonModelCodable() throws {
         let json = """
         {
@@ -341,10 +341,10 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testButtonImageModelCodable() throws {
         let icon = """
         {
@@ -380,7 +380,7 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: icon, type:  ThomasViewInfo.ImageButton.ButtonImage.self)
 
         let url = """
@@ -389,10 +389,44 @@ final class ThomasViewModelTest: XCTestCase {
           "url": "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Airship_2019_logo.png"
         }
         """
-        
+
         try decodeEncodeCompare(source: url, type: ThomasViewInfo.ImageButton.ButtonImage.self)
     }
-    
+
+    func testValidationInfoCoding() throws {
+        let json = """
+    {
+        "required": true,
+        "on_error": {
+            "state_actions": [
+                {
+                  "type": "set",
+                  "key": "label_tapped",
+                  "value": true
+                }
+            ]
+        },
+       "on_error_cleared": {
+            "state_actions": [
+                {
+                    "type": "clear"
+                }
+            ]
+        }
+    }
+    """
+
+        try decodeEncodeCompare(source: json, type: ThomasValidationInfo.self)
+
+        // Test optional fields
+        let minimalJson = """
+    {
+    }
+    """
+
+        try decodeEncodeCompare(source: minimalJson, type: ThomasValidationInfo.self)
+    }
+
     func testImageButtonCodable() throws {
         let json = """
         {
@@ -435,10 +469,10 @@ final class ThomasViewModelTest: XCTestCase {
           ]
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testEmptyViewModelCodable() throws {
         let json = """
         {
@@ -452,10 +486,10 @@ final class ThomasViewModelTest: XCTestCase {
           }
         }
         """
-        
+
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testPagerGestureModelCodable() throws {
         let swipe = """
         {
@@ -503,7 +537,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: hold, type: ThomasViewInfo.Pager.Gesture.self)
     }
-    
+
     func testPagerIndicatorModelCodable() throws {
         let json = """
         {
@@ -560,7 +594,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testStoryIndicatorModelCodable() throws {
         let json = """
         {
@@ -592,7 +626,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testToggleStyleModelCodable() throws {
         let switchStyle = """
         {
@@ -678,7 +712,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: checkbox, type: ThomasToggleStyleInfo.self)
     }
-    
+
     func testCheckboxModelCodable() throws {
         let json = """
         {
@@ -771,7 +805,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testRadioModelCodable() throws {
         let json = """
         {
@@ -839,7 +873,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testTextInputModelCodable() throws {
         let json = """
         {
@@ -880,7 +914,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testScoreStyleModelCodable() throws {
         let json = """
         {
@@ -984,7 +1018,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.Score.ScoreStyle.self)
     }
-    
+
     func testScoreModelCodable() throws {
         let json = """
         {
@@ -1064,7 +1098,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.Score.self)
     }
-    
+
     func testToggleModelCodable() throws {
         let json = """
         {
@@ -1104,7 +1138,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.Toggle.self)
     }
-    
+
     func testContainerModelCodable() throws {
         let json = """
         {
@@ -1152,7 +1186,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.Container.self)
     }
-    
+
     func testLinearLayoutModelCodable() throws {
         let json = """
         {
@@ -1218,7 +1252,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testScrollLayoutModelCodable() throws {
         let json = """
         {
@@ -1250,7 +1284,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testPagerModelCodable() throws {
         let json = """
         {
@@ -1300,7 +1334,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testPagerControllerModelCodable() throws {
         let json = """
         {
@@ -1513,7 +1547,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testFormControllerModelCodable() throws {
         let json = """
         {
@@ -1829,7 +1863,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testCheckboxControllerModelCodable() throws {
         let json = """
         {
@@ -2189,7 +2223,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testRadioInputControllerModelCodable() throws {
         let json = """
         {
@@ -2234,7 +2268,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testStateControllerModelCodable() throws {
         let json = """
         {
@@ -2276,14 +2310,14 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
-    
+
     func testActionPayload() throws {
         let payload = ThomasActionsPayload(value: try AirshipJSON.wrap(["foo": "bar"]))
         let encoded = try AirshipJSON.defaultEncoder.encode(payload)
         let decoded = try AirshipJSON.defaultDecoder.decode(ThomasActionsPayload.self, from: encoded)
         XCTAssertEqual(payload, decoded)
     }
-    
+
     func testActionPayloadPlatformOverrides() throws {
         let payload = ThomasActionsPayload(value: try AirshipJSON.wrap([
             "foo": "bar",
@@ -2298,27 +2332,25 @@ final class ThomasViewModelTest: XCTestCase {
         let encoded = try AirshipJSON.defaultEncoder.encode(payload)
         let decoded = try AirshipJSON.defaultDecoder.decode(ThomasActionsPayload.self, from: encoded)
         XCTAssertEqual(payload, decoded)
-        
+
         XCTAssertEqual("bar2", payload.value.object?["foo"]?.string)
         XCTAssertEqual("value", payload.value.object?["shouldnt_change"]?.string)
         XCTAssertEqual("override", payload.value.object?["added"]?.string)
     }
-    
+
     private func decodeEncodeCompare<T: Codable & Equatable>(source: String, type: T.Type) throws {
         let decoder = JSONDecoder()
         let encoder = JSONEncoder()
-        
+
         let decoded = try decoder.decode(type, from: source.data(using: .utf8)!)
         let json = try encoder.encode(decoded)
         let restored = try decoder.decode(type, from: json)
-        
+
         XCTAssertEqual(restored, decoded)
-        
+
         let inputJson = try JSONSerialization.jsonObject(with: source.data(using: .utf8)!) as! [String: Any]
         let encodedJson = try JSONSerialization.jsonObject(with: json) as! [String: Any]
-        
+
         XCTAssertEqual(inputJson.toNsDictionary(), encodedJson.toNsDictionary())
     }
 }
-
-
