@@ -95,9 +95,9 @@ final class ThomasViewModelTest: XCTestCase {
             "font_families": ["sans-serif"]
           },
           "view_overrides": {
-            "background_color": {
-            },
-            "text": {
+            "background_color": [{
+            }],
+            "text": [{
               "when_state_matches": {
                 "scope": ["some-id:error"],
                 "value": {
@@ -105,7 +105,7 @@ final class ThomasViewModelTest: XCTestCase {
                 }
               },
               "value": "neat"
-            }
+            }]
           }
         }
         """

@@ -344,7 +344,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Overrides: ThomasSerializable {
-            let text: PropertyOverrides<String>?
+            var text: [ThomasPropertyOverride<String>]?
         }
 
         struct Properties: ThomasSerializable {
@@ -1216,11 +1216,12 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         var accessible: ThomasAccessibleInfo
         var validation: ThomasValidationInfo
         var commonOverrides: CommonViewOverrides?
+        var overrides: Overrides?
 
         func encode(to encoder: any Encoder) throws {
             try encoder.encode(
                 properties: commonProperties, properties, accessible, validation,
-                overrides: commonOverrides
+                overrides: commonOverrides, overrides
             )
         }
 
@@ -1230,8 +1231,17 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             self.accessible = try decoder.decodeProperties()
             self.validation = try decoder.decodeProperties()
             self.commonOverrides = try decoder.decodeOverrides()
+            self.overrides = try decoder.decodeOverrides()
         }
 
+        enum IconEndType: String, Codable {
+            case floating = "floating"
+        }
+
+        struct IconEndInfo: ThomasSerializable {
+            var type: IconEndType = .floating
+            var icon: ThomasIconInfo
+        }
 
         struct Properties: ThomasSerializable {
             let type: ViewType = .textInput
@@ -1242,15 +1252,6 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var inputType: TextInputType
             var iconEnd: IconEndInfo?
 
-            enum IconEndType: String, Codable {
-                case floating = "floating"
-            }
-
-            struct IconEndInfo: ThomasSerializable {
-                var type: IconEndType = .floating
-                var icon: ThomasIconInfo
-            }
-
             enum CodingKeys: String, CodingKey {
                 case attributeName = "attribute_name"
                 case textAppearance = "text_appearance"
@@ -1258,6 +1259,14 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case placeholder = "place_holder"
                 case inputType = "input_type"
                 case type
+                case iconEnd = "icon_end"
+            }
+        }
+
+        struct Overrides: ThomasSerializable {
+            var iconEnd: [ThomasPropertyOverride<IconEndInfo>]?
+
+            enum CodingKeys: String, CodingKey {
                 case iconEnd = "icon_end"
             }
         }
@@ -1474,29 +1483,9 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
     }
 
-    struct OptionalPropertyOverrides<T: Codable&Sendable&Equatable>: Codable, Sendable, Equatable {
-        let whenStateMatches: JSONPredicate?
-        let value: T?
-
-        enum CodingKeys: String, CodingKey {
-            case whenStateMatches = "when_state_matches"
-            case value
-        }
-    }
-
-    struct PropertyOverrides<T: Codable&Sendable&Equatable>: Codable, Sendable, Equatable {
-        let whenStateMatches: JSONPredicate?
-        let value: T
-
-        enum CodingKeys: String, CodingKey {
-            case whenStateMatches = "when_state_matches"
-            case value
-        }
-    }
-
     struct CommonViewOverrides: ThomasSerializable {
-        var border: OptionalPropertyOverrides<ThomasBorder>?
-        var backgroundColor: OptionalPropertyOverrides<ThomasColor>?
+        var border: [ThomasPropertyOverride<ThomasBorder>]?
+        var backgroundColor: [ThomasPropertyOverride<ThomasColor>]?
 
         enum CodingKeys: String, CodingKey {
             case border
@@ -1571,3 +1560,5 @@ fileprivate struct ViewOverridesDecodable<T: Decodable>: Decodable {
         case overrides = "view_overrides"
     }
 }
+
+

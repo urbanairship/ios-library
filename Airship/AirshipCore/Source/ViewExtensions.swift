@@ -102,9 +102,11 @@ extension View {
         _ info: some ThomasViewInfo.BaseInfo,
         formInputID: String? = nil
     ) -> some View {
-        self.background(
+        self.thomasBackground(
             color: info.commonProperties.backgroundColor,
-            border: info.commonProperties.border
+            colorOverrides: info.commonOverrides?.backgroundColor,
+            border: info.commonProperties.border,
+            borderOverrides: info.commonOverrides?.border
         )
         .thomasEventHandlers(
             info.commonProperties.eventHandlers,

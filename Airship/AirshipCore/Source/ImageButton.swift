@@ -30,9 +30,11 @@ struct ImageButton : View {
         ) {
             makeInnerButton()
                 .constraints(constraints, fixedSize: true)
-                .background(
+                .thomasBackground(
                     color: self.info.commonProperties.backgroundColor,
-                    border: self.info.commonProperties.border
+                    colorOverrides: self.info.commonOverrides?.backgroundColor,
+                    border: self.info.commonProperties.border,
+                    borderOverrides: self.info.commonOverrides?.border
                 )
                 .accessible(self.info.accessible)
                 .background(Color.airshipTappableClear)

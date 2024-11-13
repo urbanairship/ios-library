@@ -6,16 +6,31 @@ import SwiftUI
 
 struct BackgroundViewModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var state: ViewState
 
-    var color: ThomasColor?
+    var backgroundColor: ThomasColor?
+    var backgroundColorOverrides: [ThomasPropertyOverride<ThomasColor>]?
     var border: ThomasBorder?
+    var borderOverrides: [ThomasPropertyOverride<ThomasBorder>]?
     var shadow: ThomasShadow?
 
     func body(content: Content) -> some View {
+        let border = ThomasPropertyOverride<ThomasBorder>.resolveOptional(
+            state: self.state,
+            overrides: self.borderOverrides,
+            defaultValue: self.border
+        )
+
+        let backgroundColor = ThomasPropertyOverride<ThomasColor>.resolveOptional(
+            state: self.state,
+            overrides: self.backgroundColorOverrides,
+            defaultValue: self.backgroundColor
+        )
+
         content
             .clipContent(border: border)
             .applyPadding(padding: border?.strokeWidth)
-            .applyBackground(color: color, border: border, colorScheme: colorScheme)
+            .applyBackground(color: backgroundColor, border: border, colorScheme: colorScheme)
             .applyShadow(shadow, border: border, colorScheme: colorScheme)
     }
 }
@@ -131,16 +146,20 @@ fileprivate extension ThomasBorder {
 
 extension View {
     @ViewBuilder
-    func background(
+    func thomasBackground(
         color: ThomasColor? = nil,
+        colorOverrides: [ThomasPropertyOverride<ThomasColor>]? = nil,
         border: ThomasBorder? = nil,
+        borderOverrides: [ThomasPropertyOverride<ThomasBorder>]? = nil,
         shadow: ThomasShadow? = nil
     ) -> some View {
-        if border != nil || shadow != nil || color != nil {
+        if border != nil || shadow != nil || color != nil || borderOverrides?.isEmpty == false || colorOverrides?.isEmpty == false {
             self.modifier(
                 BackgroundViewModifier(
-                    color: color,
+                    backgroundColor: color,
+                    backgroundColorOverrides: colorOverrides,
                     border: border,
+                    borderOverrides: borderOverrides,
                     shadow: shadow
                 )
             )

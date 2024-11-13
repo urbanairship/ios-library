@@ -33,9 +33,11 @@ struct ButtonLayout : View {
     var body: some View {
         if isVoiceOverRunning, !isButtonForAccessibility {
             ViewFactory.createView(self.info.properties.view, constraints: constraints)
-                .background(
+                .thomasBackground(
                     color: self.info.commonProperties.backgroundColor,
-                    border: self.info.commonProperties.border
+                    colorOverrides: self.info.commonOverrides?.backgroundColor,
+                    border: self.info.commonProperties.border,
+                    borderOverrides: self.info.commonOverrides?.border
                 )
                 .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
         } else {
@@ -49,9 +51,11 @@ struct ButtonLayout : View {
                 tapEffect: self.info.properties.tapEffect
             ) {
                 ViewFactory.createView(self.info.properties.view, constraints: constraints)
-                    .background(
+                    .thomasBackground(
                         color: self.info.commonProperties.backgroundColor,
-                        border: self.info.commonProperties.border
+                        colorOverrides: self.info.commonOverrides?.backgroundColor,
+                        border: self.info.commonProperties.border,
+                        borderOverrides: self.info.commonOverrides?.border
                     )
                     .background(Color.airshipTappableClear)
             }

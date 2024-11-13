@@ -105,7 +105,7 @@ struct BannerView: View {
                 layout.view,
                 constraints: contentConstraints
             )
-            .background(
+            .thomasBackground(
                 color: placement.backgroundColor,
                 border: placement.border
             )

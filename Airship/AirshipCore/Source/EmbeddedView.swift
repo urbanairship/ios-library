@@ -139,7 +139,7 @@ struct EmbeddedView: View {
     ) -> some View {
         return ViewFactory
             .createView(layout.view, constraints: constraints)
-            .background(
+            .thomasBackground(
                 color: placement.backgroundColor,
                 border: placement.border
             )

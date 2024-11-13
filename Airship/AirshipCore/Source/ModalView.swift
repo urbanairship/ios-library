@@ -128,7 +128,7 @@ struct ModalView: View {
                 self.layout.view,
                 constraints: contentConstraints
             )
-            .background(
+            .thomasBackground(
                 color: placement.backgroundColor,
                 border: placement.border,
                 shadow: placement.shadow

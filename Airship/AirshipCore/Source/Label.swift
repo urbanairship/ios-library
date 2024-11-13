@@ -11,14 +11,14 @@ struct Label: View {
     /// View constraints.
     let constraints: ViewConstraints
 
-
+    @EnvironmentObject var viewState: ViewState
     @Environment(\.colorScheme) var colorScheme
 
     @available(iOS 15, tvOS 15, watchOS 8, *)
     private var markdownText: Text {
         get throws {
             var text = try AttributedString(
-                markdown: self.info.properties.text,
+                markdown: resolvedText,
                 options: .init(
                     interpretedSyntax: .inlineOnlyPreservingWhitespace
                 )
@@ -42,24 +42,33 @@ struct Label: View {
         }
     }
 
-    private var text: Text {
-        guard 
+    private var resolvedText: String {
+        return ThomasPropertyOverride.resolveRequired(
+            state: viewState,
+            overrides: self.info.overrides?.text,
+            defaultValue: self.info.properties.text
+        )
+    }
+
+    private var textView: Text {
+
+        guard
             self.info.properties.markdown?.disabled != true,
             #available(iOS 15, tvOS 15, watchOS 8, *)
         else {
-            return Text(verbatim: self.info.properties.text)
+            return Text(verbatim: resolvedText)
         }
 
         do {
             return try markdownText
         } catch {
-            AirshipLogger.error("Failed to parse markdown text \(error) text \(self.info.properties.text)")
-            return Text(verbatim: self.info.properties.text)
+            AirshipLogger.error("Failed to parse markdown text \(error) text \(resolvedText)")
+            return Text(verbatim: resolvedText)
         }
     }
 
     var body: some View {
-        self.text
+        self.textView
             .textAppearance(self.info.properties.textAppearance)
             .truncationMode(.tail)
             .constraints(
