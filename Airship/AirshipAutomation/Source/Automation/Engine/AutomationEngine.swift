@@ -17,28 +17,28 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let store: AutomationStore
     private let executor: AutomationExecutor
     private let preparer: AutomationPreparer
-    private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol
-    private let eventFeed: AutomationEventFeedProtocol
-    private let triggersProcessor: AutomationTriggerProcessorProtocol
-    private let delayProcessor: AutomationDelayProcessorProtocol
-    private let date: AirshipDateProtocol
-    private let taskSleeper: AirshipTaskSleeper
+    private let scheduleConditionsChangedNotifier: any ScheduleConditionsChangedNotifierProtocol
+    private let eventFeed: any AutomationEventFeedProtocol
+    private let triggersProcessor: any AutomationTriggerProcessorProtocol
+    private let delayProcessor: any AutomationDelayProcessorProtocol
+    private let date: any AirshipDateProtocol
+    private let taskSleeper: any AirshipTaskSleeper
 
     private var processPendingExecutionTask: Task<Void, Never>?
     private var pendingExecution: [String: PreparedData] = [:]
-    private var preprocessDelayTasks: Set<Task<Bool, Error>> = Set()
+    private var preprocessDelayTasks: Set<Task<Bool, any Error>> = Set()
 
 
     init(
         store: AutomationStore,
         executor: AutomationExecutor,
         preparer: AutomationPreparer,
-        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol,
-        eventFeed: AutomationEventFeedProtocol,
-        triggersProcessor: AutomationTriggerProcessorProtocol,
-        delayProcessor: AutomationDelayProcessorProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared
+        scheduleConditionsChangedNotifier: any ScheduleConditionsChangedNotifierProtocol,
+        eventFeed: any AutomationEventFeedProtocol,
+        triggersProcessor: any AutomationTriggerProcessorProtocol,
+        delayProcessor: any AutomationDelayProcessorProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.store = store
         self.executor = executor
@@ -83,17 +83,31 @@ actor AutomationEngine : AutomationEngineProtocol {
             await self.startTask?.value
 
             await withTaskGroup(of: Void.self) { group in
-                group.addTask {
-                    for await result in await self.triggersProcessor.triggerResults {
+                group.addTask { [weak self] in
+                    guard
+                        !Task.isCancelled,
+                        let resultsStream = await self?.triggersProcessor.triggerResults
+                    else {
+                        return
+                    }
+                    
+                    for await result in resultsStream {
                         guard !Task.isCancelled else { return }
-                        await self.processTriggerResult(result)
+                        await self?.processTriggerResult(result)
                     }
                 }
 
-                group.addTask {
-                    for await event in self.eventFeed.feed {
+                group.addTask { [weak self] in
+                    guard
+                        !Task.isCancelled,
+                        let eventsFeed = self?.eventFeed.feed
+                    else {
+                        return
+                    }
+                    
+                    for await event in eventsFeed {
                         guard !Task.isCancelled else { return }
-                        await self.triggersProcessor.processEvent(event)
+                        await self?.triggersProcessor.processEvent(event)
                     }
                 }
             }
@@ -108,8 +122,11 @@ actor AutomationEngine : AutomationEngineProtocol {
     }
 
     func stop() async {
-        self.startTask?.cancel()
         self.listenerTask?.cancel()
+        self.listenerTask = nil
+        
+        self.startTask?.cancel()
+        self.startTask = nil
     }
 
     func stopSchedules(identifiers: [String]) async throws {

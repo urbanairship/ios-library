@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 struct InAppEventData {
-    let event: InAppEvent
+    let event: any InAppEvent
     let context: InAppEventContext?
     let source: InAppEventSource
     let messageID: InAppEventMessageID
@@ -20,10 +20,10 @@ protocol InAppEventRecorderProtocol: Sendable {
 }
 
 struct InAppEventRecorder: InAppEventRecorderProtocol {
-    private let airshipAnalytics: InternalAnalyticsProtocol
-    private let meteredUsage: AirshipMeteredUsageProtocol
+    private let airshipAnalytics: any InternalAnalyticsProtocol
+    private let meteredUsage: any AirshipMeteredUsageProtocol
 
-    init(airshipAnalytics: InternalAnalyticsProtocol, meteredUsage: AirshipMeteredUsageProtocol) {
+    init(airshipAnalytics: any InternalAnalyticsProtocol, meteredUsage: any AirshipMeteredUsageProtocol) {
         self.airshipAnalytics = airshipAnalytics
         self.meteredUsage = meteredUsage
     }
@@ -81,7 +81,7 @@ fileprivate struct EventBody: Encodable, Sendable {
         case deviceInfo = "device"
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: Self.CodingKeys.self)
         try container.encode(self.identifier, forKey: Self.CodingKeys.identifier)
         try container.encode(self.source, forKey: Self.CodingKeys.source)

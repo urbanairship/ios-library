@@ -9,7 +9,7 @@ import AirshipCore
 
 /// Wraps a custom display adapter as a DisplayAdapter
 final class CustomDisplayAdapterWrapper: DisplayAdapter {
-    let adapter: CustomDisplayAdapter
+    let adapter: any CustomDisplayAdapter
 
     @MainActor
     var isReady: Bool { return adapter.isReady }
@@ -19,13 +19,13 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
     }
 
     init(
-        adapter: CustomDisplayAdapter
+        adapter: any CustomDisplayAdapter
     ) {
         self.adapter = adapter
     }
 
     @MainActor
-    func display(scene: WindowSceneHolder, analytics: InAppMessageAnalyticsProtocol) async -> DisplayResult {
+    func display(scene: any WindowSceneHolder, analytics: any InAppMessageAnalyticsProtocol) async -> DisplayResult {
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
 
         let timer = ActiveTimer()

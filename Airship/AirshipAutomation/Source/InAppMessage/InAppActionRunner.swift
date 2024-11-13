@@ -32,17 +32,17 @@ protocol InternalInAppActionRunner: InAppActionRunner, ThomasActionRunner {
 }
 
 final class DefaultInAppActionRunner: InternalInAppActionRunner {
-    private let analytics: InAppMessageAnalyticsProtocol
+    private let analytics: any InAppMessageAnalyticsProtocol
     private let trackPermissionResults: Bool
 
-    init(analytics: InAppMessageAnalyticsProtocol, trackPermissionResults: Bool) {
+    init(analytics: any InAppMessageAnalyticsProtocol, trackPermissionResults: Bool) {
         self.analytics = analytics
         self.trackPermissionResults = trackPermissionResults
     }
 
     @MainActor
     func extendMetadata(
-        _ metadata: inout [String: Sendable],
+        _ metadata: inout [String: any Sendable],
         layoutContext: ThomasLayoutContext? = nil
     ) {
         if trackPermissionResults {
@@ -79,7 +79,7 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
 
     @MainActor
     public func runAsync(actions: AirshipJSON) {
-        var metadata: [String: Sendable] = [:]
+        var metadata: [String: any Sendable] = [:]
         self.extendMetadata(&metadata)
 
         Task {
@@ -89,7 +89,7 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
 
     @MainActor
     public func run(actions: AirshipJSON) async {
-        var metadata: [String: Sendable] = [:]
+        var metadata: [String: any Sendable] = [:]
         self.extendMetadata(&metadata)
 
         await ActionRunner.run(
@@ -101,7 +101,7 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
 
     @MainActor
     public func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?) {
-        var metadata: [String: Sendable] = [:]
+        var metadata: [String: any Sendable] = [:]
         self.extendMetadata(&metadata, layoutContext: layoutContext)
 
         Task {
@@ -122,12 +122,12 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
 }
 
 protocol InAppActionRunnerFactoryProtocol: Sendable {
-    func makeRunner(message: InAppMessage, analytics: InAppMessageAnalyticsProtocol) -> InternalInAppActionRunner
+    func makeRunner(message: InAppMessage, analytics: any InAppMessageAnalyticsProtocol) -> any InternalInAppActionRunner
 }
 
 
 final class InAppActionRunnerFactory: InAppActionRunnerFactoryProtocol {
-    func makeRunner(message: InAppMessage, analytics: InAppMessageAnalyticsProtocol) -> InternalInAppActionRunner {
+    func makeRunner(message: InAppMessage, analytics: any InAppMessageAnalyticsProtocol) -> any InternalInAppActionRunner {
         return DefaultInAppActionRunner(
             analytics: analytics,
             trackPermissionResults: message.isAirshipLayout

@@ -9,25 +9,25 @@ import AirshipCore
 
 protocol InAppMessageSceneManagerProtocol: AnyObject, Sendable {
     @MainActor
-    var delegate: InAppMessageSceneDelegate? { get set }
+    var delegate: (any InAppMessageSceneDelegate)? { get set }
 
     @MainActor
-    func scene(forMessage: InAppMessage) throws -> WindowSceneHolder
+    func scene(forMessage: InAppMessage) throws -> any WindowSceneHolder
 }
 
 final class InAppMessageSceneManager: InAppMessageSceneManagerProtocol, @unchecked Sendable {
 
     @MainActor
-    weak var delegate: InAppMessageSceneDelegate?
+    weak var delegate: (any InAppMessageSceneDelegate)?
 
-    private let sceneManger: AirshipSceneManagerProtocol
+    private let sceneManger: any AirshipSceneManagerProtocol
 
-    init(sceneManger: AirshipSceneManagerProtocol) {
+    init(sceneManger: any AirshipSceneManagerProtocol) {
         self.sceneManger = sceneManger
     }
 
     @MainActor
-    func scene(forMessage message: InAppMessage) throws -> WindowSceneHolder {
+    func scene(forMessage message: InAppMessage) throws -> any WindowSceneHolder {
         let scene = try self.delegate?.sceneForMessage(message) ?? sceneManger.lastActiveScene
         return DefaultWindowSceneHolder(scene: scene)
     }

@@ -16,8 +16,8 @@ protocol DisplayAdapter: Sendable {
 
     @MainActor
     func display(
-        scene: WindowSceneHolder,
-        analytics: InAppMessageAnalyticsProtocol
+        scene: any WindowSceneHolder,
+        analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult
 }
 

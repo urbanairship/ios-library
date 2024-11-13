@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppPageActionEvent: InAppEvent {
     let name = EventType.inAppPageAction
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
 
     init(identifier: String, reportingMetadata: AirshipJSON?) {

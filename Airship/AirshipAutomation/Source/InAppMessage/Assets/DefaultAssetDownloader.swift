@@ -8,11 +8,11 @@ import AirshipCore
 
 /// Data task wrapper used for testing the default asset downloader
 protocol AssetDownloaderSession: Sendable {
-    func autoResumingDataTask(with url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> AirshipCancellable
+    func autoResumingDataTask(with url: URL, completion: @Sendable @escaping (Data?, URLResponse?, (any Error)?) -> Void) -> any AirshipCancellable
 }
 
 extension URLSession: AssetDownloaderSession {
-    func autoResumingDataTask(with url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> Void) -> AirshipCancellable {
+    func autoResumingDataTask(with url: URL, completion: @Sendable @escaping (Data?, URLResponse?, (any Error)?) -> Void) -> any AirshipCancellable {
         
         let task = self.dataTask(with: url, completionHandler: { data, response, error in
             completion(data, response, error)
@@ -27,14 +27,14 @@ extension URLSession: AssetDownloaderSession {
 }
 
 struct DefaultAssetDownloader : AssetDownloader {
-    var session: AssetDownloaderSession
+    var session: any AssetDownloaderSession
 
-    init(session: AssetDownloaderSession = URLSession.airshipSecureSession) {
+    init(session: any AssetDownloaderSession = URLSession.airshipSecureSession) {
         self.session = session
     }
 
     func downloadAsset(remoteURL: URL) async throws -> URL {
-        let cancellable = CancellableValueHolder<AirshipCancellable>() { cancellable in
+        let cancellable = CancellableValueHolder<any AirshipCancellable>() { cancellable in
             cancellable.cancel()
         }
 

@@ -50,12 +50,12 @@ protocol AutomationExecutorDelegate<ExecutionData>: Sendable {
 final class AutomationExecutor: AutomationExecutorProtocol {
     private let actionExecutor: any AutomationExecutorDelegate<AirshipJSON>
     private let messageExecutor: any AutomationExecutorDelegate<PreparedInAppMessageData>
-    private let remoteDataAccess: AutomationRemoteDataAccessProtocol
+    private let remoteDataAccess: any AutomationRemoteDataAccessProtocol
 
     init(
         actionExecutor: any AutomationExecutorDelegate<AirshipJSON>,
         messageExecutor: any AutomationExecutorDelegate<PreparedInAppMessageData>,
-        remoteDataAccess: AutomationRemoteDataAccessProtocol
+        remoteDataAccess: any AutomationRemoteDataAccessProtocol
     ) {
         self.actionExecutor = actionExecutor
         self.messageExecutor = messageExecutor

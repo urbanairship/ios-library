@@ -17,7 +17,7 @@ public protocol AirshipPushableComponent {
     @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
     )
     #else
     /**
@@ -29,7 +29,7 @@ public protocol AirshipPushableComponent {
     @MainActor
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+        completionHandler: @Sendable @escaping (WKBackgroundFetchResult) -> Void
     )
     #endif
 
@@ -43,7 +43,7 @@ public protocol AirshipPushableComponent {
     @MainActor
     func receivedNotificationResponse(
         _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
+        completionHandler: @Sendable @escaping () -> Void
     )
     #endif
 }

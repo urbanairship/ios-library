@@ -83,7 +83,7 @@ public final class CancelSchedulesAction: AirshipAction {
             case groups = "groups"
         }
         
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             func decodeSingleOrArray<T, K>(from container: KeyedDecodingContainer<K>, key: K) throws -> [T]? where T: Decodable {
                 guard container.contains(key) else { return nil }
                 do {

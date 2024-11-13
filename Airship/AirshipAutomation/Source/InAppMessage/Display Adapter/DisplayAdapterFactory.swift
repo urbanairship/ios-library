@@ -12,17 +12,17 @@ public struct DisplayAdapterArgs: Sendable {
     public var message: InAppMessage
 
     /// The assets
-    public var assets: AirshipCachedAssetsProtocol
+    public var assets: any AirshipCachedAssetsProtocol
 
     /// The schedule priority
     public var priority: Int
 
     /// Action runner
-    public var actionRunner: InAppActionRunner {
+    public var actionRunner: any InAppActionRunner {
         return _actionRunner
     }
     
-    var _actionRunner: InternalInAppActionRunner
+    var _actionRunner: any InternalInAppActionRunner
 }
 
 protocol DisplayAdapterFactoryProtocol: Sendable {
@@ -30,24 +30,24 @@ protocol DisplayAdapterFactoryProtocol: Sendable {
     @MainActor
     func setAdapterFactoryBlock(
         forType: CustomDisplayAdapterType,
-        factoryBlock: @Sendable @escaping (DisplayAdapterArgs) -> CustomDisplayAdapter?
+        factoryBlock: @Sendable @escaping (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?
     )
 
     @MainActor
     func makeAdapter(
         args: DisplayAdapterArgs
-    ) throws -> DisplayAdapter
+    ) throws -> any DisplayAdapter
 }
 
 final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sendable {
 
     @MainActor
-    var customAdapters: [CustomDisplayAdapterType: (DisplayAdapterArgs) -> CustomDisplayAdapter?] = [:]
+    var customAdapters: [CustomDisplayAdapterType: @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?] = [:]
 
     @MainActor
     func setAdapterFactoryBlock(
         forType type: CustomDisplayAdapterType,
-        factoryBlock: @Sendable @escaping (DisplayAdapterArgs) -> CustomDisplayAdapter?
+        factoryBlock: @Sendable @escaping (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?
     ) {
         customAdapters[type] = factoryBlock
     }
@@ -55,7 +55,7 @@ final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sen
     @MainActor
     func makeAdapter(
         args: DisplayAdapterArgs
-    ) throws -> DisplayAdapter {
+    ) throws -> any DisplayAdapter {
         switch (args.message.displayContent) {
         case .banner(_):
             if let custom = customAdapters[.banner]?(args) {

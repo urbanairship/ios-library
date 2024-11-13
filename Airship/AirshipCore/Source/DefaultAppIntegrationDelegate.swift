@@ -203,15 +203,14 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         )
 
         let dispatchGroup = DispatchGroup()
-        var fetchResults: [UInt] = []
-        let lock = AirshipLock()
+        let fetchResults = AirshipAtomicValue(Array<UInt>())
 
         // Pushable components
         self.pushableComponents.forEach {
             dispatchGroup.enter()
             $0.receivedRemoteNotification(userInfo) { fetchResult in
-                lock.sync {
-                    fetchResults.append(fetchResult.rawValue)
+                fetchResults.update { input in
+                    input + [fetchResult.rawValue]
                 }
                 dispatchGroup.leave()
             }
@@ -222,17 +221,16 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             userInfo,
             isForeground: isForeground
         ) { pushResult in
-            lock.sync {
 #if !os(watchOS)
-                let result: UIBackgroundFetchResult =
-                pushResult as! UIBackgroundFetchResult
+                let result: UIBackgroundFetchResult = pushResult as! UIBackgroundFetchResult
 #else
-                let result: WKBackgroundFetchResult =
-                pushResult as! WKBackgroundFetchResult
+                let result: WKBackgroundFetchResult = pushResult as! WKBackgroundFetchResult
 
 #endif
-                fetchResults.append(result.rawValue)
+            fetchResults.update { input in
+                input + [result.rawValue]
             }
+            
             dispatchGroup.leave()
         }
 
@@ -257,7 +255,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
 
         dispatchGroup.notify(queue: .main) {
-            completionHandler(AirshipUtils.mergeFetchResults(fetchResults).rawValue)
+            completionHandler(AirshipUtils.mergeFetchResults(fetchResults.value).rawValue)
         }
     }
 

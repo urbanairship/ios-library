@@ -37,8 +37,8 @@ protocol AutomationTriggerProcessorProtocol: Sendable {
 }
 
 final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
-    let store: TriggerStoreProtocol
-    private let date: AirshipDateProtocol
+    let store: any TriggerStoreProtocol
+    private let date: any AirshipDateProtocol
     private let stream: AsyncStream<TriggerResult>
     private let continuation: AsyncStream<TriggerResult>.Continuation
     
@@ -53,8 +53,8 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     private var appSessionState: TriggerableState?
     
     init(
-        store: TriggerStoreProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared
+        store: any TriggerStoreProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.store = store
         self.date = date

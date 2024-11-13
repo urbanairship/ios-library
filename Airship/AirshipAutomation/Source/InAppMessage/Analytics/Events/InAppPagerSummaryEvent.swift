@@ -17,7 +17,7 @@ struct PageViewSummary: Encodable, Sendable, Equatable {
         case displayTime = "display_time"
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.identifier, forKey: .identifier)
         try container.encode(self.index, forKey: .index)
@@ -32,7 +32,7 @@ struct PageViewSummary: Encodable, Sendable, Equatable {
 
 struct InAppPagerSummaryEvent: InAppEvent {
     let name = EventType.inAppPagerSummary
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
     init(pagerInfo: ThomasPagerInfo, viewedPages: [PageViewSummary]) {
         self.data = PagerSummaryData(

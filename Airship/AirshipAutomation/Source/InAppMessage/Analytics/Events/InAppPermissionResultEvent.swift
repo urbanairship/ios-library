@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppPermissionResultEvent: InAppEvent {
     let name = EventType.inAppPermissionResult
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
     init(
         permission: AirshipPermission,

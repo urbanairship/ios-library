@@ -36,14 +36,14 @@ public struct AutomationAudience: Codable, Sendable, Equatable {
         self.missBehavior = missBehavior
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         try audienceSelector.encode(to: encoder)
 
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(self.missBehavior, forKey: .missBehavior)
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         self.audienceSelector = try DeviceAudienceSelector(from: decoder)
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.missBehavior = try container.decodeIfPresent(AutomationAudience.MissBehavior.self, forKey: .missBehavior)

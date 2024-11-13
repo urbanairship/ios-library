@@ -6,7 +6,7 @@ public import SwiftUI
 public extension InAppMessageTheme {
 
     /// Text in-app message theme
-    struct Text: Equatable {
+    struct Text: Equatable, Sendable {
         
         /// Letter spacing
         public var letterSpacing: CGFloat

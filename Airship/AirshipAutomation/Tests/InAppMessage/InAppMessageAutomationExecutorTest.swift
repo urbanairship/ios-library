@@ -12,7 +12,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private var conditionsChangedNotifier: ScheduleConditionsChangedNotifier!
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private let actionRunner: TestInAppActionRunner = TestInAppActionRunner()
-    private let displayAdapter: TestDisplayAdapter = TestDisplayAdapter()
+    private var displayAdapter: TestDisplayAdapter!
 
 
     private let preparedInfo: PreparedScheduleInfo = PreparedScheduleInfo(
@@ -29,9 +29,11 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private var preparedData: PreparedInAppMessageData!
     private var executor: InAppMessageAutomationExecutor!
 
+    @MainActor
     override func setUp() async throws {
-        self.conditionsChangedNotifier = await ScheduleConditionsChangedNotifier()
-        self.displayCoordinator = await TestDisplayCoordinator()
+        self.displayAdapter = TestDisplayAdapter()
+        self.conditionsChangedNotifier = ScheduleConditionsChangedNotifier()
+        self.displayCoordinator = TestDisplayCoordinator()
         self.preparedData = PreparedInAppMessageData(
             message: InAppMessage(
                 name: "",
@@ -51,7 +53,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             scheduleConditionsChangedNotifier: conditionsChangedNotifier
         )
 
-        await self.analyticsFactory.setOnMake { _, _ in
+        self.analyticsFactory.setOnMake { _, _ in
             return self.analytics
         }
     }

@@ -7,13 +7,13 @@ import AirshipCore
 @MainActor
 final class InAppMessageDisplayListener: InAppMessageViewDelegate {
 
-    private let analytics: InAppMessageAnalyticsProtocol
-    private let timer: ActiveTimerProtocol
+    private let analytics: any InAppMessageAnalyticsProtocol
+    private let timer: any ActiveTimerProtocol
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
 
     init(
-        analytics: InAppMessageAnalyticsProtocol,
-        timer: ActiveTimerProtocol? = nil,
+        analytics: any InAppMessageAnalyticsProtocol,
+        timer: (any ActiveTimerProtocol)? = nil,
         onDismiss: @MainActor @escaping @Sendable (DisplayResult) -> Void
     ) {
         self.analytics = analytics

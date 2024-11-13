@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppButtonTapEvent: InAppEvent {
     let name = EventType.inAppButtonTap
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
     init(identifier: String, reportingMetadata: AirshipJSON?) {
         self.data = ButtonTapData(

@@ -89,7 +89,7 @@ public enum AutomationTrigger: Sendable, Codable, Equatable {
     case compound(CompoundAutomationTrigger)
 
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         switch self {
         case .event(let trigger):
             try trigger.encode(to: encoder)
@@ -102,7 +102,7 @@ public enum AutomationTrigger: Sendable, Codable, Equatable {
         case type
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
         if CompoundAutomationTriggerType(rawValue: type) != nil {
@@ -210,7 +210,7 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
         self.allowBackfillID = false
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.type = try container.decode(EventAutomationTriggerType.self, forKey: .type)
         self.goal = try container.decode(Double.self, forKey: .goal)
@@ -232,7 +232,7 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
         case id
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
            var container = encoder.container(keyedBy: CodingKeys.self)
            try container.encode(self.type, forKey: .type)
            try container.encode(self.goal, forKey: .goal)

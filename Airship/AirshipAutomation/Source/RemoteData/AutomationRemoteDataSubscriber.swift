@@ -19,9 +19,9 @@ protocol AutomationRemoteDataSubscriberProtocol: Sendable {
 
 final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtocol, @unchecked Sendable {
     private let sourceInfoStore: AutomationSourceInfoStore
-    private let remoteDataAccess: AutomationRemoteDataAccessProtocol
-    private let engine: AutomationEngineProtocol
-    private let frequencyLimitManager: FrequencyLimitManagerProtocol
+    private let remoteDataAccess: any AutomationRemoteDataAccessProtocol
+    private let engine: any AutomationEngineProtocol
+    private let frequencyLimitManager: any FrequencyLimitManagerProtocol
     private let airshipSDKVersion: String
 
     @MainActor
@@ -38,9 +38,9 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
 
     init(
         dataStore: PreferenceDataStore,
-        remoteDataAccess: AutomationRemoteDataAccessProtocol,
-        engine: AutomationEngineProtocol,
-        frequencyLimitManager: FrequencyLimitManagerProtocol,
+        remoteDataAccess: any AutomationRemoteDataAccessProtocol,
+        engine: any AutomationEngineProtocol,
+        frequencyLimitManager: any FrequencyLimitManagerProtocol,
         airshipSDKVersion: String = AirshipVersion.version
     ) {
         self.sourceInfoStore = AutomationSourceInfoStore(dataStore: dataStore)

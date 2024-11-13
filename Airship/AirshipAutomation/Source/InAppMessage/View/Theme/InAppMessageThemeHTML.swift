@@ -11,7 +11,7 @@ import AirshipCore
 
 public extension InAppMessageTheme {
     /// Html message theme
-    struct HTML: Equatable {
+    struct HTML: Equatable, Sendable {
 
         /// Max width in points
         public var maxWidth: CGFloat

@@ -46,8 +46,9 @@ final class AutomationEngineTest: XCTestCase {
 
     private var scheduleConditionsChangedNotifier: TestScheduleConditionsChangedNotifier!
 
+    @MainActor
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
             config:  RuntimeConfig(
                 config: AirshipConfig(),
@@ -65,7 +66,7 @@ final class AutomationEngineTest: XCTestCase {
         )
         
         self.automationStore = AutomationStore(appKey: UUID().uuidString, inMemory: true)
-        self.preparer = await AutomationPreparer(
+        self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,
             deferredResolver: deferredResolver,
@@ -90,10 +91,10 @@ final class AutomationEngineTest: XCTestCase {
         )
 
         let analyticsFeed = AirshipAnalyticsFeed() { true }
-        self.scheduleConditionsChangedNotifier = await TestScheduleConditionsChangedNotifier()
-        let eventFeed = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: AppStateTracker.shared, analyticsFeed: analyticsFeed)
+        self.scheduleConditionsChangedNotifier = TestScheduleConditionsChangedNotifier()
+        eventFeed = AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: AppStateTracker.shared, analyticsFeed: analyticsFeed)
         let analytics = TestAnalytics()
-        let delayProcessor = await AutomationDelayProcessor(analytics: analytics)
+        let delayProcessor = AutomationDelayProcessor(analytics: analytics)
         
         self.engine = AutomationEngine(
             store: self.automationStore,
@@ -106,10 +107,15 @@ final class AutomationEngineTest: XCTestCase {
         )
     }
     
+    override func tearDown() async throws {
+        await self.engine.stop()
+    }
+    
     func testStart() async throws {
         await self.engine.start()
         let startTask = await self.engine.startTask
         let listenTask = await self.engine.listenerTask
+        
         XCTAssertNotNil(startTask)
         XCTAssertNotNil(listenTask)
     }

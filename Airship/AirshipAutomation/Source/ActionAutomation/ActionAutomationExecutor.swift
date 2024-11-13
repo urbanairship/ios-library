@@ -11,9 +11,9 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
     typealias PrepareDataOut = AirshipJSON
     typealias ExecutionData = AirshipJSON
 
-    private let actionRunner: AutomationActionRunnerProtocol
+    private let actionRunner: any AutomationActionRunnerProtocol
 
-    init(actionRunner: AutomationActionRunnerProtocol = AutomationActionRunner()) {
+    init(actionRunner: any AutomationActionRunnerProtocol = AutomationActionRunner()) {
         self.actionRunner = actionRunner
     }
 

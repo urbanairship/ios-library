@@ -16,7 +16,7 @@ public extension InAppMessageTheme {
     }
 
     /// Button in-app message theme
-    struct Button: Equatable {
+    struct Button: Equatable, Sendable {
         /// Button height
         public var height: Double
 

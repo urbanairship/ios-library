@@ -11,19 +11,19 @@ import AirshipCore
 
 @MainActor
 class InAppMessageEnvironment: ObservableObject {
-    private let delegate: InAppMessageViewDelegate
+    private let delegate: any InAppMessageViewDelegate
 
     @Published var imageLoader: AirshipImageLoader?
 #if !os(tvOS)
-    let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
 #endif
-    let actionRunner: InAppActionRunner?
+    let actionRunner: (any InAppActionRunner)?
 
     @Published var isDismissed = false
 
     @MainActor
     init(
-        delegate: InAppMessageViewDelegate,
+        delegate: any InAppMessageViewDelegate,
         extensions: InAppMessageExtensions? = nil
     ) {
         self.delegate = delegate

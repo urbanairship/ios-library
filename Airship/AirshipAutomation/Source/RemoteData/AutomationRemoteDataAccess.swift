@@ -20,14 +20,14 @@ protocol AutomationRemoteDataAccessProtocol: Sendable {
 }
 
 final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
-    private let remoteData: RemoteDataProtocol
-    private let network: AirshipNetworkCheckerProtocol
+    private let remoteData: any RemoteDataProtocol
+    private let network: any AirshipNetworkCheckerProtocol
 
     private static let remoteDataTypes = ["in_app_messages"]
 
     init(
-        remoteData: RemoteDataProtocol,
-        network: AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
+        remoteData: any RemoteDataProtocol,
+        network: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
     ) {
         self.remoteData = remoteData
         self.network = network
@@ -283,7 +283,7 @@ struct InAppRemoteData: Sendable {
 fileprivate enum ScheduleOrError: Decodable {
 
     case succeed(AutomationSchedule)
-    case failed(Error)
+    case failed(any Error)
 
     init(from decoder: any Decoder) throws {
         do {

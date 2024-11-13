@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppFormDisplayEvent: InAppEvent {
     let name = EventType.inAppFormDisplay
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
     init(formInfo: ThomasFormInfo) {
         self.init(

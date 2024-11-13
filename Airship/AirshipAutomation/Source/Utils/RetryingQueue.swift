@@ -19,13 +19,13 @@ actor RetryingQueue<T: Sendable> {
 
     /// Work state that persists across retries
     actor State {
-        private var state: [String: Sendable] = [:]
+        private var state: [String: any Sendable] = [:]
 
         /// Sets the value for a given key
         /// - Parameters:
         ///     - value: The value to set
         ///     - key: The key
-        func setValue(_ value: Sendable?, key: String) {
+        func setValue(_ value: (any Sendable)?, key: String) {
             self.state[key] = value
         }
 
@@ -105,11 +105,11 @@ actor RetryingQueue<T: Sendable> {
     private var operationState: [UInt: OperationState] = [:]
     private var nextID: UInt = 1
 
-    private let taskSleeper: AirshipTaskSleeper
+    private let taskSleeper: any AirshipTaskSleeper
 
     init(
         config: RemoteConfig.RetryingQueueConfig? = nil,
-        taskSleeper: AirshipTaskSleeper = .shared
+        taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.maxConcurrentOperations = config?.maxConcurrentOperations ?? 3
         self.maxPendingResults = config?.maxPendingResults ?? 2
@@ -123,7 +123,7 @@ actor RetryingQueue<T: Sendable> {
         maxPendingResults: UInt = 2,
         initialBackOff: TimeInterval = 15,
         maxBackOff: TimeInterval = 60,
-        taskSleeper: AirshipTaskSleeper = .shared
+        taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.maxConcurrentOperations = max(1,maxConcurrentOperations)
         self.maxPendingResults = max(1, maxPendingResults)
@@ -150,7 +150,7 @@ actor RetryingQueue<T: Sendable> {
 
         while(true) {
             await waitForStart(operationID: operationID)
-            let task: Task<Result, Error> = Task {
+            let task: Task<Result, any Error> = Task {
                 return try await operation(state)
             }
 

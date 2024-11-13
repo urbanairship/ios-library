@@ -31,10 +31,10 @@ struct AdditionalAudienceCheckResult: Codable, Sendable, Equatable {
 
 final class AdditionalAudienceCheckerAPIClient: AdditionalAudienceCheckerAPIClientProtocol {
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
     private let encoder: JSONEncoder
 
-    init(config: RuntimeConfig, session: AirshipRequestSession, encoder: JSONEncoder = JSONEncoder()) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession, encoder: JSONEncoder = JSONEncoder()) {
         self.config = config
         self.session = session
         self.encoder = encoder

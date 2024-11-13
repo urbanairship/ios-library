@@ -11,10 +11,10 @@ final class ThomasPagerTracker {
     private var trackers: [String: Tracker] = [:]
     private var lastPagerInfo: [String: ThomasPagerInfo] = [:]
 
-    private let timerFactory: @MainActor @Sendable () -> ActiveTimerProtocol
+    private let timerFactory: @MainActor @Sendable () -> any ActiveTimerProtocol
 
     init(
-        timerFactory: @escaping @MainActor @Sendable () -> ActiveTimerProtocol = { return ActiveTimer() }
+        timerFactory: @escaping @MainActor @Sendable () -> any ActiveTimerProtocol = { return ActiveTimer() }
     ) {
         self.timerFactory = timerFactory
     }
@@ -62,11 +62,11 @@ final class ThomasPagerTracker {
 
     @MainActor
     fileprivate final class Tracker {
-        private var timer: ActiveTimerProtocol?
+        private var timer: (any ActiveTimerProtocol)?
         private var currentPage: Page?
         var viewed: [PageViewSummary] = []
 
-        func start(_ page: Page, timer: ActiveTimerProtocol) {
+        func start(_ page: Page, timer: any ActiveTimerProtocol) {
             guard currentPage != page else { return }
             stop()
 

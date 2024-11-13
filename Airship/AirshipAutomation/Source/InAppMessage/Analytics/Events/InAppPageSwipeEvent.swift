@@ -10,7 +10,7 @@ import AirshipCore
 
 struct InAppPageSwipeEvent: InAppEvent {
     let name = EventType.inAppPageSwipe
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
     init(from: ThomasPagerInfo, to: ThomasPagerInfo) {
         self.data = PagerSwipeData(

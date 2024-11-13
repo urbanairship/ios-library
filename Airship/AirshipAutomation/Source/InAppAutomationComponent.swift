@@ -22,13 +22,13 @@ final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent
 
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
     ) {
         self.inAppAutomation.receivedRemoteNotification(notification, completionHandler: completionHandler)
     }
 
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
         self.inAppAutomation.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
 #endif

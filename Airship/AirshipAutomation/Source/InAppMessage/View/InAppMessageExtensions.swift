@@ -10,9 +10,9 @@ import AirshipCore
 /// - Note: for internal use only.  :nodoc:
 struct InAppMessageExtensions {
 #if !os(tvOS)
-    let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
 #endif
     
-    let imageProvider: AirshipImageProvider?
-    let actionRunner: InAppActionRunner?
+    let imageProvider: (any AirshipImageProvider)?
+    let actionRunner: (any InAppActionRunner)?
 }

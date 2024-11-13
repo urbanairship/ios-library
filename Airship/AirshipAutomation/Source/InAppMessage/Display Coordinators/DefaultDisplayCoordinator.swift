@@ -18,8 +18,8 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
     }
 
     private var lockState: AirshipMainActorValue<LockState> = AirshipMainActorValue(.unlocked)
-    private let appStateTracker: AppStateTrackerProtocol
-    private let taskSleeper: AirshipTaskSleeper
+    private let appStateTracker: any AppStateTrackerProtocol
+    private let taskSleeper: any AirshipTaskSleeper
     private var unlockTask: Task<Void, Never>?
 
     public var displayInterval: TimeInterval {
@@ -33,8 +33,8 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
 
     init(
         displayInterval: TimeInterval,
-        appStateTracker: AppStateTrackerProtocol? = nil,
-        taskSleeper: AirshipTaskSleeper = .shared
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
+        taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.displayInterval = displayInterval
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared

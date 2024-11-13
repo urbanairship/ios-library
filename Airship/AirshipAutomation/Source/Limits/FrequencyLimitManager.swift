@@ -15,7 +15,7 @@ protocol FrequencyLimitManagerProtocol: Sendable {
     @MainActor
     func getFrequencyChecker(
         constraintIDs: [String]?
-    ) async throws -> FrequencyCheckerProtocol
+    ) async throws -> any FrequencyCheckerProtocol
 
     func setConstraints(_ constraints: [FrequencyConstraint]) async throws
 }
@@ -23,7 +23,7 @@ protocol FrequencyLimitManagerProtocol: Sendable {
 /// Manager for keeping track of frequency limits and occurrence counts.
 final class FrequencyLimitManager: FrequencyLimitManagerProtocol, @unchecked Sendable {
     private let frequencyLimitStore: FrequencyLimitStore
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let storeQueue: AirshipSerialQueue
 
     private let emptyChecker = FrequencyChecker(
@@ -39,7 +39,7 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, @unchecked Sen
 
     init(
         dataStore: FrequencyLimitStore,
-        date: AirshipDateProtocol = AirshipDate(),
+        date: any AirshipDateProtocol = AirshipDate(),
         storeQueue: AirshipSerialQueue = AirshipSerialQueue()
     ) {
         self.frequencyLimitStore = dataStore
@@ -54,7 +54,7 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, @unchecked Sen
     @MainActor
     func getFrequencyChecker(
         constraintIDs: [String]?
-    ) async throws -> FrequencyCheckerProtocol {
+    ) async throws -> any FrequencyCheckerProtocol {
         guard let constraintIDs = constraintIDs, !constraintIDs.isEmpty else {
             return emptyChecker
         }

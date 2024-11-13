@@ -42,7 +42,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     private let coreData: UACoreData?
     private let inMemory: Bool
     private let legacyStore: LegacyAutomationStore
-    private var migrationTask: Task<Void, Error>?
+    private var migrationTask: Task<Void, any Error>?
 
     init(appKey: String, inMemory: Bool = false) {
         let modelURL = AutomationResources.bundle.url(
@@ -234,7 +234,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         predicate: NSPredicate? = nil,
         context: NSManagedObjectContext
     ) throws  {
-        let request: NSFetchRequest<NSFetchRequestResult> = TriggerEntity.fetchRequest()
+        let request: NSFetchRequest<any NSFetchRequestResult> = TriggerEntity.fetchRequest()
         request.predicate = predicate
 
         if self.inMemory {
@@ -264,7 +264,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         predicate: NSPredicate? = nil,
         context: NSManagedObjectContext
     ) throws  {
-        let request = NSFetchRequest<NSFetchRequestResult>(
+        let request = NSFetchRequest<any NSFetchRequestResult>(
             entityName: ScheduleEntity.entityName
         )
         request.predicate = predicate

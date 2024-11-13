@@ -8,26 +8,26 @@ public import AirshipCore
 /// NOTE: For internal use only. :nodoc:
 @objc(UAAutomationSDKModule)
 public class AutomationSDKModule: NSObject, AirshipSDKModule {
-    public let components: [AirshipComponent]
-    public let actionsManifest: ActionsManifest? = AutomationActionManifest()
+    public let components: [any AirshipComponent]
+    public let actionsManifest: (any ActionsManifest)? = AutomationActionManifest()
 
-    init(components: [AirshipComponent]) {
+    init(components: [any AirshipComponent]) {
         self.components = components
     }
 
-    public static func load(dependencies: [String : Any]) -> AirshipSDKModule? {
+    public static func load(dependencies: [String : Any]) -> (any AirshipSDKModule)? {
         // Dependencies
         let dataStore = dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
         let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
-        let remoteData = dependencies[SDKDependencyKeys.remoteData] as! RemoteDataProtocol
-        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! AirshipDeferredResolverProtocol
+        let remoteData = dependencies[SDKDependencyKeys.remoteData] as! (any RemoteDataProtocol)
+        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! (any AirshipDeferredResolverProtocol)
         let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
-        let experiments = dependencies[SDKDependencyKeys.experimentsProvider] as! ExperimentDataProvider
-        let sceneManager = dependencies[SDKDependencyKeys.sceneManager] as! AirshipSceneManagerProtocol
+        let experiments = dependencies[SDKDependencyKeys.experimentsProvider] as! (any ExperimentDataProvider)
+        let sceneManager = dependencies[SDKDependencyKeys.sceneManager] as! (any AirshipSceneManagerProtocol)
         let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
-        let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! InternalAnalyticsProtocol
-        let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! AirshipMeteredUsageProtocol
-        let cache = dependencies[SDKDependencyKeys.cache] as! AirshipCache
+        let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! (any InternalAnalyticsProtocol)
+        let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! (any AirshipMeteredUsageProtocol)
+        let cache = dependencies[SDKDependencyKeys.cache] as! (any AirshipCache)
 
         /// Utils
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)

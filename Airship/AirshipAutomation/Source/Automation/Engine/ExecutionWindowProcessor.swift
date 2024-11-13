@@ -14,15 +14,15 @@ protocol ExecutionWindowProcessorProtocol: Actor {
 }
 
 actor ExecutionWindowProcessor: ExecutionWindowProcessorProtocol {
-    private let taskSleeper: AirshipTaskSleeper
-    private let date: AirshipDateProtocol
+    private let taskSleeper: any AirshipTaskSleeper
+    private let date: any AirshipDateProtocol
     private let onEvaluate: @Sendable (ExecutionWindow, Date) throws -> ExecutionWindowResult
 
-    private var sleepTasks: [String: Task<Void, Error>] = [:]
+    private var sleepTasks: [String: Task<Void, any Error>] = [:]
 
     init(
-        taskSleeper: AirshipTaskSleeper,
-        date: AirshipDateProtocol,
+        taskSleeper: any AirshipTaskSleeper,
+        date: any AirshipDateProtocol,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         onEvaluate: @escaping @Sendable (ExecutionWindow, Date) throws -> ExecutionWindowResult = { window, date in
             try window.nextAvailability(date: date)

@@ -9,7 +9,7 @@ import AirshipCore
 protocol DisplayCoordinatorManagerProtocol: Sendable, AnyObject {
     @MainActor
     var displayInterval: TimeInterval { get set }
-    func displayCoordinator(message: InAppMessage) -> DisplayCoordinator
+    func displayCoordinator(message: InAppMessage) -> any DisplayCoordinator
 }
 
 final class DisplayCoordinatorManager: DisplayCoordinatorManagerProtocol {
@@ -43,7 +43,7 @@ final class DisplayCoordinatorManager: DisplayCoordinatorManagerProtocol {
         )
     }
 
-    func displayCoordinator(message: InAppMessage) -> DisplayCoordinator {
+    func displayCoordinator(message: InAppMessage) -> any DisplayCoordinator {
         guard !message.isEmbedded else {
             return immediateCoordinator
         }

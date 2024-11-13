@@ -16,7 +16,7 @@ enum InAppEventMessageID: Encodable, Equatable {
         case campaigns
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         switch self {
         case .legacy(identifier: let identifier):
             var container = encoder.singleValueContainer()

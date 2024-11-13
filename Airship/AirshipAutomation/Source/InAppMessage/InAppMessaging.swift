@@ -19,11 +19,11 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
 
     /// Display delegate
     @MainActor
-    var displayDelegate: InAppMessageDisplayDelegate? { get set }
+    var displayDelegate: (any InAppMessageDisplayDelegate)? { get set }
 
     /// Scene delegate
     @MainActor
-    var sceneDelegate: InAppMessageSceneDelegate? { get set }
+    var sceneDelegate: (any InAppMessageSceneDelegate)? { get set }
 
     /// Sets a factory block for a custom display adapter.
     /// If the factory block returns a nil adapter, the default adapter will be used.
@@ -35,7 +35,7 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
     @available(*, deprecated, message: "Use setCustomAdapter(forType:factoryBlock:) instead")
     func setAdapterFactoryBlock(
         forType: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+        factoryBlock: @escaping @Sendable (InAppMessage, any AirshipCachedAssetsProtocol) -> (any CustomDisplayAdapter)?
     )
 
     /// Sets a factory block for a custom display adapter.
@@ -47,7 +47,7 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
     @MainActor
     func setCustomAdapter(
         forType: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?
     )
 
     /// Notifies In-App messages that the display conditions should be reevaluated.
@@ -74,7 +74,7 @@ final class InAppMessaging: InAppMessagingProtocol {
     }
 
     @MainActor
-    weak var displayDelegate: InAppMessageDisplayDelegate? {
+    weak var displayDelegate: (any InAppMessageDisplayDelegate)? {
         get {
             return executor.displayDelegate
         }
@@ -84,7 +84,7 @@ final class InAppMessaging: InAppMessagingProtocol {
     }
 
     @MainActor
-    weak var sceneDelegate: InAppMessageSceneDelegate? {
+    weak var sceneDelegate: (any InAppMessageSceneDelegate)? {
         get {
             return executor.sceneDelegate
         }
@@ -97,7 +97,7 @@ final class InAppMessaging: InAppMessagingProtocol {
     @MainActor
     func setAdapterFactoryBlock(
         forType type: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (InAppMessage, AirshipCachedAssetsProtocol) -> CustomDisplayAdapter?
+        factoryBlock: @escaping @Sendable (InAppMessage, any AirshipCachedAssetsProtocol) -> (any CustomDisplayAdapter)?
     ) {
         self.setCustomAdapter(forType: type) { args in
             factoryBlock(args.message, args.assets)
@@ -107,11 +107,12 @@ final class InAppMessaging: InAppMessagingProtocol {
     @MainActor
     func setCustomAdapter(
         forType type: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?
     ) {
         self.preparer.setAdapterFactoryBlock(forType: type, factoryBlock: factoryBlock)
     }
 
+    @MainActor
     init(
         executor: InAppMessageAutomationExecutor,
         preparer: InAppMessageAutomationPreparer

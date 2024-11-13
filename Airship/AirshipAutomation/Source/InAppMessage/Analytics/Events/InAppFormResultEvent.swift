@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppFormResultEvent: InAppEvent {
     let name = EventType.inAppFormResult
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
     init(forms: AirshipJSON) {
         self.data = FormResultData(forms: forms)

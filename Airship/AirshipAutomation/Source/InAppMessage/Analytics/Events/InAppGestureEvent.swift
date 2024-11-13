@@ -8,7 +8,7 @@ import AirshipCore
 
 struct InAppGestureEvent: InAppEvent {
     let name = EventType.inAppGesture
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
 
     init(identifier: String, reportingMetadata: AirshipJSON?) {

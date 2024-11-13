@@ -14,7 +14,7 @@ final class PreparedTrigger {
         var priority: Int
     }
 
-    let date: AirshipDateProtocol
+    let date: any AirshipDateProtocol
     let scheduleID: String
     let executionType: TriggerExecutionType
 
@@ -33,7 +33,7 @@ final class PreparedTrigger {
         endDate: Date?,
         triggerData: TriggerData?,
         priority: Int,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.scheduleID = scheduleID
         self.executionType = type

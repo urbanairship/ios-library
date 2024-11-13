@@ -6,17 +6,17 @@ import AirshipCore
 
 @MainActor
 final class ThomasDisplayListener: ThomasDelegate {
-    private let analytics: InAppMessageAnalyticsProtocol
+    private let analytics: any InAppMessageAnalyticsProtocol
     
-    private let timer: ActiveTimerProtocol
+    private let timer: any ActiveTimerProtocol
     private let tracker: ThomasPagerTracker
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
     private var completedPagers: Set<String> = Set()
 
     init(
-        analytics: InAppMessageAnalyticsProtocol,
+        analytics: any InAppMessageAnalyticsProtocol,
         tracker: ThomasPagerTracker? = nil,
-        timer: ActiveTimerProtocol? = nil,
+        timer: (any ActiveTimerProtocol)? = nil,
         onDismiss: @escaping @MainActor @Sendable (DisplayResult) -> Void
     ) {
         self.analytics = analytics

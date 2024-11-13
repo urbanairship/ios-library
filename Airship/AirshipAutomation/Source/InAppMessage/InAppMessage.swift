@@ -110,7 +110,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
 
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         let name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
@@ -158,7 +158,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         )
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.name, forKey: .name)
         try container.encodeIfPresent(self.source, forKey: .source)

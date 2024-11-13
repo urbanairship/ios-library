@@ -30,7 +30,7 @@ protocol AssetCacheManagerProtocol: Actor {
     func cacheAssets(
         identifier: String,
         assets: [String]
-    ) async throws -> AirshipCachedAssetsProtocol
+    ) async throws -> any AirshipCachedAssetsProtocol
 
     func clearCache(identifier: String) async
 }
@@ -38,16 +38,16 @@ protocol AssetCacheManagerProtocol: Actor {
 
 /// Downloads and caches asset files in filesystem using cancelable thread-safe tasks.
 actor AssetCacheManager: AssetCacheManagerProtocol {
-    private let assetDownloader: AssetDownloader
-    private let assetFileManager: AssetFileManager
+    private let assetDownloader: any AssetDownloader
+    private let assetFileManager: any AssetFileManager
 
     private var cacheRoot: URL?
 
-    private var taskMap: [String: Task<AirshipCachedAssets, Error>] = [:]
+    private var taskMap: [String: Task<AirshipCachedAssets, any Error>] = [:]
 
     internal init(
-        assetDownloader: AssetDownloader = DefaultAssetDownloader(),
-        assetFileManager: AssetFileManager = DefaultAssetFileManager()
+        assetDownloader: any AssetDownloader = DefaultAssetDownloader(),
+        assetFileManager: any AssetFileManager = DefaultAssetFileManager()
     ) {
         self.assetDownloader = assetDownloader
         self.assetFileManager = assetFileManager
@@ -66,13 +66,13 @@ actor AssetCacheManager: AssetCacheManagerProtocol {
     func cacheAssets(
         identifier: String,
         assets: [String]
-    ) async throws -> AirshipCachedAssetsProtocol {
+    ) async throws -> any AirshipCachedAssetsProtocol {
         
         if let running = taskMap[identifier] {
             return try await running.result.get()
         }
         
-        let task: Task<AirshipCachedAssets, Error> = Task {
+        let task: Task<AirshipCachedAssets, any Error> = Task {
             let assetURLs = assets.compactMap({ URL(string:$0) })
 
             /// Create or get the directory for the assets corresponding to a specific identifier

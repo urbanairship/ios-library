@@ -10,7 +10,7 @@ import AirshipCore
 public extension InAppMessageTheme {
 
     /// Modal in-app message theme
-    struct Modal: Equatable {
+    struct Modal: Equatable, Sendable {
 
         /// Max width
         public var maxWidth: CGFloat

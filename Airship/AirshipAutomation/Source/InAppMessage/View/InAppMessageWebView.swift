@@ -51,7 +51,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
     let url: String
-    let nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
     @Binding var isWebViewLoading: Bool
 
     let accessibilityLabel: String?
@@ -102,7 +102,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         private let challengeResolver: ChallengeResolver
         let nativeBridge: NativeBridge
 
-        init(_ parent: WKWebViewRepresentable, actionRunner: NativeBridgeActionRunner, resolver: ChallengeResolver = .shared) {
+        init(_ parent: WKWebViewRepresentable, actionRunner: any NativeBridgeActionRunner, resolver: ChallengeResolver = .shared) {
             self.parent = parent
             self.nativeBridge = NativeBridge(actionRunner: actionRunner)
             self.challengeResolver = resolver
@@ -133,7 +133,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         func webView(
             _ webView: WKWebView,
             didFail navigation: WKNavigation!,
-            withError error: Error
+            withError error: any Error
         ) {
             parent.updateLoading(true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
@@ -154,7 +154,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
             return false
         }
 
-        func close() {
+        nonisolated func close() {
             DispatchQueue.main.async {
                 self.parent.onDismiss()
             }

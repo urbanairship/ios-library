@@ -122,7 +122,7 @@ public final class LandingPageAction: AirshipAction {
             case aspectLockLegacy = "aspectLock"
         }
 
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             do {
                 let container: KeyedDecodingContainer<Self.CodingKeys> = try decoder.container(keyedBy: Self.CodingKeys.self)
                 self.url = try Self.parseURL(

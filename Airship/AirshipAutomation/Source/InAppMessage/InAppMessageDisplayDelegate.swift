@@ -3,7 +3,7 @@
 import Foundation
 
 /// Message display delegate
-public protocol InAppMessageDisplayDelegate: AnyObject {
+public protocol InAppMessageDisplayDelegate: AnyObject, Sendable{
 
     /// Called to check if the message is ready to be displayed. This method will be called for
     /// every message that is pending display whenever a display condition changes. Use `notifyDisplayConditionsChanged`

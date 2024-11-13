@@ -20,22 +20,22 @@ protocol AutomationDelayProcessorProtocol: Sendable {
 }
 
 final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
-    private let analytics: InternalAnalyticsProtocol
-    private let appStateTracker: AppStateTrackerProtocol
-    private let taskSleeper: AirshipTaskSleeper
-    private let date: AirshipDateProtocol
+    private let analytics: any InternalAnalyticsProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
+    private let taskSleeper: any AirshipTaskSleeper
+    private let date: any AirshipDateProtocol
     private let screen: AirshipMainActorValue<String?> = AirshipMainActorValue(nil)
-    private let executionWindowProcessor: ExecutionWindowProcessorProtocol
+    private let executionWindowProcessor: any ExecutionWindowProcessorProtocol
 
     private static let preprocessSecondsDelayAllowance: TimeInterval = 30.0
 
     @MainActor
     init(
-        analytics: InternalAnalyticsProtocol,
-        appStateTracker: AppStateTrackerProtocol? = nil,
-        taskSleeper: AirshipTaskSleeper = .shared,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        executionWindowProcessor: ExecutionWindowProcessorProtocol? = nil
+        analytics: any InternalAnalyticsProtocol,
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
+        taskSleeper: any AirshipTaskSleeper = .shared,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        executionWindowProcessor: (any ExecutionWindowProcessorProtocol)? = nil
     ) {
         self.analytics = analytics
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared

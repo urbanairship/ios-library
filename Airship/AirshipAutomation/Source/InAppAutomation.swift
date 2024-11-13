@@ -12,19 +12,19 @@ import AirshipCore
  */
 public final class InAppAutomation: Sendable {
 
-    private let engine: AutomationEngineProtocol
-    private let remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol
+    private let engine: any AutomationEngineProtocol
+    private let remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
     private let notificationCenter: AirshipNotificationCenter
     private static let pausedStoreKey: String = "UAInAppMessageManagerPaused"
-    private let _legacyInAppMessaging: InternalLegacyInAppMessagingProtocol
+    private let _legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol
 
     /// In-App Messaging
-    public let inAppMessaging: InAppMessagingProtocol
+    public let inAppMessaging: any InAppMessagingProtocol
 
     /// Legacy In-App Messaging
-    public var legacyInAppMessaging: LegacyInAppMessagingProtocol {
+    public var legacyInAppMessaging: any LegacyInAppMessagingProtocol {
         return _legacyInAppMessaging
     }
 
@@ -35,10 +35,10 @@ public final class InAppAutomation: Sendable {
 
     @MainActor
     init(
-        engine: AutomationEngineProtocol,
-        inAppMessaging: InAppMessagingProtocol,
-        legacyInAppMessaging: InternalLegacyInAppMessagingProtocol,
-        remoteDataSubscriber: AutomationRemoteDataSubscriberProtocol,
+        engine: any AutomationEngineProtocol,
+        inAppMessaging: any InAppMessagingProtocol,
+        legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol,
+        remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
         config: RuntimeConfig,
@@ -140,13 +140,13 @@ extension InAppAutomation {
 
     func receivedRemoteNotification(
         _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
     ) {
         self._legacyInAppMessaging.receivedRemoteNotification(notification, completionHandler: completionHandler)
     }
 
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
         self._legacyInAppMessaging.receivedNotificationResponse(response, completionHandler: completionHandler)
     }
 #endif

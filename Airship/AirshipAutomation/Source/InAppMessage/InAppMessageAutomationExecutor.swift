@@ -10,15 +10,15 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     typealias ExecutionData = PreparedInAppMessageData
 
     private let delegates: Delegates = Delegates()
-    private let sceneManager: InAppMessageSceneManagerProtocol
-    private let assetManager: AssetCacheManagerProtocol
-    private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
+    private let sceneManager: any InAppMessageSceneManagerProtocol
+    private let assetManager: any AssetCacheManagerProtocol
+    private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
 
     init(
-        sceneManager: InAppMessageSceneManagerProtocol,
-        assetManager: AssetCacheManagerProtocol,
-        analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
+        sceneManager: any InAppMessageSceneManagerProtocol,
+        assetManager: any AssetCacheManagerProtocol,
+        analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
         scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
     ) {
         self.sceneManager = sceneManager
@@ -28,7 +28,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     }
 
     @MainActor
-    weak var displayDelegate: InAppMessageDisplayDelegate? {
+    weak var displayDelegate: (any InAppMessageDisplayDelegate)? {
         get {
             return delegates.displayDelegate
         }
@@ -38,7 +38,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     }
 
     @MainActor
-    weak var sceneDelegate: InAppMessageSceneDelegate? {
+    weak var sceneDelegate: (any InAppMessageSceneDelegate)? {
         get {
             return sceneManager.delegate
         }
@@ -183,7 +183,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     /// Delegates holder so I can keep the executor sendable
     private final class Delegates: @unchecked Sendable {
         @MainActor
-        weak var displayDelegate: InAppMessageDisplayDelegate?
+        weak var displayDelegate: (any InAppMessageDisplayDelegate)?
 
     }
 }

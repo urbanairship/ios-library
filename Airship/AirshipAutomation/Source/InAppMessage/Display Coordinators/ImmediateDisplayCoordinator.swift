@@ -11,10 +11,10 @@ import AirshipCore
 @MainActor
 final class ImmediateDisplayCoordinator: DisplayCoordinator {
 
-    private let appStateTracker: AppStateTrackerProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
 
     init(
-        appStateTracker: AppStateTrackerProtocol? = nil
+        appStateTracker: (any AppStateTrackerProtocol)? = nil
     ) {
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
     }

@@ -10,7 +10,7 @@ import AirshipCore
 public extension InAppMessageTheme {
 
     /// Fullscreen in-app message theme
-    struct Fullscreen: Equatable {
+    struct Fullscreen: Equatable, Sendable {
 
         /// Padding
         public var padding: EdgeInsets

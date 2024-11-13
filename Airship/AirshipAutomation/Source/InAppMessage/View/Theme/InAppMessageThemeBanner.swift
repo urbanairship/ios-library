@@ -11,7 +11,7 @@ public extension InAppMessageTheme {
 
 
     /// Banner in-app message theme
-    struct Banner: Equatable {
+    struct Banner: Equatable, Sendable {
 
         /// Max width
         public var maxWidth: CGFloat

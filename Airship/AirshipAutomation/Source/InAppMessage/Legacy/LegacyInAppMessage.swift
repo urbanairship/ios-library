@@ -152,7 +152,7 @@ public struct LegacyInAppMessage: Sendable, Equatable {
         payload: [String: Any],
         overrideId: String? = nil,
         overrideOnClick: AirshipJSON? = nil,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         guard
             let identifier = overrideId ?? (payload[ParseKey.identifier.rawValue] as? String),

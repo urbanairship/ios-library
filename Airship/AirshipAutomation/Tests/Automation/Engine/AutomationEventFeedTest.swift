@@ -21,7 +21,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         subject = await AutomationEventFeed(applicationMetrics: metrics, applicationStateTracker: stateTracker, analyticsFeed: analyticsFeed)
 
-        iterator = await subject.feed.makeAsyncIterator()
+        iterator = subject.feed.makeAsyncIterator()
     }
     
     func testFirstAttachProducesInitAndVersionUpdated() async throws {
@@ -186,7 +186,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         let collectTask = Task {
             var result: [AutomationEvent] = []
-            var iterator = await self.subject.feed.makeAsyncIterator()
+            var iterator = self.subject.feed.makeAsyncIterator()
             while result.count < count, !Task.isCancelled {
                 if let next = await iterator.next() {
                     result.append(next)

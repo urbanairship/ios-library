@@ -220,7 +220,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.additionalAudienceCheckOverrides = additionalAudienceCheckOverrides
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.identifier = try container.decode(String.self, forKey: .identifier)
@@ -275,7 +275,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         }
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.identifier, forKey: .identifier)
         try container.encode(self.triggers, forKey: .triggers)

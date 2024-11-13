@@ -21,13 +21,13 @@ final class TestCachedAssets: AirshipCachedAssetsProtocol, @unchecked Sendable {
 
 final actor TestAssetManager: AssetCacheManagerProtocol {
     var cleared: [String] = []
-    var onCache: (@Sendable (String, [String]) async throws -> AirshipCachedAssetsProtocol)?
+    var onCache: (@Sendable (String, [String]) async throws -> any AirshipCachedAssetsProtocol)?
 
-    func setOnCache(_ onCache: @escaping @Sendable (String, [String]) async throws -> AirshipCachedAssetsProtocol) {
+    func setOnCache(_ onCache: @escaping @Sendable (String, [String]) async throws -> any AirshipCachedAssetsProtocol) {
         self.onCache = onCache
     }
 
-    func cacheAssets(identifier: String, assets: [String]) async throws -> AirshipCachedAssetsProtocol {
+    func cacheAssets(identifier: String, assets: [String]) async throws -> any AirshipCachedAssetsProtocol {
         try await self.onCache!(identifier, assets)
     }
     

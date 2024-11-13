@@ -32,33 +32,33 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private let actionPreparer: any AutomationPreparerDelegate<AirshipJSON, AirshipJSON>
     private let messagePreparer: any AutomationPreparerDelegate<InAppMessage, PreparedInAppMessageData>
 
-    private let deferredResolver: AirshipDeferredResolverProtocol
-    private let frequencyLimits: FrequencyLimitManagerProtocol
-    private let audienceChecker: DeviceAudienceChecker
-    private let experiments: ExperimentDataProvider
-    private let remoteDataAccess: AutomationRemoteDataAccessProtocol
+    private let deferredResolver: any AirshipDeferredResolverProtocol
+    private let frequencyLimits: any FrequencyLimitManagerProtocol
+    private let audienceChecker: any DeviceAudienceChecker
+    private let experiments: any ExperimentDataProvider
+    private let remoteDataAccess: any AutomationRemoteDataAccessProtocol
     private let queues: Queues
     private let config: RuntimeConfig
-    private let additionalAudienceResolver: AdditionalAudienceCheckerResolverProtocol
+    private let additionalAudienceResolver: any AdditionalAudienceCheckerResolverProtocol
 
     private static let deferredResultKey: String = "AirshipAutomation#deferredResult"
     private static let defaultMessageType: String = "transactional"
-    private let deviceInfoProviderFactory: @Sendable (String?) -> AudienceDeviceInfoProvider
+    private let deviceInfoProviderFactory: @Sendable (String?) -> any AudienceDeviceInfoProvider
 
     @MainActor
     init(
         actionPreparer: any AutomationPreparerDelegate<AirshipJSON, AirshipJSON>,
         messagePreparer: any AutomationPreparerDelegate<InAppMessage, PreparedInAppMessageData>,
-        deferredResolver: AirshipDeferredResolverProtocol,
-        frequencyLimits: FrequencyLimitManagerProtocol,
-        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
-        experiments: ExperimentDataProvider,
-        remoteDataAccess: AutomationRemoteDataAccessProtocol,
+        deferredResolver: any AirshipDeferredResolverProtocol,
+        frequencyLimits: any FrequencyLimitManagerProtocol,
+        audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        experiments: any ExperimentDataProvider,
+        remoteDataAccess: any AutomationRemoteDataAccessProtocol,
         config: RuntimeConfig,
-        deviceInfoProviderFactory: @escaping @Sendable (String?) -> AudienceDeviceInfoProvider = { contactID in
+        deviceInfoProviderFactory: @escaping @Sendable (String?) -> any AudienceDeviceInfoProvider = { contactID in
             CachingAudienceDeviceInfoProvider(contactID: contactID)
         },
-        additionalAudienceResolver: AdditionalAudienceCheckerResolverProtocol
+        additionalAudienceResolver: any AdditionalAudienceCheckerResolverProtocol
     ) {
         self.actionPreparer = actionPreparer
         self.messagePreparer = messagePreparer
@@ -103,7 +103,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .invalidate)
             }
 
-            var frequencyChecker: FrequencyCheckerProtocol!
+            var frequencyChecker: (any FrequencyCheckerProtocol)!
             do {
                 frequencyChecker = try await self.frequencyLimits.getFrequencyChecker(
                     constraintIDs: schedule.frequencyConstraintIDs

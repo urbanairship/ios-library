@@ -10,7 +10,7 @@ import AirshipCore
 
 /// Theme manager for in-app messages.
 @MainActor
-public final class InAppAutomationThemeManager {
+public final class InAppAutomationThemeManager: Sendable {
 
     /// Sets the html theme extender block
     public var htmlThemeExtender: (@MainActor (InAppMessage, inout InAppMessageTheme.HTML) -> Void)?

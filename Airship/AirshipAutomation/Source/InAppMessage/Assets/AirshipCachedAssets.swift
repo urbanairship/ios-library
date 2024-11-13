@@ -39,9 +39,9 @@ struct AirshipCachedAssets: AirshipCachedAssetsProtocol, Equatable {
 
     private let directory: URL
 
-    private let assetFileManager: AssetFileManager
+    private let assetFileManager: any AssetFileManager
 
-    internal init(directory: URL, assetFileManager: AssetFileManager = DefaultAssetFileManager()) {
+    internal init(directory: URL, assetFileManager: any AssetFileManager = DefaultAssetFileManager()) {
         self.directory = directory
         self.assetFileManager = assetFileManager
     }

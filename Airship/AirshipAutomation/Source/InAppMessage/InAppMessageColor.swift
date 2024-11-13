@@ -22,12 +22,12 @@ public struct InAppMessageColor: Codable, Sendable, Equatable {
         self.color = Color(AirshipColorUtils.color(hexColorString) ?? .clear)
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let hexColorString = try decoder.singleValueContainer().decode(String.self)
         self.init(hexColorString: hexColorString)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(self.hexColorString)
     }

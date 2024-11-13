@@ -8,7 +8,7 @@ public import AirshipCore
 #endif
 
 /// Airship native bridge extension for an InAppMessage
-public class InAppMessageNativeBridgeExtension: NativeBridgeExtensionDelegate {
+public final class InAppMessageNativeBridgeExtension: NativeBridgeExtensionDelegate, Sendable {
 
     private let message: InAppMessage
 
@@ -26,7 +26,7 @@ public class InAppMessageNativeBridgeExtension: NativeBridgeExtensionDelegate {
     }
 
     public func extendJavaScriptEnvironment(
-        _ js: JavaScriptEnvironmentProtocol,
+        _ js: any JavaScriptEnvironmentProtocol,
         webView: WKWebView
     ) async {
         let extras = message.extras?.unWrap() as? [String : AnyHashable]

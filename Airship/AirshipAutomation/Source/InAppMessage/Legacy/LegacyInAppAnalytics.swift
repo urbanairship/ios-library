@@ -13,7 +13,7 @@ protocol LegacyInAppAnalyticsProtocol: Sendable {
 }
 
 struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
-    let recorder: InAppEventRecorderProtocol
+    let recorder: any InAppEventRecorderProtocol
 
     func recordReplacedEvent(scheduleID: String, replacementID: String) {
         recorder.recordEvent(
@@ -43,9 +43,9 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
 struct LegacyResolutionEvent : InAppEvent {
     let name = EventType.inAppResolution
 
-    let data: (Encodable & Sendable)?
+    let data: (any Encodable & Sendable)?
 
-    private init(data: (Encodable & Sendable)?) {
+    private init(data: (any Encodable & Sendable)?) {
         self.data = data
     }
 

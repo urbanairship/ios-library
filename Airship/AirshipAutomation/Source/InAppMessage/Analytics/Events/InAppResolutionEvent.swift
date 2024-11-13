@@ -9,9 +9,9 @@ import AirshipCore
 struct InAppResolutionEvent: InAppEvent {
 
     let name = EventType.inAppResolution
-    let data: (Sendable&Encodable)?
+    let data: (any Sendable & Encodable)?
 
-    private init(data: Sendable&Encodable) {
+    private init(data: any Sendable & Encodable) {
         self.data = data
     }
 
@@ -130,7 +130,7 @@ struct InAppResolutionEvent: InAppEvent {
             case device = "device"
         }
 
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: ContainerCodingKeys.self)
             var resolution = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .resolution)
 

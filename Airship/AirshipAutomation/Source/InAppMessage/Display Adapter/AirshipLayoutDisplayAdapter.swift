@@ -11,9 +11,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     private let message: InAppMessage
     private let priority: Int
-    private let assets: AirshipCachedAssetsProtocol
-    private let actionRunner: InternalInAppActionRunner?
-    private let networkChecker: AirshipNetworkCheckerProtocol
+    private let assets: any AirshipCachedAssetsProtocol
+    private let actionRunner: (any InternalInAppActionRunner)?
+    private let networkChecker: any AirshipNetworkCheckerProtocol
 
     @MainActor
     var themeManager: InAppAutomationThemeManager {
@@ -23,9 +23,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     init(
         message: InAppMessage,
         priority: Int,
-        assets: AirshipCachedAssetsProtocol,
-        actionRunner: InternalInAppActionRunner? = nil,
-        networkChecker: AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
+        assets: any AirshipCachedAssetsProtocol,
+        actionRunner: (any InternalInAppActionRunner)? = nil,
+        networkChecker: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
     ) throws {
         self.message = message
         self.priority = priority
@@ -79,8 +79,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     }
 
     func display(
-        scene: WindowSceneHolder,
-        analytics: InAppMessageAnalyticsProtocol
+        scene: any WindowSceneHolder,
+        analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         switch (message.displayContent) {
         case .banner(let banner):
@@ -119,6 +119,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         }
     }
 
+    @MainActor
     private class func windowSize(_ window: UIWindow) -> CGSize {
 #if os(iOS) || os(tvOS)
         return window.screen.bounds.size
@@ -158,7 +159,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private func displayBanner(
         _ banner: InAppMessageDisplayContent.Banner,
         scene: UIWindowScene,
-        analytics: InAppMessageAnalyticsProtocol
+        analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
 
@@ -226,7 +227,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private func displayModal(
         _ modal: InAppMessageDisplayContent.Modal,
         scene: UIWindowScene,
-        analytics: InAppMessageAnalyticsProtocol
+        analytics: any InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
             let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
@@ -261,7 +262,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private func displayFullscreen(
         _ fullscreen: InAppMessageDisplayContent.Fullscreen,
         scene: UIWindowScene,
-        analytics: InAppMessageAnalyticsProtocol
+        analytics: any InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
         return await withCheckedContinuation { continuation in
             let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
@@ -296,7 +297,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private func displayHTML(
         _ html: InAppMessageDisplayContent.HTML,
         scene: UIWindowScene,
-        analytics: InAppMessageAnalyticsProtocol
+        analytics: any InAppMessageAnalyticsProtocol
     ) async -> DisplayResult {
 #if !os(tvOS)
         return await withCheckedContinuation { continuation in
@@ -335,7 +336,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private func displayThomasLayout(
         _ layout: AirshipLayout,
         scene: UIWindowScene,
-        analytics: InAppMessageAnalyticsProtocol
+        analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
             let listener = ThomasDisplayListener(analytics: analytics) { result in
@@ -374,8 +375,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 }
 
 fileprivate class AssetCacheImageProvider : AirshipImageProvider {
-    let assets: AirshipCachedAssetsProtocol
-    init(assets: AirshipCachedAssetsProtocol) {
+    let assets: any AirshipCachedAssetsProtocol
+    init(assets: any AirshipCachedAssetsProtocol) {
         self.assets = assets
     }
     

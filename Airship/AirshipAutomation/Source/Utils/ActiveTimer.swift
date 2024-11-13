@@ -22,9 +22,9 @@ final class ManualActiveTimer: ActiveTimerProtocol {
     private var isStarted: Bool = false
     private var elapsedTime: TimeInterval = 0
     private var startDate: Date? = nil
-    private let dateFetcher: AirshipDateProtocol
+    private let dateFetcher: any AirshipDateProtocol
 
-    init(date: AirshipDateProtocol = AirshipDate.shared) {
+    init(date: any AirshipDateProtocol = AirshipDate.shared) {
         self.dateFetcher = date
     }
 
@@ -62,12 +62,12 @@ final class ActiveTimer: ActiveTimerProtocol {
     private var elapsedTime: TimeInterval = 0
     private var startDate: Date? = nil
     private let notificationCenter: AirshipNotificationCenter
-    private let dateFetcher: AirshipDateProtocol
+    private let dateFetcher: any AirshipDateProtocol
     
     init(
-        appStateTracker: AppStateTrackerProtocol? = nil,
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) { 
         
         self.notificationCenter = notificationCenter

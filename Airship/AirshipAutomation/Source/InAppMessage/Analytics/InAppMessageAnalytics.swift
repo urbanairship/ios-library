@@ -14,7 +14,7 @@ struct InAppCustomEventContext: Sendable, Encodable, Equatable {
 protocol InAppMessageAnalyticsProtocol: AnyObject, Sendable {
     @MainActor
     func recordEvent(
-        _ event: InAppEvent,
+        _ event: any InAppEvent,
         layoutContext: ThomasLayoutContext?
     )
 
@@ -27,7 +27,7 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         return nil
     }
     
-    func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
+    func recordEvent(_ event: any InAppEvent, layoutContext: ThomasLayoutContext?) {
         if let layoutContext = layoutContext {
             print("Event added: \(event) context: \(layoutContext)")
         } else {
@@ -41,11 +41,11 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let messageID: InAppEventMessageID
     private let source: InAppEventSource
     private let renderedLocale: AirshipJSON?
-    private let eventRecorder: InAppEventRecorderProtocol
+    private let eventRecorder: any InAppEventRecorderProtocol
     private let isReportingEnabled: Bool
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
 
-    private let historyStore: MessageDisplayHistoryStoreProtocol
+    private let historyStore: any MessageDisplayHistoryStoreProtocol
     private let displayImpressionRule: InAppDisplayImpressionRule
 
     private let displayHistory: AirshipMainActorValue<MessageDisplayHistory>
@@ -55,10 +55,10 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         preparedScheduleInfo: PreparedScheduleInfo,
         message: InAppMessage,
         displayImpressionRule: InAppDisplayImpressionRule,
-        eventRecorder: InAppEventRecorderProtocol,
-        historyStore: MessageDisplayHistoryStoreProtocol,
+        eventRecorder: any InAppEventRecorderProtocol,
+        historyStore: any MessageDisplayHistoryStoreProtocol,
         displayHistory: MessageDisplayHistory,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.preparedScheduleInfo = preparedScheduleInfo
         self.messageID = Self.makeMessageID(
@@ -99,7 +99,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     }
 
     func recordEvent(
-        _ event: InAppEvent,
+        _ event: any InAppEvent,
         layoutContext: ThomasLayoutContext?
     ) {
         let now = self.date.now

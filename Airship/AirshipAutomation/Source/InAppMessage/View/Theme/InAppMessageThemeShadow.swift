@@ -12,7 +12,7 @@ import AirshipCore
 public extension InAppMessageTheme {
 
     /// Shadow  in-app message theme
-    struct Shadow: Equatable {
+    struct Shadow: Equatable, Sendable {
 
         /// Shadow radius
         public var radius: CGFloat

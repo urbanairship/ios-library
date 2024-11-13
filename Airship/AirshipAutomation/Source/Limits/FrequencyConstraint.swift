@@ -54,7 +54,7 @@ struct FrequencyConstraint: Equatable, Hashable, Sendable, Decodable {
         self.count = count
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let identifier = try container.decode(String.self, forKey: .identifier)
         let periodRange = try container.decode(Double.self, forKey: .range)

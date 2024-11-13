@@ -12,7 +12,7 @@ private let buttonDefaultBorderWidth: CGFloat = 2
 
 struct ViewHeightKey: PreferenceKey {
     typealias Value = CGFloat
-    static var defaultValue = CGFloat.zero
+    static let defaultValue = CGFloat.zero
     static func reduce(value: inout Value, nextValue: () -> Value) {
         value += nextValue()
     }

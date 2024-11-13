@@ -9,21 +9,21 @@ import AirshipCore
 /// Any data needed by in-app message to handle displaying the message
 struct PreparedInAppMessageData: Sendable {
     var message: InAppMessage
-    var displayAdapter: DisplayAdapter
-    var displayCoordinator: DisplayCoordinator
-    var analytics: InAppMessageAnalyticsProtocol
-    var actionRunner: InAppActionRunner & ThomasActionRunner
+    var displayAdapter: any DisplayAdapter
+    var displayCoordinator: any DisplayCoordinator
+    var analytics: any InAppMessageAnalyticsProtocol
+    var actionRunner: any InAppActionRunner & ThomasActionRunner
 }
 
 final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     typealias PrepareDataIn = InAppMessage
     typealias PrepareDataOut = PreparedInAppMessageData
 
-    private let displayCoordinatorManager: DisplayCoordinatorManagerProtocol
-    private let displayAdapterFactory: DisplayAdapterFactoryProtocol
-    private let assetManager: AssetCacheManagerProtocol
-    private let analyticsFactory: InAppMessageAnalyticsFactoryProtocol
-    private let actionRunnerFactory: InAppActionRunnerFactoryProtocol
+    private let displayCoordinatorManager: any DisplayCoordinatorManagerProtocol
+    private let displayAdapterFactory: any DisplayAdapterFactoryProtocol
+    private let assetManager: any AssetCacheManagerProtocol
+    private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
+    private let actionRunnerFactory: any InAppActionRunnerFactoryProtocol
 
     @MainActor
     public var displayInterval: TimeInterval {
@@ -36,11 +36,11 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     }
 
     init(
-        assetManager: AssetCacheManagerProtocol,
-        displayCoordinatorManager: DisplayCoordinatorManagerProtocol,
-        displayAdapterFactory: DisplayAdapterFactoryProtocol = DisplayAdapterFactory(),
-        analyticsFactory: InAppMessageAnalyticsFactoryProtocol,
-        actionRunnerFactory: InAppActionRunnerFactoryProtocol = InAppActionRunnerFactory()
+        assetManager: any AssetCacheManagerProtocol,
+        displayCoordinatorManager: any DisplayCoordinatorManagerProtocol,
+        displayAdapterFactory: any DisplayAdapterFactoryProtocol = DisplayAdapterFactory(),
+        analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
+        actionRunnerFactory: any InAppActionRunnerFactoryProtocol = InAppActionRunnerFactory()
     ) {
         self.assetManager = assetManager
         self.displayCoordinatorManager = displayCoordinatorManager
@@ -91,7 +91,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         await self.assetManager.clearCache(identifier: scheduleID)
     }
 
-    private func prepareAssets(message: InAppMessage, scheduleID: String, skip: Bool) async throws -> AirshipCachedAssetsProtocol {
+    private func prepareAssets(message: InAppMessage, scheduleID: String, skip: Bool) async throws -> any AirshipCachedAssetsProtocol {
         // - prepare assets
         let imageURLs: [String] = if skip {
             []
@@ -116,7 +116,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     @MainActor
     func setAdapterFactoryBlock(
         forType type: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> CustomDisplayAdapter?
+        factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?
     ) {
         self.displayAdapterFactory.setAdapterFactoryBlock(
             forType: type,

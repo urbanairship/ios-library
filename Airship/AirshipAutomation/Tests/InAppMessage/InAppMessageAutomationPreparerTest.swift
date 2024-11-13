@@ -60,7 +60,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             return displayCoordinator
         }
 
-        let displayAdapter = TestDisplayAdapter()
+        let displayAdapter = await TestDisplayAdapter()
         self.displayAdapterFactory.onMake = { [message] args in
             XCTAssertEqual(message, args.message)
             let incomingAssets = args.assets as? TestCachedAssets
@@ -78,12 +78,14 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
     func testPrepareFailedAssets() async throws {
         let displayCoordinator = await TestDisplayCoordinator()
+        let adapter = await TestDisplayAdapter()
+        
         self.displayCoordinatorManager.onCoordinator = { _ in
             return displayCoordinator
         }
 
         self.displayAdapterFactory.onMake = { _ in
-            return TestDisplayAdapter()
+            return adapter
         }
 
         await self.assetManager.setOnCache { identifier, assets in

@@ -10,7 +10,7 @@ import AirshipCore
 struct PreparedSchedule: Sendable {
     let info: PreparedScheduleInfo
     let data: PreparedScheduleData
-    let frequencyChecker: FrequencyCheckerProtocol?
+    let frequencyChecker: (any FrequencyCheckerProtocol)?
 }
 
 

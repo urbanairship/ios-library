@@ -32,18 +32,18 @@ public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
 
 protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void)
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void)
 #endif
 
     func receivedRemoteNotification(_ notification: [AnyHashable : Any],
-                                    completionHandler: @escaping (UIBackgroundFetchResult) -> Void)
+                                    completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void)
 }
 
 final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Sendable {
 
     private let dataStore: PreferenceDataStore
-    private let analytics: LegacyInAppAnalyticsProtocol
-    private let automationEngine: AutomationEngineProtocol
+    private let analytics: any LegacyInAppAnalyticsProtocol
+    private let automationEngine: any AutomationEngineProtocol
 
     @MainActor
     public var customMessageConverter: MessageConvertor?
@@ -54,13 +54,13 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
     @MainActor
     public var scheduleExtender: ScheduleExtender?
 
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
 
     init(
-        analytics: LegacyInAppAnalyticsProtocol,
+        analytics: any LegacyInAppAnalyticsProtocol,
         dataStore: PreferenceDataStore,
-        automationEngine: AutomationEngineProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared
+        automationEngine: any AutomationEngineProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.analytics = analytics
         self.automationEngine = automationEngine
@@ -209,7 +209,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
 extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
 
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
 
         guard
@@ -236,7 +236,7 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
 #endif
 
     func receivedRemoteNotification(_ notification: [AnyHashable : Any],
-                                    completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+                                    completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void) {
         guard let payload = notification[Keys.incomingMessageKey.rawValue] as? [String: Any] else {
             completionHandler(.noData)
             return

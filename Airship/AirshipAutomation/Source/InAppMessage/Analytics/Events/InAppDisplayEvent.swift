@@ -7,5 +7,5 @@ import AirshipCore
 
 struct InAppDisplayEvent: InAppEvent {
     let name = EventType.inAppDisplay
-    let data: (Sendable&Encodable)? = nil
+    let data: (any Sendable & Encodable)? = nil
 }

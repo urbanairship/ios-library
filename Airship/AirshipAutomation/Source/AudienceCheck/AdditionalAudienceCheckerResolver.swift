@@ -7,17 +7,17 @@ import AirshipCore
 
 protocol AdditionalAudienceCheckerResolverProtocol: Actor {
     func resolve(
-        deviceInfoProvider: AudienceDeviceInfoProvider,
+        deviceInfoProvider: any AudienceDeviceInfoProvider,
         additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     ) async throws -> Bool
 }
 
 actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtocol {
-    private let cache: AirshipCache
-    private let apiClient: AdditionalAudienceCheckerAPIClientProtocol
+    private let cache: any AirshipCache
+    private let apiClient: any AdditionalAudienceCheckerAPIClientProtocol
 
-    private let date: AirshipDateProtocol
-    private var inProgress: Task<Bool, Error>?
+    private let date: any AirshipDateProtocol
+    private var inProgress: Task<Bool, any Error>?
     private let configProvider: () -> RemoteConfig.AdditionalAudienceCheckConfig?
 
     private var additionalAudienceConfig: RemoteConfig.AdditionalAudienceCheckConfig? {
@@ -28,8 +28,8 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
 
     init(
         config: RuntimeConfig,
-        cache: AirshipCache,
-        date: AirshipDateProtocol = AirshipDate.shared
+        cache: any AirshipCache,
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.cache = cache
         self.apiClient = AdditionalAudienceCheckerAPIClient(config: config)
@@ -41,9 +41,9 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
     
     /// Testing
     init(
-        cache: AirshipCache,
-        apiClient: AdditionalAudienceCheckerAPIClientProtocol,
-        date: AirshipDateProtocol,
+        cache: any AirshipCache,
+        apiClient: any AdditionalAudienceCheckerAPIClientProtocol,
+        date: any AirshipDateProtocol,
         configProvider: @escaping () -> RemoteConfig.AdditionalAudienceCheckConfig?
     ) {
         self.cache = cache
@@ -53,7 +53,7 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
     }
     
     func resolve(
-        deviceInfoProvider: AudienceDeviceInfoProvider,
+        deviceInfoProvider: any AudienceDeviceInfoProvider,
         additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     ) async throws -> Bool {
         
@@ -96,7 +96,7 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
     private func doResolve(
         url: URL,
         context: AirshipJSON?,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> Bool {
 
         let channelID = try await deviceInfoProvider.channelID

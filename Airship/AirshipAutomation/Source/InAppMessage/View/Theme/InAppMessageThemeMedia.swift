@@ -6,7 +6,7 @@ public import SwiftUI
 public extension InAppMessageTheme {
 
     /// Media in-app message theme
-    struct Media: Equatable  {
+    struct Media: Equatable, Sendable {
 
         /// Padding
         public var padding: EdgeInsets
