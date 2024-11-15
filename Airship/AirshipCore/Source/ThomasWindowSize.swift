@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasWindowSize: String, ThomasSerailizable {
+enum ThomasWindowSize: String, ThomasSerializable {
     case small
     case medium
     case large

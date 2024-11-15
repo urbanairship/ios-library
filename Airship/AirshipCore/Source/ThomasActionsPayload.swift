@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ThomasActionsPayload: ThomasSerailizable, Hashable {
+struct ThomasActionsPayload: ThomasSerializable, Hashable {
     static let keyActionOverride = "platform_action_overrides"
 
     private let original: AirshipJSON

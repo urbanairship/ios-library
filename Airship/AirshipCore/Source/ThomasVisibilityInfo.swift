@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ThomasVisibilityInfo: ThomasSerailizable {
+struct ThomasVisibilityInfo: ThomasSerializable {
     let invertWhenStateMatches: JSONPredicate
     let defaultVisibility: Bool
 

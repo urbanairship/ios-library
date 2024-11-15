@@ -183,9 +183,7 @@ extension AddChannelPromptViewModel {
         if let platform = self.platform {
             switch platform {
             case .email(_):
-                let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-                let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-                return emailPredicate.evaluate(with: self.inputText)
+                return self.inputText.airshipIsValidEmail()
             case .sms(_):
                 let formatted = formattedMSISDN(countryCode: self.selectedSender.countryCode, number: self.inputText)
                 let msisdnRegex = "^[1-9]\\d{1,14}$"

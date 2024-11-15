@@ -1,0 +1,264 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    margin:
+      start: 16
+      end: 16
+    size:
+      width: 100%
+      height: auto
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.75
+    border:
+      stroke_color:
+        default:
+          hex: "#000000"
+          alpha: 1
+      stroke_width: 3
+      radius: 10
+    background_color:
+      default:
+        hex: '#ffffff'
+        alpha: 1
+view:
+  type: container
+  items:
+    - size:
+        height: auto
+        width: 100%
+      position:
+        vertical: center
+        horizontal: center
+      margin:
+        start: 32
+        end: 32
+        top: 32
+        bottom: 32
+      view:
+        type: linear_layout
+        direction: vertical
+        background_color:
+          default:
+            hex: "#ffffff"
+            alpha: 1
+        border:
+            stroke_color:
+              default:
+                hex: "#000000"
+                alpha: 1
+            stroke_width: 3
+        view_overrides:
+          background_color:
+            - value:
+                default:
+                  hex: "#ffbbbb"
+                  alpha: 1
+              when_state_matches:
+                  key: favorite_color
+                  value:
+                    equals: red
+            - value:
+                default:
+                  hex: "#bbffbb"
+                  alpha: 1
+              when_state_matches:
+                  key: favorite_color
+                  value:
+                    equals: green
+            - value:
+                default:
+                  hex: "#bbbbff"
+                  alpha: 1
+              when_state_matches:
+                  key: favorite_color
+                  value:
+                    equals: blue
+          border:
+            - value:
+                stroke_color:
+                  default:
+                    hex: "#ff0000"
+                    alpha: 1
+                stroke_width: 3
+              when_state_matches:
+                key: favorite_color
+                value:
+                  equals: red
+            - value:
+                stroke_color:
+                  default:
+                    hex: "#00ff00"
+                    alpha: 1
+                stroke_width: 3
+              when_state_matches:
+                  key: favorite_color
+                  value:
+                    equals: green
+            - value:
+                stroke_color:
+                  default:
+                    hex: "#0000ff"
+                    alpha: 1
+                stroke_width: 3
+              when_state_matches:
+                  key: favorite_color
+                  value:
+                    equals: blue
+        items:
+          - size:
+              height: auto
+              width: 100%
+            view:
+              type: linear_layout
+              direction: horizontal
+              items:
+                - size:
+                    height: auto
+                    width: auto
+                  margin:
+                    start: 16
+                  view:
+                    type: label
+                    text: 'Favorite Color:'
+                    text_appearance:
+                      alignment: start
+                      styles:
+                      - bold
+                      - underlined
+                      font_size: 16
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    height: auto
+                    width: 100%
+                  margin:
+                    start: 16
+                  view:
+                    type: label
+                    text: ""
+                    text_appearance:
+                      alignment: start
+                      styles:
+                      - bold
+                      font_size: 16
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                    view_overrides:
+                      text:
+                        - value: Red
+                          when_state_matches:
+                              key: favorite_color
+                              value:
+                                equals: red
+                        - value: Green
+                          when_state_matches:
+                              key: favorite_color
+                              value:
+                                equals: green
+                        - value: Blue
+                          when_state_matches:
+                              key: favorite_color
+                              value:
+                                equals: blue
+          - size:
+              height: auto
+              width: 300
+            margin:
+              start: 16
+              end: 16
+              top: 16
+              bottom: 8
+            view:
+              type: label_button
+              identifier: red
+              background_color:
+                default:
+                  hex: "#FF3333"
+                  alpha: 1
+              label:
+                type: label
+                text: Red
+                text_appearance:
+                  font_size: 10
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+              event_handlers:
+                - type: tap
+                  state_actions:
+                    - type: set
+                      key: favorite_color
+                      value: red
+          - size:
+              height: auto
+              width: 300
+            margin:
+              start: 16
+              end: 16
+              bottom: 8
+              top: 8
+            view:
+              type: label_button
+              identifier: green
+              background_color:
+                default:
+                  hex: "#33FF33"
+                  alpha: 1
+              label:
+                type: label
+                text: Green
+                text_appearance:
+                  font_size: 10
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+              event_handlers:
+                - type: tap
+                  state_actions:
+                    - type: set
+                      key: favorite_color
+                      value: green
+          - size:
+              height: auto
+              width: 300
+            margin:
+              start: 16
+              end: 16
+              top: 8
+              bottom: 16
+            view:
+              type: label_button
+              identifier: blue
+              background_color:
+                default:
+                  hex: "#3333FF"
+                  alpha: 1
+              label:
+                type: label
+                text: Blue
+                text_appearance:
+                  font_size: 10
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+              event_handlers:
+                - type: tap
+                  state_actions:
+                    - type: set
+                      key: favorite_color
+                      value: blue

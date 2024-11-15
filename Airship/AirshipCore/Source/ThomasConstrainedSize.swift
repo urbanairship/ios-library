@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ThomasConstrainedSize: ThomasSerailizable {
+struct ThomasConstrainedSize: ThomasSerializable {
     var minWidth: ThomasSizeConstraint?
     var width: ThomasSizeConstraint
     var maxWidth: ThomasSizeConstraint?

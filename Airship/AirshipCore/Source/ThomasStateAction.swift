@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasStateAction: ThomasSerailizable {
+enum ThomasStateAction: ThomasSerializable {
     case setState(SetState)
     case clearState
     case formValue(SetFormValue)
@@ -11,7 +11,7 @@ enum ThomasStateAction: ThomasSerailizable {
         case type
     }
 
-    enum ActionType: String, ThomasSerailizable {
+    enum ActionType: String, ThomasSerializable {
         case setState = "set"
         case clearState = "clear"
         case formValue = "set_form_value"
@@ -38,7 +38,7 @@ enum ThomasStateAction: ThomasSerailizable {
         }
     }
 
-    struct SetState: ThomasSerailizable {
+    struct SetState: ThomasSerializable {
         let type: ActionType = .setState
         let key: String
         let value: AirshipJSON?
@@ -50,7 +50,7 @@ enum ThomasStateAction: ThomasSerailizable {
         }
     }
 
-    struct SetFormValue: ThomasSerailizable {
+    struct SetFormValue: ThomasSerializable {
         let type: ActionType = .formValue
         let key: String
 

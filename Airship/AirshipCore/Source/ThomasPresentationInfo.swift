@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasPresentationInfo: ThomasSerailizable {
+enum ThomasPresentationInfo: ThomasSerializable {
     case banner(Banner)
     case modal(Modal)
     case embedded(Embedded)
@@ -30,20 +30,20 @@ enum ThomasPresentationInfo: ThomasSerailizable {
         }
     }
 
-    enum PresentationType: String, ThomasSerailizable {
+    enum PresentationType: String, ThomasSerializable {
         case modal
         case banner
         case embedded
     }
 
-    struct Device: ThomasSerailizable {
+    struct Device: ThomasSerializable {
         let orientationLock: ThomasOrientation?
         private enum CodingKeys: String, CodingKey {
             case orientationLock = "lock_orientation"
         }
     }
 
-    struct Banner: ThomasSerailizable {
+    struct Banner: ThomasSerializable {
         let type: PresentationType = .banner
         var duration: Int?
         var placementSelectors: [PlacementSelector<Placement>]?
@@ -56,12 +56,12 @@ enum ThomasPresentationInfo: ThomasSerailizable {
             case type
         }
 
-        enum Position: String, ThomasSerailizable {
+        enum Position: String, ThomasSerializable {
             case top
             case bottom
         }
 
-        struct Placement: ThomasSerailizable {
+        struct Placement: ThomasSerializable {
             var margin: ThomasMargin?
             var size: ThomasConstrainedSize
             var position: Position
@@ -80,7 +80,7 @@ enum ThomasPresentationInfo: ThomasSerailizable {
         }
     }
 
-    struct Modal: ThomasSerailizable {
+    struct Modal: ThomasSerializable {
         let type: PresentationType = .modal
         var placementSelectors: [PlacementSelector<Placement>]?
         var defaultPlacement: Placement
@@ -95,7 +95,7 @@ enum ThomasPresentationInfo: ThomasSerailizable {
             case type
         }
 
-        struct Placement: ThomasSerailizable {
+        struct Placement: ThomasSerializable {
             var margin: ThomasMargin?
             var size: ThomasConstrainedSize
             var position: ThomasPosition?
@@ -120,7 +120,7 @@ enum ThomasPresentationInfo: ThomasSerailizable {
         }
     }
 
-    struct Embedded: ThomasSerailizable {
+    struct Embedded: ThomasSerializable {
         let type: PresentationType = .embedded
         var placementSelectors: [PlacementSelector<Placement>]?
         var defaultPlacement: Placement
@@ -133,7 +133,7 @@ enum ThomasPresentationInfo: ThomasSerailizable {
             case type
         }
 
-        struct Placement: ThomasSerailizable {
+        struct Placement: ThomasSerializable {
             let margin: ThomasMargin?
             let size: ThomasConstrainedSize
             let border: ThomasBorder?
@@ -148,7 +148,7 @@ enum ThomasPresentationInfo: ThomasSerailizable {
         }
     }
 
-    struct PlacementSelector<Placement: ThomasSerailizable>: ThomasSerailizable {
+    struct PlacementSelector<Placement: ThomasSerializable>: ThomasSerializable {
         var placement: Placement
         var windowSize: ThomasWindowSize?
         var orientation: ThomasOrientation?

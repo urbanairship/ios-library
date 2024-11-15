@@ -2,14 +2,14 @@
 
 import Foundation
 
-struct ThomasMarkDownOptions: ThomasSerailizable {
+struct ThomasMarkDownOptions: ThomasSerializable {
     var disabled: Bool?
     var appearance: Appearance?
 
-    struct Appearance: ThomasSerailizable {
+    struct Appearance: ThomasSerializable {
         var anchor: Anchor?
 
-        struct Anchor: ThomasSerailizable {
+        struct Anchor: ThomasSerializable {
             var color: ThomasColor?
             // Currently we only support underlined styles
             var styles: [ThomasTextAppearance.TextStyle]?

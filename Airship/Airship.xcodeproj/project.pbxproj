@@ -1341,6 +1341,9 @@
 		6EED68312CE28FAC0087CDCB /* ThomasConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED68302CE28FA70087CDCB /* ThomasConstants.swift */; };
 		6EED68322CE28FAC0087CDCB /* ThomasConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED68302CE28FA70087CDCB /* ThomasConstants.swift */; };
 		6EED68332CE28FAC0087CDCB /* ThomasConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED68302CE28FA70087CDCB /* ThomasConstants.swift */; };
+		6EED68E52CE3ECCB0087CDCB /* ThomasPropertyOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */; };
+		6EED68E62CE3ECCB0087CDCB /* ThomasPropertyOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */; };
+		6EED68E72CE3ECCB0087CDCB /* ThomasPropertyOverride.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */; };
 		6EEE8BA2290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */; };
 		6EEE8BA3290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */; };
 		6EEE8BA4290B3EDE00230528 /* AirshipKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */; };
@@ -2975,6 +2978,7 @@
 		6EED68282CE28C960087CDCB /* ThomasVisibilityInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasVisibilityInfo.swift; sourceTree = "<group>"; };
 		6EED682C2CE28CBF0087CDCB /* ThomasValidationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationInfo.swift; sourceTree = "<group>"; };
 		6EED68302CE28FA70087CDCB /* ThomasConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasConstants.swift; sourceTree = "<group>"; };
+		6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPropertyOverride.swift; sourceTree = "<group>"; };
 		6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipKeychainAccess.swift; sourceTree = "<group>"; };
 		6EF02DEF2714EB500008B6C9 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
 		6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceID.swift; sourceTree = "<group>"; };
@@ -5035,6 +5039,7 @@
 		6EED67642CDEE75D0087CDCB /* Types */ = {
 			isa = PBXGroup;
 			children = (
+				6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */,
 				6EED679D2CDEEAA90087CDCB /* AirshipLayout.swift */,
 				6EED681C2CE274290087CDCB /* ThomasAccessibilityAction.swift */,
 				6EED68202CE2806B0087CDCB /* ThomasAccessibleInfo.swift */,
@@ -6856,6 +6861,7 @@
 				6E698E3F267BEDC300654DB2 /* AttributesEditor.swift in Sources */,
 				6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */,
 				6E3B32CF2755D8C700B89C7B /* LayoutState.swift in Sources */,
+				6EED68E72CE3ECCB0087CDCB /* ThomasPropertyOverride.swift in Sources */,
 				99E433982C9A044C006436B9 /* AirshipResources.swift in Sources */,
 				6E87BE1326E28F570005D20D /* AirshipInstance.swift in Sources */,
 				32515869272AFB2E00DF8B44 /* Media.swift in Sources */,
@@ -7600,6 +7606,7 @@
 				A6722A26281A9EA00033F54D /* PasteboardAction.swift in Sources */,
 				6EED682A2CE28C9A0087CDCB /* ThomasVisibilityInfo.swift in Sources */,
 				6EC755A12A4E5AB200851ABB /* DeviceAudienceChecker.swift in Sources */,
+				6EED68E52CE3ECCB0087CDCB /* ThomasPropertyOverride.swift in Sources */,
 				6E6BD2482AEAFE7E00B9DFC9 /* DeferredAPIClient.swift in Sources */,
 				6E5A64CA2AABBE7100574085 /* MeteredUsageAPIClient.swift in Sources */,
 				60EACFC02B7D272100CAFDBB /* AirshipApptimizeIntegration.swift in Sources */,
@@ -8186,6 +8193,7 @@
 				6EED677F2CDEE9040087CDCB /* ThomasSerializable.swift in Sources */,
 				6E510C252721DA86006D9126 /* MarginViewModifier.swift in Sources */,
 				99E433992C9A044C006436B9 /* AirshipResources.swift in Sources */,
+				6EED68E62CE3ECCB0087CDCB /* ThomasPropertyOverride.swift in Sources */,
 				6E698E0D267A88D600654DB2 /* EventAPIClient.swift in Sources */,
 				32515872272B007F00DF8B44 /* Media.swift in Sources */,
 				6E3B32D02755D8C700B89C7B /* LayoutState.swift in Sources */,

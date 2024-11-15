@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasDirection: String, ThomasSerailizable {
+enum ThomasDirection: String, ThomasSerializable {
     case vertical
     case horizontal
 }

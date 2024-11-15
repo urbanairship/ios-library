@@ -208,6 +208,15 @@ public struct FormInputData {
                 FormInputData.typeKey: "text_input",
                 FormInputData.valueKey: value,
             ]
+        case .emailText(let value):
+            guard let value = value else {
+                return nil
+            }
+
+            return [
+                FormInputData.typeKey: "email_input",
+                FormInputData.valueKey: value,
+            ]
         case .score(let value):
             guard let value = value else {
                 return nil
@@ -247,6 +256,7 @@ public enum FormValue {
     case multipleCheckbox([String]?)
     case form(String?, FormType, [FormInputData])
     case text(String?)
+    case emailText(String?)
     case score(Int?)
 }
 

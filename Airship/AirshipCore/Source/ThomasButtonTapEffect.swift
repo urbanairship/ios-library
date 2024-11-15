@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasButtonTapEffect: ThomasSerailizable {
+enum ThomasButtonTapEffect: ThomasSerializable {
     case `default`
     case none
 

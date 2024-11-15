@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ThomasAttributeName: ThomasSerailizable {
+struct ThomasAttributeName: ThomasSerializable {
     var channel: String?
     var contact: String?
 }

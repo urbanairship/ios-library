@@ -39,6 +39,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
         case .multipleCheckbox(let value): return value
         case .form(_, _, let value): return value.map { $0.toPayload() }
         case .text(let value): return value
+        case .emailText(let value): return value
         case .score(let value): return value
         case .none: return nil
         }

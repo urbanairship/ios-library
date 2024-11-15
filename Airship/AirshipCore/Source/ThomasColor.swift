@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-struct ThomasColor: ThomasSerailizable {
+struct ThomasColor: ThomasSerializable {
     let defaultColor: HexColor
     let selectors: [Selector]?
 
@@ -12,7 +12,7 @@ struct ThomasColor: ThomasSerailizable {
         case selectors
     }
 
-    struct HexColor: ThomasSerailizable {
+    struct HexColor: ThomasSerializable {
         let type: String = "hex"
         var hex: String
         var alpha: Double?
@@ -24,7 +24,7 @@ struct ThomasColor: ThomasSerailizable {
         }
     }
 
-    struct Selector: ThomasSerailizable {
+    struct Selector: ThomasSerializable {
         let darkMode: Bool?
         let platform: ThomasPlatform?
         let color: HexColor

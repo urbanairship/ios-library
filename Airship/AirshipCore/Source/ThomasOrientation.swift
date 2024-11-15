@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasOrientation: String, ThomasSerailizable {
+enum ThomasOrientation: String, ThomasSerializable {
     case portrait
     case landscape
 }

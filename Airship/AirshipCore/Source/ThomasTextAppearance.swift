@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ThomasTextAppearance: ThomasSerailizable {
+struct ThomasTextAppearance: ThomasSerializable {
     var color: ThomasColor
     var fontSize: Double
     var alignment: TextAlignement?
@@ -10,13 +10,13 @@ struct ThomasTextAppearance: ThomasSerailizable {
     var fontFamilies: [String]?
     var placeHolderColor: ThomasColor?
 
-    enum TextStyle: String, ThomasSerailizable {
+    enum TextStyle: String, ThomasSerializable {
         case bold
         case italic
         case underlined
     }
 
-    enum TextAlignement: String, ThomasSerailizable {
+    enum TextAlignement: String, ThomasSerializable {
         case start
         case end
         case center

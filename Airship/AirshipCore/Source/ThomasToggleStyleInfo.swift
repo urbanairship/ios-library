@@ -3,7 +3,7 @@
 import Foundation
 
 
-enum ThomasToggleStyleInfo: ThomasSerailizable {
+enum ThomasToggleStyleInfo: ThomasSerializable {
     case switchStyle(Switch)
     case checkboxStyle(Checkbox)
 
@@ -28,12 +28,12 @@ enum ThomasToggleStyleInfo: ThomasSerailizable {
         }
     }
 
-    enum StyleType: String, ThomasSerailizable {
+    enum StyleType: String, ThomasSerializable {
         case `switch`
         case checkbox
     }
 
-    struct Switch: ThomasSerailizable {
+    struct Switch: ThomasSerializable {
         let type: StyleType = .switch
         let colors: ToggleColors
 
@@ -42,13 +42,13 @@ enum ThomasToggleStyleInfo: ThomasSerailizable {
             case type
         }
 
-        struct ToggleColors: ThomasSerailizable {
+        struct ToggleColors: ThomasSerializable {
             var on: ThomasColor
             var off: ThomasColor
         }
     }
 
-    struct Checkbox: ThomasSerailizable {
+    struct Checkbox: ThomasSerializable {
         let type: StyleType = .checkbox
         let bindings: Bindings
 
@@ -57,12 +57,12 @@ enum ThomasToggleStyleInfo: ThomasSerailizable {
             case type
         }
 
-        struct Bindings: ThomasSerailizable {
+        struct Bindings: ThomasSerializable {
             let selected: Binding
             let unselected: Binding
         }
 
-        struct Binding: ThomasSerailizable {
+        struct Binding: ThomasSerializable {
             let shapes: [ThomasShapeInfo]?
             let icon: ThomasIconInfo?
         }
