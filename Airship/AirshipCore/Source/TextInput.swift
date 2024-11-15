@@ -13,11 +13,16 @@ struct TextInput: View {
 
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var viewState: ViewState
 
     @State private var input: String = ""
     @State private var isEditing: Bool = false
-    
-    #if !os(watchOS)
+    @State private var validationTask: Task<Void, Never>?
+
+    /// Validation will occur if no edits take place within this duration, resets each time edits take place
+    private static var editValidationDelay: TimeInterval = 1.0
+
+#if !os(watchOS)
     private var keyboardType: UIKeyboardType {
         switch self.info.properties.inputType {
         case .email:
@@ -30,28 +35,40 @@ struct TextInput: View {
             return .default
         }
     }
-    #endif
-    
+#endif
+
+    private func onTextFieldTextChanged(newValue: String) {
+        self.input = newValue
+        self.updateValue(newValue)
+
+        validationTask?.cancel()
+        updateValidationState(isEditing: true)
+
+        validationTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: UInt64(Self.editValidationDelay * 1_000_000_000))
+            guard !Task.isCancelled else { return }
+            updateValidationState(isEditing: false)
+        }
+    }
+
     @ViewBuilder
     private func createTextEditor() -> some View {
         let binding = Binding<String>(
             get: { self.input },
-            set: {
-                self.input = $0
-                self.updateValue($0)
+            set: { newValue in
+                onTextFieldTextChanged(newValue: newValue)
             }
         )
 
         if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
-            AirshipTexField(
+            AirshipTextField(
                 info: self.info,
                 constraints: constraints,
                 binding: binding,
                 isEditing: $isEditing
             )
         } else {
-            // Fallback on earlier versions
-            #if !os(watchOS)
+#if !os(watchOS)
             AirshipTextView(
                 textAppearance: self.info.properties.textAppearance,
                 text: binding,
@@ -62,10 +79,10 @@ struct TextInput: View {
                 let focusedID = newValue ? self.info.properties.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
             }
-            #endif
+#endif
         }
     }
-    
+
     @ViewBuilder
     var body: some View {
         ZStack {
@@ -77,18 +94,87 @@ struct TextInput: View {
                     .opacity(input.isEmpty && !isEditing ? 1 : 0)
                     .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
             }
-            createTextEditor()
-                .id(self.info.properties.identifier)
+            HStack {
+                createTextEditor()
+#if !os(watchOS)
+
+                    .airshipApplyIf(self.info.properties.inputType == .email) { view in
+                        if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
+                            view.textInputAutocapitalization(.never)
+                        } else {
+                            view.autocapitalization(.none)
+                        }
+                    }
+#endif
+                    .id(self.info.properties.identifier)
+
+                if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
+                    let maxIconWidth = self.info.properties.textAppearance.fontSize
+                    let maxIconHeight = maxIconWidth
+
+                    Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
+                        .frame(maxWidth: maxIconWidth, maxHeight: maxIconHeight)
+                        .padding(5)
+                }
+            }
         }
-        #if !os(watchOS)
+#if !os(watchOS)
         .keyboardType(keyboardType)
-        #endif
+        .airshipApplyIf(self.info.properties.inputType == .email) { view in
+            view.textContentType(.emailAddress)
+        }
+#endif
         .thomasCommon(self.info)
         .accessible(self.info.accessible)
         .formElement()
         .onAppear {
             restoreFormState()
             updateValue(input)
+        }
+        .onDisappear {
+            validationTask?.cancel()
+        }
+    }
+
+    private var resolvedIconEndInfo: ThomasViewInfo.TextInput.IconEndInfo? {
+        return ThomasPropertyOverride.resolveOptional(
+            state: viewState,
+            overrides: self.info.overrides?.iconEnd,
+            defaultValue: self.info.properties.iconEnd ?? nil
+        )
+    }
+
+    private func updateValidationState(isEditing: Bool) {
+        if isEditing {
+            self.info.validation.onEdit?.stateActions.map(handleStateActions)
+        } else {
+            let isValid = validate(input)
+
+            if isValid {
+                self.info.validation.onValid?.stateActions.map(handleStateActions)
+            } else {
+                self.info.validation.onError?.stateActions.map(handleStateActions)
+            }
+        }
+    }
+
+    private func handleStateActions(_ stateActions: [ThomasStateAction]) {
+        stateActions.forEach { action in
+            switch action {
+            case .setState(let details):
+                withAnimation {
+                    viewState.updateState(
+                        key: details.key,
+                        value: details.value?.unWrap()
+                    )
+                }
+            case .clearState:
+                withAnimation {
+                    viewState.clearState()
+                }
+            case .formValue(_):
+                AirshipLogger.error("Unable to handle state actions for form value")
+            }
         }
     }
 
@@ -105,12 +191,29 @@ struct TextInput: View {
         self.input = value
     }
 
+    private func validate(_ text: String) -> Bool {
+        guard self.info.validation.isRequired ?? false else { return true }
+
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+
+        switch self.info.properties.inputType {
+        case .email:
+            return !trimmed.isEmpty && trimmed.airshipIsValidEmail()
+        default:
+            return !trimmed.isEmpty
+        }
+    }
+
     private func updateValue(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
-        let isValid = !trimmed.isEmpty || !(self.info.validation.isRequired ?? false)
+
+        let isValid = validate(trimmed)
+
+        let isEmailType = self.info.properties.inputType == .email
+
         let data = FormInputData(
             self.info.properties.identifier,
-            value: .text(trimmed.isEmpty ? nil : trimmed),
+            value: isEmailType ? .emailText(trimmed.isEmpty ? nil : trimmed) : .text(trimmed.isEmpty ? nil : trimmed),
             attributeName: self.info.properties.attributeName,
             attributeValue: trimmed.isEmpty ? nil : .string(trimmed),
             isValid: isValid
@@ -128,10 +231,9 @@ struct TextInput: View {
         return appearance
     }
 }
-
 @available(iOS 16.0, tvOS 16, watchOS 9.0, *)
-struct AirshipTexField: View {
-    
+struct AirshipTextField: View {
+
     let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
 
@@ -140,24 +242,18 @@ struct AirshipTexField: View {
 
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    
+    @EnvironmentObject var viewState: ViewState
+
     @FocusState private var focused: Bool
 
-    var body: some View {
-        let axis: Axis = self.info.properties.inputType == .textMultiline ? .vertical : .horizontal
-        TextField("", text: $binding, axis: axis)
-            .padding(5)
-            .airshipOnChangeOf( binding) { [binding] newValue in
-                if (axis == .vertical) {
-                    let oldCount = binding.filter { $0 == "\n" }.count
-                    let newCount = newValue.filter { $0 == "\n" }.count
+    @State var icon: ThomasViewInfo.TextInput.IconEndInfo?
 
-                    if (newCount == oldCount + 1) {
-                        self.binding = binding
-                        self.focused = false
-                    }
-                }
-            }
+    var body: some View {
+        let isMultiline = self.info.properties.inputType == .textMultiline
+        let axis: Axis = isMultiline ? .vertical : .horizontal
+
+        return TextField("", text: $binding, axis: axis)
+            .padding(5)
             .constraints(constraints, alignment: .topLeading)
             .focused($focused)
             .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
@@ -169,7 +265,7 @@ struct AirshipTexField: View {
             .airshipApplyIf(isUnderlined, transform: { content in
                 content.underline()
             })
-            .airshipOnChangeOf( focused) { newValue in
+            .airshipOnChangeOf(focused) { newValue in
                 if (newValue) {
                     self.thomasEnvironment.focusedID = self.info.properties.identifier
                 } else if (self.thomasEnvironment.focusedID == self.info.properties.identifier) {
@@ -178,8 +274,22 @@ struct AirshipTexField: View {
 
                 isEditing = newValue
             }
+            .airshipApplyIf(isMultiline) { view in
+                view.airshipOnChangeOf(binding) { [binding] newValue in
+                    let oldCount = binding.filter { $0 == "\n" }.count
+                    let newCount = newValue.filter { $0 == "\n" }.count
+
+                    if (newCount == oldCount + 1) {
+                        // Only update if values are different
+                        if newValue != binding {
+                            self.binding = binding
+                        }
+                        self.focused = false
+                    }
+                }
+            }
     }
-    
+
     private var isUnderlined : Bool {
         if let styles = self.info.properties.textAppearance.styles {
             if styles.contains(.underlined) {
@@ -206,7 +316,7 @@ internal struct AirshipTextView: UIViewRepresentable {
         textView.backgroundColor = .clear
         textView.delegate = context.coordinator
 
-        #if os(iOS)
+#if os(iOS)
         let toolbar = UIToolbar()
         toolbar.sizeToFit()
         let done = UIBarButtonItem(
@@ -223,7 +333,7 @@ internal struct AirshipTextView: UIViewRepresentable {
 
         toolbar.items = [flexSpace, done]
         textView.inputAccessoryView = toolbar
-        #endif
+#endif
 
         textView.applyTextAppearance(self.textAppearance, colorScheme)
         return textView
@@ -252,7 +362,7 @@ internal struct AirshipTextView: UIViewRepresentable {
             self.text = text
             self.isEditing = isEditing
             self.cancellable =
-                subject
+            subject
                 .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
                 .sink {
                     text.wrappedValue = $0
@@ -280,9 +390,9 @@ extension UITextView {
     ) {
         if let textAppearance = textAppearance {
             self.textAlignment =
-                textAppearance.alignment?.toNSTextAlignment() ?? .center
+            textAppearance.alignment?.toNSTextAlignment() ?? .center
             self.textColor =
-                textAppearance.color.toUIColor(colorScheme)
+            textAppearance.color.toUIColor(colorScheme)
             self.font = UIFont.resolveUIFont(textAppearance)
         }
     }

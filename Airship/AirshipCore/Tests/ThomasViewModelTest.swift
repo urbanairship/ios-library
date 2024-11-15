@@ -401,15 +401,24 @@ final class ThomasViewModelTest: XCTestCase {
             "state_actions": [
                 {
                   "type": "set",
-                  "key": "label_tapped",
-                  "value": true
+                  "key": "is_valid",
+                  "value": false
                 }
             ]
         },
-       "on_error_cleared": {
+       "on_edit": {
             "state_actions": [
                 {
                     "type": "clear"
+                }
+            ]
+        },
+        "on_valid": {
+            "state_actions": [
+             {
+                  "type": "set",
+                  "key": "is_valid",
+                  "value": false
                 }
             ]
         }

@@ -5,7 +5,8 @@ import Foundation
 struct ThomasValidationInfo: ThomasSerializable {
     var isRequired: Bool?
     var onError: ErrorInfo?
-    var onErrorCleared: ClearedInfo?
+    var onEdit: EditInfo?
+    var onValid: ValidInfo?
 
     struct ErrorInfo: ThomasSerializable {
         var stateActions: [ThomasStateAction]?
@@ -15,7 +16,15 @@ struct ThomasValidationInfo: ThomasSerializable {
         }
     }
 
-    struct ClearedInfo: ThomasSerializable {
+    struct EditInfo: ThomasSerializable {
+        var stateActions: [ThomasStateAction]?
+
+        enum CodingKeys: String, CodingKey {
+            case stateActions = "state_actions"
+        }
+    }
+
+    struct ValidInfo: ThomasSerializable {
         var stateActions: [ThomasStateAction]?
 
         enum CodingKeys: String, CodingKey {
@@ -26,6 +35,7 @@ struct ThomasValidationInfo: ThomasSerializable {
     enum CodingKeys: String, CodingKey {
         case isRequired = "required"
         case onError = "on_error"
-        case onErrorCleared = "on_error_cleared"
+        case onEdit = "on_edit"
+        case onValid = "on_valid"
     }
 }

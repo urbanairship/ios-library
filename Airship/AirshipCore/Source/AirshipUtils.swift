@@ -444,6 +444,15 @@ public class AirshipUtils: NSObject {
     }
 }
 
+public extension String {
+    func airshipIsValidEmail() -> Bool {
+        let trimmed = self.trimmingCharacters(in: .whitespaces)
+        let emailRegex = #"^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"# 
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: trimmed)
+    }
+}
+
 extension Locale {
     func getLanguageCode() -> String {
         let localeLanguage: String
