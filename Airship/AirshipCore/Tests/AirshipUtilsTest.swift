@@ -223,4 +223,60 @@ final class AirshipUtilsTest: XCTestCase {
             XCTAssertEqual(encodedUrl, url?.absoluteString)
         }
     }
+
+    func testEmailValidationValidEmails() {
+        XCTAssertTrue("simple@example.com".airshipIsValidEmail())
+        XCTAssertTrue("very.common@example.com".airshipIsValidEmail())
+        XCTAssertTrue("disposable.style.email.with+symbol@example.com".airshipIsValidEmail())
+        XCTAssertTrue("other.email-with-hyphen@example.com".airshipIsValidEmail())
+        XCTAssertTrue("fully-qualified-domain@example.com".airshipIsValidEmail())
+        XCTAssertTrue("user.name+tag+sorting@example.com".airshipIsValidEmail())
+        XCTAssertTrue("x@y.z".airshipIsValidEmail())
+        XCTAssertTrue("user123@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user.name@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("a@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user@sub.domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user-name@domain.com".airshipIsValidEmail())
+    }
+
+    func testEmailValidationInvalidEmails() {
+        XCTAssertFalse("".airshipIsValidEmail())
+        XCTAssertFalse(" ".airshipIsValidEmail())
+        XCTAssertFalse("@".airshipIsValidEmail())
+        XCTAssertFalse("@domain.com".airshipIsValidEmail())
+        XCTAssertFalse("user@".airshipIsValidEmail())
+        XCTAssertFalse("user".airshipIsValidEmail())
+        XCTAssertFalse("domain.com".airshipIsValidEmail())
+        XCTAssertFalse("user@domain".airshipIsValidEmail())
+        XCTAssertFalse("@domain".airshipIsValidEmail())
+        XCTAssertFalse("user@@domain.com".airshipIsValidEmail())
+        XCTAssertFalse("user@domain@test.com".airshipIsValidEmail())
+    }
+
+    func testEmailValidationWhitespaceHandling() {
+        // These should be valid after trimming
+        XCTAssertTrue(" user@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user@domain.com ".airshipIsValidEmail())
+
+        // These should be invalid even after trimming
+        XCTAssertFalse("user @domain.com".airshipIsValidEmail())
+        XCTAssertFalse("user@ domain.com".airshipIsValidEmail())
+        XCTAssertFalse("us er@domain.com".airshipIsValidEmail())
+        XCTAssertFalse("user@do main.com".airshipIsValidEmail())
+    }
+
+    func testEmailValidationEdgeCases() {
+        // Valid edge cases
+        XCTAssertTrue("user.@domain.com".airshipIsValidEmail())
+        XCTAssertTrue(".user@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user@.domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user@domain..com".airshipIsValidEmail())
+        XCTAssertTrue("user..name@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user+name@domain.com".airshipIsValidEmail())
+        XCTAssertTrue("user!#$%&'*+-/=?^_`{|}~@domain.com".airshipIsValidEmail())
+
+        // Invalid edge cases
+        XCTAssertFalse("user@domain.com.".airshipIsValidEmail())
+        XCTAssertFalse("user@domain@example.com".airshipIsValidEmail())
+    }
 }
