@@ -34,6 +34,9 @@ struct Container: View {
             })
         )
         .thomasCommon(self.info)
+#if os(tvOS)
+            .focusSection()
+#endif
     }
 
     @ViewBuilder

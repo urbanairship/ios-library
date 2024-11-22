@@ -3,13 +3,11 @@
 import Foundation
 import SwiftUI
 
-
 struct RadioInput: View {
     let info: ThomasViewInfo.RadioInput
     let constraints: ViewConstraints
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var radioInputState: RadioInputState
-    @Environment(\.colorScheme) var colorScheme
 
     @ViewBuilder
     private func createToggle() -> some View {
@@ -25,9 +23,7 @@ struct RadioInput: View {
         Toggle(isOn: isOn.animation()) {}
             .thomasToggleStyle(
                 self.info.properties.style,
-                colorScheme: colorScheme,
-                constraints: self.constraints,
-                disabled: !formState.isFormInputEnabled
+                constraints: self.constraints
             )
     }
 

@@ -9,7 +9,6 @@ struct Checkbox: View {
     let constraints: ViewConstraints
     @EnvironmentObject var formState: FormState
     @EnvironmentObject var checkboxState: CheckboxState
-    @Environment(\.colorScheme) var colorScheme
 
     @ViewBuilder
     private func createToggle() -> some View {
@@ -29,9 +28,7 @@ struct Checkbox: View {
         Toggle(isOn: isOn.animation()) {}
             .thomasToggleStyle(
                 self.info.properties.style,
-                colorScheme: colorScheme,
-                constraints: self.constraints,
-                disabled: !formState.isFormInputEnabled
+                constraints: self.constraints
             )
     }
 
@@ -44,7 +41,6 @@ struct Checkbox: View {
             .constraints(constraints)
             .thomasCommon(self.info)
             .accessible(self.info.accessible)
-            .addSelectedTrait(self.checkboxState.selectedItems.contains(self.info.properties.reportingValue))
             .formElement()
             .disabled(!enabled)
     }

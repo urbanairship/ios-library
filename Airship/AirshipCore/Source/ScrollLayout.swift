@@ -98,6 +98,9 @@ struct ScrollLayout: View {
         makeScrollView()
             .constraints(self.constraints)
             .thomasCommon(self.info)
+#if os(tvOS)
+            .focusSection()
+#endif
     }
 
     private func childConstraints() -> ViewConstraints {

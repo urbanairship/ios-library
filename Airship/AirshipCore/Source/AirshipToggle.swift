@@ -10,14 +10,12 @@ struct AirshipToggle: View {
 
     @EnvironmentObject var formState: FormState
     @State private var isOn: Bool = false
-    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         createToggle()
             .constraints(self.constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
             .accessible(self.info.accessible)
-            .addSelectedTrait(isOn)
             .formElement()
             .onAppear {
                 restoreFormState()
@@ -34,13 +32,11 @@ struct AirshipToggle: View {
                 self.updateValue($0)
             }
         )
-
+        
         Toggle(isOn: binding.animation()) {}
             .thomasToggleStyle(
                 self.info.properties.style,
-                colorScheme: colorScheme,
-                constraints: self.constraints,
-                disabled: !formState.isFormInputEnabled
+                constraints: self.constraints
             )
     }
 

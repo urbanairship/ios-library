@@ -24,7 +24,15 @@ struct LinearLayout: View {
     ) -> some View {
         VStack(alignment: .center, spacing: 0) {
             ForEach(0..<items.count, id: \.self) { index in
+#if os(tvOS)
+                HStack {
+                    childItem(items[index], parentConstraints: parentConstraints)
+                }
+                .frame(maxWidth: .infinity)
+                .focusSection()
+#else
                 childItem(items[index], parentConstraints: parentConstraints)
+#endif
             }
         }
         .constraints(self.constraints, alignment: .top)
@@ -38,7 +46,15 @@ struct LinearLayout: View {
     ) -> some View {
         HStack(spacing: 0) {
             ForEach(0..<items.count, id: \.self) { index in
+#if os(tvOS)
+                VStack {
+                    childItem(items[index], parentConstraints: parentConstraints)
+                }
+                .frame(maxHeight: .infinity)
+                .focusSection()
+#else
                 childItem(items[index], parentConstraints: parentConstraints)
+#endif
             }
         }
         .constraints(constraints, alignment: .leading)
@@ -81,6 +97,9 @@ struct LinearLayout: View {
 
         ViewFactory.createView(item.view, constraints: constraints)
             .margin(item.margin)
+#if os(tvOS)
+            .focusSection()
+#endif
     }
 
     private func parentConstraints() -> ViewConstraints {

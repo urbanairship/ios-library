@@ -12,26 +12,20 @@ extension View {
     @ViewBuilder
     internal func thomasToggleStyle(
         _ style: ThomasToggleStyleInfo,
-        colorScheme: ColorScheme,
-        constraints: ViewConstraints,
-        disabled: Bool
+        constraints: ViewConstraints
     ) -> some View {
         switch style {
         case .checkboxStyle(let style):
             self.toggleStyle(
                 AirshipCheckboxToggleStyle(
                     viewConstraints: constraints,
-                    info: style,
-                    colorScheme: colorScheme,
-                    disabled: disabled
+                    info: style
                 )
             )
         case .switchStyle(let style):
             self.toggleStyle(
                 AirshipSwitchToggleStyle(
-                    info: style,
-                    colorScheme: colorScheme,
-                    disabled: disabled
+                    info: style
                 )
             )
         }

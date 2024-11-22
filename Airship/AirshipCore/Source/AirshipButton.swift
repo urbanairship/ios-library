@@ -171,7 +171,11 @@ fileprivate extension View {
     func buttonTapEffect(_ tapEffect: ThomasButtonTapEffect) -> some View {
         switch(tapEffect) {
         case .default:
+#if os(tvOS)
+            self.buttonStyle(TVButtonStyle())
+#else
             self.buttonStyle(.plain)
+#endif
         case .none:
             self.buttonStyle(AirshipButtonEmptyStyle())
         }
@@ -188,3 +192,26 @@ fileprivate extension View {
 
 
 }
+
+#if os(tvOS)
+struct TVButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        return ButtonView(configuration: configuration)
+    }
+
+    struct ButtonView: View {
+        @Environment(\.isFocused) var isFocused
+        @Environment(\.isEnabled) var isEnabled
+
+        let configuration: ButtonStyle.Configuration
+
+        var body: some View {
+            configuration.label
+                .hoverEffect(.highlight, isEnabled: isFocused)
+                .colorMultiply(isEnabled ? Color.white : ThomasConstants.disabledColor)
+        }
+    }
+}
+
+#endif

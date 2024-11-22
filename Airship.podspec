@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
    s.module_name                = "AirshipKit"
    s.header_dir                 = "AirshipKit"
    s.ios.deployment_target      = "14.0"
-   s.tvos.deployment_target     = "14.0"
+   s.tvos.deployment_target     = "18.0"
    s.watchos.deployment_target  = "7.0"
    s.swift_versions             = "5.0"
    s.requires_arc               = true

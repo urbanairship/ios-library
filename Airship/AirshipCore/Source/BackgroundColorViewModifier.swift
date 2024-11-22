@@ -32,6 +32,7 @@ struct BackgroundViewModifier: ViewModifier {
             .applyPadding(padding: border?.strokeWidth)
             .applyBackground(color: backgroundColor, border: border, colorScheme: colorScheme)
             .applyShadow(shadow, border: border, colorScheme: colorScheme)
+            .contentShape(.rect(cornerRadius: border?.radius ?? 0, style: .continuous))
     }
 }
 

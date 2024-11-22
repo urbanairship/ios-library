@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 
 // Copyright Airship and Contributors
 
@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "Airship",
     defaultLocalization: "en",
-    platforms: [.macOS(.v10_15), .iOS(.v14), .tvOS(.v14), .visionOS(.v1)],
+    platforms: [.macOS(.v10_15), .iOS(.v14), .tvOS(.v18), .visionOS(.v1)],
     products: [
         .library(
             name: "AirshipCore",

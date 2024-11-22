@@ -68,9 +68,10 @@ struct Score: View {
         return constraints
     }
 
-    func calculateHeight(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, width: CGFloat?)
-        -> CGFloat?
-    {
+    func calculateHeight(
+        style: ThomasViewInfo.Score.ScoreStyle.NumberRange,
+        width: CGFloat?
+    ) -> CGFloat? {
         guard let width = width else {
             return nil
         }
@@ -81,7 +82,7 @@ struct Score: View {
         if remainingSpace <= 0 {
             return nil
         }
-        return remainingSpace / count
+        return min(remainingSpace / count, 66.0)
     }
 
     private func updateScore(_ value: Int?) {
@@ -174,9 +175,11 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                 .opacity(isOn ? 0 : 1)
             }
             .aspectRatio(1, contentMode: .fit)
-            .frame(height: self.viewConstraints.height)
         }
+        .frame(height: self.viewConstraints.height)
         .animation(Animation.easeInOut(duration: 0.05), value: configuration.isOn)
+#if os(tvOS)
+        .buttonStyle(TVButtonStyle())
+#endif
     }
-
 }
