@@ -110,7 +110,7 @@ final class MessageCenterStoreTest: XCTestCase {
 
 extension MessageCenterMessage {
 
-    class func generateMessage(
+    static func generateMessage(
         sentDate: Date = Date(),
         expiry: Date? = nil
     ) -> MessageCenterMessage {
@@ -132,7 +132,7 @@ extension MessageCenterMessage {
         )
     }
 
-    class func generateMessages(_ count: Int) -> [MessageCenterMessage] {
+    static func generateMessages(_ count: Int) -> [MessageCenterMessage] {
         // Sets the sent date to make the order predictable
         let date = Date()
         return (0..<count)

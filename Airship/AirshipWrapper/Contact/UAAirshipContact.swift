@@ -67,16 +67,6 @@ public class UAAirshipContact: NSObject {
         subscriptionListEditor.editor = Airship.contact.editSubscriptionLists()
         return subscriptionListEditor
     }
-
-    /// Begins a subscription list editing session
-    /// - Parameter editorBlock: A scoped subscription list editor block.
-    /// - Returns: A ScopedSubscriptionListEditor
-    @objc
-    public func editSubscriptionLists(
-        _ editorBlock: (ScopedSubscriptionListEditor) -> Void
-    ) {
-        Airship.contact.editSubscriptionLists(editorBlock)
-    }
 }
 
 @objc

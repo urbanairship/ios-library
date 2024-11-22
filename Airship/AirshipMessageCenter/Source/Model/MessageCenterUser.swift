@@ -5,13 +5,13 @@ import AirshipCore
 #endif
 
 /// Model object for holding user data.
-public final class MessageCenterUser: NSObject, Codable, Sendable {
+public struct MessageCenterUser: Codable, Sendable, Equatable {
 
     /// The username.
-    public let password: String
+    public var password: String
 
     /// The password.
-    public let username: String
+    public var username: String
 
     /// - Note: for internal use only.  :nodoc:
     init(username: String, password: String) {

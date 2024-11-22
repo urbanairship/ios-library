@@ -27,12 +27,12 @@ public protocol UAMessageCenterDisplayDelegate {
 }
 
 @objc
-public protocol UAMessageCenterPredicate {
+public protocol UAMessageCenterPredicate: Sendable {
     /// Evaluate the message center message. Used to filter the message center list
     /// - Parameters:
     ///     - message: The message center message
     /// - Returns: True if the message passed the evaluation, otherwise false.
-    func evaluate(message: MessageCenterMessage) -> Bool
+    func evaluate(message: UAMessageCenterMessage) -> Bool
 }
 
 @objc
@@ -130,7 +130,7 @@ public class UAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDispl
     }
 }
 
-public class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
+public final class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
     private let delegate: UAMessageCenterPredicate
     
     init(delegate: UAMessageCenterPredicate) {
@@ -138,6 +138,7 @@ public class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
     }
     
     public func evaluate(message: MessageCenterMessage) -> Bool {
-        self.delegate.evaluate(message: message)
+        let mcMessage = UAMessageCenterMessage(message: message)
+        return self.delegate.evaluate(message: mcMessage)
     }
 }

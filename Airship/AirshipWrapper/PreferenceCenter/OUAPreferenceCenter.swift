@@ -33,13 +33,6 @@ public class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOp
 @objc
 public class UAPreferenceCenter: NSObject {
     
-    /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    @objc
-    public static var shared: PreferenceCenter {
-        return PreferenceCenter.shared
-    }
-    
-    
     /**
      * Open delegate.
      *

@@ -39,13 +39,6 @@ public class UAChannel: NSObject {
     }
     
     @objc
-    public func editSubscriptionLists(
-        _ editorBlock: (SubscriptionListEditor) -> Void
-    ) {
-        Airship.channel.editSubscriptionLists(editorBlock)
-    }
-    
-    @objc
     public func fetchSubscriptionLists() async throws -> [String] {
         try await Airship.channel.fetchSubscriptionLists()
     }

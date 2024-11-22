@@ -7,32 +7,32 @@ import AirshipCore
 #endif
 
 /// Message center message.
-public final class MessageCenterMessage: NSObject, Sendable {
+public struct MessageCenterMessage: Sendable, Equatable {
     /// The message title.
-    public let title: String
+    public var title: String
 
     /// The Airship message ID.
     /// This ID may be used to match an incoming push notification to a specific message.
-    public let id: String
+    public var id: String
 
     /// The message's extra dictionary.
     /// This dictionary can be populated with arbitrary key-value data at the time the message is composed.
-    public let extra: [String: String]
+    public var extra: [String: String]
 
     /// The URL for the message body itself.
     /// This URL may only be accessed with Basic Auth credentials set to the user ID and password.
-    public let bodyURL: URL
+    public var bodyURL: URL
 
     /// The date and time the message will expire.
     /// A nil value indicates it will never expire.
-    public let expirationDate: Date?
+    public var expirationDate: Date?
 
     /// The date and time the message was sent (UTC).
-    public let sentDate: Date
+    public var sentDate: Date
 
     /// The unread status of the message.
     /// `true` if the message is unread, otherwise `false`.
-    public let unread: Bool
+    public var unread: Bool
 
     /// The reporting data of the message.
     let messageReporting: AirshipJSON?
@@ -68,27 +68,6 @@ public final class MessageCenterMessage: NSObject, Sendable {
         self.sentDate = sentDate
         self.messageURL = messageURL
         self.rawMessageObject = (try? AirshipJSON.wrap(rawMessageObject))  ?? AirshipJSON.null
-    }
-
-    public override func isEqual(_ object: Any?) -> Bool {
-
-        guard
-            let object = object as? MessageCenterMessage,
-            self.title == object.title,
-            self.id == object.id,
-            self.bodyURL == object.bodyURL,
-            self.expirationDate == object.expirationDate,
-            self.unread == object.unread,
-            self.sentDate == object.sentDate,
-            self.messageURL == object.messageURL,
-            self.extra == object.extra,
-            self.messageReporting == object.messageReporting,
-            self.rawMessageObject == object.rawMessageObject
-        else {
-            return false
-        }
-
-        return true
     }
 }
 
@@ -138,21 +117,5 @@ extension MessageCenterMessage {
             return (result == .orderedAscending || result == .orderedSame)
         }
         return false
-    }
-
-    /// Default hash implementation hashes the memory address by default which is always unique and can become out-of-sync with isEquals
-    public override var hash: Int {
-        var hasher = Hasher()
-        hasher.combine(title)
-        hasher.combine(id)
-        hasher.combine(bodyURL)
-        hasher.combine(expirationDate)
-        hasher.combine(unread)
-        hasher.combine(sentDate)
-        hasher.combine(messageURL)
-        hasher.combine(extra)
-        hasher.combine(messageReporting)
-        hasher.combine(rawMessageObject)
-        return hasher.finalize()
     }
 }
