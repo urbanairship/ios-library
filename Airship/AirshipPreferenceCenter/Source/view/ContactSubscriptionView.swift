@@ -111,16 +111,6 @@ where Self == DefaultContactSubscriptionViewStyle {
 
 /// Default contact subscription view style
 public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline,
-        color: .primary
-    )
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline,
-        color: .primary
-    )
-
     @ViewBuilder
     @MainActor
     public func makeBody(configuration: Configuration) -> some View {
@@ -135,8 +125,7 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle 
                         Text(title)
                             .textAppearance(
                                 itemTheme?.titleAppearance,
-                                base: DefaultContactSubscriptionViewStyle
-                                    .titleAppearance,
+                                base: PreferenceCenterDefaults.titleAppearance,
                                 colorScheme: colorScheme
                             ).accessibilityAddTraits(.isHeader)
                     }
@@ -145,14 +134,18 @@ public struct DefaultContactSubscriptionViewStyle: ContactSubscriptionViewStyle 
                         Text(subtitle)
                             .textAppearance(
                                 itemTheme?.subtitleAppearance,
-                                base: DefaultContactSubscriptionViewStyle
-                                    .subtitleAppearance,
+                                base: PreferenceCenterDefaults.subtitleAppearance,
                                 colorScheme: colorScheme
                             )
                     }
                 }
             }
-            .toggleStyle(tint: colorScheme.airshipResolveColor(light: itemTheme?.toggleTintColor, dark: itemTheme?.toggleTintColorDark))
+            .toggleStyle(
+                tint: colorScheme.airshipResolveColor(
+                    light: itemTheme?.toggleTintColor,
+                    dark: itemTheme?.toggleTintColorDark
+                )
+            )
             .padding(.trailing, 2)
         }
     }

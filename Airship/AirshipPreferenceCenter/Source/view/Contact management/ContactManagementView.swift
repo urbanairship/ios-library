@@ -96,98 +96,10 @@ where Self == DefaultContactManagementSectionStyle {
     }
 }
 
-internal struct DefaultColors {
-    static let primaryText: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return traitCollection.userInterfaceStyle == .dark ? UIColor.white : AirshipColorUtils.color("#333333") ?? UIColor.label
-    })
-
-    static let primaryInvertedText: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#333333") : UIColor.white) ?? UIColor.systemBackground
-    })
-
-    static let secondaryText: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return (traitCollection.userInterfaceStyle == .dark ? UIColor.white : AirshipColorUtils.color("#666666")) ?? UIColor.secondaryLabel
-    })
-
-    static let secondaryBackground: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : UIColor.secondarySystemBackground) ?? UIColor.secondarySystemBackground
-    })
-
-    static let linkBlue: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#619AFF") : AirshipColorUtils.color("#316BF2")) ?? UIColor.secondaryLabel
-    })
-
-    static let alertRed: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#FF677F") : AirshipColorUtils.color("#E6193B")) ?? UIColor.red
-    })
-
-    static let destructiveRed: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#B20D25") : AirshipColorUtils.color("#B9142B")) ?? UIColor.red
-    })
-}
 
 // MARK: - DEFAULT Contact Management View
 /// Default contact management section style. Also styles alert views.
 public struct DefaultContactManagementSectionStyle: ContactManagementSectionStyle {
-    static let backgroundColor = DefaultColors.secondaryBackground
-
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline,
-        color: DefaultColors.primaryText
-    )
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline,
-        color: DefaultColors.primaryText
-    )
-
-    static let resendButtonTitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .caption.weight(.bold),
-        color: DefaultColors.linkBlue
-    )
-
-    static let listTitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .callout.weight(.regular),
-        color: DefaultColors.secondaryText
-    )
-
-    static let listSubtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .caption.weight(.regular),
-        color: DefaultColors.secondaryText
-    )
-
-    static let errorAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .footnote.weight(.medium),
-        color: DefaultColors.alertRed
-    )
-
-    static let textFieldTextAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .body,
-        color: DefaultColors.primaryText
-    )
-
-    static let textFieldPlaceholderAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .body,
-        color: DefaultColors.primaryText /// It's a prominent placeholder by design
-    )
-
-    static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline.weight(.bold),
-        color: DefaultColors.primaryInvertedText
-    )
-
-    static let buttonLabelDestructiveAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline.weight(.bold),
-        color: .white
-    )
-
-    static let buttonLabelOutlineAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline.weight(.bold),
-        color: DefaultColors.primaryText
-    )
-
-    static let buttonBackgroundColor = DefaultColors.primaryText
-    static let buttonDestructiveBackgroundColor = DefaultColors.destructiveRed
 
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {

@@ -23,7 +23,7 @@ public protocol PreferenceCenterViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = PreferenceCenterViewStyleConfiguration
     
-    @MainActor
+    @preconcurrency @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -36,11 +36,8 @@ where Self == DefaultPreferenceCenterViewStyle {
 }
 
 /// The default Preference Center view style
+@MainActor @preconcurrency 
 public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline
-    )
 
     private func navigationBarTitle(
         configuration: Configuration,
@@ -82,7 +79,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     theme?.retryMessageAppearance,
                     colorScheme: colorScheme
                 )
-                .padding(16)
+                .padding()
 
             Button(
                 action: {
@@ -133,11 +130,10 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     Text(subtitle)
                         .textAppearance(
                             theme.preferenceCenter?.subtitleAppearance,
-                            base: DefaultPreferenceCenterViewStyle
-                                .subtitleAppearance,
+                            base: PreferenceCenterDefaults.subtitleAppearance,
                             colorScheme: colorScheme
                         )
-                        .padding(.bottom, 16)
+                        .padding(.bottom)
                 }
 
                 ForEach(0..<state.config.sections.count, id: \.self) { index in
@@ -147,7 +143,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     )
                 }
             }
-            .padding(16)
+            .padding()
             Spacer()
         }
         .navigationTitle(navigationBarTitle(configuration: configuration, state: state))

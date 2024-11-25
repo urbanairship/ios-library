@@ -93,11 +93,11 @@ struct ChannelListViewCell: View {
 
     @ViewBuilder
     private var pendingLabelView: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: PreferenceCenterDefaults.smallPadding) {
             if let pendingText = viewModel.pendingLabelModel?.message {
                 Text(pendingText).textAppearance(
                     theme.contactManagement?.listSubtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.listSubtitleAppearance,
+                    base: PreferenceCenterDefaults.channelListItemSubtitleAppearance,
                     colorScheme: colorScheme
                 )
             }
@@ -119,7 +119,7 @@ struct ChannelListViewCell: View {
             } label: {
                 Text(resendTitle).textAppearance(
                     theme.contactManagement?.listSubtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.resendButtonTitleAppearance,
+                    base: PreferenceCenterDefaults.resendButtonTitleAppearance,
                     colorScheme: colorScheme
                 )
             }
@@ -131,29 +131,30 @@ struct ChannelListViewCell: View {
             viewModel.onRemove()
         }) {
             Image(systemName: "trash")
-                .foregroundColor(theme.contactManagement?.titleAppearance?.color ?? .primary)
+                .foregroundColor(
+                    theme.contactManagement?.titleAppearance?.color ?? .primary
+                )
         }
     }
 
     @ViewBuilder
     private func makeCellLabel(iconSystemName: String, labelText: String) -> some View {
-        HStack {
-            Image(systemName: iconSystemName)
-                .font(.system(size: 16))
-                .foregroundColor(theme.contactManagement?.titleAppearance?.color ?? DefaultColors.secondaryText)
+        SwiftUI.Label {
             Text(labelText).textAppearance(
                 theme.contactManagement?.listSubtitleAppearance,
-                base: DefaultContactManagementSectionStyle.listTitleAppearance,
+                base: PreferenceCenterDefaults.channelListItemTitleAppearance,
                 colorScheme: colorScheme
             )
             .lineLimit(1)
             .truncationMode(.middle)
+        } icon: {
+            Image(systemName: iconSystemName)
+                .textAppearance(
+                    theme.contactManagement?.listSubtitleAppearance,
+                    base: PreferenceCenterDefaults.channelListItemTitleAppearance,
+                    colorScheme: colorScheme
+                )
         }
-    }
-
-    @ViewBuilder
-    private func makeErrorLabel(labelText: String) -> some View {
-        ErrorLabel(message: labelText, theme: self.theme.contactManagement)
     }
 
     @ViewBuilder
@@ -172,7 +173,7 @@ struct ChannelListViewCell: View {
 
     @ViewBuilder
     private func makeCell(channel: ContactChannel) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading) {
             let cellText = channel.maskedAddress.replacingAsterisksWithBullets()
             if channel.channelType == .email {
                 makeCellLabel(iconSystemName: "envelope", labelText: cellText)
@@ -186,14 +187,13 @@ struct ChannelListViewCell: View {
 
     private var cellBody: some View {
         VStack(alignment: .leading) {
-            Divider()
-            HStack {
+            HStack(alignment: .top) {
                 makeCell(channel: viewModel.channel)
                 Spacer()
                 trashButton
             }
-            .padding(3)
         }
+        .padding(PreferenceCenterDefaults.smallPadding)
     }
 
     var body: some View {

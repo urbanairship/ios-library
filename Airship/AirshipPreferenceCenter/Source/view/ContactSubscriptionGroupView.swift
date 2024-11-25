@@ -127,21 +127,6 @@ where Self == DefaultContactSubscriptionGroupStyle {
 /// The default subscription group item style
 public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
 
-    private static let chipLabelAppearance =
-        PreferenceCenterTheme.TextAppearance(
-            color: .primary
-        )
-
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline,
-        color: .primary
-    )
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline,
-        color: .primary
-    )
-
     @ViewBuilder
     @MainActor
     public func makeBody(configuration: Configuration) -> some View {
@@ -151,13 +136,12 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
             .contactSubscriptionGroup
 
         if configuration.displayConditionsMet {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading) {
                 if let title = item.display?.title {
                     Text(title)
                         .textAppearance(
                             itemTheme?.titleAppearance,
-                            base: DefaultContactSubscriptionGroupStyle
-                                .titleAppearance,
+                            base: PreferenceCenterDefaults.titleAppearance,
                             colorScheme: colorScheme
                         )
                 }
@@ -166,8 +150,7 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                     Text(subtitle)
                         .textAppearance(
                             itemTheme?.subtitleAppearance,
-                            base: DefaultContactSubscriptionGroupStyle
-                                .subtitleAppearance,
+                            base: PreferenceCenterDefaults.subtitleAppearance,
                             colorScheme: colorScheme
                         )
                 }
@@ -194,7 +177,8 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
         var body: some View {
             let dx = AirshipAtomicValue(CGFloat.zero)
             let dy = AirshipAtomicValue(CGFloat.zero)
-            let hSpacing = 8.0
+
+            let hSpacing = PreferenceCenterDefaults.chipSpacing
 
             GeometryReader { geometry in
                 ZStack(alignment: .topLeading) {
@@ -251,45 +235,46 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
         ) -> some View {
             let onColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.checkColor, dark: chipTheme?.checkColorDark) ?? .green
             let offColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary
+            let chipBackground = Capsule().strokeBorder(
+                colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary,
+                lineWidth: 1
+            )
 
             Button(action: {
                 isOn.wrappedValue.toggle()
             }) {
-                HStack(spacing: 4) {
-                    ZStack {
-                        if isOn.wrappedValue {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 24))
-                                .foregroundColor(onColor)
-                        } else {
-                            Image(systemName: "circle")
-                                .font(.system(size: 24))
-                                .foregroundColor(offColor)
-                        }
+                HStack(spacing: 0) {
+                    if isOn.wrappedValue {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(onColor)
+                    } else {
+                        Image(systemName: "circle")
+                            .font(.system(size: 24))
+                            .foregroundColor(offColor)
                     }
-
                     Text(component.display?.title ?? "")
                         .textAppearance(
                             chipTheme?.labelAppearance,
-                            base: DefaultContactSubscriptionGroupStyle
-                                .chipLabelAppearance,
+                            base: PreferenceCenterDefaults.chipLabelAppearance,
                             colorScheme: colorScheme
                         )
-                        .padding(.trailing, 8)
+                        .padding(.horizontal, 8)
                 }
                 .padding(2)
-                .overlay(
-                    RoundedRectangle(
-                        cornerRadius: 22,
-                        style: .circular
-                    )
-                    .strokeBorder(
-                        colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary,
-                        lineWidth: 1
-                    )
-                )
+#if os(tvOS)
                 .frame(minHeight: 44)
-            }.airshipApplyIf(true) { view in
+                .background(chipBackground)
+#else
+                .background(chipBackground)
+                .frame(minHeight: 44)
+#endif
+            }
+#if os(tvOS)
+            .buttonBorderShape(.capsule)
+            .buttonStyle(.card)
+#endif
+            .airshipApplyIf(true) { view in
                 if #available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *) {
                     view.accessibilityAddTraits(isOn.wrappedValue ? [.isToggle, .isSelected] : .isToggle)
                 } else {

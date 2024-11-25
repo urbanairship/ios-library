@@ -108,16 +108,6 @@ where Self == DefaultChannelSubscriptionViewStyle {
 
 /// The default channel subscription view style
 public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline,
-        color: .primary
-    )
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline,
-        color: .primary
-    )
-
 
     @ViewBuilder
     @MainActor
@@ -134,8 +124,7 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
                         Text(title)
                             .textAppearance(
                                 itemTheme?.titleAppearance,
-                                base: DefaultChannelSubscriptionViewStyle
-                                    .titleAppearance,
+                                base: PreferenceCenterDefaults.titleAppearance,
                                 colorScheme: colorScheme
                             )
                             .accessibilityAddTraits(.isHeader)
@@ -145,8 +134,7 @@ public struct DefaultChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle 
                         Text(subtitle)
                             .textAppearance(
                                 itemTheme?.subtitleAppearance,
-                                base: DefaultChannelSubscriptionViewStyle
-                                    .subtitleAppearance,
+                                base: PreferenceCenterDefaults.subtitleAppearance,
                                 colorScheme: colorScheme
                             )
 

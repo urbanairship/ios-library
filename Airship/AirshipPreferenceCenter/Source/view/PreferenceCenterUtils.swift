@@ -13,11 +13,13 @@ internal extension View {
         ZStack {
             Rectangle()
                 .foregroundColor(Color.clear)
-                .background(Color.airshipTappableClear.ignoresSafeArea(.all)).simultaneousGesture(TapGesture().onEnded { _ in
-                if let onClose = onClose {
-                    onClose()
+                .background(Color.airshipTappableClear.ignoresSafeArea(.all))
+                .onTapGesture {
+                    if let onClose = onClose {
+                        onClose()
+                    }
                 }
-            }).zIndex(0)
+                .zIndex(0)
             self.zIndex(1)
         }
     }

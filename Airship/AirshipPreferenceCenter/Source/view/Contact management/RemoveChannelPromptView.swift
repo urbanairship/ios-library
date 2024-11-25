@@ -13,14 +13,8 @@ struct RemoveChannelPromptView: View {
     /// The preference center theme
     var theme: PreferenceCenterTheme.ContactManagement?
 
-    var onCancel: ()->()
-    var optOutAction: ()->()
-
-    /// The minimum alert width - as defined by Apple
-    private let promptMinWidth = 270.0
-
-    /// The maximum alert width
-    private let promptMaxWidth = 420.0
+    var onCancel: () -> Void
+    var optOutAction: () -> Void
 
     private func dismiss() {
         onCancel()
@@ -28,9 +22,11 @@ struct RemoveChannelPromptView: View {
 
     @ViewBuilder
     private var promptViewContent: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            titleText.padding(.trailing, 16) // Pad out to prevent aliasing with the close button
+        VStack(alignment: .leading) {
+            titleText
+                .padding(.trailing) // Pad out to prevent aliasing with the close button
             bodyText
+                .padding(.vertical)
             buttonView
             footer
         }
@@ -42,8 +38,8 @@ struct RemoveChannelPromptView: View {
 
         GeometryReader { proxy in
             promptViewContent
-                .padding(16)
-                .addBackground(theme: theme, colorScheme: colorScheme)
+                .padding()
+                .addPromptBackground(theme: theme, colorScheme: colorScheme)
                 .addPreferenceCloseButton(
                     dismissButtonColor: dismissButtonColor ?? .primary,
                     dismissIconResource: "xmark",
@@ -51,7 +47,7 @@ struct RemoveChannelPromptView: View {
                     onUserDismissed: {
                         onCancel()
                     })
-                .padding(16)
+                .padding()
                 .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                 .transition(.opacity)
         }
@@ -63,7 +59,7 @@ struct RemoveChannelPromptView: View {
         Text(item.view.display.title)
             .textAppearance(
                 theme?.titleAppearance,
-                base: DefaultContactManagementSectionStyle.titleAppearance,
+                base: PreferenceCenterDefaults.titleAppearance,
                 colorScheme: colorScheme
             )
             .fixedSize(horizontal: false, vertical: true)
@@ -77,7 +73,7 @@ struct RemoveChannelPromptView: View {
             Text(body)
                 .textAppearance(
                     theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                    base: PreferenceCenterDefaults.subtitleAppearance,
                     colorScheme: colorScheme
                 )
                 .multilineTextAlignment(.leading)
@@ -88,30 +84,19 @@ struct RemoveChannelPromptView: View {
     private var footer: some View {
         /// Footer
         if let footer = item.view.display.footer {
-            Spacer()
-                .frame(height: 20)
-            FooterView(text: footer, textAppearance: theme?.subtitleAppearance ?? DefaultContactManagementSectionStyle.subtitleAppearance)
+            FooterView(text: footer, textAppearance: theme?.subtitleAppearance ?? PreferenceCenterDefaults.subtitleAppearance)
         }
     }
 
     @ViewBuilder
     private var buttonView: some View {
-        let noText = item.view.onSuccess?.title == nil && item.view.onSuccess?.body == nil
-        if item.view.cancelButton != nil {
-            HStack {
-                Spacer()
-                HStack(alignment: .center, spacing: 12) {
-                    cancelButton
-                    submitButton
-                }
-                Spacer()
+        HStack {
+            Spacer()
+            if item.view.cancelButton != nil {
+                cancelButton
+                    .padding(.trailing)
             }
-            .padding(.top, noText ? 24 : 0)
-        } else {
-            HStack {
-                Spacer()
-                submitButton.padding(.top, noText ? 24 : 0)
-            }
+            submitButton
         }
     }
 
@@ -123,7 +108,8 @@ struct RemoveChannelPromptView: View {
                 type: .destructiveType,
                 item: optOutButton,
                 theme: self.theme,
-                action: optOutAction)
+                action: optOutAction
+            )
         }
     }
 
@@ -145,7 +131,10 @@ struct RemoveChannelPromptView: View {
 
     var body: some View {
         promptView
-            .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
+            .frame(
+                minWidth: PreferenceCenterDefaults.promptMinWidth,
+                maxWidth: PreferenceCenterDefaults.promptMaxWidth
+            )
             .accessibilityAddTraits(.isModal)
     }
 }

@@ -18,12 +18,6 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     @StateObject
     private var viewModel: AddChannelPromptViewModel
 
-    /// The minimum alert width - as defined by Apple
-    private let promptMinWidth = 270.0
-
-    /// The maximum alert width
-    private let promptMaxWidth = 420.0
-
     init(viewModel: AddChannelPromptViewModel) {
         _viewModel = StateObject(
             wrappedValue: viewModel
@@ -58,8 +52,8 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                 Rectangle()
                     .foregroundColor(Color.clear)
                     .onAppear {
-                    viewModel.onSubmit()
-                }
+                        viewModel.onSubmit()
+                    }
             }
         case .ready, .loading, .failedInvalid, .failedDefault:
             promptView
@@ -71,7 +65,10 @@ struct AddChannelPromptView: View, @unchecked Sendable {
         foregroundContent.backgroundWithCloseAction {
             self.viewModel.onCancel()
         }
-        .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
+        .frame(
+            minWidth: PreferenceCenterDefaults.promptMinWidth,
+            maxWidth: PreferenceCenterDefaults.promptMaxWidth
+        )
     }
 
     // MARK: Prompt view
@@ -80,9 +77,10 @@ struct AddChannelPromptView: View, @unchecked Sendable {
         Text(self.viewModel.item.display.title)
             .textAppearance(
                 viewModel.theme?.titleAppearance,
-                base: DefaultContactManagementSectionStyle.titleAppearance,
+                base: PreferenceCenterDefaults.sectionTitleAppearance,
                 colorScheme: colorScheme
-            ).accessibilityAddTraits(.isHeader)
+            )
+            .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
@@ -91,7 +89,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
             Text(bodyText)
                 .textAppearance(
                     viewModel.theme?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                    base: PreferenceCenterDefaults.sectionSubtitleAppearance,
                     colorScheme: colorScheme
                 )
         }
@@ -138,24 +136,24 @@ struct AddChannelPromptView: View, @unchecked Sendable {
     private var footer: some View {
         /// Footer
         if let footer = self.viewModel.item.display.footer {
-            FooterView(text: footer, textAppearance: viewModel.theme?.subtitleAppearance ?? DefaultContactManagementSectionStyle.subtitleAppearance)
+            FooterView(text: footer, textAppearance: viewModel.theme?.subtitleAppearance ?? PreferenceCenterDefaults.subtitleAppearance)
         }
     }
 
     @ViewBuilder
     private var promptViewContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            titleText.padding(.trailing, 16) // Pad out to prevent aliasing with the close button
-            bodyText
+        VStack(alignment: .leading) {
+            titleText
+                .padding(.bottom)
+                .padding(.trailing) // Pad out to prevent aliasing with the close button
 
-            /// Channel Input text fields
+            bodyText
             ChannelTextField(
                 platform: viewModel.platform,
                 selectedSender: $viewModel.selectedSender,
                 inputText: $viewModel.inputText,
                 theme: viewModel.theme
             )
-
             errorText
             submitButton
             footer
@@ -164,12 +162,15 @@ struct AddChannelPromptView: View, @unchecked Sendable {
 
     @ViewBuilder
     private var promptView: some View {
-        let dismissButtonColor = colorScheme.airshipResolveColor(light: viewModel.theme?.buttonLabelAppearance?.color, dark: viewModel.theme?.buttonLabelAppearance?.colorDark)
+        let dismissButtonColor = colorScheme.airshipResolveColor(
+            light: viewModel.theme?.buttonLabelAppearance?.color,
+            dark: viewModel.theme?.buttonLabelAppearance?.colorDark
+        )
 
         GeometryReader { proxy in
             promptViewContent
-                .padding(16)
-                .addBackground(
+                .padding()
+                .addPromptBackground(
                     theme: viewModel.theme,
                     colorScheme: colorScheme
                 )
@@ -178,9 +179,10 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                     dismissIconResource: "xmark",
                     contentDescription: nil,
                     onUserDismissed: {
-                    self.viewModel.onCancel()
-                })
-                .padding(16)
+                        self.viewModel.onCancel()
+                    }
+                )
+                .padding()
                 .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                 .transition(.opacity)
                 .airshipOnChangeOf(viewModel.inputText) { newValue in
@@ -194,6 +196,7 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                         }
                     }
                 }
-        }.accessibilityAddTraits(.isModal)
+        }
+        .accessibilityAddTraits(.isModal)
     }
 }

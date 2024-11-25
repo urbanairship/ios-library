@@ -106,21 +106,6 @@ extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
 /// The default common section view style
 public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
-    public static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 18).bold(),
-        color: .primary
-    )
-
-    public static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 14),
-        color: .secondary
-    )
-
-    public static let emptyTextAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 14),
-        color: .gray.opacity(0.80)
-    )
-
     @ViewBuilder
     @MainActor
     public func makeBody(configuration: Configuration) -> some View {
@@ -130,30 +115,29 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
         if configuration.displayConditionsMet {
             VStack(alignment: .leading) {
-                if section.display?.title != nil
-                    || section.display?.subtitle != nil
-                {
-                    if let title = section.display?.title {
-                        Text(title)
-                            .textAppearance(
-                                sectionTheme?.titleAppearance,
-                                base: DefaultCommonSectionViewStyle
-                                    .titleAppearance,
-                                colorScheme: colorScheme
-                            ).accessibilityAddTraits(.isHeader)
-                    }
+                Spacer()
+                if section.display?.title?.isEmpty == false || section.display?.subtitle?.isEmpty == false {
+                    VStack(alignment: .leading) {
+                        if let title = section.display?.title {
+                            Text(title)
+                                .textAppearance(
+                                    sectionTheme?.titleAppearance,
+                                    base: PreferenceCenterDefaults.sectionTitleAppearance,
+                                    colorScheme: colorScheme
+                                )
+                                .accessibilityAddTraits(.isHeader)
+                        }
 
-                    if let subtitle = section.display?.subtitle {
-                        Text(subtitle)
-                            .textAppearance(
-                                sectionTheme?.subtitleAppearance,
-                                base: DefaultCommonSectionViewStyle
-                                    .subtitleAppearance,
-                                colorScheme: colorScheme
-                            )
+                        if let subtitle = section.display?.subtitle {
+                            Text(subtitle)
+                                .textAppearance(
+                                    sectionTheme?.subtitleAppearance,
+                                    base: PreferenceCenterDefaults.sectionSubtitleAppearance,
+                                    colorScheme: colorScheme
+                                )
+                        }
                     }
-
-                    Divider()
+                    .padding(.bottom, PreferenceCenterDefaults.smallPadding)
                 }
 
                 ForEach(0..<section.items.count, id: \.self) { index in
@@ -163,7 +147,12 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                     )
                 }
             }
-            .padding(.bottom, 8)
+#if os(tvOS)
+            .focusSection()
+#endif
+
+            Divider().padding(.vertical)
+            
         }
     }
 
@@ -178,19 +167,15 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
             PreferenceCenterAlertView(item: item, state: state).transition(.opacity)
         case .channelSubscription(let item):
             ChannelSubscriptionView(item: item, state: state)
-            Divider()
         case .contactSubscription(let item):
             ContactSubscriptionView(item: item, state: state)
-            Divider()
         case .contactSubscriptionGroup(let item):
             ContactSubscriptionGroupView(item: item, state: state)
-            Divider()
         case .contactManagement(let item):
             PreferenceCenterContactManagementView(
                 item: item,
                 state: state
             )
-            Divider()
         }
     }
 }

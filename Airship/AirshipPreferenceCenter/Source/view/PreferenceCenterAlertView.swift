@@ -103,16 +103,6 @@ where Self == DefaultPreferenceCenterAlertStyle {
 
 /// The default Preference Center alert style
 public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline,
-        color: .primary
-    )
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline,
-        color: .primary
-    )
-
     @ViewBuilder
     @MainActor
     public func makeBody(configuration: Configuration) -> some View {
@@ -122,7 +112,7 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
 
         if configuration.displayConditionsMet {
             VStack(alignment: .center) {
-                HStack(spacing: 16) {
+                HStack(alignment: .top) {
                     if let url = item.display?.iconURL, !url.isEmpty {
                         AirshipAsyncImage(
                             url: url,
@@ -136,15 +126,15 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                             }
                         )
                         .frame(width: 60, height: 60)
+                        .padding()
                     }
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading) {
                         if let title = item.display?.title {
                             Text(title)
                                 .textAppearance(
                                     itemTheme?.titleAppearance,
-                                    base: DefaultPreferenceCenterAlertStyle
-                                        .titleAppearance,
+                                    base: PreferenceCenterDefaults.titleAppearance,
                                     colorScheme: colorScheme
                                 )
                         }
@@ -153,8 +143,7 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                             Text(subtitle)
                                 .textAppearance(
                                     itemTheme?.subtitleAppearance,
-                                    base: DefaultPreferenceCenterAlertStyle
-                                        .subtitleAppearance,
+                                    base: PreferenceCenterDefaults.subtitleAppearance,
                                     colorScheme: colorScheme
                                 )
                         }
@@ -175,11 +164,13 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                                     Text(button.text)
                                         .textAppearance(
                                             itemTheme?.buttonLabelAppearance,
-                                            base: DefaultContactManagementSectionStyle.buttonLabelAppearance,
+                                            base: PreferenceCenterDefaults.buttonLabelAppearance,
                                             colorScheme: colorScheme
                                         )
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 4)
+                                        .padding(.horizontal)
+                                        .padding(.vertical, PreferenceCenterDefaults.smallPadding)
+#if !os(tvOS)
+
                                         .background(
                                             Capsule()
                                                 .fill(
@@ -189,9 +180,21 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                                                     ) ?? Color.blue
                                                 )
                                         )
-                                        .cornerRadius(8)
+                                        .frame(minHeight: 44)
+
+#endif
                                 }
                             )
+#if os(tvOS)
+                            .tint(colorScheme.airshipResolveColor(
+                                light: itemTheme?.buttonBackgroundColor,
+                                dark: itemTheme?.buttonBackgroundColorDark
+                            ) ?? Color.blue)
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+#else
+                            .clipShape(Capsule())
+#endif
                             .optAccessibilityLabel(
                                 string: button.contentDescription
                             )

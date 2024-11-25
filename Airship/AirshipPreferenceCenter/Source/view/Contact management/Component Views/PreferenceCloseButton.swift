@@ -12,16 +12,15 @@ struct PreferenceCloseButton: View {
     let dismissIconColor: Color
     let dismissIconResource: String
 
-    let onTap: () -> ()
+    let onTap: () -> Void
 
     private let opacity: CGFloat = 0.64
-    private let defaultPadding: CGFloat = 24
 
     private let height: CGFloat = 24
     private let width: CGFloat = 24
 
-    private let tappableHeight: CGFloat = 48
-    private let tappableWidth: CGFloat = 48
+    private let tappableHeight: CGFloat = 44
+    private let tappableWidth: CGFloat = 44
 
     private func imageExistsInBundle(name: String) -> Bool {
         return UIImage(named: name) != nil
@@ -39,7 +38,7 @@ struct PreferenceCloseButton: View {
             .resizable()
             .frame(width: width/2, height: height/2)
             .foregroundColor(dismissIconColor)
-            .padding(8)
+            .padding()
             .clipShape(Circle()))
     }
 
@@ -49,11 +48,11 @@ struct PreferenceCloseButton: View {
                 Spacer()
                 dismissButtonImage
                     .opacity(opacity)
-
                 Spacer()
             }
-        }.frame(width: tappableWidth, height: tappableHeight)
-            .accessibilityLabel("Dismiss")
+            .frame(width: tappableWidth, height: tappableHeight)
+        }
+        .accessibilityLabel("Dismiss")
     }
 }
 
@@ -66,12 +65,12 @@ struct PreferenceCloseButton: View {
 
 extension View {
     @ViewBuilder
-    func addBackground(theme: PreferenceCenterTheme.ContactManagement?, colorScheme: ColorScheme) -> some View {
+    func addPromptBackground(theme: PreferenceCenterTheme.ContactManagement?, colorScheme: ColorScheme) -> some View {
         let color = colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark)
         
         self.background(
             BackgroundShape(
-                color: color ?? DefaultContactManagementSectionStyle.backgroundColor
+                color: color ?? AirshipSystemColors.secondaryBackground
             )
         )
     }
@@ -90,9 +89,9 @@ extension View {
                 dismissIconResource: dismissIconResource,
                 onTap: onUserDismissed
             )
-            .airshipApplyIf(contentDescription != nil, transform: { view in
+            .airshipApplyIf(contentDescription != nil) { view in
                 view.accessibilityLabel(contentDescription!)
-            })
+            }
             .zIndex(1)
         }
     }
