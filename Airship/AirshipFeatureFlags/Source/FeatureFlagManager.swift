@@ -9,15 +9,17 @@ import AirshipCore
 
 
 /// Feature flag errors
-public enum FeatureFlagError: Error {
-    /// Failed to fetch the data for the feature flag. The app should retry on this error.
+public enum FeatureFlagError: Error, Equatable {
     case failedToFetchData
+    case staleData
+    case outOfDate
+    case connectionError(errorMessage: String)
 }
 
-enum FeatureFlagEvaluationError: Error {
-    case connectionError
+enum FeatureFlagEvaluationError: Error, Equatable {
     case outOfDate
     case staleNotAllowed
+    case connectionError(errorMessage: String)
 }
 
 /// Airship feature flag manager
@@ -92,8 +94,8 @@ public final class FeatureFlagManager: Sendable {
             )
         } catch {
             switch (error) {
-            case FeatureFlagEvaluationError.connectionError:
-                throw FeatureFlagError.failedToFetchData
+            case FeatureFlagEvaluationError.connectionError(let errorMessage):
+                throw FeatureFlagError.connectionError(errorMessage: errorMessage)
             case FeatureFlagEvaluationError.outOfDate:
                 await self.remoteDataAccess.notifyOutdated(
                     remoteDateInfo: remoteDataFeatureFlagInfo.remoteDataInfo
@@ -103,14 +105,14 @@ public final class FeatureFlagManager: Sendable {
                     await self.remoteDataAccess.waitForRefresh()
                     return try await self.flag(name: name, allowRefresh: false)
                 }
-                throw FeatureFlagError.failedToFetchData
+                throw FeatureFlagError.outOfDate
 
             case FeatureFlagEvaluationError.staleNotAllowed:
                 if (allowRefresh) {
                     await self.remoteDataAccess.waitForRefresh()
                     return try await self.flag(name: name, allowRefresh: false)
                 }
-                throw FeatureFlagError.failedToFetchData
+                throw FeatureFlagError.staleData
             default:
                 AirshipLogger.error("Unexpected error \(error)")
                 throw FeatureFlagError.failedToFetchData

@@ -18,12 +18,12 @@ final class TestDeferredResolver: AirshipDeferredResolverProtocol, @unchecked Se
                 let value = try await resultParser(data)
                 return .success(value)
             } catch {
-                return .retriableError()
+                return .retriableError(statusCode: 200)
             }
         case .timedOut: return .timedOut
         case .outOfDate: return .outOfDate
         case .notFound: return .notFound
-        case .retriableError(retryAfter: let retryAfter): return .retriableError(retryAfter: retryAfter)
+        case .retriableError(retryAfter: let retryAfter, statusCode: let statusCode): return .retriableError(retryAfter: retryAfter, statusCode:statusCode)
         }
     }
 }
