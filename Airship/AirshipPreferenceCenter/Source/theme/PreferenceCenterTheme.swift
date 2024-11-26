@@ -556,7 +556,11 @@ struct PreferenceCenterDefaults {
     static let buttonBackgroundColor = AirshipSystemColors.label
 
     static let promptBackgroundColor: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+#if os(tvOS)
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : .black) ?? .white
+#else
         return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
+#endif
     })
 
     static let labeledSectionBreakTitleAppearance = PreferenceCenterTheme.TextAppearance(
@@ -647,9 +651,13 @@ internal struct AirshipSystemColors {
     static let label = Color(UIColor.label)
     static let secondaryLabel = Color(UIColor.secondaryLabel)
     static let tertiaryLabel = Color(UIColor.tertiaryLabel)
+#if os(tvOS)
+    static let background = Color.black
+#else
     static let background = Color(UIColor.systemBackground)
     static let secondaryBackground = Color(UIColor.secondarySystemBackground)
     static let tertiaryBackground = Color(UIColor.tertiarySystemBackground)
+#endif
 
     static let link = Color(UIColor.link)
 }

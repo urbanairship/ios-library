@@ -50,13 +50,6 @@ class ProjectValidationTest: XCTestCase {
                 "AirshipCore/Source",
             ]
         )
-        validateTarget(
-            target: "AirshipCore tvOS",
-            sourcePaths: [
-                "AirshipCore/Source/Internal", "AirshipCore/Source/Public",
-                "AirshipCore/Source",
-            ]
-        )
     }
 
     func testAirshipAutomation() {

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 #import "UALegacyLoggingBridge.h"
 
 #define UA_LEVEL_LOG(level, fmt, ...) \

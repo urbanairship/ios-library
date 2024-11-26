@@ -101,7 +101,7 @@ build_archive "AirshipNotificationServiceExtension" "maccatalyst"
 build_archive "AirshipNotificationContentExtension" "maccatalyst"
 
 # visionOS
-build_archive "AirshipRelease visionOS" "visionOS"
+build_archive "AirshipRelease" "visionOS"
 
 # Package AirshipBasement
 xcrun xcodebuild -create-xcframework \
@@ -109,10 +109,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipBasement.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipBasement.framework" \
@@ -127,10 +127,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipCore.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipCore.framework" \
@@ -146,10 +146,10 @@ xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipAutomation.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipAutomation.framework.dSYM" \
   -output "$OUTPUT/AirshipAutomation.xcframework"
@@ -160,10 +160,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipMessageCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipMessageCenter.framework.dSYM" \
   -output "$OUTPUT/AirshipMessageCenter.xcframework"
@@ -174,10 +174,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
   -output "$OUTPUT/AirshipPreferenceCenter.xcframework"
@@ -188,10 +188,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xros.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease visionOS/xrsimulator.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -output "$OUTPUT/AirshipFeatureFlags.xcframework"

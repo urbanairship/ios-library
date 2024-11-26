@@ -28,16 +28,16 @@ protocol AirshipInstanceProtocol {
 final class AirshipInstance: AirshipInstanceProtocol {
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
-
+    
     public let actionRegistry: ActionRegistry
     public let permissionsManager: AirshipPermissionsManager
-
-    #if !os(tvOS) && !os(watchOS)
-
+    
+#if !os(tvOS) && !os(watchOS)
+    
     public var javaScriptCommandDelegate: JavaScriptCommandDelegate?
     public let channelCapture: ChannelCapture
-    #endif
-
+#endif
+    
     public var deepLinkDelegate: DeepLinkDelegate?
     public let urlAllowList: URLAllowListProtocol
     public let localeManager: AirshipLocaleManager
@@ -47,7 +47,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
     private let experimentManager: ExperimentDataProvider
     private var componentMap: [String: AirshipComponent] = [:]
     private var lock = AirshipLock()
-
+    
     @MainActor
     init(config: AirshipConfig) {
         let requestSession = DefaultAirshipRequestSession(
@@ -64,23 +64,23 @@ final class AirshipInstance: AirshipInstanceProtocol {
             config: self.config,
             defaultEnabledFeatures: config.enabledFeatures
         )
-
+        
         self.actionRegistry = ActionRegistry()
         self.urlAllowList = URLAllowList.allowListWithConfig(self.config)
         self.localeManager = AirshipLocaleManager(
             dataStore: dataStore,
             config: self.config
         )
-
-        #if !os(watchOS)
+        
+#if !os(watchOS)
         let apnsRegistrar = UIApplicationAPNSRegistrar()
-        #else
+#else
         let apnsRegistrar = WKExtensionAPNSRegistrar()
-        #endif
-
+#endif
+        
         let audienceOverridesProvider = DefaultAudienceOverridesProvider()
-
-
+        
+        
         let channel = AirshipChannel(
             dataStore: dataStore,
             config: self.config,
@@ -88,13 +88,13 @@ final class AirshipInstance: AirshipInstanceProtocol {
             localeManager: self.localeManager,
             audienceOverridesProvider: audienceOverridesProvider
         )
-
+        
         requestSession.channelAuthTokenProvider = ChannelAuthTokenProvider(
             channel: channel,
             runtimeConfig: self.config
         )
-
-
+        
+        
         let analytics = AirshipAnalytics(
             config: self.config,
             dataStore: dataStore,
@@ -103,7 +103,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             privacyManager: privacyManager,
             permissionsManager: permissionsManager
         )
-
+        
         let push = AirshipPush(
             config: self.config,
             dataStore: dataStore,
@@ -114,7 +114,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             apnsRegistrar: apnsRegistrar,
             badger: Badger.shared
         )
-
+        
         let contact = AirshipContact(
             dataStore: dataStore,
             config: self.config,
@@ -124,7 +124,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             localeManager: self.localeManager
         )
         requestSession.contactAuthTokenProvider = contact.authTokenProvider
-
+        
         let remoteData = RemoteData(
             config: self.config,
             dataStore: dataStore,
@@ -137,7 +137,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             dataStore: dataStore,
             remoteData: remoteData
         )
-
+        
         let meteredUsage = AirshipMeteredUsage(
             config: self.config,
             dataStore: dataStore,
@@ -145,14 +145,14 @@ final class AirshipInstance: AirshipInstanceProtocol {
             contact: contact,
             privacyManager: privacyManager
         )
-
-        #if !os(tvOS) && !os(watchOS)
+        
+#if !os(tvOS) && !os(watchOS)
         self.channelCapture = ChannelCapture(
             config: self.config,
             channel: channel
         )
-        #endif
-
+#endif
+        
         let deferredResolver = AirshipDeferredResolver(
             config: self.config,
             audienceOverrides: audienceOverridesProvider
@@ -174,25 +174,25 @@ final class AirshipInstance: AirshipInstanceProtocol {
             deferredResolver: deferredResolver,
             cache: CoreDataAirshipCache(appKey: self.config.appKey)
         )
-
+        
         var components: [AirshipComponent] = [
             contact, channel, analytics, remoteData, push
         ]
         components.append(contentsOf: moduleLoader.components)
-
+        
         self.components = components
-
+        
         self.remoteConfigManager = RemoteConfigManager(
             config: self.config,
             remoteData: remoteData,
             privacyManager: self.privacyManager
         )
-
+        
         self.actionRegistry.registerActions(
             actionsManifests: moduleLoader.actionManifests + [DefaultActionsManifest()]
         )
     }
-
+    
     public func component<E>(ofType componentType: E.Type) -> E? {
         var component: E?
         lock.sync {
@@ -202,12 +202,12 @@ final class AirshipInstance: AirshipInstanceProtocol {
                     ($0 as? E) != nil
                 }
             }
-
+            
             component = componentMap[key] as? E
         }
         return component
     }
-
+    
     @MainActor
     func airshipReady() {
         self.components.forEach { $0.airshipReady() }

@@ -20,6 +20,20 @@
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "847BFFFB267CD73A007CD249"
+               BuildableName = "AirshipPreferenceCenterTests.xctest"
+               BlueprintName = "AirshipPreferenceCenterTests"
+               ReferencedContainer = "container:Airship.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

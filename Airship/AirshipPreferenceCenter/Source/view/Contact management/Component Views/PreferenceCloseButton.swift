@@ -66,11 +66,14 @@ struct PreferenceCloseButton: View {
 extension View {
     @ViewBuilder
     func addPromptBackground(theme: PreferenceCenterTheme.ContactManagement?, colorScheme: ColorScheme) -> some View {
-        let color = colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark)
-        
+        let color = colorScheme.airshipResolveColor(
+            light: theme?.backgroundColor,
+            dark: theme?.backgroundColorDark
+        )
+
         self.background(
             BackgroundShape(
-                color: color ?? AirshipSystemColors.secondaryBackground
+                color: color ?? PreferenceCenterDefaults.promptBackgroundColor
             )
         )
     }

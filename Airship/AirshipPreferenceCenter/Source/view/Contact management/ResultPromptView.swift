@@ -65,7 +65,7 @@ public struct ResultPromptView: View {
                     color: colorScheme.airshipResolveColor(
                         light: theme?.backgroundColor,
                         dark: theme?.backgroundColorDark
-                    ) ?? AirshipSystemColors.secondaryBackground
+                    ) ?? PreferenceCenterDefaults.promptBackgroundColor
                 )
             )
             .padding()
