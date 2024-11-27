@@ -302,7 +302,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         case .notFound:
             await self.remoteDataAccess.notifyOutdated(schedule: schedule)
             return .success(result: .invalidate)
-        case .retriableError(retryAfter: let retryAfter):
+        case .retriableError(retryAfter: let retryAfter, statusCode: _):
             if let retryAfter {
                 return .retryAfter(retryAfter)
             } else {
