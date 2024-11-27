@@ -167,7 +167,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             )
             XCTFail()
         } catch {
-            XCTAssertEqual(FeatureFlagEvaluationError.connectionError, error as! FeatureFlagEvaluationError)
+            XCTAssertEqual(FeatureFlagEvaluationError.connectionError(errorMessage: "Failed to resolve flag."), error as! FeatureFlagEvaluationError)
         }
 
         await fulfillment(of: [expectation])
@@ -177,7 +177,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
         let expectation = expectation(description: "flag resolved")
         self.deferredResolver.onData = { _ in
             expectation.fulfill()
-            return .retriableError()
+            return .retriableError(statusCode: nil)
         }
 
         do {
@@ -187,7 +187,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             )
             XCTFail()
         } catch {
-            XCTAssertEqual(FeatureFlagEvaluationError.connectionError, error as! FeatureFlagEvaluationError)
+            XCTAssertEqual(FeatureFlagEvaluationError.connectionError(errorMessage: "Failed to resolve flag."), error as! FeatureFlagEvaluationError)
         }
 
         await fulfillment(of: [expectation])
@@ -210,7 +210,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             )
             XCTFail()
         } catch {
-            XCTAssertEqual(FeatureFlagEvaluationError.connectionError, error as! FeatureFlagEvaluationError)
+            XCTAssertEqual(FeatureFlagEvaluationError.connectionError(errorMessage: "Failed to resolve flag."), error as! FeatureFlagEvaluationError)
         }
 
         await fulfillment(of: [expectation])
@@ -232,7 +232,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             )
             XCTFail()
         } catch {
-            XCTAssertEqual(FeatureFlagEvaluationError.connectionError, error as! FeatureFlagEvaluationError)
+            XCTAssertEqual(FeatureFlagEvaluationError.connectionError(errorMessage: "Failed to resolve flag."), error as! FeatureFlagEvaluationError)
         }
 
         await fulfillment(of: [expecation])
@@ -371,7 +371,7 @@ fileprivate final class TestDeferredResolver: AirshipDeferredResolverProtocol, @
         case .timedOut: return .timedOut
         case .outOfDate: return .outOfDate
         case .notFound: return .notFound
-        case .retriableError(retryAfter: let retryAfter): return .retriableError(retryAfter: retryAfter)
+        case .retriableError(retryAfter: let retryAfter, statusCode: let statusCode): return .retriableError(retryAfter: retryAfter, statusCode: statusCode)
         @unknown default:
             fatalError()
         }

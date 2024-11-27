@@ -1,6 +1,13 @@
 
 # iOS Changelog
 
+## Version 18.12.2 November 26, 2024
+Patch release that resolves a minor memory-related bug and adds more useful logging around Feature Flag evaluation.
+
+### Changes
+- Fixed minor memory-related bug that could result in a rare crash.
+- Improved logging around Feature Flag evaluation.
+
 ## Version 18.12.1 November 6, 2024
 Patch release that resolves an issue with Firebase integrations in React Native and Flutter and an issue with opt-in checks when `requestAuthorizationToUseNotifications` is set to false.
 

@@ -129,16 +129,18 @@ final class DeferredResolverTest: XCTestCase {
             notificationOptIn: true
         )
 
+        let statusCode: Int = 200
+
         let body = "some body".data(using: .utf8)
         self.client.onResolve = { _, _, _, _, _, _ in
-            return AirshipHTTPResponse(result: body, statusCode: 200, headers: [:])
+            return AirshipHTTPResponse(result: body, statusCode: statusCode, headers: [:])
         }
 
         let result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
             throw AirshipErrors.error("parse error")
         }
 
-        XCTAssertEqual(result, .retriableError())
+        XCTAssertEqual(result, .retriableError(statusCode: statusCode))
     }
 
 
@@ -210,16 +212,17 @@ final class DeferredResolverTest: XCTestCase {
             notificationOptIn: true
         )
 
+        let statusCode: Int = 429
         let body = "some body".data(using: .utf8)!
         self.client.onResolve = { _, _, _, _, _, _ in
-            return AirshipHTTPResponse(result: body, statusCode: 429, headers: ["Location": self.altExampleURL.absoluteString])
+            return AirshipHTTPResponse(result: body, statusCode: statusCode, headers: ["Location": self.altExampleURL.absoluteString])
         }
 
         let result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
             return data
         }
 
-        XCTAssertEqual(result, .retriableError())
+        XCTAssertEqual(result, .retriableError(statusCode: statusCode))
 
         self.client.onResolve = { url, _, _, _, _, _ in
             XCTAssertEqual(url, self.altExampleURL)
@@ -242,16 +245,17 @@ final class DeferredResolverTest: XCTestCase {
             notificationOptIn: true
         )
 
+        let statusCode: Int = 429
         let body = "some body".data(using: .utf8)!
         self.client.onResolve = { _, _, _, _, _, _ in
-            return AirshipHTTPResponse(result: body, statusCode: 429, headers: ["Retry-After": "100.0"])
+            return AirshipHTTPResponse(result: body, statusCode: statusCode, headers: ["Retry-After": "100.0"])
         }
 
         let result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
             return data
         }
 
-        XCTAssertEqual(result, .retriableError(retryAfter: 100.0))
+        XCTAssertEqual(result, .retriableError(retryAfter: 100.0,  statusCode: statusCode))
     }
 
     func testResolve307() async throws {
@@ -287,11 +291,13 @@ final class DeferredResolverTest: XCTestCase {
         )
 
         let body = "some body".data(using: .utf8)!
+
+        let statusCode: Int = 307
         self.client.onResolve = { url, _, _, _, _, _ in
             if (url == self.exampleURL) {
                 return AirshipHTTPResponse(
                     result: nil,
-                    statusCode: 307,
+                    statusCode: statusCode,
                     headers: [
                         "Location": self.altExampleURL.absoluteString,
                         "Retry-After": "20.0"
@@ -306,7 +312,7 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .retriableError(retryAfter: 20.0))
+        XCTAssertEqual(result, .retriableError(retryAfter: 20.0, statusCode: statusCode))
 
         let anotherResult: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
             return data

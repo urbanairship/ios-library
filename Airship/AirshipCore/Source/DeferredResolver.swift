@@ -8,7 +8,7 @@ public enum AirshipDeferredResult<T : Sendable&Equatable>: Sendable, Equatable {
     case timedOut
     case outOfDate
     case notFound
-    case retriableError(retryAfter: TimeInterval? = nil)
+    case retriableError(retryAfter: TimeInterval? = nil, statusCode: Int? = nil)
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -147,7 +147,7 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
         case 200:
             do {
                 guard let body = result.result else {
-                    return .retriableError()
+                    return .retriableError(statusCode: result.statusCode)
                 }
                 let parsed = try await resultParser(body)
 
@@ -155,8 +155,8 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
 
                 return .success(parsed)
             } catch {
-                AirshipLogger.error("Failed ot parse deferred body \(error)")
-                return .retriableError()
+                AirshipLogger.error("Failed to parse deferred body \(error) with status code: \(result.statusCode)")
+                return .retriableError(statusCode: result.statusCode)
             }
         case 404: return .notFound
         case 409: return .outOfDate
@@ -164,13 +164,13 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
             if let location = result.locationHeader {
                 locationMap.value[url] = location
             }
-            return .retriableError(retryAfter: result.retryAfter)
+            return .retriableError(retryAfter: result.retryAfter, statusCode: result.statusCode)
         case 307:
             if let location = result.locationHeader {
                 locationMap.value[url] = location
 
                 if let retry = result.retryAfter, retry > 0 {
-                    return .retriableError(retryAfter: retry)
+                    return .retriableError(retryAfter: retry, statusCode: result.statusCode)
                 }
 
                 if (allowRetry) {
@@ -186,9 +186,9 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
                     )
                 }
             }
-            return .retriableError(retryAfter: result.retryAfter ?? 0)
+            return .retriableError(retryAfter: result.retryAfter ?? 0, statusCode: result.statusCode)
         default:
-            return .retriableError()
+            return .retriableError(statusCode: result.statusCode)
         }
     }
 }

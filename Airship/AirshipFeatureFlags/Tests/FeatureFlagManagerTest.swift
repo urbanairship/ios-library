@@ -838,10 +838,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
             XCTFail("Should throw")
-        } catch FeatureFlagError.failedToFetchData {
+        } catch FeatureFlagError.staleData {
             // No-op
         } catch {
-            XCTFail("Should throw failedToFetchData")
+            XCTFail("Should throw staleData")
         }
     }
 
@@ -881,10 +881,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
             XCTFail("Should throw")
-        } catch FeatureFlagError.failedToFetchData {
+        }catch FeatureFlagError.staleData {
             // No-op
         } catch {
-            XCTFail("Should throw failedToFetchData")
+            XCTFail("Should throw staleData")
         }
     }
 
@@ -894,10 +894,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
             XCTFail("Should throw")
-        } catch FeatureFlagError.failedToFetchData {
+        } catch FeatureFlagError.outOfDate {
             // No-op
         } catch {
-            XCTFail("Should throw failedToFetchData")
+            XCTFail("Should throw outOfDate")
         }
     }
 
@@ -1223,7 +1223,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             _ = try await featureFlagManager.flag(name: "foo")
         } catch {
-            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.failedToFetchData)
+            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.outOfDate)
         }
 
         XCTAssertEqual(remoteDataAccess.lastOutdatedRemoteInfo, self.remoteDataAccess.remoteDataInfo)
@@ -1259,13 +1259,13 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
-            throw FeatureFlagEvaluationError.connectionError
+            throw FeatureFlagEvaluationError.connectionError(errorMessage: "Failed to resolve flag.")
         }
 
         do {
             _ = try await featureFlagManager.flag(name: "foo")
         } catch {
-            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.failedToFetchData)
+            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.connectionError(errorMessage: "Failed to resolve flag."))
         }
 
         XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
