@@ -16,23 +16,21 @@ struct InAppMessageBannerView: View {
 
     /// A state variable to prevent endless size refreshing
     @State private var lastSize: CGSize?
+    @State private var isShowing: Bool = false
+    @State private var swipeOffset: CGFloat = 0
+    @State private var isButtonTapsDisabled: Bool = false
 
-    @State var isShowing: Bool = false
-    @State var swipeOffset: CGFloat = 0
-    @State var isButtonTapsDisabled: Bool = false
+    @StateObject private var timer: BannerTimer
 
     var theme: InAppMessageTheme.Banner
-
     var onDismiss: () -> Void
 
     private let displayContent: InAppMessageDisplayContent.Banner
-
-    private var mediaMaxWidth: CGFloat = 120
-
-    private var mediaMinHeight: CGFloat = 88
-    private var mediaMaxHeight: CGFloat = 480
-
+    private static let mediaMaxWidth: CGFloat = 120
+    private static let mediaMinHeight: CGFloat = 88
+    private static let mediaMaxHeight: CGFloat = 480
     static let animationInOutDuration = 0.2
+
 
     @ViewBuilder
     private var headerView: some View {
@@ -63,9 +61,9 @@ struct InAppMessageBannerView: View {
             )
             .padding(.horizontal, -theme.media.padding.leading)
             .frame(
-                maxWidth: mediaMaxWidth,
-                minHeight: mediaMinHeight,
-                maxHeight: mediaMaxHeight
+                maxWidth: Self.mediaMaxWidth,
+                minHeight: Self.mediaMinHeight,
+                maxHeight: Self.mediaMaxHeight
             )
             .fixedSize(horizontal: false, vertical: true)
         }
@@ -91,17 +89,19 @@ struct InAppMessageBannerView: View {
         .autoconnect()
     #endif
 
-    init(environment:InAppMessageEnvironment,
-         displayContent: InAppMessageDisplayContent.Banner,
-         bannerConstraints: InAppMessageBannerConstraints,
-         theme: InAppMessageTheme.Banner,
-         onDismiss: @escaping () -> Void
+    init(
+        environment:InAppMessageEnvironment,
+        displayContent: InAppMessageDisplayContent.Banner,
+        bannerConstraints: InAppMessageBannerConstraints,
+        theme: InAppMessageTheme.Banner,
+        onDismiss: @escaping () -> Void
     ) {
         self.displayContent = displayContent
         self.environment = environment
         self.bannerConstraints = bannerConstraints
         self.theme = theme
         self.onDismiss = onDismiss
+        self._timer = StateObject(wrappedValue: BannerTimer(duration: displayContent.duration))
     }
 
     @ViewBuilder
@@ -215,14 +215,24 @@ struct InAppMessageBannerView: View {
             .simultaneousGesture(swipeGesture)
             .onAppear {
                 setShowing(state: true)
+                timer.onAppear()
                 self.environment.onAppear()
+            }
+            .onDisappear {
+                self.timer.onDisappear()
             }
             .airshipOnChangeOf(swipeOffset) { value in
                 self.isButtonTapsDisabled = value != 0
+                self.timer.isPaused = value != 0
             }
             .airshipOnChangeOf(environment.isDismissed) { _ in
                 setShowing(state: false) {
                     onDismiss()
+                }
+            }
+            .onReceive(timer.$isExpired) { expired in
+                if (expired) {
+                    self.environment.onUserDismissed()
                 }
             }
             .frame(width: self.width)
@@ -243,10 +253,15 @@ struct InAppMessageBannerView: View {
     }
 
     private var swipeGesture: some Gesture {
-        let minSwipeDistance: CGFloat = 100.0
+        let minSwipeDistance: CGFloat = if self.bannerConstraints.size.height > 0 {
+            min(100.0,  self.bannerConstraints.size.height * 0.5)
+        } else {
+            100.0
+        }
+
         let placement = displayContent.placement ?? .bottom
 
-        return DragGesture(minimumDistance: 20)
+        return DragGesture(minimumDistance: 10)
             .onChanged { gesture in
                 withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
                     let offset = gesture.translation.height
@@ -350,5 +365,52 @@ fileprivate struct InAppMessageCustomOpacityButtonStyle: ButtonStyle {
     let pressedOpacity: Double
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.opacity(configuration.isPressed ? pressedOpacity : 1.0)
+    }
+}
+
+
+
+@MainActor
+fileprivate final class BannerTimer: ObservableObject {
+    private static let tick: TimeInterval = 0.1
+    private var elapsedTime: TimeInterval = 0
+    private let duration: TimeInterval?
+
+    private var isStarted: Bool = false
+    private var task: Task<Void, Error>?
+    var isPaused: Bool = false
+
+    @Published private(set) var isExpired: Bool = false
+
+    init(duration: TimeInterval?) {
+        self.duration = duration
+    }
+
+    func onAppear() {
+        guard !isStarted, !isExpired, let duration else {
+            return
+        }
+
+        self.isStarted = true
+
+        self.task = Task { @MainActor [weak self] in
+            while self?.isExpired == false, self?.isStarted == true {
+                try await Task.sleep(nanoseconds: UInt64(Self.tick * 1_000_000_000))
+                guard let self, self.isStarted, !Task.isCancelled else { return }
+
+                if !self.isPaused {
+                    self.elapsedTime += Self.tick
+                    if self.elapsedTime >= duration {
+                        self.isExpired = true
+                        self.task?.cancel()
+                    }
+                }
+            }
+        }
+    }
+
+    func onDisappear() {
+        isStarted = false
+        task?.cancel()
     }
 }
