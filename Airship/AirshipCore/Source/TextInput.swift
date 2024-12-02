@@ -192,15 +192,16 @@ struct TextInput: View {
     }
 
     private func validate(_ text: String) -> Bool {
-        guard self.info.validation.isRequired ?? false else { return true }
-
         let trimmed = text.trimmingCharacters(in: .whitespaces)
+        if (trimmed.isEmpty) {
+            return self.info.validation.isRequired == false
+        }
 
         switch self.info.properties.inputType {
         case .email:
-            return !trimmed.isEmpty && trimmed.airshipIsValidEmail()
+            return trimmed.airshipIsValidEmail()
         default:
-            return !trimmed.isEmpty
+            return true
         }
     }
 
