@@ -145,7 +145,7 @@ struct InAppMessageBannerView: View {
             contentBody
             buttonsView
         }
-        .padding([.top, .horizontal], itemSpacing)
+        .padding(.horizontal, itemSpacing)
         .addNub(
             placement: displayContent.placement ?? .bottom,
             nub: AnyView(nub),
