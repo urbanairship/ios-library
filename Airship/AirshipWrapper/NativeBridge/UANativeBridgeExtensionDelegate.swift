@@ -35,9 +35,9 @@ public protocol UANativeBridgeExtensionDelegate {
 }
 
 public class UANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExtensionDelegate {
-    private let delegate: UANativeBridgeExtensionDelegate
+    private let delegate: any UANativeBridgeExtensionDelegate
     
-    init(delegate: UANativeBridgeExtensionDelegate) {
+    init(delegate: any UANativeBridgeExtensionDelegate) {
         self.delegate = delegate
     }
     
@@ -45,7 +45,7 @@ public class UANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExten
         self.delegate.actionsMetadata(for: command, webView: webView)
     }
     
-    public func extendJavaScriptEnvironment(_ js: JavaScriptEnvironmentProtocol, webView: WKWebView) async {
+    public func extendJavaScriptEnvironment(_ js: any JavaScriptEnvironmentProtocol, webView: WKWebView) async {
         let jse = UAJavaScriptEnvironment(delegate: js)
         await self.delegate.extendJavaScriptEnvironment(jse, webView: webView)
     }
@@ -53,9 +53,9 @@ public class UANativeBridgeExtensionDelegateWrapper: NSObject, NativeBridgeExten
 
 @objc
 public class UAJavaScriptEnvironment: NSObject {
-    private let delegate: JavaScriptEnvironmentProtocol
+    private let delegate: any JavaScriptEnvironmentProtocol
     
-    init(delegate: JavaScriptEnvironmentProtocol) {
+    init(delegate: any JavaScriptEnvironmentProtocol) {
         self.delegate = delegate
     }
    

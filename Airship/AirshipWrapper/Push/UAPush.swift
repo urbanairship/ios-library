@@ -118,9 +118,9 @@ public class UAPush: NSObject {
         }
     }
 
-    private var _pushNotificationDelegate: UAPushNotificationDelegate?
+    private var _pushNotificationDelegate: (any UAPushNotificationDelegate)?
     @objc
-    public var pushNotificationDelegate: UAPushNotificationDelegate? {
+    public var pushNotificationDelegate: (any UAPushNotificationDelegate)? {
         didSet {
             if let pushNotificationDelegate {
                 Airship.push.pushNotificationDelegate = UAPushNotificationDelegateWrapper(delegate: pushNotificationDelegate)
@@ -130,9 +130,9 @@ public class UAPush: NSObject {
         }
     }
 
-    private var _registrationDelegate: UARegistrationDelegate?
+    private var _registrationDelegate: (any UARegistrationDelegate)?
     @objc
-    public var registrationDelegate: UARegistrationDelegate? {
+    public var registrationDelegate: (any UARegistrationDelegate)? {
         didSet {
             if let registrationDelegate {
                 Airship.push.registrationDelegate = UARegistrationDelegateWrapper(delegate: registrationDelegate)

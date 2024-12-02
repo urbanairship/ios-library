@@ -19,9 +19,9 @@ public protocol UAPreferenceCenterOpenDelegate {
 }
 
 public class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
-    private let delegate: UAPreferenceCenterOpenDelegate
+    private let delegate: any UAPreferenceCenterOpenDelegate
     
-    init(delegate: UAPreferenceCenterOpenDelegate) {
+    init(delegate: any UAPreferenceCenterOpenDelegate) {
         self.delegate = delegate
     }
     
@@ -39,10 +39,10 @@ public class UAPreferenceCenter: NSObject {
      * If set, the delegate will be called instead of launching the OOTB preference center screen. Must be set
      * on the main actor.
      */
-    private var _openDelegate: PreferenceCenterOpenDelegate?
+    private var _openDelegate: (any PreferenceCenterOpenDelegate)?
     @objc
     @MainActor
-    public var openDelegate: UAPreferenceCenterOpenDelegate? {
+    public var openDelegate: (any UAPreferenceCenterOpenDelegate)? {
         didSet {
             if let openDelegate {
                 _openDelegate = UAPreferenceCenterOpenDelegateWrapper(delegate: openDelegate)

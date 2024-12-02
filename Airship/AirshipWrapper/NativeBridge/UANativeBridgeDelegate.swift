@@ -10,9 +10,9 @@ public protocol UANativeBridgeDelegate {
 }
 
 public class UANativeBridgeDelegateWrapper: NSObject, NativeBridgeDelegate {
-    private let delegate: UANativeBridgeDelegate
+    private let delegate: any UANativeBridgeDelegate
     
-    init(delegate: UANativeBridgeDelegate) {
+    init(delegate: any UANativeBridgeDelegate) {
         self.delegate = delegate
     }
     

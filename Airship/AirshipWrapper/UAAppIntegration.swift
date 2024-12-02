@@ -79,7 +79,7 @@ public class UAAppIntegration: NSObject {
     @objc
     public class func application(
         _ application: UIApplication,
-        didFailToRegisterForRemoteNotificationsWithError error: Error
+        didFailToRegisterForRemoteNotificationsWithError error: any Error
     ) {
         AppIntegration.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 @objc
 public class UAAirshipContact: NSObject {

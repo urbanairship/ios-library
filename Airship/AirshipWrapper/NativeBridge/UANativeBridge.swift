@@ -9,10 +9,11 @@ public class UANativeBridge: NSObject {
     
     private let bridge: NativeBridge
     
-    private var _nativeBridgeDelegate: NativeBridgeDelegate?
+    private var _nativeBridgeDelegate: (any NativeBridgeDelegate)?
     /// Delegate to support additional native bridge features such as `close()`.
     @objc
-    public var nativeBridgeDelegate: UANativeBridgeDelegate? {
+    @MainActor
+    public var nativeBridgeDelegate: (any UANativeBridgeDelegate)? {
         didSet {
             if let nativeBridgeDelegate {
                 
@@ -26,10 +27,11 @@ public class UANativeBridge: NSObject {
     }
 
     
-    private var _forwardNavigationDelegate: AirshipWKNavigationDelegate?
+    private var _forwardNavigationDelegate: (any AirshipWKNavigationDelegate)?
     /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
-    public var forwardNavigationDelegate: UANavigationDelegate?
+    @MainActor
+    public var forwardNavigationDelegate: (any UANavigationDelegate)?
  {
         didSet {
             if let forwardNavigationDelegate {
@@ -42,10 +44,11 @@ public class UANativeBridge: NSObject {
         }
     }
     
-    private var _javaScriptCommandDelegate: JavaScriptCommandDelegate?
+    private var _javaScriptCommandDelegate: (any JavaScriptCommandDelegate)?
     /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
-    public var javaScriptCommandDelegate: UAJavaScriptCommandDelegate?
+    @MainActor
+    public var javaScriptCommandDelegate: (any UAJavaScriptCommandDelegate)?
  {
         didSet {
             if let javaScriptCommandDelegate {
@@ -59,10 +62,11 @@ public class UANativeBridge: NSObject {
     }
     
     
-    private var _nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
+    private var _nativeBridgeExtensionDelegate: (any NativeBridgeExtensionDelegate)?
     /// Optional delegate to forward any WKNavigationDelegate calls.
     @objc
-    public var nativeBridgeExtensionDelegate: UANativeBridgeExtensionDelegate?
+    @MainActor
+    public var nativeBridgeExtensionDelegate: (any UANativeBridgeExtensionDelegate)?
  {
         didSet {
             if let nativeBridgeExtensionDelegate {
@@ -77,6 +81,7 @@ public class UANativeBridge: NSObject {
     
     /// NativeBridge initializer.
     @objc
+    @MainActor
     public override init() {
         self.bridge = NativeBridge()
     }
@@ -89,9 +94,9 @@ public protocol UANavigationDelegate: WKNavigationDelegate {
 }
 
 public class UANavigationDelegateWrapper: NSObject, AirshipWKNavigationDelegate {
-    private let delegate: UANavigationDelegate
+    private let delegate: any UANavigationDelegate
     
-    init(delegate: UANavigationDelegate) {
+    init(delegate: any UANavigationDelegate) {
         self.delegate = delegate
     }
 }

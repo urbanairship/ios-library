@@ -14,15 +14,25 @@ import AirshipCore
 @objc
 public class UAAirship: NSObject {
     
+    private static let _holder = Holder()
+    
     /// A user configurable deep link delegate.
-    private static var _deepLinkDelegate: DeepLinkDelegate?
+    private static var _deepLinkDelegate: (any DeepLinkDelegate)? {
+        get { return _holder.deeplinkDelegate.value }
+        set { _holder.deeplinkDelegate.value = newValue }
+    }
+    
     @objc
-    public static var deepLinkDelegate: UADeepLinkDelegate? {
-        didSet {
-            if let deepLinkDelegate {
-                _deepLinkDelegate = UADeepLinkDelegateWrapper(delegate: deepLinkDelegate)
-                Airship.deepLinkDelegate = _deepLinkDelegate
+    public static var deepLinkDelegate: (any UADeepLinkDelegate)? {
+        get { return _holder.uaDeepLinkDelegate.value }
+        set {
+            _holder.uaDeepLinkDelegate.value = newValue
+            if let newValue {
+                let wrapper = UADeepLinkDelegateWrapper(delegate: newValue)
+                self._deepLinkDelegate = wrapper
+                Airship.deepLinkDelegate = wrapper
             } else {
+                self._deepLinkDelegate = nil
                 Airship.deepLinkDelegate = nil
             }
         }
@@ -73,6 +83,11 @@ public class UAAirship: NSObject {
     }
     
 #endif
+    
+    private final class Holder: Sendable {
+        let deeplinkDelegate = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
+        let uaDeepLinkDelegate = AirshipAtomicValue<(any UADeepLinkDelegate)?>(nil)
+    }
     
 }
 

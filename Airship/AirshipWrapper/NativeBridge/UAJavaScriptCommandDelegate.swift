@@ -36,9 +36,9 @@ public protocol UAJavaScriptCommandDelegate {
 }
 
 public class UAJavaScriptCommandDelegateWrapper: NSObject, JavaScriptCommandDelegate {
-    private let delegate: UAJavaScriptCommandDelegate
+    private let delegate: any UAJavaScriptCommandDelegate
     
-    init(delegate: UAJavaScriptCommandDelegate) {
+    init(delegate: any UAJavaScriptCommandDelegate) {
         self.delegate = delegate
     }
     

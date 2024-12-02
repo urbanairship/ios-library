@@ -83,9 +83,9 @@ public protocol UAPushNotificationDelegate {
 }
 
 public class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
-    private let delegate: UAPushNotificationDelegate
+    private let delegate: any UAPushNotificationDelegate
     
-    init(delegate: UAPushNotificationDelegate) {
+    init(delegate: any UAPushNotificationDelegate) {
         self.delegate = delegate
     }
     

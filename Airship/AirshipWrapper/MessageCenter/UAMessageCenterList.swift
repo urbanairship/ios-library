@@ -107,9 +107,9 @@ final public class UAMessageCenterInbox: NSObject {
 
 public final class UAMessageCenterInboxBaseProtocolWrapper: NSObject, MessageCenterInboxBaseProtocol {
    
-    private let delegate: UAMessageCenterInboxBaseProtocol
+    private let delegate: any UAMessageCenterInboxBaseProtocol
     
-    init(delegate: UAMessageCenterInboxBaseProtocol) {
+    init(delegate: any UAMessageCenterInboxBaseProtocol) {
         self.delegate = delegate
     }
     

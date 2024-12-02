@@ -38,11 +38,11 @@ public protocol UAMessageCenterPredicate: Sendable {
 @objc
 public class UAMessageCenter: NSObject {
     
-    private var _displayDelegate: UAMessageCenterDisplayDelegate?
+    private var _displayDelegate: (any UAMessageCenterDisplayDelegate)?
     /// Message center display delegate.
     @objc
     @MainActor
-    public var displayDelegate: UAMessageCenterDisplayDelegate? {
+    public var displayDelegate: (any UAMessageCenterDisplayDelegate)? {
         didSet {
             if let displayDelegate {
                 MessageCenter.shared.displayDelegate = UAMessageCenterDisplayDelegateWrapper(delegate: displayDelegate)
@@ -70,12 +70,12 @@ public class UAMessageCenter: NSObject {
         try MessageCenter.shared.setThemeFromPlist(plist)
     }
 
-    private var _predicate: UAMessageCenterPredicate?
+    private var _predicate: (any UAMessageCenterPredicate)?
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
     @objc
     @MainActor
-    public var predicate: UAMessageCenterPredicate? {
+    public var predicate: (any UAMessageCenterPredicate)? {
         didSet {
             if let predicate {
                 MessageCenter.shared.predicate = UAMessageCenterPredicateWrapper(delegate: predicate)
@@ -111,9 +111,9 @@ public class UAMessageCenter: NSObject {
 }
 
 public class UAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisplayDelegate {
-    private let delegate: UAMessageCenterDisplayDelegate
+    private let delegate: any UAMessageCenterDisplayDelegate
     
-    init(delegate: UAMessageCenterDisplayDelegate) {
+    init(delegate: any UAMessageCenterDisplayDelegate) {
         self.delegate = delegate
     }
     
@@ -131,9 +131,9 @@ public class UAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDispl
 }
 
 public final class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
-    private let delegate: UAMessageCenterPredicate
+    private let delegate: any UAMessageCenterPredicate
     
-    init(delegate: UAMessageCenterPredicate) {
+    init(delegate: any UAMessageCenterPredicate) {
         self.delegate = delegate
     }
     

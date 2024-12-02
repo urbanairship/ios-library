@@ -58,14 +58,14 @@ public protocol UARegistrationDelegate {
     ///
     /// - Parameter error: An NSError object that encapsulates information why registration did not succeed.
     @objc
-    func apnsRegistrationFailedWithError(_ error: Error)
+    func apnsRegistrationFailedWithError(_ error: any Error)
 }
 
 public class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
     
-    private let delegate: UARegistrationDelegate
+    private let delegate: any UARegistrationDelegate
     
-    init(delegate: UARegistrationDelegate) {
+    init(delegate: any UARegistrationDelegate) {
         self.delegate = delegate
     }
     
@@ -92,7 +92,7 @@ public class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
         self.delegate.apnsRegistrationSucceeded(withDeviceToken: deviceToken)
     }
     
-    public func apnsRegistrationFailedWithError(_ error: Error) {
+    public func apnsRegistrationFailedWithError(_ error: any Error) {
         self.delegate.apnsRegistrationFailedWithError(error)
     }
     
