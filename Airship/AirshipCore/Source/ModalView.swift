@@ -42,8 +42,6 @@ struct ModalView: View {
     }
     #endif
 
-
-
     private func calculateKeyboardOverlap(
         placement: ThomasPresentationInfo.Modal.Placement,
         keyboardHeight: Double,
@@ -128,12 +126,6 @@ struct ModalView: View {
                 self.layout.view,
                 constraints: contentConstraints
             )
-            .thomasBackground(
-                color: placement.backgroundColor,
-                border: placement.border,
-                shadow: placement.shadow
-            )
-            .margin(placement.margin)
             .background(
                 GeometryReader(content: { contentMetrics -> Color in
                     let size = contentMetrics.size
@@ -143,28 +135,15 @@ struct ModalView: View {
                     return Color.clear
                 })
             )
+            .thomasBackground(
+                color: placement.backgroundColor,
+                border: placement.border,
+                shadow: placement.shadow
+            )
+            .margin(placement.margin)
             #if !os(watchOS)
             .offset(y: -keyboardOffset)
             #endif
-            .airshipApplyIf(contentConstraints.height == nil) {
-                let constraintHeight = contentConstraints.maxHeight
-                let height = contentSize?.height
-
-                let maxHeight: CGFloat? = if let height, let constraintHeight, height > constraintHeight {
-                    constraintHeight
-                } else {
-                    nil
-                }
-
-                $0.frame(maxHeight: maxHeight)
-            }
-            .airshipApplyIf(contentConstraints.width == nil) {
-                if let contentSize {
-                    $0.frame(maxWidth: contentSize.width)
-                } else {
-                    $0
-                }
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
         .background(

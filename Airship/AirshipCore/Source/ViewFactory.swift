@@ -8,9 +8,10 @@ import SwiftUI
 struct ViewFactory {
     @MainActor
     @ViewBuilder
-    static func createView(_ viewInfo: ThomasViewInfo, constraints: ViewConstraints)
-        -> some View
-    {
+    static func createView(
+        _ viewInfo: ThomasViewInfo,
+        constraints: ViewConstraints
+    ) -> some View {
         switch viewInfo {
         case .container(let info):
             Container(info: info, constraints: constraints)
@@ -66,5 +67,4 @@ struct ViewFactory {
             ButtonLayout(info: info, constraints: constraints)
         }
     }
-
 }
