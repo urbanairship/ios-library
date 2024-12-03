@@ -16,10 +16,10 @@ public final class AirshipDebugManager: @unchecked Sendable {
         return Airship.requireComponent(ofType: DebugComponent.self).debugManager
     }
 
-    private var currentDisplay: AirshipMainActorCancellable?
+    private var currentDisplay: (any AirshipMainActorCancellable)?
     private let pushDataManager: PushDataManager
     private let eventDataManager: EventDataManager
-    private let remoteData: RemoteDataProtocol
+    private let remoteData: any RemoteDataProtocol
     private var eventUpdates: AnyCancellable? = nil
 
     var preferenceFormsPublisher: AnyPublisher<[String], Never> {
@@ -89,8 +89,8 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
     init(
         config: RuntimeConfig,
-        analytics: AirshipAnalyticsProtocol,
-        remoteData: RemoteDataProtocol
+        analytics: any AirshipAnalyticsProtocol,
+        remoteData: any RemoteDataProtocol
     ) {
         self.remoteData = remoteData
         self.pushDataManager = PushDataManager(appKey: config.appKey)
@@ -264,7 +264,7 @@ extension UITextField {
 }
 
 private struct DebugRootView: View {
-    let disposable: AirshipMainActorCancellable
+    let disposable: any AirshipMainActorCancellable
 
     @ViewBuilder
     var body: some View {

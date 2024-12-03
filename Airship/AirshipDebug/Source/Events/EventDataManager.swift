@@ -9,7 +9,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-class EventDataManager {
+final class EventDataManager: Sendable {
 
     private let maxAge = TimeInterval(172800)  // 2 days
     private let appKey: String
@@ -39,7 +39,7 @@ class EventDataManager {
         
         do {
             try await coreData.perform(skipIfStoreNotCreated: true) { context in
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = EventData.fetchRequest()
+                let fetchRequest: NSFetchRequest<any NSFetchRequestResult> = EventData.fetchRequest()
                 fetchRequest.predicate = NSPredicate(format: "eventDate < %@", cutOffDate as NSDate)
 
                 let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)

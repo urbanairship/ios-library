@@ -40,7 +40,7 @@ final class PushDataManager: Sendable {
 
         do {
             try await coreData.perform(skipIfStoreNotCreated: true) { context in
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = PushData.fetchRequest()
+                let fetchRequest: NSFetchRequest<any NSFetchRequestResult> = PushData.fetchRequest()
                 fetchRequest.predicate = NSPredicate(format: "time < %f", storageDaysInterval)
 
                 let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
