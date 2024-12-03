@@ -17,7 +17,7 @@ struct ThomasAccessibleInfo: ThomasSerializable {
 
     enum CodingKeys: String, CodingKey {
         case contentDescription = "content_description"
-        case localizedContentDescription = "localized_conten cription"
+        case localizedContentDescription = "localized_content_description"
         case accessibilityHidden = "accessibility_hidden"
     }
 }

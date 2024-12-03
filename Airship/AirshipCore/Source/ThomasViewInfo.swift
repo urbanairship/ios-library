@@ -353,13 +353,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var textAppearance: ThomasTextAppearance
             var markdown: ThomasMarkDownOptions?
             var accessibilityRole: AccessibilityRole?
-            var accessibilityHidden: Bool?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case text
                 case textAppearance = "text_appearance"
                 case markdown
+                case accessibilityRole = "accessibility_role"
             }
         }
 
