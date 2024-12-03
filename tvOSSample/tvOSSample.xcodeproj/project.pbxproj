@@ -3,36 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6ECCAD1C2CF54CE900423D86 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40426EAA526000421B9 /* AirshipBasement.framework */; };
-		6ECCAD1D2CF54CE900423D86 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40426EAA526000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6ECCAD1E2CF54CE900423D86 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */; };
-		6ECCAD1F2CF54CE900423D86 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		996A03D31EF1BA6A003424E0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DFEB1BD71E7A142100437516 /* Main.storyboard */; };
-		99B3F4FF1ED641A1008F7C16 /* PushSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */; };
-		99B3F50A1ED7465B008F7C16 /* AddTagsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */; };
-		99B3F50C1ED760D2008F7C16 /* NamedUserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */; };
-		99B68B911EE08E350038DAE3 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99B68B901EE08E350038DAE3 /* AirshipConfig.plist */; };
-		DF240A461E7DDDF000DD7DAE /* urban-airship-logo-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */; };
-		DF240A471E7DDDF000DD7DAE /* urban-airship-pacific.png in Resources */ = {isa = PBXBuildFile; fileRef = 613420371BD6C3D800236A18 /* urban-airship-pacific.png */; };
-		DF3072341E7B4CBC00C8BE50 /* PushHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A672E71CA9F4B000BAF58A /* PushHandler.swift */; };
-		DF3072361E7B4EA200C8BE50 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */; };
-		DF3072371E7B4EA200C8BE50 /* Roboto-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */; };
-		DF3072381E7B4EA200C8BE50 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */; };
-		DF3072391E7B4EA200C8BE50 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */; };
-		DF30723A1E7B4EA200C8BE50 /* Roboto-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */; };
-		DF30723B1E7B4EA200C8BE50 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */; };
-		DF30723C1E7B4EA200C8BE50 /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */; };
-		DF30723D1E7B4EA200C8BE50 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */; };
-		DF30723E1E7B4EA200C8BE50 /* Roboto-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */; };
-		DF30723F1E7B4EA200C8BE50 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */; };
-		DF3072401E7B4EA200C8BE50 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */; };
-		DF3072411E7B4EA200C8BE50 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */; };
-		DFEB1BD21E7A142100437516 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEB1BD11E7A142100437516 /* AppDelegate.swift */; };
-		DFEB1BDB1E7A142100437516 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DFEB1BDA1E7A142100437516 /* Assets.xcassets */; };
+		6E6DD23D2CED6756009CB521 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40426EAA526000421B9 /* AirshipBasement.framework */; };
+		6E6DD23E2CED6756009CB521 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40426EAA526000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E6DD23F2CED6756009CB521 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */; };
+		6E6DD2402CED6756009CB521 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E6DD2412CED6756009CB521 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6DD1612CE80FE8009CB521 /* AirshipFeatureFlags.framework */; };
+		6E6DD2422CED6756009CB521 /* AirshipFeatureFlags.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E6DD1612CE80FE8009CB521 /* AirshipFeatureFlags.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E6DD2452CED6756009CB521 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40826EAA526000421B9 /* AirshipPreferenceCenter.framework */; };
+		6E6DD2462CED6756009CB521 /* AirshipPreferenceCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40826EAA526000421B9 /* AirshipPreferenceCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +67,55 @@
 			remoteGlobalIDString = 3CA0E423237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
 		};
+		6E6DD1602CE80FE8009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A62058692A5841330041FBF9;
+			remoteInfo = AirshipFeatureFlags;
+		};
+		6E6DD1622CE80FE8009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A62058702A5841330041FBF9;
+			remoteInfo = AirshipFeatureFlagsTests;
+		};
+		6E6DD1642CE80FE8009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
+			remoteInfo = AirshipWrapper;
+		};
+		6E6DD2312CED6743009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
+			remoteInfo = AirshipBasement;
+		};
+		6E6DD2332CED6743009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		6E6DD2352CED6743009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A62058682A5841330041FBF9;
+			remoteInfo = AirshipFeatureFlags;
+		};
+		6E6DD2392CED6743009CB521 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 847BFFF3267CD739007CD249;
+			remoteInfo = AirshipPreferenceCenter;
+		};
 		6EB1B40326EAA526000421B9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
@@ -106,154 +137,64 @@
 			remoteGlobalIDString = 847BFFFC267CD73A007CD249;
 			remoteInfo = AirshipPreferenceCenterTests;
 		};
-		6ECCAD162CF54CE000423D86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A62058692A5841330041FBF9;
-			remoteInfo = AirshipFeatureFlags;
-		};
-		6ECCAD182CF54CE000423D86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
-			remoteInfo = AirshipWrapper;
-		};
-		6ECCAD1A2CF54CE000423D86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A62058702A5841330041FBF9;
-			remoteInfo = AirshipFeatureFlagsTests;
-		};
-		6ECCAD212CF54CF300423D86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
-			remoteInfo = AirshipBasement;
-		};
-		6ECCAD232CF54CF300423D86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipCore;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6ECCAD202CF54CE900423D86 /* Embed Frameworks */ = {
+		6E6DD2472CED6757009CB521 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6ECCAD1F2CF54CE900423D86 /* AirshipCore.framework in Embed Frameworks */,
-				6ECCAD1D2CF54CE900423D86 /* AirshipBasement.framework in Embed Frameworks */,
+				6E6DD23E2CED6756009CB521 /* AirshipBasement.framework in Embed Frameworks */,
+				6E6DD2402CED6756009CB521 /* AirshipCore.framework in Embed Frameworks */,
+				6E6DD2462CED6756009CB521 /* AirshipPreferenceCenter.framework in Embed Frameworks */,
+				6E6DD2422CED6756009CB521 /* AirshipFeatureFlags.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DF508A972285F9020011D9C7 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		613420371BD6C3D800236A18 /* urban-airship-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "urban-airship-pacific.png"; path = "tvOSSample/urban-airship-pacific.png"; sourceTree = "<group>"; };
-		61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "urban-airship-logo-pacific.png"; path = "tvOSSample/urban-airship-logo-pacific.png"; sourceTree = "<group>"; };
-		619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Black.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Black.ttf"; sourceTree = "<group>"; };
-		619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BlackItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
-		619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Bold.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Bold.ttf"; sourceTree = "<group>"; };
-		619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-BoldItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
-		619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Italic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Italic.ttf"; sourceTree = "<group>"; };
-		619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Light.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Light.ttf"; sourceTree = "<group>"; };
-		619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-LightItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
-		619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Medium.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Medium.ttf"; sourceTree = "<group>"; };
-		619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-MediumItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-MediumItalic.ttf"; sourceTree = "<group>"; };
-		619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Regular.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Thin.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-Thin.ttf"; sourceTree = "<group>"; };
-		619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-ThinItalic.ttf"; path = "tvOSSample/Resources/Roboto/Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
-		619A0D401BE81D7B00D9E863 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = tvOSSample/Images.xcassets; sourceTree = "<group>"; };
-		61A672E71CA9F4B000BAF58A /* PushHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PushHandler.swift; path = tvOSSample/PushHandler.swift; sourceTree = "<group>"; };
 		6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
-		99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AddTagsDetailViewController.swift; path = tvOSSample/AddTagsDetailViewController.swift; sourceTree = "<group>"; };
-		99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NamedUserDetailViewController.swift; path = tvOSSample/NamedUserDetailViewController.swift; sourceTree = "<group>"; };
+		6E6DD2112CED670E009CB521 /* tvOSSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tvOSSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99B68B901EE08E350038DAE3 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
-		99E3024E1EEA1C26008D5D68 /* tvOSSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = tvOSSample.entitlements; path = tvOSSample/tvOSSample.entitlements; sourceTree = SOURCE_ROOT; };
-		CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PushSettingsViewController.swift; path = tvOSSample/PushSettingsViewController.swift; sourceTree = "<group>"; };
-		DFEB1BCF1E7A142100437516 /* tvOSSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tvOSSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DFEB1BD11E7A142100437516 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = tvOSSample/AppDelegate.swift; sourceTree = "<group>"; };
-		DFEB1BD81E7A142100437516 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		DFEB1BDA1E7A142100437516 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = tvOSSample/Assets.xcassets; sourceTree = "<group>"; };
-		DFEB1BDC1E7A142100437516 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = tvOSSample/Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		6E6DD2122CED670E009CB521 /* tvOSSample */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = tvOSSample; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
-		DFEB1BCC1E7A142100437516 /* Frameworks */ = {
+		6E6DD20E2CED670E009CB521 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6ECCAD1E2CF54CE900423D86 /* AirshipCore.framework in Frameworks */,
-				6ECCAD1C2CF54CE900423D86 /* AirshipBasement.framework in Frameworks */,
+				6E6DD23D2CED6756009CB521 /* AirshipBasement.framework in Frameworks */,
+				6E6DD23F2CED6756009CB521 /* AirshipCore.framework in Frameworks */,
+				6E6DD2452CED6756009CB521 /* AirshipPreferenceCenter.framework in Frameworks */,
+				6E6DD2412CED6756009CB521 /* AirshipFeatureFlags.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		613420361BD6C09B00236A18 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				619A0D401BE81D7B00D9E863 /* Images.xcassets */,
-				619A0D3F1BE7F2A000D9E863 /* Roboto */,
-				61449C931BE13A6E00240C63 /* urban-airship-logo-pacific.png */,
-				613420371BD6C3D800236A18 /* urban-airship-pacific.png */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		619A0D3F1BE7F2A000D9E863 /* Roboto */ = {
-			isa = PBXGroup;
-			children = (
-				619A0D331BE7F29700D9E863 /* Roboto-Black.ttf */,
-				619A0D341BE7F29700D9E863 /* Roboto-BlackItalic.ttf */,
-				619A0D351BE7F29700D9E863 /* Roboto-Bold.ttf */,
-				619A0D361BE7F29700D9E863 /* Roboto-BoldItalic.ttf */,
-				619A0D371BE7F29700D9E863 /* Roboto-Italic.ttf */,
-				619A0D381BE7F29700D9E863 /* Roboto-Light.ttf */,
-				619A0D391BE7F29700D9E863 /* Roboto-LightItalic.ttf */,
-				619A0D3A1BE7F29700D9E863 /* Roboto-Medium.ttf */,
-				619A0D3B1BE7F29700D9E863 /* Roboto-MediumItalic.ttf */,
-				619A0D3C1BE7F29700D9E863 /* Roboto-Regular.ttf */,
-				619A0D3D1BE7F29700D9E863 /* Roboto-Thin.ttf */,
-				619A0D3E1BE7F29700D9E863 /* Roboto-ThinItalic.ttf */,
-			);
-			name = Roboto;
-			sourceTree = "<group>";
-		};
 		6E65D54A2396E99A00AF2D1A /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				6EB1B40426EAA526000421B9 /* AirshipBasement.framework */,
 				6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */,
 				6E65D5652396E99A00AF2D1A /* AirshipAutomation.framework */,
-				6ECCAD172CF54CE000423D86 /* AirshipFeatureFlags.framework */,
+				6E6DD1612CE80FE8009CB521 /* AirshipFeatureFlags.framework */,
 				6E65D5672396E99A00AF2D1A /* AirshipMessageCenter.framework */,
 				6EB1B40826EAA526000421B9 /* AirshipPreferenceCenter.framework */,
-				6ECCAD192CF54CE000423D86 /* AirshipWrapper.framework */,
+				6E6DD1652CE80FE8009CB521 /* AirshipWrapper.framework */,
 				6E65D5632396E99A00AF2D1A /* AirshipDebug.framework */,
 				6E65D55F2396E99A00AF2D1A /* AirshipTests.xctest */,
 				6E250F2929DFF1480016A030 /* AirshipAutomationTests.xctest */,
-				6ECCAD1B2CF54CE000423D86 /* AirshipFeatureFlagsTests.xctest */,
+				6E6DD1632CE80FE8009CB521 /* AirshipFeatureFlagsTests.xctest */,
 				6E250F2529DFF1480016A030 /* AirshipMessageCenterTests.xctest */,
 				6EB1B40A26EAA526000421B9 /* AirshipPreferenceCenterTests.xctest */,
 			);
@@ -271,8 +212,8 @@
 			isa = PBXGroup;
 			children = (
 				6E65D5492396E99A00AF2D1A /* Airship.xcodeproj */,
-				DFEB1BD01E7A142100437516 /* tvOSSample */,
 				99B68B901EE08E350038DAE3 /* AirshipConfig.plist */,
+				6E6DD2122CED670E009CB521 /* tvOSSample */,
 				CCDA35A41B8D233A00950AD5 /* Products */,
 				6E65D5952396E9DB00AF2D1A /* Frameworks */,
 			);
@@ -281,51 +222,39 @@
 		CCDA35A41B8D233A00950AD5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DFEB1BCF1E7A142100437516 /* tvOSSample.app */,
+				6E6DD2112CED670E009CB521 /* tvOSSample.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		DFEB1BD01E7A142100437516 /* tvOSSample */ = {
-			isa = PBXGroup;
-			children = (
-				99E3024E1EEA1C26008D5D68 /* tvOSSample.entitlements */,
-				DFEB1BD11E7A142100437516 /* AppDelegate.swift */,
-				61A672E71CA9F4B000BAF58A /* PushHandler.swift */,
-				CCDA35AA1B8D233A00950AD5 /* PushSettingsViewController.swift */,
-				99B3F5091ED7465B008F7C16 /* AddTagsDetailViewController.swift */,
-				99B3F50B1ED760D2008F7C16 /* NamedUserDetailViewController.swift */,
-				613420361BD6C09B00236A18 /* Resources */,
-				DFEB1BD71E7A142100437516 /* Main.storyboard */,
-				DFEB1BDA1E7A142100437516 /* Assets.xcassets */,
-				DFEB1BDC1E7A142100437516 /* Info.plist */,
-			);
-			name = tvOSSample;
-			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DFEB1BCE1E7A142100437516 /* tvOSSample */ = {
+		6E6DD2102CED670E009CB521 /* tvOSSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DFEB1BDD1E7A142100437516 /* Build configuration list for PBXNativeTarget "tvOSSample" */;
+			buildConfigurationList = 6E6DD21C2CED6710009CB521 /* Build configuration list for PBXNativeTarget "tvOSSample" */;
 			buildPhases = (
-				DFEB1BCB1E7A142100437516 /* Sources */,
-				DFEB1BCC1E7A142100437516 /* Frameworks */,
-				DFEB1BCD1E7A142100437516 /* Resources */,
-				DF508A972285F9020011D9C7 /* CopyFiles */,
-				6ECCAD202CF54CE900423D86 /* Embed Frameworks */,
+				6E6DD20D2CED670E009CB521 /* Sources */,
+				6E6DD20E2CED670E009CB521 /* Frameworks */,
+				6E6DD20F2CED670E009CB521 /* Resources */,
+				6E6DD2472CED6757009CB521 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				6ECCAD222CF54CF300423D86 /* PBXTargetDependency */,
-				6ECCAD242CF54CF300423D86 /* PBXTargetDependency */,
+				6E6DD2322CED6743009CB521 /* PBXTargetDependency */,
+				6E6DD2342CED6743009CB521 /* PBXTargetDependency */,
+				6E6DD2362CED6743009CB521 /* PBXTargetDependency */,
+				6E6DD23A2CED6743009CB521 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6E6DD2122CED670E009CB521 /* tvOSSample */,
 			);
 			name = tvOSSample;
-			productName = tvOSSample;
-			productReference = DFEB1BCF1E7A142100437516 /* tvOSSample.app */;
+			packageProductDependencies = (
+			);
+			productName = "tvOS Sample";
+			productReference = 6E6DD2112CED670E009CB521 /* tvOSSample.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -334,23 +263,12 @@
 		CCDA359B1B8D233A00950AD5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0820;
+				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Urban Airship";
 				TargetAttributes = {
-					DFEB1BCE1E7A142100437516 = {
-						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = PGJV57GD94;
-						LastSwiftMigration = 1100;
-						ProvisioningStyle = Automatic;
-						SystemCapabilities = {
-							com.apple.BackgroundModes.appletvos = {
-								enabled = 1;
-							};
-							com.apple.Push = {
-								enabled = 1;
-							};
-						};
+					6E6DD2102CED670E009CB521 = {
+						CreatedOnToolsVersion = 16.1;
 					};
 				};
 			};
@@ -381,7 +299,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				DFEB1BCE1E7A142100437516 /* tvOSSample */,
+				6E6DD2102CED670E009CB521 /* tvOSSample */,
 			);
 		};
 /* End PBXProject section */
@@ -436,6 +354,27 @@
 			remoteRef = 6E65D5662396E99A00AF2D1A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		6E6DD1612CE80FE8009CB521 /* AirshipFeatureFlags.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipFeatureFlags.framework;
+			remoteRef = 6E6DD1602CE80FE8009CB521 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E6DD1632CE80FE8009CB521 /* AirshipFeatureFlagsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipFeatureFlagsTests.xctest;
+			remoteRef = 6E6DD1622CE80FE8009CB521 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E6DD1652CE80FE8009CB521 /* AirshipWrapper.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipWrapper.framework;
+			remoteRef = 6E6DD1642CE80FE8009CB521 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6EB1B40426EAA526000421B9 /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -457,97 +396,135 @@
 			remoteRef = 6EB1B40926EAA526000421B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6ECCAD172CF54CE000423D86 /* AirshipFeatureFlags.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipFeatureFlags.framework;
-			remoteRef = 6ECCAD162CF54CE000423D86 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6ECCAD192CF54CE000423D86 /* AirshipWrapper.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipWrapper.framework;
-			remoteRef = 6ECCAD182CF54CE000423D86 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6ECCAD1B2CF54CE000423D86 /* AirshipFeatureFlagsTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AirshipFeatureFlagsTests.xctest;
-			remoteRef = 6ECCAD1A2CF54CE000423D86 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
-		DFEB1BCD1E7A142100437516 /* Resources */ = {
+		6E6DD20F2CED670E009CB521 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				996A03D31EF1BA6A003424E0 /* Main.storyboard in Resources */,
-				DFEB1BDB1E7A142100437516 /* Assets.xcassets in Resources */,
-				99B68B911EE08E350038DAE3 /* AirshipConfig.plist in Resources */,
-				DF240A461E7DDDF000DD7DAE /* urban-airship-logo-pacific.png in Resources */,
-				DF240A471E7DDDF000DD7DAE /* urban-airship-pacific.png in Resources */,
-				DF3072361E7B4EA200C8BE50 /* Roboto-Black.ttf in Resources */,
-				DF3072371E7B4EA200C8BE50 /* Roboto-BlackItalic.ttf in Resources */,
-				DF3072381E7B4EA200C8BE50 /* Roboto-Bold.ttf in Resources */,
-				DF3072391E7B4EA200C8BE50 /* Roboto-BoldItalic.ttf in Resources */,
-				DF30723A1E7B4EA200C8BE50 /* Roboto-Italic.ttf in Resources */,
-				DF30723B1E7B4EA200C8BE50 /* Roboto-Light.ttf in Resources */,
-				DF30723C1E7B4EA200C8BE50 /* Roboto-LightItalic.ttf in Resources */,
-				DF30723D1E7B4EA200C8BE50 /* Roboto-Medium.ttf in Resources */,
-				DF30723E1E7B4EA200C8BE50 /* Roboto-MediumItalic.ttf in Resources */,
-				DF30723F1E7B4EA200C8BE50 /* Roboto-Regular.ttf in Resources */,
-				DF3072401E7B4EA200C8BE50 /* Roboto-Thin.ttf in Resources */,
-				DF3072411E7B4EA200C8BE50 /* Roboto-ThinItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		DFEB1BCB1E7A142100437516 /* Sources */ = {
+		6E6DD20D2CED670E009CB521 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DFEB1BD21E7A142100437516 /* AppDelegate.swift in Sources */,
-				DF3072341E7B4CBC00C8BE50 /* PushHandler.swift in Sources */,
-				99B3F50A1ED7465B008F7C16 /* AddTagsDetailViewController.swift in Sources */,
-				99B3F4FF1ED641A1008F7C16 /* PushSettingsViewController.swift in Sources */,
-				99B3F50C1ED760D2008F7C16 /* NamedUserDetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6ECCAD222CF54CF300423D86 /* PBXTargetDependency */ = {
+		6E6DD2322CED6743009CB521 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipBasement;
-			targetProxy = 6ECCAD212CF54CF300423D86 /* PBXContainerItemProxy */;
+			targetProxy = 6E6DD2312CED6743009CB521 /* PBXContainerItemProxy */;
 		};
-		6ECCAD242CF54CF300423D86 /* PBXTargetDependency */ = {
+		6E6DD2342CED6743009CB521 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipCore;
-			targetProxy = 6ECCAD232CF54CF300423D86 /* PBXContainerItemProxy */;
+			targetProxy = 6E6DD2332CED6743009CB521 /* PBXContainerItemProxy */;
+		};
+		6E6DD2362CED6743009CB521 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipFeatureFlags;
+			targetProxy = 6E6DD2352CED6743009CB521 /* PBXContainerItemProxy */;
+		};
+		6E6DD23A2CED6743009CB521 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipPreferenceCenter;
+			targetProxy = 6E6DD2392CED6743009CB521 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		DFEB1BD71E7A142100437516 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				DFEB1BD81E7A142100437516 /* Base */,
-			);
-			name = Main.storyboard;
-			path = tvOSSample;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
+		6E6DD21D2CED6710009CB521 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PGJV57GD94;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 18.1;
+			};
+			name = Debug;
+		};
+		6E6DD21E2CED6710009CB521 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.reachpush;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 18.1;
+			};
+			name = Release;
+		};
 		CCDA35B51B8D233A00950AD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -600,7 +577,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 14.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Debug;
@@ -649,55 +626,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TVOS_DEPLOYMENT_TARGET = 14.0;
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "$(inherited)";
-			};
-			name = Release;
-		};
-		DFEB1BDE1E7A142100437516 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CODE_SIGN_ENTITLEMENTS = tvOSSample/tvOSSample.entitlements;
-				DEVELOPMENT_TEAM = PGJV57GD94;
-				INFOPLIST_FILE = "$(SRCROOT)/tvOSSample/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-			};
-			name = Debug;
-		};
-		DFEB1BDF1E7A142100437516 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CODE_SIGN_ENTITLEMENTS = tvOSSample/tvOSSample.entitlements;
-				DEVELOPMENT_TEAM = PGJV57GD94;
-				INFOPLIST_FILE = "$(SRCROOT)/tvOSSample/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
 				VALID_ARCHS = "$(inherited)";
 			};
 			name = Release;
@@ -705,20 +635,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6E6DD21C2CED6710009CB521 /* Build configuration list for PBXNativeTarget "tvOSSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E6DD21D2CED6710009CB521 /* Debug */,
+				6E6DD21E2CED6710009CB521 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CCDA359E1B8D233A00950AD5 /* Build configuration list for PBXProject "tvOSSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CCDA35B51B8D233A00950AD5 /* Debug */,
 				CCDA35B61B8D233A00950AD5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DFEB1BDD1E7A142100437516 /* Build configuration list for PBXNativeTarget "tvOSSample" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DFEB1BDE1E7A142100437516 /* Debug */,
-				DFEB1BDF1E7A142100437516 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -546,7 +546,7 @@ struct PreferenceCenterDefaults {
 #endif
 
 #if os(tvOS)
-    static let chipSpacing = 24.0
+    static let chipSpacing = 36.0
 #else
     static let chipSpacing = 8.0
 #endif

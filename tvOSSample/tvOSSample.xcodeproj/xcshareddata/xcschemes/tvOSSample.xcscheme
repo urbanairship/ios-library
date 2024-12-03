@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1600"
-   version = "1.8">
+   LastUpgradeVersion = "1610"
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
+      buildImplicitDependencies = "YES"
+      buildArchitectures = "Automatic">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DFEB1BCE1E7A142100437516"
+               BlueprintIdentifier = "6E6DD2102CED670E009CB521"
                BuildableName = "tvOSSample.app"
                BlueprintName = "tvOSSample"
                ReferencedContainer = "container:tvOSSample.xcodeproj">
@@ -26,18 +27,8 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DFEB1BCE1E7A142100437516"
-            BuildableName = "tvOSSample.app"
-            BlueprintName = "tvOSSample"
-            ReferencedContainer = "container:tvOSSample.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <Testables>
-      </Testables>
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -47,14 +38,13 @@
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      migratedStopOnEveryIssue = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DFEB1BCE1E7A142100437516"
+            BlueprintIdentifier = "6E6DD2102CED670E009CB521"
             BuildableName = "tvOSSample.app"
             BlueprintName = "tvOSSample"
             ReferencedContainer = "container:tvOSSample.xcodeproj">
@@ -71,7 +61,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DFEB1BCE1E7A142100437516"
+            BlueprintIdentifier = "6E6DD2102CED670E009CB521"
             BuildableName = "tvOSSample.app"
             BlueprintName = "tvOSSample"
             ReferencedContainer = "container:tvOSSample.xcodeproj">

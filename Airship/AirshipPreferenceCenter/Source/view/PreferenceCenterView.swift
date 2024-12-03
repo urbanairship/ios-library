@@ -174,6 +174,7 @@ public struct PreferenceCenterView: View {
             case .default:
                 NavigationStack {
                     themedContent
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             case .none:
                 themedContent
@@ -184,6 +185,7 @@ public struct PreferenceCenterView: View {
             case .default:
                 NavigationView {
                     content
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 .navigationViewStyle(.stack)
             case .none:
