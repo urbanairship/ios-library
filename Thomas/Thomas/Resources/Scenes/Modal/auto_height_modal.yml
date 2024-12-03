@@ -11,6 +11,7 @@ presentation:
     size:
       width: 70%
       height: auto
+      max_height: 90%
     position:
       horizontal: center
       vertical: top
@@ -305,7 +306,9 @@ view:
                                             width: 100%
                                             height: auto
                                           view:
-                                            type: label
+                                            identifier: id
+                                            type: text_input
+                                            input_type: text_multiline
                                             text: "* dffff"
                                             content_description: "* dffff"
                                             text_appearance:
@@ -795,7 +798,7 @@ view:
                                     end: 16
                                   size:
                                     width: 100%
-                                    height: auto
+                                    height: 200
                                   view:
                                     type: label_button
                                     identifier: next--button98

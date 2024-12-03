@@ -99,7 +99,7 @@ struct ModalView: View {
         )
 
         let windowHeight = windowConstraints.height ?? 0
-        let contentHeight = contentConstraints.height ?? 0
+        let contentHeight = contentConstraints.height ?? contentSize?.height ?? 0
         #if !os(watchOS)
         let keyboardHeight = calculateKeyboardHeight(
             metrics: metrics
@@ -146,6 +146,25 @@ struct ModalView: View {
             #if !os(watchOS)
             .offset(y: -keyboardOffset)
             #endif
+            .airshipApplyIf(contentConstraints.height == nil) {
+                let constraintHeight = contentConstraints.maxHeight
+                let height = contentSize?.height
+
+                let maxHeight: CGFloat? = if let height, let constraintHeight, height > constraintHeight {
+                    constraintHeight
+                } else {
+                    nil
+                }
+
+                $0.frame(maxHeight: maxHeight)
+            }
+            .airshipApplyIf(contentConstraints.width == nil) {
+                if let contentSize {
+                    $0.frame(maxWidth: contentSize.width)
+                } else {
+                    $0
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
         .background(
@@ -156,7 +175,6 @@ struct ModalView: View {
         .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         .opacity(self.contentSize == nil ? 0 : 1)
         .animation(nil, value: self.contentSize?.1 ?? CGSize.zero)
-        
     }
 
     @ViewBuilder

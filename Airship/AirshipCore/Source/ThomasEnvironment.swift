@@ -259,7 +259,9 @@ class ThomasEnvironment: ObservableObject {
         )
         .subscribe(on: DispatchQueue.main)
         .sink { [weak self] value in
-            self?.keyboardHeight = value
+            DispatchQueue.main.async {
+                self?.keyboardHeight = value
+            }
         }
         .store(in: &self.subscriptions)
 
