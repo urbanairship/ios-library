@@ -13,61 +13,32 @@ import UIKit
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
-    private let pushTokenSubject = PassthroughSubject<String?, Never>()
-    private var pushTokenPublisher: AnyPublisher<String?, Never> {
-        self.pushTokenSubject
-            .prepend(Future { promise in
-                Task {
-                    return await promise(.success(self.deviceToken))
-                }
-            })
-            .eraseToAnyPublisher()
-    }
+    private let pushTokenChannel = AirshipAsyncChannel<String>()
 
-    private let notificationStatusSubject = PassthroughSubject<AirshipNotificationStatus, Never>()
+    private let notificationStatusChannel = AirshipAsyncChannel<AirshipNotificationStatus>()
+
     public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
-        notificationStatusSubject
-            .prepend(Future { promise in
-                Task { 
-                    return await promise(.success(self.notificationStatus))
-                }
-            })
-            .removeDuplicates()
+        return notificationStatusUpdates
+            .airshipPublisher
+            .compactMap { $0 }
             .eraseToAnyPublisher()
     }
     
     var notificationStatusUpdates: AsyncStream<AirshipNotificationStatus> {
-        let publisher = self.notificationStatusPublisher
-        return AsyncStream { continuation in
-            let cancellable = publisher
-                .removeDuplicates()
-                .sink { update in
-                    continuation.yield(update)
-                }
-            
-            continuation.onTermination = { _ in
-                cancellable.cancel()
-            }
-        }
+        return self.notificationStatusChannel.makeNonIsolatedDedupingStream(
+            initialValue: { [weak self] in await self?.notificationStatus }
+        )
     }
 
-
-    private static let pushNotificationsOptionsKey =
-        "UAUserPushNotificationsOptions"
-    private static let userPushNotificationsEnabledKey =
-        "UAUserPushNotificationsEnabled"
-    private static let backgroundPushNotificationsEnabledKey =
-        "UABackgroundPushNotificationsEnabled"
-    private static let requestExplicitPermissionWhenEphemeralKey =
-        "UAExtendedPushNotificationPermissionEnabled"
-
-    
+    private static let pushNotificationsOptionsKey = "UAUserPushNotificationsOptions"
+    private static let userPushNotificationsEnabledKey = "UAUserPushNotificationsEnabled"
+    private static let backgroundPushNotificationsEnabledKey = "UABackgroundPushNotificationsEnabled"
+    private static let requestExplicitPermissionWhenEphemeralKey = "UAExtendedPushNotificationPermissionEnabled"
     private static let badgeSettingsKey = "UAPushBadge"
     private static let deviceTokenKey = "UADeviceToken"
     private static let quietTimeSettingsKey = "UAPushQuietTime"
     private static let quietTimeEnabledSettingsKey = "UAPushQuietTimeEnabled"
     private static let timeZoneSettingsKey = "UAPushTimeZone"
-
     private static let typesAuthorizedKey = "UAPushTypesAuthorized"
     private static let authorizationStatusKey = "UAPushAuthorizationStatus"
     private static let userPromptedForNotificationsKey = "UAPushUserPromptedForNotifications"
@@ -319,7 +290,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     @MainActor
     public private(set) var deviceToken: String? {
         set {
-            
             guard let deviceToken = newValue else {
                 self.dataStore.removeObject(forKey: AirshipPush.deviceTokenKey)
                 self.updateNotificationStatus()
@@ -353,6 +323,9 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
                     forKey: AirshipPush.deviceTokenKey
                 )
                 AirshipLogger.importantInfo("Device token: \(deviceToken)")
+                Task {
+                    await self.pushTokenChannel.send(deviceToken)
+                }
             } catch {
                 AirshipLogger.error("Unable to set device token")
             }
@@ -580,7 +553,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     private func waitForDeviceTokenRegistration() async {
         guard self.waitForDeviceToken,
               self.privacyManager.isEnabled(.push),
-              self.deviceToken == nil,
               self.apnsRegistrar.isRegisteredForRemoteNotifications
         else {
             return
@@ -588,31 +560,27 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
         self.waitForDeviceToken = false
 
-        var subscription: AnyCancellable?
-        defer {
-            subscription?.cancel()
+        let updates = await pushTokenChannel.makeStream()
+        guard self.deviceToken == nil else {
+            return
         }
 
-        await withCheckedContinuation { continuation in
-            let cancelTask = Task { @MainActor in
-                try await Task.sleep(
-                    nanoseconds: UInt64(AirshipPush.deviceTokenRegistrationWaitTime * 1_000_000_000)
-                )
-                subscription?.cancel()
-                try Task.checkCancellation()
-                continuation.resume()
+        let waitTask = Task {
+            for await _ in updates {
+                return
             }
-
-            subscription = self.pushTokenPublisher
-                .receive(on: RunLoop.main)
-                .sink { token in
-                    if (token != nil) {
-                        continuation.resume()
-                        cancelTask.cancel()
-                        subscription?.cancel()
-                    }
-                }
         }
+
+        let cancelTask = Task { @MainActor in
+            try await Task.sleep(
+                nanoseconds: UInt64(AirshipPush.deviceTokenRegistrationWaitTime * 1_000_000_000)
+            )
+            try Task.checkCancellation()
+            waitTask.cancel()
+        }
+
+        await waitTask.value
+        cancelTask.cancel()
     }
 
     @MainActor
@@ -698,8 +666,8 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     }
 
     private func updateNotificationStatus() {
-        Task { @MainActor in
-            self.notificationStatusSubject.send(await self.notificationStatus)
+        Task {
+            await self.notificationStatusChannel.send(await self.notificationStatus)
         }
     }
 
@@ -1290,7 +1258,7 @@ public struct QuietTimeSettings: Sendable, Equatable {
     /// End minute
     public let endMinute: UInt
 
-    
+
     var startString: String {
         return "\(String(format: "%02d", startHour)):\(String(format: "%02d", startMinute))"
     }
@@ -1345,6 +1313,4 @@ public struct QuietTimeSettings: Sendable, Equatable {
         self.endHour = endParts[0]
         self.endMinute = endParts[1]
     }
-
-
 }

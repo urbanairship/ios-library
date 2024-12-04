@@ -1,0 +1,22 @@
+{
+    "display_type" : "banner",
+    "name" : "woot",
+    "source": "app-defined",
+    "display" : {
+        "background_color" : "#ffffff",
+        "border_radius" : 5,
+        "dismiss_button_color" : "#000000",
+        "heading" : {
+            "alignment" : "center",
+            "color" : "#63aff2",
+            "font_family" : [
+                "sans-serif"
+            ],
+            "size" : 22,
+            "text" : "Boom"
+        },
+        "template" : "media_left",
+        "placement" : "bottom",
+        "duration" : 3.0
+    }
+}

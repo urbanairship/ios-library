@@ -1,0 +1,1215 @@
+---
+version: 1
+presentation:
+  type: modal
+  placement_selectors: []
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    size:
+      width: 70%
+      height: auto
+      max_height: 90%
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        type: hex
+        hex: "#FFFFFF"
+        alpha: 1
+      selectors:
+      - platform: ios
+        dark_mode: false
+        color:
+          type: hex
+          hex: "#FFFFFF"
+          alpha: 1
+      - platform: ios
+        dark_mode: true
+        color:
+          type: hex
+          hex: "#000000"
+          alpha: 1
+      - platform: android
+        dark_mode: false
+        color:
+          type: hex
+          hex: "#FFFFFF"
+          alpha: 1
+      - platform: android
+        dark_mode: true
+        color:
+          type: hex
+          hex: "#000000"
+          alpha: 1
+      - platform: web
+        dark_mode: false
+        color:
+          type: hex
+          hex: "#FFFFFF"
+          alpha: 1
+      - platform: web
+        dark_mode: true
+        color:
+          type: hex
+          hex: "#000000"
+          alpha: 1
+    web:
+      ignore_shade: true
+    border:
+      radius: 0
+    shadow:
+      selectors:
+      - platform: ios
+        shadow:
+          box_shadow:
+            color:
+              default:
+                type: hex
+                hex: "#7B7C84"
+                alpha: 1
+              selectors:
+              - platform: ios
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: ios
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+              - platform: android
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: android
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+              - platform: web
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: web
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+            radius: 0
+            blur_radius: 4
+            offset_x: 0
+            offset_y: 0
+      - platform: web
+        shadow:
+          box_shadow:
+            color:
+              default:
+                type: hex
+                hex: "#7B7C84"
+                alpha: 1
+              selectors:
+              - platform: ios
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: ios
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+              - platform: android
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: android
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+              - platform: web
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: web
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+            radius: 0
+            blur_radius: 4
+            offset_x: 0
+            offset_y: 0
+      - platform: android
+        shadow:
+          android_shadow:
+            color:
+              default:
+                type: hex
+                hex: "#7B7C84"
+                alpha: 1
+              selectors:
+              - platform: ios
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: ios
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+              - platform: android
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: android
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+              - platform: web
+                dark_mode: false
+                color:
+                  type: hex
+                  hex: "#7B7C84"
+                  alpha: 1
+              - platform: web
+                dark_mode: true
+                color:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+            elevation: 4
+view:
+  type: pager_controller
+  identifier: b7974084-be21-4d8e-9772-cc673f1a6336
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+    - size:
+        width: 100%
+        height: auto
+      view:
+        identifier: 6cf9375d-52a5-475e-9f34-61c1b817b166
+        nps_identifier: 4a92669e-2560-4ece-a398-dc8e278c8366
+        type: nps_form_controller
+        submit: submit_event
+        form_enabled:
+        - form_submission
+        response_type: nps
+        view:
+          type: container
+          items:
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: auto
+            view:
+              type: pager
+              disable_swipe: true
+              items:
+              - identifier: 0b494bf9-425b-4c69-b800-71cb28710c75
+                type: pager_item
+                view:
+                  type: container
+                  items:
+                  - size:
+                      width: 100%
+                      height: auto
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: false
+                    view:
+                      type: container
+                      items:
+                      - margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: scroll_container
+                            size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: scroll_layout
+                              direction: vertical
+                              view:
+                                type: linear_layout
+                                direction: vertical
+                                items:
+                                - identifier: 4a92669e-2560-4ece-a398-dc8e278c8366
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 48
+                                    bottom: 8
+                                    start: 16
+                                    end: 16
+                                  view:
+                                    type: linear_layout
+                                    direction: vertical
+                                    items:
+                                    - size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: linear_layout
+                                        direction: vertical
+                                        items:
+                                        - margin:
+                                            top: 4
+                                            bottom: 8
+                                          size:
+                                            width: 100%
+                                            height: auto
+                                          view:
+                                            identifier: id
+                                            type: text_input
+                                            input_type: text_multiline
+                                            text: "* dffff"
+                                            content_description: "* dffff"
+                                            text_appearance:
+                                              font_size: 24
+                                              color:
+                                                default:
+                                                  type: hex
+                                                  hex: "#000000"
+                                                  alpha: 1
+                                                selectors:
+                                                - platform: ios
+                                                  dark_mode: false
+                                                  color:
+                                                    type: hex
+                                                    hex: "#000000"
+                                                    alpha: 1
+                                                - platform: ios
+                                                  dark_mode: true
+                                                  color:
+                                                    type: hex
+                                                    hex: "#FFFFFF"
+                                                    alpha: 1
+                                                - platform: android
+                                                  dark_mode: false
+                                                  color:
+                                                    type: hex
+                                                    hex: "#000000"
+                                                    alpha: 1
+                                                - platform: android
+                                                  dark_mode: true
+                                                  color:
+                                                    type: hex
+                                                    hex: "#FFFFFF"
+                                                    alpha: 1
+                                                - platform: web
+                                                  dark_mode: false
+                                                  color:
+                                                    type: hex
+                                                    hex: "#000000"
+                                                    alpha: 1
+                                                - platform: web
+                                                  dark_mode: true
+                                                  color:
+                                                    type: hex
+                                                    hex: "#FFFFFF"
+                                                    alpha: 1
+                                              alignment: start
+                                              styles:
+                                              - bold
+                                              font_families:
+                                              - sans-serif
+                                    - size:
+                                        width: 100%
+                                        height: auto
+                                      margin:
+                                        top: 0
+                                        bottom: 0
+                                      view:
+                                        type: linear_layout
+                                        direction: vertical
+                                        items:
+                                        - size:
+                                            width: 100%
+                                            height: auto
+                                          view:
+                                            type: linear_layout
+                                            direction: horizontal
+                                            items:
+                                            - size:
+                                                width: 50%
+                                                height: auto
+                                              margin:
+                                                end: 4
+                                                bottom: 4
+                                              view:
+                                                type: label
+                                                text: Not Likely
+                                                content_description: Not Likely
+                                                text_appearance:
+                                                  font_size: 24
+                                                  color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#000000"
+                                                      alpha: 1
+                                                    selectors:
+                                                    - platform: ios
+                                                      dark_mode: false
+                                                      color:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    - platform: ios
+                                                      dark_mode: true
+                                                      color:
+                                                        type: hex
+                                                        hex: "#FFFFFF"
+                                                        alpha: 1
+                                                    - platform: android
+                                                      dark_mode: false
+                                                      color:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    - platform: android
+                                                      dark_mode: true
+                                                      color:
+                                                        type: hex
+                                                        hex: "#FFFFFF"
+                                                        alpha: 1
+                                                    - platform: web
+                                                      dark_mode: false
+                                                      color:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    - platform: web
+                                                      dark_mode: true
+                                                      color:
+                                                        type: hex
+                                                        hex: "#FFFFFF"
+                                                        alpha: 1
+                                                  alignment: start
+                                                  styles:
+                                                  - bold
+                                                  font_families:
+                                                  - sans-serif
+                                            - size:
+                                                width: 50%
+                                                height: auto
+                                              margin:
+                                                start: 4
+                                                bottom: 4
+                                              view:
+                                                type: label
+                                                text: Very Likely
+                                                content_description: Very Likely
+                                                text_appearance:
+                                                  font_size: 24
+                                                  color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#000000"
+                                                      alpha: 1
+                                                    selectors:
+                                                    - platform: ios
+                                                      dark_mode: false
+                                                      color:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    - platform: ios
+                                                      dark_mode: true
+                                                      color:
+                                                        type: hex
+                                                        hex: "#FFFFFF"
+                                                        alpha: 1
+                                                    - platform: android
+                                                      dark_mode: false
+                                                      color:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    - platform: android
+                                                      dark_mode: true
+                                                      color:
+                                                        type: hex
+                                                        hex: "#FFFFFF"
+                                                        alpha: 1
+                                                    - platform: web
+                                                      dark_mode: false
+                                                      color:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    - platform: web
+                                                      dark_mode: true
+                                                      color:
+                                                        type: hex
+                                                        hex: "#FFFFFF"
+                                                        alpha: 1
+                                                  alignment: end
+                                                  styles:
+                                                  - bold
+                                                  font_families:
+                                                  - sans-serif
+                                        - size:
+                                            width: 100%
+                                            height: auto
+                                          view:
+                                            type: linear_layout
+                                            direction: horizontal
+                                            items:
+                                            - size:
+                                                height: 50
+                                                width: 100%
+                                              view:
+                                                type: score
+                                                style:
+                                                  type: number_range
+                                                  start: 0
+                                                  end: 10
+                                                  spacing: 2
+                                                  bindings:
+                                                    selected:
+                                                      shapes:
+                                                      - type: rectangle
+                                                        scale: 1
+                                                        border:
+                                                          radius: 2
+                                                          stroke_width: 1
+                                                          stroke_color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                            selectors:
+                                                            - platform: ios
+                                                              dark_mode: false
+                                                              color:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            - platform: ios
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: "#FFFFFF"
+                                                                alpha: 1
+                                                            - platform: android
+                                                              dark_mode: false
+                                                              color:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            - platform: android
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: "#FFFFFF"
+                                                                alpha: 1
+                                                            - platform: web
+                                                              dark_mode: false
+                                                              color:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            - platform: web
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: "#FFFFFF"
+                                                                alpha: 1
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                          selectors:
+                                                          - platform: ios
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: ios
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                      text_appearance:
+                                                        alignment: center
+                                                        font_families:
+                                                        - sans-serif
+                                                        font_size: 24
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#FFFFFF"
+                                                            alpha: 1
+                                                          selectors:
+                                                          - platform: ios
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: ios
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                    unselected:
+                                                      shapes:
+                                                      - type: rectangle
+                                                        scale: 1
+                                                        border:
+                                                          radius: 2
+                                                          stroke_width: 1
+                                                          stroke_color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                            selectors:
+                                                            - platform: ios
+                                                              dark_mode: false
+                                                              color:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            - platform: ios
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: "#FFFFFF"
+                                                                alpha: 1
+                                                            - platform: android
+                                                              dark_mode: false
+                                                              color:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            - platform: android
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: "#FFFFFF"
+                                                                alpha: 1
+                                                            - platform: web
+                                                              dark_mode: false
+                                                              color:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            - platform: web
+                                                              dark_mode: true
+                                                              color:
+                                                                type: hex
+                                                                hex: "#FFFFFF"
+                                                                alpha: 1
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#FFFFFF"
+                                                            alpha: 1
+                                                          selectors:
+                                                          - platform: ios
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: ios
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                      text_appearance:
+                                                        font_size: 24
+                                                        font_families:
+                                                        - sans-serif
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                          selectors:
+                                                          - platform: ios
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: ios
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: android
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: false
+                                                            color:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          - platform: web
+                                                            dark_mode: true
+                                                            color:
+                                                              type: hex
+                                                              hex: "#FFFFFF"
+                                                              alpha: 1
+                                                identifier: 4a92669e-2560-4ece-a398-dc8e278c8366
+                                                required: true
+                                - identifier: b4e4f64b-97d7-4928-9305-e13a7ade1fca
+                                  margin:
+                                    top: 8
+                                    bottom: 8
+                                    start: 16
+                                    end: 16
+                                  size:
+                                    width: 100%
+                                    height: 200
+                                  view:
+                                    type: label_button
+                                    identifier: next--button98
+                                    reporting_metadata:
+                                      trigger_link_id: b4e4f64b-97d7-4928-9305-e13a7ade1fca
+                                    label:
+                                      type: label
+                                      text: Buttons
+                                      content_description: ''
+                                      text_appearance:
+                                        font_size: 16
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                          selectors:
+                                          - platform: ios
+                                            dark_mode: false
+                                            color:
+                                              type: hex
+                                              hex: "#FFFFFF"
+                                              alpha: 1
+                                          - platform: ios
+                                            dark_mode: true
+                                            color:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                          - platform: android
+                                            dark_mode: false
+                                            color:
+                                              type: hex
+                                              hex: "#FFFFFF"
+                                              alpha: 1
+                                          - platform: android
+                                            dark_mode: true
+                                            color:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                          - platform: web
+                                            dark_mode: false
+                                            color:
+                                              type: hex
+                                              hex: "#FFFFFF"
+                                              alpha: 1
+                                          - platform: web
+                                            dark_mode: true
+                                            color:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                        alignment: center
+                                        styles: []
+                                        font_families:
+                                        - sans-serif
+                                    actions: {}
+                                    enabled:
+                                    - pager_next
+                                    button_click:
+                                    - pager_next
+                                    background_color:
+                                      default:
+                                        type: hex
+                                        hex: "#63AFF1"
+                                        alpha: 1
+                                      selectors:
+                                      - platform: ios
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: ios
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                    border:
+                                      radius: 3
+                                      stroke_width: 0
+                                      stroke_color:
+                                        default:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                        selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                - identifier: 911c608d-44d3-4218-98d1-49e0387676fa
+                                  margin:
+                                    top: 8
+                                    bottom: 8
+                                    start: 16
+                                    end: 16
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  view:
+                                    type: label_button
+                                    identifier: next--button52
+                                    reporting_metadata:
+                                      trigger_link_id: 911c608d-44d3-4218-98d1-49e0387676fa
+                                    label:
+                                      type: label
+                                      text: Button
+                                      content_description: ''
+                                      text_appearance:
+                                        font_size: 16
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                          selectors:
+                                          - platform: ios
+                                            dark_mode: false
+                                            color:
+                                              type: hex
+                                              hex: "#FFFFFF"
+                                              alpha: 1
+                                          - platform: ios
+                                            dark_mode: true
+                                            color:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                          - platform: android
+                                            dark_mode: false
+                                            color:
+                                              type: hex
+                                              hex: "#FFFFFF"
+                                              alpha: 1
+                                          - platform: android
+                                            dark_mode: true
+                                            color:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                          - platform: web
+                                            dark_mode: false
+                                            color:
+                                              type: hex
+                                              hex: "#FFFFFF"
+                                              alpha: 1
+                                          - platform: web
+                                            dark_mode: true
+                                            color:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                        alignment: center
+                                        styles: []
+                                        font_families:
+                                        - sans-serif
+                                    actions: {}
+                                    enabled:
+                                    - pager_next
+                                    button_click:
+                                    - pager_next
+                                    background_color:
+                                      default:
+                                        type: hex
+                                        hex: "#63AFF1"
+                                        alpha: 1
+                                      selectors:
+                                      - platform: ios
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: ios
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                    border:
+                                      radius: 3
+                                      stroke_width: 0
+                                      stroke_color:
+                                        default:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                        selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                - size:
+                                    width: 100%
+                                    height: auto
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    items: []
+                  background_color:
+                    default:
+                      type: hex
+                      hex: "#FF7F50"
+                      alpha: 1
+                    selectors:
+                    - platform: ios
+                      dark_mode: false
+                      color:
+                        type: hex
+                        hex: "#FF7F50"
+                        alpha: 1
+                    - platform: ios
+                      dark_mode: true
+                      color:
+                        type: hex
+                        hex: "#FFFF5E"
+                        alpha: 0.5
+                    - platform: android
+                      dark_mode: false
+                      color:
+                        type: hex
+                        hex: "#FF7F50"
+                        alpha: 1
+                    - platform: android
+                      dark_mode: true
+                      color:
+                        type: hex
+                        hex: "#FFFF5E"
+                        alpha: 0.5
+                    - platform: web
+                      dark_mode: false
+                      color:
+                        type: hex
+                        hex: "#FF7F50"
+                        alpha: 1
+                    - platform: web
+                      dark_mode: true
+                      color:
+                        type: hex
+                        hex: "#FFFF5E"
+                        alpha: 0.5
+            ignore_safe_area: false
+          - position:
+              horizontal: end
+              vertical: top
+            size:
+              width: 48
+              height: 48
+            view:
+              type: image_button
+              image:
+                scale: 0.4
+                type: icon
+                icon: close
+                color:
+                  default:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                  selectors:
+                  - platform: ios
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                  - platform: ios
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  - platform: android
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                  - platform: android
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  - platform: web
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                  - platform: web
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+              identifier: dismiss_button
+              button_click:
+              - dismiss

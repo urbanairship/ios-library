@@ -139,7 +139,8 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                 ForEach(0..<state.config.sections.count, id: \.self) { index in
                     self.section(
                         state.config.sections[index],
-                        state: state
+                        state: state,
+                        isLast: index == state.config.sections.count - 1
                     )
                 }
             }
@@ -177,13 +178,15 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     @MainActor
     func section(
         _ section: PreferenceCenterConfig.Section,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        isLast: Bool
     ) -> some View {
         switch section {
         case .common(let section):
             CommonSectionView(
                 section: section,
-                state: state
+                state: state,
+                isLast: isLast
             )
         case .labeledSectionBreak(let section):
             LabeledSectionBreakView(

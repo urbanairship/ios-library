@@ -535,21 +535,24 @@ extension Color {
 
 struct PreferenceCenterDefaults {
 
+
+#if os(tvOS)
+    static let promptMaxWidth: Double = 800.0
+    static let promptMinWidth: Double = 270.0
+    static let chipSpacing: Double = 24.0
     static let smallPadding: Double = 5
-
-    static let promptMinWidth = 270.0
-
-#if os(tvOS)
-    static let promptMaxWidth = 800.0
+#elseif os(visionOS)
+    static let promptMaxWidth: Double = 420.0
+    static let promptMinWidth: Double = 270.0
+    static let chipSpacing: Double = 30.0
+    static let smallPadding: Double = 10.0
 #else
-    static let promptMaxWidth = 420.0
+    static let promptMaxWidth: Double = 420.0
+    static let promptMinWidth: Double = 270.0
+    static let chipSpacing: Double = 8.0
+    static let smallPadding: Double = 5
 #endif
 
-#if os(tvOS)
-    static let chipSpacing = 36.0
-#else
-    static let chipSpacing = 8.0
-#endif
 
     static let labeledSectionBreakTitleBackgroundColor: Color = .gray
     static let buttonDestructiveBackgroundColor = Color.red
@@ -561,6 +564,7 @@ struct PreferenceCenterDefaults {
 #else
         return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
 #endif
+
     })
 
     static let labeledSectionBreakTitleAppearance = PreferenceCenterTheme.TextAppearance(

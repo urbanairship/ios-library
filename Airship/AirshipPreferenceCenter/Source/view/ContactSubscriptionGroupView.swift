@@ -273,6 +273,10 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
 #if os(tvOS)
             .buttonBorderShape(.capsule)
             .buttonStyle(.card)
+#elseif os(visionOS)
+            .buttonBorderShape(.capsule)
+            .buttonStyle(.plain)
+            .padding(.vertical)
 #endif
             .airshipApplyIf(true) { view in
                 if #available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *) {

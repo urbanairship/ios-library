@@ -133,6 +133,9 @@ struct LabeledButton: View {
         )
 #if os(tvOS)
         .buttonBorderShape(.roundedRectangle(radius: cornerRadius))
+#elseif os(visionOS)
+        .buttonBorderShape(.roundedRectangle(radius: cornerRadius))
+        .buttonStyle(.plain)
 #endif
     }
 }

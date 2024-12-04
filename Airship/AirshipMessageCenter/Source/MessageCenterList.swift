@@ -129,82 +129,33 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
 
     @MainActor
     public var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> {
-        let messagesSubject = CurrentValueSubject<[MessageCenterMessage]?, Never>(nil)
-        let messageUpdates = self.messageUpdates
-
-        Task { [messageUpdates, weak messagesSubject] in
-            for await update in messageUpdates {
-                guard let messagesSubject else { return }
-                messagesSubject.send(update)
-            }
-        }
-
-        return messagesSubject.compactMap { $0 }.eraseToAnyPublisher()
+        return self.messageUpdates
+            .airshipPublisher
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
     }
     
     var messageUpdates: AsyncStream<[MessageCenterMessage]> {
-        AsyncStream<[MessageCenterMessage]> { [weak self] continuation in
-            let task = Task { [weak self] in
-                guard let stream = await self?.updateChannel.makeStream() else {
-                    return
-                }
-
-                if let messages = await self?.messages {
-                    continuation.yield(messages)
-                }
-
-                for await update in stream  {
-                    if update != .refreshFailed, let messages = await self?.messages {
-                        continuation.yield(messages)
-                    }
-                }
-            }
-
-            continuation.onTermination = { _ in
-                task.cancel()
-            }
+        return self.updateChannel.makeNonIsolatedDedupingStream { [weak self] in
+            await self?.messages
+        } transform: { [weak self] _ in
+            await self?.messages
         }
     }
 
     @MainActor
     public var unreadCountPublisher: AnyPublisher<Int, Never> {
-        let unreadCountSubject = CurrentValueSubject<Int?, Never>(nil)
-        let unreadCountUpdates = self.unreadCountUpdates
-
-        Task { [unreadCountUpdates, weak unreadCountSubject] in
-            for await update in unreadCountUpdates {
-                guard let unreadCountSubject else { return }
-                unreadCountSubject.send(update)
-            }
-        }
-
-        return unreadCountSubject
+        return self.unreadCountUpdates
+            .airshipPublisher
             .compactMap { $0 }
-            .removeDuplicates()
             .eraseToAnyPublisher()
     }
     
     var unreadCountUpdates: AsyncStream<Int> {
-        AsyncStream<Int> { [weak self] continuation in
-            let task = Task { [weak self] in
-                guard let stream = await self?.updateChannel.makeStream() else {
-                    return
-                }
-
-                if let count = await self?.unreadCount {
-                    continuation.yield(count)
-                }
-
-                for await update in stream  {
-                    if update != .refreshFailed, let unreadCount = await self?.unreadCount {
-                        continuation.yield(unreadCount)
-                    }
-                }
-            }
-
-            continuation.onTermination = { _ in
-                task.cancel()
-            }
+        return self.updateChannel.makeNonIsolatedDedupingStream { [weak self] in
+            await self?.unreadCount
+        } transform: { [weak self] _ in
+            await self?.unreadCount
         }
     }
 

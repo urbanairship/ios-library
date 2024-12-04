@@ -29,12 +29,16 @@ public struct CommonSectionView: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
+    private var isLast: Bool
+
     init(
         section: PreferenceCenterConfig.CommonSection,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        isLast: Bool
     ) {
         self.section = section
         self.state = state
+        self.isLast = isLast
     }
     
     @ViewBuilder
@@ -44,7 +48,8 @@ public struct CommonSectionView: View {
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme,
-            colorScheme: self.colorScheme
+            colorScheme: self.colorScheme,
+            isLast: self.isLast
         )
 
         style.makeBody(configuration: configuration)
@@ -84,6 +89,9 @@ public struct CommonSectionViewStyleConfiguration {
 
     /// The color scheme
     public let colorScheme: ColorScheme
+
+    /// Is last section or not
+    public let isLast: Bool
 }
 
 /// Common section view style
@@ -144,15 +152,21 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
                     makeItem(
                         section.items[index],
                         state: configuration.state
-                    )
+                    ).airshipApplyIf(index != section.items.count - 1) {
+                        $0.padding(.bottom, PreferenceCenterDefaults.smallPadding)
+                    }
+
                 }
+            }
+            .airshipApplyIf(configuration.isLast) {
+                $0.padding(.bottom, PreferenceCenterDefaults.smallPadding)
             }
 #if os(tvOS)
             .focusSection()
 #endif
-
-            Divider().padding(.vertical)
-            
+            if !configuration.isLast {
+                Divider().padding(.vertical)
+            }
         }
     }
 

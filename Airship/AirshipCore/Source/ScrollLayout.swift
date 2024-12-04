@@ -6,78 +6,108 @@ import SwiftUI
 /// Scroll view layout
 
 struct ScrollLayout: View {
-
+    
     /// ScrollLayout model.
     let info: ThomasViewInfo.ScrollLayout
-
+    
     /// View constraints.
     let constraints: ViewConstraints
-
+    
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @State private var scrollTask: (String, Task<Void, Never>)?
-
+    
     private static let scrollInterval: TimeInterval = 0.01
-
+    
+    
     init(info: ThomasViewInfo.ScrollLayout, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
     }
-
+    
     @ViewBuilder
     private func makeScrollView(axis: Axis.Set) -> some View {
-
+        
         if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
             ScrollView(axis) {
                 makeContent()
+                    .background(
+                        GeometryReader(content: { contentMetrics -> Color in
+                            let size = contentMetrics.size
+                            DispatchQueue.main.async {
+                                self.contentSize = (constraints, size)
+                            }
+                            return Color.clear
+                        })
+                    )
             }
-            #if os(iOS)
+#if os(iOS)
             .scrollDismissesKeyboard(
                 self.thomasEnvironment.focusedID != nil ? .immediately : .never
             )
-            #endif
+#endif
         } else {
             ScrollView(axis) {
                 makeContent()
             }
         }
     }
-
+    
     @ViewBuilder
     private func makeScrollView() -> some View {
         let isVertical = self.info.properties.direction == .vertical
         let axis = isVertical ? Axis.Set.vertical : Axis.Set.horizontal
-
+        
         ScrollViewReader { proxy in
             makeScrollView(axis: axis)
-            .clipped()
-            .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { [weak thomasEnvironment] newValue in
-                if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
-                    if let focusedID = thomasEnvironment?.focusedID {
-                        switch newValue {
-                        case .hidden:
-                            scrollTask?.1.cancel()
-                        case .displaying(let duration):
-                            let task = Task {
-                                await self.startScrolling(
-                                    scrollID: focusedID,
-                                    proxy: proxy,
-                                    duration: duration
-                                )
+                .clipped()
+                .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { [weak thomasEnvironment] newValue in
+                    if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
+                        if let focusedID = thomasEnvironment?.focusedID {
+                            switch newValue {
+                            case .hidden:
+                                scrollTask?.1.cancel()
+                            case .displaying(let duration):
+                                let task = Task {
+                                    await self.startScrolling(
+                                        scrollID: focusedID,
+                                        proxy: proxy,
+                                        duration: duration
+                                    )
+                                }
+                                self.scrollTask = (focusedID, task)
+                            case .visible:
+                                scrollTask?.1.cancel()
+                                proxy.scrollTo(focusedID)
                             }
-                            self.scrollTask = (focusedID, task)
-                        case .visible:
+                        } else {
                             scrollTask?.1.cancel()
-                            proxy.scrollTo(focusedID)
                         }
-                    } else {
-                        scrollTask?.1.cancel()
                     }
                 }
+        }
+        .airshipApplyIf(self.shouldApplyFrameSize) {
+            switch (info.properties.direction) {
+            case .vertical:
+                let height = self.contentSize?.0 == self.constraints ? self.contentSize?.1.height : 0
+                $0.frame(maxHeight: height ?? 0)
+            case .horizontal:
+                let width = self.contentSize?.0 == self.constraints ? self.contentSize?.1.width : 0
+                $0.frame(maxWidth: width ?? 0)
             }
         }
     }
-
+    
+    private var shouldApplyFrameSize: Bool {
+        switch (info.properties.direction) {
+        case .vertical:
+            self.constraints.height == nil
+        case .horizontal:
+            self.constraints.width == nil
+        }
+    }
+    
+    
     @ViewBuilder
     func makeContent() -> some View {
         ZStack {
@@ -92,7 +122,7 @@ struct ScrollLayout: View {
         }
         .frame(alignment: .topLeading)
     }
-
+    
     @ViewBuilder
     var body: some View {
         makeScrollView()
@@ -102,7 +132,7 @@ struct ScrollLayout: View {
             .focusSection()
 #endif
     }
-
+    
     private func childConstraints() -> ViewConstraints {
         var childConstraints = constraints
         if self.info.properties.direction == .vertical {
@@ -114,10 +144,10 @@ struct ScrollLayout: View {
             childConstraints.maxWidth = nil
             childConstraints.isHorizontalFixedSize = false
         }
-
+        
         return childConstraints
     }
-
+    
     @MainActor
     private func startScrolling(
         scrollID: String,
