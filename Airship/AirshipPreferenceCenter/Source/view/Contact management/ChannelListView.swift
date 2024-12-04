@@ -96,7 +96,7 @@ struct ChannelListView: View {
         Text(self.item.display.title)
             .textAppearance(
                 theme.contactManagement?.titleAppearance,
-                base: DefaultContactManagementSectionStyle.titleAppearance,
+                base: PreferenceCenterDefaults.sectionTitleAppearance,
                 colorScheme: colorScheme
             )
     }
@@ -107,7 +107,7 @@ struct ChannelListView: View {
             Text(subtitle)
                 .textAppearance(
                     theme.contactManagement?.subtitleAppearance,
-                    base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                    base: PreferenceCenterDefaults.sectionSubtitleAppearance,
                     colorScheme: colorScheme
                 )
         }
@@ -116,7 +116,7 @@ struct ChannelListView: View {
     @ViewBuilder
     private var headerView: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading) {
                 headerTitleView
                 headerSubtitleView
             }
@@ -143,13 +143,22 @@ struct ChannelListView: View {
     @ViewBuilder
     private var channelListView:some View {
         ForEach(Array(self.$state.channelsList.wrappedValue.filter(with: self.item.platform.channelType)), id: \.self) { channel in
-            ChannelListViewCell(viewModel: ChannelListCellViewModel(channel: channel,
-                                                                    pendingLabelModel: pendingLabelModelForType(type: item.platform),
-                                                                    onResend: {
-                resend(channel)
-            }, onRemove: {
-                remove(channel)
-            }, onDismiss: dismissPrompt))
+            ChannelListViewCell(
+                viewModel: ChannelListCellViewModel(
+                    channel: channel,
+                    pendingLabelModel: pendingLabelModelForType(type: item.platform),
+                    onResend: {
+                        resend(channel)
+                    },
+                    onRemove: {
+                        remove(channel)
+                    },
+                    onDismiss: dismissPrompt
+                )
+            )
+#if os(tvOS)
+            .focusSection()
+#endif
         }
     }
 
@@ -164,16 +173,18 @@ struct ChannelListView: View {
                 Section {
                     VStack(alignment: .leading) {
                         if self.$state.channelsList.wrappedValue.filter(with: self.item.platform.channelType).isEmpty {
-                            EmptySectionLabel(label: item.emptyMessage) {
-                                withAnimation {
-                                    self.hideView = true
-                                }
-                            }
+                            EmptySectionLabel(label: item.emptyMessage)
                         } else {
                             channelListView
                         }
                         if let model = self.item.addChannel?.button {
-                            makeAddButton(model: model)
+                            HStack {
+                                makeAddButton(model: model)
+                                Spacer()
+                            }
+#if os(tvOS)
+                            .focusSection()
+#endif
                         }
                     }
                 } header: {
@@ -181,7 +192,6 @@ struct ChannelListView: View {
                         .accessibilityAddTraits(.isHeader)
                 }
             }
-            .padding(.bottom, 8)
         }
     }
 }
@@ -228,16 +238,18 @@ extension ChannelListView {
     @ViewBuilder
     private var addChannelPromptView: some View {
         if let view = self.item.addChannel?.view {
-            let viewModel = AddChannelPromptViewModel(item: view,
-                                                      theme: self.theme.contactManagement,
-                                                      registrationOptions: self.item.platform,
-                                                      onCancel: dismissPrompt,
-                                                      onRegisterSMS: registerSMS,
-                                                      onRegisterEmail: registerEmail)
+            let viewModel = AddChannelPromptViewModel(
+                item: view,
+                theme: self.theme.contactManagement,
+                registrationOptions: self.item.platform,
+                onCancel: dismissPrompt,
+                onRegisterSMS: registerSMS,
+                onRegisterEmail: registerEmail
+            )
 
 
             AddChannelPromptView(viewModel: viewModel)
-            .transition(.opacity)
+                .transition(.opacity)
         }
     }
 

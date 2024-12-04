@@ -66,6 +66,7 @@ extension View {
 }
 
 /// The labeled section break style configuration
+@MainActor
 public struct LabeledSectionBreakStyleConfiguration {
     /// The section config
     public let section: PreferenceCenterConfig.LabeledSectionBreak
@@ -84,9 +85,10 @@ public struct LabeledSectionBreakStyleConfiguration {
 }
 
 /// Labeled section break style
-public protocol LabeledSectionBreakStyle {
+public protocol LabeledSectionBreakStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = LabeledSectionBreakStyleConfiguration
+    @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
@@ -103,26 +105,25 @@ where Self == DefaultLabeledSectionBreakStyle {
 public struct DefaultLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 
     @ViewBuilder
+    @preconcurrency @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let colorScheme = configuration.colorScheme
         let section = configuration.section
-        let sectionTheme = configuration.preferenceCenterTheme
-            .labeledSectionBreak
-        let backgroundColor = colorScheme.airshipResolveColor(light: sectionTheme?.backgroundColor, dark: sectionTheme?.backgroundColorDark) ?? .gray
+        let sectionTheme = configuration.preferenceCenterTheme.labeledSectionBreak
+        let backgroundColor = colorScheme.airshipResolveColor(
+            light: sectionTheme?.backgroundColor,
+            dark: sectionTheme?.backgroundColorDark
+        ) ?? PreferenceCenterDefaults.labeledSectionBreakTitleBackgroundColor
 
         if configuration.displayConditionsMet {
             Text(section.display?.title ?? "")
                 .textAppearance(
                     sectionTheme?.titleAppearance,
-                    base: PreferenceCenterTheme.TextAppearance(
-                        font: .system(size: 14),
-                        color: Color.black,
-                        colorDark: Color.white
-                    ),
+                    base: PreferenceCenterDefaults.labeledSectionBreakTitleAppearance,
                     colorScheme: colorScheme
                 )
-                .padding(.vertical, 2)
-                .padding(.horizontal, 4)
+                .padding(.vertical, PreferenceCenterDefaults.smallPadding/2)
+                .padding(.horizontal, PreferenceCenterDefaults.smallPadding)
                 .background(backgroundColor)
         }
     }
@@ -130,10 +131,10 @@ public struct DefaultLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 
 struct AnyLabeledSectionBreakStyle: LabeledSectionBreakStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: LabeledSectionBreakStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -145,7 +146,7 @@ struct AnyLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 }
 
 struct LabeledSectionBreakStyleKey: EnvironmentKey {
-    static var defaultValue = AnyLabeledSectionBreakStyle(style: .defaultStyle)
+    static let defaultValue = AnyLabeledSectionBreakStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

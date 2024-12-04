@@ -24,7 +24,7 @@ public struct ErrorLabel: View {
                 Text(errorMessage)
                     .textAppearance(
                         theme?.errorAppearance,
-                        base: DefaultContactManagementSectionStyle.errorAppearance,
+                        base: PreferenceCenterDefaults.errorAppearance,
                         colorScheme: colorScheme
                     )
                     .lineLimit(2)

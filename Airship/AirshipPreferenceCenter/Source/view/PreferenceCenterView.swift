@@ -64,7 +64,7 @@ public struct PreferenceCenterList: View {
     public var body: some View {
         let phase = self.loader.phase
 
-        let refresh = {
+        let refresh: @MainActor @Sendable () -> Void = {
             self.loader.load(
                 preferenceCenterID: preferenceCenterID,
                 onLoad: onLoad

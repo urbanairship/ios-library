@@ -3,25 +3,26 @@
 import Foundation
 import SwiftUI
 
-extension Text {
-
+extension View {
     @ViewBuilder
     func textAppearance(
         _ overrides: PreferenceCenterTheme.TextAppearance?,
         base: PreferenceCenterTheme.TextAppearance? = nil,
         colorScheme: ColorScheme
-    ) -> Text {
+    ) -> some View {
         let overridesColor = colorScheme.airshipResolveColor(light: overrides?.color, dark: overrides?.colorDark)
         self.font(overrides?.font ?? base?.font)
-            .foregroundColor(overridesColor ?? base?.color)
+            .foregroundColor(overridesColor ?? base?.color ?? AirshipSystemColors.label)
     }
-}
 
-extension View {
     @ViewBuilder
     func toggleStyle(tint: Color?) -> some View {
         if let tint = tint {
+            #if os(tvOS)
+            self.tint(tint)
+            #else
             self.toggleStyle(SwitchToggleStyle(tint: tint))
+            #endif
         } else {
             self
         }

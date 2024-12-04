@@ -29,12 +29,16 @@ public struct CommonSectionView: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
+    private var isLast: Bool
+
     init(
         section: PreferenceCenterConfig.CommonSection,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        isLast: Bool
     ) {
         self.section = section
         self.state = state
+        self.isLast = isLast
     }
     
     @ViewBuilder
@@ -44,7 +48,8 @@ public struct CommonSectionView: View {
             state: self.state,
             displayConditionsMet: self.displayConditionsMet,
             preferenceCenterTheme: self.preferenceCenterTheme,
-            colorScheme: self.colorScheme
+            colorScheme: self.colorScheme,
+            isLast: self.isLast
         )
 
         style.makeBody(configuration: configuration)
@@ -84,6 +89,9 @@ public struct CommonSectionViewStyleConfiguration {
 
     /// The color scheme
     public let colorScheme: ColorScheme
+
+    /// Is last section or not
+    public let isLast: Bool
 }
 
 /// Common section view style
@@ -104,21 +112,6 @@ extension CommonSectionViewStyle where Self == DefaultCommonSectionViewStyle {
 /// The default common section view style
 public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
-    public static let titleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 18).bold(),
-        color: .primary
-    )
-
-    public static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 14),
-        color: .secondary
-    )
-
-    public static let emptyTextAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .system(size: 14),
-        color: .gray.opacity(0.80)
-    )
-
     @ViewBuilder
     public func makeBody(configuration: Configuration) -> some View {
         let section = configuration.section
@@ -127,40 +120,51 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
 
         if configuration.displayConditionsMet {
             VStack(alignment: .leading) {
-                if section.display?.title != nil
-                    || section.display?.subtitle != nil
-                {
-                    if let title = section.display?.title {
-                        Text(title)
-                            .textAppearance(
-                                sectionTheme?.titleAppearance,
-                                base: DefaultCommonSectionViewStyle
-                                    .titleAppearance,
-                                colorScheme: colorScheme
-                            ).accessibilityAddTraits(.isHeader)
-                    }
+                Spacer()
+                if section.display?.title?.isEmpty == false || section.display?.subtitle?.isEmpty == false {
+                    VStack(alignment: .leading) {
+                        if let title = section.display?.title {
+                            Text(title)
+                                .textAppearance(
+                                    sectionTheme?.titleAppearance,
+                                    base: PreferenceCenterDefaults.sectionTitleAppearance,
+                                    colorScheme: colorScheme
+                                )
+                                .accessibilityAddTraits(.isHeader)
+                        }
 
-                    if let subtitle = section.display?.subtitle {
-                        Text(subtitle)
-                            .textAppearance(
-                                sectionTheme?.subtitleAppearance,
-                                base: DefaultCommonSectionViewStyle
-                                    .subtitleAppearance,
-                                colorScheme: colorScheme
-                            )
+                        if let subtitle = section.display?.subtitle {
+                            Text(subtitle)
+                                .textAppearance(
+                                    sectionTheme?.subtitleAppearance,
+                                    base: PreferenceCenterDefaults.sectionSubtitleAppearance,
+                                    colorScheme: colorScheme
+                                )
+                        }
                     }
-
-                    Divider()
+                    .padding(.bottom, PreferenceCenterDefaults.smallPadding)
                 }
 
                 ForEach(0..<section.items.count, id: \.self) { index in
                     makeItem(
                         section.items[index],
                         state: configuration.state
-                    )
+                    ).airshipApplyIf(index != section.items.count - 1) {
+                        $0.padding(.bottom, PreferenceCenterDefaults.smallPadding)
+                    }
+
                 }
             }
-            .padding(.bottom, 8)
+            .airshipApplyIf(configuration.isLast) {
+                $0.padding(.bottom, PreferenceCenterDefaults.smallPadding)
+            }
+#if os(tvOS)
+            .focusSection()
+#endif
+
+            if !configuration.isLast {
+                Divider().padding(.vertical)
+            }
         }
     }
 
@@ -174,19 +178,15 @@ public struct DefaultCommonSectionViewStyle: CommonSectionViewStyle {
             PreferenceCenterAlertView(item: item, state: state).transition(.opacity)
         case .channelSubscription(let item):
             ChannelSubscriptionView(item: item, state: state)
-            Divider()
         case .contactSubscription(let item):
             ContactSubscriptionView(item: item, state: state)
-            Divider()
         case .contactSubscriptionGroup(let item):
             ContactSubscriptionGroupView(item: item, state: state)
-            Divider()
         case .contactManagement(let item):
             PreferenceCenterContactManagementView(
                 item: item,
                 state: state
             )
-            Divider()
         }
     }
 }

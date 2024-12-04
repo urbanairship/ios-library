@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 /// Preference Center view style configuration
-public struct PreferenceCenterViewStyleConfiguration {
+public struct PreferenceCenterViewStyleConfiguration: Sendable {
     /// The view's phase
     public let phase: PreferenceCenterViewPhase
 
@@ -15,17 +15,20 @@ public struct PreferenceCenterViewStyleConfiguration {
     public let colorScheme: ColorScheme
 
     /// A block that can be called to refresh the view
-    public let refresh: () -> Void
+    public let refresh: @MainActor @Sendable () -> Void
 }
 
 /// Preference Center view style
-public protocol PreferenceCenterViewStyle {
+public protocol PreferenceCenterViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = PreferenceCenterViewStyleConfiguration
+    
+    @preconcurrency @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-extension PreferenceCenterViewStyle where Self == DefaultPreferenceCenterViewStyle {
+extension PreferenceCenterViewStyle
+where Self == DefaultPreferenceCenterViewStyle {
     /// Default style
     public static var defaultStyle: Self {
         return .init()
@@ -33,11 +36,8 @@ extension PreferenceCenterViewStyle where Self == DefaultPreferenceCenterViewSty
 }
 
 /// The default Preference Center view style
+@MainActor @preconcurrency 
 public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
-
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .subheadline
-    )
 
     private func navigationBarTitle(
         configuration: Configuration,
@@ -79,7 +79,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     theme?.retryMessageAppearance,
                     colorScheme: colorScheme
                 )
-                .padding(16)
+                .padding()
 
             Button(
                 action: {
@@ -117,6 +117,7 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     }
 
     @ViewBuilder
+    @MainActor
     public func makePreferenceCenterView(
         configuration: Configuration,
         state: PreferenceCenterState
@@ -129,28 +130,28 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                     Text(subtitle)
                         .textAppearance(
                             theme.preferenceCenter?.subtitleAppearance,
-                            base: DefaultPreferenceCenterViewStyle
-                                .subtitleAppearance,
+                            base: PreferenceCenterDefaults.subtitleAppearance,
                             colorScheme: colorScheme
                         )
-                        .padding(.bottom, 16)
+                        .padding(.bottom)
                 }
 
                 ForEach(0..<state.config.sections.count, id: \.self) { index in
                     self.section(
                         state.config.sections[index],
-                        state: state
+                        state: state,
+                        isLast: index == state.config.sections.count - 1
                     )
                 }
             }
-            .padding(16)
+            .padding()
             Spacer()
         }
         .navigationTitle(navigationBarTitle(configuration: configuration, state: state))
-
     }
 
     @ViewBuilder
+    @MainActor
     public func makeBody(configuration: Configuration) -> some View {
         let resolvedBackgroundColor: Color? = configuration.colorScheme.airshipResolveColor(
             light: configuration.preferenceCenterTheme.viewController?.backgroundColor,
@@ -174,15 +175,18 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     }
 
     @ViewBuilder
+    @MainActor
     func section(
         _ section: PreferenceCenterConfig.Section,
-        state: PreferenceCenterState
+        state: PreferenceCenterState,
+        isLast: Bool
     ) -> some View {
         switch section {
         case .common(let section):
             CommonSectionView(
                 section: section,
-                state: state
+                state: state,
+                isLast: isLast
             )
         case .labeledSectionBreak(let section):
             LabeledSectionBreakView(
@@ -195,10 +199,10 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
 
 struct AnyPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     @ViewBuilder
-    private var _makeBody: (Configuration) -> AnyView
+    private var _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: PreferenceCenterViewStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -210,7 +214,7 @@ struct AnyPreferenceCenterViewStyle: PreferenceCenterViewStyle {
 }
 
 struct PreferenceCenterViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyPreferenceCenterViewStyle(style: .defaultStyle)
+    static let defaultValue = AnyPreferenceCenterViewStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

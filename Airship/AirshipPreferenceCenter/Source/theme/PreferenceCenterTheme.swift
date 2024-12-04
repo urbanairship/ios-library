@@ -4,6 +4,10 @@ import Foundation
 import SwiftUI
 import UIKit
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 /// Preference Center theme
 public struct PreferenceCenterTheme: Equatable, Sendable {
 
@@ -478,8 +482,8 @@ extension PreferenceCenterTheme {
 
 extension ProgressView {
     @ViewBuilder
-    func airshipSetTint(color: Color) -> some View {
-        if #available(iOS 15, *) {
+    func airshipSetTint(_ color: Color) -> some View {
+        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
             self.tint(color)
         } else {
             self.accentColor(color)
@@ -489,19 +493,6 @@ extension ProgressView {
 
 extension Color {
     
-    /// Inverts the color - used for inverted primary and secondary colors on LabeledButtons
-    func inverted() -> Color {
-        let uiColor = UIColor(self)
-        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
-        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        let invertedColor = Color(
-            red: Double(1 - red),
-            green: Double(1 - green),
-            blue: Double(1 - blue),
-            opacity: Double(alpha)
-        )
-        return invertedColor
-    }
 
     /**
      ** Derives secondary variant for a particular color by shifting a given color's RGBA values
@@ -540,4 +531,129 @@ extension Color {
             return self /// Return the original color if unable to modify
         }
     }
+}
+
+struct PreferenceCenterDefaults {
+
+
+
+#if os(tvOS)
+    static let promptMaxWidth: Double = 800.0
+    static let promptMinWidth: Double = 270.0
+    static let chipSpacing: Double = 24.0
+    static let smallPadding: Double = 5
+#elseif os(visionOS)
+    static let promptMaxWidth: Double = 420.0
+    static let promptMinWidth: Double = 270.0
+    static let chipSpacing: Double = 30.0
+    static let smallPadding: Double = 10.0
+#else
+    static let promptMaxWidth: Double = 420.0
+    static let promptMinWidth: Double = 270.0
+    static let chipSpacing: Double = 8.0
+    static let smallPadding: Double = 5
+#endif
+
+
+    static let labeledSectionBreakTitleBackgroundColor: Color = .gray
+    static let buttonDestructiveBackgroundColor = Color.red
+    static let buttonBackgroundColor = AirshipSystemColors.label
+
+    static let promptBackgroundColor: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
+    })
+
+    static let labeledSectionBreakTitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline,
+        color: Color.black,
+        colorDark: Color.white
+    )
+
+    static let sectionTitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .title2,
+        color: AirshipSystemColors.label
+    )
+
+    static let sectionSubtitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .subheadline,
+        color: AirshipSystemColors.label
+    )
+
+    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .title3,
+        color: AirshipSystemColors.label
+    )
+
+    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .subheadline,
+        color: AirshipSystemColors.label
+    )
+
+    static let channelListItemTitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline,
+        color: AirshipSystemColors.label
+    )
+
+    static let channelListItemSubtitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .subheadline,
+        color: AirshipSystemColors.secondaryLabel
+    )
+
+    static let emptyTextAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .body,
+        color: AirshipSystemColors.label
+    )
+
+    static let errorAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .footnote.weight(.medium),
+        color: .red
+    )
+
+    static let textFieldTextAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .body,
+        color: AirshipSystemColors.label
+    )
+
+    static let textFieldPlaceholderAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .body,
+        color: AirshipSystemColors.placeholder
+    )
+
+    static let chipLabelAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline.weight(.bold),
+        color: AirshipSystemColors.label
+    )
+
+    static let resendButtonTitleAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .caption.weight(.bold),
+        color: AirshipSystemColors.link
+    )
+
+    static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline.weight(.bold),
+        color: AirshipSystemColors.background
+    )
+
+    static let buttonLabelDestructiveAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline.weight(.bold),
+        color: .white
+    )
+
+    static let buttonLabelOutlineAppearance = PreferenceCenterTheme.TextAppearance(
+        font: .headline.weight(.bold),
+        color: AirshipSystemColors.label
+    )
+}
+
+
+internal struct AirshipSystemColors {
+    static let placeholder = Color(UIColor.placeholderText)
+    static let label = Color(UIColor.label)
+    static let secondaryLabel = Color(UIColor.secondaryLabel)
+    static let tertiaryLabel = Color(UIColor.tertiaryLabel)
+    static let background = Color(UIColor.systemBackground)
+    static let secondaryBackground = Color(UIColor.secondarySystemBackground)
+    static let tertiaryBackground = Color(UIColor.tertiarySystemBackground)
+
+    static let link = Color(UIColor.link)
 }

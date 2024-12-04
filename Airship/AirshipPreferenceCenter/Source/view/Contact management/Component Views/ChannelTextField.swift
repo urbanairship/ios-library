@@ -72,11 +72,11 @@ public struct ChannelTextField: View {
         /// Use text field color for picker accent. May want to expose this separately at some point.
         let pickerAccent = colorScheme.airshipResolveColor(light: theme?.textFieldTextAppearance?.color, dark: theme?.textFieldTextAppearance?.colorDark)
         if let senders = self.senders, (senders.count >= 1) {
-            HStack(spacing:10) {
+            HStack {
                 if let smsOptions = smsOptions {
                     Text(smsOptions.countryLabel).textAppearance(
                         theme?.textFieldPlaceholderAppearance,
-                        base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                        base: PreferenceCenterDefaults.textFieldTextAppearance,
                         colorScheme: colorScheme
                     )
                 }
@@ -85,12 +85,13 @@ public struct ChannelTextField: View {
                     ForEach(senders, id: \.self) {
                         Text($0.displayName).textAppearance(
                             theme?.textFieldPlaceholderAppearance,
-                            base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                            base: PreferenceCenterDefaults.textFieldTextAppearance,
                             colorScheme: colorScheme
                         ).tag($0.senderId)
                     }
                 }
-                .accentColor(pickerAccent ?? DefaultColors.primaryText)
+                .pickerStyle(.menu)
+                .accentColor(pickerAccent ?? AirshipSystemColors.label)
                 .airshipOnChangeOf(self.selectedSenderID, { newVal in
                     if let sender = senders.first(where: { $0.senderId == newVal }) {
                         selectedSender = sender
@@ -105,14 +106,17 @@ public struct ChannelTextField: View {
                     }
                 }
             }
-            .padding(10)
+            .padding()
             .background(backgroundView)
         }
     }
 
     @ViewBuilder
     private var textField: some View {
-        let textColor = colorScheme.airshipResolveColor(light: theme?.textFieldTextAppearance?.color, dark: theme?.textFieldTextAppearance?.colorDark)
+        let textColor = colorScheme.airshipResolveColor(
+            light: theme?.textFieldTextAppearance?.color,
+            dark: theme?.textFieldTextAppearance?.colorDark
+        )
 
         TextField(makePlaceholder(), text: $inputText)
             .foregroundColor(textColor)
@@ -126,14 +130,14 @@ public struct ChannelTextField: View {
             Text(smsOptions.msisdnLabel)
                 .textAppearance(
                     theme?.textFieldPlaceholderAppearance,
-                    base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                    base: PreferenceCenterDefaults.textFieldTextAppearance,
                     colorScheme: colorScheme
                 )
         } else if let emailOptions = emailOptions {
             Text(emailOptions.addressLabel)
                 .textAppearance(
                 theme?.textFieldPlaceholderAppearance,
-                base: DefaultContactManagementSectionStyle.textFieldTextAppearance,
+                base: PreferenceCenterDefaults.textFieldTextAppearance,
                 colorScheme: colorScheme
             )
         }
@@ -141,9 +145,13 @@ public struct ChannelTextField: View {
 
     @ViewBuilder
     private var backgroundView: some View {
-        let backgroundColor = colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark) ?? DefaultContactManagementSectionStyle.backgroundColor
+        let backgroundColor = colorScheme.airshipResolveColor(
+            light: theme?.backgroundColor,
+            dark: theme?.backgroundColorDark
+        ) ?? AirshipSystemColors.background
 
-        RoundedRectangle(cornerRadius: fieldCornerRadius).foregroundColor(backgroundColor.secondaryVariant(for: colorScheme).opacity(0.2))
+        RoundedRectangle(cornerRadius: fieldCornerRadius)
+            .foregroundColor(backgroundColor.secondaryVariant(for: colorScheme).opacity(0.2))
     }
 
     // MARK: Keyboard type

@@ -16,15 +16,6 @@ public struct ResultPromptView: View {
 
     var onDismiss: () -> Void
 
-    private var alertInternalPadding: CGFloat = 16
-    private var alertExternalPadding: CGFloat = 16
-
-    /// The minimum alert width - as defined by Apple
-    private let promptMinWidth = 270.0
-
-    /// The maximum alert width
-    private let promptMaxWidth = 420.0
-
     public init(
         item: PreferenceCenterConfig.ContactManagementItem.ActionableMessage?,
         theme: PreferenceCenterTheme.ContactManagement?,
@@ -37,13 +28,13 @@ public struct ResultPromptView: View {
 
     public var body: some View {
         if let item = self.item {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading) {
 
                 /// Title
                 Text(item.title)
                     .textAppearance(
                         theme?.titleAppearance,
-                        base: DefaultContactManagementSectionStyle.titleAppearance,
+                        base: PreferenceCenterDefaults.titleAppearance,
                         colorScheme: colorScheme
                     )
                     .accessibilityAddTraits(.isHeader)
@@ -53,7 +44,7 @@ public struct ResultPromptView: View {
                     Text(body)
                         .textAppearance(
                             theme?.subtitleAppearance,
-                            base: DefaultContactManagementSectionStyle.subtitleAppearance,
+                            base: PreferenceCenterDefaults.subtitleAppearance,
                             colorScheme: colorScheme
                         )
                 }
@@ -68,14 +59,20 @@ public struct ResultPromptView: View {
                     )
                 }
             }
-            .padding(alertInternalPadding)
+            .padding()
             .background(
                 BackgroundShape(
-                    color: colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark)  ?? DefaultContactManagementSectionStyle.backgroundColor
+                    color: colorScheme.airshipResolveColor(
+                        light: theme?.backgroundColor,
+                        dark: theme?.backgroundColorDark
+                    ) ?? AirshipSystemColors.secondaryBackground
                 )
             )
-            .padding(alertExternalPadding)
-            .frame(minWidth: promptMinWidth, maxWidth: promptMaxWidth)
+            .padding()
+            .frame(
+                minWidth: PreferenceCenterDefaults.promptMinWidth,
+                maxWidth: PreferenceCenterDefaults.promptMaxWidth
+            )
             .accessibilityAddTraits(.isModal)
         }
     }
