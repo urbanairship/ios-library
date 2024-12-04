@@ -377,7 +377,7 @@ fileprivate final class BannerTimer: ObservableObject {
     private let duration: TimeInterval?
 
     private var isStarted: Bool = false
-    private var task: Task<Void, Error>?
+    private var task: Task<Void, any Error>?
     var isPaused: Bool = false
 
     @Published private(set) var isExpired: Bool = false

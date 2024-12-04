@@ -152,6 +152,7 @@ public protocol AirshipPushProtocol: AirshipBasePushProtocol {
     var quietTime: QuietTimeSettings? { get set }
 
     /// Notification status updates
+    @MainActor
     var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> { get }
     
     /// Notification status updates

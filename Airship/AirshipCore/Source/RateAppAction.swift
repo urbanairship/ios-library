@@ -115,7 +115,7 @@ private struct DefaultAppRater: AppRaterProtocol {
         } else {
             #if !os(visionOS)
             /// Deprecated - remove when no longer needed
-            SKStoreReviewController.requestReview()
+            SKStoreReviewController.requestReview(in: scene)
             #endif
         }
     }

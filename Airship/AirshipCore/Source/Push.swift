@@ -17,6 +17,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     private let notificationStatusChannel = AirshipAsyncChannel<AirshipNotificationStatus>()
 
+    @MainActor
     public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
         return notificationStatusUpdates
             .airshipPublisher

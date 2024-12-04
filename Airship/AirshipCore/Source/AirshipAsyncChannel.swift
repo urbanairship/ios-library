@@ -197,9 +197,10 @@ public extension AsyncStream where Element : Sendable {
 
     /// Creates a combine publisher from an AsyncStream.
     /// - Note: for internal use only.  :nodoc:
+    @MainActor
     var airshipPublisher: AnyPublisher<Element?, Never>{
         let subject = CurrentValueSubject<Element?, Never>(nil)
-        Task { [weak subject] in
+        Task { @MainActor [weak subject] in
             for await update in self {
                 guard let subject else { return }
                 subject.send(update)
