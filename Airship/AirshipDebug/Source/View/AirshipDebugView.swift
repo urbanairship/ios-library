@@ -385,18 +385,18 @@ private class AirshipDebugViewModel: ObservableObject {
     private func subscribeUpdates() {
         NotificationCenter.default
             .publisher(for: AirshipNotifications.ChannelCreated.name)
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { _ in
                 self.channelID = Airship.channel.identifier
             })
             .store(in: &self.subscriptions)
 
         Airship.push.notificationStatusPublisher
-            .sink(receiveValue: { status in
-                Task { @MainActor in
-                    self.isPushNotificationsOptedIn = status.isOptedIn
-                    self.deviceToken = Airship.push.deviceToken
-                }
-            })
+            .receive(on: RunLoop.main)
+            .sink { status in
+                self.isPushNotificationsOptedIn = status.isOptedIn
+                self.deviceToken = Airship.push.deviceToken
+            }
             .store(in: &self.subscriptions)
 
         Airship.contact.namedUserIDPublisher
