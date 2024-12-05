@@ -4,7 +4,7 @@ import Foundation
 import os
 
 /// Default log handler. Logs to either os.Logger or just prints depending on OS version.
-class DefaultLogHandler: AirshipLogHandler {
+final class DefaultLogHandler: AirshipLogHandler {
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
     private static let logger: Logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "",

@@ -4,7 +4,7 @@ import Foundation
 
 /// Protocol used by Airship to log all log messages within the SDK.
 /// A custom log handlers should be set on `Airship.logHandler` before `Airship.takeOff`.
-public protocol AirshipLogHandler {
+public protocol AirshipLogHandler: Sendable {
 
     /// Called to log a message.
     /// - Parameters:

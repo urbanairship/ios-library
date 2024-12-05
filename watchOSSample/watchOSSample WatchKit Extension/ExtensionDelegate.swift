@@ -14,7 +14,7 @@ class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
         // Set log level for debugging config loading (optional)
         // It will be set to the value in the loaded config upon takeOff
-        Airship.logLevel = LogLevel.verbose
+        config.logLevel = LogLevel.verbose
 
         // Print out the application configuration for debugging (optional)
         print("Config:\n \(config)")

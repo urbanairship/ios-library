@@ -254,6 +254,22 @@ public struct AirshipConfig: Decodable {
     ///
     /// Defaults to `true`.
     public var restoreMessageCenterOnReinstall : Bool = true
+    
+    /// Airship log handler. All Airship log will be routed through the handler.
+    ///
+    /// The default logger will os.Logger on iOS 14+, and `print` on older devices.
+    public var logHandler: (any AirshipLogHandler)? = nil
+    
+    /// Airship log level.
+    /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
+    /// and `.error` in production. Values set before `takeOff` will be overridden by
+    /// the value from the AirshipConfig.
+    private var customLogLevel: AirshipLogLevel? = nil
+    public var logLevel: AirshipLogLevel {
+        get { customLogLevel ?? (inProduction ? productionLogLevel : developmentLogLevel) }
+        set { customLogLevel = newValue }
+    }
+    
 
     /// Returns the resolved app key.
     /// - Returns: The resolved app key or an empty string.
@@ -268,14 +284,6 @@ public struct AirshipConfig: Decodable {
         let secret = inProduction ? productionAppSecret : developmentAppSecret
         return secret ?? defaultAppSecret
     }
-
-    
-    /// Returns the resolved log level.
-    /// - Returns: The resolved log level.
-    public var logLevel: AirshipLogLevel {
-        return inProduction ? productionLogLevel : developmentLogLevel
-    }
-
     
     /// Returns the resolved log privacy level.
     /// - Returns: The resolved log privacy level.

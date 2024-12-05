@@ -7,11 +7,42 @@ import os
 /// Airship logger.
 ///
 /// - Note: For internal use only. :nodoc:
-public class AirshipLogger {
-
-    static var logLevel: AirshipLogLevel = .error
-
-    static var logHandler: AirshipLogHandler = DefaultLogHandler()
+public final class AirshipLogger: Sendable {
+    private static let _storage = Storage()
+    
+    @MainActor
+    static func configure(
+        logLevel: AirshipLogLevel = .error,
+        handler: (any AirshipLogHandler)?
+    ) {
+        _storage.logLevel = logLevel
+        
+        if let handler {
+            _storage.handler = handler
+        }
+    }
+    
+    static var logLevel: AirshipLogLevel {
+        return _storage.logLevel
+    }
+    
+    static var logHandler: AirshipLogHandler {
+        return _storage.handler
+    }
+    
+    fileprivate final class Storage: @unchecked Sendable {
+        var logLevel: AirshipLogLevel
+        var handler: AirshipLogHandler
+        
+        init(logLevel: AirshipLogLevel = .error, handler: any AirshipLogHandler = DefaultLogHandler()) {
+            self.logLevel = logLevel
+            self.handler = handler
+        }
+        
+        func copy() -> Storage {
+            return Storage(logLevel: self.logLevel, handler: self.handler)
+        }
+    }
 
     public static func trace(
         _ message: @autoclosure () -> String,

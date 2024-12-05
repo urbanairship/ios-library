@@ -281,9 +281,9 @@ public class Airship: NSObject {
 
         let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
         
+        AirshipLogger.configure(logLevel: resolvedConfig.logLevel, handler: resolvedConfig.logHandler)
         ChallengeResolver.shared.resolver = resolvedConfig.connectionChallengeResolver
 
-        self.logLevel = resolvedConfig.logLevel
         self.logPrivacyLevel = resolvedConfig.logPrivacyLevel
 
         UALegacyLoggingBridge.logger = { logLevel, function, line, message in
@@ -339,33 +339,6 @@ public class Airship: NSObject {
             )
         }
 
-    }
-
-    /// Airship log handler. All Airship log will be routed through the handler.
-    ///
-    /// The default logger will os.Logger on iOS 14+, and `print` on older devices.
-    ///
-    /// Custom loggers should be set before takeOff.
-    public static var logHandler: AirshipLogHandler {
-        get {
-            return AirshipLogger.logHandler
-        }
-        set {
-            AirshipLogger.logHandler = newValue
-        }
-    }
-
-    /// Airship log level.
-    /// Sets the Airship log level. The log level defaults to `.debug` in developer mode,
-    /// and `.error` in production. Values set before `takeOff` will be overridden by
-    /// the value from the AirshipConfig.
-    public static var logLevel: AirshipLogLevel {
-        get {
-            return AirshipLogger.logLevel
-        }
-        set {
-            AirshipLogger.logLevel = newValue
-        }
     }
 
     /// Airship default log privacy.

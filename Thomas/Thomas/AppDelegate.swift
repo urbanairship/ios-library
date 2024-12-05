@@ -19,15 +19,15 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         // or set runtime properties here.
         var config = AirshipConfig.default()
         config.isWebViewInspectionEnabled = true
+        
+        // Set log level for debugging config loading (optional)
+        // It will be set to the value in the loaded config upon takeOff
+        config.logLevel = .verbose
 
         if config.validate() != true {
             showInvalidConfigAlert()
             return true
         }
-
-        // Set log level for debugging config loading (optional)
-        // It will be set to the value in the loaded config upon takeOff
-        Airship.logLevel = .verbose
 
         // You can then programmatically override the plist values:
         // config.developmentAppKey = "YourKey"
