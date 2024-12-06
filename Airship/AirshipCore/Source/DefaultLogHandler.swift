@@ -11,7 +11,6 @@ final class DefaultLogHandler: AirshipLogHandler {
         self.privacyLevel = privacyLevel
     }
 
-    @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
     private static let logger: Logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "",
         category: "Airship"

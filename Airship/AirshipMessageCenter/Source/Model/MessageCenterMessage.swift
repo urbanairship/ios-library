@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Message center message.
-public struct MessageCenterMessage: Sendable, Equatable {
+public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     /// The message title.
     public var title: String
 

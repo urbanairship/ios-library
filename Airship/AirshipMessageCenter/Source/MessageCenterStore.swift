@@ -193,9 +193,10 @@ actor MessageCenterStore {
         return messages.first
     }
 
-    func markRead(messageIDs: [String], level: MessageCenterStoreLevel)
-        async throws
-    {
+    func markRead(
+        messageIDs: [String],
+        level: MessageCenterStoreLevel
+    ) async throws {
         guard let coreData = self.coreData else {
             throw MessageCenterStoreError.coreDataUnavailble
         }

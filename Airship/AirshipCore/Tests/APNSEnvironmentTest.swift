@@ -27,14 +27,14 @@ final class APNSEnvironmentTest: XCTestCase {
 
     func testMissingEmbeddedProfile() {
         do {
-            try APNSEnvironment.isProduction(nil)
+            _ = try APNSEnvironment.isProduction(nil)
             XCTFail()
         } catch {}
     }
 
     func testInvalidEmbeddedProfilePath() {
         do {
-            try APNSEnvironment.isProduction("Neat")
+            _ = try APNSEnvironment.isProduction("Neat")
             XCTFail()
         } catch {}
     }

@@ -325,7 +325,7 @@ private struct MessageCenterMessageContentView: View {
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
-#if canImport(webKit)
+#if canImport(WebKit)
 
     @State
     private var webViewPhase: MessageCenterWebView.Phase = .loading
@@ -340,7 +340,7 @@ private struct MessageCenterMessageContentView: View {
     let messageID: String
     let title: String?
     let dismissAction: (() -> Void)?
-    
+
     @MainActor
     func getMessage(_ messageID: String) async -> MessageCenterMessage? {
         if let message = message {
@@ -349,24 +349,24 @@ private struct MessageCenterMessageContentView: View {
         var message = await MessageCenter.shared.inbox.message(
             forID: messageID
         )
-        
+
         if message == nil {
             await MessageCenter.shared.inbox.refreshMessages()
             message = await MessageCenter.shared.inbox.message(
                 forID: messageID
             )
         }
-        
+
         self.message = message
         return message
     }
 
     @MainActor
     private func makeRequest(forMessageID messageID: String) async throws
-        -> URLRequest
+    -> URLRequest
     {
         guard let message = await getMessage(messageID),
-            let user = await MessageCenter.shared.inbox.user
+              let user = await MessageCenter.shared.inbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -380,14 +380,13 @@ private struct MessageCenterMessageContentView: View {
         return request
     }
 
-#if canImport(webKit)
-
+#if canImport(WebKit)
     @MainActor
-    private func makeExtensionDelegate(messageID: String) async throws
-        -> MessageCenterNativeBridgeExtension
-    {
+    private func makeExtensionDelegate(
+        messageID: String
+    ) async throws -> MessageCenterNativeBridgeExtension {
         guard let message = await getMessage(messageID),
-            let user = await MessageCenter.shared.inbox.user
+              let user = await MessageCenter.shared.inbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -397,7 +396,7 @@ private struct MessageCenterMessageContentView: View {
             user: user
         )
     }
-    #endif
+#endif
 
     var body: some View {
         let backgroundColor = self.colorScheme.airshipResolveColor(
@@ -415,7 +414,7 @@ private struct MessageCenterMessageContentView: View {
                 backgroundColor.ignoresSafeArea()
             }
 
-#if canImport(webKit)
+#if canImport(WebKit)
 
             MessageCenterWebView(
                 phase: self.$webViewPhase,
@@ -455,10 +454,10 @@ private struct MessageCenterMessageContentView: View {
             .animation(.easeInOut(duration: 0.5), value: self.opacity)
 
             if case .loading = self.webViewPhase {
-                ProgressView().appearanceTint()
+                ProgressView()
             } else if case .error(let error) = self.webViewPhase {
                 if let error = error as? MessageCenterMessageError,
-                    error == .messageGone
+                   error == .messageGone
                 {
                     VStack {
                         Text("ua_mc_no_longer_available".messageCenterLocalizedString)
@@ -478,8 +477,10 @@ private struct MessageCenterMessageContentView: View {
                 }
             }
 #else
-            Text("Not supported")
-            #endif
+            Text("ua_mc_failed_to_load".messageCenterLocalizedString)
+                .font(.headline)
+                .foregroundColor(.primary)
+#endif
         }
         .navigationTitle(
             Text(title ?? self.message?.title ?? "")

@@ -405,6 +405,7 @@ final class MessageCenterListTest: XCTestCase {
     }
     
     func testRefreshOnMessageExpiresOnAfterUpdate() async throws {
+        var sleeps = await self.sleeper.sleepUpdates.makeStream().makeAsyncIterator()
         self.channel.identifier = UUID().uuidString
         
         let mcUser = MessageCenterUser(
@@ -430,17 +431,18 @@ final class MessageCenterListTest: XCTestCase {
         
         var isRefreshed = false
         self.client.onRetrieve = { _, _, _ in
-            defer { isRefreshed = true }
-            
-            refresh.fulfill()
+            defer {
+                isRefreshed = true
+                refresh.fulfill()
+            }
+
             return AirshipHTTPResponse(
                 result: isRefreshed ? [] : [message],
                 statusCode: 200,
                 headers: [:]
             )
         }
-        
-        
+
         XCTAssert(self.workManager.workRequests.isEmpty)
         
         self.inbox.enabled = true
@@ -452,10 +454,9 @@ final class MessageCenterListTest: XCTestCase {
         
         let saved = await self.inbox.message(forID: message.id)
         XCTAssertNotNil(saved)
-        
-        self.date.advance(by: 1)
-        
-        XCTAssertEqual(1, sleeper.sleeps.first)
+
+        let sleep = await sleeps.next()
+        XCTAssertEqual(1, sleep)
         XCTAssertEqual(3, self.workManager.workRequests.count)
     }
     
@@ -607,10 +608,13 @@ fileprivate final class TestMessageCenterAPIClient : MessageCenterAPIClientProto
     
 }
 
-final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
+actor TestTaskSleeper : AirshipTaskSleeper {
+    var sleepUpdates: AirshipAsyncChannel<TimeInterval> = AirshipAsyncChannel()
     var sleeps : [TimeInterval] = []
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleeps.append(timeInterval)
+        await sleepUpdates.send(timeInterval)
+        await Task.yield()
     }
 }

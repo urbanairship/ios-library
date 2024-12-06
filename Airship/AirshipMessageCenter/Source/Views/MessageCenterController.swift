@@ -8,12 +8,13 @@ import AirshipCore
 #endif
 
 /// The message center controller possible states
-public enum MessageCenterState: Equatable {
+public enum MessageCenterState: Equatable, Sendable {
     case visible(messageID: String?)
     case notVisible
 }
 
 /// Controller for the Message Center View.
+@MainActor
 public class MessageCenterController: ObservableObject {
 
     @Published

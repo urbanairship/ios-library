@@ -313,7 +313,6 @@
 		6E2486FD2899C06100657CE4 /* PreferenceCenterViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */; };
 		6E2811682BE406A50040D928 /* FeatureFlagDeferredResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7EACD22AF4220E00DA286B /* FeatureFlagDeferredResolverTest.swift */; };
 		6E28116C2BE40E860040D928 /* FeatureFlagVariablesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E28116B2BE40E860040D928 /* FeatureFlagVariablesTest.swift */; };
-		6E28BA912B9BCFD400A641B6 /* MessageCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E28BA902B9BCFD400A641B6 /* MessageCenterUtils.swift */; };
 		6E29474B2AD47E15009EC6DD /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
 		6E29474D2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */; };
 		6E2947512AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */; };
@@ -1587,7 +1586,6 @@
 		6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTheme.swift; sourceTree = "<group>"; };
 		6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewLoader.swift; sourceTree = "<group>"; };
 		6E28116B2BE40E860040D928 /* FeatureFlagVariablesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagVariablesTest.swift; sourceTree = "<group>"; };
-		6E28BA902B9BCFD400A641B6 /* MessageCenterUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterUtils.swift; sourceTree = "<group>"; };
 		6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatus.swift; sourceTree = "<group>"; };
 		6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatusUpdates.swift; sourceTree = "<group>"; };
 		6E299FD428D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAirshipRequestSessionTest.swift; sourceTree = "<group>"; };
@@ -2581,7 +2579,6 @@
 			isa = PBXGroup;
 			children = (
 				6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */,
-				6E28BA902B9BCFD400A641B6 /* MessageCenterUtils.swift */,
 				6E4A466028EF447C00A25617 /* MessageCenterUser.swift */,
 				6E4A466428EF448600A25617 /* MessageCenterMessage.swift */,
 				329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */,
@@ -5535,7 +5532,6 @@
 				6EDE5F192B9BD7E700E33D04 /* InboxMessageData.swift in Sources */,
 				32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */,
 				32B513562B9F53A500BBE780 /* MessageCenterPredicate.swift in Sources */,
-				6E28BA912B9BCFD400A641B6 /* MessageCenterUtils.swift in Sources */,
 				32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */,
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
 				32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */,

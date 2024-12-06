@@ -172,9 +172,7 @@ public struct MessageCenterListView: View {
                 }
 
             if !self.viewModel.messagesLoaded {
-                ProgressView()
-                    .appearanceTint()
-                    .opacity(1.0 - self.listOpacity)
+                ProgressView().opacity(1.0 - self.listOpacity)
             } else if self.messageIDs.isEmpty {
                 emptyMessageListMessage()
             }
@@ -325,7 +323,6 @@ public struct MessageCenterListView: View {
         } label: {
             if isRefreshing {
                 ProgressView()
-                    .appearanceTint()
             } else {
                 Image(systemName: "arrow.clockwise")
                     .foregroundColor(refreshColor ?? .primary)
@@ -353,7 +350,6 @@ public struct MessageCenterListView: View {
                 ZStack {
                     if isRefreshing {
                         ProgressView()
-                            .appearanceTint()
                     } else {
                         Image(systemName: "arrow.clockwise")
                             .foregroundColor(refreshColor ?? .primary)
@@ -399,9 +395,9 @@ fileprivate extension View {
     func listBackground(_ color: Color?) -> some View {
         if let color {
             if #available(iOS 16.0, watchOS 9.0, *) {
-                #if !os(tvOS)
+#if !os(tvOS)
                 self.scrollContentBackground(.hidden).background(color)
-                #endif
+#endif
             } else {
                 self.background(color)
             }
