@@ -15,7 +15,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
     case bool(Bool)
     case null
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .array(let array): try container.encode(array)
@@ -27,7 +27,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         }
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
 
         if let object = try? container.decode([String: AirshipJSON].self) {
@@ -156,7 +156,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
             return .object(mapped)
         }
 
-        if let codable = value as? Encodable {
+        if let codable = value as? (any Encodable) {
             return try wrap(
                 JSONSerialization.jsonObject(with: try encoder.encode(codable), options: .fragmentsAllowed),
                 encoder: encoder

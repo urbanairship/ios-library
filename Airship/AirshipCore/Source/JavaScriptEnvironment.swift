@@ -35,8 +35,8 @@ public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtoco
 
     private var extensions: [String] = []
     private var lock: AirshipLock = AirshipLock()
-    private let channel: () -> AirshipChannelProtocol
-    private let contact: () -> AirshipContactProtocol
+    private let channel: () -> any AirshipChannelProtocol
+    private let contact: () -> any AirshipContactProtocol
 
     public override convenience init() {
         self.init(
@@ -46,8 +46,8 @@ public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtoco
     }
 
     init(
-        channel: @escaping () -> AirshipChannelProtocol,
-        contact: @escaping () -> AirshipContactProtocol
+        channel: @escaping () -> any AirshipChannelProtocol,
+        contact: @escaping () -> any AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact

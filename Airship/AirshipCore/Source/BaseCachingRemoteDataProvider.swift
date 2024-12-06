@@ -15,17 +15,17 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
     private let overridesProvider: @Sendable (String) async -> AsyncStream<Overrides>
     private let overridesApplier: @Sendable (Output, Overrides) async -> Output
     private let isEnabled: @Sendable () -> Bool
-    private let taskSleeper: AirshipTaskSleeper
+    private let taskSleeper: any AirshipTaskSleeper
     private var resolvers: [String: Resolver] = [:]
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     
     init(
         remoteFetcher: @Sendable @escaping (String) async throws -> AirshipHTTPResponse<Output>,
         overridesProvider: @Sendable @escaping (String) async -> AsyncStream<Overrides>,
         overridesApplier: @Sendable @escaping (Output, Overrides) async -> Output,
         isEnabled: @Sendable @escaping () -> Bool,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared,
         cacheTtl: TimeInterval = 600
     ) {
         self.remoteFetcher = remoteFetcher
@@ -116,7 +116,7 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
         private let cachedValue: CachedValue<Output>
         private let fetchQueue: AirshipSerialQueue = AirshipSerialQueue()
         private let cacheTtl: TimeInterval
-        private let taskSleeper: AirshipTaskSleeper
+        private let taskSleeper: any AirshipTaskSleeper
         private let overridesApplier: (Output, Overrides) async -> Output
         private let isEnabled: () -> Bool
 
@@ -136,10 +136,10 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
             overridesProvider: @Sendable @escaping (String) async -> AsyncStream<Overrides>,
             remoteFetcher: @Sendable @escaping (String) async throws -> AirshipHTTPResponse<Output>,
             cacheTtl: TimeInterval,
-            taskSleeper: AirshipTaskSleeper,
+            taskSleeper: any AirshipTaskSleeper,
             overridesApplier: @escaping (Output, Overrides) async -> Output,
             isEnabled: @escaping () -> Bool,
-            date: AirshipDateProtocol
+            date: any AirshipDateProtocol
         ) {
             self.identifier = identifier
             self.overridesProvider = overridesProvider

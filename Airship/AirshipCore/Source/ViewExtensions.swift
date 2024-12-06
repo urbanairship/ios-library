@@ -135,6 +135,7 @@ struct AirshipViewModifierBuilder {
         EmptyModifier()
     }
 
+    @MainActor
     static func buildOptional<VM0: ViewModifier>(_ vm0: VM0?)
         -> some ViewModifier
     {

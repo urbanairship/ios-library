@@ -105,12 +105,12 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         }
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         let json = try AirshipJSON.wrap(payload())
         try json.encode(to: encoder)
     }
 
-    public convenience init(from decoder: Decoder) throws {
+    public convenience init(from decoder: any Decoder) throws {
         let json = try AirshipJSON(from: decoder)
         try self.init(json: json.unWrap())
     }

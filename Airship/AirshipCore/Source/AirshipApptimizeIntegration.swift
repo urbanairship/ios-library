@@ -20,10 +20,10 @@ final class AirshipApptimizeIntegration: NSObject {
     }
     
     @objc(getUserID:)
-    public static func getUserID(completion: @escaping (String?) -> Void) {
+    public static func getUserID(completion: @Sendable @escaping (String?) -> Void) {
         guard Airship.isFlying else { return }
         
-        Task {
+        Task { @Sendable in
             let id = await Airship.contact.namedUserID
             completion(id)
         }

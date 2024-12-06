@@ -51,7 +51,7 @@ public protocol RegistrationDelegate: NSObjectProtocol {
     /// delegate method is called.
     ///
     /// - Parameter error: An NSError object that encapsulates information why registration did not succeed.
-    func apnsRegistrationFailedWithError(_ error: Error)
+    func apnsRegistrationFailedWithError(_ error: any Error)
 }
 
 public extension RegistrationDelegate {

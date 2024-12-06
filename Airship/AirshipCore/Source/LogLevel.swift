@@ -49,7 +49,7 @@ public enum AirshipLogLevel: String, Sendable, Decodable {
      */
     case verbose
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         do {
             let stringValue = try container.decode(String.self)

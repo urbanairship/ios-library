@@ -7,7 +7,7 @@ enum ThomasSizeConstraint: ThomasSerializable {
     case percent(Double)
     case auto
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let sizeString = try? container.decode(String.self) {
             if sizeString == "auto" {
@@ -26,7 +26,7 @@ enum ThomasSizeConstraint: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .auto:

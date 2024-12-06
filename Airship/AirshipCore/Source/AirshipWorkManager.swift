@@ -11,7 +11,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private let backgroundTasks = WorkBackgroundTasks()
     private let workers: Workers = Workers()
     private let startTask: Task<Void, Never>
-    private let backgroundWaitTask: AirshipMainActorValue<AirshipCancellable?> = AirshipMainActorValue(nil)
+    private let backgroundWaitTask: AirshipMainActorValue<(any AirshipCancellable)?> = AirshipMainActorValue(nil)
     private let queue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
     private let backgroundWorkRequests: AirshipAtomicValue<[AirshipWorkRequest]> = AirshipAtomicValue([])
 
@@ -79,7 +79,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     public func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
-        workHandler: @escaping (AirshipWorkRequest) async throws ->
+        workHandler: @Sendable @escaping (AirshipWorkRequest) async throws ->
             AirshipWorkResult
     ) {
         let worker = Worker(

@@ -118,7 +118,7 @@ private class ChallengeSender: NSObject, URLAuthenticationChallengeSender {
     func cancel(_ challenge: URLAuthenticationChallenge) { }
 }
 
-private class AirshipProtectionSpace: URLProtectionSpace {
+private class AirshipProtectionSpace: URLProtectionSpace, @unchecked Sendable {
     var useAirshipCert: Bool = true
     
     private func airshipCert() -> SecTrust? {

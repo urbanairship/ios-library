@@ -22,4 +22,4 @@ typedef NS_OPTIONS(NSUInteger, UAURLAllowListScope) {
      * otherwise specified.
      */
     UAURLAllowListScopeAll = UAURLAllowListScopeJavaScriptInterface | UAURLAllowListScopeOpenURL
-} NS_SWIFT_NAME(URLAllowListScope);
+} NS_SWIFT_SENDABLE NS_SWIFT_NAME(URLAllowListScope);

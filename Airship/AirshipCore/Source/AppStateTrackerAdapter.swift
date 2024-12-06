@@ -115,7 +115,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
     }
     
     func watchAppLifeCycleEvents(
-        eventHandler: @MainActor @escaping (AppLifeCycleEvent) -> Void
+        eventHandler: @MainActor @Sendable @escaping (AppLifeCycleEvent) -> Void
     ) {
         
         let notificationCenter = NotificationCenter.default
@@ -125,9 +125,11 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             forName: UIApplication.didBecomeActiveNotification,
             object: nil,
             queue: nil,
-            using: {  _ in
-                DefaultAppStateTrackerAdapter.runUnsafe {
-                    eventHandler(.didBecomeActive)
+            using: { _ in
+                Task { @MainActor in
+                    DefaultAppStateTrackerAdapter.runUnsafe {
+                        eventHandler(.didBecomeActive)
+                    }
                 }
             }
         )
@@ -138,8 +140,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                DefaultAppStateTrackerAdapter.runUnsafe {
-                    eventHandler(.willResignActive)
+                Task { @MainActor in
+                    DefaultAppStateTrackerAdapter.runUnsafe {
+                        eventHandler(.willResignActive)
+                    }
                 }
             }
         )
@@ -150,8 +154,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                DefaultAppStateTrackerAdapter.runUnsafe {
-                    eventHandler(.willEnterForeground)
+                Task { @MainActor in
+                    DefaultAppStateTrackerAdapter.runUnsafe {
+                        eventHandler(.willEnterForeground)
+                    }
                 }
             }
         )
@@ -162,8 +168,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                DefaultAppStateTrackerAdapter.runUnsafe {
-                    eventHandler(.didEnterBackground)
+                Task { @MainActor in
+                    DefaultAppStateTrackerAdapter.runUnsafe {
+                        eventHandler(.didEnterBackground)
+                    }
                 }
             }
         )
@@ -174,8 +182,10 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                DefaultAppStateTrackerAdapter.runUnsafe {
-                    eventHandler(.willTerminate)
+                Task { @MainActor in
+                    DefaultAppStateTrackerAdapter.runUnsafe {
+                        eventHandler(.willTerminate)
+                    }
                 }
             }
         )
@@ -183,7 +193,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
 
     @preconcurrency
     @MainActor
-    static func runUnsafe(_ block: @MainActor () -> Void) {
+    static func runUnsafe(_ block: @escaping @Sendable @MainActor () -> Void) {
         block()
     }
 }

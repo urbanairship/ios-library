@@ -413,7 +413,7 @@ class RemoteDataProviderTest: XCTestCase {
 
 
         // Notify different outdated remote info
-        await self.provider.notifyOutdated(
+        _ = await self.provider.notifyOutdated(
             remoteDataInfo: RemoteDataInfo(
                 url: URL(string: "example://")!,
                 lastModifiedTime: "some other last modified",
@@ -431,7 +431,7 @@ class RemoteDataProviderTest: XCTestCase {
         XCTAssertEqual(1, requestCount.value)
 
         // Notify outdated remote info
-        await self.provider.notifyOutdated(
+        _ = await self.provider.notifyOutdated(
             remoteDataInfo: remoteDataInfo
         )
 

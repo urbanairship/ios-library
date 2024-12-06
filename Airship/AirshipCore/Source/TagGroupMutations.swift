@@ -6,7 +6,7 @@ class TagGroupsMutation: NSObject, NSSecureCoding {
     static let codableRemoveKey = "remove"
     static let codableSetKey = "set"
 
-    public static var supportsSecureCoding: Bool = true
+    public static let supportsSecureCoding: Bool = true
 
     private let adds: [String: Set<String>]?
     private let removes: [String: Set<String>]?

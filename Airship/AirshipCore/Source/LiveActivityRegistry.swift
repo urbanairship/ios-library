@@ -45,11 +45,11 @@ actor LiveActivityRegistry {
     private var liveActivityTaskMap: [String: Task<Void, Never>] = [:]
     private let updatesContinuation: AsyncStream<LiveActivityUpdate>.Continuation
     private let dataStore: PreferenceDataStore
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
 
     init(
         dataStore: PreferenceDataStore,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.date = date
         self.dataStore = dataStore
@@ -68,8 +68,8 @@ actor LiveActivityRegistry {
     /// - Parameters:
     ///     - activities: An array of activities
     func restoreTracking(
-        activities: [LiveActivityProtocol],
-        startTokenTrackers: [LiveActivityPushToStartTrackerProtocol]
+        activities: [any LiveActivityProtocol],
+        startTokenTrackers: [any LiveActivityPushToStartTrackerProtocol]
     ) {
         guard !restoreCalled else {
             AirshipLogger.error("Restore called mulitple times. Ignoring.")
@@ -161,7 +161,7 @@ actor LiveActivityRegistry {
     /// Adds a live activity to the registry. The activity will be monitored and
     /// automatically removed after its finished.
     func addLiveActivity(
-        _ liveActivity: LiveActivityProtocol,
+        _ liveActivity: any LiveActivityProtocol,
         name: String
     ) {
         guard liveActivity.isUpdatable else {
@@ -199,7 +199,7 @@ actor LiveActivityRegistry {
     }
 
     private func watchActivity(
-        _ liveActivity: LiveActivityProtocol,
+        _ liveActivity: any LiveActivityProtocol,
         name: String
     ) {
         let task: Task<Void, Never> = Task {

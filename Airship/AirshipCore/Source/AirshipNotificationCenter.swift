@@ -24,9 +24,9 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
     @discardableResult
     public func addObserver(
         forName: NSNotification.Name,
-        object: Any? = nil,
+        object: (any Sendable)? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (Notification) -> Void
+        using: @Sendable @escaping (Notification) -> Void
     ) -> AnyObject {
         return self.notificationCenter.addObserver(
             forName: forName,
@@ -37,12 +37,14 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
     }
 
 
-    public func postOnMain(name: NSNotification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil){
+    public func postOnMain(name: NSNotification.Name, object: (any Sendable)? = nil, userInfo: [AnyHashable: Any]? = nil){
+        let wrapped = try? AirshipJSON.wrap(userInfo)
+        
         DefaultDispatcher.main.dispatchAsyncIfNecessary {
             self.post(
                 name: name,
                 object: object,
-                userInfo: userInfo
+                userInfo: wrapped?.unWrap() as? [AnyHashable: Any]
             )
         }
     }

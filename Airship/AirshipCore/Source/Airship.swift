@@ -18,7 +18,7 @@ import WatchKit
 
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
 /// before accessing any instances on Airship or Airship modules.
-public class Airship: NSObject {
+public final class Airship: NSObject, Sendable {
 
     /// Airship deep link scheme
     /// - Note: For internal use only. :nodoc:
@@ -35,7 +35,10 @@ public class Airship: NSObject {
         return Airship._shared != nil
     }
 
-    private(set) var airshipInstance: AirshipInstanceProtocol
+    private let _airshipInstanceHolder: AirshipAtomicValue<any AirshipInstanceProtocol>
+    var airshipInstance: any AirshipInstanceProtocol {
+        _airshipInstanceHolder.value
+    }
 
     /// Airship config.
     public static var config: RuntimeConfig { return shared.airshipInstance.config }
@@ -54,12 +57,12 @@ public class Airship: NSObject {
 
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
-    public static weak var javaScriptCommandDelegate: JavaScriptCommandDelegate? {
+    public static weak var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? {
         get {
             return shared.airshipInstance.javaScriptCommandDelegate
         }
         set {
-            shared.airshipInstance.javaScriptCommandDelegate = newValue
+            shared._airshipInstanceHolder.value.javaScriptCommandDelegate = newValue
         }
     }
 
@@ -71,24 +74,24 @@ public class Airship: NSObject {
 
     /// A user configurable deep link delegate.
     /// - NOTE: this delegate is not retained.
-    public static weak var deepLinkDelegate: DeepLinkDelegate? {
+    public static weak var deepLinkDelegate: (any DeepLinkDelegate)? {
         get {
             return shared.airshipInstance.deepLinkDelegate
         }
         set {
-            shared.airshipInstance.deepLinkDelegate = newValue
+            shared._airshipInstanceHolder.value.deepLinkDelegate = newValue
         }
     }
 
     /// The URL allow list used for validating URLs for landing pages,
     /// wallet action, open external URL action, deep link
     /// action (if delegate is not set), and HTML in-app messages.
-    public static var urlAllowList: URLAllowListProtocol {
+    public static var urlAllowList: any URLAllowListProtocol {
         return shared.airshipInstance.urlAllowList
     }
 
     /// The locale manager.
-    public static var localeManager: AirshipLocaleManagerProtocol {
+    public static var localeManager: any AirshipLocaleManagerProtocol {
         return shared.airshipInstance.localeManager
     }
 
@@ -98,9 +101,13 @@ public class Airship: NSObject {
     }
 
     /// - NOTE: For internal use only. :nodoc:
-    public var components: [AirshipComponent] { return airshipInstance.components }
+    public var components: [any AirshipComponent] { return airshipInstance.components }
 
-    static var _shared: Airship?
+    static let _sharedHolder = AirshipAtomicValue<Airship?>(nil)
+    static var _shared: Airship? {
+        get { _sharedHolder.value }
+        set { _sharedHolder.value = newValue }
+    }
 
     static var shared: Airship {
         if !Airship.isFlying {
@@ -110,30 +117,30 @@ public class Airship: NSObject {
     }
 
     /// Shared Push instance.
-    public static var push: AirshipPushProtocol {
-        return requireComponent(ofType: AirshipPushProtocol.self)
+    public static var push: any AirshipPushProtocol {
+        return requireComponent(ofType: (any AirshipPushProtocol).self)
     }
 
     /// Shared Contact instance.
-    public static var contact: AirshipContactProtocol {
-        return requireComponent(ofType: AirshipContactProtocol.self)
+    public static var contact: any AirshipContactProtocol {
+        return requireComponent(ofType: (any AirshipContactProtocol).self)
     }
 
     /// Shared Analytics instance.
-    public static var analytics: AirshipAnalyticsProtocol {
-        return requireComponent(ofType: AirshipAnalyticsProtocol.self)
+    public static var analytics: any AirshipAnalyticsProtocol {
+        return requireComponent(ofType: (any AirshipAnalyticsProtocol).self)
     }
 
     /// Shared Channel instance.
-    public static var channel: AirshipChannelProtocol {
-        return requireComponent(ofType: AirshipChannelProtocol.self)
+    public static var channel: any AirshipChannelProtocol {
+        return requireComponent(ofType: (any AirshipChannelProtocol).self)
     }
 
     @MainActor
     private static var onReadyCallbacks: [@MainActor @Sendable () -> Void] = []
 
-    init(instance: AirshipInstanceProtocol) {
-        self.airshipInstance = instance
+    init(instance: any AirshipInstanceProtocol) {
+        self._airshipInstanceHolder = AirshipAtomicValue(instance)
     }
 
 #if !os(watchOS)
@@ -156,7 +163,7 @@ public class Airship: NSObject {
                 as? [AnyHashable: Any]
             {
                 if AppStateTracker.shared.state != .background {
-                    self.requireComponent(ofType: InternalAnalyticsProtocol.self).launched(
+                    self.requireComponent(ofType: (any InternalAnalyticsProtocol).self).launched(
                         fromNotification: remoteNotification
                     )
                 }
@@ -272,10 +279,10 @@ public class Airship: NSObject {
         )
 
         let integrationDelegate = DefaultAppIntegrationDelegate(
-            push: requireComponent(ofType: InternalPushProtocol.self),
-            analytics: requireComponent(ofType: InternalAnalyticsProtocol.self),
+            push: requireComponent(ofType: (any InternalPushProtocol).self),
+            analytics: requireComponent(ofType: (any InternalAnalyticsProtocol).self),
             pushableComponents: _shared?.components.compactMap {
-                return $0 as? AirshipPushableComponent
+                return $0 as? (any AirshipPushableComponent)
             } ?? []
         )
 

@@ -18,10 +18,10 @@ final class ContactChannelsProvider: ContactChannelsProviderProtocol {
     private let overridesApplier: OverridesApplier = OverridesApplier()
     
     init(
-        audienceOverrides: AudienceOverridesProvider,
-        apiClient: ContactChannelsAPIClientProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared,
+        audienceOverrides: any AudienceOverridesProvider,
+        apiClient: any ContactChannelsAPIClientProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared,
         maxChannelListCacheAgeSeconds: TimeInterval = 600,
         privacyManager: AirshipPrivacyManager
     ) {

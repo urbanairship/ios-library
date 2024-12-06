@@ -12,7 +12,7 @@ public protocol ContactChannelsAPIClientProtocol: Sendable {
 // NOTE: For internal use only. :nodoc:
 final class ContactChannelsAPIClient: ContactChannelsAPIClientProtocol {
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
     
     private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
@@ -28,7 +28,7 @@ final class ContactChannelsAPIClient: ContactChannelsAPIClientProtocol {
         return decoder
     }
     
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }
@@ -110,7 +110,7 @@ fileprivate struct ContactChannelsResponseBody: Decodable, Sendable {
             case deviceType = "type"
         }
 
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let deviceType = try? container.decode(DeviceType.self, forKey: .deviceType)
             let singleValueContainer = try decoder.singleValueContainer()

@@ -10,7 +10,7 @@ actor Worker {
     private var pending: [PendingRequest] = []
     private var inProgress: Set<PendingRequest> = Set()
 
-    private var tasks: Set<Task<Void, Error>> = Set()
+    private var tasks: Set<Task<Void, any Error>> = Set()
     private var nextPendingID = 0
 
     private static let initialBackOff = 30.0
@@ -20,7 +20,7 @@ actor Worker {
     private let type: AirshipWorkerType
     private let conditionsMonitor: WorkConditionsMonitor
     private let rateLimiter: WorkRateLimiter
-    private let backgroundTasks: WorkBackgroundTasksProtocol
+    private let backgroundTasks: any WorkBackgroundTasksProtocol
     private let workHandler:
         (AirshipWorkRequest) async throws -> AirshipWorkResult
     private let notificationCenter: NotificationCenter = NotificationCenter
@@ -31,7 +31,7 @@ actor Worker {
         type: AirshipWorkerType,
         conditionsMonitor: WorkConditionsMonitor,
         rateLimiter: WorkRateLimiter,
-        backgroundTasks: WorkBackgroundTasksProtocol,
+        backgroundTasks: any WorkBackgroundTasksProtocol,
         workHandler: @escaping (AirshipWorkRequest) async throws ->
             AirshipWorkResult
     ) {
@@ -81,10 +81,10 @@ actor Worker {
 
     func run() async {
         for await next in self.workStream {
-            let task: Task<Void, Error> = Task {
+            let task: Task<Void, any Error> = Task {
                 var attempt = 1
                 while self.isValidRequest(next) == true {
-                    let cancellableValueHolder: CancellableValueHolder<Task<Void, Error>> = CancellableValueHolder { task in
+                    let cancellableValueHolder: CancellableValueHolder<Task<Void, any Error>> = CancellableValueHolder { task in
                         task.cancel()
                     }
                     

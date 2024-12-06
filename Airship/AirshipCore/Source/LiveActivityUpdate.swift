@@ -53,7 +53,7 @@ struct LiveActivityUpdate: Codable, Equatable {
         self.actionTimeMS = actionTimeMS
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let type: Source.TokenType
@@ -78,7 +78,7 @@ struct LiveActivityUpdate: Codable, Equatable {
         self.actionTimeMS = try container.decode(Int64.self, forKey: .actionTimeMS)
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(action, forKey: .action)
         try container.encodeIfPresent(token, forKey: .token)

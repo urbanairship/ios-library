@@ -8,34 +8,34 @@ public struct AirshipImageLoader {
     private static let retryDelay = 10
     private static let retries = 10
 
-    private let imageProvider: AirshipImageProvider?
+    private let imageProvider: (any AirshipImageProvider)?
 
-    public init(imageProvider: AirshipImageProvider? = nil) {
+    public init(imageProvider: (any AirshipImageProvider)? = nil) {
         self.imageProvider = imageProvider
     }
 
-    func load(url: String) -> AnyPublisher<AirshipImageData, Error> {
+    func load(url: String) -> AnyPublisher<AirshipImageData, any Error> {
         guard let url = URL(string: url) else {
             return Fail(error: AirshipErrors.error("failed to fetch message"))
                 .eraseToAnyPublisher()
         }
 
-        return Deferred { () -> AnyPublisher<AirshipImageData, Error> in
+        return Deferred { () -> AnyPublisher<AirshipImageData, any Error> in
             guard let imageData = self.imageProvider?.get(url: url) else {
                 return fetchImage(url: url)
             }
             return Just(imageData)
-                .setFailureType(to: Error.self)
+                .setFailureType(to: (any Error).self)
                 .eraseToAnyPublisher()
         }
         .subscribe(on: DispatchQueue.global(qos: .userInteractive))
         .eraseToAnyPublisher()
     }
 
-    private func fetchImage(url: URL) -> AnyPublisher<AirshipImageData, Error> {
+    private func fetchImage(url: URL) -> AnyPublisher<AirshipImageData, any Error> {
         return URLSession.airshipSecureSession.dataTaskPublisher(for: url)
             .mapError { AirshipErrors.error("URL error \($0)") }
-            .map { response -> AnyPublisher<AirshipImageData, Error> in
+            .map { response -> AnyPublisher<AirshipImageData, any Error> in
                 guard let httpResponse = response.response as? HTTPURLResponse,
                     httpResponse.statusCode == 200
                 else {
@@ -48,7 +48,7 @@ public struct AirshipImageLoader {
                 do {
                     let imageData = try AirshipImageData(data: response.data)
                     return Just(imageData)
-                        .setFailureType(to: Error.self)
+                        .setFailureType(to: (any Error).self)
                         .eraseToAnyPublisher()
                 } catch {
                     return Fail(error: error)

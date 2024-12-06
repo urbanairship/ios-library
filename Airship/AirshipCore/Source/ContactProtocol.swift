@@ -126,7 +126,7 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
 
     /// SMS validator delegate to allow overriding the default SMS validation
     /// - Returns: Bool indicating if SMS is valid.
-    var smsValidatorDelegate: SMSValidatorDelegate? { get set }
+    var smsValidatorDelegate: (any SMSValidatorDelegate)? { get set }
 
     /**
      * Validates MSISDN
@@ -160,7 +160,7 @@ public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
 
 protocol InternalAirshipContactProtocol: AirshipContactProtocol {
     var contactID: String? { get async }
-    var authTokenProvider: AuthTokenProvider { get }
+    var authTokenProvider: any AuthTokenProvider { get }
 
     func getStableContactID() async -> String
 

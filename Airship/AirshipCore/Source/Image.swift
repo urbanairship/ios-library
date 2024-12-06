@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+
+@preconcurrency
 import ImageIO
 
 /// - Note: for internal use only.  :nodoc:

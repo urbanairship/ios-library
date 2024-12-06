@@ -23,13 +23,13 @@ public final class AirshipLogger: Sendable {
         return _storage.logLevel
     }
     
-    static var logHandler: AirshipLogHandler {
+    static var logHandler: any AirshipLogHandler {
         return _storage.handler
     }
     
     fileprivate final class Storage: @unchecked Sendable {
         var logLevel: AirshipLogLevel
-        var handler: AirshipLogHandler
+        var handler: any AirshipLogHandler
         
         init(
             logLevel: AirshipLogLevel = .error,

@@ -29,7 +29,7 @@ final class RemoteDataStore: Sendable {
 
     func hasData() async throws -> Bool {
         return try await self.coreData.performWithResult { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: RemoteDataStore.remoteDataEntity
             )
             return try context.count(for: request) > 0
@@ -44,7 +44,7 @@ final class RemoteDataStore: Sendable {
         )
 
         return try await self.coreData.performWithResult { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: RemoteDataStore.remoteDataEntity
             )
 
@@ -108,7 +108,7 @@ final class RemoteDataStore: Sendable {
         context: NSManagedObjectContext
     ) throws {
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(
+        let fetchRequest = NSFetchRequest<any NSFetchRequestResult>(
             entityName: RemoteDataStore.remoteDataEntity
         )
         

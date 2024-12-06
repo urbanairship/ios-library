@@ -4,14 +4,16 @@ public import SwiftUI
   * Internal only
   * :nodoc:
   */
-public typealias AirshipCustomViewBuilder = (AirshipJSON?) -> AnyView
+public typealias AirshipCustomViewBuilder = @Sendable (AirshipJSON?) -> AnyView
 
 /**
  * Internal only
  * :nodoc:
  */
-public final class AirshipCustomViewManager {
+public final class AirshipCustomViewManager: Sendable {
     public static let shared = AirshipCustomViewManager()
+    
+    @MainActor
     var builders: [String: AirshipCustomViewBuilder] = [:]
 
     /**

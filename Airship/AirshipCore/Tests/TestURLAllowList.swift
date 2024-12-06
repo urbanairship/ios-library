@@ -2,7 +2,7 @@
 
 public import AirshipCore
 
-public class TestURLAllowList: URLAllowListProtocol {
+public final class TestURLAllowList: URLAllowListProtocol, @unchecked Sendable {
 
     public var isAllowedReturnValue: Bool = true
     public var addEntryReturnValue: Bool = true

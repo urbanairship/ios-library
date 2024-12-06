@@ -53,7 +53,7 @@ public struct AudienceHashSelector: Codable, Sendable, Equatable {
         }
     
 
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.min = try container.decodeIfPresent(UInt64.self, forKey: .min) ?? 0
             self.max = try container.decodeIfPresent(UInt64.self, forKey: .max) ?? UInt64.max

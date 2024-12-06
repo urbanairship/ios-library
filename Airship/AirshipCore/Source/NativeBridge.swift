@@ -32,19 +32,19 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     ]
 
     /// Delegate to support additional native bridge features such as `close`.
-    public weak var nativeBridgeDelegate: NativeBridgeDelegate?
+    public weak var nativeBridgeDelegate: (any NativeBridgeDelegate)?
 
     /// Optional delegate to forward any WKNavigationDelegate calls.
-    public weak var forwardNavigationDelegate: AirshipWKNavigationDelegate?
+    public weak var forwardNavigationDelegate: (any AirshipWKNavigationDelegate)?
 
     /// Optional delegate to support custom JavaScript commands.
-    public weak var javaScriptCommandDelegate: JavaScriptCommandDelegate?
+    public weak var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)?
 
     /// Optional delegate to extend the native bridge.
-    public weak var nativeBridgeExtensionDelegate: NativeBridgeExtensionDelegate?
+    public weak var nativeBridgeExtensionDelegate: (any NativeBridgeExtensionDelegate)?
 
-    private let actionHandler: NativeBridgeActionHandlerProtocol
-    private let javaScriptEnvironmentFactoryBlock: () -> JavaScriptEnvironmentProtocol
+    private let actionHandler: any NativeBridgeActionHandlerProtocol
+    private let javaScriptEnvironmentFactoryBlock: () -> any JavaScriptEnvironmentProtocol
     private let challengeResolver: ChallengeResolver
 
     /// NativeBridge initializer.
@@ -52,8 +52,8 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     /// - Parameter actionHandler: An action handler.
     /// - Parameter javaScriptEnvironmentFactoryBlock: A factory block producing a JavaScript environment.
     init(
-        actionHandler: NativeBridgeActionHandlerProtocol,
-        javaScriptEnvironmentFactoryBlock: @escaping () -> JavaScriptEnvironmentProtocol,
+        actionHandler: any NativeBridgeActionHandlerProtocol,
+        javaScriptEnvironmentFactoryBlock: @escaping () -> any JavaScriptEnvironmentProtocol,
         resolver: ChallengeResolver = .shared
     ) {
         self.actionHandler = actionHandler
@@ -75,7 +75,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 
     /// NativeBridge initializer.
     /// - Parameter actionRunner: An action runner to run actions triggered from the web view
-    public convenience init(actionRunner: NativeBridgeActionRunner) {
+    public convenience init(actionRunner: any NativeBridgeActionRunner) {
         self.init(
             actionHandler: NativeBridgeActionHandler(actionRunner: actionRunner),
             javaScriptEnvironmentFactoryBlock: {
@@ -89,10 +89,11 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
      *
      * If a uairship:// URL, process it ourselves
      */
+    
     public func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+        decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
     ) {
         let navigationType = navigationAction.navigationType
         let originatingURL = webView.url
@@ -121,7 +122,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             as (
                 (
                     WKWebView, WKNavigationAction,
-                    @escaping (WKNavigationActionPolicy) -> Void
+                    @Sendable @escaping @MainActor(WKNavigationActionPolicy) -> Void
                 ) -> Void
             )?
 
@@ -192,7 +193,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     public func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationResponse: WKNavigationResponse,
-        decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void
+        decisionHandler: @Sendable @escaping @MainActor (WKNavigationResponsePolicy) -> Void
     ) {
 
         guard
@@ -200,7 +201,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
                 as (
                     (
                         WKWebView, WKNavigationResponse,
-                        @escaping (WKNavigationResponsePolicy) -> Void
+                        @Sendable @MainActor @escaping (WKNavigationResponsePolicy) -> Void
                     ) -> Void
                 )?
         else {
@@ -299,7 +300,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     public func webView(
         _ webView: WKWebView,
         didFail navigation: WKNavigation!,
-        withError error: Error
+        withError error: any Error
     ) {
         self.forwardNavigationDelegate?.webView?(
             webView,
@@ -314,7 +315,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     public func webView(
         _ webView: WKWebView,
         didFailProvisionalNavigation navigation: WKNavigation!,
-        withError error: Error
+        withError error: any Error
     ) {
         self.forwardNavigationDelegate?.webView?(
             webView,
@@ -329,7 +330,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
     public func webView(
         _ webView: WKWebView,
         didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (
+        completionHandler: @Sendable @escaping @MainActor (
             URLSession.AuthChallengeDisposition, URLCredential?
         ) -> Void
     ) {
@@ -339,7 +340,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
                 as (
                     (
                         WKWebView, URLAuthenticationChallenge,
-                        @escaping (
+                        @Sendable @MainActor @escaping (
                             URLSession.AuthChallengeDisposition,
                             URLCredential?
                         ) ->
@@ -359,7 +360,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
 
     @MainActor
     private func makeJSEnvironment(webView: WKWebView) async -> String {
-        let jsEnvironment: JavaScriptEnvironmentProtocol = self.javaScriptEnvironmentFactoryBlock()
+        let jsEnvironment: any JavaScriptEnvironmentProtocol = self.javaScriptEnvironmentFactoryBlock()
 
         await self.nativeBridgeExtensionDelegate?.extendJavaScriptEnvironment(
             jsEnvironment,
@@ -382,7 +383,7 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
             let idArgs = command.options["id"]
             let argument = idArgs?.first
 
-            let contact: AirshipContactProtocol = Airship.contact
+            let contact: any AirshipContactProtocol = Airship.contact
             if let identifier = argument, !identifier.isEmpty {
                 contact.identify(identifier)
             } else {
@@ -513,6 +514,7 @@ public protocol AirshipWKNavigationDelegate: WKNavigationDelegate {
 }
 
 extension URL {
+    @MainActor
     fileprivate var isAirshipCommand: Bool {
         return self.scheme == NativeBridge.airshipScheme
     }
@@ -568,13 +570,17 @@ fileprivate extension WKWebView {
                     if let error = error {
                         continuation.resume(throwing: error)
                     } else {
-                        continuation.resume(returning: data)
+                        continuation.resume(returning: AnySendable(value: data))
                     }
                 }
             }
         }
     }
-    
+}
+
+// a workaround for WebKit framework evaluateJavaScriptAsync to pass Any? to a closure.
+fileprivate struct AnySendable: @unchecked Sendable {
+    let value: Any?
 }
 
 #endif

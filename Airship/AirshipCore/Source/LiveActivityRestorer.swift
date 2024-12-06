@@ -17,8 +17,8 @@ public protocol LiveActivityRestorer: Actor {
 @available(iOS 16.1, *)
 actor AirshipLiveActivityRestorer: LiveActivityRestorer {
 
-    var liveActivities: [LiveActivityProtocol] = []
-    var pushToStartTokenTrackers: [LiveActivityPushToStartTrackerProtocol] = []
+    var liveActivities: [any LiveActivityProtocol] = []
+    var pushToStartTokenTrackers: [any LiveActivityPushToStartTrackerProtocol] = []
 
     public func restore<T: ActivityAttributes>(
         forType: Activity<T>.Type

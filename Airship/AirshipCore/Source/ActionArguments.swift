@@ -50,12 +50,12 @@ public struct ActionArguments: Sendable {
     public var situation: ActionSituation
 
     /// The action argument's metadata
-    public var metadata: [String: Sendable]
+    public var metadata: [String: any Sendable]
 
     public init(
         string: String,
         situation: ActionSituation = .manualInvocation,
-        metadata: [String : Sendable] = [:]
+        metadata: [String : any Sendable] = [:]
     ) {
         self.value = AirshipJSON.string(string)
         self.situation = situation
@@ -65,7 +65,7 @@ public struct ActionArguments: Sendable {
     public init(
         double: Double,
         situation: ActionSituation = .manualInvocation,
-        metadata: [String : Sendable] = [:]
+        metadata: [String : any Sendable] = [:]
     ) {
         self.value = AirshipJSON.number(double)
         self.situation = situation
@@ -75,7 +75,7 @@ public struct ActionArguments: Sendable {
     public init(
         bool: Bool,
         situation: ActionSituation = .manualInvocation,
-        metadata: [String : Sendable] = [:]
+        metadata: [String : any Sendable] = [:]
     ) {
         self.value = AirshipJSON.bool(bool)
         self.situation = situation
@@ -85,7 +85,7 @@ public struct ActionArguments: Sendable {
     public init(
         value: AirshipJSON = AirshipJSON.null,
         situation: ActionSituation = .manualInvocation,
-        metadata: [String : Sendable] = [:]
+        metadata: [String : any Sendable] = [:]
     ) {
         self.value = value
         self.situation = situation

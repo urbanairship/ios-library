@@ -19,9 +19,9 @@ public final class OpenExternalURLAction: AirshipAction {
         return args.situation != .foregroundPush
     }
 
-    private let urlOpener: URLOpenerProtocol
+    private let urlOpener: any URLOpenerProtocol
 
-    init(urlOpener: URLOpenerProtocol) {
+    init(urlOpener: any URLOpenerProtocol) {
         self.urlOpener = urlOpener
     }
 

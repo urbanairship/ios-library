@@ -20,7 +20,7 @@ public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
 
 /// NOTE: For internal use only. :nodoc:
 public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
-    private let deviceInfoProvider: AudienceDeviceInfoProvider
+    private let deviceInfoProvider: any AudienceDeviceInfoProvider
 
     private let cachedTags: OneTimeValue<Set<String>>
     private let cachedLocale: OneTimeValue<Locale>
@@ -35,7 +35,7 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         self.init(deviceInfoProvider: DefaultAudienceDeviceInfoProvider(contactID: contactID))
     }
 
-    public init(deviceInfoProvider: AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()) {
+    public init(deviceInfoProvider: any AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()) {
         self.deviceInfoProvider = deviceInfoProvider
 
         self.cachedTags = OneTimeValue {
@@ -152,7 +152,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     public var stableContactInfo: StableContactInfo {
         get async {
             let stableInfo = await Airship.requireComponent(
-                ofType: InternalAirshipContactProtocol.self
+                ofType: (any InternalAirshipContactProtocol).self
             ).getStableContactInfo()
 
             if let contactID {
@@ -273,7 +273,7 @@ fileprivate actor OneTimeAsyncValue<T: Equatable & Sendable> {
 
 fileprivate actor ThrowingOneTimeAsyncValue<T: Equatable & Sendable> {
     private var provider: @Sendable () async throws -> T
-    private var task: Task<T, Error>?
+    private var task: Task<T, any Error>?
     private var value: T?
 
     init(provider: @Sendable @escaping () async throws -> T) {

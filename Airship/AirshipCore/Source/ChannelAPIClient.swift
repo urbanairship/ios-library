@@ -5,11 +5,11 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
     private let channelPath = "/api/channels/"
 
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
     init(
         config: RuntimeConfig,
-        session: AirshipRequestSession
+        session: any AirshipRequestSession
     ) {
         self.config = config
         self.session = session

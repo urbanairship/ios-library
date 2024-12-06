@@ -3,7 +3,7 @@
 import Foundation
 
 final class CachedValue<Value>: @unchecked Sendable where Value: Any {
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let lock = AirshipLock()
     private var expiration: Date?
 
@@ -66,7 +66,7 @@ final class CachedValue<Value>: @unchecked Sendable where Value: Any {
         }
     }
 
-    init(date: AirshipDateProtocol = AirshipDate.shared) {
+    init(date: any AirshipDateProtocol = AirshipDate.shared) {
         self.date = date
     }
 }

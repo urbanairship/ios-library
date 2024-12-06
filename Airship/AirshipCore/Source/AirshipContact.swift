@@ -23,7 +23,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             let updates = self.contactChannelUpdates
             let subject = CurrentValueSubject<ContactChannelsResult?, Never>(nil)
 
-            Task { [weak subject] in
+            Task { @Sendable [weak subject] in
                 for await update in updates {
                     subject?.send(update)
                 }
@@ -69,19 +69,19 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
-    private let contactChannelsProvider: ContactChannelsProviderProtocol
-    private let subscriptionListProvider: SubscriptionListProviderProtocol
-    private let date: AirshipDateProtocol
-    private let audienceOverridesProvider: AudienceOverridesProvider
-    private let contactManager: ContactManagerProtocol
-    private var smsValidator: SMSValidatorProtocol
+    private let contactChannelsProvider: any ContactChannelsProviderProtocol
+    private let subscriptionListProvider: any SubscriptionListProviderProtocol
+    private let date: any AirshipDateProtocol
+    private let audienceOverridesProvider: any AudienceOverridesProvider
+    private let contactManager: any ContactManagerProtocol
+    private var smsValidator: any SMSValidatorProtocol
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
     private let serialQueue: AirshipAsyncSerialQueue
 
     /// Publishes all edits made to the subscription lists through the  SDK
-    public var smsValidatorDelegate: SMSValidatorDelegate? {
+    public var smsValidatorDelegate: (any SMSValidatorDelegate)? {
         set {
             self.smsValidator.delegate = newValue
         }
@@ -157,15 +157,15 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: InternalAirshipChannelProtocol,
+        channel: any InternalAirshipChannelProtocol,
         privacyManager: AirshipPrivacyManager,
-        contactChannelsProvider: ContactChannelsProviderProtocol,
-        subscriptionListProvider: SubscriptionListProviderProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
+        contactChannelsProvider: any ContactChannelsProviderProtocol,
+        subscriptionListProvider: any SubscriptionListProviderProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        audienceOverridesProvider: AudienceOverridesProvider,
-        contactManager: ContactManagerProtocol,
-        smsValidator: SMSValidatorProtocol,
+        audienceOverridesProvider: any AudienceOverridesProvider,
+        contactManager: any ContactManagerProtocol,
+        smsValidator: any SMSValidatorProtocol,
         serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
     ) {
 
@@ -321,8 +321,8 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         config: RuntimeConfig,
         channel: AirshipChannel,
         privacyManager: AirshipPrivacyManager,
-        audienceOverridesProvider: AudienceOverridesProvider,
-        localeManager: AirshipLocaleManagerProtocol
+        audienceOverridesProvider: any AudienceOverridesProvider,
+        localeManager: any AirshipLocaleManagerProtocol
     ) {
         self.init(
             dataStore: dataStore,
@@ -876,7 +876,7 @@ extension AirshipContact : InternalAirshipContactProtocol {
     }
 
 
-    var authTokenProvider: AuthTokenProvider {
+    var authTokenProvider: any AuthTokenProvider {
         return self.contactManager
     }
 

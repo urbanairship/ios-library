@@ -86,7 +86,7 @@ public class CustomEvent: NSObject {
     }
 
     private lazy var analytics = Airship.requireComponent(
-        ofType: AirshipAnalyticsProtocol.self
+        ofType: (any AirshipAnalyticsProtocol).self
     )
 
     /**

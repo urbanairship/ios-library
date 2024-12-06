@@ -39,12 +39,12 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: AirshipPrivacyManager
-    private let workManager: AirshipWorkManagerProtocol
-    private let subscriptionListProvider: ChannelSubscriptionListProviderProtocol
-    private let updateClient: ChannelBulkUpdateAPIClientProtocol
-    private let audienceOverridesProvider: AudienceOverridesProvider
+    private let workManager: any AirshipWorkManagerProtocol
+    private let subscriptionListProvider: any ChannelSubscriptionListProviderProtocol
+    private let updateClient: any ChannelBulkUpdateAPIClientProtocol
+    private let audienceOverridesProvider: any AudienceOverridesProvider
 
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let updateLock = AirshipLock()
 
     private let cachedSubscriptionLists: CachedValue<[String]>
@@ -86,13 +86,13 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     init(
         dataStore: PreferenceDataStore,
-        workManager: AirshipWorkManagerProtocol,
-        subscriptionListProvider: ChannelSubscriptionListProviderProtocol,
-        updateClient: ChannelBulkUpdateAPIClientProtocol,
+        workManager: any AirshipWorkManagerProtocol,
+        subscriptionListProvider: any ChannelSubscriptionListProviderProtocol,
+        updateClient: any ChannelBulkUpdateAPIClientProtocol,
         privacyManager: AirshipPrivacyManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        audienceOverridesProvider: AudienceOverridesProvider
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        audienceOverridesProvider: any AudienceOverridesProvider
     ) {
         self.dataStore = dataStore
         self.workManager = workManager
@@ -144,7 +144,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
-        audienceOverridesProvider: AudienceOverridesProvider
+        audienceOverridesProvider: any AudienceOverridesProvider
     ) {
         self.init(
             dataStore: dataStore,

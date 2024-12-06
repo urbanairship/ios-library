@@ -68,9 +68,9 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
 
 
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }

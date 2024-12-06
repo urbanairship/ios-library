@@ -7,7 +7,7 @@ public protocol AirshipWorkManagerProtocol: Sendable {
     func registerWorker(
         _ workID: String,
         type: AirshipWorkerType,
-        workHandler: @escaping (AirshipWorkRequest) async throws ->
+        workHandler: @Sendable @escaping (AirshipWorkRequest) async throws ->
             AirshipWorkResult
     )
 

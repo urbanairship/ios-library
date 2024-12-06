@@ -134,6 +134,7 @@ class PushTest: XCTestCase {
         XCTAssertFalse(self.push.userPromptedForNotifications)
     }
     
+    @MainActor
     func testNotificationsStatusPropogation() async throws {
         XCTAssertFalse(self.push.userPromptedForNotifications)
 
@@ -145,7 +146,7 @@ class PushTest: XCTestCase {
         
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
         
-        let cancellable = await self.push.notificationStatusPublisher.sink { status in
+        let cancellable = self.push.notificationStatusPublisher.sink { status in
             XCTAssertEqual(true, status.areNotificationsAllowed)
             completed.fulfill()
         }

@@ -8,23 +8,25 @@ import Foundation
 /// knocks (app foregrounds) within a specific timeframe. Channel Capture can be enabled
 /// or disabled in Airship Config.
 @available(tvOS, unavailable)
-public class ChannelCapture: NSObject {
+final public class ChannelCapture: NSObject, Sendable {
     private static let knocksToTriggerChannelCapture = 6
     private static let knocksMaxTimeSeconds: TimeInterval = 30
     private static let pasteboardExpirationSeconds: TimeInterval = 60
 
     private let config: RuntimeConfig
-    private let channel: AirshipChannelProtocol
+    private let channel: any AirshipChannelProtocol
     private let notificationCenter: NotificationCenter
-    private let date: AirshipDateProtocol
-    private let pasteboard: AirshipPasteboardProtocol
+    private let date: any AirshipDateProtocol
+    private let pasteboard: any AirshipPasteboardProtocol
 
+    @MainActor
     private var knockTimes: [Date] = []
 
     /**
      * Flag indicating whether channel capture is enabled. Clear to disable. Set to enable.
      * Note: Does not persist through app launches.
      */
+    @MainActor
     public var enabled: Bool {
         didSet {
             AirshipLogger.trace("Channel capture enabled: \(enabled)")
@@ -33,10 +35,10 @@ public class ChannelCapture: NSObject {
 
     init(
         config: RuntimeConfig,
-        channel: AirshipChannelProtocol,
+        channel: any AirshipChannelProtocol,
         notificationCenter: NotificationCenter = NotificationCenter.default,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        pasteboard: AirshipPasteboardProtocol = UIPasteboard.general
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        pasteboard: any AirshipPasteboardProtocol = UIPasteboard.general
     ) {
         self.config = config
         self.channel = channel
@@ -57,6 +59,7 @@ public class ChannelCapture: NSObject {
     }
 
     @objc
+    @MainActor
     private func applicationDidTransitionToForeground() {
         guard enabled else {
             AirshipLogger.trace(
@@ -104,7 +107,7 @@ public class ChannelCapture: NSObject {
 }
 
 @available(tvOS, unavailable)
-protocol AirshipPasteboardProtocol {
+protocol AirshipPasteboardProtocol: Sendable {
     func copy(value: String, expiry: TimeInterval)
 }
 

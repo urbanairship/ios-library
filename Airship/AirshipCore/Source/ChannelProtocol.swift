@@ -146,7 +146,7 @@ public protocol AirshipChannelProtocol: AirshipBaseChannelProtocol {
     ///     - callback: Callback with the restorer.
     @available(iOS 16.1, *)
     func restoreLiveActivityTracking(
-        callback: @escaping @Sendable (LiveActivityRestorer) async -> Void
+        callback: @escaping @Sendable (any LiveActivityRestorer) async -> Void
     )
 
 #endif

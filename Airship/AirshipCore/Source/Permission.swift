@@ -37,7 +37,7 @@ public enum AirshipPermission: UInt, CustomStringConvertible, Sendable {
 
 extension AirshipPermission: Decodable {
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()
         let string = try? singleValueContainer.decode(String.self)
         self = try AirshipPermission.fromString(string ?? "")

@@ -26,7 +26,7 @@ public final class PromptPermissionAction: AirshipAction {
     /// - Note: For internal use only. :nodoc:
     public static let resultReceiverMetadataKey = "permission_result"
 
-    private let permissionPrompter: @Sendable () -> PermissionPrompter
+    private let permissionPrompter: @Sendable () -> any PermissionPrompter
 
     public convenience init() {
            self.init {
@@ -37,7 +37,7 @@ public final class PromptPermissionAction: AirshipAction {
        }
 
     
-    required init(permissionPrompter: @escaping @Sendable () -> PermissionPrompter) {
+    required init(permissionPrompter: @escaping @Sendable () -> any PermissionPrompter) {
         self.permissionPrompter = permissionPrompter
     }
     

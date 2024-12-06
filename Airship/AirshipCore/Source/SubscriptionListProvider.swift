@@ -18,10 +18,10 @@ final class SubscriptionListProvider: SubscriptionListProviderProtocol {
     private let actor: BaseCachingRemoteDataProvider<SubscriptionListResult, ContactAudienceOverrides>
     
     init(
-        audienceOverrides: AudienceOverridesProvider,
-        apiClient: ContactSubscriptionListAPIClientProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared,
+        audienceOverrides: any AudienceOverridesProvider,
+        apiClient: any ContactSubscriptionListAPIClientProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared,
         maxChannelListCacheAgeSeconds: TimeInterval = 600,
         privacyManager: AirshipPrivacyManager
     ) {

@@ -14,10 +14,10 @@ public final class Thomas {
         layout: AirshipLayout,
         scene: UIWindowScene,
         extensions: ThomasExtensions? = nil,
-        delegate: ThomasDelegate,
+        delegate: any ThomasDelegate,
         extras: AirshipJSON?,
         priority: Int
-    ) throws -> AirshipMainActorCancellable {
+    ) throws -> any AirshipMainActorCancellable {
         switch layout.presentation {
         case .banner(let presentation):
             return try displayBanner(
@@ -53,8 +53,8 @@ public final class Thomas {
         scene: UIWindowScene,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
-        delegate: ThomasDelegate
-    ) throws -> AirshipMainActorCancellable {
+        delegate: any ThomasDelegate
+    ) throws -> any AirshipMainActorCancellable {
         guard let window = AirshipUtils.mainWindow(scene: scene),
             window.rootViewController != nil
         else {
@@ -115,8 +115,8 @@ public final class Thomas {
         scene: UIWindowScene,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
-        delegate: ThomasDelegate
-    ) -> AirshipMainActorCancellable {
+        delegate: any ThomasDelegate
+    ) -> any AirshipMainActorCancellable {
         let window: UIWindow = UIWindow.airshipMakeModalReadyWindow(scene: scene)
         var viewController: ThomasModalViewController?
 
@@ -174,26 +174,26 @@ public final class Thomas {
 public struct ThomasExtensions {
 
     #if !os(tvOS) && !os(watchOS)
-    var nativeBridgeExtension: NativeBridgeExtensionDelegate?
+    var nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
     #endif
 
-    var imageProvider: AirshipImageProvider?
+    var imageProvider: (any AirshipImageProvider)?
 
-    var actionRunner: ThomasActionRunner?
+    var actionRunner: (any ThomasActionRunner)?
 
     #if os(tvOS) || os(watchOS)
     public init(
-        imageProvider: AirshipImageProvider? = nil,
-        actionRunner: ThomasActionRunner? = nil
+        imageProvider: (any AirshipImageProvider)? = nil,
+        actionRunner: (any ThomasActionRunner)? = nil
     ) {
         self.imageProvider = imageProvider
     }
     #else
 
     public init(
-        nativeBridgeExtension: NativeBridgeExtensionDelegate? = nil,
-        imageProvider: AirshipImageProvider? = nil,
-        actionRunner: ThomasActionRunner? = nil
+        nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil,
+        imageProvider: (any AirshipImageProvider)? = nil,
+        actionRunner: (any ThomasActionRunner)? = nil
     ) {
         self.nativeBridgeExtension = nativeBridgeExtension
         self.imageProvider = imageProvider

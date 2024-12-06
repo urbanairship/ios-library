@@ -6,7 +6,7 @@ import Foundation
 class AttributePendingMutations: NSObject, NSSecureCoding {
     static let codableKey = "com.urbanairship.attributes"
 
-    public static var supportsSecureCoding: Bool = true
+    public static let supportsSecureCoding: Bool = true
     private let mutationsPayload: [[AnyHashable: Any]]
 
     init(mutationsPayload: [[AnyHashable: Any]]) {

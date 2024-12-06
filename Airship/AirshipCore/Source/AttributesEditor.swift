@@ -5,13 +5,13 @@ import Foundation
 /// Attributes editor.
 public final class AttributesEditor: NSObject {
 
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private var sets: [String: AirshipJSON] = [:]
     private var removes: [String] = []
     private let completionHandler: ([AttributeUpdate]) -> Void
 
     init(
-        date: AirshipDateProtocol,
+        date: any AirshipDateProtocol,
         completionHandler: @escaping ([AttributeUpdate]) -> Void
     ) {
         self.completionHandler = completionHandler

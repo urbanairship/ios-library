@@ -14,9 +14,9 @@ final class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
     private static let getPath = "/api/subscription_lists/channels/"
 
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }

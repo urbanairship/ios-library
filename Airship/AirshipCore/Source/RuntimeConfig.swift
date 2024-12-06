@@ -33,7 +33,7 @@ public final class RuntimeConfig: @unchecked Sendable {
     public let appCredentials: AirshipAppCredentials
 
     /// The request session used to perform authenticated interactions with the API
-    public let requestSession: AirshipRequestSession
+    public let requestSession: any AirshipRequestSession
 
     /// The airship config
     public let airshipConfig: AirshipConfig
@@ -116,7 +116,7 @@ public final class RuntimeConfig: @unchecked Sendable {
         airshipConfig: AirshipConfig,
         appCredentials: AirshipAppCredentials,
         dataStore: PreferenceDataStore,
-        requestSession: AirshipRequestSession,
+        requestSession: any AirshipRequestSession,
         notificationCenter: NotificationCenter = NotificationCenter.default
     ) {
         self.airshipConfig = airshipConfig

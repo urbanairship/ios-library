@@ -25,21 +25,21 @@ NS_SWIFT_NAME(AppIntegrationDelegate)
 #if !TARGET_OS_WATCH
 - (void)didReceiveRemoteNotification:(NSDictionary *)userInfo
                         isForeground:(BOOL)isForeground
-                   completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler NS_SWIFT_NAME(didReceiveRemoteNotification(userInfo:isForeground:completionHandler:));
+                   completionHandler:(NS_SWIFT_SENDABLE void (^)(UIBackgroundFetchResult))completionHandler NS_SWIFT_NAME(didReceiveRemoteNotification(userInfo:isForeground:completionHandler:));
 
 #else
 - (void)didReceiveRemoteNotification:(NSDictionary *)userInfo
                         isForeground:(BOOL)isForeground
-                   completionHandler:(void (^)(WKBackgroundFetchResult))completionHandler NS_SWIFT_NAME(didReceiveRemoteNotification(userInfo:isForeground:completionHandler:));
+                   completionHandler:(NS_SWIFT_SENDABLE void (^)(WKBackgroundFetchResult))completionHandler NS_SWIFT_NAME(didReceiveRemoteNotification(userInfo:isForeground:completionHandler:));
 
 #endif
 
 - (void)willPresentNotification:(UNNotification *)notification
             presentationOptions:(UNNotificationPresentationOptions)options
-              completionHandler:(void (^)(void))completionHandler NS_SWIFT_NAME(willPresentNotification(notification:presentationOptions:completionHandler:));
+              completionHandler:(NS_SWIFT_SENDABLE void (^)(void))completionHandler NS_SWIFT_NAME(willPresentNotification(notification:presentationOptions:completionHandler:));
 
 
-- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(void (^)(void))completionHandler API_UNAVAILABLE(tvos) NS_SWIFT_NAME(didReceiveNotificationResponse(response:completionHandler:));
+- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(NS_SWIFT_SENDABLE void (^)(void))completionHandler API_UNAVAILABLE(tvos) NS_SWIFT_NAME(didReceiveNotificationResponse(response:completionHandler:));
 
 - (void)presentationOptionsForNotification:(UNNotification *)notification completionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
     NS_SWIFT_NAME(presentationOptionsForNotification(_:completionHandler:));

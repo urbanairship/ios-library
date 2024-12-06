@@ -20,10 +20,10 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     private let config: RuntimeConfig
 
     private let dataStore: PreferenceDataStore
-    private let channel: AirshipChannelProtocol
-    private let contact: InternalAirshipContactProtocol
-    private let client: MeteredUsageAPIClientProtocol
-    private let workManager: AirshipWorkManagerProtocol
+    private let channel: any AirshipChannelProtocol
+    private let contact: any InternalAirshipContactProtocol
+    private let client: any MeteredUsageAPIClientProtocol
+    private let workManager: any AirshipWorkManagerProtocol
     private let store: MeteredUsageStore
     private let privacyManager: AirshipPrivacyManager
 
@@ -31,8 +31,8 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: AirshipChannelProtocol,
-        contact: InternalAirshipContactProtocol,
+        channel: any AirshipChannelProtocol,
+        contact: any InternalAirshipContactProtocol,
         privacyManager: AirshipPrivacyManager
     ) {
         self.init(
@@ -50,12 +50,12 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: AirshipChannelProtocol,
-        contact: InternalAirshipContactProtocol,
+        channel: any AirshipChannelProtocol,
+        contact: any InternalAirshipContactProtocol,
         privacyManager: AirshipPrivacyManager,
-        client: MeteredUsageAPIClientProtocol,
+        client: any MeteredUsageAPIClientProtocol,
         store: MeteredUsageStore,
-        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
+        workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared
     ) {
         self.config = config

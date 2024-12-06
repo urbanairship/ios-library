@@ -421,6 +421,7 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertNotEqual(last, changeToken.value)
     }
 
+    @MainActor
     func testChangeTokenAppForeground() async {
         let changeToken = AirshipAtomicValue<String?>(nil)
 
@@ -466,6 +467,7 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertNotEqual(last, changeToken.value)
     }
 
+    @MainActor
     func testWaitForRefresh() async {
         await self.contactProvider.setRefreshCallback{ _, _, _ in
             return .failed
@@ -478,11 +480,11 @@ final class RemoteDataTest: AirshipBaseTest {
         let finished = AirshipMainActorValue(false)
         Task {
             await self.remoteData.waitRefresh(source: .app)
-            await finished.set(true)
+            finished.set(true)
         }
 
         await self.launchRefreshTask()
-        var isFinished = await finished.value
+        var isFinished = finished.value
         XCTAssertFalse(isFinished)
 
         await self.appProvider.setRefreshCallback{ _, _, _ in
@@ -490,7 +492,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         await self.launchRefreshTask()
-        isFinished = await finished.value
+        isFinished = finished.value
         XCTAssertTrue(isFinished)
     }
 

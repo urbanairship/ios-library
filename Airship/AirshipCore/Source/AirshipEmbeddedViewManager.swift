@@ -1,18 +1,19 @@
 /* Copyright Airship and Contributors */
 
+@preconcurrency
 import Combine
 import SwiftUI
 
-protocol AirshipEmbeddedViewManagerProtocol {
+protocol AirshipEmbeddedViewManagerProtocol: Sendable {
     @MainActor
     func addPending(
         presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
-        delegate: ThomasDelegate,
+        delegate: any ThomasDelegate,
         extras: AirshipJSON?,
         priority: Int
-    ) -> AirshipMainActorCancellable
+    ) -> any AirshipMainActorCancellable
 
     var publisher: AnyPublisher<[PendingEmbedded], Never> { get }
     func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never>
@@ -20,9 +21,9 @@ protocol AirshipEmbeddedViewManagerProtocol {
 
 final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
-    
     public static let shared = AirshipEmbeddedViewManager()
 
+    @MainActor
     private var pending: [PendingEmbedded] = []
     private let viewSubject = CurrentValueSubject<[PendingEmbedded], Never>([])
 
@@ -35,10 +36,10 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
         presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
-        delegate: ThomasDelegate,
+        delegate: any ThomasDelegate,
         extras: AirshipJSON?,
         priority: Int
-    ) -> AirshipMainActorCancellable {
+    ) -> any AirshipMainActorCancellable {
         let id = UUID().uuidString
 
         let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
@@ -77,7 +78,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     }
 }
 
-struct PendingEmbedded {
+struct PendingEmbedded: Sendable {
     fileprivate let id: String
     let presentation: ThomasPresentationInfo.Embedded
     let layout: AirshipLayout

@@ -6,7 +6,7 @@ import UserNotifications
 
 /// Internal protocol to fan out push handling to UAComponents.
 ///  - Note: For internal use only. :nodoc:
-public protocol AirshipPushableComponent {
+public protocol AirshipPushableComponent: Sendable {
     #if !os(watchOS)
     /**
      * Called when a remote notification is received.

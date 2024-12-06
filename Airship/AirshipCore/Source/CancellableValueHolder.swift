@@ -52,8 +52,8 @@ public final class CancellableValueHolder<T: Sendable>: AirshipCancellable, @unc
         }
     }
     
-    public static func cancellableHolder() -> CancellableValueHolder<AirshipCancellable> {
-        return CancellableValueHolder<AirshipCancellable>() { cancellable in
+    public static func cancellableHolder() -> CancellableValueHolder<any AirshipCancellable> {
+        return CancellableValueHolder<any AirshipCancellable>() { cancellable in
             cancellable.cancel()
         }
     }

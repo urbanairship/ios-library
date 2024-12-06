@@ -48,7 +48,7 @@ struct AttributeUpdate: Codable, Sendable, Equatable {
         self.date = date
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.attribute = try container.decode(String.self, forKey: .attribute)
         self.type = try container.decode(AttributeUpdateType.self, forKey: .type)

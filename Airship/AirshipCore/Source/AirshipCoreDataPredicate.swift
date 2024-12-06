@@ -5,9 +5,9 @@ import Foundation
 /// - Note: for internal use only.  :nodoc:
 public struct AirshipCoreDataPredicate: Sendable {
     private let format: String
-    private let args: [Sendable]?
+    private let args: [any Sendable]?
     
-    public init(format: String, args: [Sendable]? = nil) {
+    public init(format: String, args: [any Sendable]? = nil) {
         self.format = format
         self.args = args
     }

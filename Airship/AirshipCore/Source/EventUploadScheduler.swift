@@ -22,17 +22,17 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     private var isScheduled: Bool = false
     private var workBlock: (() async throws -> AirshipWorkResult)?
 
-    private let workManager: AirshipWorkManagerProtocol
-    private let appStateTracker: AppStateTrackerProtocol
-    private let date: AirshipDateProtocol
-    private let taskSleeper: AirshipTaskSleeper
+    private let workManager: any AirshipWorkManagerProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
+    private let date: any AirshipDateProtocol
+    private let taskSleeper: any AirshipTaskSleeper
 
     @MainActor
     init(
-        appStateTracker: AppStateTrackerProtocol? = nil,
-        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
+        workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
     ) {
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.workManager = workManager

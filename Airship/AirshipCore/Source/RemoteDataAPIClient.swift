@@ -10,7 +10,7 @@ protocol RemoteDataAPIClientProtocol: Sendable {
 }
 
 final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
     private let config: RuntimeConfig
 
     private var decoder: JSONDecoder {
@@ -27,7 +27,7 @@ final class RemoteDataAPIClient: RemoteDataAPIClientProtocol {
         return decoder
     }
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }

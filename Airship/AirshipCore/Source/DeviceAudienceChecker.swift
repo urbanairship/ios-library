@@ -7,7 +7,7 @@ public protocol DeviceAudienceChecker: Sendable {
     func evaluate(
         audience: DeviceAudienceSelector,
         newUserEvaluationDate: Date,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> Bool
 }
 
@@ -18,7 +18,7 @@ public struct DefaultDeviceAudienceChecker: DeviceAudienceChecker {
     public func evaluate(
         audience: DeviceAudienceSelector,
         newUserEvaluationDate: Date,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> Bool {
         return try await audience.evaluate(
             newUserEvaluationDate: newUserEvaluationDate,

@@ -60,7 +60,7 @@ struct Experiment: Codable, Sendable, Equatable {
         self.timeCriteria = timeCriteria
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.created = try container.decode(Date.self, forKey: .created)
@@ -75,7 +75,7 @@ struct Experiment: Codable, Sendable, Equatable {
         self.timeCriteria = try definitionContainer.decodeIfPresent(AirshipTimeCriteria.self, forKey: .timeCriteria)
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.id, forKey: .id)
         

@@ -7,10 +7,10 @@ struct ContactRemoteDataProviderDelegate: RemoteDataProviderDelegate {
     let storeName: String
 
     private let config: RuntimeConfig
-    private let apiClient: RemoteDataAPIClientProtocol
-    private let contact: InternalAirshipContactProtocol
+    private let apiClient: any RemoteDataAPIClientProtocol
+    private let contact: any InternalAirshipContactProtocol
 
-    init(config: RuntimeConfig, apiClient: RemoteDataAPIClientProtocol, contact: InternalAirshipContactProtocol) {
+    init(config: RuntimeConfig, apiClient: any RemoteDataAPIClientProtocol, contact: any InternalAirshipContactProtocol) {
         self.storeName = "RemoteData-Contact-\(config.appCredentials.appKey).sqlite"
         self.config = config
         self.apiClient = apiClient

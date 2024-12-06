@@ -17,7 +17,7 @@ struct ThomasActionsPayload: ThomasSerializable, Hashable {
         self.merged = Self.overridingPlatformActions(value)
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let json = try AirshipJSON.init(from: decoder)
 
         guard case .object = json else {
@@ -28,7 +28,7 @@ struct ThomasActionsPayload: ThomasSerializable, Hashable {
         self.merged = Self.overridingPlatformActions(json)
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         try self.original.encode(to: encoder)
     }
 

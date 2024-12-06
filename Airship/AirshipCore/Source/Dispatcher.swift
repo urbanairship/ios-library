@@ -36,7 +36,7 @@ final class DefaultDispatcher: UADispatcher, Sendable {
         }
     }
 
-    func dispatchAsyncIfNecessary(_ block: @escaping () -> Void) {
+    func dispatchAsyncIfNecessary(_ block: @Sendable @escaping () -> Void) {
         if isCurrentQueue() {
             block()
         } else {
@@ -44,7 +44,7 @@ final class DefaultDispatcher: UADispatcher, Sendable {
         }
     }
 
-    func dispatchAsync(_ block: @escaping () -> Void) {
+    func dispatchAsync(_ block: @Sendable @escaping () -> Void) {
         queue.async(execute: block)
     }
 

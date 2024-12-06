@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+@preconcurrency
 import Combine
 import Foundation
 
@@ -12,11 +13,11 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
-    private let localeManager: AirshipLocaleManagerProtocol
-    private let audienceManager: ChannelAudienceManagerProtocol
-    private let channelRegistrar: ChannelRegistrarProtocol
+    private let localeManager: any AirshipLocaleManagerProtocol
+    private let audienceManager: any ChannelAudienceManagerProtocol
+    private let channelRegistrar: any ChannelRegistrarProtocol
     private let notificationCenter: AirshipNotificationCenter
-    private let appStateTracker: AppStateTrackerProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
     private let tagsLock = AirshipLock()
     private let subscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
 
@@ -100,11 +101,11 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
-        localeManager: AirshipLocaleManagerProtocol,
-        audienceManager: ChannelAudienceManagerProtocol,
-        channelRegistrar: ChannelRegistrarProtocol,
+        localeManager: any AirshipLocaleManagerProtocol,
+        audienceManager: any ChannelAudienceManagerProtocol,
+        channelRegistrar: any ChannelRegistrarProtocol,
         notificationCenter: AirshipNotificationCenter,
-        appStateTracker: AppStateTrackerProtocol
+        appStateTracker: any AppStateTrackerProtocol
     ) {
 
         self.dataStore = dataStore
@@ -180,8 +181,8 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
-        localeManager: AirshipLocaleManagerProtocol,
-        audienceOverridesProvider: AudienceOverridesProvider
+        localeManager: any AirshipLocaleManagerProtocol,
+        audienceOverridesProvider: any AudienceOverridesProvider
     ) {
         self.init(
             dataStore: dataStore,
@@ -543,7 +544,7 @@ extension AirshipChannel {
     /// - Parameters:
     ///     - callback: Callback with the restorer.
     public func restoreLiveActivityTracking(
-        callback: @escaping @Sendable (LiveActivityRestorer) async -> Void
+        callback: @escaping @Sendable (any LiveActivityRestorer) async -> Void
     ) {
         liveActivityQueue.enqueue { [liveActivityRegistry] in
             let restorer = AirshipLiveActivityRestorer()

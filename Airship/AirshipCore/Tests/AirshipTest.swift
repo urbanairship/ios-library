@@ -149,7 +149,7 @@ class UAirshipTest: XCTestCase {
 }
 
 
-fileprivate class TestAirshipComponent: AirshipComponent {
+fileprivate class TestAirshipComponent: AirshipComponent, @unchecked Sendable {
     var onDeepLink: ((URL) -> Bool)?
     var deepLink: URL? = nil
 

@@ -13,14 +13,14 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let channel: AirshipChannelProtocol
+    private let channel: any AirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
     private let notificationCenter: AirshipNotificationCenter
-    private let date: AirshipDateProtocol
-    private let eventManager: EventManagerProtocol
-    private let localeManager: AirshipLocaleManagerProtocol
+    private let date: any AirshipDateProtocol
+    private let eventManager: any EventManagerProtocol
+    private let localeManager: any AirshipLocaleManagerProtocol
     private let permissionsManager: AirshipPermissionsManager
-    private let sessionTracker: SessionTrackerProtocol
+    private let sessionTracker: any SessionTrackerProtocol
     private let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
     private let sdkExtensions: AirshipAtomicValue<[String]> = AirshipAtomicValue([])
@@ -67,8 +67,8 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: AirshipChannelProtocol,
-        localeManager: AirshipLocaleManagerProtocol,
+        channel: any AirshipChannelProtocol,
+        localeManager: any AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager
     ) {
@@ -91,15 +91,15 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: AirshipChannelProtocol,
+        channel: any AirshipChannelProtocol,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        localeManager: AirshipLocaleManagerProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        localeManager: any AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        eventManager: EventManagerProtocol,
-        sessionTracker: SessionTrackerProtocol? = nil,
-        sessionEventFactory: SessionEventFactoryProtocol = SessionEventFactory()
+        eventManager: any EventManagerProtocol,
+        sessionTracker: (any SessionTrackerProtocol)? = nil,
+        sessionEventFactory: any SessionEventFactoryProtocol = SessionEventFactory()
     ) {
         self.config = config
         self.dataStore = dataStore

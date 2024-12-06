@@ -52,23 +52,23 @@ public protocol AirshipRequestSession: Sendable {
 /// - Note: For internal use only. :nodoc:
 final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Sendable {
 
-    private let session: URLRequestSessionProtocol
+    private let session: any URLRequestSessionProtocol
     private let defaultHeaders: [String: String]
     private let appSecret: String
     private let appKey: String
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let nonceFactory: () -> String
 
-    private var authTasks: [AirshipRequestAuth: Task<ResolvedAuth, Error>] = [:]
+    private var authTasks: [AirshipRequestAuth: Task<ResolvedAuth, any Error>] = [:]
 
 
     @MainActor
-    var channelAuthTokenProvider: AuthTokenProvider?
+    var channelAuthTokenProvider: (any AuthTokenProvider)?
 
     @MainActor
-    var contactAuthTokenProvider: AuthTokenProvider?
+    var contactAuthTokenProvider: (any AuthTokenProvider)?
 
-    private static let sharedURLSession: URLRequestSessionProtocol = {
+    private static let sharedURLSession: any URLRequestSessionProtocol = {
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.urlCache = nil
         sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -83,8 +83,8 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     init(
         appKey: String,
         appSecret: String,
-        session: URLRequestSessionProtocol = DefaultAirshipRequestSession.sharedURLSession,
-        date: AirshipDateProtocol = AirshipDate.shared,
+        session: any URLRequestSessionProtocol = DefaultAirshipRequestSession.sharedURLSession,
+        date: any AirshipDateProtocol = AirshipDate.shared,
         nonceFactory: @Sendable @escaping () -> String = { return UUID().uuidString }
     ) {
         self.appKey = appKey
@@ -159,7 +159,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
         autoCancel: Bool = false,
         responseParser: (@Sendable (Data?, HTTPURLResponse) throws -> T?)?
     ) async throws -> (shouldRetry: Bool, response: AirshipHTTPResponse<T>) {
-        let cancellable = CancellableValueHolder<AirshipCancellable>() { cancellable in
+        let cancellable = CancellableValueHolder<any AirshipCancellable>() { cancellable in
             cancellable.cancel()
         }
 
@@ -370,7 +370,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
     private func resolveTokenAuth(
         requestAuth: AirshipRequestAuth,
         identifier: String,
-        provider: AuthTokenProvider?
+        provider: (any AuthTokenProvider)?
     ) async throws -> ResolvedAuth {
         guard let provider = provider else {
             throw AirshipErrors.error("Missing auth provider for auth \(requestAuth)")
@@ -456,18 +456,18 @@ protocol URLRequestSessionProtocol: Sendable {
     @discardableResult
     func dataTask(
         request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+        completionHandler: @Sendable @escaping (Data?, URLResponse?, (any Error)?) -> Void
     )
-        -> AirshipCancellable
+    -> any AirshipCancellable
 }
 
 extension URLSession: URLRequestSessionProtocol {
     @discardableResult
     func dataTask(
         request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+        completionHandler: @Sendable @escaping (Data?, URLResponse?, (any Error)?) -> Void
     )
-        -> AirshipCancellable
+    -> any AirshipCancellable
     {
 
         let task = self.dataTask(

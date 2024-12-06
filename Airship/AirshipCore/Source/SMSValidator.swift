@@ -3,13 +3,13 @@
 import Foundation
 
 protocol SMSValidatorProtocol: Sendable {
-    var delegate: SMSValidatorDelegate? { get set }
+    var delegate: (any SMSValidatorDelegate)? { get set }
 
     func validateSMS(msisdn: String, sender: String) async throws -> Bool
 }
 
 /// Delegate for overriding the default SMS validation
-public protocol SMSValidatorDelegate {
+public protocol SMSValidatorDelegate: Sendable {
 
     /**
      * Validates a given MSISDN.
@@ -36,14 +36,14 @@ protocol SMSValidatorAPIClientProtocol: Sendable {
 }
 
 class SMSValidator: SMSValidatorProtocol, @unchecked Sendable {
-    let apiClient: SMSValidatorAPIClientProtocol
-    var delegate: SMSValidatorDelegate?
+    let apiClient: any SMSValidatorAPIClientProtocol
+    var delegate: (any SMSValidatorDelegate)?
 
     /// Stores up to 10 most recent SMS validation results.
     private var resultsCache: [String] = []
     private var resultsLookup: [String: Bool] = [:]
 
-    init(apiClient: SMSValidatorAPIClientProtocol, delegate: SMSValidatorDelegate? = nil) {
+    init(apiClient: any SMSValidatorAPIClientProtocol, delegate: (any SMSValidatorDelegate)? = nil) {
         self.apiClient = apiClient
         Task { @MainActor in
             self.delegate = delegate
@@ -90,7 +90,7 @@ class SMSValidator: SMSValidatorProtocol, @unchecked Sendable {
 /// NOTE: For internal use only. :nodoc:
 final class SMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
     private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
@@ -117,7 +117,7 @@ final class SMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
         return encoder
     }
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }

@@ -12,8 +12,8 @@ public final class PreferenceDataStore: @unchecked Sendable {
     private var pending: [String: [Any?]] = [:]
     private var cache: [String: Cached] = [:]
     private let lock = AirshipLock()
-    private let dispatcher: UADispatcher
-    private var deviceID: AirshipDeviceIDProtocol
+    private let dispatcher: any UADispatcher
+    private var deviceID: any AirshipDeviceIDProtocol
 
     var isAppRestore: Bool {
         get async {
@@ -43,7 +43,7 @@ public final class PreferenceDataStore: @unchecked Sendable {
         )
     }
 
-    init(appKey: String, dispatcher: UADispatcher, deviceID: AirshipDeviceIDProtocol) {
+    init(appKey: String, dispatcher: any UADispatcher, deviceID: any AirshipDeviceIDProtocol) {
         self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
         self.appKey = appKey
         self.dispatcher = dispatcher

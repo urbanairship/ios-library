@@ -27,10 +27,10 @@ public final class RateAppAction: AirshipAction, Sendable {
     }
 
     let itunesID: @Sendable () -> String?
-    let appRater: AppRaterProtocol
+    let appRater: any AppRaterProtocol
 
     init(
-        appRater: AppRaterProtocol,
+        appRater: any AppRaterProtocol,
         itunesID: @escaping @Sendable () -> String?
     ) {
         self.appRater = appRater

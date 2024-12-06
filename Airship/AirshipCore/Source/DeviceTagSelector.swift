@@ -42,7 +42,7 @@ public indirect enum DeviceTagSelector: Codable, Sendable, Equatable {
         case tag
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         var allKeys = ArraySlice(container.allKeys)
         guard let selectorType = allKeys.popFirst(), allKeys.isEmpty else {
@@ -64,7 +64,7 @@ public indirect enum DeviceTagSelector: Codable, Sendable, Equatable {
         }
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .or(let selectors):

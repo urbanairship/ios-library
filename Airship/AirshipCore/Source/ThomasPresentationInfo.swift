@@ -11,7 +11,7 @@ enum ThomasPresentationInfo: ThomasSerializable {
         case type
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(PresentationType.self, forKey: .type)
 
@@ -22,7 +22,7 @@ enum ThomasPresentationInfo: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         switch self {
         case .banner(let info): try info.encode(to: encoder)
         case .modal(let info): try info.encode(to: encoder)

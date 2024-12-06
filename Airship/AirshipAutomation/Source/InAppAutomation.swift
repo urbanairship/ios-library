@@ -133,7 +133,9 @@ extension InAppAutomation {
         }
 
         self.notificationCenter.addObserver(forName: AirshipNotifications.PrivacyManagerUpdated.name) { [weak self] _ in
-            self?.privacyManagerUpdated()
+            Task { @MainActor in
+                self?.privacyManagerUpdated()
+            }
         }
         self.privacyManagerUpdated()
     }

@@ -17,7 +17,7 @@ enum ThomasStateAction: ThomasSerializable {
         case formValue = "set_form_value"
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(ActionType.self, forKey: .type)
 
@@ -28,7 +28,7 @@ enum ThomasStateAction: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         switch self {
         case .setState(let action): try action.encode(to: encoder)
         case .clearState:

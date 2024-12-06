@@ -83,6 +83,7 @@ extension Text {
     }
     
     @ViewBuilder
+    @MainActor
     func textAppearance(
         _ textAppearance: ThomasTextAppearance?
     ) -> some View {

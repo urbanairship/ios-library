@@ -14,7 +14,7 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
     private static let maxStaleTime: TimeInterval = 3 * 24 * 60.0 // 3 days
 
     private let dataStore: PreferenceDataStore
-    private let delegate: RemoteDataProviderDelegate
+    private let delegate: any RemoteDataProviderDelegate
     private let remoteDataStore: RemoteDataStore
     private let date: AirshipDate
 
@@ -29,7 +29,7 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
     
     init(
         dataStore: PreferenceDataStore,
-        delegate: RemoteDataProviderDelegate,
+        delegate: any RemoteDataProviderDelegate,
         defaultEnabled: Bool = true,
         inMemory: Bool = false,
         date: AirshipDate = AirshipDate.shared

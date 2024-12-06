@@ -5,9 +5,9 @@ import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 public protocol AirshipSDKModule: NSObject {
-    var actionsManifest: ActionsManifest? { get }
-    var components: [AirshipComponent] { get }
+    var actionsManifest: (any ActionsManifest)? { get }
+    var components: [any AirshipComponent] { get }
 
     @MainActor
-    static func load(dependencies: [String: Any]) -> AirshipSDKModule?
+    static func load(dependencies: [String: Any]) -> (any AirshipSDKModule)?
 }

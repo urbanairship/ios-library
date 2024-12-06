@@ -370,7 +370,7 @@ class UAURLAllowListTest: XCTestCase {
     }
 }
 
-fileprivate class TestDelegate: URLAllowListDelegate {
+fileprivate final class TestDelegate: URLAllowListDelegate, @unchecked Sendable {
     var allowURLCalled = false
 
     var onAllow: ((URL, URLAllowListScope) -> Bool)?

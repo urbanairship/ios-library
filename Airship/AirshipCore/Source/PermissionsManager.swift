@@ -8,7 +8,7 @@ import Foundation
 /// to be configured by the app by providing a `PermissionDelegate` for the given permissions.
 public final class AirshipPermissionsManager: @unchecked Sendable {
     private let lock = AirshipLock()
-    private var delegateMap: [AirshipPermission: AirshipPermissionDelegate] = [:]
+    private var delegateMap: [AirshipPermission: any AirshipPermissionDelegate] = [:]
     private var airshipEnablers: [
         AirshipPermission: [() async -> Void]
     ] = [:]
@@ -20,13 +20,13 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     ] = [:]
     
     private let statusUpdates: AirshipAsyncChannel<(AirshipPermission, AirshipPermissionStatus)> = AirshipAsyncChannel()
-    private let appStateTracker: AppStateTrackerProtocol
-    private let systemSettingsNavigator: SystemSettingsNavigatorProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
+    private let systemSettingsNavigator: any SystemSettingsNavigatorProtocol
 
     @MainActor
     init(
-        appStateTracker: AppStateTrackerProtocol? = nil,
-        systemSettingsNavigator: SystemSettingsNavigatorProtocol = SystemSettingsNavigator()
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
+        systemSettingsNavigator: any SystemSettingsNavigatorProtocol = SystemSettingsNavigator()
     ) {
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.systemSettingsNavigator = systemSettingsNavigator
@@ -95,7 +95,7 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     ///     - delegate: The delegate.
     ///     - permission: The permission.
     public func setDelegate(
-        _ delegate: AirshipPermissionDelegate?,
+        _ delegate: (any AirshipPermissionDelegate)?,
         permission: AirshipPermission
     ) {
         lock.sync {
@@ -261,8 +261,8 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
 
     private func permissionDelegate(
         _ permission: AirshipPermission
-    ) -> AirshipPermissionDelegate? {
-        var delegate: AirshipPermissionDelegate?
+    ) -> (any AirshipPermissionDelegate)? {
+        var delegate: (any AirshipPermissionDelegate)?
         lock.sync {
             delegate = delegateMap[permission]
         }

@@ -11,7 +11,7 @@ actor CoreDataAirshipCache: AirshipCache {
     private let coreData: UACoreData?
     private let appVersion: String
     private let sdkVersion: String
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let cleanUpTask: Task<Void, Never>
 
     static func makeCoreData(appKey: String) -> UACoreData? {
@@ -43,7 +43,7 @@ actor CoreDataAirshipCache: AirshipCache {
         coreData: UACoreData?,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? "0.0.0",
         sdkVersion: String = AirshipVersion.version,
-        date: AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.coreData = coreData
         self.appVersion = appVersion
@@ -199,7 +199,7 @@ fileprivate extension NSManagedObjectContext {
         useBatch: Bool
     ) throws {
         if useBatch {
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: AirshipCacheData.entityName
             )
             request.predicate = predicate.toNSPredicate()

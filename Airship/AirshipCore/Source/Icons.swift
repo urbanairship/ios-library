@@ -21,6 +21,7 @@ struct Icons {
     }
 
     @ViewBuilder
+    @MainActor
     static func icon(
         info: ThomasIconInfo,
         colorScheme: ColorScheme,

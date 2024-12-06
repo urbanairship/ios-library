@@ -31,10 +31,11 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
         XCTAssertTrue(push.updateAuthorizedNotificationTypesCalled)
     }
 
-    func testDidRegisterForRemoteNotifications() throws {
+    func testDidRegisterForRemoteNotifications() async throws {
         let data = Data()
         delegate.didRegisterForRemoteNotifications(deviceToken: data)
-        XCTAssertEqual(data, push.deviceToken?.data(using: .utf8))
+        let token = await push.deviceToken?.data(using: .utf8)
+        XCTAssertEqual(data, token)
         XCTAssertTrue(self.analytics.onDeviceRegistrationCalled)
     }
 
@@ -84,7 +85,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 }
 
 
-class TestPushableComponent: AirshipPushableComponent {
+class TestPushableComponent: AirshipPushableComponent, @unchecked Sendable {
     var didReceiveRemoteNotificationCallback:
         (
             ([AnyHashable: Any], @escaping (UIBackgroundFetchResult) -> Void) ->

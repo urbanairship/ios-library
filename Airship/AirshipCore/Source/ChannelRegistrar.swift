@@ -31,10 +31,10 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     private var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []
 
     private let dataStore: PreferenceDataStore
-    private let channelAPIClient: ChannelAPIClientProtocol
-    private let date: AirshipDateProtocol
-    private let workManager: AirshipWorkManagerProtocol
-    private let appStateTracker: AppStateTrackerProtocol
+    private let channelAPIClient: any ChannelAPIClientProtocol
+    private let date: any AirshipDateProtocol
+    private let workManager: any AirshipWorkManagerProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
     private let updatesSubject = CurrentValueSubject<ChannelRegistrationUpdate?, Never>(nil)
     private var checkAppRestoreTask: Task<Void, Never>?
     private let channelCreateMethod: (() async throws -> ChannelGenerationMethod)?
@@ -83,10 +83,10 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     @MainActor
     init(
         dataStore: PreferenceDataStore,
-        channelAPIClient: ChannelAPIClientProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        appStateTracker: AppStateTrackerProtocol? = nil,
+        channelAPIClient: any ChannelAPIClientProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
         channelCreateMethod: AirshipChannelCreateOptionClosure? = nil
     ) {
         self.dataStore = dataStore

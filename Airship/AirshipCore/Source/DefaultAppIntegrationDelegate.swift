@@ -2,17 +2,20 @@
 
 import Foundation
 
-// NOTE: For internal use only. :nodoc:
-class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
+@preconcurrency
+import UserNotifications
 
-    let push: InternalPushProtocol
-    let analytics: InternalAnalyticsProtocol
-    let pushableComponents: [AirshipPushableComponent]
+// NOTE: For internal use only. :nodoc:
+final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sendable {
+
+    let push: any InternalPushProtocol
+    let analytics: any InternalAnalyticsProtocol
+    let pushableComponents: [any AirshipPushableComponent]
 
     init(
-        push: InternalPushProtocol,
-        analytics: InternalAnalyticsProtocol,
-        pushableComponents: [AirshipPushableComponent]
+        push: any InternalPushProtocol,
+        analytics: any InternalAnalyticsProtocol,
+        pushableComponents: [any AirshipPushableComponent]
     ) {
         self.push = push
         self.analytics = analytics
@@ -24,19 +27,20 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         self.push.dispatchUpdateAuthorizedNotificationTypes()
     }
 
-
-    @preconcurrency @MainActor
     public func didRegisterForRemoteNotifications(deviceToken: Data) {
         let tokenString = AirshipUtils.deviceTokenStringFromDeviceToken(deviceToken)
 
         AirshipLogger.info(
             "Application registered device token: \(tokenString)"
         )
-        self.push.didRegisterForRemoteNotifications(deviceToken)
-        self.analytics.onDeviceRegistration(token: tokenString)
+    
+        Task { @MainActor in
+            self.push.didRegisterForRemoteNotifications(deviceToken)
+            self.analytics.onDeviceRegistration(token: tokenString)
+        }
     }
 
-    public func didFailToRegisterForRemoteNotifications(error: Error) {
+    public func didFailToRegisterForRemoteNotifications(error: any Error) {
         AirshipLogger.error(
             "Application failed to register for remote notifications with error \(error)"
         )
@@ -44,11 +48,10 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     #if !os(watchOS)
-    @preconcurrency @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool,
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
     ) {
 
         guard !isForeground || AirshipUtils.isSilentPush(userInfo) else {
@@ -56,15 +59,19 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             completionHandler(.noData)
             return
         }
-
-        self.processPush(
-            userInfo,
-            isForeground: isForeground,
-            presentationOptions: nil
-        ) { result in
-            completionHandler(
-                UIBackgroundFetchResult(rawValue: result) ?? .noData
-            )
+        
+        let wrapped = try? AirshipJSON.wrap(userInfo)
+        
+        Task { @Sendable @MainActor in
+            self.processPush(
+                unwrapUserInfo(wrapped) ?? [:],
+                isForeground: isForeground,
+                presentationOptions: nil
+            ) { result in
+                completionHandler(
+                    UIBackgroundFetchResult(rawValue: result) ?? .noData
+                )
+            }
         }
     }
     #else
@@ -93,30 +100,33 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
     #endif
 
-    @preconcurrency @MainActor
     public func willPresentNotification(
         notification: UNNotification,
         presentationOptions: UNNotificationPresentationOptions,
-        completionHandler: @escaping () -> Void
+        completionHandler: @Sendable @escaping () -> Void
     ) {
         #if os(tvOS) || os(watchOS)
         completionHandler()
         #else
-        self.processPush(
-            notification.request.content.userInfo,
-            isForeground: true,
-            presentationOptions: presentationOptions
-        ) { _ in
-            completionHandler()
+        Task { @MainActor in
+            let options = presentationOptions
+            let handler = completionHandler
+            
+            self.processPush(
+                notification.request.content.userInfo,
+                isForeground: true,
+                presentationOptions: options
+            ) { _ in
+                handler()
+            }
         }
         #endif
     }
 
     #if !os(tvOS)
-    @preconcurrency @MainActor
     public func didReceiveNotificationResponse(
         response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
+        completionHandler: @Sendable @escaping () -> Void
     ) {
         AirshipLogger.info(
             "Application received notification response: \(response)"
@@ -127,48 +137,59 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         let responseText = (response as? UNTextInputNotificationResponse)?.userText
         let categoryID = response.notification.request.content.categoryIdentifier
         let actionID = response.actionIdentifier
-        let action = self.notificationAction(
-            categoryID: categoryID,
-            actionID: actionID
-        )
-        let actionsPayload = self.actionsPayloadForNotification(
-            userInfo: userInfo,
-            actionID: actionID
-        )
-
-        // Analytics
-        self.analytics.onNotificationResponse(
-            response: response,
-            action: action
-        )
-
-        // Pushable components
-        self.pushableComponents.forEach {
-            dispatchGroup.enter()
-            $0.receivedNotificationResponse(response) {
-                dispatchGroup.leave()
-            }
-        }
-
-        if let actionsPayload = actionsPayload {
-            dispatchGroup.enter()
-            Task {
-                let pushPayloadJSON = try? AirshipJSON.wrap(userInfo)
-                let situation = self.situationFromAction(action) ?? .launchedFromPush
-                let metadata: [String: Sendable] = [
-                    ActionArguments.userNotificationActionIDMetadataKey: actionID,
-                    ActionArguments.pushPayloadJSONMetadataKey: pushPayloadJSON,
-                    ActionArguments.responseInfoMetadataKey: responseText
-                ]
-                await ActionRunner.run(
-                    actionsPayload: actionsPayload,
-                    situation: situation,
-                    metadata: metadata
+        
+        let wrappedUserInfo = try? AirshipJSON.wrap(userInfo)
+        
+        Task { @Sendable in
+            let actionsPayload = self.actionsPayloadForNotification(
+                userInfo: unwrapUserInfo(wrappedUserInfo) ?? [:],
+                actionID: actionID
+            )
+            
+            // Analytics
+            Task { @MainActor @Sendable in
+                let action = await self.notificationAction(
+                    categoryID: categoryID,
+                    actionID: actionID
                 )
-                dispatchGroup.leave()
+                
+                self.analytics.onNotificationResponse(
+                    response: response,
+                    action: action
+                )
+
+                // Pushable components
+                self.pushableComponents.forEach {
+                    dispatchGroup.enter()
+                    $0.receivedNotificationResponse(response) {
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            if let actionsPayload = actionsPayload {
+                dispatchGroup.enter()
+                Task {
+                    let action = await self.notificationAction(
+                        categoryID: categoryID,
+                        actionID: actionID
+                    )
+                    
+                    let situation = self.situationFromAction(action) ?? .launchedFromPush
+                    let metadata: [String: any Sendable] = [
+                        ActionArguments.userNotificationActionIDMetadataKey: actionID,
+                        ActionArguments.pushPayloadJSONMetadataKey: wrappedUserInfo,
+                        ActionArguments.responseInfoMetadataKey: responseText
+                    ]
+                    await ActionRunner.run(
+                        actionsPayload: actionsPayload,
+                        situation: situation,
+                        metadata: metadata
+                    )
+                    dispatchGroup.leave()
+                }
             }
         }
-
 
         dispatchGroup.enter()
         self.push.didReceiveNotificationResponse(response) {
@@ -180,6 +201,18 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         }
     }
     #endif
+    
+    private func unwrapUserInfo(_ json: AirshipJSON?) -> [AnyHashable: Any]? {
+        guard
+            let json, json.isObject,
+            let value = json.unWrap(),
+            let restored = value as? [AnyHashable: Any]
+        else {
+            return nil
+        }
+        
+        return restored
+    }
     
     public func presentationOptionsForNotification(
         _ notification: UNNotification,
@@ -195,7 +228,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool,
         presentationOptions: UNNotificationPresentationOptions?,
-        completionHandler: @escaping (UInt) -> Void
+        completionHandler: @Sendable @escaping (UInt) -> Void
     ) {
         
         AirshipLogger.info(
@@ -239,7 +272,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
             let situation: ActionSituation = isForeground ? .foregroundPush : .backgroundPush
             let isForegroundPresentation = self.isForegroundPresentation(presentationOptions)
 
-            let metadata: [String: Sendable] = [
+            let metadata: [String: any Sendable] = [
                 ActionArguments.pushPayloadJSONMetadataKey: pushJSON,
                 ActionArguments.isForegroundPresentationMetadataKey: isForegroundPresentation
             ]
@@ -306,7 +339,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
     }
 
     @available(tvOS, unavailable)
-    private func notificationAction(categoryID: String, actionID: String)
+    private func notificationAction(categoryID: String, actionID: String) async
         -> UNNotificationAction?
     {
         guard actionID != UNNotificationDefaultActionIdentifier else {
@@ -315,7 +348,7 @@ class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
         var category: UNNotificationCategory?
         #if !os(tvOS)
-        category = self.push.combinedCategories.first(where: {
+        category = await self.push.combinedCategories.first(where: {
             return $0.identifier == categoryID
         })
         #endif

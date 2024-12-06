@@ -11,7 +11,7 @@ protocol WorkBackgroundTasksProtocol: Sendable {
     func beginTask(
         _ name: String,
         expirationHandler: (@Sendable () -> Void)?
-    ) throws -> AirshipCancellable
+    ) throws -> any AirshipCancellable
 }
 
 final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
@@ -25,7 +25,7 @@ final class WorkBackgroundTasks: WorkBackgroundTasksProtocol, Sendable {
     func beginTask(
         _ name: String,
         expirationHandler: (@Sendable () -> Void)? = nil
-    ) throws -> AirshipCancellable {
+    ) throws -> any AirshipCancellable {
 #if os(watchOS)
         let cancellable: CancellableValueHolder<UInt> = CancellableValueHolder(value: 0) { _ in
         }

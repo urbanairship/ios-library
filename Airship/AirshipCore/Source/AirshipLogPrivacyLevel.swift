@@ -15,7 +15,7 @@ public enum AirshipLogPrivacyLevel: String, Sendable, CustomStringConvertible, D
      */
     case `public`
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         do {
             let stringValue = try container.decode(String.self)

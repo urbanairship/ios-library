@@ -15,7 +15,7 @@ public actor UACoreData {
 
     private var shouldPrepareCoreData = false
     private var coreDataPrepared: Bool = false
-    private var prepareCoreDataTask: Task<Void, Error>?
+    private var prepareCoreDataTask: Task<Void, any Error>?
 
     private var _container: NSPersistentContainer?
     private var container: NSPersistentContainer {

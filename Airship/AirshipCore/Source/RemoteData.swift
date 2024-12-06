@@ -20,11 +20,11 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private static let changeTokenKey = "remotedata.CHANGE_TOKEN"
 
     private let config: RuntimeConfig
-    private let providers: [RemoteDataProviderProtocol]
+    private let providers: [any RemoteDataProviderProtocol]
     private let dataStore: PreferenceDataStore
-    private let date: AirshipDateProtocol
-    private let localeManager: AirshipLocaleManagerProtocol
-    private let workManager: AirshipWorkManagerProtocol
+    private let date: any AirshipDateProtocol
+    private let localeManager: any AirshipLocaleManagerProtocol
+    private let workManager: any AirshipWorkManagerProtocol
     private let privacyManager: AirshipPrivacyManager
     private let appVersion: String
 
@@ -50,9 +50,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        localeManager: AirshipLocaleManagerProtocol,
+        localeManager: any AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
-        contact: InternalAirshipContactProtocol
+        contact: any InternalAirshipContactProtocol
     ) {
         let client = RemoteDataAPIClient(config: config)
         self.init(
@@ -90,12 +90,12 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        localeManager: AirshipLocaleManagerProtocol,
+        localeManager: any AirshipLocaleManagerProtocol,
         privacyManager: AirshipPrivacyManager,
-        contact: InternalAirshipContactProtocol,
-        providers: [RemoteDataProviderProtocol],
-        workManager: AirshipWorkManagerProtocol = AirshipWorkManager.shared,
-        date: AirshipDateProtocol = AirshipDate.shared,
+        contact: any InternalAirshipContactProtocol,
+        providers: [any RemoteDataProviderProtocol],
+        workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
+        date: any AirshipDateProtocol = AirshipDate.shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? ""
 
@@ -396,9 +396,10 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
 
     private func payloadsFuture(types: [String]) -> Future<[RemoteDataPayload], Never> {
         return Future { promise in
+            let wrapped = SendablePromise(promise: promise)
             Task {
                 let payloads = await self.payloads(types: types)
-                promise(.success(payloads))
+                wrapped.promise(.success(payloads))
             }
         }
     }
@@ -452,3 +453,6 @@ extension Sequence where Iterator.Element == RemoteDataPayload {
     }
 }
 
+fileprivate struct SendablePromise<O, E>: @unchecked Sendable where E : Error {
+    let promise: Future<O,E>.Promise
+}

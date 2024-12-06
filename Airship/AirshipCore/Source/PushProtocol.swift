@@ -26,6 +26,7 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     var requestExplicitPermissionWhenEphemeral: Bool { get set }
 
     /// The device token for this device, as a hex string.
+    @MainActor
     var deviceToken: String? { get }
 
     /// User Notification options this app will request from APNS.
@@ -54,10 +55,10 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     var requireAuthorizationForDefaultCategories: Bool { get set }
 
     /// Set a delegate that implements the PushNotificationDelegate protocol.
-    var pushNotificationDelegate: PushNotificationDelegate? { get set }
+    var pushNotificationDelegate: (any PushNotificationDelegate)? { get set }
 
     /// Set a delegate that implements the RegistrationDelegate protocol.
-    var registrationDelegate: RegistrationDelegate? { get set }
+    var registrationDelegate: (any RegistrationDelegate)? { get set }
 
     #if !os(tvOS)
     /// Notification response that launched the application.
@@ -174,17 +175,19 @@ public protocol AirshipPushProtocol: AirshipBasePushProtocol {
     func enableUserPushNotifications(fallback: PromptPermissionFallback) async -> Bool
 }
 
-protocol InternalPushProtocol {
+protocol InternalPushProtocol: Sendable {
+    @MainActor
     var deviceToken: String? { get }
+    
     func dispatchUpdateAuthorizedNotificationTypes()
     @MainActor
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
-    func didFailToRegisterForRemoteNotifications(_ error: Error)
+    func didFailToRegisterForRemoteNotifications(_ error: any Error)
 
     func didReceiveRemoteNotification(
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool,
-        completionHandler: @escaping (Any) -> Void
+        completionHandler: @Sendable @escaping (Any) -> Void
     )
 
     func presentationOptionsForNotification(
@@ -197,6 +200,8 @@ protocol InternalPushProtocol {
         _ response: UNNotificationResponse,
         completionHandler: @escaping () -> Void
     )
+    
+    @MainActor
     var combinedCategories: Set<UNNotificationCategory> { get }
     #endif
 }

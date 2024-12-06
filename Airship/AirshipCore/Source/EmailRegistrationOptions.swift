@@ -94,7 +94,7 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     }
 
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.transactionalOptedIn = try container.decodeIfPresent(Date.self, forKey: .transactionalOptedIn)
         self.commercialOptedIn = try container.decodeIfPresent(Date.self, forKey: .commercialOptedIn)

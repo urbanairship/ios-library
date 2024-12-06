@@ -22,7 +22,7 @@ public actor AirshipSerialQueue {
             }
         }
 
-        let task: Task<T, Error> = Task {
+        let task: Task<T, any Error> = Task {
             return try await work()
         }
 

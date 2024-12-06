@@ -4,7 +4,7 @@ import Foundation
 
 /// Airship component.
 ///  - Note: For internal use only. :nodoc:
-public protocol AirshipComponent {
+public protocol AirshipComponent: Sendable {
 
     /// Called once the Airship instance is ready.
     @MainActor

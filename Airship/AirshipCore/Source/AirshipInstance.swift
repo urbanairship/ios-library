@@ -2,22 +2,22 @@
 
 import Foundation
 
-protocol AirshipInstanceProtocol {
+protocol AirshipInstanceProtocol: Sendable {
     var config: RuntimeConfig { get }
     var preferenceDataStore: PreferenceDataStore { get }
     var actionRegistry: ActionRegistry { get }
     var permissionsManager: AirshipPermissionsManager { get }
 
     #if !os(tvOS) && !os(watchOS)
-    var javaScriptCommandDelegate: JavaScriptCommandDelegate? { get set }
+    var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? { get set }
     var channelCapture: ChannelCapture { get }
     #endif
 
-    var deepLinkDelegate: DeepLinkDelegate? { get set }
-    var urlAllowList: URLAllowListProtocol { get }
+    var deepLinkDelegate: (any DeepLinkDelegate)? { get set }
+    var urlAllowList: any URLAllowListProtocol { get }
     var localeManager: AirshipLocaleManager { get }
     var privacyManager: AirshipPrivacyManager { get }
-    var components: [AirshipComponent] { get }
+    var components: [any AirshipComponent] { get }
 
     func component<E>(ofType componentType: E.Type) -> E?
 
@@ -25,7 +25,7 @@ protocol AirshipInstanceProtocol {
     func airshipReady()
 }
 
-final class AirshipInstance: AirshipInstanceProtocol {
+final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
     
@@ -34,19 +34,27 @@ final class AirshipInstance: AirshipInstanceProtocol {
     
 #if !os(tvOS) && !os(watchOS)
     
-    public var javaScriptCommandDelegate: JavaScriptCommandDelegate?
+    private let _jsDelegateHolder = AirshipAtomicValue<(any JavaScriptCommandDelegate)?>(nil)
+    public var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? {
+        get { return _jsDelegateHolder.value }
+        set { _jsDelegateHolder.value = newValue }
+    }
     public let channelCapture: ChannelCapture
 #endif
     
-    public var deepLinkDelegate: DeepLinkDelegate?
-    public let urlAllowList: URLAllowListProtocol
+    private let _deeplinkDelegateHolder = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
+    public var deepLinkDelegate: (any DeepLinkDelegate)? {
+        get { _deeplinkDelegateHolder.value }
+        set { _deeplinkDelegateHolder.value = newValue }
+    }
+    public let urlAllowList: any URLAllowListProtocol
     public let localeManager: AirshipLocaleManager
     public let privacyManager: AirshipPrivacyManager
-    public let components: [AirshipComponent]
+    public let components: [any AirshipComponent]
     private let remoteConfigManager: RemoteConfigManager
-    private let experimentManager: ExperimentDataProvider
-    private var componentMap: [String: AirshipComponent] = [:]
-    private var lock = AirshipLock()
+    private let experimentManager: any ExperimentDataProvider
+    private var componentMap: [String: any AirshipComponent] = [:] //it's accessed with the lock below
+    private let lock = AirshipLock()
     
     @MainActor
     init(airshipConfig: AirshipConfig, appCredentials: AirshipAppCredentials) {
@@ -181,7 +189,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             cache: CoreDataAirshipCache(appKey: appCredentials.appKey)
         )
         
-        var components: [AirshipComponent] = [
+        var components: [any AirshipComponent] = [
             contact, channel, analytics, remoteData, push
         ]
         components.append(contentsOf: moduleLoader.components)

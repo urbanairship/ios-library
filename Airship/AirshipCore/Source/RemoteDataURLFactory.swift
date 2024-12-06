@@ -4,7 +4,7 @@ import Foundation
 
 struct RemoteDataURLFactory: Sendable {
     static func makeURL(config: RuntimeConfig, path: String, locale: Locale, randomValue: Int) throws -> URL {
-        guard var components = URLComponents(string: config.remoteDataAPIURL ?? "") else {
+        guard var components = URLComponents(string: config.remoteDataAPIURL) else {
             throw AirshipErrors.error("URL is null")
         }
 

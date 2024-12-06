@@ -43,7 +43,7 @@ public class ActionRegistry {
     }
 
     @discardableResult
-    public func updateEntry(name: String, action: AirshipAction) -> Bool {
+    public func updateEntry(name: String, action: any AirshipAction) -> Bool {
         guard let entryHolder = entries[name] else { return false }
         entryHolder.entry.action = action
         return true
@@ -57,7 +57,7 @@ public class ActionRegistry {
     }
 
     @discardableResult
-    public func updateEntry(name: String, situation: ActionSituation, action: AirshipAction) -> Bool {
+    public func updateEntry(name: String, situation: ActionSituation, action: any AirshipAction) -> Bool {
         guard let entryHolder = entries[name] else { return false }
         entryHolder.entry.situationOverrides[situation] = action
         return true
@@ -67,7 +67,7 @@ public class ActionRegistry {
         return self.entries[name]?.entry
     }
 
-    public func registerActions(actionsManifests: [ActionsManifest]) {
+    public func registerActions(actionsManifests: [any ActionsManifest]) {
         actionsManifests.forEach { actionsManifest in
             actionsManifest.manifest.forEach { (names, entry) in
                 registerEntry(names: names, entry: entry)
@@ -78,20 +78,20 @@ public class ActionRegistry {
 
 /// Action registry entry
 public struct ActionEntry: Sendable {
-    var situationOverrides: [ActionSituation: AirshipAction] = [:]
-    var action: AirshipAction
+    var situationOverrides: [ActionSituation: any AirshipAction] = [:]
+    var action: any AirshipAction
     var predicate: (@Sendable (ActionArguments) async -> Bool)?
 
     public init(
-        action: AirshipAction,
-        situationOverrides: [ActionSituation: AirshipAction] = [:],
+        action: any AirshipAction,
+        situationOverrides: [ActionSituation: any AirshipAction] = [:],
         predicate: (@Sendable (ActionArguments) async -> Bool)? = nil
     ) {
         self.action = action
         self.predicate = predicate
     }
 
-    func action(situation: ActionSituation) -> AirshipAction {
+    func action(situation: ActionSituation) -> any AirshipAction {
         return situationOverrides[situation] ?? action
     }
 }

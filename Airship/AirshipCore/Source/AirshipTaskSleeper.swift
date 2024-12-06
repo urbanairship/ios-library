@@ -12,11 +12,11 @@ public final class DefaultAirshipTaskSleeper: AirshipTaskSleeper {
     fileprivate static let shared: DefaultAirshipTaskSleeper = DefaultAirshipTaskSleeper()
     private static let maxDelayInterval: TimeInterval = 30
 
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let onSleep: @Sendable (TimeInterval) async throws -> Void
 
     init(
-        date: AirshipDateProtocol = AirshipDate.shared,
+        date: any AirshipDateProtocol = AirshipDate.shared,
         onSleep: @escaping @Sendable (TimeInterval) async throws -> Void = {
             try await Task.sleep(nanoseconds: UInt64($0 * 1_000_000_000))
         }

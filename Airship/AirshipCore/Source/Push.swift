@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-
 import Foundation
+
+@preconcurrency
 import UserNotifications
 
 #if os(watchOS)
@@ -64,13 +65,13 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let channel: InternalAirshipChannelProtocol
+    private let channel: any InternalAirshipChannelProtocol
     private let privacyManager: AirshipPrivacyManager
     private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: AirshipNotificationCenter
-    private let notificationRegistrar: NotificationRegistrar
-    private let apnsRegistrar: APNSRegistrar
-    private let badger: BadgerProtocol
+    private let notificationRegistrar: any NotificationRegistrar
+    private let apnsRegistrar: any APNSRegistrar
+    private let badger: any BadgerProtocol
 
     @MainActor
     private var waitForDeviceToken = false
@@ -101,15 +102,15 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: InternalAirshipChannelProtocol,
-        analytics: InternalAnalyticsProtocol,
+        channel: any InternalAirshipChannelProtocol,
+        analytics: any InternalAnalyticsProtocol,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        notificationRegistrar: NotificationRegistrar =
+        notificationRegistrar: any NotificationRegistrar =
             UNNotificationRegistrar(),
-        apnsRegistrar: APNSRegistrar,
-        badger: BadgerProtocol,
+        apnsRegistrar: any APNSRegistrar,
+        badger: any BadgerProtocol,
         serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
     ) {
 
@@ -411,9 +412,9 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
-    public weak var pushNotificationDelegate: PushNotificationDelegate?
+    public weak var pushNotificationDelegate: (any PushNotificationDelegate)?
 
-    public weak var registrationDelegate: RegistrationDelegate?
+    public weak var registrationDelegate: (any RegistrationDelegate)?
 
     #if !os(tvOS)
     /// Notification response that launched the application.
@@ -1008,7 +1009,7 @@ extension AirshipPush: InternalPushProtocol {
         )
     }
 
-    public func didFailToRegisterForRemoteNotifications(_ error: Error) {
+    public func didFailToRegisterForRemoteNotifications(_ error: any Error) {
         guard self.privacyManager.isEnabled(.push) else {
             return
         }

@@ -47,7 +47,7 @@ final class MeteredUsageStore: Sendable {
 
     func deleteAll() async throws {
         try await self.coreData.perform(skipIfStoreNotCreated: true) { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: MeteredUsageStore.eventDataEntityName
             )
 
@@ -67,7 +67,7 @@ final class MeteredUsageStore: Sendable {
     func deleteEvents(_ events: [AirshipMeteredUsageEvent]) async throws {
         let eventIDs = events.map { $0.eventID }
         try await self.coreData.perform { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: MeteredUsageStore.eventDataEntityName
             )
 
@@ -91,7 +91,7 @@ final class MeteredUsageStore: Sendable {
 
     func getEvents() async throws -> [AirshipMeteredUsageEvent] {
         return try await self.coreData.performWithResult { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: MeteredUsageStore.eventDataEntityName
             )
             request.fetchLimit = MeteredUsageStore.fetchEventLimit

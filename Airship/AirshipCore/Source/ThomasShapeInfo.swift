@@ -10,7 +10,7 @@ enum ThomasShapeInfo: ThomasSerializable {
         case type = "type"
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(ShapeType.self, forKey: .type)
 
@@ -20,7 +20,7 @@ enum ThomasShapeInfo: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         switch self {
         case .ellipse(let shape): try shape.encode(to: encoder)
         case .rectangle(let shape): try shape.encode(to: encoder)

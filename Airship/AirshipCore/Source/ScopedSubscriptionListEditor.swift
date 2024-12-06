@@ -6,11 +6,11 @@ import Foundation
 public class ScopedSubscriptionListEditor {
 
     private var subscriptionListUpdates: [ScopedSubscriptionListUpdate] = []
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
     private let completionHandler: ([ScopedSubscriptionListUpdate]) -> Void
 
     init(
-        date: AirshipDateProtocol,
+        date: any AirshipDateProtocol,
         completionHandler: @escaping ([ScopedSubscriptionListUpdate]) -> Void
     ) {
         self.date = date

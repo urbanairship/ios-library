@@ -7,15 +7,15 @@ final class ExperimentManager: ExperimentDataProvider {
     private static let payloadType = "experiments"
     
     private let dataStore: PreferenceDataStore
-    private let remoteData: RemoteDataProtocol
-    private let audienceChecker: DeviceAudienceChecker
-    private let date: AirshipDateProtocol
+    private let remoteData: any RemoteDataProtocol
+    private let audienceChecker: any DeviceAudienceChecker
+    private let date: any AirshipDateProtocol
 
     init(
         dataStore: PreferenceDataStore,
-        remoteData: RemoteDataProtocol,
-        audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
-        date: AirshipDateProtocol = AirshipDate.shared
+        remoteData: any RemoteDataProtocol,
+        audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.dataStore = dataStore
         self.remoteData = remoteData
@@ -25,7 +25,7 @@ final class ExperimentManager: ExperimentDataProvider {
     
     public func evaluateExperiments(
         info: MessageInfo,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> ExperimentResult? {
         let experiments = await getExperiments(info: info)
         guard !experiments.isEmpty else {

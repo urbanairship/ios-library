@@ -3,7 +3,7 @@
 import Foundation
 
 /// Delegate protocol for accepting and rejecting URLs.
-public protocol URLAllowListDelegate {
+public protocol URLAllowListDelegate: Sendable {
     /**
      * Called when a URL has been allowed by the SDK, but before the URL is fetched.
      *
@@ -17,7 +17,7 @@ public protocol URLAllowListDelegate {
 }
 
 /// NOTE: For internal use only. :nodoc:
-public protocol URLAllowListProtocol {
+public protocol URLAllowListProtocol: Sendable {
     @MainActor
     func isAllowed(_ url: URL?) -> Bool
 
@@ -84,6 +84,7 @@ public final class URLAllowList: URLAllowListProtocol {
         options: .useUnicodeWordBoundaries
     )
 
+    @MainActor
     private var entries: Set<AllowListEntry> = []
 
     init(airshipConfig: AirshipConfig) {
@@ -130,7 +131,8 @@ public final class URLAllowList: URLAllowListProtocol {
     /// The URL allow list delegate.
     ///
     /// - note: The delegate is not retained.
-    public var delegate: URLAllowListDelegate? = nil
+    @MainActor
+    public var delegate: (any URLAllowListDelegate)? = nil
 
     /// Add an entry to the URL allow list, with the implicit scope `URLAllowListScope.all`.
     ///
@@ -138,6 +140,7 @@ public final class URLAllowList: URLAllowListProtocol {
     ///
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @discardableResult
+    @MainActor
     public func addEntry(_ patternString: String) -> Bool {
         return addEntry(patternString, scope: .all)
     }
@@ -150,6 +153,7 @@ public final class URLAllowList: URLAllowListProtocol {
     ///
     /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @discardableResult
+    @MainActor
     public func addEntry(
         _ patternString: String,
         scope: URLAllowListScope
@@ -237,6 +241,7 @@ public final class URLAllowList: URLAllowListProtocol {
     ///   - url: The URL under consideration.
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
+    @MainActor
     public func isAllowed(_ url: URL?) -> Bool {
         return isAllowed(url, scope: .all)
     }
@@ -248,6 +253,7 @@ public final class URLAllowList: URLAllowListProtocol {
     ///   - scope: The scope of the desired match.
     ///
     /// - Returns: `true` if the URL is allowed, `false` otherwise.
+    @MainActor
     public func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
         guard let url = url else {
             return false
@@ -399,7 +405,7 @@ public final class URLAllowList: URLAllowListProtocol {
             )
         }
 
-        return { (url: URL) -> Bool in
+        return { @MainActor (url: URL) -> Bool in
             let scheme = url.scheme ?? ""
             if let expression = schemeRegex,
                 scheme.isEmpty
@@ -438,9 +444,9 @@ public final class URLAllowList: URLAllowListProtocol {
     }
 
     /// Block mapping URLs to allow list status.
-    private typealias AllowListMatcher = (URL) -> Bool
+    private typealias AllowListMatcher = @MainActor @Sendable (URL) -> Bool
 
-    private struct AllowListEntry: Hashable {
+    private struct AllowListEntry: Hashable, Sendable {
         let matcher: AllowListMatcher
         let scope: URLAllowListScope
         // Pattern is only used for hashing

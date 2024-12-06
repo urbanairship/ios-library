@@ -53,13 +53,13 @@ public protocol AirshipDeferredResolverProtocol : Sendable {
 
 final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
 
-    private final let audienceOverridesProvider: AudienceOverridesProvider
-    private final let client: DeferredAPIClientProtocol
+    private final let audienceOverridesProvider: any AudienceOverridesProvider
+    private final let client: any DeferredAPIClientProtocol
     private final let locationMap: AirshipAtomicValue<[URL: URL]> = AirshipAtomicValue([:])
 
     convenience init(
         config: RuntimeConfig,
-        audienceOverrides: AudienceOverridesProvider
+        audienceOverrides: any AudienceOverridesProvider
     ) {
         self.init(
             client: DeferredAPIClient(config: config),
@@ -68,8 +68,8 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
     }
     
     init(
-        client: DeferredAPIClientProtocol,
-        audienceOverrides: AudienceOverridesProvider
+        client: any DeferredAPIClientProtocol,
+        audienceOverrides: any AudienceOverridesProvider
     ) {
         self.client = client
         self.audienceOverridesProvider = audienceOverrides

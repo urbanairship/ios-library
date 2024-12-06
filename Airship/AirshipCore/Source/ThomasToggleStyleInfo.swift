@@ -11,7 +11,7 @@ enum ThomasToggleStyleInfo: ThomasSerializable {
         case type = "type"
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(StyleType.self, forKey: .type)
 
@@ -21,7 +21,7 @@ enum ThomasToggleStyleInfo: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         switch self {
         case .switchStyle(let style): try style.encode(to: encoder)
         case .checkboxStyle(let style): try style.encode(to: encoder)

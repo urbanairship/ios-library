@@ -3,11 +3,11 @@
 final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendable {
     private let tokenPath = "/api/auth/device"
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
     init(
         config: RuntimeConfig,
-        session: AirshipRequestSession
+        session: any AirshipRequestSession
     ) {
         self.config = config
         self.session = session

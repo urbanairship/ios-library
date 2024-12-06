@@ -30,8 +30,8 @@ public final class RemoveTagsAction: AirshipAction {
         return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
     }
 
-    private let channel: @Sendable () -> AirshipChannelProtocol
-    private let contact: @Sendable () -> AirshipContactProtocol
+    private let channel: @Sendable () -> any AirshipChannelProtocol
+    private let contact: @Sendable () -> any AirshipContactProtocol
 
     public convenience init() {
         self.init(
@@ -41,8 +41,8 @@ public final class RemoveTagsAction: AirshipAction {
     }
 
     init(
-        channel: @escaping @Sendable () -> AirshipChannelProtocol,
-        contact: @escaping @Sendable () -> AirshipContactProtocol
+        channel: @escaping @Sendable () -> any AirshipChannelProtocol,
+        contact: @escaping @Sendable () -> any AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact

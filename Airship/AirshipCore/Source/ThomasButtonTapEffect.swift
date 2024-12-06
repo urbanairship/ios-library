@@ -15,7 +15,7 @@ enum ThomasButtonTapEffect: ThomasSerializable {
         case none = "none"
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type: EffectType = try container.decode(EffectType.self, forKey: .type)
         self = switch(type) {
@@ -24,7 +24,7 @@ enum ThomasButtonTapEffect: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch (self) {
         case .default: try container.encode(EffectType.default, forKey: .type)

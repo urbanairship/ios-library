@@ -7,6 +7,7 @@ import SwiftUI
 struct Shapes {
 
     @ViewBuilder
+    @MainActor
     static func shape(
         info: ThomasShapeInfo,
         constraints: ViewConstraints,
@@ -71,6 +72,7 @@ struct Shapes {
     }
 
     @ViewBuilder
+    @MainActor
     private static func rectangle(
         info: ThomasShapeInfo.Rectangle,
         constraints: ViewConstraints,
@@ -135,6 +137,7 @@ struct Shapes {
     }
 
     @ViewBuilder
+    @MainActor
     private static func ellipse(
         info: ThomasShapeInfo.Ellipse,
         constraints: ViewConstraints,

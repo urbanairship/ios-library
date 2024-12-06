@@ -5,7 +5,7 @@ import Foundation
 @testable
 import AirshipCore
 
-class TestAirshipInstance: AirshipInstanceProtocol {
+final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
 
     var _permissionsManager: AirshipPermissionsManager?
     var permissionsManager: AirshipPermissionsManager {

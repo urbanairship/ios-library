@@ -37,7 +37,7 @@ actor EventStore {
         maxBatchSizeKB: UInt
     ) async throws -> [AirshipEventData] {
         return try await self.coreData.performWithResult { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
             request.fetchLimit = EventStore.fetchEventLimit
@@ -71,7 +71,7 @@ actor EventStore {
 
     func hasEvents() async throws -> Bool {
         return try await self.coreData.performWithResult { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
             return try context.count(for: request) > 0
@@ -80,7 +80,7 @@ actor EventStore {
 
     func deleteEvents(eventIDs: [String]) async throws {
         try await self.coreData.perform { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
             
@@ -108,7 +108,7 @@ actor EventStore {
 
     func deleteAllEvents() async throws {
         try await self.coreData.perform(skipIfStoreNotCreated: true) { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: EventStore.eventDataEntityName
             )
 
@@ -146,7 +146,7 @@ actor EventStore {
         _ sessionID: String,
         context: NSManagedObjectContext
     ) -> Bool {
-        let request = NSFetchRequest<NSFetchRequestResult>(
+        let request = NSFetchRequest<any NSFetchRequestResult>(
             entityName: EventStore.eventDataEntityName
         )
         request.predicate = NSPredicate(format: "sessionID == %@", sessionID)
@@ -164,7 +164,7 @@ actor EventStore {
     nonisolated private func fetchOldestSessionID(with context: NSManagedObjectContext)
         -> String?
     {
-        let request = NSFetchRequest<NSFetchRequestResult>(
+        let request = NSFetchRequest<any NSFetchRequestResult>(
             entityName: EventStore.eventDataEntityName
         )
         request.fetchLimit = 1
@@ -198,7 +198,7 @@ actor EventStore {
         )
         sumDescription.expressionResultType = .doubleAttributeType
 
-        let request = NSFetchRequest<NSFetchRequestResult>(
+        let request = NSFetchRequest<any NSFetchRequestResult>(
             entityName: EventStore.eventDataEntityName
         )
         request.resultType = .dictionaryResultType

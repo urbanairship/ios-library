@@ -28,7 +28,7 @@ struct AnonContactData: Codable, Sendable {
         self.subscriptionLists = subscriptionLists
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.tags = try container.decode([String : [String]].self, forKey: .tags)
         self.channels = try container.decode([Channel].self, forKey: .channels)

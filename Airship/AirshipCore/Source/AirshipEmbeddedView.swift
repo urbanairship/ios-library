@@ -107,7 +107,7 @@ private class EmbeddedViewModel: ObservableObject {
 public struct AirshipEmbeddedContentView : View, Identifiable  {
     public let embeddedInfo: AirshipEmbeddedInfo
 
-    public var id: String {
+    nonisolated public var id: String {
         embeddedInfo.instanceID
     }
 
@@ -145,7 +145,7 @@ public struct AirshipEmbeddedViewStyleConfiguration {
 }
 
 /// Protocol for customizing an Airship embedded view with a style
-public protocol AirshipEmbeddedViewStyle {
+public protocol AirshipEmbeddedViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = AirshipEmbeddedViewStyleConfiguration
     @preconcurrency @MainActor
@@ -183,10 +183,10 @@ public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
 
 struct AnyAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
     @ViewBuilder
-    private let _makeBody: (Configuration) -> AnyView
+    private let _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
     init<S: AirshipEmbeddedViewStyle>(style: S) {
-        _makeBody = { configuration in
+        _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }
     }
@@ -198,7 +198,7 @@ struct AnyAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
 }
 
 struct AirshipEmbeddedViewStyleKey: EnvironmentKey {
-    static var defaultValue = AnyAirshipEmbeddedViewStyle(style: .defaultStyle)
+    static let defaultValue = AnyAirshipEmbeddedViewStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

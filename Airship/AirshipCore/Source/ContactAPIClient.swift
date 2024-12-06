@@ -70,7 +70,7 @@ protocol ContactsAPIClientProtocol: Sendable {
 final class ContactAPIClient: ContactsAPIClientProtocol {
 
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
     private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
@@ -97,7 +97,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         return encoder
     }
 
-    init(config: RuntimeConfig, session: AirshipRequestSession? = nil) {
+    init(config: RuntimeConfig, session: (any AirshipRequestSession)? = nil) {
         self.config = config
         self.session = session ?? config.requestSession
     }
@@ -543,7 +543,7 @@ enum DisassociateOptions: Sendable, Equatable, Codable, Hashable {
         case sms
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .channel(let channel):
@@ -555,7 +555,7 @@ enum DisassociateOptions: Sendable, Equatable, Codable, Hashable {
         }
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let channel = try? container.decode(Channel.self) {
             self = .channel(channel)

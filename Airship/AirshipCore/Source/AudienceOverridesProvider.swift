@@ -60,7 +60,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
 
     private static let maxRecordAge: TimeInterval = 600 // 10 minutes
 
-    init(date: AirshipDateProtocol = AirshipDate.shared) {
+    init(date: any AirshipDateProtocol = AirshipDate.shared) {
         self.updates = CachedList(date: date)
     }
 

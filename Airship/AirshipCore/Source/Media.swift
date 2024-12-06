@@ -62,6 +62,7 @@ struct Media: View {
 extension Image {
 
     @ViewBuilder
+    @MainActor
     func fitMedia(
         mediaFit: ThomasMediaFit,
         cropPosition: ThomasPosition?,
@@ -101,6 +102,7 @@ extension Image {
     }
 
     @ViewBuilder
+    @MainActor
     private func cropAligned(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .center) -> some View {
         // If we have an auto bound constraint and we can fit the image then centerInside
         if shouldCenterInside(constraints: constraints, imageSize: imageSize) {
@@ -114,6 +116,7 @@ extension Image {
         }
     }
 
+    @MainActor
     private func centerInside(constraints: ViewConstraints) -> some View {
         self.resizable()
             .scaledToFit()

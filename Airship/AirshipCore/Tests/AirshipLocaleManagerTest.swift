@@ -73,6 +73,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
         localeManager.currentLocale = Locale(identifier: "fr")
 
         let expectation = self.expectation(description: "update called")
+        
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.LocaleUpdated.name
         ) { _ in

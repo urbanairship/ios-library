@@ -12,7 +12,7 @@ protocol MeteredUsageAPIClientProtocol: Sendable {
 
 final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
     private let config: RuntimeConfig
-    private let session: AirshipRequestSession
+    private let session: any AirshipRequestSession
 
     private var encoder: JSONEncoder {
         let encoder = JSONEncoder()
@@ -26,7 +26,7 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
     }
 
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: any AirshipRequestSession) {
         self.config = config
         self.session = session
     }

@@ -76,7 +76,7 @@ public extension DeviceAudienceSelector {
 
     func evaluate(
         newUserEvaluationDate: Date = Date.distantPast,
-        deviceInfoProvider: AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()
+        deviceInfoProvider: any AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()
     ) async throws -> Bool {
 
         AirshipLogger.trace("Evaluating audience conditions \(self)")
@@ -138,7 +138,7 @@ public extension DeviceAudienceSelector {
         return true
     }
 
-    private func checkNewUser(deviceInfoProvider: AudienceDeviceInfoProvider, newUserEvaluationDate: Date) -> Bool {
+    private func checkNewUser(deviceInfoProvider: any AudienceDeviceInfoProvider, newUserEvaluationDate: Date) -> Bool {
         guard let newUser = self.newUser else {
             return true
         }
@@ -150,7 +150,7 @@ public extension DeviceAudienceSelector {
         return deviceTypes?.contains("ios") ?? true
     }
 
-    private func checkPermissions(deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
+    private func checkPermissions(deviceInfoProvider: any AudienceDeviceInfoProvider) async throws -> Bool {
         guard self.permissionPredicate != nil || self.locationOptIn != nil else {
             return true
         }
@@ -176,7 +176,7 @@ public extension DeviceAudienceSelector {
         return true
     }
 
-    private func checkAnalytics(deviceInfoProvider: AudienceDeviceInfoProvider) -> Bool {
+    private func checkAnalytics(deviceInfoProvider: any AudienceDeviceInfoProvider) -> Bool {
         guard let requiresAnalytics = self.requiresAnalytics else {
             return true
         }
@@ -184,7 +184,7 @@ public extension DeviceAudienceSelector {
         return requiresAnalytics == false || deviceInfoProvider.analyticsEnabled
     }
 
-    private func checkVersion(deviceInfoProvider: AudienceDeviceInfoProvider) throws -> Bool {
+    private func checkVersion(deviceInfoProvider: any AudienceDeviceInfoProvider) throws -> Bool {
         guard let versionPredicate = self.versionPredicate else {
             return true
         }
@@ -199,7 +199,7 @@ public extension DeviceAudienceSelector {
     }
 
 
-    private func checkTags(deviceInfoProvider: AudienceDeviceInfoProvider) async -> Bool {
+    private func checkTags(deviceInfoProvider: any AudienceDeviceInfoProvider) async -> Bool {
         guard let tagSelector = self.tagSelector else {
             return true
         }
@@ -207,7 +207,7 @@ public extension DeviceAudienceSelector {
         return tagSelector.evaluate(tags: deviceInfoProvider.tags)
     }
 
-    private func checkNotificationOptIn(deviceInfoProvider: AudienceDeviceInfoProvider) async -> Bool {
+    private func checkNotificationOptIn(deviceInfoProvider: any AudienceDeviceInfoProvider) async -> Bool {
         guard let notificationOptIn = self.notificationOptIn else {
             return true
         }
@@ -216,7 +216,7 @@ public extension DeviceAudienceSelector {
     }
 
 
-    private func checkTestDevices(deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
+    private func checkTestDevices(deviceInfoProvider: any AudienceDeviceInfoProvider) async throws -> Bool {
         guard let testDevices = self.testDevices else {
             return true
         }
@@ -233,7 +233,7 @@ public extension DeviceAudienceSelector {
         }
     }
 
-    private func checkLocale(deviceInfoProvider: AudienceDeviceInfoProvider) -> Bool {
+    private func checkLocale(deviceInfoProvider: any AudienceDeviceInfoProvider) -> Bool {
         guard let languageIDs = self.languageIDs else {
             return true
         }
@@ -254,7 +254,7 @@ public extension DeviceAudienceSelector {
         }
     }
 
-    private func checkHash(deviceInfoProvider: AudienceDeviceInfoProvider) async throws -> Bool {
+    private func checkHash(deviceInfoProvider: any AudienceDeviceInfoProvider) async throws -> Bool {
         guard let hash = self.hashSelector else {
             return true
         }

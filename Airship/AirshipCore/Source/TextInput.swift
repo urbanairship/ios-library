@@ -357,7 +357,7 @@ internal struct AirshipTextView: UIViewRepresentable {
         var isEditing: Binding<Bool>
 
         let subject = PassthroughSubject<String, Never>()
-        let cancellable: Cancellable
+        let cancellable: any Cancellable
 
         init(_ text: Binding<String>, isEditing: Binding<Bool>) {
             self.text = text

@@ -5,7 +5,7 @@
 public import WebKit
 
 /// Action runner used in the `NativeBridge`.
-public protocol NativeBridgeActionRunner {
+public protocol NativeBridgeActionRunner: Sendable {
     /// Called to run an action when triggered from the web view.
     ///  - Parameters:
     ///     - actionName: The action name.

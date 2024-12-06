@@ -15,9 +15,9 @@ actor WorkRateLimiter {
 
     private var hits: [String: [Date]] = [:]
     private var rules: [String: RateLimitRule] = [:]
-    private let date: AirshipDateProtocol
+    private let date: any AirshipDateProtocol
 
-    init(date: AirshipDateProtocol = AirshipDate()) {
+    init(date: any AirshipDateProtocol = AirshipDate()) {
         self.date = date
     }
 

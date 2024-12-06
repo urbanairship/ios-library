@@ -9,7 +9,7 @@ public final class ActionRunner: NSObject {
     ///     - arguments: The action's arguments
     /// - Returns An action result
     public class func run(
-        action: AirshipAction,
+        action: any AirshipAction,
         arguments: ActionArguments
     ) async -> ActionResult {
         guard await action.accepts(arguments: arguments) else {
@@ -55,7 +55,7 @@ public final class ActionRunner: NSObject {
             return .argumentsRejected
         }
 
-        let action: AirshipAction = entry.action(situation: arguments.situation)
+        let action: any AirshipAction = entry.action(situation: arguments.situation)
 
         return await self.run(
             action: action,
@@ -73,7 +73,7 @@ public final class ActionRunner: NSObject {
     public class func run(
         actionsPayload: AirshipJSON,
         situation: ActionSituation,
-        metadata: [String: Sendable]
+        metadata: [String: any Sendable]
     ) async -> [String: ActionResult] {
         guard case .object(let payload) = actionsPayload else {
             AirshipLogger.error("Invalid actions payload: \(actionsPayload)")

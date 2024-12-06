@@ -272,7 +272,7 @@ public struct AirshipConfig: Decodable, Sendable {
         self = try decoder.decode(AirshipConfig.self, from: data)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         // Development

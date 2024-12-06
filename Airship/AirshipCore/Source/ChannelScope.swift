@@ -30,7 +30,7 @@ public final class ChannelScopes: NSObject, Codable, Sendable {
         return values.hashValue
     }
 
-    public required init(from decoder: Decoder) throws {
+    public required init(from decoder: any Decoder) throws {
         let singleValueContainer = try decoder.singleValueContainer()
         if let strings = try? singleValueContainer.decode([String].self) {
             self.values = try strings.map { try ChannelScope.fromString($0) }
@@ -39,7 +39,7 @@ public final class ChannelScopes: NSObject, Codable, Sendable {
         }
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(values.map { $0.rawValue })
     }

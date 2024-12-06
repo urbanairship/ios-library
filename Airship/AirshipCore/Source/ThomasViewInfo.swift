@@ -69,7 +69,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case type
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(ViewType.self, forKey: .type)
 
@@ -111,7 +111,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         switch self {
         case .container(let info): try info.encode(to: encoder)
         case .linearLayout(let info): try info.encode(to: encoder)
@@ -626,7 +626,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case type = "type"
             }
 
-            init(from decoder: Decoder) throws {
+            init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 let type = try container.decode(ButtonImageType.self, forKey: .type)
 
@@ -636,7 +636,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 }
             }
 
-            func encode(to encoder: Encoder) throws {
+            func encode(to encoder: any Encoder) throws {
                 switch self {
                 case .icon(let info): try info.encode(to: encoder)
                 case .url(let info): try info.encode(to: encoder)
@@ -743,7 +743,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case type
             }
 
-            init(from decoder: Decoder) throws {
+            init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 let type = try container.decode(GestureType.self, forKey: .type)
 
@@ -754,7 +754,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 }
             }
 
-            func encode(to encoder: Encoder) throws {
+            func encode(to encoder: any Encoder) throws {
                 switch self {
                 case .swipeGesture(let gesture): try gesture.encode(to: encoder)
                 case .tapGesture(let gesture): try gesture.encode(to: encoder)
@@ -951,7 +951,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case type
             }
 
-            init(from decoder: Decoder) throws {
+            init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 let type = try container.decode(StyleType.self, forKey: .type)
 
@@ -960,7 +960,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 }
             }
 
-            func encode(to encoder: Encoder) throws {
+            func encode(to encoder: any Encoder) throws {
                 switch self {
                 case .linearProgress(let style): try style.encode(to: encoder)
                 }
@@ -1434,7 +1434,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case type
             }
 
-            init(from decoder: Decoder) throws {
+            init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 let type = try container.decode(ScoreStyleType.self, forKey: .type)
 
@@ -1443,7 +1443,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 }
             }
 
-            func encode(to encoder: Encoder) throws {
+            func encode(to encoder: any Encoder) throws {
                 switch self {
                 case .numberRange(let info): try info.encode(to: encoder)
                 }
@@ -1511,7 +1511,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 }
 
 fileprivate extension Encoder {
-    func encode(properties: Encodable?..., overrides: Encodable?...) throws {
+    func encode(properties: (any Encodable)?..., overrides: (any Encodable)?...) throws {
         try properties.forEach { codable in
             try codable?.encode(to: self)
         }
@@ -1536,7 +1536,7 @@ fileprivate extension Decoder {
 fileprivate struct ViewOverridesEncodable: Encodable {
     private let wrapper: Wrapper?
 
-    init(overrides: [Encodable]) {
+    init(overrides: [any Encodable]) {
         self.wrapper = Wrapper(overrides: overrides)
     }
 
@@ -1545,7 +1545,7 @@ fileprivate struct ViewOverridesEncodable: Encodable {
     }
 
     struct Wrapper: Encodable {
-        var overrides: [Encodable]
+        var overrides: [any Encodable]
         func encode(to encoder: any Encoder) throws {
             try overrides.forEach {
                 try $0.encode(to: encoder)

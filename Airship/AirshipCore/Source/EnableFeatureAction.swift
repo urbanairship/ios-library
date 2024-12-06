@@ -28,7 +28,7 @@ public final class EnableFeatureAction: AirshipAction {
     public static let locationActionValue = "location"
     public static let backgroundLocationActionValue = "background_location"
 
-    private let permissionPrompter: @Sendable () -> PermissionPrompter
+    private let permissionPrompter: @Sendable () -> any PermissionPrompter
 
 
     public convenience init() {
@@ -39,7 +39,7 @@ public final class EnableFeatureAction: AirshipAction {
            }
        }
     
-    required init(permissionPrompter: @escaping @Sendable () -> PermissionPrompter) {
+    required init(permissionPrompter: @escaping @Sendable () -> any PermissionPrompter) {
         self.permissionPrompter = permissionPrompter
     }
     

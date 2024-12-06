@@ -125,33 +125,33 @@ class AirshipPrivacyManagerTest: XCTestCase {
 
     @MainActor
     func testNotifiedOnChange() {
-        var eventCount = 0
-        let observer = notificationCenter.addObserver(forName: AirshipNotifications.PrivacyManagerUpdated.name, object: nil, queue: nil) { _ in
-            eventCount += 1
+        let counter = AirshipAtomicValue(0)
+        let observer = notificationCenter.addObserver(forName: AirshipNotifications.PrivacyManagerUpdated.name, object: nil, queue: nil) { @Sendable _ in
+            counter.value += 1
         }
 
         self.privacyManager.enabledFeatures = .all
         self.privacyManager.disableFeatures([])
         self.privacyManager.enableFeatures(.all)
         self.privacyManager.enableFeatures(.analytics)
-        XCTAssertEqual(eventCount, 0)
+        XCTAssertEqual(counter.value, 0)
 
         self.privacyManager.disableFeatures(.analytics)
-        XCTAssertEqual(eventCount, 1)
+        XCTAssertEqual(counter.value, 1)
 
         self.privacyManager.enableFeatures(.analytics)
-        XCTAssertEqual(eventCount, 2)
+        XCTAssertEqual(counter.value, 2)
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: [])
         )
-        XCTAssertEqual(eventCount, 2)
+        XCTAssertEqual(counter.value, 2)
 
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: [.analytics])
         )
-        XCTAssertEqual(eventCount, 3)
+        XCTAssertEqual(counter.value, 3)
 
 
         notificationCenter.removeObserver(observer)

@@ -3,7 +3,7 @@
 import Foundation
 
 class AirshipResources {
-    static var bundle: Bundle? = findBundle()
+    static let bundle: Bundle? = findBundle()
 
     /// Assumes AirshipResources class and UrbanAirship.string resource always exist in the same bundle
     private static func findBundle() -> Bundle? {

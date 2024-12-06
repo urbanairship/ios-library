@@ -60,13 +60,13 @@ class AnalyticsTest: XCTestCase {
         TestAirshipInstance.clearShared()
     }
 
-
+    @MainActor
     func testScreenTrackingBackground() async throws {
         let notificationCenter = self.notificationCenter
         // Foreground
         notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
-        await self.analytics.trackScreen("test_screen")
+        self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
             notificationCenter.post(
@@ -78,6 +78,7 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual("screen_tracking", events[0].type.reportingName)
     }
 
+    @MainActor
     func testScreenTrackingTerminate() async throws {
         let notificationCenter = self.notificationCenter
 
@@ -85,9 +86,9 @@ class AnalyticsTest: XCTestCase {
         notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
         // Track the screen
-        await self.analytics.trackScreen("test_screen")
+        self.analytics.trackScreen("test_screen")
 
-        await self.analytics.trackScreen("test_screen")
+        self.analytics.trackScreen("test_screen")
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
             notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)

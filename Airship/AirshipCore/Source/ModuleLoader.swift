@@ -33,9 +33,9 @@ enum SDKModuleNames: String, CaseIterable {
 /// NOTE: For internal use only. :nodoc:
 class ModuleLoader {
 
-    public let components: [AirshipComponent]
+    public let components: [any AirshipComponent]
 
-    public let actionManifests: [ActionsManifest]
+    public let actionManifests: [any ActionsManifest]
 
     @MainActor
     init(
@@ -44,15 +44,15 @@ class ModuleLoader {
         channel: AirshipChannel,
         contact: AirshipContact,
         push: AirshipPush,
-        remoteData: RemoteDataProtocol,
+        remoteData: any RemoteDataProtocol,
         analytics: AirshipAnalytics,
         privacyManager: AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        audienceOverrides: AudienceOverridesProvider,
-        experimentsManager: ExperimentDataProvider,
+        audienceOverrides: any AudienceOverridesProvider,
+        experimentsManager: any ExperimentDataProvider,
         meteredUsage: AirshipMeteredUsage,
-        deferredResolver: AirshipDeferredResolverProtocol,
-        cache: AirshipCache
+        deferredResolver: any AirshipDeferredResolverProtocol,
+        cache: any AirshipCache
     ) {
 
         var dependencies: [String: Any] = [
@@ -86,11 +86,11 @@ class ModuleLoader {
     }
 
     @MainActor
-    private class func loadModules(_ dependencies: [String: Any]) -> [AirshipSDKModule]
+    private class func loadModules(_ dependencies: [String: Any]) -> [any AirshipSDKModule]
     {
-        let sdkModules: [AirshipSDKModule] = SDKModuleNames.allCases.compactMap {
+        let sdkModules: [any AirshipSDKModule] = SDKModuleNames.allCases.compactMap {
             guard
-                let moduleClass = NSClassFromString($0.rawValue) as? AirshipSDKModule.Type
+                let moduleClass = NSClassFromString($0.rawValue) as? any AirshipSDKModule.Type
             else {
                 return nil
             }

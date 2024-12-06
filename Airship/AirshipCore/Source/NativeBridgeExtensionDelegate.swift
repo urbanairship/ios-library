@@ -25,7 +25,7 @@ public protocol NativeBridgeExtensionDelegate: AnyObject {
     /// - Parameter completionHandler The completion handler when finished.
     @MainActor
     func extendJavaScriptEnvironment(
-        _ js: JavaScriptEnvironmentProtocol,
+        _ js: any JavaScriptEnvironmentProtocol,
         webView: WKWebView
     ) async
 }

@@ -5,7 +5,7 @@ import Foundation
 
 @MainActor
 class ThomasEnvironment: ObservableObject {
-    private let delegate: ThomasDelegate
+    private let delegate: any ThomasDelegate
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
     let defaultFormState = FormState(identifier: "",
@@ -31,7 +31,7 @@ class ThomasEnvironment: ObservableObject {
 
     @MainActor
     init(
-        delegate: ThomasDelegate,
+        delegate: any ThomasDelegate,
         extensions: ThomasExtensions?,
         onDismiss: (() -> Void)? = nil
     ) {

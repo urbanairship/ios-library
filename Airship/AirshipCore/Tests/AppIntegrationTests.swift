@@ -7,14 +7,17 @@ import XCTest
 class AppIntegrationTests: XCTestCase {
     private let testDelegate = TestIntegrationDelegate()
 
+    @MainActor
     override func setUpWithError() throws {
         AppIntegration.integrationDelegate = self.testDelegate
     }
 
+    @MainActor
     override func tearDownWithError() throws {
         AppIntegration.integrationDelegate = nil
     }
 
+    @MainActor
     func testPerformFetchWithCompletionHandler() throws {
         let appCallbackCalled = expectation(description: "Callback called")
         AppIntegration.application(
@@ -28,6 +31,7 @@ class AppIntegrationTests: XCTestCase {
         XCTAssertTrue(self.testDelegate.onBackgroundAppRefreshCalled!)
     }
 
+    @MainActor
     func testDidRegisterForRemoteNotificationsWithDeviceToken() throws {
         let token = Data("some token".utf8)
         AppIntegration.application(
@@ -37,6 +41,7 @@ class AppIntegrationTests: XCTestCase {
         XCTAssertEqual(token, self.testDelegate.deviceToken)
     }
 
+    @MainActor
     func testDidFailToRegisterForRemoteNotificationsWithError() throws {
         let error = AirshipErrors.error("some error") as NSError
         AppIntegration.application(

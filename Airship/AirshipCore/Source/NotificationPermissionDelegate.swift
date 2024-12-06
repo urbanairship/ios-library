@@ -10,10 +10,10 @@ final class NotificationPermissionDelegate: AirshipPermissionDelegate {
         let skipIfEphemeral: Bool
     }
 
-    let registrar: NotificationRegistrar
+    let registrar: any NotificationRegistrar
     let config: @Sendable () -> Config
 
-    init(registrar: NotificationRegistrar, config: @Sendable @escaping () -> Config) {
+    init(registrar: any NotificationRegistrar, config: @Sendable @escaping () -> Config) {
         self.registrar = registrar
         self.config = config
     }

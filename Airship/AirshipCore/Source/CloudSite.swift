@@ -11,7 +11,7 @@ public enum CloudSite: String, Sendable, Decodable {
     /// Projects available at go.airship.eu must use this value.
     case eu
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         do {
             let stringValue = try container.decode(String.self)

@@ -17,10 +17,10 @@ final class ChannelSubscriptionListProvider: ChannelSubscriptionListProviderProt
     private let overridesApplier = OverridesApplier()
     
     init(
-        audienceOverrides: AudienceOverridesProvider,
-        apiClient: SubscriptionListAPIClientProtocol,
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared,
+        audienceOverrides: any AudienceOverridesProvider,
+        apiClient: any SubscriptionListAPIClientProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared,
         maxChannelListCacheAgeSeconds: TimeInterval = 600
     ) {
         

@@ -25,12 +25,12 @@ final class SessionTracker: SessionTrackerProtocol {
     private let eventsContinuation: AsyncStream<SessionEvent>.Continuation
     public let events: AsyncStream<SessionEvent>
 
-    private let date: AirshipDateProtocol
-    private let taskSleeper: AirshipTaskSleeper
+    private let date: any AirshipDateProtocol
+    private let taskSleeper: any AirshipTaskSleeper
     private let isForeground: AirshipMainActorValue<Bool?> = AirshipMainActorValue(nil)
     private let initialized: AirshipMainActorValue<Bool> = AirshipMainActorValue(false)
     private let _sessionState: AirshipAtomicValue<SessionState>
-    private let appStateTracker: AppStateTrackerProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
     private let sessionStateFactory: @Sendable () -> SessionState
 
     nonisolated var sessionState: SessionState {
@@ -39,10 +39,10 @@ final class SessionTracker: SessionTrackerProtocol {
 
     @MainActor
     init(
-        date: AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: AirshipTaskSleeper = .shared,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        taskSleeper: any AirshipTaskSleeper = .shared,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        appStateTracker: AppStateTrackerProtocol? = nil,
+        appStateTracker: (any AppStateTrackerProtocol)? = nil,
         sessionStateFactory: @Sendable @escaping () -> SessionState = { SessionState() }
     ) {
         self.date = date

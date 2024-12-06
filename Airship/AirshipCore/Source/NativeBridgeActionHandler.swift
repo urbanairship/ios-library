@@ -5,7 +5,7 @@
 import Foundation
 import WebKit
 
-protocol NativeBridgeActionHandlerProtocol {
+protocol NativeBridgeActionHandlerProtocol: Sendable {
     
     /**
      * Runs actions for a command.
@@ -17,7 +17,7 @@ protocol NativeBridgeActionHandlerProtocol {
     @MainActor
     func runActionsForCommand(
         command: JavaScriptCommand,
-        metadata: [String: Sendable]?,
+        metadata: [String: any Sendable]?,
         webView: WKWebView
     ) async -> String?
 }
@@ -28,12 +28,12 @@ private struct DefaultNativeBridgeActionRunner: NativeBridgeActionRunner {
     }
 }
 
-class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
+final class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
 
 
-    private let actionRunner: NativeBridgeActionRunner
+    private let actionRunner: any NativeBridgeActionRunner
 
-    init(actionRunner: NativeBridgeActionRunner = DefaultNativeBridgeActionRunner()) {
+    init(actionRunner: any NativeBridgeActionRunner = DefaultNativeBridgeActionRunner()) {
         self.actionRunner = actionRunner
     }
 
@@ -47,7 +47,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
     @MainActor
     public func runActionsForCommand(
         command: JavaScriptCommand,
-        metadata: [String: Sendable]?,
+        metadata: [String: any Sendable]?,
         webView: WKWebView
     ) async -> String? {
         AirshipLogger.debug("Running actions for command: \(command)")
@@ -130,7 +130,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
     @MainActor
     private func run(
         _ actionValues: [String: [AirshipJSON]],
-        metadata: [String: Sendable]?,
+        metadata: [String: any Sendable]?,
         webView: WKWebView
     ) async {
         for (actionName, values) in actionValues {
@@ -161,7 +161,7 @@ class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
     private func run(
         _ actionName: String,
         _ actionValue: AirshipJSON,
-        _ metadata: [String: Sendable],
+        _ metadata: [String: any Sendable],
         _ callbackID: String,
         webView: WKWebView
     ) async -> String? {

@@ -4,6 +4,9 @@
 import WatchKit
 #endif
 
+@preconcurrency
+import UserNotifications
+
 /// Application hooks required by Airship. If `automaticSetupEnabled` is enabled
 /// (enabled by default), Airship will automatically integrate these calls into
 /// the application by swizzling methods. If `automaticSetupEnabled` is disabled,
@@ -11,7 +14,8 @@ import WatchKit
 public class AppIntegration: NSObject {
 
     /// - Note: For internal use only. :nodoc:
-    public static var integrationDelegate: AppIntegrationDelegate?
+    @MainActor
+    public static var integrationDelegate: (any AppIntegrationDelegate)?
 
     private class func logIgnoringCall(_ method: String = #function) {
         AirshipLogger.impError(
@@ -33,6 +37,7 @@ public class AppIntegration: NSObject {
         deprecated,
         message: "Use application(_:performFetchWithCompletionHandler:) instead"
     )
+    @MainActor
     public class func applicatin(
         _ application: UIApplication,
         performFetchWithCompletionHandler completionHandler: @escaping (
@@ -53,6 +58,7 @@ public class AppIntegration: NSObject {
      *   - application: The application
      *   - completionHandler: The completion handler.
      */
+    @MainActor
     public class func application(
         _ application: UIApplication,
         performFetchWithCompletionHandler completionHandler: @escaping (
@@ -77,6 +83,7 @@ public class AppIntegration: NSObject {
      *   - application: The application
      *   - deviceToken: The device token.
      */
+    @MainActor
     public class func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -97,9 +104,10 @@ public class AppIntegration: NSObject {
      *   - application: The application
      *   - error: The error.
      */
+    @MainActor
     public class func application(
         _ application: UIApplication,
-        didFailToRegisterForRemoteNotificationsWithError error: Error
+        didFailToRegisterForRemoteNotificationsWithError error: any Error
     ) {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
@@ -122,7 +130,7 @@ public class AppIntegration: NSObject {
     public class func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @escaping (
+        fetchCompletionHandler completionHandler: @Sendable @escaping (
             UIBackgroundFetchResult
         ) -> Void
     ) {
@@ -148,6 +156,7 @@ public class AppIntegration: NSObject {
      * - Parameters:
      *   - deviceToken: The device token.
      */
+    @MainActor
     public class func didRegisterForRemoteNotificationsWithDeviceToken(
         deviceToken: Data
     ) {
@@ -166,6 +175,7 @@ public class AppIntegration: NSObject {
      * - Parameters:
      *   - error: The error.
      */
+    @MainActor
     public class func didFailToRegisterForRemoteNotificationsWithError(
         error: Error
     ) {
@@ -184,6 +194,7 @@ public class AppIntegration: NSObject {
      *   - userInfo: The remote notification.
      *   - completionHandler: The completion handler.
      */
+    @MainActor
     public class func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (
@@ -221,10 +232,11 @@ public class AppIntegration: NSObject {
         message:
             "Use userNotificationCenter(_:willPresent:withCompletionHandler:) instead"
     )
+    @MainActor
     public class func userNotificationCenter(
         center: UNUserNotificationCenter,
         willPresentNotification notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (
+        withCompletionHandler completionHandler: @Sendable @escaping (
             _ options: UNNotificationPresentationOptions
         ) -> Void
     ) {
@@ -244,10 +256,11 @@ public class AppIntegration: NSObject {
      *   - notification: The notification.
      *   - completionHandler: The completion handler.
      */
+    @MainActor
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (
+        withCompletionHandler completionHandler: @Sendable @escaping (
             _ options: UNNotificationPresentationOptions
         ) -> Void
     ) {
@@ -283,10 +296,11 @@ public class AppIntegration: NSObject {
         message:
             "Use userNotificationCenter(_:didReceive:withCompletionHandler:) instead"
     )
+    @MainActor
     public class func userNotificationCenter(
         center: UNUserNotificationCenter,
         didReceiveNotificationResponse response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
+        withCompletionHandler completionHandler: @Sendable @escaping () -> Void
     ) {
         self.userNotificationCenter(
             center,
@@ -303,10 +317,11 @@ public class AppIntegration: NSObject {
      *   - response: The notification response.
      *   - completionHandler: The completion handler.
      */
+    @MainActor
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
+        withCompletionHandler completionHandler: @Sendable @escaping () -> Void
     ) {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()

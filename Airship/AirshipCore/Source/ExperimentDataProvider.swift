@@ -6,7 +6,7 @@ import Foundation
 public protocol ExperimentDataProvider: Sendable {
     func evaluateExperiments(
         info: MessageInfo,
-        deviceInfoProvider: AudienceDeviceInfoProvider
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> ExperimentResult?
 }
 
