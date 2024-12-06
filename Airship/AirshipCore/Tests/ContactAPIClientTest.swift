@@ -8,17 +8,10 @@ class ContactAPIClientTest: XCTestCase {
 
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
     private var contactAPIClient: ContactAPIClient!
-    private var config: RuntimeConfig!
+    private var config: RuntimeConfig = RuntimeConfig.testConfig()
     private let currentLocale = Locale(identifier: "fr-CA")
 
     override func setUpWithError() throws {
-        var airshipConfig = AirshipConfig()
-        airshipConfig.deviceAPIURL = "https://example.com"
-        airshipConfig.requireInitialRemoteConfigEnabled = false
-        self.config = RuntimeConfig(
-            config: airshipConfig,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://contacts_test")!,
             statusCode: 200,
@@ -82,7 +75,7 @@ class ContactAPIClientTest: XCTestCase {
             ]
 
         XCTAssertEqual(expectedBody, requestBody)
-        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
+        XCTAssertEqual(request.url?.absoluteString, "\(config.deviceAPIURL!)/api/contacts/identify/v2")
         XCTAssertEqual(request.method, "POST")
         XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
         XCTAssertEqual(
@@ -143,7 +136,7 @@ class ContactAPIClientTest: XCTestCase {
             ]
 
         XCTAssertEqual(expectedBody, requestBody)
-        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
+        XCTAssertEqual(request.url?.absoluteString, "https://device-api.urbanairship.com/api/contacts/identify/v2")
         XCTAssertEqual(request.method, "POST")
         XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
         XCTAssertEqual(
@@ -202,7 +195,7 @@ class ContactAPIClientTest: XCTestCase {
             ]
 
         XCTAssertEqual(expectedBody, requestBody)
-        XCTAssertEqual(request.url?.absoluteString, "https://example.com/api/contacts/identify/v2")
+        XCTAssertEqual(request.url?.absoluteString, "\(config.deviceAPIURL!)/api/contacts/identify/v2")
         XCTAssertEqual(request.method, "POST")
         XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
         XCTAssertEqual(
@@ -239,7 +232,7 @@ class ContactAPIClientTest: XCTestCase {
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
             XCTAssertEqual(
-                "https://example.com/api/channels/restricted/email",
+                "\(config.deviceAPIURL!)/api/channels/restricted/email",
                 previousRequest.url!.absoluteString
             )
 
@@ -270,7 +263,7 @@ class ContactAPIClientTest: XCTestCase {
 
             let lastRequest = self.session.lastRequest!
             XCTAssertEqual(
-                "https://example.com/api/contacts/some-contact-id",
+                "\(config.deviceAPIURL!)/api/contacts/some-contact-id",
                 lastRequest.url!.absoluteString
             )
 
@@ -321,7 +314,7 @@ class ContactAPIClientTest: XCTestCase {
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
             XCTAssertEqual(
-                "https://example.com/api/channels/restricted/sms",
+                "https://device-api.urbanairship.com/api/channels/restricted/sms",
                 previousRequest.url!.absoluteString
             )
             
@@ -343,7 +336,7 @@ class ContactAPIClientTest: XCTestCase {
             
             let lastRequest = self.session.lastRequest!
             XCTAssertEqual(
-                "https://example.com/api/contacts/some-contact-id",
+                "https://device-api.urbanairship.com/api/contacts/some-contact-id",
                 lastRequest.url!.absoluteString
             )
             
@@ -393,7 +386,7 @@ class ContactAPIClientTest: XCTestCase {
             let previousRequest = self.session.previousRequest!
             XCTAssertNotNil(previousRequest)
             XCTAssertEqual(
-                "https://example.com/api/channels/restricted/open",
+                "https://device-api.urbanairship.com/api/channels/restricted/open",
                 previousRequest.url!.absoluteString
             )
             
@@ -425,7 +418,7 @@ class ContactAPIClientTest: XCTestCase {
             
             let lastRequest = self.session.lastRequest!
             XCTAssertEqual(
-                "https://example.com/api/contacts/some-contact-id",
+                "https://device-api.urbanairship.com/api/contacts/some-contact-id",
                 lastRequest.url!.absoluteString
             )
             
@@ -464,7 +457,7 @@ class ContactAPIClientTest: XCTestCase {
             
             let request = self.session.lastRequest!
             XCTAssertEqual(
-                "https://example.com/api/contacts/some-contact-id",
+                "https://device-api.urbanairship.com/api/contacts/some-contact-id",
                 request.url!.absoluteString
             )
             
@@ -503,7 +496,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/contacts/disassociate/\(expectedContactID)",
+            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)",
             request.url!.absoluteString
         )
 
@@ -538,7 +531,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/contacts/disassociate/\(expectedContactID)",
+            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)",
             request.url!.absoluteString
         )
 
@@ -569,7 +562,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/contacts/disassociate/\(expectedContactID)",
+            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)",
             request.url!.absoluteString
         )
 
@@ -599,7 +592,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/channels/resend",
+            "https://device-api.urbanairship.com/api/channels/resend",
             request.url!.absoluteString
         )
 
@@ -628,7 +621,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/channels/resend",
+            "https://device-api.urbanairship.com/api/channels/resend",
             request.url!.absoluteString
         )
 
@@ -656,7 +649,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/channels/resend",
+            "https://device-api.urbanairship.com/api/channels/resend",
             request.url!.absoluteString
         )
 
@@ -730,7 +723,7 @@ class ContactAPIClientTest: XCTestCase {
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
-            "https://example.com/api/contacts/some-contact-id",
+            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
             request.url!.absoluteString
         )
 

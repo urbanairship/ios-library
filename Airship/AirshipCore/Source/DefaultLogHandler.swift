@@ -5,6 +5,12 @@ import os
 
 /// Default log handler. Logs to either os.Logger or just prints depending on OS version.
 final class DefaultLogHandler: AirshipLogHandler {
+    private let privacyLevel: AirshipLogPrivacyLevel
+
+    init(privacyLevel: AirshipLogPrivacyLevel) {
+        self.privacyLevel = privacyLevel
+    }
+
     @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
     private static let logger: Logger = Logger(
         subsystem: Bundle.main.bundleIdentifier ?? "",
@@ -19,21 +25,16 @@ final class DefaultLogHandler: AirshipLogHandler {
         function: String
     ) {
         let logMessage = "[\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
-
-        if #available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *) {
-            switch Airship.logPrivacyLevel {
-            case .private:
-                DefaultLogHandler.logger.log(
-                    level: logLevel.logType,
-                    "\(logMessage, privacy: .private)"
-                )
-            case .public:
-                DefaultLogHandler.logger.notice(
-                    "\(logMessage, privacy: .public)"
-                )
-            }
-        } else {
-            print(logMessage)
+        switch self.privacyLevel {
+        case .private:
+            DefaultLogHandler.logger.log(
+                level: logLevel.logType,
+                "\(logMessage, privacy: .private)"
+            )
+        case .public:
+            DefaultLogHandler.logger.notice(
+                "\(logMessage, privacy: .public)"
+            )
         }
     }
 }

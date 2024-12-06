@@ -4,299 +4,158 @@ import XCTest
 @testable import AirshipCore
 
 final class AirshipConfigTest: XCTestCase {
-
-    func testURLAllowListNotSetAfterCopy() throws {
+    func testEmptyConfig() {
         let config = AirshipConfig()
-        let copy = config.copy() as! AirshipConfig
-        XCTAssertFalse(copy.isURLAllowListSet)
-        XCTAssertFalse(copy.isURLAllowListScopeOpenURLSet)
-    }
-    
-    func testURLAllowListSetAfterCopy() throws {
-        var config = AirshipConfig()
-        config.urlAllowList = ["neat"]
-
-        let copy = config.copy() as! AirshipConfig
-        XCTAssertTrue(copy.isURLAllowListSet)
+        verifyDefaultConfig(config)
     }
 
-    func testURLAllowScopeOpenURLSetListSetAfterCopy() throws {
-        var config = AirshipConfig()
-        config.urlAllowListScopeOpenURL = ["neat"]
-
-        let copy = config.copy() as! AirshipConfig
-        XCTAssertTrue(copy.isURLAllowListScopeOpenURLSet)
+    func testConfigFromEmptyJSON() throws {
+        let config: AirshipConfig = try AirshipJSON.wrap([:]).decode()
+        verifyDefaultConfig(config)
     }
-    
-    func testProductionProfileParsing() {
-        let profilePath = Bundle(for: self.classForCoder).path(forResource: "production-embedded", ofType: "mobileprovision")!
-        XCTAssert(AirshipConfig.isProductionProvisioningProfile(profilePath))
+
+    func testOldPlistFormat() throws {
+        let path = Bundle(for: self.classForCoder).path(
+            forResource: "AirshipConfig-Valid-Legacy",
+            ofType: "plist"
+        )
+        let config = try AirshipConfig(fromPlist: path!)
+        XCTAssertEqual(config.productionAppKey, "0A00000000000000000000")
+        XCTAssertEqual(config.productionAppSecret, "0A00000000000000000000")
+        XCTAssertEqual(config.developmentAppKey, "0A00000000000000000000")
+        XCTAssertEqual(config.developmentAppSecret, "0A00000000000000000000")
+        XCTAssertEqual(config.developmentLogLevel, .verbose)
+        XCTAssertEqual(config.inProduction, true)
     }
-    
-    func testDevelopmentProfileParsing() {
-        let profilePath = Bundle(for: self.classForCoder).path(
-            forResource: "development-embedded",
-            ofType: "mobileprovision"
-        )!
 
-        XCTAssertFalse(AirshipConfig.isProductionProvisioningProfile(profilePath))
+    func testPlistParsing() throws {
+        let path = Bundle(for: self.classForCoder).path(
+            forResource: "AirshipConfig-Valid",
+            ofType: "plist"
+        )
+
+        let config = try AirshipConfig(fromPlist: path!)
+        XCTAssertEqual(config.productionAppKey, "0A00000000000000000000")
+        XCTAssertEqual(config.productionAppSecret, "0A00000000000000000000")
+        XCTAssertEqual(config.developmentAppKey, "0A00000000000000000000")
+        XCTAssertEqual(config.developmentAppSecret, "0A00000000000000000000")
+        XCTAssertEqual(config.developmentLogLevel, .error)
+        XCTAssertEqual(config.developmentLogPrivacyLevel, .private)
+        XCTAssertEqual(config.productionLogLevel, .verbose)
+        XCTAssertEqual(config.productionLogPrivacyLevel, .public)
+        XCTAssertTrue(config.isChannelCreationDelayEnabled)
+        XCTAssertTrue(config.isExtendedBroadcastsEnabled)
+        XCTAssertEqual(config.inProduction, true)
+        XCTAssertEqual(config.enabledFeatures, [.inAppAutomation, .push])
+        XCTAssertTrue(config.resetEnabledFeatures)
+        XCTAssertEqual(config.messageCenterStyleConfig, "ValidUAMessageCenterDefaultStyle")
     }
-    
-    func testMissingEmbeddedProfile() {
-        XCTAssertTrue(AirshipConfig.isProductionProvisioningProfile(""))
-    }
-    
-    func testSimulatorFallback() {
-        // Ensure that the simulator falls back to the inProduction flag as it was set if there isn't a profile
-        var production = AirshipConfig()
-        production.profilePath = nil
-        production.inProduction = true
-        production.detectProvisioningMode = true
-        XCTAssertTrue(production.inProduction)
 
-        var development = AirshipConfig()
-        development.profilePath = nil
-        development.inProduction = false
-        development.detectProvisioningMode = true
-        XCTAssertFalse(development.inProduction)
-    }
-    
-    func testMissingProvisioningOnDeviceFallback() {
-        // Ensure that a device falls back to YES rather than inProduction when there isn't a profile
-        var config = AirshipConfig()
-        config.profilePath = nil
-        config.inProduction = false
-        config.detectProvisioningMode = true
-        XCTAssertFalse(config.inProduction, "Devices without embedded provisioning profiles AND provisioning detection enabled should return YES for inProduction as a safety measure.")
-    }
-    
-    func testProductionFlag() {
-        var config = AirshipConfig()
-        
-        // initialize with a custom profile path that is accessible from this test environment
-        config.profilePath = Bundle(for: self.classForCoder).path(forResource: "production-embedded", ofType: "mobileprovision")!
-        
-        // populate dev and prod keys, then toggle between them
-        config.developmentAppKey = "devAppKey"
-        config.developmentAppSecret = "devAppSecret"
-        config.developmentLogLevel = .verbose //not the default
-        
-        config.productionAppKey = "prodAppKey"
-        config.productionAppSecret = "prodAppSecret"
-        config.productionLogLevel = .none //not the default
-
-        XCTAssertTrue(config.inProduction, "inProduction defaults to YES.")
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode defaults to YES.")
-        XCTAssertEqual(config.appKey, config.productionAppKey, "Incorrect app key resolution.")
-        XCTAssertEqual(config.appSecret, config.productionAppSecret, "Incorrect app secret resolution.")
-        XCTAssertEqual(config.logLevel, config.productionLogLevel, "Incorrect log level resolution.")
-        XCTAssertEqual(config.logPrivacyLevel, config.productionLogPrivacyLevel, "Incorrect log privacy level resolution.")
-
-        config.inProduction = false
-        XCTAssertFalse(config.detectProvisioningMode, "detectProvisioningMode defaults to NO.")
-        XCTAssertEqual(config.appKey, config.developmentAppKey, "Incorrect app key resolution.")
-        XCTAssertEqual(config.appSecret, config.developmentAppSecret, "Incorrect app secret resolution.")
-        XCTAssertEqual(config.logLevel, config.developmentLogLevel, "Incorrect log level resolution.")
-        XCTAssertEqual(config.logPrivacyLevel, config.developmentLogPrivacyLevel, "Incorrect log privacy level resolution.")
-
-        config.inProduction = true
-        XCTAssertFalse(config.detectProvisioningMode, "detectProvisioningMode defaults to NO.")
-        XCTAssertEqual(config.appKey, config.productionAppKey, "Incorrect app key resolution.")
-        XCTAssertEqual(config.appSecret, config.productionAppSecret, "Incorrect app secret resolution.")
-        XCTAssertEqual(config.logLevel, config.productionLogLevel, "Incorrect log level resolution.")
-        XCTAssertEqual(config.logPrivacyLevel, config.productionLogPrivacyLevel, "Incorrect log privacy level resolution.")
-
-        config.detectProvisioningMode = true
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode defaults to YES.")
-        XCTAssertTrue(config.inProduction, "The embedded provisioning profile is a production profile.")
-    }
-    
-    /**
-     * Test detectProvisioningMode = true when neither detectProvisioningMode or inProduction
-     * is explicity set in AirshipConfig.plist
-     */
-    func testDetectProvisioningModeDefault() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Without-InProduction-And-DetectProvisioningMode", ofType: "plist")!
-        let config = AirshipConfig.config(contentsOfFile: plist)
-        
-        XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode should default to true")
-    }
-    
-    /**
-     * Test detectProvisioningMode = true when detectProvisioningMode is explicity set in AirshipConfig.plist
-     */
-    func testDetectProvisioningModeExplicitlySet() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-DetectProvisioningMode", ofType: "plist")!
-        let config = AirshipConfig.config(contentsOfFile: plist)
-        
-        XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode should default to true")
-    }
-    
-    /**
-     * Test inProduction = true when inProduction is explicitly set in AirshipConfig.plist
-     */
-    func testInProductionExplicitlySet() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-InProduction", ofType: "plist")!
-        let config = AirshipConfig.config(contentsOfFile: plist)
-        
-        XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
-        XCTAssertTrue(config.inProduction, "inProduction should be true")
-    }
-    
-    /**
-     * Test when both detectProvisioningMode and inProduction is explicitly set in AirshipConfig.plist
-     */
-    func testDetectProvisioningModeAndInProductionExplicitlySet() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
-        let config = AirshipConfig.config(contentsOfFile: plist)
-        
-        XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode should be true")
-        XCTAssertTrue(config.inProduction, "inProduction should be true")
-        XCTAssertEqual(CloudSite.eu, config.site)
-        XCTAssertEqual(["*"], config.urlAllowListScopeOpenURL)
-    }
-    
-    func testOldPlistFormat() {
-        let legacyPlist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid-Legacy-NeXTStep", ofType: "plist")!
-        let validAppValue = "0A00000000000000000000"
-        let config = AirshipConfig.config(contentsOfFile: legacyPlist)
-        
-        XCTAssertTrue(config.validate(), "Legacy Config File is invalid.")
-
-        XCTAssertEqual(config.productionAppKey, validAppValue, "Production app key was improperly loaded.")
-        XCTAssertEqual(config.productionAppSecret, validAppValue, "Production app secret was improperly loaded.")
-        XCTAssertEqual(config.developmentAppKey, validAppValue, "Development app key was improperly loaded.")
-        XCTAssertEqual(config.developmentAppSecret, validAppValue, "Development app secret was improperly loaded.")
-
-        XCTAssertEqual(config.developmentLogLevel, .verbose, "Development log level was improperly loaded.")
-        XCTAssertTrue(config.inProduction, "inProduction was improperly loaded.")
-    }
-    
-    func testPlistParsing() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
-        let validAppValue = "0A00000000000000000000"
-        var config = AirshipConfig.config(contentsOfFile: plist)
-        
-        XCTAssertTrue(config.validate(), "AirshipConfig (modern) File is invalid.")
-
-        XCTAssertEqual(config.productionAppKey, validAppValue, "Production app key was improperly loaded.")
-        XCTAssertEqual(config.productionAppSecret, validAppValue, "Production app secret was improperly loaded.")
-        XCTAssertEqual(config.developmentAppKey, validAppValue, "Development app key was improperly loaded.")
-        XCTAssertEqual(config.developmentAppSecret, validAppValue, "Development app secret was improperly loaded.")
-
-        XCTAssertEqual(config.developmentLogLevel, .error, "Development log level was improperly loaded.")
-        XCTAssertEqual(config.productionLogLevel, .verbose, "Production log level was improperly loaded.")
-        XCTAssertTrue(config.detectProvisioningMode, "detectProvisioningMode was improperly loaded.")
-        XCTAssertTrue(config.isChannelCreationDelayEnabled, "channelCreationDelayEnabled was improperly loaded.")
-        XCTAssertTrue(config.isExtendedBroadcastsEnabled, "extendedBroadcastsEnabled was improperly loaded.")
-
-        //special case this one since we have to disable detectProvisioningMode
-        config.detectProvisioningMode = false
-        XCTAssertTrue(config.inProduction, "inProduction was improperly loaded.")
-        
-        XCTAssert(config.enabledFeatures.contains(.push))
-        XCTAssert(config.enabledFeatures.contains(.inAppAutomation))
-
-        XCTAssertTrue(config.resetEnabledFeatures, "resetEnabledFeatures was improperly loaded.")
-    }
-    
-    func testValidation() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
-        let validAppValue = "0A00000000000000000000"
-        let invalidValue = " invalid!!! "
-        var config = AirshipConfig.config(contentsOfFile: plist)
-        
-        config.inProduction = false
-        config.detectProvisioningMode = false
-
-        // Make it invalid and then valid again, asserting the whole way.
-        
-        config.developmentAppKey = invalidValue
-        XCTAssertFalse(config.validate(), "Development App Key is improperly verified.")
-        config.developmentAppKey = validAppValue
-
-        config.developmentAppSecret = invalidValue
-        XCTAssertFalse(config.validate(), "Development App Secret is improperly verified.")
-        config.developmentAppSecret = validAppValue
-
-        //switch to production mode as validation only strictly checks the current keypair
-        config.inProduction = true
-
-        config.productionAppKey = invalidValue
-        XCTAssertFalse(config.validate(), "Production App Key is improperly verified.")
-        config.productionAppKey = validAppValue
-
-        config.productionAppSecret = invalidValue
-        XCTAssertFalse(config.validate(), "Production App Secret is improperly verified.")
-        config.productionAppSecret = validAppValue
-    }
-    
-    func testCopyConfig() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "AirshipConfig-Valid", ofType: "plist")!
-        let config = AirshipConfig.config(contentsOfFile: plist)
-        let copy = config.copy() as! AirshipConfig
-        
-        XCTAssertEqual(copy.description, config.description)
-        XCTAssertTrue(copy.developmentAppKey == config.developmentAppKey)
-        XCTAssertTrue(copy.developmentAppSecret == config.developmentAppSecret)
-        XCTAssertTrue(copy.productionAppKey == config.productionAppKey)
-        XCTAssertTrue(copy.productionAppSecret == config.productionAppSecret)
-        XCTAssertTrue(copy.deviceAPIURL == config.deviceAPIURL)
-        XCTAssertTrue(copy.remoteDataAPIURL == config.remoteDataAPIURL)
-        XCTAssertTrue(copy.analyticsURL == config.analyticsURL)
-        XCTAssertTrue(copy.developmentLogLevel == config.developmentLogLevel)
-        XCTAssertTrue(copy.developmentLogPrivacyLevel == config.developmentLogPrivacyLevel)
-        XCTAssertTrue(copy.productionLogLevel == config.productionLogLevel)
-        XCTAssertTrue(copy.productionLogPrivacyLevel == config.productionLogPrivacyLevel)
-        XCTAssertTrue(copy.inProduction == config.inProduction)
-        XCTAssertTrue(copy.detectProvisioningMode == config.detectProvisioningMode)
-        XCTAssertTrue(copy.profilePath == config.profilePath)
-        XCTAssertTrue(copy.isAnalyticsEnabled == config.isAnalyticsEnabled)
-        XCTAssertTrue(copy.clearUserOnAppRestore == config.clearUserOnAppRestore)
-        XCTAssertEqual(copy.urlAllowList, config.urlAllowList)
-        XCTAssertEqual(copy.urlAllowListScopeJavaScriptInterface, config.urlAllowListScopeJavaScriptInterface)
-        XCTAssertEqual(copy.urlAllowListScopeOpenURL, config.urlAllowListScopeOpenURL)
-        XCTAssertTrue(copy.clearNamedUserOnAppRestore == config.clearNamedUserOnAppRestore)
-        XCTAssertTrue(copy.isChannelCaptureEnabled == config.isChannelCaptureEnabled)
-        XCTAssertTrue(copy.isChannelCreationDelayEnabled == config.isChannelCreationDelayEnabled)
-        XCTAssertTrue(copy.isExtendedBroadcastsEnabled == config.isExtendedBroadcastsEnabled)
-        XCTAssertTrue(copy.messageCenterStyleConfig == config.messageCenterStyleConfig)
-        XCTAssertTrue(copy.itunesID == config.itunesID)
-        XCTAssertTrue(copy.requestAuthorizationToUseNotifications == config.requestAuthorizationToUseNotifications)
-        XCTAssertTrue(copy.requireInitialRemoteConfigEnabled == config.requireInitialRemoteConfigEnabled)
-        XCTAssertTrue(copy.resetEnabledFeatures == config.resetEnabledFeatures)
-
-        XCTAssertEqual(copy.enabledFeatures, config.enabledFeatures)
-    }
-    
-    func testInitialConfig() {
-        let config = AirshipConfig()
-        
-        XCTAssertEqual(CloudSite.us, config.site)
-        XCTAssertNil(config.deviceAPIURL)
-        XCTAssertNil(config.remoteDataAPIURL)
-        XCTAssertNil(config.analyticsURL)
+    private func verifyDefaultConfig(
+        _ config: AirshipConfig,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertNil(config.developmentAppKey)
+        XCTAssertNil(config.developmentAppSecret)
+        XCTAssertNil(config.productionAppKey)
+        XCTAssertNil(config.productionAppSecret)
+        XCTAssertNil(config.defaultAppKey)
+        XCTAssertNil(config.defaultAppSecret)
+        XCTAssertNil(config.logHandler)
+        XCTAssertEqual(config.site, .us)
         XCTAssertEqual(config.developmentLogLevel, .debug)
         XCTAssertEqual(config.developmentLogPrivacyLevel, .private)
         XCTAssertEqual(config.productionLogLevel, .error)
         XCTAssertEqual(config.productionLogPrivacyLevel, .private)
-        XCTAssertFalse(config.inProduction)
-        XCTAssertTrue(config.detectProvisioningMode)
+        XCTAssertNil(config.inProduction)
         XCTAssertTrue(config.isAutomaticSetupEnabled)
         XCTAssertTrue(config.isAnalyticsEnabled)
         XCTAssertFalse(config.clearUserOnAppRestore)
-        XCTAssertEqual(config.urlAllowList.count, 0)
-        XCTAssertEqual(config.urlAllowListScopeJavaScriptInterface.count, 0)
-        XCTAssertEqual(config.urlAllowListScopeOpenURL.count, 0)
+        XCTAssertNil(config.urlAllowList)
+        XCTAssertNil(config.urlAllowListScopeJavaScriptInterface)
+        XCTAssertNil(config.urlAllowListScopeOpenURL)
         XCTAssertFalse(config.clearNamedUserOnAppRestore)
         XCTAssertTrue(config.isChannelCaptureEnabled)
         XCTAssertFalse(config.isChannelCreationDelayEnabled)
         XCTAssertFalse(config.isExtendedBroadcastsEnabled)
         XCTAssertTrue(config.requestAuthorizationToUseNotifications)
         XCTAssertTrue(config.requireInitialRemoteConfigEnabled)
+        XCTAssertFalse(config.autoPauseInAppAutomationOnLaunch)
         XCTAssertFalse(config.resetEnabledFeatures)
+        XCTAssertFalse(config.isWebViewInspectionEnabled)
+        XCTAssertNil(config.connectionChallengeResolver)
+        XCTAssertNil(config.restoreChannelID)
+        XCTAssertNil(config.itunesID)
+        XCTAssertNil(config.messageCenterStyleConfig)
+        XCTAssertEqual(config.enabledFeatures, .all)
+        XCTAssertNil(config.initialConfigURL)
+        XCTAssertFalse(config.useUserPreferredLocale)
+        XCTAssertTrue(config.restoreMessageCenterOnReinstall)
+    }
+
+    func testValidation() throws {
+        var config = AirshipConfig()
+
+        // Not set
+        verifyThrows {
+            try config.validateCredentials(inProduction: true)
+        }
+        verifyThrows {
+            try config.validateCredentials(inProduction: false)
+        }
+
+        // App key & secret match
+        config.developmentAppKey = "0A00000000000000000000"
+        config.developmentAppSecret = "0A00000000000000000000"
+        verifyThrows {
+            try config.validateCredentials(inProduction: false)
+        }
+
+        // Should not throw
+        config.developmentAppSecret = "0B00000000000000000000"
+        try config.validateCredentials(inProduction: false)
+
+        // Production still not set
+        verifyThrows {
+            try config.validateCredentials(inProduction: true)
+        }
+
+        // Invalid key
+        config.productionAppKey = "NOT VALID"
+        config.productionAppSecret = "0A00000000000000000000"
+        verifyThrows {
+            try config.validateCredentials(inProduction: true)
+        }
+
+        // Invalid secret
+        config.productionAppKey = "0A00000000000000000000"
+        config.productionAppSecret = "NOT VALID"
+        verifyThrows {
+            try config.validateCredentials(inProduction: true)
+        }
+
+        // Both invalid
+        config.productionAppKey = "NOT VALID KEY"
+        config.productionAppSecret = "NOT VALID"
+        verifyThrows {
+            try config.validateCredentials(inProduction: true)
+        }
+
+        // Both valid
+        config.productionAppKey = "0A00000000000000000000"
+        config.productionAppSecret = "0B00000000000000000000"
+        try config.validateCredentials(inProduction: true)
+    }
+
+    private func verifyThrows(
+        block: () throws -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        do {
+            try block()
+            XCTFail()
+        } catch {}
     }
 }

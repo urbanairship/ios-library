@@ -6,17 +6,11 @@ import XCTest
 
 class ChannelBulkUpdateAPIClientTest: XCTestCase {
 
-    private var config: RuntimeConfig!
+    private var config: RuntimeConfig = .testConfig()
     private let session = TestAirshipRequestSession()
     var client: ChannelBulkUpdateAPIClient!
 
     override func setUpWithError() throws {
-        var airshipConfig = AirshipConfig()
-        airshipConfig.requireInitialRemoteConfigEnabled = false
-        self.config = RuntimeConfig(
-            config: airshipConfig,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
         self.client = ChannelBulkUpdateAPIClient(
             config: self.config,
             session: self.session

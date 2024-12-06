@@ -184,7 +184,8 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
 
         if !self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled {
             AirshipLogger.impError(
-                "Application is not configured for background notifications. Please enable remote notifications in the application's background modes."
+                "Application is not configured for background notifications. Please enable remote notifications in the application's background modes.",
+                skipLogLevelCheck: false
             )
         }
     }
@@ -524,7 +525,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
     public func enableUserPushNotifications(
         fallback: PromptPermissionFallback
     ) async -> Bool {
-        guard self.config.requestAuthorizationToUseNotifications else {
+        guard self.config.airshipConfig.requestAuthorizationToUseNotifications else {
             self.userPushNotificationsEnabled = true
 
             if !fallback.isNone {
@@ -826,7 +827,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         #if !os(tvOS)
         guard 
             self.privacyManager.isEnabled(.push),
-            self.config.requestAuthorizationToUseNotifications
+            self.config.airshipConfig.requestAuthorizationToUseNotifications
         else {
             return
         }
@@ -847,7 +848,7 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
             return
         }
 
-        guard self.config.requestAuthorizationToUseNotifications else {
+        guard self.config.airshipConfig.requestAuthorizationToUseNotifications else {
             self.channel.updateRegistration()
             return
         }

@@ -748,7 +748,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
         let existing = notification.userInfo?[AirshipNotifications.ChannelCreated.isExistingChannelKey] as? Bool
 
-        if existing == true && self.config.clearNamedUserOnAppRestore {
+        if existing == true && self.config.airshipConfig.clearNamedUserOnAppRestore {
             self.addOperation(.reset)
         } else {
             self.addOperation(.resolve)

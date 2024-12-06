@@ -21,15 +21,7 @@ class AirshipBaseTest: XCTestCase {
      * A preference airship with unique appkey/secret. A runtime config is created
      * lazily when first used.
      */
-    lazy var config: RuntimeConfig = {
-        var config = AirshipConfig()
-        config.inProduction = false
-        config.site = .us
-        config.developmentAppKey = "test-app-key";
-        config.developmentAppSecret = "test-app-secret";
-        config.requireInitialRemoteConfigEnabled = false
-        return RuntimeConfig(config: config, dataStore: self.dataStore)
-    }()
+    lazy var config: RuntimeConfig = RuntimeConfig.testConfig()
     
 }
 

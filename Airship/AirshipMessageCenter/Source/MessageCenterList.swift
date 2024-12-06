@@ -196,7 +196,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
         self.workManager = workManager
         self.taskSleeper = taskSleeper ?? DefaultAirshipTaskSleeper.shared
 
-        self.startUpTask = if channel.identifier == nil, !config.restoreMessageCenterOnReinstall {
+        self.startUpTask = if channel.identifier == nil, !config.airshipConfig.restoreMessageCenterOnReinstall {
             Task { [weak store] in
                 await store?.resetUser()
             }

@@ -13,13 +13,13 @@ struct AppRemoteDataProviderDelegate: RemoteDataProviderDelegate {
     init(config: RuntimeConfig, apiClient: RemoteDataAPIClientProtocol) {
         self.config = config
         self.apiClient = apiClient
-        self.storeName = "RemoteData-\(config.appKey).sqlite"
+        self.storeName = "RemoteData-\(config.appCredentials.appKey).sqlite"
     }
 
     private func makeURL(locale: Locale, randomValue: Int) throws -> URL {
         return try RemoteDataURLFactory.makeURL(
             config: config,
-            path: "/api/remote-data/app/\(config.appKey)/ios",
+            path: "/api/remote-data/app/\(config.appCredentials.appKey)/ios",
             locale: locale,
             randomValue: randomValue
         )

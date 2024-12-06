@@ -9,7 +9,7 @@ class AnalyticsTest: XCTestCase {
 
     private let appStateTracker = TestAppStateTracker()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private let config = AirshipConfig()
+    private let config = RuntimeConfig.testConfig()
     private let channel = TestChannel()
     private let locale = TestLocaleManager()
     private var permissionsManager: AirshipPermissionsManager!
@@ -30,10 +30,7 @@ class AnalyticsTest: XCTestCase {
         self.permissionsManager = AirshipPermissionsManager()
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config:  RuntimeConfig(
-                config: self.config,
-                dataStore: self.dataStore
-            ),
+            config: RuntimeConfig.testConfig(),
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
@@ -45,7 +42,7 @@ class AnalyticsTest: XCTestCase {
     @MainActor
     func makeAnalytics() -> AirshipAnalytics {
         return AirshipAnalytics(
-            config: RuntimeConfig(config: config, dataStore: dataStore),
+            config: config,
             dataStore: dataStore,
             channel: channel,
             notificationCenter: notificationCenter,
@@ -424,7 +421,7 @@ class AnalyticsTest: XCTestCase {
             "X-UA-OS-Version": UIDevice.current.systemVersion,
             "X-UA-Device-Model": AirshipUtils.deviceModelName(),
             "X-UA-Lib-Version": AirshipVersion.version,
-            "X-UA-App-Key": self.config.appKey,
+            "X-UA-App-Key": self.config.appCredentials.appKey,
             "X-UA-Package-Name":
                 Bundle.main.infoDictionary?[kCFBundleIdentifierKey as String]
                 as? String,

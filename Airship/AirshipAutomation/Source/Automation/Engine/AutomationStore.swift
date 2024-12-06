@@ -66,7 +66,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     }
 
     init(config: RuntimeConfig) {
-        self.init(appKey: config.appKey)
+        self.init(appKey: config.appCredentials.appKey)
     }
 
     func getSchedules() async throws -> [AutomationScheduleData] {

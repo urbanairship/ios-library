@@ -13,11 +13,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Prefere
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        var config = AirshipConfig.default()
+        var config = try! AirshipConfig.default()
         config.productionLogLevel = .verbose
         config.developmentLogLevel = .verbose
 
-        Airship.takeOff(config, launchOptions: launchOptions)
+        try! Airship.takeOff(config, launchOptions: launchOptions)
 
         Airship.channel.editTags { $0.add(["tvos"]) }
         Airship.deepLinkDelegate = self

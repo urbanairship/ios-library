@@ -13,7 +13,7 @@ final class ScheduleActionTest: XCTestCase {
     
     override func setUp() async throws {
         let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-        let config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
+        let config = RuntimeConfig.testConfig()
         
         let inAppAutomation = await InAppAutomation(
             engine: automation,

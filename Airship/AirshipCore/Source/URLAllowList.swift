@@ -18,14 +18,18 @@ public protocol URLAllowListDelegate {
 
 /// NOTE: For internal use only. :nodoc:
 public protocol URLAllowListProtocol {
+    @MainActor
     func isAllowed(_ url: URL?) -> Bool
 
+    @MainActor
     func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool
 
     @discardableResult
+    @MainActor
     func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool
 
     @discardableResult
+    @MainActor
     func addEntry(_ patternString: String) -> Bool
 }
 
@@ -51,7 +55,8 @@ public protocol URLAllowListProtocol {
 /// Note that NSURL does not support internationalized domains containing non-ASCII characters.
 /// All URL allow list entries for internationalized domains must be in ASCII IDNA format as
 /// specified in https://tools.ietf.org/html/rfc3490
-public final class URLAllowList: NSObject, URLAllowListProtocol {
+@MainActor
+public final class URLAllowList: URLAllowListProtocol {
     /// `<scheme> := <any chars (no spaces), '*' will match 0 or more characters>`
     private static let schemeRegex = "^([^\\s]*)$"
 
@@ -81,64 +86,46 @@ public final class URLAllowList: NSObject, URLAllowListProtocol {
 
     private var entries: Set<AllowListEntry> = []
 
-    /// Create a default URL allow list with entries specified in a config object.
-    ///
-    /// - Note: The entry "*.urbanairship.com" is added by default.
-    ///
-    /// - Parameter config: An instance of UARuntimeConfig.
-    ///
-    /// - Returns: An instance of UAURLAllowList
-    @MainActor
-    public static func allowListWithConfig(_ config: RuntimeConfig)
-        -> URLAllowList
-    {
-        let allowList = URLAllowList()
-        allowList.addEntry("https://*.urbanairship.com")
-        allowList.addEntry("https://*.asnapieu.com")
+    init(airshipConfig: AirshipConfig) {
+        addEntry("https://*.urbanairship.com")
+        addEntry("https://*.asnapieu.com")
+
+        if let initialConfigURL = airshipConfig.initialConfigURL {
+            addEntry(initialConfigURL)
+        }
 
         // Open only
-        allowList.addEntry("mailto:", scope: .openURL)
-        allowList.addEntry("sms:", scope: .openURL)
-        allowList.addEntry("tel:", scope: .openURL)
+        addEntry("mailto:", scope: .openURL)
+        addEntry("sms:", scope: .openURL)
+        addEntry("tel:", scope: .openURL)
 
-        if (!config.isURLAllowListSet && !config.isURLAllowListScopeOpenURLSet) {
-            AirshipLogger.impError(
-                "The Airship config options is missing URL allow list rules for SCOPE_OPEN " +
-                "that controls what external URLs are able to be opened externally or loaded " +
-                "in a web view by Airship. By default, all URLs will be allowed. " +
-                "To suppress this error, specify the config urlAllowListScopeOpenURL = [*] " +
-                "to keep the defaults, or by providing a list of rules that your app expects. " +
-                "See https://docs.airship.com/platform/mobile/setup/sdk/ios/#url-allow-list " +
-                "for more information."
-              )
-
-            allowList.addEntry("*", scope: .openURL)
+        if (airshipConfig.urlAllowList == nil && airshipConfig.urlAllowListScopeOpenURL == nil) {
+            addEntry("*", scope: .openURL)
         }
 
         #if !os(watchOS)
-        allowList.addEntry(
+        addEntry(
             UIApplication.openSettingsURLString,
             scope: .openURL
         )
         #endif
 
-        config.urlAllowList?
-            .forEach {
-                allowList.addEntry($0)
-            }
+        airshipConfig.urlAllowList?.forEach {
+            addEntry($0)
+        }
 
-        config.urlAllowListScopeJavaScriptInterface?
-            .forEach {
-                allowList.addEntry($0, scope: .javaScriptInterface)
-            }
+        airshipConfig.urlAllowListScopeOpenURL?.forEach {
+            addEntry($0, scope: .openURL)
+        }
 
-        config.urlAllowListScopeOpenURL?
-            .forEach {
-                allowList.addEntry($0, scope: .openURL)
-            }
-
-        return allowList
+        airshipConfig.urlAllowListScopeJavaScriptInterface?.forEach {
+            addEntry($0, scope: .javaScriptInterface)
+        }
     }
+
+    init() {
+    }
+
 
     /// The URL allow list delegate.
     ///

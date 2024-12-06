@@ -84,7 +84,7 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
 
         super.init()
 
-        if config.resetEnabledFeatures {
+        if config.airshipConfig.resetEnabledFeatures {
             self.dataStore.removeObject(forKey:  AirshipPrivacyManager.enabledFeaturesKey)
         } 
 

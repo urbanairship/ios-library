@@ -8,17 +8,10 @@ final class MeteredUsageApiClientTest: XCTestCase {
     private let requestSession = TestAirshipRequestSession()
     private let configDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var target: MeteredUsageAPIClient!
-    private var config: RuntimeConfig!
-    
+    private var config: RuntimeConfig = RuntimeConfig.testConfig()
 
     @MainActor
     override func setUp() async throws {
-        self.config = RuntimeConfig(
-            config: AirshipConfig.config(),
-            dataStore: configDataStore,
-            requestSession: requestSession
-        )
-
         self.config.updateRemoteConfig(
             RemoteConfig(
                 airshipConfig: RemoteConfig.AirshipConfig(

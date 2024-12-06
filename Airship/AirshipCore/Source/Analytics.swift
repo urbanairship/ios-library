@@ -60,7 +60,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
     private var isAnalyticsEnabled: Bool {
         return self.privacyManager.isEnabled(.analytics) &&
-        self.config.isAnalyticsEnabled
+        self.config.airshipConfig.isAnalyticsEnabled
     }
 
     @MainActor
@@ -113,7 +113,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         self.sessionTracker = sessionTracker ?? SessionTracker()
         self.eventFeed = AirshipAnalyticsFeed(
             privacyManager: privacyManager,
-            isAnalyticsEnabled: config.isAnalyticsEnabled
+            isAnalyticsEnabled: config.airshipConfig.isAnalyticsEnabled
         )
 
         self.eventManager.addHeaderProvider {
@@ -239,7 +239,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
         // Airship identifiers
         headers["X-UA-Channel-ID"] = self.channel.identifier
-        headers["X-UA-App-Key"] = self.config.appKey
+        headers["X-UA-App-Key"] = self.config.appCredentials.appKey
 
         // SDK Version
         headers["X-UA-Lib-Version"] = AirshipVersion.version

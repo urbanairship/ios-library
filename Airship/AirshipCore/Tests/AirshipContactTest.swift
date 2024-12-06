@@ -20,11 +20,10 @@ class AirshipContactTest: XCTestCase {
     private let smsValidator: TestSMSValidator = TestSMSValidator()
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
-    private var config: RuntimeConfig!
+    private var config: RuntimeConfig = RuntimeConfig.testConfig()
     private var subscriptionProvider: SubscriptionListProviderProtocol!
 
     override func setUp() async throws {
-        self.config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,

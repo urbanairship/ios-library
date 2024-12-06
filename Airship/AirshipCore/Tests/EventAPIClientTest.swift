@@ -6,8 +6,6 @@ import XCTest
 import AirshipCore
 
 final class EventAPIClientTest: XCTestCase {
-
-
     private let requestSession = TestAirshipRequestSession()
     private var client: EventAPIClient!
 
@@ -20,15 +18,8 @@ final class EventAPIClientTest: XCTestCase {
     ]
 
     override func setUpWithError() throws {
-        var config = AirshipConfig()
-        config.requireInitialRemoteConfigEnabled = false
-        let runtimeConfig = RuntimeConfig(
-            config: config,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
-
         client = EventAPIClient(
-            config: runtimeConfig,
+            config: .testConfig(),
             session: requestSession
         )
     }

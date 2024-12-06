@@ -47,8 +47,8 @@ public class UAAirship: NSObject {
     @MainActor
     public class func takeOff(
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) {
-        Airship.takeOff(launchOptions: launchOptions)
+    ) throws {
+        try Airship.takeOff(launchOptions: launchOptions)
     }
 
     /// Initializes Airship.
@@ -60,8 +60,8 @@ public class UAAirship: NSObject {
     public class func takeOff(
         _ config: UAAirshipConfig?,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) {
-        Airship.takeOff(config?.config, launchOptions: launchOptions)
+    ) throws {
+        try Airship.takeOff(config?.config, launchOptions: launchOptions)
     }
 
 #else
@@ -69,8 +69,8 @@ public class UAAirship: NSObject {
     /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
     @objc
     @MainActor
-    public class func takeOff() {
-        Airship.takeOff(nil)
+    public class func takeOff() throws {
+        try Airship.takeOff(nil)
     }
 
     /// Initializes Airship.
@@ -78,8 +78,8 @@ public class UAAirship: NSObject {
     ///     - config: The Airship config.
     @objc
     @MainActor
-    public class func takeOff(_ config: AirshipConfig?) {
-        Airship.takeOff(config)
+    public class func takeOff(_ config: AirshipConfig?) throws {
+        try Airship.takeOff(config)
     }
     
 #endif

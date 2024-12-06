@@ -120,7 +120,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         self.init(
             dataStore: dataStore,
             channelAPIClient: ChannelAPIClient(config: config),
-            channelCreateMethod: config.restoreChannelID
+            channelCreateMethod: config.airshipConfig.restoreChannelID
         )
     }
 

@@ -7,10 +7,10 @@ class AirshipPrivacyManagerTest: XCTestCase {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
 
-    private var config: RuntimeConfig!
+    private var config: RuntimeConfig = RuntimeConfig.testConfig()
+
     private var privacyManager: AirshipPrivacyManager!
     override func setUp() async throws {
-        self.config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,

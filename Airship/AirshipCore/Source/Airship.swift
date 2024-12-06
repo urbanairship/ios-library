@@ -136,59 +136,18 @@ public class Airship: NSObject {
         self.airshipInstance = instance
     }
 
-    #if !os(watchOS)
-
-    /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
+#if !os(watchOS)
+    /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
+    /// the error.
     /// - Parameters:
+    ///     - config: The Airship config. If nil, config will be loading from a plist.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @MainActor
     public class func takeOff(
+        _ config: AirshipConfig? = nil,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) {
-        takeOff(nil, launchOptions: launchOptions)
-    }
-
-    /// Initializes Airship.
-    /// - Parameters:
-    ///     - config: The Airship config.
-    ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
-    @MainActor
-    public class func takeOff(
-        _ config: AirshipConfig?,
-        launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) {
-        guard Thread.isMainThread else {
-            fatalError("TakeOff must be called on the main thread.")
-        }
-
-        guard !Airship.isFlying else {
-            AirshipLogger.impError("TakeOff can only be called once.")
-            return
-        }
-
-        if config == nil {
-            guard
-                Bundle.main.path(
-                    forResource: "AirshipConfig",
-                    ofType: "plist"
-                ) != nil
-            else {
-                AirshipLogger.impError(
-                    "AirshipConfig.plist file is missing. Unable to takeOff."
-                )
-                return
-            }
-        }
-
-        let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
-
-        guard resolvedConfig.validate() else {
-            AirshipLogger.impError("Config is invalid. Unable to takeOff.")
-            return
-        }
-        
-        commonTakeOff(config) {
-
+    ) throws {
+        try commonTakeOff(config) {
 #if !os(tvOS) && !os(watchOS)
             if let remoteNotification =
                 launchOptions?[
@@ -204,58 +163,21 @@ public class Airship: NSObject {
             }
 #endif
         }
-
     }
+#else
 
-    #else
-
-    /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
-
-    @MainActor
-    public class func takeOff() {
-        takeOff(nil)
-    }
-
-    /// Initializes Airship.
+    /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
+    /// the error.
     /// - Parameters:
-    ///     - config: The Airship config.
+    ///     - config: The Airship config. If nil, config will be loading from a plist.
     @MainActor
-    public class func takeOff(_ config: AirshipConfig?) {
-
-        guard Thread.isMainThread else {
-            fatalError("TakeOff must be called on the main thread.")
-        }
-
-        guard !Airship.isFlying else {
-            AirshipLogger.impError("TakeOff can only be called once.")
-            return
-        }
-
-        if config == nil {
-            guard
-                Bundle.main.path(
-                    forResource: "AirshipConfig",
-                    ofType: "plist"
-                ) != nil
-            else {
-                AirshipLogger.impError(
-                    "AirshipConfig.plist file is missing. Unable to takeOff."
-                )
-                return
-            }
-        }
-
-        let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
-
-        guard resolvedConfig.validate() else {
-            AirshipLogger.impError("Config is invalid. Unable to takeOff.")
-            return
-        }
-
-        commonTakeOff(config)
+    public class func takeOff(
+        _ config: AirshipConfig? = nil
+    ) throws {
+        try commonTakeOff(config)
     }
 
-    #endif
+#endif
 
     /// On ready callback gets called immediately when ready otherwise gets called immediately after takeoff
     /// - Parameter callback: callback closure that's called when Airship is ready
@@ -276,15 +198,30 @@ public class Airship: NSObject {
         toExecute.forEach { $0() }
     }
 
+
     @MainActor
-    private class func commonTakeOff(_ config: AirshipConfig?, onReady: (() -> Void)? = nil) {
+    private class func resolveProduction(_ config: AirshipConfig) throws -> Bool {
+        if let inProduction = config.inProduction {
+            return inProduction
+        }
 
-        let resolvedConfig = config?.copy() as? AirshipConfig ?? AirshipConfig.default()
-        
-        AirshipLogger.configure(logLevel: resolvedConfig.logLevel, handler: resolvedConfig.logHandler)
-        ChallengeResolver.shared.resolver = resolvedConfig.connectionChallengeResolver
+        return try APNSEnvironment.isProduction()
+    }
 
-        self.logPrivacyLevel = resolvedConfig.logPrivacyLevel
+    @MainActor
+    private class func configureLogger(_ config: AirshipConfig, inProduction: Bool) {
+        let handler = if let logHandler = config.logHandler {
+            logHandler
+        } else {
+            DefaultLogHandler(
+                privacyLevel: inProduction ? config.productionLogPrivacyLevel : config.developmentLogPrivacyLevel
+            )
+        }
+
+        AirshipLogger.configure(
+            logLevel: inProduction ? config.productionLogLevel : config.developmentLogLevel,
+            handler: handler
+        )
 
         UALegacyLoggingBridge.logger = { logLevel, function, line, message in
             AirshipLogger.log(
@@ -295,12 +232,44 @@ public class Airship: NSObject {
                 function: function
             )
         }
+    }
+
+    @MainActor
+    private class func commonTakeOff(_ config: AirshipConfig?, onReady: (() -> Void)? = nil) throws {
+        guard !Airship.isFlying else {
+            throw AirshipErrors.error("Airship already initalized. TakeOff can only be called once.")
+        }
+
+        // Get the config
+        let resolvedConfig = try (config ?? AirshipConfig.default())
+
+        // Determine production flag and configure logger so we can log errors
+        var inProduction: Bool = true
+        do {
+            inProduction = try resolveProduction(resolvedConfig)
+            configureLogger(resolvedConfig, inProduction: inProduction)
+        } catch {
+            configureLogger(resolvedConfig, inProduction: inProduction)
+            AirshipLogger.impError("Unable to determine AirshipConfig.inProduction \(error), defaulting to true")
+        }
+
+        let credentials = try resolvedConfig.resolveCredentails(inProduction)
+
+        // We have valid config, log issues
+        resolvedConfig.logIssues()
 
         AirshipLogger.info(
-            "Airship TakeOff! SDK Version \(AirshipVersion.version), App Key: \(resolvedConfig.appKey), inProduction: \(resolvedConfig.inProduction)"
+            "Airship TakeOff! SDK Version \(AirshipVersion.version), App Key: \(credentials.appKey), inProduction: \(inProduction)"
         )
 
-        _shared = Airship(instance: AirshipInstance(config: resolvedConfig))
+        ChallengeResolver.shared.resolver = resolvedConfig.connectionChallengeResolver
+
+        _shared = Airship(
+            instance: AirshipInstance(
+                airshipConfig: resolvedConfig,
+                appCredentials: credentials
+            )
+        )
 
         let integrationDelegate = DefaultAppIntegrationDelegate(
             push: requireComponent(ofType: InternalPushProtocol.self),
@@ -322,11 +291,11 @@ public class Airship: NSObject {
         self.shared.airshipInstance.airshipReady()
         executeOnReady()
 
-        if self.shared.airshipInstance.config.isExtendedBroadcastsEnabled {
+        if resolvedConfig.isExtendedBroadcastsEnabled {
             var userInfo: [String: Any] = [:]
             userInfo[AirshipNotifications.AirshipReady.channelIDKey] =
                 self.channel.identifier
-            userInfo[AirshipNotifications.AirshipReady.appKey] = self.shared.airshipInstance.config.appKey
+            userInfo[AirshipNotifications.AirshipReady.appKey] = credentials.appKey
             userInfo[AirshipNotifications.AirshipReady.payloadVersionKey] = 1
             NotificationCenter.default.post(
                 name: AirshipNotifications.AirshipReady.name,
@@ -338,14 +307,7 @@ public class Airship: NSObject {
                 object: nil
             )
         }
-
     }
-
-    /// Airship default log privacy.
-    /// Set log privacy level for default logger. All logs have privacy settings that default to `.private`
-    /// in both developer mode and production. Values set before `takeOff` will be overridden by
-    /// the value from the AirshipConfig.
-    public static var logPrivacyLevel: AirshipLogPrivacyLevel = .private
 
     /// - NOTE: For internal use only. :nodoc:
     public class func component<E>(ofType componentType: E.Type) -> E? {
@@ -471,7 +433,7 @@ public class Airship: NSObject {
             .reduce(into: [String: String?]()) {
                 $0[$1.name] = $1.value
             } ?? [:]
-        return queryMap[Airship.itunesIDKey] as? String ?? airshipInstance.config.itunesID
+        return queryMap[Airship.itunesIDKey] as? String ?? airshipInstance.config.airshipConfig.itunesID
     }
 
 

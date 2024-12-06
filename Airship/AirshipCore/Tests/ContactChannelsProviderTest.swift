@@ -77,7 +77,7 @@ class ContactChannelsProviderTest: XCTestCase {
         self.notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config: RuntimeConfig(config: AirshipConfig(), dataStore: self.dataStore),
+            config: .testConfig(),
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )

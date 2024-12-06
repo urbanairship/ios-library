@@ -22,7 +22,7 @@ final class AutomationPreparerTest: XCTestCase {
     private let triggerContext = AirshipTriggerContext(type: "some type", goal: 10, event: .null)
 
     private var preparedMessageData: PreparedInAppMessageData!
-    private var runtimeConfig: RuntimeConfig?
+    private let runtimeConfig: RuntimeConfig = .testConfig()
 
     @MainActor
     override func setUp() async throws {
@@ -37,13 +37,6 @@ final class AutomationPreparerTest: XCTestCase {
             actionRunner: TestInAppActionRunner()
         )
 
-        var config = AirshipConfig()
-        config.requireInitialRemoteConfigEnabled = false
-        self.runtimeConfig = RuntimeConfig(
-            config: config,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
-        
         self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,
@@ -52,7 +45,7 @@ final class AutomationPreparerTest: XCTestCase {
             audienceChecker: audienceChecker,
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
-            config: self.runtimeConfig!,
+            config: self.runtimeConfig,
             deviceInfoProviderFactory: { [provider = self.deviceInfoProvider] contactID in
                 provider.stableContactInfo = StableContactInfo(contactID: contactID ?? UUID().uuidString)
                 return provider

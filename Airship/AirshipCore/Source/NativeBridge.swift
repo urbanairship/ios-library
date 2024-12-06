@@ -517,6 +517,7 @@ extension URL {
         return self.scheme == NativeBridge.airshipScheme
     }
 
+    @MainActor
     fileprivate func isAllowed(scope: URLAllowListScope) -> Bool {
         return Airship.urlAllowList.isAllowed(self, scope: scope)
     }

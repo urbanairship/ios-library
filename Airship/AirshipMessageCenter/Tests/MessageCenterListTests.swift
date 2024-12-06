@@ -10,11 +10,8 @@ final class MessageCenterListTest: XCTestCase {
 
     private var disposables = Set<AnyCancellable>()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private lazy var config = RuntimeConfig(
-        config: AirshipConfig(),
-        dataStore: dataStore
-    )
-    
+    private let config: RuntimeConfig = .testConfig()
+
     private lazy var store: MessageCenterStore = {
         let modelURL = MessageCenterResources.bundle?
             .url(
@@ -24,7 +21,7 @@ final class MessageCenterListTest: XCTestCase {
         if let modelURL = modelURL {
             let storeName = String(
                 format: "Inbox-%@.sqlite",
-                self.config.appKey
+                self.config.appCredentials.appKey
             )
             let coreData = UACoreData(
                 name: "UAInbox",
@@ -109,8 +106,8 @@ final class MessageCenterListTest: XCTestCase {
 
     func testMessageCenterIdenityHintRestoreMessageCenterDisabled() async throws {
         self.channel.extenders.removeAll()
-        var config = AirshipConfig()
-        config.restoreMessageCenterOnReinstall = false
+        var airshipConfig = AirshipConfig()
+        airshipConfig.restoreMessageCenterOnReinstall = false
 
         let user = MessageCenterUser(
             username: "AnyName",
@@ -123,10 +120,7 @@ final class MessageCenterListTest: XCTestCase {
         let inbox = MessageCenterInbox(
             channel: channel,
             client: client,
-            config: RuntimeConfig(
-                config: config,
-                dataStore: dataStore
-            ),
+            config: .testConfig(airshipConfig: airshipConfig),
             store: store,
             workManager: workManager
         )
@@ -140,8 +134,8 @@ final class MessageCenterListTest: XCTestCase {
 
     func testRestoreMessageCenterDisabled() async throws {
         self.channel.extenders.removeAll()
-        var config = AirshipConfig()
-        config.restoreMessageCenterOnReinstall = false
+        var airshipConfig = AirshipConfig()
+        airshipConfig.restoreMessageCenterOnReinstall = false
 
         let user = MessageCenterUser(
             username: "AnyName",
@@ -154,10 +148,7 @@ final class MessageCenterListTest: XCTestCase {
         let inbox = MessageCenterInbox(
             channel: channel,
             client: client,
-            config: RuntimeConfig(
-                config: config,
-                dataStore: dataStore
-            ),
+            config: .testConfig(airshipConfig: airshipConfig),
             store: store,
             workManager: workManager
         )
@@ -171,9 +162,7 @@ final class MessageCenterListTest: XCTestCase {
         XCTAssertNil(fromStore)
     }
 
-
     func testMessageRetrieve() async throws {
-
         self.inbox.enabled = true
 
         try await self.store.updateMessages(
@@ -189,7 +178,6 @@ final class MessageCenterListTest: XCTestCase {
     }
 
     func testMessageRetrieveWithId() async throws {
-
         self.inbox.enabled = true
 
         let messages = MessageCenterMessage.generateMessages(1)

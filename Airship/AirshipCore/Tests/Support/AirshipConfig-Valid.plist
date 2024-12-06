@@ -23,7 +23,7 @@
 	<key>productionLogLevel</key>
 	<integer>5</integer>
 	<key>productionLogPrivacyLevel</key>
-	<integer>0</integer>
+	<string>public</string>
 	<key>isChannelCreationDelayEnabled</key>
 	<true/>
 	<key>isExtendedBroadcastsEnabled</key>
@@ -35,8 +35,6 @@
 	<key>resetEnabledFeatures</key>
 	<true/>
 	<key>inProduction</key>
-	<true/>
-	<key>detectProvisioningMode</key>
 	<true/>
 	<key>enabledFeatures</key>
 	<array>

@@ -37,7 +37,7 @@ actor FrequencyLimitStore {
         config: RuntimeConfig
     ) {
         self.init(
-            appKey: config.appKey,
+            appKey: config.appCredentials.appKey,
             inMemory: false
         )
     }

@@ -42,7 +42,7 @@ final class AutomationEngineTest: XCTestCase {
     private var messageExecutor: InAppMessageAutomationExecutor!
     private var delayProcessor: AutomationDelayProcessor!
     private var metrics: ApplicationMetrics!
-    private var runtimeConfig: RuntimeConfig?
+    private let runtimeConfig: RuntimeConfig = .testConfig()
 
     private var scheduleConditionsChangedNotifier: TestScheduleConditionsChangedNotifier!
 
@@ -50,21 +50,11 @@ final class AutomationEngineTest: XCTestCase {
     override func setUp() async throws {
         self.privacyManager = AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config:  RuntimeConfig(
-                config: AirshipConfig(),
-                dataStore: self.dataStore
-            ),
+            config: runtimeConfig,
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
-        
-        var config = AirshipConfig()
-        config.requireInitialRemoteConfigEnabled = false
-        self.runtimeConfig = RuntimeConfig(
-            config: config,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
-        
+
         self.automationStore = AutomationStore(appKey: UUID().uuidString, inMemory: true)
         self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
@@ -74,7 +64,7 @@ final class AutomationEngineTest: XCTestCase {
             audienceChecker: audienceChecker,
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
-            config: self.runtimeConfig!,
+            config: self.runtimeConfig,
             additionalAudienceResolver: TestAdditionalAudienceResolver()
         )
         

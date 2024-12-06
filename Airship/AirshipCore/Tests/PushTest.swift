@@ -31,10 +31,7 @@ class PushTest: XCTestCase {
         self.permissionsManager = await AirshipPermissionsManager()
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config:  RuntimeConfig(
-                config: AirshipConfig(),
-                dataStore: self.dataStore
-            ),
+            config: .testConfig(),
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
@@ -51,10 +48,7 @@ class PushTest: XCTestCase {
     @MainActor
     func createPush() -> AirshipPush {
         return AirshipPush(
-            config: RuntimeConfig(
-                config: self.config,
-                dataStore: self.dataStore
-            ),
+            config: .testConfig(airshipConfig: self.config),
             dataStore: dataStore,
             channel: channel,
             analytics: analtyics,
@@ -151,7 +145,7 @@ class PushTest: XCTestCase {
         
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
         
-        let cancellable = self.push.notificationStatusPublisher.sink { status in
+        let cancellable = await self.push.notificationStatusPublisher.sink { status in
             XCTAssertEqual(true, status.areNotificationsAllowed)
             completed.fulfill()
         }

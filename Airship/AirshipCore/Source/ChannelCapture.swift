@@ -44,7 +44,7 @@ public class ChannelCapture: NSObject {
         self.date = date
         self.pasteboard = pasteboard
 
-        self.enabled = config.isChannelCaptureEnabled
+        self.enabled = config.airshipConfig.isChannelCaptureEnabled
 
         super.init()
 

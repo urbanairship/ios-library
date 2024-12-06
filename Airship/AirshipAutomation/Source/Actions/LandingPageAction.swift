@@ -20,7 +20,7 @@ public final class LandingPageAction: AirshipAction {
 
     private let borderRadius: Double
     private let scheduleExtender: ScheduleExtender?
-    private let allowListChecker: @Sendable (URL) -> Bool
+    private let allowListChecker: @Sendable @MainActor (URL) -> Bool
     private let scheduler: @Sendable (AutomationSchedule) async throws -> Void
 
     /// Default constructor
@@ -42,7 +42,7 @@ public final class LandingPageAction: AirshipAction {
     init(
         borderRadius: Double,
         scheduleExtender: ScheduleExtender?,
-        allowListChecker: @escaping @Sendable (URL) -> Bool,
+        allowListChecker: @escaping @MainActor @Sendable (URL) -> Bool,
         scheduler: @escaping @Sendable (AutomationSchedule) async throws -> Void
     ) {
         self.borderRadius = borderRadius
@@ -68,6 +68,7 @@ public final class LandingPageAction: AirshipAction {
         }
     }
 
+    @MainActor
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         let pushMetadata = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON
         let messageID = pushMetadata?.object?["_"]?.string

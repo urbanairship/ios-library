@@ -93,8 +93,8 @@ public final class AirshipDebugManager: @unchecked Sendable {
         remoteData: any RemoteDataProtocol
     ) {
         self.remoteData = remoteData
-        self.pushDataManager = PushDataManager(appKey: config.appKey)
-        self.eventDataManager = EventDataManager(appKey: config.appKey)
+        self.pushDataManager = PushDataManager(appKey: config.appCredentials.appKey)
+        self.eventDataManager = EventDataManager(appKey: config.appCredentials.appKey)
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted

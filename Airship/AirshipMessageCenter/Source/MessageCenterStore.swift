@@ -60,8 +60,8 @@ actor MessageCenterStore {
             }
 
             let credentials = await self.keychainAccess.readCredentails(
-                identifier: self.config.appKey,
-                appKey: self.config.appKey
+                identifier: self.config.appCredentials.appKey,
+                appKey: self.config.appCredentials.appKey
             )
 
             if let credentials = credentials {
@@ -116,7 +116,7 @@ actor MessageCenterStore {
         if let modelURL = modelURL {
             let storeName = String(
                 format: MessageCenterStore.coreDataStoreName,
-                config.appKey
+                config.appCredentials.appKey
             )
             self.coreData = UACoreData(
                 name: "UAInbox",
@@ -279,8 +279,8 @@ actor MessageCenterStore {
                 username: user.username,
                 password: user.password
             ),
-            identifier: self.config.appKey,
-            appKey: self.config.appKey
+            identifier: self.config.appCredentials.appKey,
+            appKey: self.config.appCredentials.appKey
         )
 
         if !result {
@@ -294,8 +294,8 @@ actor MessageCenterStore {
     func resetUser() async {
         _user = nil
         await self.keychainAccess.deleteCredentials(
-            identifier: self.config.appKey,
-            appKey: self.config.appKey
+            identifier: self.config.appCredentials.appKey,
+            appKey: self.config.appCredentials.appKey
         )
     }
 

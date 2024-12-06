@@ -8,17 +8,10 @@ class SMSValidatorAPIClientTest: XCTestCase {
 
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
     private var smsValidatorAPIClient: SMSValidatorAPIClient!
-    private var config: RuntimeConfig!
+    private var config: RuntimeConfig = RuntimeConfig.testConfig()
     private let currentLocale = Locale(identifier: "fr-CA")
 
     override func setUpWithError() throws {
-        var airshipConfig = AirshipConfig()
-        airshipConfig.deviceAPIURL = "https://example.com"
-        airshipConfig.requireInitialRemoteConfigEnabled = false
-        self.config = RuntimeConfig(
-            config: airshipConfig,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://contacts_test")!,
             statusCode: 200,
@@ -35,7 +28,7 @@ class SMSValidatorAPIClientTest: XCTestCase {
     func testValidateSMS() async throws {
 
         self.session.response = HTTPURLResponse(
-            url: URL(string: "https://example.com/api/channels/sms/validate")!,
+            url: URL(string: "https://device-api.urbanairship.com/api/channels/sms/validate")!,
             statusCode: 200,
             httpVersion: "",
             headerFields: [String: String]()
@@ -61,7 +54,7 @@ class SMSValidatorAPIClientTest: XCTestCase {
         let lastRequest = self.session.lastRequest!
         XCTAssertNotNil(lastRequest)
         XCTAssertEqual(
-            "https://example.com/api/channels/sms/validate",
+            "https://device-api.urbanairship.com/api/channels/sms/validate",
             lastRequest.url!.absoluteString
         )
 

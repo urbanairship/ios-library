@@ -41,7 +41,7 @@ final class EventManager: EventManagerProtocol {
         self.init(
             dataStore: dataStore,
             channel: channel,
-            eventStore: EventStore(appKey: config.appKey),
+            eventStore: EventStore(appKey: config.appCredentials.appKey),
             eventAPIClient: EventAPIClient(config: config)
         )
     }

@@ -11,7 +11,7 @@ final class AirshipAnalyticFeedTest: XCTestCase {
     override func setUp() async throws {
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: dataStore,
-            config: RuntimeConfig(config: AirshipConfig(), dataStore: dataStore),
+            config: .testConfig(),
             defaultEnabledFeatures: .all
         )
     }

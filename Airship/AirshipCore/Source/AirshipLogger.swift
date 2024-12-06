@@ -12,14 +12,11 @@ public final class AirshipLogger: Sendable {
     
     @MainActor
     static func configure(
-        logLevel: AirshipLogLevel = .error,
-        handler: (any AirshipLogHandler)?
+        logLevel: AirshipLogLevel,
+        handler: (any AirshipLogHandler)
     ) {
         _storage.logLevel = logLevel
-        
-        if let handler {
-            _storage.handler = handler
-        }
+        _storage.handler = handler
     }
     
     static var logLevel: AirshipLogLevel {
@@ -34,7 +31,10 @@ public final class AirshipLogger: Sendable {
         var logLevel: AirshipLogLevel
         var handler: AirshipLogHandler
         
-        init(logLevel: AirshipLogLevel = .error, handler: any AirshipLogHandler = DefaultLogHandler()) {
+        init(
+            logLevel: AirshipLogLevel = .error,
+            handler: any AirshipLogHandler = DefaultLogHandler(privacyLevel: .private)
+        ) {
             self.logLevel = logLevel
             self.handler = handler
         }
@@ -139,6 +139,7 @@ public final class AirshipLogger: Sendable {
 
     public static func impError(
         _ message: @autoclosure () -> String,
+        skipLogLevelCheck: Bool = true,
         fileID: String = #fileID,
         line: UInt = #line,
         function: String = #function
@@ -148,7 +149,8 @@ public final class AirshipLogger: Sendable {
             message: "🚨Airship Implementation Error🚨: \(message())",
             fileID: fileID,
             line: line,
-            function: function
+            function: function,
+            skipLogLevelCheck: skipLogLevelCheck
         )
     }
 

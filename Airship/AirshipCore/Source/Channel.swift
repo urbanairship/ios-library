@@ -125,7 +125,7 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
         // Check config to see if user wants to delay channel creation
         // If channel ID exists or channel creation delay is disabled then channelCreationEnabled
         if self.channelRegistrar.channelID != nil
-            || !config.isChannelCreationDelayEnabled
+            || !config.airshipConfig.isChannelCreationDelayEnabled
         {
             self.isChannelCreationEnabled = true
         } else {

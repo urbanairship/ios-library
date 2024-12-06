@@ -32,7 +32,7 @@ final class ContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientPr
             url: try self.makeURL(path: "/api/subscription_lists/contacts/\(contactID)"),
             headers: [
                 "Accept":  "application/vnd.urbanairship+json; version=3;",
-                "X-UA-Appkey": self.config.appKey,
+                "X-UA-Appkey": self.config.appCredentials.appKey
             ],
             method: "GET",
             auth: .contactAuthToken(identifier: contactID)

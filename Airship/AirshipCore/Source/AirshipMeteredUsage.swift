@@ -42,7 +42,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
             contact: contact,
             privacyManager: privacyManager,
             client: MeteredUsageAPIClient(config: config),
-            store: MeteredUsageStore(appKey: config.appKey)
+            store: MeteredUsageStore(appKey: config.appCredentials.appKey)
         )
     }
 

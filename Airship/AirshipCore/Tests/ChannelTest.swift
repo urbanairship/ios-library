@@ -20,10 +20,7 @@ class ChannelTest: XCTestCase {
 
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config:  RuntimeConfig(
-                config: self.config,
-                dataStore: self.dataStore
-            ),
+            config: .testConfig(),
             defaultEnabledFeatures: [],
             notificationCenter: self.notificationCenter
         )
@@ -35,10 +32,7 @@ class ChannelTest: XCTestCase {
     private func createChannel() -> AirshipChannel {
         return AirshipChannel(
             dataStore: self.dataStore,
-            config: RuntimeConfig(
-                config: self.config,
-                dataStore: self.dataStore
-            ),
+            config: .testConfig(airshipConfig: self.config),
             privacyManager: self.privacyManager,
             localeManager: self.localeManager,
             audienceManager: self.audienceManager,

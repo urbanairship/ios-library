@@ -9,23 +9,14 @@ final class ContactSubscriptionListAPIClientTest: XCTestCase {
 
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
     private var contactAPIClient: ContactSubscriptionListAPIClient!
-    private var config: RuntimeConfig!
+    private var config: RuntimeConfig = RuntimeConfig.testConfig()
 
     override func setUpWithError() throws {
-        var airshipConfig = AirshipConfig()
-        airshipConfig.deviceAPIURL = "https://example.com"
-        airshipConfig.requireInitialRemoteConfigEnabled = false
-        self.config = RuntimeConfig(
-            config: airshipConfig,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
-
         self.contactAPIClient = ContactSubscriptionListAPIClient(
             config: self.config,
             session: self.session
         )
     }
-
 
     func testGetContactLists() async throws {
         let responseBody = """
@@ -72,7 +63,7 @@ final class ContactSubscriptionListAPIClientTest: XCTestCase {
 
         XCTAssertEqual("GET", self.session.lastRequest?.method)
         XCTAssertEqual(
-            "https://example.com/api/subscription_lists/contacts/some-contact",
+            "\(self.config.deviceAPIURL!)/api/subscription_lists/contacts/some-contact",
             self.session.lastRequest?.url?.absoluteString
         )
     }

@@ -10,53 +10,51 @@ final class AirshipLocaleManagerTest: XCTestCase {
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
     )
-    private let dataStore: PreferenceDataStore = PreferenceDataStore(
-        appKey: UUID().uuidString
-    )
-    private var config: RuntimeConfig!
-    private var localeManager: AirshipLocaleManager!
 
-    override func setUpWithError() throws {
-        config = RuntimeConfig(
-                   config: AirshipConfig(),
-                   dataStore: dataStore
-               )
-        localeManager = AirshipLocaleManager(
-            dataStore: dataStore,
-            config: config,
+    private func makeLocaleManager(
+        useUserPreferredLocale: Bool = false
+    ) -> AirshipLocaleManager {
+        return AirshipLocaleManager(
+            dataStore: PreferenceDataStore(
+                appKey: UUID().uuidString
+            ),
+            config: .testConfig(useUserPreferredLocale: useUserPreferredLocale),
             notificationCenter: notificationCenter
         )
     }
 
     func testLocale() throws {
-        XCTAssertEqual(self.localeManager.currentLocale, Locale.autoupdatingCurrent)
+        let localeManager = makeLocaleManager()
+        XCTAssertEqual(localeManager.currentLocale, Locale.autoupdatingCurrent)
 
         let french = Locale(identifier: "fr")
         localeManager.currentLocale = french
-        XCTAssertEqual(self.localeManager.currentLocale, french)
+        XCTAssertEqual(localeManager.currentLocale, french)
 
         let english = Locale(identifier: "en")
         localeManager.currentLocale = english
-        XCTAssertEqual(self.localeManager.currentLocale, english)
+        XCTAssertEqual(localeManager.currentLocale, english)
 
         localeManager.clearLocale()
-        XCTAssertEqual(self.localeManager.currentLocale, Locale.autoupdatingCurrent)
+        XCTAssertEqual(localeManager.currentLocale, Locale.autoupdatingCurrent)
     }
     
     func testLocaleWithUseUserPreferredLocale() throws {
-        config.useUserPreferredLocale = true
+        let localeManager = makeLocaleManager(useUserPreferredLocale: true)
         let preferredLocale = Locale(identifier: Locale.preferredLanguages[0])
-        XCTAssertEqual(self.localeManager.currentLocale, preferredLocale)
+        XCTAssertEqual(localeManager.currentLocale, preferredLocale)
         
         let french = Locale(identifier: "fr")
         localeManager.currentLocale = french
-        XCTAssertEqual(self.localeManager.currentLocale, french)
+        XCTAssertEqual(localeManager.currentLocale, french)
         
         localeManager.clearLocale()
-        XCTAssertEqual(self.localeManager.currentLocale, preferredLocale)
+        XCTAssertEqual(localeManager.currentLocale, preferredLocale)
     }
 
     func testNotificationWhenOverrideChanges() {
+        let localeManager = makeLocaleManager()
+
         let expectation = self.expectation(description: "update called")
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.LocaleUpdated.name
@@ -70,6 +68,8 @@ final class AirshipLocaleManagerTest: XCTestCase {
     }
 
     func testNotificationWhenOverrideClears() {
+        let localeManager = makeLocaleManager()
+
         localeManager.currentLocale = Locale(identifier: "fr")
 
         let expectation = self.expectation(description: "update called")
@@ -85,6 +85,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
     }
 
     func testNotificationWhenAutoUpdateChanges() {
+        let localeManager = makeLocaleManager()
         let expectation = self.expectation(description: "update called")
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.LocaleUpdated.name

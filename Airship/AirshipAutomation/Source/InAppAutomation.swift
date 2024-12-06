@@ -52,7 +52,7 @@ public final class InAppAutomation: Sendable {
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
 
-        if (config.autoPauseInAppAutomationOnLaunch) {
+        if (config.airshipConfig.autoPauseInAppAutomationOnLaunch) {
             self.isPaused = true
         }
     }

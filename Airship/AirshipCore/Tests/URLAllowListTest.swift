@@ -5,37 +5,17 @@ import XCTest
 @testable
 import AirshipCore
 
+@MainActor
 class UAURLAllowListTest: XCTestCase {
 
-    private var allowList: URLAllowList!
+    private var allowList: URLAllowList = URLAllowList()
     private let scopes: [URLAllowListScope] = [.javaScriptInterface, .openURL, .all]
 
-    override func setUp() {
-        super.setUp()
-        allowList = URLAllowList()
-    }
-
-    func testEmptyURLAllowList() {
-        for scope in scopes {
-            XCTAssertFalse(allowList.isAllowed(URL(string: "urbanairship.com")!, scope: scope))
-            XCTAssertFalse(allowList.isAllowed(URL(string: "www.urbanairship.com")!, scope: scope))
-            XCTAssertFalse(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!, scope: scope))
-            XCTAssertFalse(allowList.isAllowed(URL(string: "https://www.urbanairship.com")!, scope: scope))
-            XCTAssertFalse(allowList.isAllowed(URL(string: "file:///*")!, scope: scope))
-        }
-    }
-
-    @MainActor
     func testDefaultURLAllowList() {
-        var config = AirshipConfig()
-        config.inProduction = false
-        config.developmentAppKey = "test-app-key"
-        config.developmentAppSecret = "test-app-secret"
-        config.urlAllowList = []
+        var airshipConfig = AirshipConfig()
+        airshipConfig.urlAllowListScopeOpenURL = []
 
-        let runtimeConfig = RuntimeConfig(config: config, dataStore: PreferenceDataStore(appKey: UUID().uuidString))
-
-        let allowList = URLAllowList.allowListWithConfig(runtimeConfig)
+        allowList = URLAllowList(airshipConfig: airshipConfig)
 
         for scope in scopes {
             XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
@@ -65,14 +45,7 @@ class UAURLAllowListTest: XCTestCase {
 
     @MainActor
     func testDefaultURLAllowListNoOpenScopeSet() {
-        var config = AirshipConfig()
-        config.inProduction = false
-        config.developmentAppKey = "test-app-key"
-        config.developmentAppSecret = "test-app-secret"
-
-        let runtimeConfig = RuntimeConfig(config: config, dataStore: PreferenceDataStore(appKey: UUID().uuidString))
-
-        let allowList = URLAllowList.allowListWithConfig(runtimeConfig)
+        allowList = URLAllowList(airshipConfig: .init())
 
         for scope in scopes {
             XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))

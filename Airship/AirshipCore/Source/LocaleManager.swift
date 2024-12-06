@@ -29,7 +29,7 @@ final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
      */
     public var currentLocale: Locale {
         get {
-            if self.config.useUserPreferredLocale {
+            if self.config.airshipConfig.useUserPreferredLocale {
                 let preferredLanguage = Locale.preferredLanguages[0]
                 let preferredLocale = Locale(identifier: preferredLanguage)
                 return dataStore.localeOverride ?? preferredLocale

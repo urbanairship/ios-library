@@ -7,17 +7,11 @@ import XCTest
 
 class SubscriptionListAPIClientTest: XCTestCase {
 
-    var config: RuntimeConfig!
+    var config: RuntimeConfig = .testConfig()
     var session: TestAirshipRequestSession = TestAirshipRequestSession()
     var client: SubscriptionListAPIClient!
 
     override func setUpWithError() throws {
-        var airshipConfig = AirshipConfig()
-        airshipConfig.requireInitialRemoteConfigEnabled = false
-        self.config = RuntimeConfig(
-            config: airshipConfig,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-        )
         self.client = SubscriptionListAPIClient(
             config: self.config,
             session: self.session

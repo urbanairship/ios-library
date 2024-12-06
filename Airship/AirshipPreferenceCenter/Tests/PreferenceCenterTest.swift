@@ -13,13 +13,11 @@ class PreferenceCenterTest: XCTestCase {
     private let remoteDataProvider: TestRemoteData = TestRemoteData()
 
     override func setUp() async throws {
-        let config = RuntimeConfig(config: AirshipConfig(), dataStore: dataStore)
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config: config,
+            config: .testConfig(),
             defaultEnabledFeatures: .all
         )
-
         
         self.preferenceCenter = await PreferenceCenter(
             dataStore: self.dataStore,

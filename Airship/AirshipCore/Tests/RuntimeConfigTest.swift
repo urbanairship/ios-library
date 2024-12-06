@@ -5,16 +5,8 @@ import XCTest
 @testable import AirshipCore
 
 class RuntimeConfigTest: XCTestCase {
-    let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    let notificationCenter = NotificationCenter()
-    let session: TestAirshipRequestSession = TestAirshipRequestSession()
-
     func testUSSiteURLS() throws {
-        var appConfig = AirshipConfig()
-        appConfig.site = .us
-        appConfig.requireInitialRemoteConfigEnabled = false
-
-        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
+        let config = RuntimeConfig.testConfig(site: .us)
         XCTAssertEqual(
             "https://device-api.urbanairship.com",
             config.deviceAPIURL
@@ -27,11 +19,7 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testEUSiteURLS() throws {
-        var appConfig = AirshipConfig()
-        appConfig.site = .eu
-        appConfig.requireInitialRemoteConfigEnabled = false
-
-        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
+        let config = RuntimeConfig.testConfig(site: .eu)
         XCTAssertEqual("https://device-api.asnapieu.com", config.deviceAPIURL)
         XCTAssertEqual("https://combine.asnapieu.com", config.analyticsURL)
         XCTAssertEqual(
@@ -40,40 +28,16 @@ class RuntimeConfigTest: XCTestCase {
         )
     }
 
-    func testURLOverrides() throws {
-        var appConfig = AirshipConfig()
-        appConfig.deviceAPIURL = "cool://devices"
-        appConfig.analyticsURL = "cool://analytics"
-        appConfig.remoteDataAPIURL = "cool://remote"
-
-        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
-        XCTAssertEqual("cool://devices", config.deviceAPIURL)
-        XCTAssertEqual("cool://analytics", config.analyticsURL)
-        XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
-    }
-
     func testInitialConfigURL() throws {
-        var appConfig = AirshipConfig()
-        appConfig.initialConfigURL = "cool://remote"
-
-        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
+        let config = RuntimeConfig.testConfig(initialConfigURL: "cool://remote")
         XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
-    }
-
-    func testInitialConfigURLOverridesRemoteDataAPIURL() throws {
-        var appConfig = AirshipConfig()
-        appConfig.initialConfigURL = "cool://remote-good"
-        appConfig.remoteDataAPIURL = "cool://remote-bad"
-
-        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
-        XCTAssertEqual("cool://remote-good", config.remoteDataAPIURL)
     }
 
     func testRequireInitialRemoteConfigEnabled() throws {
-        var appConfig = AirshipConfig()
-        appConfig.requireInitialRemoteConfigEnabled = true
+        let config = RuntimeConfig.testConfig(
+            requireInitialRemoteConfigEnabled: true
+        )
 
-        let config = RuntimeConfig(config: appConfig, dataStore: self.dataStore)
         XCTAssertNil(config.deviceAPIURL)
         XCTAssertNil(config.analyticsURL)
         XCTAssertEqual(
@@ -83,8 +47,10 @@ class RuntimeConfigTest: XCTestCase {
     }
 
     func testRemoteConfigOverride() async throws {
+        let notificationCenter = NotificationCenter()
+
         let updatedCount = AirshipAtomicValue<Int>(0)
-        self.notificationCenter.addObserver(
+        notificationCenter.addObserver(
             forName: RuntimeConfig.configUpdatedEvent,
             object: nil,
             queue: nil
@@ -92,12 +58,7 @@ class RuntimeConfigTest: XCTestCase {
             updatedCount.value += 1
         }
 
-        let config = RuntimeConfig(
-            config: AirshipConfig(),
-            dataStore: self.dataStore,
-            requestSession: session,
-            notificationCenter: self.notificationCenter
-        )
+        let config = RuntimeConfig.testConfig(notifiaconCenter: notificationCenter)
 
         let airshipConfig = RemoteConfig.AirshipConfig(
             remoteDataURL: "cool://remote",

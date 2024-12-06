@@ -68,7 +68,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         webView.accessibilityLabel = accessibilityLabel
 
         if #available(iOS 16.4, *) {
-            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+            webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
         }
 
         if let url = URL(string: self.url) {

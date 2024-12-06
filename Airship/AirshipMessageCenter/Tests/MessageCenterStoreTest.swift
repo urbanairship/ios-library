@@ -7,10 +7,8 @@ import XCTest
 
 final class MessageCenterStoreTest: XCTestCase {
     private var dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private lazy var config = RuntimeConfig(
-        config: AirshipConfig(),
-        dataStore: dataStore
-    )
+    private let config: RuntimeConfig = .testConfig()
+        
     private lazy var store: MessageCenterStore = {
         let modelURL = MessageCenterResources.bundle?
             .url(
@@ -20,7 +18,7 @@ final class MessageCenterStoreTest: XCTestCase {
         if let modelURL = modelURL {
             let storeName = String(
                 format: "Inbox-%@.sqlite",
-                self.config.appKey
+                self.config.appCredentials.appKey
             )
             let coreData = UACoreData(
                 name: "UAInbox",

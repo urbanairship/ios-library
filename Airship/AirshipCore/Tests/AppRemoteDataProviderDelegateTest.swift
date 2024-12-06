@@ -7,17 +7,7 @@ import AirshipCore
 final class AppRemoteDataProviderDelegateTest: XCTestCase {
 
     private let client: TestRemoteDataAPIClient = TestRemoteDataAPIClient()
-    private let config: RuntimeConfig = {
-        var config = AirshipConfig()
-        config.defaultAppKey = "test-app-key";
-        config.defaultAppSecret = "test-app-secret";
-        return RuntimeConfig(
-            config: config,
-            dataStore: PreferenceDataStore(
-                appKey: UUID().uuidString
-            )
-        )
-    }()
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
     private var delegate: AppRemoteDataProviderDelegate!
 
@@ -32,7 +22,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
         let remoteDatInfo = RemoteDataInfo(
             url: try RemoteDataURLFactory.makeURL(
                 config: config,
-                path: "/api/remote-data/app/\(config.appKey)/ios",
+                path: "/api/remote-data/app/\(config.appCredentials.appKey)/ios",
                 locale: locale,
                 randomValue: randomValue
             ),
@@ -71,7 +61,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
         let remoteDatInfo = RemoteDataInfo(
             url: try RemoteDataURLFactory.makeURL(
                 config: config,
-                path: "/api/remote-data/app/\(config.appKey)/ios/something-else",
+                path: "/api/remote-data/app/\(config.appCredentials.appKey)/ios/something-else",
                 locale: locale,
                 randomValue: randomValue
             ),
@@ -95,7 +85,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
         let remoteDatInfo = RemoteDataInfo(
             url: try RemoteDataURLFactory.makeURL(
                 config: config,
-                path: "/api/remote-data/app/\(config.appKey)/ios",
+                path: "/api/remote-data/app/\(config.appCredentials.appKey)/ios",
                 locale: locale,
                 randomValue: randomValue
             ),
@@ -113,7 +103,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
                 RemoteDataInfo(
                     url: try RemoteDataURLFactory.makeURL(
                         config: self.config,
-                        path: "/api/remote-data/app/\(self.config.appKey)/ios",
+                        path: "/api/remote-data/app/\(self.config.appCredentials.appKey)/ios",
                         locale: locale,
                         randomValue: randomValue
                     ),
@@ -149,7 +139,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
         let remoteDatInfo = RemoteDataInfo(
             url: try RemoteDataURLFactory.makeURL(
                 config: config,
-                path: "/api/remote-data/app/\(config.appKey)/ios",
+                path: "/api/remote-data/app/\(config.appCredentials.appKey)/ios",
                 locale: locale,
                 randomValue: randomValue
             ),

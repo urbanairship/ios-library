@@ -3,7 +3,7 @@
 import Foundation
 
 /// Protocol used by Airship to log all log messages within the SDK.
-/// A custom log handlers should be set on `Airship.logHandler` before `Airship.takeOff`.
+/// A custom log handlers should be set on `AirshipConfig.logHandler`.
 public protocol AirshipLogHandler: Sendable {
 
     /// Called to log a message.

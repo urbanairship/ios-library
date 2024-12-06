@@ -97,13 +97,9 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
         return encoder
     }
 
-    init(config: RuntimeConfig, session: AirshipRequestSession) {
+    init(config: RuntimeConfig, session: AirshipRequestSession? = nil) {
         self.config = config
-        self.session = session
-    }
-
-    convenience init(config: RuntimeConfig) {
-        self.init(config: config, session: config.requestSession)
+        self.session = session ?? config.requestSession
     }
 
     func resolve(
@@ -433,7 +429,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             headers: [
                 "Accept": "application/vnd.urbanairship+json; version=3;",
                 "Content-Type": "application/json",
-                "X-UA-Appkey": self.config.appKey,
+                "X-UA-Appkey": self.config.appCredentials.appKey
             ],
             method: "POST",
             auth: .contactAuthToken(identifier: contactID),

@@ -23,7 +23,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private var featureFlagManager: FeatureFlagManager!
 
     override func setUp() async throws {
-        let config = RuntimeConfig(config: AirshipConfig(), dataStore: self.dataStore)
+        let config: RuntimeConfig = .testConfig()
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: dataStore,
             config: config,

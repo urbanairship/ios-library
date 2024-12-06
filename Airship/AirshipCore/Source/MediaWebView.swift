@@ -115,7 +115,7 @@ struct MediaWebView: UIViewRepresentable {
         webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         if #available(iOS 16.4, *) {
-            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+            webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
         }
 
         let video = self.info.properties.video

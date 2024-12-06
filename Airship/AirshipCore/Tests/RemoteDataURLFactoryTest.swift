@@ -6,20 +6,11 @@ import AirshipCore
 
 final class RemoteDataURLFactoryTest: XCTestCase {
 
-    let runtimeConfig: RuntimeConfig = {
-        var airshipConfig = AirshipConfig()
-        airshipConfig.remoteDataAPIURL = "https://example.com"
-
-        return RuntimeConfig(
-            config: airshipConfig,
-            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
-            notificationCenter: NotificationCenter()
-        )
-    }()
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
     func testURL() throws {
         let remoteDataURL = try! RemoteDataURLFactory.makeURL(
-            config: runtimeConfig,
+            config: config,
             path: "/some-path",
             locale: Locale(identifier: "en-US"),
             randomValue: 100
@@ -27,14 +18,14 @@ final class RemoteDataURLFactoryTest: XCTestCase {
 
         let sdkVersion = AirshipVersion.version
         XCTAssertEqual(
-            "https://example.com/some-path?language=en&country=US&sdk_version=\(sdkVersion)&random_value=100",
+            "\(config.remoteDataAPIURL)/some-path?language=en&country=US&sdk_version=\(sdkVersion)&random_value=100",
             remoteDataURL.absoluteString
         )
     }
 
     func testURLNoCountry() throws {
         let remoteDataURL = try! RemoteDataURLFactory.makeURL(
-            config: runtimeConfig,
+            config: config,
             path: "/some-path",
             locale: Locale(identifier: "br"),
             randomValue: 100
@@ -42,7 +33,7 @@ final class RemoteDataURLFactoryTest: XCTestCase {
 
         let sdkVersion = AirshipVersion.version
         XCTAssertEqual(
-            "https://example.com/some-path?language=br&sdk_version=\(sdkVersion)&random_value=100",
+            "\(config.remoteDataAPIURL)/some-path?language=br&sdk_version=\(sdkVersion)&random_value=100",
             remoteDataURL.absoluteString
         )
     }

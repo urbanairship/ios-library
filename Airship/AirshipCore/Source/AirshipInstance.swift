@@ -49,24 +49,30 @@ final class AirshipInstance: AirshipInstanceProtocol {
     private var lock = AirshipLock()
     
     @MainActor
-    init(config: AirshipConfig) {
+    init(airshipConfig: AirshipConfig, appCredentials: AirshipAppCredentials) {
         let requestSession = DefaultAirshipRequestSession(
-            appKey: config.appKey,
-            appSecret: config.appSecret
+            appKey: appCredentials.appKey,
+            appSecret: appCredentials.appSecret
         )
-        let dataStore = PreferenceDataStore(appKey: config.appKey)
+
+        let dataStore = PreferenceDataStore(appKey: appCredentials.appKey)
         self.preferenceDataStore = dataStore
         self.permissionsManager = AirshipPermissionsManager()
-        self.config = RuntimeConfig(config: config, dataStore: dataStore, requestSession: requestSession)
-        
+        self.config = RuntimeConfig(
+            airshipConfig: airshipConfig,
+            appCredentials: appCredentials,
+            dataStore: dataStore,
+            requestSession: requestSession
+        )
+
         self.privacyManager = AirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,
-            defaultEnabledFeatures: config.enabledFeatures
+            defaultEnabledFeatures: airshipConfig.enabledFeatures
         )
         
         self.actionRegistry = ActionRegistry()
-        self.urlAllowList = URLAllowList.allowListWithConfig(self.config)
+        self.urlAllowList = URLAllowList(airshipConfig: airshipConfig)
         self.localeManager = AirshipLocaleManager(
             dataStore: dataStore,
             config: self.config
@@ -172,7 +178,7 @@ final class AirshipInstance: AirshipInstanceProtocol {
             experimentsManager: experimentManager,
             meteredUsage: meteredUsage,
             deferredResolver: deferredResolver,
-            cache: CoreDataAirshipCache(appKey: self.config.appKey)
+            cache: CoreDataAirshipCache(appKey: appCredentials.appKey)
         )
         
         var components: [AirshipComponent] = [

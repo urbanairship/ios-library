@@ -8,17 +8,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
 
     private let contact: TestContact = TestContact()
     private let client: TestRemoteDataAPIClient = TestRemoteDataAPIClient()
-    private let config: RuntimeConfig = {
-        var config = AirshipConfig()
-        config.defaultAppKey = "test-app-key";
-        config.defaultAppSecret = "test-app-secret";
-        return RuntimeConfig(
-            config: config,
-            dataStore: PreferenceDataStore(
-                appKey: UUID().uuidString
-            )
-        )
-    }()
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
     private var delegate: ContactRemoteDataProviderDelegate!
 

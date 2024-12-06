@@ -82,6 +82,7 @@ public class UAAirshipConfig: NSObject {
             config.productionLogLevel = UAHelpers.toAirshipLogLevel(level: newValue)
         }
     }
+
     /// Auto pause InAppAutomation on launch. Defaults to `false`
     @objc
     public var autoPauseInAppAutomationOnLaunch: Bool {
@@ -117,7 +118,7 @@ public class UAAirshipConfig: NSObject {
     /// The default app key. Depending on the `inProduction` status,
     /// `developmentAppKey` or `productionAppKey` will take priority.
     @objc
-    public var defaultAppKey: String {
+    public var defaultAppKey: String? {
         get {
             return config.defaultAppKey
         }
@@ -129,7 +130,7 @@ public class UAAirshipConfig: NSObject {
     /// The default app secret. Depending on the `inProduction` status,
     /// `developmentAppSecret` or `productionAppSecret` will take priority.
     @objc
-    public var defaultAppSecret: String {
+    public var defaultAppSecret: String? {
         get {
             return config.defaultAppSecret
         }
@@ -143,36 +144,16 @@ public class UAAirshipConfig: NSObject {
     /// If neither `inProduction` nor `detectProvisioningMode` is set,
     /// `detectProvisioningMode` will be enabled.
     @objc
-    public var inProduction: Bool {
+    public var inProduction: NSNumber? {
         get {
-            return config.inProduction
+            return if let inProduction = config.inProduction {
+                NSNumber(value: inProduction)
+            } else {
+                nil
+            }
         }
         set {
-            config.inProduction = newValue
-        }
-    }
-
-    /// Apps may be set to self-configure based on the APS-environment set in the
-    /// embedded.mobileprovision file by using `detectProvisioningMode`. If
-    /// `detectProvisioningMode` is set to `true`, the `inProduction` value will
-    /// be determined at runtime by reading the provisioning profile. If it is set to
-    /// `false` (the default), the inProduction flag may be set directly or by using the
-    /// AirshipConfig.plist file.
-    ///
-    /// When this flag is enabled, the `inProduction` will fallback to `true` for safety
-    /// so that the production keys will always be used if the profile cannot be read
-    /// in a released app. Simulator builds do not include the profile, and the
-    /// `detectProvisioningMode` flag does not have any effect in cases where a profile
-    /// is not present. When a provisioning file is not present, the app will fall
-    /// back to the `inProduction` property as set in code or the AirshipConfig.plist
-    /// file.
-    @objc
-    public var detectProvisioningMode: Bool {
-        get {
-            return config.detectProvisioningMode
-        }
-        set {
-            config.detectProvisioningMode = newValue
+            config.inProduction = newValue?.boolValue
         }
     }
 
@@ -199,7 +180,7 @@ public class UAAirshipConfig: NSObject {
     ///
     /// - NOTE: See `UAURLAllowList` for pattern entry syntax.
     @objc(URLAllowList)
-    public var urlAllowList: [String] {
+    public var urlAllowList: [String]? {
         get {
             return config.urlAllowList
         }
@@ -214,7 +195,7 @@ public class UAAirshipConfig: NSObject {
     ///
     /// - NOTE: See `UAURLAllowList` for pattern entry syntax.
     @objc(URLAllowListScopeJavaScriptInterface)
-    public var urlAllowListScopeJavaScriptInterface: [String] {
+    public var urlAllowListScopeJavaScriptInterface: [String]? {
         get {
             return config.urlAllowListScopeJavaScriptInterface
         }
@@ -230,7 +211,7 @@ public class UAAirshipConfig: NSObject {
     ///
     /// - NOTE: See `UAURLAllowList` for pattern entry syntax.
     @objc(URLAllowListScopeOpenURL)
-    public var urlAllowListScopeOpenURL: [String] {
+    public var urlAllowListScopeOpenURL: [String]? {
         get {
             return config.urlAllowListScopeOpenURL
         }
@@ -381,68 +362,6 @@ public class UAAirshipConfig: NSObject {
         }
     }
 
-    /// The Airship device API url.
-    ///
-    /// - Note: This option is reserved for internal debugging. :nodoc:
-    @objc
-    public var deviceAPIURL: String? {
-        get {
-            return config.deviceAPIURL
-        }
-        set {
-            config.deviceAPIURL = newValue
-        }
-    }
-
-
-    /// The Airship analytics API url.
-    ///
-    /// - Note: This option is reserved for internal debugging. :nodoc:
-    @objc
-    public var analyticsURL: String? {
-        get {
-            return config.analyticsURL
-        }
-        set {
-            config.analyticsURL = newValue
-        }
-    }
-
-    /// The Airship remote data API url.
-    ///
-    /// - Note: This option is reserved for internal debugging. :nodoc:
-    @objc
-    public var remoteDataAPIURL: String? {
-        get {
-            return config.remoteDataAPIURL
-        }
-        set {
-            config.remoteDataAPIURL = newValue
-        }
-    }
-
-    /// The Airship chat API URL.
-    @objc
-    public var chatURL: String? {
-        get {
-            return config.chatURL
-        }
-        set {
-            config.chatURL = newValue
-        }
-    }
-
-    /// The Airship web socket URL.
-    @objc
-    public var chatWebSocketURL: String? {
-        get {
-            return config.chatWebSocketURL
-        }
-        set {
-            config.chatWebSocketURL = newValue
-        }
-    }
-
     /// If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
     ///
     /// Defaults to `false`.
@@ -455,41 +374,14 @@ public class UAAirshipConfig: NSObject {
             config.useUserPreferredLocale = newValue
         }
     }
-    
-    /// Returns the resolved app key.
-    /// - Returns: The resolved app key or an empty string.
-    @objc
-    public var appKey: String {
-        get {
-            return config.appKey
-        }
-    }
-
-    /// Returns the resolved app secret.
-    /// - Returns: The resolved app key or an empty string.
-    @objc
-    public var appSecret: String {
-        get {
-            return config.appSecret
-        }
-    }
-
-    /// Returns the resolved log level.
-    /// - Returns: The resolved log level.
-    @objc
-    public var logLevel: UAAirshipLogLevel {
-        get {
-            return UAHelpers.toLogLevel(level: config.logLevel)
-        }
-    }
 
     /// Creates an instance using the values set in the `AirshipConfig.plist` file.
     /// - Returns: A config with values from `AirshipConfig.plist` file.
-    @objc(defaultConfig)
-    public class func `default`() -> UAAirshipConfig {
-        let airshipConfig = UAAirshipConfig()
-        airshipConfig.config = AirshipConfig.default()
-        return airshipConfig
+    @objc(defaultConfigWithError:)
+    public class func `default`() throws -> UAAirshipConfig {
+        return UAAirshipConfig(
+            config: try AirshipConfig.default()
+        )
     }
 
     /**
@@ -498,45 +390,29 @@ public class UAAirshipConfig: NSObject {
      * - Returns: A config with values from the specified file.
      */
     @objc
-    public class func config(contentsOfFile path: String?) -> UAAirshipConfig {
-        let airshipConfig = UAAirshipConfig()
-        airshipConfig.config = AirshipConfig.config(contentsOfFile: path)
-        return airshipConfig
+    public class func fromPlist(contentsOfFile path: String) throws -> UAAirshipConfig {
+        return UAAirshipConfig(
+            config: try AirshipConfig(fromPlist: path)
+        )
     }
 
     /// Creates an instance with empty values.
     /// - Returns: A config with empty values.
     @objc
     public class func config() -> UAAirshipConfig {
-        let airshipConfig = UAAirshipConfig()
-        airshipConfig.config = AirshipConfig()
-        return airshipConfig
+        return UAAirshipConfig(config: AirshipConfig())
     }
 
-    /**
-     * Creates an instance using the values found in the specified `.plist` file.
-     * - Parameter path: The path of the specified file.
-     * - Returns: A config with values from the specified file.
-     */
-    @objc
-    public convenience init(contentsOfFile path: String?) {
-        self.init()
-        self.config = AirshipConfig.config(contentsOfFile: path)
+    private init(config: AirshipConfig) {
+        self.config = config
     }
 
-    /// Creates an instance with empty values.
-    /// - Returns: A Config with empty values.
+    /// Validates credentails
+    /// - Parameters:
+    ///     - inProduction: To validate production or development credentials
     @objc
-    public override init() {
-        self.config = AirshipConfig()
-    }
-
-    /// Validates the current configuration. In addition to performing a strict validation, this method
-    /// will log warnings and common configuration errors.
-    /// - Returns: `true` if the current configuration is valid, otherwise `false`.
-    @objc
-    public func validate() -> Bool {
-        return self.config.validate(logIssues: true)
+    public func validateCredentials(inProduction: Bool) throws {
+        try self.config.validateCredentials(inProduction: inProduction)
     }
 }
 

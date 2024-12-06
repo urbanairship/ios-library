@@ -118,7 +118,7 @@ public final class MessageCenter: NSObject, Sendable {
 
         super.init()
 
-        if let plist = config.messageCenterStyleConfig {
+        if let plist = config.airshipConfig.messageCenterStyleConfig {
             do {
                 try setThemeFromPlist(plist)
             } catch {

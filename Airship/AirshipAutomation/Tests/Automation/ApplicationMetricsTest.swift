@@ -17,10 +17,7 @@ final class ApplicationMetricsTest: XCTestCase {
     override func setUp() async throws {
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
-            config:  RuntimeConfig(
-                config: AirshipConfig(),
-                dataStore: self.dataStore
-            ),
+            config: .testConfig(),
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )

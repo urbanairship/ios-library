@@ -23,12 +23,6 @@ final class RemoteDataTest: AirshipBaseTest {
     private var privacyManager: AirshipPrivacyManager!
 
     override func setUp() async throws {
-
-        self.config = RuntimeConfig(
-            config: AirshipConfig.config(),
-            dataStore: dataStore
-        )
-
         self.privacyManager = await AirshipPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,

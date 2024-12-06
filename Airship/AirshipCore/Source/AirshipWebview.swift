@@ -58,7 +58,7 @@ struct WebViewView: UIViewRepresentable {
         webView.navigationDelegate = context.coordinator.nativeBridge
 
         if #available(iOS 16.4, *) {
-            webView.isInspectable = Airship.isFlying && Airship.config.isWebViewInspectionEnabled
+            webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
         }
 
         if let url = URL(string: self.url) {

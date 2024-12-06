@@ -80,7 +80,7 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
         )
 
         let expectedHeaders = [
-            "X-UA-Appkey": "test-app-key",
+            "X-UA-Appkey": "\(config.appCredentials.appKey)",
             "If-Modified-Since": "current last modified",
             "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
@@ -178,7 +178,7 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
         )
 
         let expectedHeaders = [
-            "X-UA-Appkey": "test-app-key",
+            "X-UA-Appkey": config.appCredentials.appKey,
             "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 

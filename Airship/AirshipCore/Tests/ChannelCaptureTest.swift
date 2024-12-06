@@ -20,10 +20,7 @@ final class ChannelCaptureTest: XCTestCase {
         self.channel.identifier = UUID().uuidString
 
         self.channelCapture = ChannelCapture(
-            config: RuntimeConfig(
-                config: config,
-                dataStore: PreferenceDataStore(appKey: UUID().uuidString)
-            ),
+            config: .testConfig(),
             channel: channel,
             notificationCenter: notificationCenter,
             date: date,
