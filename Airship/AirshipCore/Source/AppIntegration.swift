@@ -24,31 +24,6 @@ public class AppIntegration: NSObject {
     }
 
     #if !os(watchOS)
-    /**
-     * Must be called by the UIApplicationDelegate's
-     * application:performFetchWithCompletionHandler:.
-     *
-     * - Parameters:
-     *   - application: The application
-     *   - completionHandler: The completion handler.
-     */
-    @available(
-        *,
-        deprecated,
-        message: "Use application(_:performFetchWithCompletionHandler:) instead"
-    )
-    @MainActor
-    public class func applicatin(
-        _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (
-            UIBackgroundFetchResult
-        ) -> Void
-    ) {
-        self.application(
-            application,
-            performFetchWithCompletionHandler: completionHandler
-        )
-    }
 
     /**
      * Must be called by the UIApplicationDelegate's
@@ -177,7 +152,7 @@ public class AppIntegration: NSObject {
      */
     @MainActor
     public class func didFailToRegisterForRemoteNotificationsWithError(
-        error: Error
+        error: any Error
     ) {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
@@ -197,7 +172,7 @@ public class AppIntegration: NSObject {
     @MainActor
     public class func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @escaping (
+        fetchCompletionHandler completionHandler: @Sendable @escaping (
             WKBackgroundFetchResult
         ) -> Void
     ) {
@@ -217,35 +192,6 @@ public class AppIntegration: NSObject {
     }
     #endif
 
-    /**
-     * Must be called by the UNUserNotificationDelegate's
-     * userNotificationCenter:willPresentNotification:withCompletionHandler.
-     *
-     * - Parameters:
-     *   - center: The notification center.
-     *   - notification: The notification.
-     *   - completionHandler: The completion handler.
-     */
-    @available(
-        *,
-        deprecated,
-        message:
-            "Use userNotificationCenter(_:willPresent:withCompletionHandler:) instead"
-    )
-    @MainActor
-    public class func userNotificationCenter(
-        center: UNUserNotificationCenter,
-        willPresentNotification notification: UNNotification,
-        withCompletionHandler completionHandler: @Sendable @escaping (
-            _ options: UNNotificationPresentationOptions
-        ) -> Void
-    ) {
-        self.userNotificationCenter(
-            center,
-            willPresent: notification,
-            withCompletionHandler: completionHandler
-        )
-    }
 
     /**
      * Must be called by the UNUserNotificationDelegate's
@@ -281,33 +227,6 @@ public class AppIntegration: NSObject {
     }
 
     #if !os(tvOS)
-    /**
-     * Must be called by the UNUserNotificationDelegate's
-     * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler.
-     *
-     * - Parameters:
-     *   - center: The notification center.
-     *   - response: The notification response.
-     *   - completionHandler: The completion handler.
-     */
-    @available(
-        *,
-        deprecated,
-        message:
-            "Use userNotificationCenter(_:didReceive:withCompletionHandler:) instead"
-    )
-    @MainActor
-    public class func userNotificationCenter(
-        center: UNUserNotificationCenter,
-        didReceiveNotificationResponse response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @Sendable @escaping () -> Void
-    ) {
-        self.userNotificationCenter(
-            center,
-            didReceive: response,
-            withCompletionHandler: completionHandler
-        )
-    }
     /**
      * Must be called by the UNUserNotificationDelegate's
      * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler.

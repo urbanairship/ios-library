@@ -14,7 +14,6 @@ struct Label: View {
     @EnvironmentObject var viewState: ViewState
     @Environment(\.colorScheme) var colorScheme
 
-    @available(iOS 15, tvOS 15, watchOS 8, *)
     private var markdownText: Text {
         get throws {
             var text = try AttributedString(
@@ -53,8 +52,7 @@ struct Label: View {
     private var textView: Text {
 
         guard
-            self.info.properties.markdown?.disabled != true,
-            #available(iOS 15, tvOS 15, watchOS 8, *)
+            self.info.properties.markdown?.disabled != true
         else {
             return Text(verbatim: resolvedText)
         }
@@ -123,7 +121,6 @@ extension ThomasTextAppearance.TextAlignement {
 }
 
 extension View {
-    @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
     fileprivate func headingLevel(_ int: Int) -> AccessibilityHeadingLevel {
         switch int {
         case 1:
@@ -147,15 +144,10 @@ extension View {
     fileprivate func accessibilityRole(_ role: ThomasViewInfo.Label.AccessibilityRole?) -> some View  {
         switch role {
         case .heading(let level):
-            if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-                self.accessibilityAddTraits(.isHeader)
-                    .accessibilityHeading(headingLevel(level))
-             } else {
-                 self.accessibilityAddTraits(.isHeader)
-             }
+            self.accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(headingLevel(level))
         case .none:
             self
         }
     }
-
 }

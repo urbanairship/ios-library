@@ -480,16 +480,6 @@ extension PreferenceCenterTheme {
     }
 }
 
-extension ProgressView {
-    @ViewBuilder
-    func airshipSetTint(_ color: Color) -> some View {
-        if #available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *) {
-            self.tint(color)
-        } else {
-            self.accentColor(color)
-        }
-    }
-}
 
 extension Color {
     

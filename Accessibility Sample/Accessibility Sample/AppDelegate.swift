@@ -20,11 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        var config = AirshipConfig.default()
+        var config = try! AirshipConfig.default()
         config.productionLogLevel = .verbose
         config.developmentLogLevel = .verbose
 
-        Airship.takeOff(config, launchOptions: launchOptions)
+        try! Airship.takeOff(config, launchOptions: launchOptions)
 
         Airship.push.autobadgeEnabled = true
         Airship.push.notificationOptions = [.alert, .badge, .sound, .carPlay]

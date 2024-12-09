@@ -174,14 +174,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
             delegate: ChallengeResolver.shared,
             delegateQueue: nil)
         
-        if #available(macOS 12.0, iOS 15.0, watchOS 8.0, *) {
-            return try await session.download(from: url)
-        } else {
-            let (data, response) = try await session.data(from: url)
-            let tmpUrl = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-            try data.write(to: tmpUrl)
-            return (tmpUrl, response)
-        }
+        return try await session.download(from: url)
     }
     
     open override func serviceExtensionTimeWillExpire() {

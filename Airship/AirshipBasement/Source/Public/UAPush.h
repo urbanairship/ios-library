@@ -13,8 +13,7 @@ typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionCarPlay = (1 << 3),
     UANotificationOptionCriticalAlert = (1 << 4),
     UANotificationOptionProvidesAppNotificationSettings = (1 << 5),
-    UANotificationOptionProvisional = (1 << 6),
-    UANotificationOptionAnnouncement DEPRECATED_MSG_ATTRIBUTE("Deprecated – to be removed in SDK version 16.0.") = (1 << 7),
+    UANotificationOptionProvisional = (1 << 6)
 };
 
 /**

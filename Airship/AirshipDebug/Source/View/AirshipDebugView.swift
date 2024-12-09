@@ -103,8 +103,8 @@ public struct AirshipDebugView: View {
                 )
 
                 let optInStatus =
-                    viewModel.isPushNotificationsOptedIn
-                    ? "Opted-In" : "Opted-Out"
+                viewModel.isPushNotificationsOptedIn
+                ? "Opted-In" : "Opted-Out"
                 makeInfoItem("Opt-In Status", optInStatus.localized())
                 makeInfoItem("Device Token", viewModel.deviceToken)
                 makeNavItem(
@@ -255,23 +255,15 @@ public struct AirshipDebugView: View {
             Text(title.localized())
             Spacer()
 
-            if #available(iOS 15.0, *) {
-                TextField((placeHolder ?? title).localized(), text: text)
-                    .onSubmit {
-                        onSubmit()
-                    }
-                    .textInputAutocapitalization(.never)
-                    .disableAutocorrection(true)
-                    .frame(maxWidth: .infinity)
-            } else {
-                TextField((placeHolder ?? title).localized(), text: text) {
+            TextField((placeHolder ?? title).localized(), text: text)
+                .onSubmit {
                     onSubmit()
                 }
+                .textInputAutocapitalization(.never)
+                .disableAutocorrection(true)
                 .frame(maxWidth: .infinity)
-            }
         }
     }
-
 }
 
 @MainActor

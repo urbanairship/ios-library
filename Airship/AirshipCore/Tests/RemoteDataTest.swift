@@ -478,7 +478,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let finished = AirshipMainActorValue(false)
-        Task {
+        let task = Task {
             await self.remoteData.waitRefresh(source: .app)
             finished.set(true)
         }
@@ -492,6 +492,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         await self.launchRefreshTask()
+        await task.value
         isFinished = finished.value
         XCTAssertTrue(isFinished)
     }

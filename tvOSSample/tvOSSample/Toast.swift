@@ -20,19 +20,12 @@ struct Toast: View {
 
     @ViewBuilder
     private func makeView() -> some View {
-        if #available(iOS 15.0, *) {
-            Text(message?.text ?? "")
-                .padding()
-                .background(
-                    .ultraThinMaterial,
-                    in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-                )
-        } else {
-            Text(message?.text ?? "")
-                .padding()
-                .background(Color.white.opacity(0.4))
-                .cornerRadius(16)
-        }
+        Text(message?.text ?? "")
+            .padding()
+            .background(
+                .ultraThinMaterial,
+                in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+            )
     }
 
     @ViewBuilder

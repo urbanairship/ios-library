@@ -39,17 +39,11 @@ public struct NamedUserDebugView: View {
                         .localized()
                 )
             ) {
-                if #available(iOS 15.0, *) {
-                    TextField(title, text: self.$viewModel.namedUserID)
-                        .onSubmit {
-                            updateNamedUser()
-                        }
-                        .freeInput()
-                } else {
-                    TextField(title, text: self.$viewModel.namedUserID) {
+                TextField(title, text: self.$viewModel.namedUserID)
+                    .onSubmit {
                         updateNamedUser()
                     }
-                }
+                    .freeInput()
             }
         }
         .navigationTitle(title)

@@ -126,7 +126,6 @@ final class LiveActivityRegistryTest: XCTestCase {
         ))
     }
     
-    @available(iOS 15.0, *)
     func testRestoreResendsStaleTokens() async throws {
         tracker.token = "activity-token"
 

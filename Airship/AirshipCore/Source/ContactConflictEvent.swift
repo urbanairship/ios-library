@@ -3,7 +3,7 @@
 import Foundation
 
 /// Contact data.
-public final class ContactConflictEvent: NSObject, @unchecked Sendable {
+public struct ContactConflictEvent: Sendable, Equatable {
 
     /**
      * The named user ID if the conflict was caused by an identify operation with an existing named user through the SDK.
@@ -23,18 +23,7 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
     /**
      * Attributes.
      */
-    public let attributes: [String: AnyHashable]
-
-    /**
-     * Associated channels.
-     * @deprecated
-     */
-    @available(*, deprecated, message: "Use associatedChannels instead")
-    public var channels: [AssociatedChannel] {
-        associatedChannels.map { info in
-            AssociatedChannel(channelType: info.channelType, channelID: info.channelID)
-        }
-    }
+    public let attributes: [String: AirshipJSON]
 
     /**
      * Associated channels.
@@ -62,32 +51,11 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
         self.associatedChannels = associatedChannels
         self.subscriptionLists = subscriptionLists
         self.conflictingNamedUserID = conflictingNamedUserID
-        self.attributes = attributes.compactMapValues { $0.unWrap() }
+        self.attributes = attributes
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ContactConflictEvent else {
-            return false
-        }
 
-        return self.tags == other.tags &&
-        self.attributes == other.attributes &&
-        self.subscriptionLists == other.subscriptionLists &&
-        self.conflictingNamedUserID == other.conflictingNamedUserID &&
-        self.associatedChannels == other.associatedChannels
-    }
-
-    public override var hash: Int {
-        var result = 1
-        result = 31 * result + tags.hashValue
-        result = 31 * result + attributes.hashValue
-        result = 31 * result + subscriptionLists.hashValue
-        result = 31 * result + conflictingNamedUserID.hashValue
-        result = 31 * result + associatedChannels.hashValue
-        return result
-    }
-
-    public final class ChannelInfo: NSObject, Codable, Sendable {
+    public struct ChannelInfo: Sendable, Equatable {
 
         /**
          * Channel type
@@ -99,12 +67,6 @@ public final class ContactConflictEvent: NSObject, @unchecked Sendable {
          */
         public let channelID: String
 
-
-        public init(channelType: ChannelType, channelID: String) {
-            self.channelType = channelType
-            self.channelID = channelID
-            super.init()
-        }
     }
 
 }

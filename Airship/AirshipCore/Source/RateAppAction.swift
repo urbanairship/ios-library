@@ -91,17 +91,17 @@ private struct DefaultAppRater: AppRaterProtocol {
     @MainActor
     func openStore(itunesID: String) async throws {
         let urlString =
-            "itms-apps://itunes.apple.com/app/id\(itunesID)?action=write-review"
-
+        "itms-apps://itunes.apple.com/app/id\(itunesID)?action=write-review"
+        
         guard let url = URL(string: urlString) else {
             throw AirshipErrors.error("Unable to generate URL")
         }
-
+        
         guard await UIApplication.shared.open(url) else {
             throw AirshipErrors.error("Failed to open url \(url)")
         }
     }
-
+    
     @MainActor
     func showPrompt() async throws {
         guard let scene = self.findScene() else {
@@ -109,17 +109,17 @@ private struct DefaultAppRater: AppRaterProtocol {
                 "Unable to find scene for rate app prompt"
             )
         }
-
+        
         if #available(iOS 16.0, visionOS 1.0, *) {
             AppStore.requestReview(in: scene)
         } else {
-            #if !os(visionOS)
+#if !os(visionOS)
             /// Deprecated - remove when no longer needed
             SKStoreReviewController.requestReview(in: scene)
-            #endif
+#endif
         }
     }
-
+    
     @MainActor
     private func findScene() -> UIWindowScene? {
         return try? AirshipSceneManager.shared.lastActiveScene

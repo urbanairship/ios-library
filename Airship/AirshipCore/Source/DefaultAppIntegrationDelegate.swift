@@ -75,11 +75,10 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         }
     }
     #else
-    @preconcurrency @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool,
-        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
+        completionHandler: @Sendable @escaping (WKBackgroundFetchResult) -> Void
     ) {
 
         guard !isForeground || AirshipUtils.isSilentPush(userInfo) else {
@@ -88,14 +87,18 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
             return
         }
 
-        self.processPush(
-            userInfo,
-            isForeground: isForeground,
-            presentationOptions: nil
-        ) { result in
-            completionHandler(
-                WKBackgroundFetchResult(rawValue: result) ?? .noData
-            )
+        let wrapped = try? AirshipJSON.wrap(userInfo)
+
+        Task { @Sendable @MainActor in
+            self.processPush(
+                unwrapUserInfo(wrapped) ?? [:],
+                isForeground: isForeground,
+                presentationOptions: nil
+            ) { result in
+                completionHandler(
+                    WKBackgroundFetchResult(rawValue: result) ?? .noData
+                )
+            }
         }
     }
     #endif

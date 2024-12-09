@@ -61,20 +61,6 @@ public struct MessageCenterMessageView: View {
 }
 
 extension View {
-
-    /// Sets the Message Center message style
-    /// - Parameters:
-    ///     - style: The style
-    @available(*, deprecated, message: "Use messageCenterMessageViewStyle(_:) instead")
-    public func setMessageCenterMessageViewStyle<S>(
-        _ style: S
-    ) -> some View where S: MessageViewStyle {
-        self.environment(
-            \.airshipMessageViewStyle,
-            AnyMessageViewStyle(style: style)
-        )
-    }
-
     /// Sets the Message Center message style
     /// - Parameters:
     ///     - style: The style

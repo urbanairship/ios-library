@@ -11,6 +11,8 @@
 		32B5BE4C28F8BFBA00F2254B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4A28F8BFBA00F2254B /* AppState.swift */; };
 		32B5BE4E28F94FD200F2254B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* Toast.swift */; };
 		32B5BE4F28F94FD200F2254B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* Toast.swift */; };
+		6E00316F2D03C2610004F53E /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E00316E2D03C2610004F53E /* AirshipConfig.plist */; };
+		6E0031702D03C2610004F53E /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E00316E2D03C2610004F53E /* AirshipConfig.plist */; };
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
@@ -375,6 +377,7 @@
 		1BFB70582388302000BF7F07 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		32B5BE4A28F8BFBA00F2254B /* AppState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		32B5BE4D28F94FD200F2254B /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
+		6E00316E2D03C2610004F53E /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
 		6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAttributes.swift; sourceTree = "<group>"; };
@@ -555,6 +558,7 @@
 				6EDB2B0928D4E24F00A01377 /* LiveActivity */,
 				CCDA35A41B8D233A00950AD5 /* Products */,
 				DF4E494E221D96CB00F306A5 /* Frameworks */,
+				6E00316E2D03C2610004F53E /* AirshipConfig.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -875,6 +879,7 @@
 				6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */,
 				6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */,
 				6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */,
+				6E00316F2D03C2610004F53E /* AirshipConfig.plist in Resources */,
 				99E6F0632B97E11E0006326A /* TestAssets.xcassets in Resources */,
 				99E6F0602B97CFAA0006326A /* SampleMessageCenterTheme.plist in Resources */,
 			);
@@ -887,6 +892,7 @@
 				6EC7556A2A4B842600851ABB /* AirshipConfig.plist in Resources */,
 				6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */,
 				6EAAE9C028C7E322003CAE53 /* Preview Assets.xcassets in Resources */,
+				6E0031702D03C2610004F53E /* AirshipConfig.plist in Resources */,
 				99E6F0642B97E11E0006326A /* TestAssets.xcassets in Resources */,
 				99E6F0612B97D53E0006326A /* SampleMessageCenterTheme.plist in Resources */,
 			);
@@ -1120,7 +1126,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1170,7 +1176,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

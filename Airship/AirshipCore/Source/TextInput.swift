@@ -99,11 +99,7 @@ struct TextInput: View {
 #if !os(watchOS)
 
                     .airshipApplyIf(self.info.properties.inputType == .email) { view in
-                        if #available(iOS 15.0, tvOS 15.0, watchOS 8.0, *) {
-                            view.textInputAutocapitalization(.never)
-                        } else {
-                            view.autocapitalization(.none)
-                        }
+                        view.textInputAutocapitalization(.never)
                     }
 #endif
                     .id(self.info.properties.identifier)

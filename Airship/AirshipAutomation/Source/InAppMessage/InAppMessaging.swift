@@ -32,19 +32,6 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
     ///     - forType: The type
     ///     - factoryBlock: The factory block
     @MainActor
-    @available(*, deprecated, message: "Use setCustomAdapter(forType:factoryBlock:) instead")
-    func setAdapterFactoryBlock(
-        forType: CustomDisplayAdapterType,
-        factoryBlock: @escaping @Sendable (InAppMessage, any AirshipCachedAssetsProtocol) -> (any CustomDisplayAdapter)?
-    )
-
-    /// Sets a factory block for a custom display adapter.
-    /// If the factory block returns a nil adapter, the default adapter will be used.
-    ///
-    /// - Parameters:
-    ///     - forType: The type
-    ///     - factoryBlock: The factory block
-    @MainActor
     func setCustomAdapter(
         forType: CustomDisplayAdapterType,
         factoryBlock: @escaping @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?

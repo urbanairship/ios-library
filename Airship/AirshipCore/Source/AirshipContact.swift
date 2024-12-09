@@ -282,7 +282,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
 
 
     public func airshipReady() {
-        Task { [weak self] in
+        Task { @MainActor [weak self] in
             if let self = self {
                 let contactInfo = await self.contactManager.currentContactIDInfo()
                 self.contactIDUpdatesSubject.send(contactInfo)

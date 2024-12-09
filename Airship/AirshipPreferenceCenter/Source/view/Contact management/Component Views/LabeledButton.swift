@@ -76,8 +76,7 @@ struct LabeledButton: View {
                 $0
                     .opacity(0) /// Hide the text underneath the loader
                     .overlay(
-                        ProgressView()
-                            .airshipSetTint(labelColor)
+                        ProgressView().tint(labelColor)
                     )
             }
     }

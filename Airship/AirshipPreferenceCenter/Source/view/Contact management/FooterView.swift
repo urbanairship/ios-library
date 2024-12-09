@@ -24,12 +24,7 @@ struct FooterView: View {
     }
 
     private func containsMarkdownLink(text: String) -> Bool {
-        if #available(iOS 15, tvOS 15, watchOS 8, *) {
-            let text = try? AttributedString(markdown: text)
-            return text?.runs.contains(where: { $0.link != nil }) ?? false
-        } else {
-            let regexPattern = "\\[([^\\]]+)\\]\\(([^\\)]+)\\)"
-            return text.range(of: regexPattern, options: .regularExpression) != nil
-        }
+        let text = try? AttributedString(markdown: text)
+        return text?.runs.contains(where: { $0.link != nil }) ?? false
     }
 }

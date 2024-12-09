@@ -55,10 +55,8 @@ struct UNNotificationRegistrar: NotificationRegistrar {
 
 extension UNAuthorizationStatus {
     fileprivate var airshipStatus: UAAuthorizationStatus {
-        if #available(iOS 12.0, tvOS 12.0, *) {
-            if self == .provisional {
-                return .provisional
-            }
+        if self == .provisional {
+            return .provisional
         }
 
         if self == .notDetermined {
@@ -85,13 +83,13 @@ extension UNAuthorizationStatus {
 extension UNNotificationSettings {
     fileprivate var airshipSettings: UAAuthorizedNotificationSettings {
         var authorizedSettings: UAAuthorizedNotificationSettings = []
-        #if !os(watchOS)
+#if !os(watchOS)
         if self.badgeSetting == .enabled {
             authorizedSettings.insert(.badge)
         }
-        #endif
+#endif
 
-        #if !os(tvOS)
+#if !os(tvOS)
 
         if self.soundSetting == .enabled {
             authorizedSettings.insert(.sound)
@@ -101,7 +99,7 @@ extension UNNotificationSettings {
             authorizedSettings.insert(.alert)
         }
 
-        #if !os(watchOS)
+#if !os(watchOS)
         if self.carPlaySetting == .enabled {
             authorizedSettings.insert(.carPlay)
         }
@@ -109,42 +107,36 @@ extension UNNotificationSettings {
         if self.lockScreenSetting == .enabled {
             authorizedSettings.insert(.lockScreen)
         }
-        #endif
+#endif
 
         if self.notificationCenterSetting == .enabled {
             authorizedSettings.insert(.notificationCenter)
         }
 
-        if #available(iOS 12.0, *) {
-            if self.criticalAlertSetting == .enabled {
-                authorizedSettings.insert(.criticalAlert)
-            }
+        if self.criticalAlertSetting == .enabled {
+            authorizedSettings.insert(.criticalAlert)
         }
 
-        #if !os(visionOS)
+#if !os(visionOS)
         /// Announcement authorization is always included in visionOS
         if self.announcementSetting == .enabled {
             authorizedSettings.insert(.announcement)
         }
-        #endif
+#endif
 
-        #endif
+#endif
 
-        if #available(iOS 15.0, watchOS 8.0, *) {
-            #if !os(tvOS) && !targetEnvironment(macCatalyst)
+#if !os(tvOS) && !targetEnvironment(macCatalyst)
 
-            if self.timeSensitiveSetting == .enabled {
-                authorizedSettings.insert(.timeSensitive)
-            }
-
-            if self.scheduledDeliverySetting == .enabled {
-                authorizedSettings.insert(.scheduledDelivery)
-            }
-
-            #endif
-        } else {
-            // Fallback on earlier versions
+        if self.timeSensitiveSetting == .enabled {
+            authorizedSettings.insert(.timeSensitive)
         }
+
+        if self.scheduledDeliverySetting == .enabled {
+            authorizedSettings.insert(.scheduledDelivery)
+        }
+
+#endif
         return authorizedSettings
     }
 }
@@ -152,45 +144,35 @@ extension UNNotificationSettings {
 extension UANotificationOptions {
     fileprivate var appleOptions: UNAuthorizationOptions {
         var authorizedOptions: UNAuthorizationOptions = []
-
+        
         if self.contains(.badge) {
             authorizedOptions.insert(.badge)
         }
-
+        
         if self.contains(.sound) {
             authorizedOptions.insert(.sound)
         }
-
+        
         if self.contains(.alert) {
             authorizedOptions.insert(.alert)
         }
-
+        
         if self.contains(.carPlay) {
             authorizedOptions.insert(.carPlay)
         }
-
-        if #available(iOS 12.0, tvOS 12.0, *) {
-            if self.contains(.criticalAlert) {
-                authorizedOptions.insert(.criticalAlert)
-            }
-
-            if self.contains(.providesAppNotificationSettings) {
-                authorizedOptions.insert(.providesAppNotificationSettings)
-            }
-
-            if self.contains(.provisional) {
-                authorizedOptions.insert(.provisional)
-            }
+        
+        if self.contains(.criticalAlert) {
+            authorizedOptions.insert(.criticalAlert)
         }
-
-        #if !os(tvOS) && !os(watchOS) && !os(visionOS)
-        // Avoids deprecation warning
-        let annoucement = UANotificationOptions(rawValue: (1 << 7))
-        if self.contains(annoucement) {
-            authorizedOptions.insert(.announcement)
+        
+        if self.contains(.providesAppNotificationSettings) {
+            authorizedOptions.insert(.providesAppNotificationSettings)
         }
-        #endif
-
+        
+        if self.contains(.provisional) {
+            authorizedOptions.insert(.provisional)
+        }
+        
         return authorizedOptions
     }
 }

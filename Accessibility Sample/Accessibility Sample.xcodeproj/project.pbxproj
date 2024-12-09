@@ -31,6 +31,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E0031862D03C5890004F53E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
+			remoteInfo = AirshipWrapper;
+		};
 		6E524D1D2C25FA51002CA094 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
@@ -38,40 +45,12 @@
 			remoteGlobalIDString = 6E43204826EA814F009228AB;
 			remoteInfo = AirshipBasement;
 		};
-		6E524D1F2C25FA51002CA094 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6E43212626EA819A009228AB;
-			remoteInfo = "AirshipBasement tvOS";
-		};
-		6E524D212C25FA51002CA094 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A6722ABF281A9F460033F54D;
-			remoteInfo = "AirshipBasement watchOS";
-		};
 		6E524D232C25FA51002CA094 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 494DD9571B0EB677009C134E;
 			remoteInfo = AirshipCore;
-		};
-		6E524D252C25FA51002CA094 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DF6DD6561E7A1EB8000C281A;
-			remoteInfo = "AirshipCore tvOS";
-		};
-		6E524D272C25FA51002CA094 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A67229B228199CEF0033F54D;
-			remoteInfo = "AirshipCore watchOS";
 		};
 		6E524D292C25FA51002CA094 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -235,21 +214,18 @@
 			isa = PBXGroup;
 			children = (
 				6E524D1E2C25FA51002CA094 /* AirshipBasement.framework */,
-				6E524D202C25FA51002CA094 /* AirshipBasement.framework */,
-				6E524D222C25FA51002CA094 /* AirshipBasement.framework */,
 				6E524D242C25FA51002CA094 /* AirshipCore.framework */,
-				6E524D262C25FA51002CA094 /* AirshipCore.framework */,
-				6E524D282C25FA51002CA094 /* AirshipCore.framework */,
-				6E524D2A2C25FA51002CA094 /* AirshipTests.xctest */,
-				6E524D2C2C25FA51002CA094 /* AirshipDebug.framework */,
+				6E524D362C25FA51002CA094 /* AirshipAutomation.framework */,
+				6E524D3A2C25FA51002CA094 /* AirshipFeatureFlags.framework */,
 				6E524D2E2C25FA51002CA094 /* AirshipMessageCenter.framework */,
 				6E524D302C25FA51002CA094 /* AirshipPreferenceCenter.framework */,
-				6E524D322C25FA51002CA094 /* AirshipPreferenceCenterTests.xctest */,
-				6E524D342C25FA51002CA094 /* AirshipMessageCenterTests.xctest */,
-				6E524D362C25FA51002CA094 /* AirshipAutomation.framework */,
+				6E0031872D03C5890004F53E /* AirshipWrapper.framework */,
+				6E524D2C2C25FA51002CA094 /* AirshipDebug.framework */,
+				6E524D2A2C25FA51002CA094 /* AirshipTests.xctest */,
 				6E524D382C25FA51002CA094 /* AirshipAutomationTests.xctest */,
-				6E524D3A2C25FA51002CA094 /* AirshipFeatureFlags.framework */,
 				6E524D3C2C25FA51002CA094 /* AirshipFeatureFlagsTests.xctest */,
+				6E524D342C25FA51002CA094 /* AirshipMessageCenterTests.xctest */,
+				6E524D322C25FA51002CA094 /* AirshipPreferenceCenterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -375,6 +351,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6E0031872D03C5890004F53E /* AirshipWrapper.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipWrapper.framework;
+			remoteRef = 6E0031862D03C5890004F53E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		6E524D1E2C25FA51002CA094 /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -382,39 +365,11 @@
 			remoteRef = 6E524D1D2C25FA51002CA094 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E524D202C25FA51002CA094 /* AirshipBasement.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipBasement.framework;
-			remoteRef = 6E524D1F2C25FA51002CA094 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E524D222C25FA51002CA094 /* AirshipBasement.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipBasement.framework;
-			remoteRef = 6E524D212C25FA51002CA094 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		6E524D242C25FA51002CA094 /* AirshipCore.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipCore.framework;
 			remoteRef = 6E524D232C25FA51002CA094 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E524D262C25FA51002CA094 /* AirshipCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipCore.framework;
-			remoteRef = 6E524D252C25FA51002CA094 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		6E524D282C25FA51002CA094 /* AirshipCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipCore.framework;
-			remoteRef = 6E524D272C25FA51002CA094 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6E524D2A2C25FA51002CA094 /* AirshipTests.xctest */ = {
@@ -684,7 +639,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -716,7 +671,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

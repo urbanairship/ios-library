@@ -559,6 +559,7 @@ class AirshipContactTest: XCTestCase {
         XCTAssertEqual(expected, lists)
     }
 
+    @MainActor
     func testFetchSubscriptionListsCachedDifferentContactID() async throws {
         await self.contactManager.setCurrentContactIDInfo(
             ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
@@ -787,7 +788,6 @@ class AirshipContactTest: XCTestCase {
         XCTAssertEqual(overrides.tags, updateBar.tags)
         XCTAssertEqual(overrides.attributes, updateBar.attributes)
         XCTAssertEqual(overrides.subscriptionLists, updateBar.subscriptionLists)
-
     }
 
     @MainActor

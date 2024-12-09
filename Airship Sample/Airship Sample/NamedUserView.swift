@@ -25,20 +25,14 @@ struct NamedUserView: View {
 
     @ViewBuilder
     private func makeTextInput() -> some View {
-        if #available(iOS 15.0, *) {
-            TextField("Named User", text: self.$viewModel.namedUserID)
-                .onSubmit {
-                    updateNamedUser()
-                }
-                .textInputAutocapitalization(.never)
-                .disableAutocorrection(true)
-        } else {
-            TextField("Named User", text:self.$viewModel.namedUserID) {
+        TextField("Named User", text: self.$viewModel.namedUserID)
+            .onSubmit {
                 updateNamedUser()
             }
-
-        }
+            .textInputAutocapitalization(.never)
+            .disableAutocorrection(true)
     }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text(

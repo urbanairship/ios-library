@@ -39,16 +39,9 @@ public struct EventListDebugView: View {
     public var body: some View {
         Form {
             Section(header: Text("Events")) {
-                makeList()
-                if #available(iOS 15.0, *) {
-                    makeList()
-                        .searchable(
-                            text: self.$viewModel.searchString
-                                .preventWhiteSpace()
-                        )
-                } else {
-                    makeList()
-                }
+                makeList().searchable(
+                    text: self.$viewModel.searchString.preventWhiteSpace()
+                )
             }
         }
         .navigationTitle("Events".localized())

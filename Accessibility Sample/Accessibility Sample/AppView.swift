@@ -35,7 +35,7 @@ struct AppView: View {
                 systemImage: "tray.fill"
             )
         }
-        .badgeCompat(self.appState.unreadCount)
+        .badge(self.appState.unreadCount)
         .onAppear {
             Airship.analytics.trackScreen("message_center")
         }
@@ -74,17 +74,6 @@ struct AppView: View {
         }.overlay(
             makeToastView()
         )
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func badgeCompat(_ badge: Int) -> some View {
-        if #available(iOS 15.0, *) {
-            self.badge(badge)
-        } else {
-            self
-        }
     }
 }
 
