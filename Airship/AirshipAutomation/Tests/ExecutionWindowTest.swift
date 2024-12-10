@@ -6,7 +6,7 @@ import XCTest
 import AirshipCore
 
 final class ExectutionWindowTest: XCTestCase {
-    private var defaultTimeZone: TimeZone = .gmt
+    private var defaultTimeZone: TimeZone = TimeZone(secondsFromGMT: 0)!
 
     private var calendar: Calendar  {
         var calendar = Calendar(identifier: .gregorian)

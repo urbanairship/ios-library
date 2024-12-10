@@ -11,6 +11,8 @@
  */
 #if os(iOS)
 
+import UIKit
+
 public final class ShareAction: AirshipAction {
     /// Default names - "share_action", "^s"
     public static let defaultNames = ["share_action", "^s"]

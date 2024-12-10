@@ -417,10 +417,7 @@ final class MessageCenterListTest: XCTestCase {
             sentDate: self.date.now.advanced(by: -1),
             expiry: self.date.now.advanced(by: 1)
         )
-        
-        let refresh = self.expectation(description: "client called")
-        refresh.assertForOverFulfill = false
-        
+
         self.client.onCreateUser = { _ in
             return AirshipHTTPResponse(
                 result: mcUser,
@@ -428,36 +425,49 @@ final class MessageCenterListTest: XCTestCase {
                 headers: [:]
             )
         }
-        
-        var isRefreshed = false
-        self.client.onRetrieve = { _, _, _ in
-            defer {
-                isRefreshed = true
-                refresh.fulfill()
-            }
 
-            return AirshipHTTPResponse(
-                result: isRefreshed ? [] : [message],
-                statusCode: 200,
-                headers: [:]
-            )
-        }
+        var refreshes = AsyncStream<Bool> { continuation in
+
+            var responses = AirshipAtomicValue([[message], []])
+            self.client.onRetrieve = { _, _, _ in
+                defer {
+                    continuation.yield(true)
+                }
+
+                let response = responses.value.first
+                responses.update { responses in
+                    var updated = responses
+                    if !updated.isEmpty {
+                        updated.removeFirst()
+                    }
+                    return updated
+                }
+
+                return AirshipHTTPResponse(
+                    result: response ?? [],
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+        }.makeAsyncIterator()
+
 
         XCTAssert(self.workManager.workRequests.isEmpty)
         
         self.inbox.enabled = true
         self.workManager.autoLaunchRequests = true
-        
         await self.inbox.refreshMessages()
-        
-        await fulfillment(of: [refresh], timeout: 5)
-        
-        let saved = await self.inbox.message(forID: message.id)
-        XCTAssertNotNil(saved)
+        _ = await refreshes.next()
+
+        var fetched = await self.inbox.message(forID: message.id)
+        XCTAssertNotNil(fetched)
 
         let sleep = await sleeps.next()
         XCTAssertEqual(1, sleep)
-        XCTAssertEqual(3, self.workManager.workRequests.count)
+        _ = await refreshes.next()
+
+        fetched = await self.inbox.message(forID: message.id)
+        XCTAssertNil(fetched)
     }
     
     func testRefreshOnMessageExpiresTakesEarliestDate() async throws {

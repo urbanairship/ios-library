@@ -114,7 +114,6 @@
 		3CC8AA0626BB3C7900405614 /* Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8AA0526BB3C7900405614 /* Push.swift */; };
 		3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */; };
 		3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */; };
-		3DD57BE1EC73D7CF9D4687C8 /* Pods_AirshipTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */; };
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
 		6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */; };
 		6014AD6C2C2032730072DCF0 /* ChallengeResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */; };
@@ -1020,7 +1019,6 @@
 		CC64F14F1D8B7954009CEF27 /* AirshipConfig-Valid.plist in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1471D8B7954009CEF27 /* AirshipConfig-Valid.plist */; };
 		CC64F1511D8B7954009CEF27 /* development-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */; };
 		CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */; };
-		DF7E22BC1ED63E9200C79C46 /* ProjectValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7E22BB1ED63E9200C79C46 /* ProjectValidationTest.swift */; };
 		DFD2464E2473404C000FD565 /* DebugSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD2464D2473404C000FD565 /* DebugSDKModule.swift */; };
 		E976486F27A46CC50024518D /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E976486E27A46CC50024518D /* ChannelType.swift */; };
 		E99605A127A071EA00365AE4 /* EmailRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */; };
@@ -1301,8 +1299,6 @@
 		03525B95280DE5F400320AA9 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		03525B96280DE60200320AA9 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		03525B97280DE61200320AA9 /* zu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zu; path = zu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
-		07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.release.xcconfig"; sourceTree = "<group>"; };
-		0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.debug.xcconfig"; sourceTree = "<group>"; };
 		320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerGestureMap.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		322AAB1C2B5A869000652DAC /* ContactManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagementView.swift; sourceTree = "<group>"; };
@@ -1374,7 +1370,6 @@
 		3CC8AA0526BB3C7900405614 /* Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Push.swift; sourceTree = "<group>"; };
 		3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategories.swift; sourceTree = "<group>"; };
 		3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPushableComponent.swift; sourceTree = "<group>"; };
-		3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipKitTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipKitTests/Pods-AirshipKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
 		459D404B208FE6BA00C40E2D /* Invalid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
 		459D40542092474300C40E2D /* Valid-UAInAppMessageModalStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageModalStyle.plist"; sourceTree = "<group>"; };
@@ -1382,7 +1377,6 @@
 		459D40582092475500C40E2D /* Invalid-UAInAppMessageBannerStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageBannerStyle.plist"; sourceTree = "<group>"; };
 		459D405A2092475C00C40E2D /* Invalid-UAInAppMessageModalStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Invalid-UAInAppMessageModalStyle.plist"; sourceTree = "<group>"; };
 		45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = testMCColorsCatalog.xcassets; sourceTree = "<group>"; };
-		45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipAccengageTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolver.swift; sourceTree = "<group>"; };
@@ -1438,8 +1432,6 @@
 		60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessageTest.swift; sourceTree = "<group>"; };
 		60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessagingTest.swift; sourceTree = "<group>"; };
 		60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventFeedTest.swift; sourceTree = "<group>"; };
-		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
-		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E0031A82D08BB880004F53E /* UAFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAFeature.swift; sourceTree = "<group>"; };
 		6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigTest.swift; sourceTree = "<group>"; };
 		6E062D02271656DE001A74A1 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
@@ -2304,7 +2296,6 @@
 		C00ED4CE26C729390040C5D0 /* URLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLAllowList.swift; sourceTree = "<group>"; };
 		C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCapture.swift; sourceTree = "<group>"; };
 		C088383526E0244C00D40838 /* TestURLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLAllowList.swift; sourceTree = "<group>"; };
-		C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CC40DDB31D8CAF7300BABD4F /* AirshipConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = AirshipConfig.xcconfig; sourceTree = "<group>"; };
 		CC64F0541D8B77E3009CEF27 /* AirshipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC64F0581D8B77E3009CEF27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2314,13 +2305,11 @@
 		CC64F1471D8B7954009CEF27 /* AirshipConfig-Valid.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "AirshipConfig-Valid.plist"; sourceTree = "<group>"; };
 		CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "development-embedded.mobileprovision"; sourceTree = "<group>"; };
 		CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "production-embedded.mobileprovision"; sourceTree = "<group>"; };
-		DF7E22BB1ED63E9200C79C46 /* ProjectValidationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectValidationTest.swift; sourceTree = "<group>"; };
 		DFD2464D2473404C000FD565 /* DebugSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugSDKModule.swift; sourceTree = "<group>"; };
 		E976486E27A46CC50024518D /* ChannelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelType.swift; sourceTree = "<group>"; };
 		E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailRegistrationOptions.swift; sourceTree = "<group>"; };
 		E99605A327A075B800365AE4 /* SMSRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSRegistrationOptions.swift; sourceTree = "<group>"; };
 		E99605A627A075C600365AE4 /* OpenRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenRegistrationOptions.swift; sourceTree = "<group>"; };
-		EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2428,7 +2417,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CC64F0591D8B77E3009CEF27 /* AirshipCore.framework in Frameworks */,
-				3DD57BE1EC73D7CF9D4687C8 /* Pods_AirshipTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2439,12 +2427,6 @@
 			isa = PBXGroup;
 			children = (
 				494DD9581B0EB677009C134E /* Products */,
-				3DE226EC24B13B38BA51B7B4 /* Pods-AirshipKitTests.debug.xcconfig */,
-				07A9F5B3D35A6078949E4EAA /* Pods-AirshipKitTests.release.xcconfig */,
-				0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */,
-				62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */,
-				C3AEC8D23AA7835AC1E74C9A /* Pods-AirshipAccengageTests.debug.xcconfig */,
-				6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -4700,7 +4682,6 @@
 				CC04F2151DCAB73000B4842D /* Analytics */,
 				CC04F2191DCAB7BE00B4842D /* Utils */,
 				CC04F21B1DCAB82200B4842D /* NativeBridge */,
-				DF7E22BB1ED63E9200C79C46 /* ProjectValidationTest.swift */,
 				CC64F0581D8B77E3009CEF27 /* Info.plist */,
 				6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */,
 				6E7EACD02AF4192400DA286B /* AirshipCacheTest.swift */,
@@ -4783,8 +4764,6 @@
 				6EB4E4A32549F95200E3FFD0 /* Network.framework */,
 				6EB4E4BE2549F9B900E3FFD0 /* Network.framework */,
 				3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */,
-				EBF83042659DAF0D42AD7A9E /* Pods_AirshipTests.framework */,
-				45F651ACE8833830E1D2333D /* Pods_AirshipAccengageTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -5107,11 +5086,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CC64F05E1D8B77E3009CEF27 /* Build configuration list for PBXNativeTarget "AirshipTests" */;
 			buildPhases = (
-				F177E7D1D04156E5342D8FCC /* [CP] Check Pods Manifest.lock */,
 				CC64F0501D8B77E3009CEF27 /* Sources */,
 				CC64F0511D8B77E3009CEF27 /* Frameworks */,
 				CC64F0521D8B77E3009CEF27 /* Resources */,
-				D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5392,45 +5369,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		D3775F1A08A9BD2223C1AC9E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/XcodeEdit/XcodeEdit.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XcodeEdit.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AirshipTests/Pods-AirshipTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F177E7D1D04156E5342D8FCC /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-AirshipTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3CA0E29C237CCE2600EE76CF /* Sources */ = {
@@ -6375,7 +6313,6 @@
 				6EC7E474269E52600038CFDD /* ContactOperationTest.swift in Sources */,
 				6EC7E47626A5EE910038CFDD /* AudienceUtilsTest.swift in Sources */,
 				325D53DA295C7979003421B4 /* ActionRegistryTest.swift in Sources */,
-				DF7E22BC1ED63E9200C79C46 /* ProjectValidationTest.swift in Sources */,
 				32F293D5295AFD94004A7D9C /* ActionArgumentsTest.swift in Sources */,
 				6ED2F52D2B7FD403000AFC80 /* JavaScriptCommandTest.swift in Sources */,
 				6EFAFB7C295525DF008AD187 /* ChannelRegistrationPayloadTest.swift in Sources */,
@@ -6705,7 +6642,6 @@
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipDebug/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6751,7 +6687,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipDebug/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6795,7 +6730,6 @@
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipMessageCenter/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6839,7 +6773,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipMessageCenter/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -6941,7 +6874,8 @@
 				TVOS_DEPLOYMENT_TARGET = 18.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Debug;
 		};
@@ -7012,7 +6946,8 @@
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				WATCHOS_DEPLOYMENT_TARGET = 11.0;
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Release;
 		};
@@ -7050,7 +6985,6 @@
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				VALID_ARCHS = "$(inherited) x86_64";
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
@@ -7087,7 +7021,6 @@
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 				VALID_ARCHS = "$(inherited) x86_64";
-				WATCHOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
@@ -7115,7 +7048,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Urban Airship. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7169,7 +7101,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Urban Airship. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7217,7 +7148,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -7247,7 +7177,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAutomationTests;
@@ -7347,7 +7276,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7383,7 +7311,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7454,7 +7381,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7504,7 +7430,6 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7548,7 +7473,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7581,7 +7505,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7618,7 +7541,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipFeatureFlags/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Urban Airship. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7671,7 +7593,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipFeatureFlags/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Urban Airship. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7717,7 +7638,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -7747,7 +7667,6 @@
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.AirshipFeatureFlagsTests;
@@ -7786,7 +7705,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Urban Airship. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7847,7 +7765,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Urban Airship. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7882,7 +7799,6 @@
 		};
 		CC64F05C1D8B77E3009CEF27 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0F55D47F540C142B0F469570 /* Pods-AirshipTests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -7900,7 +7816,6 @@
 					"XCODE_VERSION_MAJOR=\"$(XCODE_VERSION_MAJOR)\"",
 				);
 				INFOPLIST_FILE = AirshipCore/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7910,19 +7825,17 @@
 					"-ObjC",
 					"$(inherited)",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
-				TVOS_DEPLOYMENT_TARGET = 14.0;
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
 		};
 		CC64F05D1D8B77E3009CEF27 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -7938,7 +7851,6 @@
 					"XCODE_VERSION_MAJOR=\"$(XCODE_VERSION_MAJOR)\"",
 				);
 				INFOPLIST_FILE = Core/Tests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -7948,11 +7860,10 @@
 					"-ObjC",
 					"$(inherited)",
 				);
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_STRICT_CONCURRENCY = minimal;
-				TVOS_DEPLOYMENT_TARGET = 14.0;
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;

@@ -23,7 +23,6 @@ package_carthage_zip_path = ${build_path}/Airship.xcframeworks.zip
 setup:
 	test ${DEVELOPER_DIR}
 	bundle install --quiet
-	bundle exec pod install
 	bash ./scripts/check_xcbeautify.sh
 
 .PHONY: all
