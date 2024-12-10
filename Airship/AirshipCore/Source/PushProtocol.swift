@@ -32,7 +32,7 @@ public protocol AirshipPushProtocol: AnyObject, Sendable {
     /// User Notification options this app will request from APNS.
     ///
     /// Defaults to alert, sound and badge.
-    var notificationOptions: UANotificationOptions { get set }
+    var notificationOptions: UNAuthorizationOptions { get set }
 
     #if !os(tvOS)
     /// Custom notification categories. Airship default notification
@@ -72,11 +72,11 @@ public protocol AirshipPushProtocol: AnyObject, Sendable {
     ///
     /// Note: this value reflects all the notification settings currently enabled in the
     /// Settings app and does not take into account which options were originally requested.
-    var authorizedNotificationSettings: UAAuthorizedNotificationSettings { get }
+    var authorizedNotificationSettings: AirshipAuthorizedNotificationSettings { get }
 
     /// The current authorization status.
     /// If push is disabled in privacy manager, this value could be out of date.
-    var authorizationStatus: UAAuthorizationStatus { get }
+    var authorizationStatus: UNAuthorizationStatus { get }
 
     /// Indicates whether the user has been prompted for notifications or not.
     /// If push is disabled in privacy manager, this value will be out of date.

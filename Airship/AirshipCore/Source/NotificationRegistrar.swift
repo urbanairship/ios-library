@@ -11,11 +11,11 @@ protocol NotificationRegistrar: Sendable {
     #endif
 
     @MainActor
-    func checkStatus() async -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings)
+    func checkStatus() async -> (UNAuthorizationStatus, AirshipAuthorizedNotificationSettings)
 
     @MainActor
     func updateRegistration(
-        options: UANotificationOptions,
+        options: UNAuthorizationOptions,
         skipIfEphemeral: Bool
     ) async -> Void
 }

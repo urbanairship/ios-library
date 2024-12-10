@@ -25,60 +25,60 @@ class EventUtils {
     }
 
     class func notificationTypes(
-        authorizedSettings: UAAuthorizedNotificationSettings
+        authorizedSettings: AirshipAuthorizedNotificationSettings
     ) -> [String]? {
         var notificationTypes: [String] = []
 
-        if (UAAuthorizedNotificationSettings.badge.rawValue
+        if (AirshipAuthorizedNotificationSettings.badge.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("badge")
         }
 
         #if !os(tvOS)
-        if (UAAuthorizedNotificationSettings.sound.rawValue
+        if (AirshipAuthorizedNotificationSettings.sound.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("sound")
         }
 
-        if (UAAuthorizedNotificationSettings.alert.rawValue
+        if (AirshipAuthorizedNotificationSettings.alert.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("alert")
         }
 
-        if (UAAuthorizedNotificationSettings.carPlay.rawValue
+        if (AirshipAuthorizedNotificationSettings.carPlay.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("car_play")
         }
 
-        if (UAAuthorizedNotificationSettings.lockScreen.rawValue
+        if (AirshipAuthorizedNotificationSettings.lockScreen.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("lock_screen")
         }
 
-        if (UAAuthorizedNotificationSettings.notificationCenter.rawValue
+        if (AirshipAuthorizedNotificationSettings.notificationCenter.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("notification_center")
         }
 
-        if (UAAuthorizedNotificationSettings.criticalAlert.rawValue
+        if (AirshipAuthorizedNotificationSettings.criticalAlert.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("critical_alert")
         }
 
-        if (UAAuthorizedNotificationSettings.scheduledDelivery.rawValue
+        if (AirshipAuthorizedNotificationSettings.scheduledDelivery.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("scheduled_summary")
         }
 
-        if (UAAuthorizedNotificationSettings.timeSensitive.rawValue
+        if (AirshipAuthorizedNotificationSettings.timeSensitive.rawValue
             & authorizedSettings.rawValue) > 0
         {
             notificationTypes.append("time_sensitive")
@@ -90,7 +90,7 @@ class EventUtils {
     }
 
     class func notificationAuthorization(
-        authorizationStatus: UAAuthorizationStatus
+        authorizationStatus: UNAuthorizationStatus
     ) -> String? {
         switch authorizationStatus {
         case .notDetermined:

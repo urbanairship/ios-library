@@ -20,7 +20,7 @@ public protocol UARegistrationDelegate {
         withAuthorizedSettings authorizedSettings:
             UAAuthorizedNotificationSettings,
         categories: Set<UNNotificationCategory>,
-        status: UAAuthorizationStatus
+        status: UNAuthorizationStatus
     )
     #endif
 
@@ -33,12 +33,12 @@ public protocol UARegistrationDelegate {
     func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
             UAAuthorizedNotificationSettings,
-        status: UAAuthorizationStatus
+        status: UNAuthorizationStatus
     )
 
     /// Called when notification authentication changes with the new authorized settings.
     ///
-    /// - Parameter authorizedSettings: UAAuthorizedNotificationSettings The newly changed authorized settings.
+    /// - Parameter authorizedSettings: AirshipAuthorizedNotificationSettings The newly changed authorized settings.
     @objc
     func notificationAuthorizedSettingsDidChange(
         _ authorizedSettings: UAAuthorizedNotificationSettings
@@ -62,7 +62,7 @@ public protocol UARegistrationDelegate {
 }
 
 final class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
-    
+
     weak var forwardDelegate: (any UARegistrationDelegate)?
 
     init(_ forwardDelegate: any UARegistrationDelegate) {
@@ -71,19 +71,26 @@ final class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
     
     public func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
-            UAAuthorizedNotificationSettings,
+            AirshipAuthorizedNotificationSettings,
         categories: Set<UNNotificationCategory>,
-        status: UAAuthorizationStatus
+        status: UNAuthorizationStatus
     ) {
-        self.forwardDelegate?.notificationRegistrationFinished(withAuthorizedSettings: authorizedSettings, categories: categories, status: status)
+        self.forwardDelegate?.notificationRegistrationFinished(
+            withAuthorizedSettings: authorizedSettings.asUAAuthorizedNotificationSettings,
+            categories: categories,
+            status: status
+        )
     }
     
     public func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
-            UAAuthorizedNotificationSettings,
-        status: UAAuthorizationStatus
+            AirshipAuthorizedNotificationSettings,
+        status: UNAuthorizationStatus
     ) {
-        self.forwardDelegate?.notificationRegistrationFinished(withAuthorizedSettings: authorizedSettings, status: status)
+        self.forwardDelegate?.notificationRegistrationFinished(
+            withAuthorizedSettings: authorizedSettings.asUAAuthorizedNotificationSettings,
+            status: status
+        )
     }
     
     public func apnsRegistrationSucceeded(
@@ -96,7 +103,9 @@ final class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
         self.forwardDelegate?.apnsRegistrationFailedWithError(error)
     }
     
-    public func notificationAuthorizedSettingsDidChange(_ authorizedSettings: UAAuthorizedNotificationSettings) {
-        self.forwardDelegate?.notificationAuthorizedSettingsDidChange(authorizedSettings)
+    public func notificationAuthorizedSettingsDidChange(_ authorizedSettings: AirshipAuthorizedNotificationSettings) {
+        self.forwardDelegate?.notificationAuthorizedSettingsDidChange(
+            authorizedSettings.asUAAuthorizedNotificationSettings
+        )
     }
 }

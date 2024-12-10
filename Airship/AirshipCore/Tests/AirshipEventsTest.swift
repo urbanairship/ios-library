@@ -398,7 +398,7 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
 
     var requestExplicitPermissionWhenEphemeral = false
 
-    var notificationOptions: UANotificationOptions = [.alert, .sound, .badge]
+    var notificationOptions: UNAuthorizationOptions = [.alert, .sound, .badge]
 
     var customCategories: Set<UNNotificationCategory> = []
 
@@ -412,9 +412,9 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
 
     var launchNotificationResponse: UNNotificationResponse?
 
-    var authorizedNotificationSettings: UAAuthorizedNotificationSettings = []
+    var authorizedNotificationSettings: AirshipAuthorizedNotificationSettings = []
 
-    var authorizationStatus: UAAuthorizationStatus = .notDetermined
+    var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
     var userPromptedForNotifications = false
 

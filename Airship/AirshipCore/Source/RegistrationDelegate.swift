@@ -15,9 +15,9 @@ public protocol RegistrationDelegate: AnyObject {
     ///   - status: The authorization status.
     func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
-            UAAuthorizedNotificationSettings,
+            AirshipAuthorizedNotificationSettings,
         categories: Set<UNNotificationCategory>,
-        status: UAAuthorizationStatus
+        status: UNAuthorizationStatus
     )
     #endif
 
@@ -28,15 +28,15 @@ public protocol RegistrationDelegate: AnyObject {
     ///   - status: The authorization status.
     func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
-            UAAuthorizedNotificationSettings,
-        status: UAAuthorizationStatus
+            AirshipAuthorizedNotificationSettings,
+        status: UNAuthorizationStatus
     )
 
     /// Called when notification authentication changes with the new authorized settings.
     ///
-    /// - Parameter authorizedSettings: UAAuthorizedNotificationSettings The newly changed authorized settings.
+    /// - Parameter authorizedSettings: AirshipAuthorizedNotificationSettings The newly changed authorized settings.
     func notificationAuthorizedSettingsDidChange(
-        _ authorizedSettings: UAAuthorizedNotificationSettings
+        _ authorizedSettings: AirshipAuthorizedNotificationSettings
     )
 
     /// Called when the UIApplicationDelegate's application:didRegisterForRemoteNotificationsWithDeviceToken:
@@ -57,13 +57,13 @@ public protocol RegistrationDelegate: AnyObject {
 public extension RegistrationDelegate {
        
     #if !os(tvOS)
-    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, categories: Set<UNNotificationCategory>, status: UAAuthorizationStatus) {
+    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: AirshipAuthorizedNotificationSettings, categories: Set<UNNotificationCategory>, status: UNAuthorizationStatus) {
     }
     #endif
     
-    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, status: UAAuthorizationStatus) {}
+    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: AirshipAuthorizedNotificationSettings, status: UNAuthorizationStatus) {}
     
-    func notificationAuthorizedSettingsDidChange(_ authorizedSettings: UAAuthorizedNotificationSettings) {}
+    func notificationAuthorizedSettingsDidChange(_ authorizedSettings: AirshipAuthorizedNotificationSettings) {}
     
     func apnsRegistrationSucceeded(withDeviceToken deviceToken: Data) {}
     

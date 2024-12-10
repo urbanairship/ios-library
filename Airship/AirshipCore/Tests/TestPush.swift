@@ -70,7 +70,7 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
 
     var requestExplicitPermissionWhenEphemeral: Bool = false
 
-    var notificationOptions: UANotificationOptions  = []
+    var notificationOptions: UNAuthorizationOptions  = []
 
     var customCategories: Set<UNNotificationCategory> = Set()
 
@@ -84,9 +84,9 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
 
     var launchNotificationResponse: UNNotificationResponse?
 
-    var authorizedNotificationSettings: UAAuthorizedNotificationSettings = []
+    var authorizedNotificationSettings: AirshipAuthorizedNotificationSettings = []
 
-    var authorizationStatus: UAAuthorizationStatus = .notDetermined
+    var authorizationStatus: UNAuthorizationStatus = .notDetermined
 
     var userPromptedForNotifications: Bool = false
 

@@ -1,7 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if canImport(AirshipCore)
 public import AirshipCore
+#endif
+
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
@@ -64,7 +67,7 @@ public final class UAPush: NSObject, Sendable {
     ///
     /// Defaults to alert, sound and badge.
     @objc
-    public var notificationOptions: UANotificationOptions {
+    public var notificationOptions: UNAuthorizationOptions {
         set {
             Airship.push.notificationOptions = newValue
         }
@@ -179,12 +182,12 @@ public final class UAPush: NSObject, Sendable {
     @MainActor
     public var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
         get {
-            return Airship.push.authorizedNotificationSettings
+            return Airship.push.authorizedNotificationSettings.asUAAuthorizedNotificationSettings
         }
     }
 
     @objc
-    public var authorizationStatus: UAAuthorizationStatus {
+    public var authorizationStatus: UNAuthorizationStatus {
         get {
             return Airship.push.authorizationStatus
         }

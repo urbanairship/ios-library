@@ -6,7 +6,7 @@ import UserNotifications
 final class NotificationPermissionDelegate: AirshipPermissionDelegate {
 
     struct Config: Sendable {
-        let options: UANotificationOptions
+        let options: UNAuthorizationOptions
         let skipIfEphemeral: Bool
     }
 
@@ -32,7 +32,7 @@ final class NotificationPermissionDelegate: AirshipPermissionDelegate {
     }
 }
 
-extension UAAuthorizationStatus {
+extension UNAuthorizationStatus {
     var permissionStatus: AirshipPermissionStatus {
         switch self {
         case .authorized: return .granted

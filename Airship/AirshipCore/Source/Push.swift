@@ -344,7 +344,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     /// updateRegistration.
     ///
     /// Defaults to alert, sound and badge.
-    public var notificationOptions: UANotificationOptions {
+    public var notificationOptions: UNAuthorizationOptions {
         set {
             let previous = self.notificationOptions
             self.dataStore.setObject(
@@ -372,7 +372,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 #endif
             }
 
-            return UANotificationOptions(rawValue: value.uintValue)
+            return UNAuthorizationOptions(rawValue: value.uintValue)
         }
     }
 
@@ -421,7 +421,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     public private(set) var launchNotificationResponse: UNNotificationResponse?
     #endif
 
-    public private(set) var authorizedNotificationSettings: UAAuthorizedNotificationSettings {
+    public private(set) var authorizedNotificationSettings: AirshipAuthorizedNotificationSettings {
         set {
             self.dataStore.setInteger(
                 Int(newValue.rawValue),
@@ -439,11 +439,11 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 return []
             }
 
-            return UAAuthorizedNotificationSettings(rawValue: value.uintValue)
+            return AirshipAuthorizedNotificationSettings(rawValue: value.uintValue)
         }
     }
 
-    public private(set) var authorizationStatus: UAAuthorizationStatus {
+    public private(set) var authorizationStatus: UNAuthorizationStatus {
         set {
             self.dataStore.setInteger(
                 newValue.rawValue,
@@ -461,7 +461,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 return .notDetermined
             }
 
-            return UAAuthorizationStatus(rawValue: Int(value.uintValue))
+            return UNAuthorizationStatus(rawValue: Int(value.uintValue))
                 ?? .notDetermined
         }
     }
@@ -486,15 +486,19 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     @MainActor
     private func updateAuthorizedNotificationTypes(
         alwaysUpdateChannel: Bool = false
-    ) async -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings) {
+    ) async -> (UNAuthorizationStatus, AirshipAuthorizedNotificationSettings) {
         AirshipLogger.trace("Updating authorized types.")
         let (status, settings) = await self.notificationRegistrar.checkStatus()
         var settingsChanged = false
         if self.privacyManager.isEnabled(.push) {
             if !self.userPromptedForNotifications {
+#if os(tvOS) || os(watchOS)
+                self.userPromptedForNotifications = status != .notDetermined
+#else
                 if status != .notDetermined && status != .ephemeral {
                     self.userPromptedForNotifications = true
                 }
+#endif
             }
             if status != self.authorizationStatus {
                 self.authorizationStatus = status
@@ -954,11 +958,11 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
         payload.channel.iOSChannelSettings?.isScheduledSummary =
         (self.authorizedNotificationSettings.rawValue
-         & UAAuthorizedNotificationSettings.scheduledDelivery
+         & AirshipAuthorizedNotificationSettings.scheduledDelivery
             .rawValue > 0)
         payload.channel.iOSChannelSettings?.isTimeSensitive =
         (self.authorizedNotificationSettings.rawValue
-         & UAAuthorizedNotificationSettings.timeSensitive.rawValue
+         & AirshipAuthorizedNotificationSettings.timeSensitive.rawValue
          > 0)
 
         return payload

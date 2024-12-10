@@ -1191,26 +1191,26 @@ class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
 }
 
 class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
-    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: UAAuthorizedNotificationSettings, status: UAAuthorizationStatus) {}
+    func notificationRegistrationFinished(withAuthorizedSettings authorizedSettings: AirshipAuthorizedNotificationSettings, status: UNAuthorizationStatus) {}
     
 
     var onNotificationRegistrationFinished:
         (
             (
-                UAAuthorizedNotificationSettings, Set<UNNotificationCategory>,
-                UAAuthorizationStatus
+                AirshipAuthorizedNotificationSettings, Set<UNNotificationCategory>,
+                UNAuthorizationStatus
             ) -> Void
         )?
     var onNotificationAuthorizedSettingsDidChange:
-        ((UAAuthorizedNotificationSettings) -> Void)?
+        ((AirshipAuthorizedNotificationSettings) -> Void)?
     var onAPNSRegistrationSucceeded: ((Data) -> Void)?
     var onAPNSRegistrationFailed: ((Error) -> Void)?
 
     func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
-            UAAuthorizedNotificationSettings,
+            AirshipAuthorizedNotificationSettings,
         categories: Set<UNNotificationCategory>,
-        status: UAAuthorizationStatus
+        status: UNAuthorizationStatus
     ) {
         self.onNotificationRegistrationFinished?(
             authorizedSettings,
@@ -1220,7 +1220,7 @@ class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
     }
 
     func notificationAuthorizedSettingsDidChange(
-        _ authorizedSettings: UAAuthorizedNotificationSettings
+        _ authorizedSettings: AirshipAuthorizedNotificationSettings
     ) {
         self.onNotificationAuthorizedSettingsDidChange?(authorizedSettings)
     }
@@ -1237,15 +1237,15 @@ class TestRegistraitonDelegate: NSObject, RegistrationDelegate {
 final class TestNotificationRegistrar: NotificationRegistrar, @unchecked Sendable {
     var categories: Set<UNNotificationCategory>?
     var onCheckStatus:
-        (() -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings))?
+        (() -> (UNAuthorizationStatus, AirshipAuthorizedNotificationSettings))?
     var onUpdateRegistration:
-        ((UANotificationOptions, Bool) -> Void)?
+        ((UNAuthorizationOptions, Bool) -> Void)?
 
     func setCategories(_ categories: Set<UNNotificationCategory>) {
         self.categories = categories
     }
 
-    func checkStatus() async -> (UAAuthorizationStatus, UAAuthorizedNotificationSettings) {
+    func checkStatus() async -> (UNAuthorizationStatus, AirshipAuthorizedNotificationSettings) {
         guard let callback = self.onCheckStatus else {
             return(.notDetermined, [])
         }
@@ -1253,7 +1253,7 @@ final class TestNotificationRegistrar: NotificationRegistrar, @unchecked Sendabl
     }
 
     func updateRegistration(
-        options: UANotificationOptions,
+        options: UNAuthorizationOptions,
         skipIfEphemeral: Bool
     ) async -> Void {
 
