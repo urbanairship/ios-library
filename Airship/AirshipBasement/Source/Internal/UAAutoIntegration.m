@@ -2,10 +2,19 @@
 
 #import "UAAutoIntegration.h"
 #import "UASwizzler+Internal.h"
-#import "UAGlobal.h"
+
 #if TARGET_OS_WATCH
 #import <WatchKit/WatchKit.h>
 #endif
+
+#define UA_LEVEL_LOG(level, fmt, ...) \
+do { \
+   [UAAutoIntegration logHelper:level function:@(__PRETTY_FUNCTION__) line:__LINE__ message:^NSString * { return [NSString stringWithFormat:fmt, ##__VA_ARGS__]; }]; \
+} while(0)
+
+
+#define UA_LTRACE(fmt, ...) UA_LEVEL_LOG(NO, fmt, ##__VA_ARGS__)
+#define UA_LERR(fmt, ...) UA_LEVEL_LOG(YES, fmt, ##__VA_ARGS__)
 
 static UAAutoIntegration *instance_;
 @interface UAAutoIntegrationDummyDelegate : NSObject<UNUserNotificationCenterDelegate>
@@ -36,6 +45,7 @@ static UAAutoIntegration *instance_;
 
 @implementation UAAutoIntegration
 static dispatch_once_t onceToken;
+static UALoggerBlock _loggerBlock = nil;
 
 + (void)integrateWithDelegate:(id<UAAppIntegrationDelegate>)delegate {
     dispatch_once(&onceToken, ^{
@@ -49,14 +59,19 @@ static dispatch_once_t onceToken;
     });
 }
 
-+ (void)reset {
-    if (instance_) {
-        onceToken = 0;
-        instance_.appDelegateSwizzler = nil;
-        instance_.notificationDelegateSwizzler = nil;
-        instance_.notificationCenterSwizzler = nil;
-        instance_.dummyNotificationDelegate = nil;
-        instance_ = nil;
+
++ (void)setLogger:(UALoggerBlock)loggerBlock {
+    _loggerBlock = loggerBlock;
+}
+
++ (void)logHelper:(BOOL)isError
+        function:(NSString *)function
+            line:(NSUInteger)line
+         message:(UAMessageBlock)messageBlock {
+
+    UALoggerBlock loggerBlock = _loggerBlock;
+    if (loggerBlock) {
+        loggerBlock(isError, function, line, messageBlock);
     }
 }
 
@@ -89,20 +104,20 @@ static dispatch_once_t onceToken;
     // Device token errors
     [self.appDelegateSwizzler swizzleInstance:delegate
                                      selector:@selector(application:didFailToRegisterForRemoteNotificationsWithError:)
-                             protocol:@protocol(UIApplicationDelegate)
-                       implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError];
+                                     protocol:@protocol(UIApplicationDelegate)
+                               implementation:(IMP)ApplicationDidFailToRegisterForRemoteNotificationsWithError];
 
     // Content-available notifications
     [self.appDelegateSwizzler swizzleInstance:delegate
                                      selector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)
-                             protocol:@protocol(UIApplicationDelegate)
-                       implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
+                                     protocol:@protocol(UIApplicationDelegate)
+                               implementation:(IMP)ApplicationDidReceiveRemoteNotificationFetchCompletionHandler];
 
     // Background app refresh
     [self.appDelegateSwizzler swizzleInstance:delegate
                                      selector:@selector(application:performFetchWithCompletionHandler:)
-                             protocol:@protocol(UIApplicationDelegate)
-                       implementation:(IMP)ApplicationPerformFetchWithCompletionHandler];
+                                     protocol:@protocol(UIApplicationDelegate)
+                               implementation:(IMP)ApplicationPerformFetchWithCompletionHandler];
 }
 #endif
 
@@ -116,7 +131,13 @@ static dispatch_once_t onceToken;
     self.notificationCenterSwizzler = [UASwizzler swizzler];
 
     // setDelegate:
-    [self.notificationCenterSwizzler swizzleClass:class selector:@selector(setDelegate:) implementation:(IMP)UserNotificationCenterSetDelegate];
+    BOOL swizzled = [self.notificationCenterSwizzler swizzleClass:class
+                                                         selector:@selector(setDelegate:)
+                                                   implementation:(IMP)UserNotificationCenterSetDelegate];
+
+    if (!swizzled) {
+        UA_LERR(@"Failed to swizzle UNUserNotificationCenter.setDelegate");
+    }
 
     id notificationCenterDelegate = [UNUserNotificationCenter currentNotificationCenter].delegate;
     if (notificationCenterDelegate) {

@@ -6,10 +6,6 @@ import Foundation
 import WatchKit
 #endif
 
-#if canImport(AirshipBasement)
-@_exported import AirshipBasement
-#endif
-
 /**
  * Airship manages the shared state for all Airship services. Airship.takeOff should be
  * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
@@ -229,16 +225,6 @@ public final class Airship: NSObject, Sendable {
             logLevel: inProduction ? config.productionLogLevel : config.developmentLogLevel,
             handler: handler
         )
-
-        UALegacyLoggingBridge.logger = { logLevel, function, line, message in
-            AirshipLogger.log(
-                logLevel: AirshipLogLevel(rawValue: String(logLevel)) ?? .none,
-                message: message(),
-                fileID: "",
-                line: line,
-                function: function
-            )
-        }
     }
 
     @MainActor
@@ -288,6 +274,15 @@ public final class Airship: NSObject, Sendable {
 
         if resolvedConfig.isAutomaticSetupEnabled {
             AirshipLogger.info("Automatic setup enabled.")
+            UAAutoIntegration.setLogger { isError, function, line, message in
+                AirshipLogger.log(
+                    logLevel: isError ? .error : .verbose,
+                    message: message(),
+                    fileID: "UAAutoIntegration",
+                    line: line,
+                    function: function
+                )
+            }
             UAAutoIntegration.integrate(with: integrationDelegate)
         } else {
             AppIntegration.integrationDelegate = integrationDelegate

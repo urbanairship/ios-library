@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-#import "UAGlobal.h"
 #import "UASwizzler+Internal.h"
 #import <objc/runtime.h>
 
@@ -80,37 +79,35 @@
             implementation:implementation];
     }
 }
+
 - (void)swizzleClass:(Class)clazz
             selector:(nonnull SEL)selector
             protocol:(Protocol *)protocol
       implementation:(IMP)implementation {
     Method method = class_getInstanceMethod(clazz, selector);
     if (method) {
-        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), clazz);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
             [self storeOriginalImplementation:existing class:clazz selector:selector];
         }
     } else {
         struct objc_method_description description = protocol_getMethodDescription(protocol, selector, NO, YES);
-        UA_LTRACE(@"Adding implementation for %@ class %@", NSStringFromSelector(selector), clazz);
         class_addMethod(clazz, selector, implementation, description.types);
     }
 }
 
-- (void)swizzleClass:(Class)clazz
-               selector:(SEL)selector
-         implementation:(IMP)implementation {
+- (BOOL)swizzleClass:(Class)clazz
+            selector:(SEL)selector
+      implementation:(IMP)implementation {
     Method method = class_getInstanceMethod(clazz, selector);
     if (method) {
-        UA_LTRACE(@"Swizzling implementation for %@ class %@", NSStringFromSelector(selector), clazz);
         IMP existing = method_setImplementation(method, implementation);
         if (implementation != existing) {
             [self storeOriginalImplementation:existing class:clazz selector:selector];
         }
-    } else {
-        UA_LTRACE(@"Unable to swizzle method for %@ class %@, method not found.", NSStringFromSelector(selector), clazz);
+        return YES;
     }
+    return NO;
 }
 
 - (void)unswizzle {
@@ -118,8 +115,6 @@
         SEL selector = NSSelectorFromString(entry.selectorString);
         Method method = class_getInstanceMethod(entry.swizzledClass, selector);
         IMP originalImplementation = [entry implementation];
-
-        UA_LTRACE(@"Unswizzling implementation for %@ class %@", entry.selectorString, entry.swizzledClass);
         method_setImplementation(method, originalImplementation);
     }
 

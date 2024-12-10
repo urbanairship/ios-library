@@ -55,8 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param clazz The class.
  * @param selector The selector to swizzle.
  * @param implementation The implmentation to replace the method with.
+ * @return `YES` if successful, otherwise `NO`.
  */
-- (void)swizzleClass:(Class)clazz
+- (BOOL)swizzleClass:(Class)clazz
             selector:(SEL)selector
       implementation:(IMP)implementation;
 
