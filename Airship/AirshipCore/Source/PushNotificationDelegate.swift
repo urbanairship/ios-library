@@ -7,7 +7,7 @@ import WatchKit
 #endif
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
-public protocol PushNotificationDelegate: NSObjectProtocol {
+public protocol PushNotificationDelegate: AnyObject {
     /// Called when a notification is received in the foreground.
     ///
     /// - Parameters:
@@ -53,17 +53,6 @@ public protocol PushNotificationDelegate: NSObjectProtocol {
         completionHandler: @escaping () -> Void
     )
     #endif
-    /// Called when a notification has arrived in the foreground and is available for display.
-    ///
-    /// - Parameters:
-    ///   - options: The notification presentation options.
-    ///   - notification: The notification.
-    /// - Returns: a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
-    func extend(
-        _ options: UNNotificationPresentationOptions,
-        notification: UNNotification
-    ) -> UNNotificationPresentationOptions
-
     
     /// Called when a notification has arrived in the foreground and is available for display.
     ///
@@ -115,11 +104,4 @@ public extension PushNotificationDelegate {
         completionHandler()
     }
     #endif
-
-    func extend(
-        _ options: UNNotificationPresentationOptions,
-        notification: UNNotification
-    ) -> UNNotificationPresentationOptions {
-        return []
-    }
 }

@@ -419,7 +419,7 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
     var userPromptedForNotifications = false
 
     var defaultPresentationOptions: UNNotificationPresentationOptions = [
-        .alert, .sound, .badge,
+        .list, .sound, .badge,
     ]
 
     var badgeNumber: Int = 0

@@ -12,7 +12,8 @@ public import WebKit
 
 /// The native bridge will automatically load the Airship JavaScript environment into whitlelisted sites. The native
 /// bridge must be assigned as the navigation delegate on a `WKWebView` in order to function.
-public class NativeBridge: NSObject, WKNavigationDelegate {
+public final class NativeBridge: NSObject, WKNavigationDelegate {
+
     static let airshipScheme = "uairship"
     private static let closeCommand = "close"
     private static let setNamedUserCommand = "named_user"
@@ -89,7 +90,6 @@ public class NativeBridge: NSObject, WKNavigationDelegate {
      *
      * If a uairship:// URL, process it ourselves
      */
-    
     public func webView(
         _ webView: WKWebView,
         decidePolicyFor navigationAction: WKNavigationAction,

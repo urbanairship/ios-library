@@ -97,6 +97,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
         self.notificationCenter.post(name: NSLocale.currentLocaleDidChangeNotification)
 
         self.waitForExpectations(timeout: 10.0)
+        _ = localeManager
     }
 
 }

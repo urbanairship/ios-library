@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @note For internal use only. :nodoc:
  */
 NS_SWIFT_NAME(AppIntegrationDelegate)
+NS_SWIFT_SENDABLE
 @protocol UAAppIntegrationDelegate <NSObject>
 
 - (void)onBackgroundAppRefresh;
@@ -41,7 +42,7 @@ NS_SWIFT_NAME(AppIntegrationDelegate)
 
 - (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(NS_SWIFT_SENDABLE void (^)(void))completionHandler API_UNAVAILABLE(tvos) NS_SWIFT_NAME(didReceiveNotificationResponse(response:completionHandler:));
 
-- (void)presentationOptionsForNotification:(UNNotification *)notification completionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+- (void)presentationOptionsForNotification:(UNNotification *)notification completionHandler:(NS_SWIFT_SENDABLE void (^)(UNNotificationPresentationOptions))completionHandler
     NS_SWIFT_NAME(presentationOptionsForNotification(_:completionHandler:));
 
 @end

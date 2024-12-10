@@ -44,7 +44,9 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         AirshipLogger.error(
             "Application failed to register for remote notifications with error \(error)"
         )
-        self.push.didFailToRegisterForRemoteNotifications(error)
+        Task { @MainActor in
+            self.push.didFailToRegisterForRemoteNotifications(error)
+        }
     }
 
     #if !os(watchOS)
@@ -195,8 +197,10 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         }
 
         dispatchGroup.enter()
-        self.push.didReceiveNotificationResponse(response) {
-            dispatchGroup.leave()
+        Task { @MainActor in
+            self.push.didReceiveNotificationResponse(response) {
+                dispatchGroup.leave()
+            }
         }
 
         dispatchGroup.notify(queue: .main) {
@@ -219,10 +223,12 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
     
     public func presentationOptionsForNotification(
         _ notification: UNNotification,
-        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+        completionHandler: @Sendable @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        self.push.presentationOptionsForNotification(notification) { presentationOptions in
-            completionHandler(presentationOptions)
+        Task {
+            await self.push.presentationOptionsForNotification(notification) { presentationOptions in
+                completionHandler(presentationOptions)
+            }
         }
     }
 

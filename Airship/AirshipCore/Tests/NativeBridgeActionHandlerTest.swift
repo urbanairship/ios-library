@@ -18,6 +18,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         self.actionHandler = NativeBridgeActionHandler(actionRunner: testActionRunner)
     }
 
+    @MainActor
     func testRunActionsMultiple() async throws {
         let command = JavaScriptCommand(
             url: URL(
@@ -37,7 +38,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
-
+    @MainActor
     func testRunActionsMultipleArgs() async throws {
         let command = JavaScriptCommand(
             url: URL(
@@ -58,6 +59,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunActionsInvalidArgs() async throws {
         let command = JavaScriptCommand(
             url: URL(
@@ -71,6 +73,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual([:], self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunActionCBNullResult() async throws {
         self.testActionRunner.actionResult = .completed(AirshipJSON.null)
         let command = JavaScriptCommand(
@@ -90,6 +93,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunActionCBValueResult() async throws {
         self.testActionRunner.actionResult = .completed(AirshipJSON.string("neat"))
         let command = JavaScriptCommand(
@@ -109,6 +113,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunActionCBError() async throws {
         self.testActionRunner.actionResult = .error(AirshipErrors.error("Some error"))
         let command = JavaScriptCommand(
@@ -128,6 +133,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunActionCBActionNotFound() async throws {
         self.testActionRunner.actionResult = .actionNotFound
         let command = JavaScriptCommand(
@@ -147,6 +153,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunActionCBActionArgsRejected() async throws {
         self.testActionRunner.actionResult = .argumentsRejected
         let command = JavaScriptCommand(
@@ -166,6 +173,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunBasicActions() async throws {
         let command = JavaScriptCommand(
             url: URL(
@@ -184,6 +192,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
     }
 
+    @MainActor
     func testRunBasicActionsMultipleArgs() async throws {
         let command = JavaScriptCommand(
             url: URL(
@@ -207,7 +216,9 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
 
 final class TestActionRunner: NativeBridgeActionRunner {
+    @MainActor
     var actionResult: ActionResult = .completed(AirshipJSON.null)
+    @MainActor
     var ranActions: [String: [ActionArguments]] = [:]
 
     @MainActor

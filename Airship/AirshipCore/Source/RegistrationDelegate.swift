@@ -5,7 +5,7 @@ import Foundation
 /// Implement this protocol and add as a Push.registrationDelegate to receive
 /// registration success and failure callbacks.
 ///
-public protocol RegistrationDelegate: NSObjectProtocol {
+public protocol RegistrationDelegate: AnyObject {
     #if !os(tvOS)
     /// Called when APNS registration completes.
     ///

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 /// Implement this protocol and add as a Push.registrationDelegate to receive
 /// registration success and failure callbacks.
@@ -61,12 +61,12 @@ public protocol UARegistrationDelegate {
     func apnsRegistrationFailedWithError(_ error: any Error)
 }
 
-public class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
+final class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
     
-    private let delegate: any UARegistrationDelegate
-    
-    init(delegate: any UARegistrationDelegate) {
-        self.delegate = delegate
+    weak var forwardDelegate: (any UARegistrationDelegate)?
+
+    init(_ forwardDelegate: any UARegistrationDelegate) {
+        self.forwardDelegate = forwardDelegate
     }
     
     public func notificationRegistrationFinished(
@@ -75,7 +75,7 @@ public class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
         categories: Set<UNNotificationCategory>,
         status: UAAuthorizationStatus
     ) {
-        self.delegate.notificationRegistrationFinished(withAuthorizedSettings: authorizedSettings, categories: categories, status: status)
+        self.forwardDelegate?.notificationRegistrationFinished(withAuthorizedSettings: authorizedSettings, categories: categories, status: status)
     }
     
     public func notificationRegistrationFinished(
@@ -83,20 +83,20 @@ public class UARegistrationDelegateWrapper: NSObject, RegistrationDelegate {
             UAAuthorizedNotificationSettings,
         status: UAAuthorizationStatus
     ) {
-        self.delegate.notificationRegistrationFinished(withAuthorizedSettings: authorizedSettings, status: status)
+        self.forwardDelegate?.notificationRegistrationFinished(withAuthorizedSettings: authorizedSettings, status: status)
     }
     
     public func apnsRegistrationSucceeded(
         withDeviceToken deviceToken: Data
     ) {
-        self.delegate.apnsRegistrationSucceeded(withDeviceToken: deviceToken)
+        self.forwardDelegate?.apnsRegistrationSucceeded(withDeviceToken: deviceToken)
     }
     
     public func apnsRegistrationFailedWithError(_ error: any Error) {
-        self.delegate.apnsRegistrationFailedWithError(error)
+        self.forwardDelegate?.apnsRegistrationFailedWithError(error)
     }
     
     public func notificationAuthorizedSettingsDidChange(_ authorizedSettings: UAAuthorizedNotificationSettings) {
-        self.delegate.notificationAuthorizedSettingsDidChange(authorizedSettings)
+        self.forwardDelegate?.notificationAuthorizedSettingsDidChange(authorizedSettings)
     }
 }

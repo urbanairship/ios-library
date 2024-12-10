@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 @objc
 public protocol UADeepLinkDelegate: Sendable {
@@ -14,16 +14,17 @@ public protocol UADeepLinkDelegate: Sendable {
     
 }
 
-public final class UADeepLinkDelegateWrapper: NSObject, DeepLinkDelegate {
+@MainActor
+final class UADeepLinkDelegateWrapper: NSObject, DeepLinkDelegate {
     
-    private let delegate: any UADeepLinkDelegate
-    
+    var forwardDelegate: (any UADeepLinkDelegate)?
+
     init(delegate: any UADeepLinkDelegate) {
-        self.delegate = delegate
+        self.forwardDelegate = delegate
     }
     
     public func receivedDeepLink(_ deepLink: URL) async {
-        await self.delegate.receivedDeepLink(deepLink)
+        await self.forwardDelegate?.receivedDeepLink(deepLink)
     }
     
 }

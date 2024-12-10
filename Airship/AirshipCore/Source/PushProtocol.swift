@@ -6,7 +6,7 @@ import UserNotifications
 public import Combine
 
 /// Airship Push protocol.
-public protocol AirshipBasePushProtocol: AnyObject, Sendable {
+public protocol AirshipPushProtocol: AnyObject, Sendable {
 
     /// Checks to see if push notifications are opted in.
     @MainActor
@@ -55,9 +55,11 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     var requireAuthorizationForDefaultCategories: Bool { get set }
 
     /// Set a delegate that implements the PushNotificationDelegate protocol.
+    @MainActor
     var pushNotificationDelegate: (any PushNotificationDelegate)? { get set }
 
     /// Set a delegate that implements the RegistrationDelegate protocol.
+    @MainActor
     var registrationDelegate: (any RegistrationDelegate)? { get set }
 
     #if !os(tvOS)
@@ -84,7 +86,6 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
     var defaultPresentationOptions: UNNotificationPresentationOptions {
         get set
     }
-
 
     /// Enables user notifications on this device through Airship.
     ///
@@ -142,11 +143,6 @@ public protocol AirshipBasePushProtocol: AnyObject, Sendable {
         endHour: Int,
         endMinute: Int
     )
-}
-
-
-/// Airship Push protocol.
-public protocol AirshipPushProtocol: AirshipBasePushProtocol {
 
     /// Quiet time settings. Setting this value only sets the start/end time for quiet time. It still needs to be
     /// enabled with `quietTimeEnabled`. The timzone can be set with `timeZone`.
@@ -180,27 +176,33 @@ protocol InternalPushProtocol: Sendable {
     var deviceToken: String? { get }
     
     func dispatchUpdateAuthorizedNotificationTypes()
+
     @MainActor
     func didRegisterForRemoteNotifications(_ deviceToken: Data)
+
+    @MainActor
     func didFailToRegisterForRemoteNotifications(_ error: any Error)
 
+    @MainActor
     func didReceiveRemoteNotification(
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool,
         completionHandler: @Sendable @escaping (Any) -> Void
     )
 
+    @MainActor
     func presentationOptionsForNotification(
         _ notification: UNNotification,
         completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     )
     
     #if !os(tvOS)
+    @MainActor
     func didReceiveNotificationResponse(
         _ response: UNNotificationResponse,
         completionHandler: @escaping () -> Void
     )
-    
+
     @MainActor
     var combinedCategories: Set<UNNotificationCategory> { get }
     #endif

@@ -3,6 +3,8 @@
 import Foundation
 import AirshipCore
 
+@preconcurrency import UserNotifications
+
 /// Application hooks required by Airship. If `automaticSetupEnabled` is enabled
 /// (enabled by default), Airship will automatically integrate these calls into
 /// the application by swizzling methods. If `automaticSetupEnabled` is disabled,
@@ -23,11 +25,13 @@ public class UAAppIntegration: NSObject {
     @objc(application:performFetchWithCompletionHandler:)
     public class func application(
         _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (
+        performFetchWithCompletionHandler completionHandler: @Sendable @escaping (
             UIBackgroundFetchResult
         ) -> Void
     ) {
-        AppIntegration.application(application, performFetchWithCompletionHandler: completionHandler)
+        Task { @MainActor in
+            AppIntegration.application(application, performFetchWithCompletionHandler: completionHandler)
+        }
     }
     
     /**
@@ -43,7 +47,9 @@ public class UAAppIntegration: NSObject {
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        AppIntegration.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        Task { @MainActor in
+            AppIntegration.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
+        }
     }
     
     /**
@@ -59,7 +65,9 @@ public class UAAppIntegration: NSObject {
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: any Error
     ) {
-        AppIntegration.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
+        Task { @MainActor in
+            AppIntegration.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
+        }
     }
     
     /**
@@ -76,12 +84,13 @@ public class UAAppIntegration: NSObject {
     public class func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @escaping (
+        fetchCompletionHandler completionHandler: @Sendable @escaping (
             UIBackgroundFetchResult
         ) -> Void
     ) {
-        
-        AppIntegration.application(application, didReceiveRemoteNotification: userInfo, fetchCompletionHandler: completionHandler)
+        Task { @MainActor in
+            AppIntegration.application(application, didReceiveRemoteNotification: userInfo, fetchCompletionHandler: completionHandler)
+        }
     }
 #else
     /**
@@ -143,11 +152,13 @@ public class UAAppIntegration: NSObject {
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @escaping (
+        withCompletionHandler completionHandler: @Sendable @escaping (
             _ options: UNNotificationPresentationOptions
         ) -> Void
     ) {
-        AppIntegration.userNotificationCenter(center, willPresent: notification, withCompletionHandler: completionHandler)
+        Task { @MainActor in
+            AppIntegration.userNotificationCenter(center, willPresent: notification, withCompletionHandler: completionHandler)
+        }
     }
     
 #if !os(tvOS)
@@ -168,9 +179,11 @@ public class UAAppIntegration: NSObject {
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @escaping () -> Void
+        withCompletionHandler completionHandler: @Sendable @escaping () -> Void
     ) {
-        AppIntegration.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+        Task { @MainActor in
+            AppIntegration.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+        }
     }
 #endif
 }

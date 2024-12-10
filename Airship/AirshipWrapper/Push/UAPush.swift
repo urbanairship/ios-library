@@ -5,8 +5,11 @@ public import AirshipCore
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
-public class UAPush: NSObject {
-    
+public final class UAPush: NSObject, Sendable {
+
+    @MainActor
+    private let storage = Storage()
+
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
     @objc
@@ -118,26 +121,46 @@ public class UAPush: NSObject {
         }
     }
 
-    private var _pushNotificationDelegate: (any UAPushNotificationDelegate)?
     @objc
-    public var pushNotificationDelegate: (any UAPushNotificationDelegate)? {
-        didSet {
-            if let pushNotificationDelegate {
-                Airship.push.pushNotificationDelegate = UAPushNotificationDelegateWrapper(delegate: pushNotificationDelegate)
+    @MainActor
+    public weak var pushNotificationDelegate: (any UAPushNotificationDelegate)? {
+        get {
+            guard let wrapped = Airship.push.pushNotificationDelegate as? UAPushNotificationDelegateWrapper else {
+                return nil
+            }
+            return wrapped.forwardDelegate
+        }
+
+        set {
+            if let newValue {
+                let wrapper = UAPushNotificationDelegateWrapper(newValue)
+                Airship.push.pushNotificationDelegate = wrapper
+                storage.pushNotificationDelegate = wrapper
             } else {
                 Airship.push.pushNotificationDelegate = nil
+                storage.pushNotificationDelegate = nil
             }
         }
     }
 
-    private var _registrationDelegate: (any UARegistrationDelegate)?
     @objc
-    public var registrationDelegate: (any UARegistrationDelegate)? {
-        didSet {
-            if let registrationDelegate {
-                Airship.push.registrationDelegate = UARegistrationDelegateWrapper(delegate: registrationDelegate)
+    @MainActor
+    public weak var registrationDelegate: (any UARegistrationDelegate)? {
+        get {
+            guard let wrapped = Airship.push.registrationDelegate as? UARegistrationDelegateWrapper else {
+                return nil
+            }
+            return wrapped.forwardDelegate
+        }
+
+        set {
+            if let newValue {
+                let wrapper = UARegistrationDelegateWrapper(newValue)
+                Airship.push.registrationDelegate = wrapper
+                storage.registrationDelegate = wrapper
             } else {
                 Airship.push.registrationDelegate = nil
+                storage.registrationDelegate = nil
             }
         }
     }
@@ -274,7 +297,11 @@ public class UAPush: NSObject {
         Airship.push.setQuietTimeStartHour(startHour, startMinute: startMinute, endHour: endHour, endMinute: endMinute)
     }
 
-   
+    @MainActor
+    fileprivate final class Storage  {
+        var registrationDelegate: (any RegistrationDelegate)?
+        var pushNotificationDelegate: (any PushNotificationDelegate)?
+    }
 }
 
 public extension UAAirshipNotifications {

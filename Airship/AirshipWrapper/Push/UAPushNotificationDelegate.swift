@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+import AirshipCore
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 @objc
@@ -82,18 +82,23 @@ public protocol UAPushNotificationDelegate {
     )
 }
 
-public class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
-    private let delegate: any UAPushNotificationDelegate
-    
-    init(delegate: any UAPushNotificationDelegate) {
-        self.delegate = delegate
+class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
+    weak var forwardDelegate: (any UAPushNotificationDelegate)?
+
+    init(_ forwardDelegate: any UAPushNotificationDelegate) {
+        self.forwardDelegate = forwardDelegate
     }
     
     public func receivedForegroundNotification(
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping () -> Void
     ) {
-        self.delegate.receivedForegroundNotification(userInfo, completionHandler: completionHandler)
+        guard let forwardDelegate  else {
+            completionHandler()
+            return
+        }
+
+        forwardDelegate.receivedForegroundNotification(userInfo, completionHandler: completionHandler)
     }
     
     #if !os(watchOS)
@@ -102,7 +107,12 @@ public class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelega
        _ userInfo: [AnyHashable: Any],
        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        self.delegate.receivedBackgroundNotification(userInfo, completionHandler: completionHandler)
+        guard let forwardDelegate  else {
+            completionHandler(.noData)
+            return
+        }
+
+        forwardDelegate.receivedBackgroundNotification(userInfo, completionHandler: completionHandler)
     }
     
     #else
@@ -111,7 +121,12 @@ public class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelega
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
     ) {
-        self.delegate.receivedBackgroundNotification(userInfo, completionHandler: completionHandler)
+        guard let forwardDelegate  else {
+            completionHandler(.noData)
+            return
+        }
+
+        forwardDelegate.receivedBackgroundNotification(userInfo, completionHandler: completionHandler)
     }
     
     #endif
@@ -121,24 +136,25 @@ public class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelega
        _ notificationResponse: UNNotificationResponse,
        completionHandler: @escaping () -> Void
     ) {
-        self.delegate.receivedNotificationResponse(notificationResponse, completionHandler: completionHandler)
+        guard let forwardDelegate  else {
+            completionHandler()
+            return
+        }
+        forwardDelegate.receivedNotificationResponse(notificationResponse, completionHandler: completionHandler)
     }
     
     #endif
-    
-    public func extend(
-        _ options: UNNotificationPresentationOptions,
-        notification: UNNotification
-    ) -> UNNotificationPresentationOptions {
-        return self.delegate.extend(options, notification: notification)
-    }
-    
     
     public func extendPresentationOptions(
         _ options: UNNotificationPresentationOptions,
         notification: UNNotification,
         completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        self.delegate.extendPresentationOptions(options, notification: notification, completionHandler: completionHandler)
+        guard let forwardDelegate  else {
+            completionHandler(options)
+            return
+        }
+
+        forwardDelegate.extendPresentationOptions(options, notification: notification, completionHandler: completionHandler)
     }
 }

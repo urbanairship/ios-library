@@ -793,6 +793,7 @@ class PushTest: XCTestCase {
         self.wait(for: [called], timeout: 10.0)
     }
 
+    @MainActor
     func testForwardAuthorizedSettingsChangesForeground() {
         self.push.registrationDelegate = self.registrationDelegate
         self.notificationRegistrar.onCheckStatus = {
@@ -830,6 +831,7 @@ class PushTest: XCTestCase {
         self.wait(for: [called], timeout: 10.0)
     }
 
+    @MainActor
     func testForwardAPNSRegistrationFailed() {
         let expectedError = AirshipErrors.error("something")
 
@@ -848,6 +850,7 @@ class PushTest: XCTestCase {
         self.wait(for: [called], timeout: 10.0)
     }
 
+    @MainActor
     func testReceivedForegroundNotification() {
         let expected = ["cool": "payload"]
 
@@ -872,6 +875,7 @@ class PushTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testForwardReceivedForegroundNotification() {
         let expected = ["cool": "payload"]
         self.push.pushNotificationDelegate = self.pushDelegate
@@ -910,6 +914,7 @@ class PushTest: XCTestCase {
 
     }
 
+    @MainActor
     func testReceivedBackgroundNotification() {
         let expected = ["cool": "payload"]
 
@@ -934,6 +939,7 @@ class PushTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testForwardReceivedBackgroundNotification() {
         let expected = ["cool": "payload"]
         self.push.pushNotificationDelegate = self.pushDelegate

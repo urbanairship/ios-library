@@ -13,31 +13,46 @@ import AirshipCore
 /// before accessing any instances on Airship or Airship modules.
 @objc
 public class UAAirship: NSObject {
-    
-    private static let _holder = Holder()
-    
-    /// A user configurable deep link delegate.
-    private static var _deepLinkDelegate: (any DeepLinkDelegate)? {
-        get { return _holder.deeplinkDelegate.value }
-        set { _holder.deeplinkDelegate.value = newValue }
+
+    private static let storage = Storage()
+    private static let _push: UAPush = UAPush()
+
+    private static func ensureAirship() {
+        if !Airship.isFlying {
+            assertionFailure("TakeOff must be called before accessing Airship.")
+        }
     }
-    
+
+    @objc
+    public static var push: UAPush {
+        ensureAirship()
+        return _push
+    }
+
+    /// A user configurable deep link delegate.
+    @MainActor
     @objc
     public static var deepLinkDelegate: (any UADeepLinkDelegate)? {
-        get { return _holder.uaDeepLinkDelegate.value }
+        get {
+            ensureAirship()
+            guard let wrapped = Airship.deepLinkDelegate as? UADeepLinkDelegateWrapper else {
+                return nil
+            }
+            return wrapped.forwardDelegate
+        }
         set {
-            _holder.uaDeepLinkDelegate.value = newValue
+            ensureAirship()
             if let newValue {
                 let wrapper = UADeepLinkDelegateWrapper(delegate: newValue)
-                self._deepLinkDelegate = wrapper
                 Airship.deepLinkDelegate = wrapper
+                storage.deepLinkDelegate = wrapper
             } else {
-                self._deepLinkDelegate = nil
                 Airship.deepLinkDelegate = nil
+                storage.deepLinkDelegate = nil
             }
         }
     }
-    
+
 #if !os(watchOS)
     
     /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
@@ -83,12 +98,12 @@ public class UAAirship: NSObject {
     }
     
 #endif
-    
-    private final class Holder: Sendable {
-        let deeplinkDelegate = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
-        let uaDeepLinkDelegate = AirshipAtomicValue<(any UADeepLinkDelegate)?>(nil)
+
+    @MainActor
+    fileprivate final class Storage  {
+        var deepLinkDelegate: (any DeepLinkDelegate)?
     }
-    
+
 }
 
 /// NSNotificationCenter keys event names

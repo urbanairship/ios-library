@@ -175,7 +175,6 @@
 		60FCA30C2B51492A005C9232 /* LegacyInAppMessagingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */; };
 		60FCA30D2B5534DB005C9232 /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
 		60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
-		60FCA30F2B55363E005C9232 /* PushTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CE761284137D600CF4B11 /* PushTest.swift */; };
 		60FCA3252B5EF3A8005C9232 /* AutomationEventFeedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */; };
 		6E032A502B210E6000404630 /* RemoteConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */; };
 		6E062D03271656DE001A74A1 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
@@ -1008,10 +1007,6 @@
 		A6F507722C3544B900F679BC /* UASearchEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507712C3544B900F679BC /* UASearchEventTemplate.swift */; };
 		A6F507742C3544C800F679BC /* UARetailEventTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507732C3544C800F679BC /* UARetailEventTemplate.swift */; };
 		A6F507842C3E6F8700F679BC /* UAPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507832C3E6F8700F679BC /* UAPrivacyManager.swift */; };
-		A6F507872C401F5300F679BC /* UANativeBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507862C401F5300F679BC /* UANativeBridge.swift */; };
-		A6F507892C401F6400F679BC /* UANativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507882C401F6400F679BC /* UANativeBridgeDelegate.swift */; };
-		A6F5078F2C401FB300F679BC /* UAJavaScriptCommandDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F5078E2C401FB300F679BC /* UAJavaScriptCommandDelegate.swift */; };
-		A6F507912C401FC900F679BC /* UANativeBridgeExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507902C401FC900F679BC /* UANativeBridgeExtensionDelegate.swift */; };
 		A6F507952C466FBD00F679BC /* UADeepLinkDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F507942C466FBD00F679BC /* UADeepLinkDelegate.swift */; };
 		BD8C10832865F92200358622 /* CreateSMSChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10762865F92200358622 /* CreateSMSChannelView.swift */; };
 		BD8C10842865F92200358622 /* AddChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10772865F92200358622 /* AddChannelView.swift */; };
@@ -2303,10 +2298,6 @@
 		A6F507712C3544B900F679BC /* UASearchEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASearchEventTemplate.swift; sourceTree = "<group>"; };
 		A6F507732C3544C800F679BC /* UARetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARetailEventTemplate.swift; sourceTree = "<group>"; };
 		A6F507832C3E6F8700F679BC /* UAPrivacyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
-		A6F507862C401F5300F679BC /* UANativeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANativeBridge.swift; sourceTree = "<group>"; };
-		A6F507882C401F6400F679BC /* UANativeBridgeDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANativeBridgeDelegate.swift; sourceTree = "<group>"; };
-		A6F5078E2C401FB300F679BC /* UAJavaScriptCommandDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAJavaScriptCommandDelegate.swift; sourceTree = "<group>"; };
-		A6F507902C401FC900F679BC /* UANativeBridgeExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANativeBridgeExtensionDelegate.swift; sourceTree = "<group>"; };
 		A6F507942C466FBD00F679BC /* UADeepLinkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADeepLinkDelegate.swift; sourceTree = "<group>"; };
 		BD8C10762865F92200358622 /* CreateSMSChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSMSChannelView.swift; sourceTree = "<group>"; };
 		BD8C10772865F92200358622 /* AddChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelView.swift; sourceTree = "<group>"; };
@@ -4368,7 +4359,6 @@
 			children = (
 				A6F507642C35438700F679BC /* Analytics */,
 				A6F507822C3E6F7200F679BC /* PrivacyManager */,
-				A6F507852C401E6800F679BC /* NativeBridge */,
 				A65BEF782BF79FEC00F6C5D7 /* Push */,
 				A641E1492BDBBDB400DE6FAA /* AirshipWrapper.h */,
 				A6F0D12F2C06129400F9EA2D /* MessageCenter */,
@@ -4496,17 +4486,6 @@
 				A6F507832C3E6F8700F679BC /* UAPrivacyManager.swift */,
 			);
 			path = PrivacyManager;
-			sourceTree = "<group>";
-		};
-		A6F507852C401E6800F679BC /* NativeBridge */ = {
-			isa = PBXGroup;
-			children = (
-				A6F507862C401F5300F679BC /* UANativeBridge.swift */,
-				A6F507882C401F6400F679BC /* UANativeBridgeDelegate.swift */,
-				A6F5078E2C401FB300F679BC /* UAJavaScriptCommandDelegate.swift */,
-				A6F507902C401FC900F679BC /* UANativeBridgeExtensionDelegate.swift */,
-			);
-			path = NativeBridge;
 			sourceTree = "<group>";
 		};
 		BD8C10742865F92200358622 /* Contact */ = {
@@ -6103,7 +6082,6 @@
 				60FCA30D2B5534DB005C9232 /* TestAirshipInstance.swift in Sources */,
 				6EE6AAF32B58A9D5002FEA75 /* InAppPagerSummaryEventTest.swift in Sources */,
 				603269592BF75976007F7F75 /* AirshipCacheTest.swift in Sources */,
-				60FCA30F2B55363E005C9232 /* PushTest.swift in Sources */,
 				6E1A9BB52B5B1A0900A6489B /* ThomasPagerTrackerTest.swift in Sources */,
 				6EE6AB092B59C236002FEA75 /* CustomDisplayAdapterWrapperTest.swift in Sources */,
 				605073842B2CD46D00209B51 /* TestAppStateTracker.swift in Sources */,
@@ -6285,7 +6263,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A6F507952C466FBD00F679BC /* UADeepLinkDelegate.swift in Sources */,
-				A6F507892C401F6400F679BC /* UANativeBridgeDelegate.swift in Sources */,
 				A692023B2C10AC08007197EF /* UAAppIntegration.swift in Sources */,
 				A6F507842C3E6F8700F679BC /* UAPrivacyManager.swift in Sources */,
 				A65BEF322BF658C300F6C5D7 /* UAPush.swift in Sources */,
@@ -6304,13 +6281,10 @@
 				A6F507722C3544B900F679BC /* UASearchEventTemplate.swift in Sources */,
 				A6F0D1212BFBA9C000F9EA2D /* UASubscriptionListEditor.swift in Sources */,
 				A6F0D1232BFDF4B700F9EA2D /* UATagGroupsEditor.swift in Sources */,
-				A6F5078F2C401FB300F679BC /* UAJavaScriptCommandDelegate.swift in Sources */,
 				A61F93DD2CE3905B0087D665 /* UAMessageCenterMessage.swift in Sources */,
 				A69202402C133DBA007197EF /* OUAPreferenceCenter.swift in Sources */,
 				A641E1662BE1247700DE6FAA /* UAAirshipConfig.swift in Sources */,
 				A6F507702C3544A300F679BC /* UAAccountEventTemplate.swift in Sources */,
-				A6F507872C401F5300F679BC /* UANativeBridge.swift in Sources */,
-				A6F507912C401FC900F679BC /* UANativeBridgeExtensionDelegate.swift in Sources */,
 				A6F0D11A2BFBA85400F9EA2D /* UAChannel.swift in Sources */,
 				A6F507662C3543AE00F679BC /* UAAnalytics.swift in Sources */,
 				A65BEF7E2BF7A02A00F6C5D7 /* UAPushNotificationDelegate.swift in Sources */,

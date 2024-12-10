@@ -12,7 +12,7 @@ import UIKit
 #endif
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
+final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
     private let pushTokenChannel = AirshipAsyncChannel<String>()
 
@@ -124,8 +124,6 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         self.apnsRegistrar = apnsRegistrar
         self.badger = badger
         self.serialQueue = serialQueue
-
-        super.init()
 
         let permissionDelegate = NotificationPermissionDelegate(
             registrar: self.notificationRegistrar
@@ -412,8 +410,10 @@ final class AirshipPush: NSObject, AirshipPushProtocol, @unchecked Sendable {
         }
     }
 
+    @MainActor
     public weak var pushNotificationDelegate: (any PushNotificationDelegate)?
 
+    @MainActor
     public weak var registrationDelegate: (any RegistrationDelegate)?
 
     #if !os(tvOS)
@@ -1056,13 +1056,6 @@ extension AirshipPush: InternalPushProtocol {
             }
         } else {
             options = self.defaultPresentationOptions
-        }
-
-        if let extendedOptions = self.pushNotificationDelegate?.extend(
-            options,
-            notification: notification
-        ) {
-            options = extendedOptions
         }
         
         if let delegateMethod = self.pushNotificationDelegate?.extendPresentationOptions {
