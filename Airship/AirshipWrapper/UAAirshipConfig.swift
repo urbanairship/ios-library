@@ -106,12 +106,12 @@ public class UAAirshipConfig: NSObject {
     }
 
     @objc(enabledFeatures)
-    public var enabledFeatures: _UAFeatures {
+    public var enabledFeatures: UAFeature {
         get {
-            return config.enabledFeatures.toObjc
+            return config.enabledFeatures.asUAFeature
         }
         set {
-            config.enabledFeatures = newValue.toSwift
+            config.enabledFeatures = newValue.asAirshipFeature
         }
     }
 
@@ -416,17 +416,6 @@ public class UAAirshipConfig: NSObject {
     }
 }
 
-extension AirshipFeature {
-    var toObjc: _UAFeatures {
-        return _UAFeatures(rawValue: self.rawValue)
-    }
-}
-
-extension _UAFeatures {
-    var toSwift: AirshipFeature {
-        return AirshipFeature(rawValue: self.rawValue)
-    }
-}
 
 @objc
 /// Represents the possible log levels.

@@ -3,11 +3,7 @@
 import Foundation
 import AirshipCore
 
-/**
- * Airship manages the shared state for all Airship services. Airship.takeOff should be
- * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
- * to initialize the shared instance.
- */
+
 
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
 /// before accessing any instances on Airship or Airship modules.
@@ -16,32 +12,42 @@ public class UAAirship: NSObject {
 
     private static let storage = Storage()
     private static let _push: UAPush = UAPush()
+    private static let _privacyManager: UAPrivacyManager = UAPrivacyManager()
 
-    private static func ensureAirship() {
+    /// Asserts that Airship is flying (initalized)
+    public static func assertAirshipIsFlying() {
         if !Airship.isFlying {
             assertionFailure("TakeOff must be called before accessing Airship.")
         }
     }
 
+    /// Push instance
     @objc
     public static var push: UAPush {
-        ensureAirship()
+        assertAirshipIsFlying()
         return _push
     }
 
-    /// A user configurable deep link delegate.
+    /// Privacy manager
+    @objc
+    public static var privacyManager: UAPrivacyManager {
+        assertAirshipIsFlying()
+        return _privacyManager
+    }
+
+    /// A user configurable deep link delegate
     @MainActor
     @objc
     public static var deepLinkDelegate: (any UADeepLinkDelegate)? {
         get {
-            ensureAirship()
+            assertAirshipIsFlying()
             guard let wrapped = Airship.deepLinkDelegate as? UADeepLinkDelegateWrapper else {
                 return nil
             }
             return wrapped.forwardDelegate
         }
         set {
-            ensureAirship()
+            assertAirshipIsFlying()
             if let newValue {
                 let wrapper = UADeepLinkDelegateWrapper(delegate: newValue)
                 Airship.deepLinkDelegate = wrapper

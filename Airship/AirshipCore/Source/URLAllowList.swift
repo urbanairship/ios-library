@@ -449,6 +449,7 @@ public final class URLAllowList: URLAllowListProtocol {
     private struct AllowListEntry: Hashable, Sendable {
         let matcher: AllowListMatcher
         let scope: URLAllowListScope
+
         // Pattern is only used for hashing
         private let pattern: String
 
@@ -475,5 +476,24 @@ public final class URLAllowList: URLAllowListProtocol {
             hasher.combine(scope.rawValue)
             hasher.combine(pattern)
         }
+    }
+}
+
+// Scope options for URL allow list matching
+public struct URLAllowListScope: OptionSet, Sendable, Equatable {
+    public let rawValue: Int
+
+    // Scope that is checked before loading the JavaScript Native Bridge into
+    // a WebView when using the `NativeBridge`
+    public static let javaScriptInterface = URLAllowListScope(rawValue: 1 << 0)
+
+    // Scope that is checked before opening a URL.
+    public static let openURL = URLAllowListScope(rawValue: 1 << 1)
+
+    // All scopes
+    public static let all: URLAllowListScope = [.javaScriptInterface, .openURL]
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
     }
 }

@@ -3,17 +3,18 @@
 import Foundation
 import AirshipCore
 
+// Bindings for `AirshipPrivacyManager`
 @objc
-public class UAPrivacyManager: NSObject {
-    
+public final class UAPrivacyManager: NSObject, Sendable {
+
     /// The current set of enabled features.
     @objc(enabledFeatures)
-    public var enabledFeatures: _UAFeatures {
+    public var enabledFeatures: UAFeature {
         get {
-            return Airship.privacyManager.enabledFeatures.toObjc
+            return Airship.privacyManager.enabledFeatures.asUAFeature
         }
         set {
-            Airship.privacyManager.enabledFeatures = newValue.toSwift
+            Airship.privacyManager.enabledFeatures = newValue.asAirshipFeature
         }
     }
     
@@ -21,16 +22,16 @@ public class UAPrivacyManager: NSObject {
     /// This will append any features to the `enabledFeatures` property.
     /// - Parameter features: The features to enable.
     @objc(enableFeatures:)
-    public func enableFeatures(_ features: _UAFeatures) {
-        Airship.privacyManager.enableFeatures(features.toSwift)
+    public func enableFeatures(_ features: UAFeature) {
+        Airship.privacyManager.enableFeatures(features.asAirshipFeature)
     }
     
     /// Disables features.
     /// This will remove any features to the `enabledFeatures` property.
     /// - Parameter features: The features to disable.
     @objc(disableFeatures:)
-    public func disableFeatures(_ features: _UAFeatures) {
-        Airship.privacyManager.disableFeatures(features.toSwift)
+    public func disableFeatures(_ features: UAFeature) {
+        Airship.privacyManager.disableFeatures(features.asAirshipFeature)
     }
     
     /**
@@ -40,8 +41,8 @@ public class UAPrivacyManager: NSObject {
      * - Returns: True if the provided features are enabled, otherwise false.
      */
     @objc(isEnabled:)
-    public func isEnabled(_ features: _UAFeatures) -> Bool {
-        return Airship.privacyManager.isEnabled(features.toSwift)
+    public func isEnabled(_ features: UAFeature) -> Bool {
+        return Airship.privacyManager.isEnabled(features.asAirshipFeature)
     }
     
     /// Checks if any feature is enabled.

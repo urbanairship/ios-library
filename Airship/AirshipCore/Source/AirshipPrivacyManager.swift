@@ -196,59 +196,44 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
     }
 }
 
-/**
- * Airship features.
- */
+/// Airship Features.
 public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
     
     public let rawValue: UInt
 
-    // Enables In-App Automation.
-    // In addition to the default data collection, In-App Automation will collect:
-    // - App Version (App update triggers)
-    public static let inAppAutomation = AirshipFeature(rawValue: _UAFeatures.inAppAutomation.rawValue)
+    /// In-App automation
+    public static let inAppAutomation = AirshipFeature(rawValue: 1 << 0)
 
-    // Enables Message Center.
-    // In addition to the default data collection, Message Center will collect:
-    // - Message Center User
-    // - Message Reads & Deletes
-    public static let messageCenter = AirshipFeature(rawValue: _UAFeatures.messageCenter.rawValue)
+    /// Message Center
+    public static let messageCenter = AirshipFeature(rawValue: 1 << 1)
 
-    // Enables push.
-    // In addition to the default data collection, push will collect:
-    // - Push tokens
-    public static let push = AirshipFeature(rawValue: _UAFeatures.push.rawValue)
+    /// Push
+    public static let push = AirshipFeature(rawValue: 1 << 2)
 
-    // Enables analytics.
-    // In addition to the default data collection, analytics will collect:
-    // -  Events
-    // - Associated Identifiers
-    // - Registered Notification Types
-    // - Time in app
-    // - App Version
-    // - Device model
-    // - Device manufacturer
-    // - OS version
-    // - Carrier
-    // - Connection type
-    // - Framework usage
-    public static let analytics = AirshipFeature(rawValue: _UAFeatures.analytics.rawValue)
+    /// Analytics
+    public static let analytics = AirshipFeature(rawValue: 1 << 4)
 
-    // Enables tags and attributes.
-    // In addition to the default data collection, tags and attributes will collect:
-    // - Channel and Contact Tags
-    // - Channel and Contact Attributes
-    public static let tagsAndAttributes = AirshipFeature(rawValue: _UAFeatures.tagsAndAttributes.rawValue)
+    /// Tags, attributes, and subscription lists
+    public static let tagsAndAttributes = AirshipFeature(rawValue: 1 << 5)
 
-    // Enables contacts.
-    // In addition to the default data collection, contacts will collect:
-    // External ids (named user)
-    public static let contacts = AirshipFeature(rawValue: _UAFeatures.contacts.rawValue)
-    
-    // Enables feature flags.
-    public static let featureFlags = AirshipFeature(rawValue: _UAFeatures.featureFlags.rawValue)
+    /// Contacts
+    public static let contacts = AirshipFeature(rawValue: 1 << 6)
 
-    public static let all: AirshipFeature = [inAppAutomation, messageCenter, push, analytics, tagsAndAttributes, contacts, featureFlags]
+    /* Do not use: UAFeaturesLocation = (1 << 7) */
+
+    /// Feature flags
+    public static let featureFlags = AirshipFeature(rawValue: 1 << 8)
+
+    /// All features
+    public static let all: AirshipFeature = [
+        inAppAutomation,
+        messageCenter,
+        push,
+        analytics,
+        tagsAndAttributes,
+        contacts,
+        featureFlags
+    ]
 
     public init(rawValue: UInt) {
         self.rawValue = rawValue
@@ -282,20 +267,6 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
         return "Enabled features: " + descriptions.joined(separator: ", ")
     }
 }
-
-
-extension AirshipFeature {
-    public var toObjc: _UAFeatures {
-        return _UAFeatures(rawValue: self.rawValue)
-    }
-}
-
-extension _UAFeatures {
-    var toSwift: AirshipFeature {
-        return AirshipFeature(rawValue: self.rawValue)
-    }
-}
-
 
 extension AirshipFeature: Codable {
     static let nameMap: [String: AirshipFeature] = [

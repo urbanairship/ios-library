@@ -176,6 +176,7 @@
 		60FCA30D2B5534DB005C9232 /* TestAirshipInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1526E29BC90005D20D /* TestAirshipInstance.swift */; };
 		60FCA30E2B5535F4005C9232 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
 		60FCA3252B5EF3A8005C9232 /* AutomationEventFeedTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */; };
+		6E0031A92D08BB8B0004F53E /* UAFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0031A82D08BB880004F53E /* UAFeature.swift */; };
 		6E032A502B210E6000404630 /* RemoteConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */; };
 		6E062D03271656DE001A74A1 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D02271656DE001A74A1 /* Container.swift */; };
 		6E062D05271656F8001A74A1 /* LinearLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E062D04271656F8001A74A1 /* LinearLayout.swift */; };
@@ -359,13 +360,11 @@
 		6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */; };
 		6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
 		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
-		6E43214026EA84A5009228AB /* UAFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212A26EA84A4009228AB /* UAFeature.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214826EA84A5009228AB /* UAPush.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212E26EA84A4009228AB /* UAPush.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215826EA84A5009228AB /* UACompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213626EA84A4009228AB /* UACompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213926EA84A4009228AB /* UAURLAllowListScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43216826EA84A5009228AB /* UAGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213E26EA84A5009228AB /* UAGlobal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213F26EA84A5009228AB /* AirshipBasement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43217826EA84BE009228AB /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
@@ -1441,6 +1440,7 @@
 		60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventFeedTest.swift; sourceTree = "<group>"; };
 		62C67C80125440E0C4F9982D /* Pods-AirshipTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipTests/Pods-AirshipTests.release.xcconfig"; sourceTree = "<group>"; };
 		6D0D4500368AC9710E0F37B7 /* Pods-AirshipAccengageTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipAccengageTests.release.xcconfig"; path = "../Pods/Target Support Files/Pods-AirshipAccengageTests/Pods-AirshipAccengageTests.release.xcconfig"; sourceTree = "<group>"; };
+		6E0031A82D08BB880004F53E /* UAFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAFeature.swift; sourceTree = "<group>"; };
 		6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigTest.swift; sourceTree = "<group>"; };
 		6E062D02271656DE001A74A1 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		6E062D04271656F8001A74A1 /* LinearLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinearLayout.swift; sourceTree = "<group>"; };
@@ -1651,13 +1651,11 @@
 		6E411CA62538C6A500FEE4E8 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
 		6E411CA82538C6A500FEE4E8 /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		6E43204826EA814F009228AB /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E43212A26EA84A4009228AB /* UAFeature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAFeature.h; path = Public/UAFeature.h; sourceTree = "<group>"; };
 		6E43212E26EA84A4009228AB /* UAPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAPush.h; path = Public/UAPush.h; sourceTree = "<group>"; };
 		6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
 		6E43213026EA84A4009228AB /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Public/UAAutoIntegration.h; sourceTree = "<group>"; };
 		6E43213326EA84A4009228AB /* AirshipBasementLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasementLib.h; path = Public/AirshipBasementLib.h; sourceTree = "<group>"; };
 		6E43213626EA84A4009228AB /* UACompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UACompression.h; path = Public/UACompression.h; sourceTree = "<group>"; };
-		6E43213926EA84A4009228AB /* UAURLAllowListScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAURLAllowListScope.h; path = Public/UAURLAllowListScope.h; sourceTree = "<group>"; };
 		6E43213E26EA84A5009228AB /* UAGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAGlobal.h; path = Public/UAGlobal.h; sourceTree = "<group>"; };
 		6E43213F26EA84A5009228AB /* AirshipBasement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasement.h; path = Public/AirshipBasement.h; sourceTree = "<group>"; };
 		6E43216D26EA84BE009228AB /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
@@ -3510,12 +3508,10 @@
 				6E43216E26EA84BE009228AB /* UAAutoIntegration.m */,
 				6E43213626EA84A4009228AB /* UACompression.h */,
 				6E43217026EA84BE009228AB /* UACompression.m */,
-				6E43212A26EA84A4009228AB /* UAFeature.h */,
 				6E43213E26EA84A5009228AB /* UAGlobal.h */,
 				6E43212E26EA84A4009228AB /* UAPush.h */,
 				6E43216D26EA84BE009228AB /* UASwizzler.m */,
 				6E43217526EA84BE009228AB /* UASwizzler+Internal.h */,
-				6E43213926EA84A4009228AB /* UAURLAllowListScope.h */,
 				6EF1934228380BA0005F192A /* UALegacyLoggingBridge.m */,
 				6EF1934728380BE1005F192A /* UALegacyLoggingBridge.h */,
 			);
@@ -4357,6 +4353,7 @@
 		A641E1482BDBBDB400DE6FAA /* AirshipWrapper */ = {
 			isa = PBXGroup;
 			children = (
+				6E0031A82D08BB880004F53E /* UAFeature.swift */,
 				A6F507642C35438700F679BC /* Analytics */,
 				A6F507822C3E6F7200F679BC /* PrivacyManager */,
 				A65BEF782BF79FEC00F6C5D7 /* Push */,
@@ -4831,7 +4828,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E43214026EA84A5009228AB /* UAFeature.h in Headers */,
 				6E43216826EA84A5009228AB /* UAGlobal.h in Headers */,
 				6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */,
 				6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
@@ -4839,7 +4835,6 @@
 				6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */,
 				6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */,
 				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
-				6E43215E26EA84A5009228AB /* UAURLAllowListScope.h in Headers */,
 				6EF1934828380BE1005F192A /* UALegacyLoggingBridge.h in Headers */,
 				6E43214826EA84A5009228AB /* UAPush.h in Headers */,
 			);
@@ -6266,6 +6261,7 @@
 				A692023B2C10AC08007197EF /* UAAppIntegration.swift in Sources */,
 				A6F507842C3E6F8700F679BC /* UAPrivacyManager.swift in Sources */,
 				A65BEF322BF658C300F6C5D7 /* UAPush.swift in Sources */,
+				6E0031A92D08BB8B0004F53E /* UAFeature.swift in Sources */,
 				A65BEF7C2BF7A01500F6C5D7 /* UARegistrationDelegate.swift in Sources */,
 				A6F5076B2C35447400F679BC /* UARegionEvent.swift in Sources */,
 				A6F507692C35446800F679BC /* UACustomEvent.swift in Sources */,
