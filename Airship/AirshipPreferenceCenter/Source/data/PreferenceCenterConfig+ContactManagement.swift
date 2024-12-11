@@ -9,33 +9,33 @@ public import AirshipCore
 public extension PreferenceCenterConfig {
 
     /// Contact management item - base container object for contact management in the preference center
-    class ContactManagementItem: Decodable, Equatable, PreferenceCenterConfigItem, @unchecked Sendable {
+    struct ContactManagementItem: Decodable, Equatable, PreferenceCenterConfigItem, Sendable {
         /// The contact management item's type.
         public let type = PreferenceCenterConfigItemType.contactManagement
 
         /// The contact management item's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The contact management item's channel platform - for example: email or sms.
-        public let platform: Platform
+        public var platform: Platform
 
         // The common title and optional description
-        public let display: CommonDisplay
+        public var display: CommonDisplay
 
         // The add prompt
-        public let addChannel: AddChannel?
+        public var addChannel: AddChannel?
 
         /// The remove prompt
-        public let removeChannel: RemoveChannel?
+        public var removeChannel: RemoveChannel?
 
         /// The empty message label that's visible when no channels of this type have been added
-        public let emptyMessage: String?
+        public var emptyMessage: String?
 
         /// The section's display conditions.
-        public let conditions: [Condition]?
+        public var conditions: [Condition]?
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case platform = "platform"
             case display = "display"
             case emptyMessage = "empty_message"
@@ -43,12 +43,10 @@ public extension PreferenceCenterConfig {
             case removeChannel = "remove"
             case registrationOptions = "registration_options"
             case conditions = "conditions"
-            case email = "email"
-            case sms = "sms"
         }
 
         public init(
-            identifier: String,
+            id: String,
             platform: Platform,
             display: CommonDisplay,
             emptyMessage: String? = nil,
@@ -56,7 +54,7 @@ public extension PreferenceCenterConfig {
             removeChannel: RemoveChannel? = nil,
             conditions: [Condition]? = nil
         ) {
-            self.identifier = identifier
+            self.id = id
             self.platform = platform
             self.display = display
             self.emptyMessage = emptyMessage
@@ -65,23 +63,26 @@ public extension PreferenceCenterConfig {
             self.conditions = conditions
         }
 
-        public required init(from decoder: any Decoder) throws {
+        enum PlatformType: String, Decodable {
+            case email
+            case sms
+        }
+
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            self.identifier = try container.decode(String.self, forKey: .identifier)
+            self.id = try container.decode(String.self, forKey: .id)
 
-            let platformType = try container.decode(String.self, forKey: CodingKeys.platform)
+            let platformType = try container.decode(PlatformType.self, forKey: CodingKeys.platform)
             switch platformType {
-            case CodingKeys.email.rawValue:
+            case .email:
                 self.platform = .email(
                     try container.decode(Email.self, forKey: .registrationOptions)
                 )
-            case CodingKeys.sms.rawValue:
+            case .sms:
                 self.platform = .sms(
                     try container.decode(SMS.self, forKey: .registrationOptions)
                 )
-            default:
-                throw AirshipErrors.error("Unable to parse platform")
             }
 
             self.display = try container.decode(CommonDisplay.self, forKey: .display)
@@ -91,30 +92,11 @@ public extension PreferenceCenterConfig {
             self.conditions = try container.decodeIfPresent([Condition].self, forKey: .conditions)
         }
 
-        public static func == (
-            lhs: ContactManagementItem,
-            rhs: ContactManagementItem
-        ) -> Bool {
-            return lhs.identifier == rhs.identifier &&
-            lhs.platform == rhs.platform &&
-            lhs.display == rhs.display &&
-            lhs.addChannel == rhs.addChannel &&
-            lhs.removeChannel == rhs.removeChannel &&
-            lhs.emptyMessage == rhs.emptyMessage &&
-            lhs.conditions == rhs.conditions
-        }
 
         /// Platform
-        public enum Platform: Decodable, Equatable {
+        public enum Platform: Equatable, Sendable {
             case sms(SMS)
             case email(Email)
-
-            var stringValue: String {
-                switch self {
-                case .sms: return "sms"
-                case .email: return "email"
-                }
-            }
 
             var errorMessages: ErrorMessages? {
                 switch self {
@@ -124,14 +106,10 @@ public extension PreferenceCenterConfig {
                     return email.errorMessages
                 }
             }
-
-            public var description: String {
-                return stringValue
-            }
         }
 
         /// Pending label that appears after channel list item is added. Resend button appears after interval.
-        public struct PendingLabel: Decodable, Equatable {
+        public struct PendingLabel: Decodable, Equatable, Sendable {
 
             /// The interval in seconds to wait before resend button appears
             public let intervalInSeconds: Int
@@ -166,7 +144,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// Email registration options
-        public struct Email: Decodable, Equatable {
+        public struct Email: Decodable, Equatable, Sendable {
 
             /// Text placeholder for email address
             public var placeholder: String?
@@ -207,7 +185,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// SMS registration options
-        public struct SMS: Decodable, Equatable {
+        public struct SMS: Decodable, Equatable, Sendable {
 
             /// List of sender ids - the identifiers for the senders of the SMS verification message
             public var senders: [SMSSenderInfo]
@@ -248,7 +226,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// Reusable container for holding a title and optional description.
-        public struct CommonDisplay: Decodable, Equatable {
+        public struct CommonDisplay: Decodable, Equatable, Sendable {
 
             /// Title text.
             public let title: String
@@ -292,7 +270,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// The container for the add prompt button and resulting add prompt.
-        public struct AddChannel: Decodable, Equatable {
+        public struct AddChannel: Decodable, Equatable, Sendable {
 
             /// The add channel prompt view that appears when the add channel button is tapped.
             public let view: AddChannelPrompt
@@ -315,7 +293,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// The container for the remove channel button and resulting remove prompt for adding a channel to a channel list.
-        public struct RemoveChannel: Decodable, Equatable {
+        public struct RemoveChannel: Decodable, Equatable, Sendable {
 
             /// The remove channel prompt view that appears when the remove channel button is tapped.
             public let view: RemoveChannelPrompt
@@ -338,7 +316,7 @@ public extension PreferenceCenterConfig {
             }
         }
 
-        public struct RemoveChannelPrompt: Decodable, Equatable {
+        public struct RemoveChannelPrompt: Decodable, Equatable, Sendable {
 
             /// Optional additional prompt display info.
             public let display: PromptDisplay
@@ -379,7 +357,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// A more dynamic version of common display that includes a footer and error message.
-        public struct PromptDisplay: Decodable, Equatable {
+        public struct PromptDisplay: Decodable, Equatable, Sendable {
 
             /// Title text.
             public let title: String
@@ -408,7 +386,7 @@ public extension PreferenceCenterConfig {
             }
         }
 
-        public struct AddChannelPrompt: Decodable, Equatable {
+        public struct AddChannelPrompt: Decodable, Equatable, Sendable {
 
             /// The item text display.
             public let display: PromptDisplay
@@ -448,7 +426,7 @@ public extension PreferenceCenterConfig {
             }
         }
 
-        public struct IconButton: Codable, Equatable {
+        public struct IconButton: Codable, Equatable, Sendable {
             /// The button's content description.
             public let contentDescription: String?
 
@@ -464,7 +442,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// Alert button info.
-        public struct LabeledButton: Decodable, Equatable {
+        public struct LabeledButton: Decodable, Equatable, Sendable {
 
             /// The button's text.
             public let text: String
@@ -488,7 +466,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// Alert display info
-        public struct ActionableMessage: Decodable, Equatable {
+        public struct ActionableMessage: Decodable, Equatable, Sendable {
 
             /// Title text.
             public let title: String
@@ -517,7 +495,7 @@ public extension PreferenceCenterConfig {
         }
 
         /// Error message container for showing error messages on the add channel prompt
-        public struct ErrorMessages: Codable, Equatable {
+        public struct ErrorMessages: Codable, Equatable, Sendable {
             var invalidMessage: String
             var defaultMessage: String
 

@@ -51,7 +51,7 @@ final class ContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientPr
                 from: data
             )
 
-            return try parsedBody.toScopedSubscriptionLists()
+            return parsedBody.toScopedSubscriptionLists()
         }
     }
 
@@ -79,7 +79,7 @@ struct SubscriptionResponseBody: Decodable {
 
     struct Entry: Decodable, Equatable {
         let lists: [String]
-        let scope: String
+        let scope: ChannelScope
 
         enum CodingKeys: String, CodingKey {
             case lists = "list_ids"
@@ -87,10 +87,10 @@ struct SubscriptionResponseBody: Decodable {
         }
     }
 
-    func toScopedSubscriptionLists() throws -> [String: [ChannelScope]] {
+    func toScopedSubscriptionLists() -> [String: [ChannelScope]] {
         var parsed: [String: [ChannelScope]] = [:]
-        try self.subscriptionLists.forEach { entry in
-            let scope = try ChannelScope.fromString(entry.scope)
+        self.subscriptionLists.forEach { entry in
+            let scope = entry.scope
             entry.lists.forEach { listID in
                 var scopes = parsed[listID] ?? []
                 if !scopes.contains(scope) {

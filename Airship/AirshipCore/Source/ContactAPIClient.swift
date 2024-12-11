@@ -663,7 +663,7 @@ fileprivate struct ContactUpdateRequestBody: Encodable {
 
     struct SubscriptionListOperation: Encodable {
         let action: SubscriptionListOperationAction
-        let scope: String
+        let scope: ChannelScope
         let timestamp: Date
         let listID: String
 
@@ -957,14 +957,14 @@ fileprivate extension Array where Element == ScopedSubscriptionListUpdate {
             case .subscribe:
                 return ContactUpdateRequestBody.SubscriptionListOperation(
                     action: .subscribe,
-                    scope: update.scope.stringValue,
+                    scope: update.scope,
                     timestamp: update.date,
                     listID: update.listId
                 )
             case .unsubscribe:
                 return ContactUpdateRequestBody.SubscriptionListOperation(
                     action: .unsubscribe,
-                    scope: update.scope.stringValue,
+                    scope: update.scope,
                     timestamp: update.date,
                     listID: update.listId
                 )

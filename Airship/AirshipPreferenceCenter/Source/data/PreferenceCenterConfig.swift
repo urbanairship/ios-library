@@ -7,25 +7,21 @@ public import AirshipCore
 #endif
 
 /// Preference center config.
-public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
+public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
 
     /// The config's identifier.
-    public let identifier: String
+    public var identifier: String
 
     /// The config's sections.
-    public let sections: [Section]
-
-    public var _sections: [any PreferenceCenterConfigSection] {
-        self.sections.map { $0.info }
-    }
+    public var sections: [Section]
 
     /// The config's display info.
-    public let display: CommonDisplay?
+    public var display: CommonDisplay?
 
     /**
      * The config's options.
      */
-    public let options: Options?
+    public var options: Options?
 
     public init(
         identifier: String,
@@ -33,7 +29,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         display: CommonDisplay? = nil,
         options: Options? = nil
     ) {
-
         self.identifier = identifier
         self.sections = sections
         self.display = display
@@ -47,71 +42,31 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         case options = "options"
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let object = object as? PreferenceCenterConfig else {
-            return false
-        }
-
-        return self.identifier == object.identifier
-            && self.sections == object.sections
-            && self.display == object.display
-            && self.options == object.options
-    }
-
-    public static func == (lhs: PreferenceCenterConfig, rhs: PreferenceCenterConfig) -> Bool {
-        return lhs.identifier == rhs.identifier &&
-        lhs.sections == rhs.sections &&
-        lhs.display == rhs.display &&
-        lhs.options == rhs.options
-    }
-
     /// Config options.
-    public final class Options: NSObject, Decodable, Sendable {
+    public struct Options: Decodable, Sendable, Equatable {
 
         /**
          * The config identifier.
          */
-        public let mergeChannelDataToContact: Bool
+        public var mergeChannelDataToContact: Bool?
 
         enum CodingKeys: String, CodingKey {
             case mergeChannelDataToContact = "merge_channel_data_to_contact"
         }
 
-        public init(mergeChannelDataToContact: Bool) {
+        public init(mergeChannelDataToContact: Bool?) {
             self.mergeChannelDataToContact = mergeChannelDataToContact
-        }
-
-        public required init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-
-            if let mergeChannelDataToContact = try? container.decode(
-                Bool.self,
-                forKey: .mergeChannelDataToContact
-            ) {
-                self.mergeChannelDataToContact = mergeChannelDataToContact
-            } else {
-                self.mergeChannelDataToContact = false
-            }
-        }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? Options else {
-                return false
-            }
-
-            return self.mergeChannelDataToContact
-                == object.mergeChannelDataToContact
         }
     }
 
     /// Common display info
-    public final class CommonDisplay: NSObject, Decodable, Sendable {
+    public struct CommonDisplay: Decodable, Sendable, Equatable {
 
         /// Title
-        public let title: String?
+        public var title: String?
 
         // Subtitle
-        public let subtitle: String?
+        public var subtitle: String?
 
         public init(title: String? = nil, subtitle: String? = nil) {
             self.title = title
@@ -122,32 +77,19 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
             case title = "name"
             case subtitle = "description"
         }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? CommonDisplay else {
-                return false
-            }
-
-            return self.title == object.title
-                && self.subtitle == object.subtitle
-        }
-
-        public static func == (lhs: PreferenceCenterConfig.CommonDisplay, rhs: PreferenceCenterConfig.CommonDisplay) -> Bool {
-            return lhs.title == rhs.title && lhs.subtitle == rhs.subtitle
-        }
     }
 
-    public final class NotificationOptInCondition: NSObject, Decodable, PreferenceConfigCondition, Sendable
+    public struct NotificationOptInCondition: Decodable, PreferenceConfigCondition, Sendable
     {
 
-        public enum OptInStatus: Int, Equatable, Sendable {
-            case optedIn
-            case optedOut
+        public enum OptInStatus: String, Equatable, Sendable, Codable {
+            case optedIn = "opt_in"
+            case optedOut = "opt_out"
         }
 
         public let type = PreferenceCenterConfigConditionType.notificationOptIn
 
-        public let optInStatus: OptInStatus
+        public var optInStatus: OptInStatus
 
         enum CodingKeys: String, CodingKey {
             case optInStatus = "when_status"
@@ -155,31 +97,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
         public init(optInStatus: OptInStatus) {
             self.optInStatus = optInStatus
-        }
-
-        public required init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            let optInStatus = try container.decode(
-                String.self,
-                forKey: .optInStatus
-            )
-
-            switch optInStatus {
-            case "opt_in":
-                self.optInStatus = .optedIn
-            case "opt_out":
-                self.optInStatus = .optedOut
-            default:
-                throw AirshipErrors.error("Invalid status \(optInStatus)")
-            }
-        }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? NotificationOptInCondition else {
-                return false
-            }
-
-            return self.optInStatus == object.optInStatus
         }
     }
 
@@ -195,9 +112,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try PreferenceCenterConfigConditionType.fromString(
-                container.decode(String.self, forKey: .type)
-            )
+            let type = try container.decode(PreferenceCenterConfigConditionType.self, forKey: .type)
             let singleValueContainer = try decoder.singleValueContainer()
 
             switch type {
@@ -212,177 +127,111 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
     }
 
     /// Common section.
-    public final class CommonSection: NSObject, Decodable,
-        PreferenceCenterConfigSection
-    {
+    public struct CommonSection: Decodable, PreferenceCenterConfigSection {
 
         /// The section's type.
         public let type = PreferenceCenterConfigSectionType.common
 
         /// The section's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The section's items.
-        public let items: [Item]
-
-        public var _items: [any PreferenceCenterConfigItem] {
-            return self.items.map { $0.info }
-        }
+        public var items: [Item]
 
         /// The section's display info.
-        public let display: CommonDisplay?
+        public var display: CommonDisplay?
 
         /// The section's display conditions.
-        public let conditions: [Condition]?
-
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
+        public var conditions: [Condition]?
 
         public init(
-            identifier: String,
+            id: String,
             items: [Item],
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
-
-            self.identifier = identifier
+            self.id = id
             self.items = items
             self.display = display
             self.conditions = conditions
         }
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case items = "items"
             case conditions = "conditions"
         }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? CommonSection else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-                && self.display == object.display
-                && self.items == object.items
-                && self.conditions == object.conditions
-        }
-
-        public static func == (lhs: PreferenceCenterConfig.CommonSection, rhs: PreferenceCenterConfig.CommonSection) -> Bool {
-            return lhs.identifier == rhs.identifier &&
-            lhs.items == rhs.items &&
-            lhs.display == rhs.display &&
-            lhs.conditions == rhs.conditions
-        }
     }
 
     /// Labeled section break info.
-    public final class LabeledSectionBreak: NSObject, Decodable,
-        PreferenceCenterConfigSection
-    {
+    public struct LabeledSectionBreak: Decodable, PreferenceCenterConfigSection {
+
 
         /// The section's type.
         public let type = PreferenceCenterConfigSectionType.labeledSectionBreak
 
         /// The section's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The section's display info.
-        public let display: CommonDisplay?
+        public var display: CommonDisplay?
 
         /// The section's display conditions.
-        public let conditions: [Condition]?
-
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
+        public var conditions: [Condition]?
 
         public init(
-            identifier: String,
+            id: String,
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
 
-            self.identifier = identifier
+            self.id = id
             self.display = display
             self.conditions = conditions
         }
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case conditions = "conditions"
-        }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? LabeledSectionBreak else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-                && self.display == object.display
-                && self.conditions == object.conditions
         }
     }
 
     /// Contact Management section.
-    public final class ContactManagementSection: NSObject, Decodable,
-                                      PreferenceCenterConfigSection
-    {
-
+    public struct ContactManagementSection: Decodable, PreferenceCenterConfigSection {
         /// The section's type.
         public let type = PreferenceCenterConfigSectionType.common
 
         /// The section's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The section's items.
-        public let items: [Item]
-
-        public var _items: [any PreferenceCenterConfigItem] {
-            return self.items.map { $0.info }
-        }
+        public var items: [Item]
 
         /// The section's display info.
-        public let display: CommonDisplay?
+        public var display: CommonDisplay?
 
         /// The section's display conditions.
-        public let conditions: [Condition]?
-
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
+        public var conditions: [Condition]?
 
         public init(
-            identifier: String,
+            id: String,
             items: [Item],
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
-            self.identifier = identifier
+            self.id = id
             self.items = items
             self.display = display
             self.conditions = conditions
         }
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case items = "items"
             case conditions = "conditions"
-        }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? CommonSection else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-            && self.display == object.display
-            && self.items == object.items
-            && self.conditions == object.conditions
         }
     }
 
@@ -401,9 +250,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try PreferenceCenterConfigSectionType.fromString(
-                container.decode(String.self, forKey: .type)
-            )
+            let type = try container.decode(PreferenceCenterConfigSectionType.self, forKey: .type)
             let singleValueContainer = try decoder.singleValueContainer()
 
             switch type {
@@ -417,103 +264,72 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 )
             }
         }
-
-        public static func == (lhs: PreferenceCenterConfig.Section, rhs: PreferenceCenterConfig.Section) -> Bool {
-            switch (lhs, rhs) {
-            case (.common(let lhsSection), .common(let rhsSection)):
-                return lhsSection == rhsSection
-            case (.labeledSectionBreak(let lhsSection), .labeledSectionBreak(let rhsSection)):
-                return lhsSection == rhsSection
-            default:
-                return false
-            }
-        }
     }
     
     /// Channel subscription item info.
-    public final class ChannelSubscription: NSObject, Decodable, PreferenceCenterConfigItem, Sendable {
+    public struct ChannelSubscription: Decodable, Equatable, PreferenceCenterConfigItem {
 
         /// The item's type.
         public let type = PreferenceCenterConfigItemType.channelSubscription
 
         /// The item's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The item's subscription ID.
-        public let subscriptionID: String
+        public var subscriptionID: String
 
         /// The item's display info.
-        public let display: CommonDisplay?
+        public var display: CommonDisplay?
 
         /// The item's display conditions.
-        public let conditions: [Condition]?
+        public var conditions: [Condition]?
 
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case subscriptionID = "subscription_id"
             case conditions = "conditions"
         }
 
         public init(
-            identifier: String,
+            id: String,
             subscriptionID: String,
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
 
-            self.identifier = identifier
+            self.id = id
             self.subscriptionID = subscriptionID
             self.display = display
             self.conditions = conditions
         }
-
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? ChannelSubscription else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-                && self.display == object.display
-                && self.subscriptionID == object.subscriptionID
-                && self.conditions == object.conditions
-        }
     }
 
     /// Group contact subscription item info.
-    public final class ContactSubscriptionGroup: NSObject, Decodable,
-        PreferenceCenterConfigItem
-    {
+    public struct ContactSubscriptionGroup: Decodable, Equatable, PreferenceCenterConfigItem {
 
         /// The item's type.
         public let type = PreferenceCenterConfigItemType
             .contactSubscriptionGroup
 
         /// The item's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The item's subscription ID.
-        public let subscriptionID: String
+        public var subscriptionID: String
 
         /// Components
-        public let components: [Component]
+        public var components: [Component]
 
         /// The item's display info.
-        public let display: CommonDisplay?
+        public var display: CommonDisplay?
 
         /// The item's display conditions.
-        public let conditions: [Condition]?
-
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
+        public var conditions: [Condition]?
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case subscriptionID = "subscription_id"
             case conditions = "conditions"
@@ -521,47 +337,31 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
         }
 
         public init(
-            identifier: String,
+            id: String,
             subscriptionID: String,
             components: [Component],
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
 
-            self.identifier = identifier
+            self.id = id
             self.subscriptionID = subscriptionID
             self.components = components
             self.display = display
             self.conditions = conditions
         }
 
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? ContactSubscriptionGroup else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-                && self.display == object.display
-                && self.subscriptionID == object.subscriptionID
-                && self.conditions == object.conditions
-                && self.components == object.components
-        }
-
         /// Contact subscription group component.
-        public final class Component: NSObject, Decodable, Sendable {
+        public struct Component: Decodable, Sendable, Equatable {
 
             /// The component's scopes.
-            public var scopes: [ChannelScope] {
-                return self._scopes.values
-            }
-
-            public let _scopes: ChannelScopes
+            public var scopes: [ChannelScope]
 
             /// The component's display info.
-            public let display: CommonDisplay?
+            public var display: CommonDisplay?
 
             enum CodingKeys: String, CodingKey {
-                case _scopes = "scopes"
+                case scopes = "scopes"
                 case display = "display"
             }
 
@@ -569,154 +369,106 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 scopes: [ChannelScope],
                 display: CommonDisplay? = nil
             ) {
-                self._scopes = ChannelScopes(scopes)
+                self.scopes = scopes
                 self.display = display
-            }
-
-            public override func isEqual(_ object: Any?) -> Bool {
-                guard let object = object as? Component else {
-                    return false
-                }
-
-                return self.display == object.display
-                    && self._scopes == object._scopes
             }
         }
     }
 
     /// Contact subscription item info.
-    public final class ContactSubscription: NSObject, Decodable,
-        PreferenceCenterConfigItem
-    {
+    public struct ContactSubscription: Decodable, PreferenceCenterConfigItem, Equatable {
 
         /// The item's type.
         public let type = PreferenceCenterConfigItemType.contactSubscription
 
         /// The item's identifier.
-        public let identifier: String
+        public var id: String
 
         /// The item's display info.
-        public let display: CommonDisplay?
+        public var display: CommonDisplay?
 
         /// The item's display conditions.
         public let conditions: [Condition]?
 
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
-
         /// The item's subscription ID.
-        public let subscriptionID: String
+        public var subscriptionID: String
 
         /// The item's scopes.
-        public var scopes: [ChannelScope] {
-            return self._scopes.values
-        }
-
-        public let _scopes: ChannelScopes
+        public var scopes: [ChannelScope]
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case subscriptionID = "subscription_id"
             case conditions = "conditions"
-            case _scopes = "scopes"
+            case scopes = "scopes"
         }
 
         public init(
-            identifier: String,
+            id: String,
             subscriptionID: String,
             scopes: [ChannelScope],
             display: CommonDisplay? = nil,
             conditions: [Condition]? = nil
         ) {
 
-            self.identifier = identifier
+            self.id = id
             self.subscriptionID = subscriptionID
-            self._scopes = ChannelScopes(scopes)
+            self.scopes = scopes
             self.display = display
             self.conditions = conditions
         }
 
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? ContactSubscription else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-                && self.display == object.display
-                && self.subscriptionID == object.subscriptionID
-                && self.conditions == object.conditions
-                && self._scopes == object._scopes
-        }
     }
 
     /// Alert item info.
-    public final class Alert: NSObject, Decodable, PreferenceCenterConfigItem {
+    public struct Alert: Decodable, PreferenceCenterConfigItem, Equatable {
 
         public let type = PreferenceCenterConfigItemType.alert
 
         /// The item's identifier.
-        public let identifier: String
+        public let id: String
 
         /// The item's display info.
-        public let display: Display?
+        public var display: Display?
 
         /// The item's display conditions.
-        public let conditions: [Condition]?
-
-        public var _conditions: [any PreferenceConfigCondition]? {
-            self.conditions?.map { $0.info }
-        }
+        public var conditions: [Condition]?
 
         /// The alert's button.
-        public let button: Button?
+        public var button: Button?
 
         enum CodingKeys: String, CodingKey {
-            case identifier = "id"
+            case id = "id"
             case display = "display"
             case conditions = "conditions"
             case button = "button"
         }
 
         public init(
-            identifier: String,
+            id: String,
             display: Display? = nil,
             conditions: [Condition]? = nil,
             button: Button? = nil
         ) {
 
-            self.identifier = identifier
+            self.id = id
             self.display = display
             self.conditions = conditions
             self.button = button
         }
 
-        public override func isEqual(_ object: Any?) -> Bool {
-            guard let object = object as? Alert else {
-                return false
-            }
-
-            return self.identifier == object.identifier
-                && self.display == object.display
-                && self.conditions == object.conditions
-        }
-
         /// Alert button info.
-        public final class Button: NSObject, Decodable, Sendable {
+        public struct Button: Decodable, Sendable, Equatable {
 
             /// The button's text.
-            public let text: String
+            public var text: String
 
             /// The button's content description.
-            public let contentDescription: String?
-
-            let actionJSON: AirshipJSON
+            public var contentDescription: String?
 
             /// Actions payload to run on tap
-            public var actions: Any? {
-                return self.actionJSON.unWrap()
-            }
+            public var actionJSON: AirshipJSON
 
             enum CodingKeys: String, CodingKey {
                 case text = "text"
@@ -726,36 +478,27 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
             public init(
                 text: String,
-                contentDescription: String? = nil
+                contentDescription: String? = nil,
+                actionJSON: AirshipJSON = .null
             ) {
 
                 self.text = text
                 self.contentDescription = contentDescription
-                self.actionJSON = .null
-            }
-
-            public override func isEqual(_ object: Any?) -> Bool {
-                guard let object = object as? Button else {
-                    return false
-                }
-
-                return self.text == object.text
-                    && self.contentDescription == object.contentDescription
-                    && self.actionJSON == object.actionJSON
+                self.actionJSON = actionJSON
             }
         }
 
         /// Alert display info
-        public final class Display: NSObject, Decodable, Sendable {
+        public struct Display: Decodable, Sendable, Equatable {
 
             /// Title
-            public let title: String?
+            public var title: String?
 
             /// Subtitle
-            public let subtitle: String?
+            public var subtitle: String?
 
             /// Icon URL
-            public let iconURL: String?
+            public var iconURL: String?
 
             enum CodingKeys: String, CodingKey {
                 case title = "name"
@@ -771,16 +514,6 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
                 self.title = title
                 self.subtitle = subtitle
                 self.iconURL = iconURL
-            }
-
-            public override func isEqual(_ object: Any?) -> Bool {
-                guard let object = object as? Display else {
-                    return false
-                }
-
-                return self.title == object.title
-                    && self.subtitle == object.subtitle
-                    && self.iconURL == object.iconURL
             }
         }
     }
@@ -802,9 +535,7 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let type = try PreferenceCenterConfigItemType.fromString(
-                container.decode(String.self, forKey: .type)
-            )
+            let type = try container.decode(PreferenceCenterConfigItemType.self, forKey: .type)
             let singleValueContainer = try decoder.singleValueContainer()
 
             switch type {
@@ -833,39 +564,13 @@ public final class PreferenceCenterConfig: NSObject, Decodable, Sendable {
 }
 
 /// Condition types
-public enum PreferenceCenterConfigConditionType: Int, CustomStringConvertible,
-    Equatable, Sendable
-{
-
+public enum PreferenceCenterConfigConditionType: String, Equatable, Sendable, Codable {
     /// Notification opt-in condition.
-    case notificationOptIn
-
-
-    var stringValue: String {
-        switch self {
-        case .notificationOptIn:
-            return "notification_opt_in"
-        }
-    }
-
-    static func fromString(_ value: String) throws
-        -> PreferenceCenterConfigConditionType
-    {
-        switch value {
-        case "notification_opt_in":
-            return .notificationOptIn
-        default:
-            throw AirshipErrors.error("invalid condition \(value)")
-        }
-    }
-
-    public var description: String {
-        return stringValue
-    }
+    case notificationOptIn = "notification_opt_in"
 }
 
 /// Condition
-public protocol PreferenceConfigCondition: Sendable {
+public protocol PreferenceConfigCondition: Sendable, Equatable {
 
     /**
      * Condition type.
@@ -874,99 +579,43 @@ public protocol PreferenceConfigCondition: Sendable {
 }
 
 /// Item types.
-public enum PreferenceCenterConfigItemType: Int, CustomStringConvertible,
-    Equatable, Sendable
-{
+public enum PreferenceCenterConfigItemType: String, Equatable, Sendable, Codable {
     /// Channel subscription type.
-    case channelSubscription
+    case channelSubscription = "channel_subscription"
 
     /// Contact subscription type.
-    case contactSubscription
+    case contactSubscription = "contact_subscription"
 
     /// Channel group subscription type.
-    case contactSubscriptionGroup
+    case contactSubscriptionGroup = "contact_subscription_group"
 
     /// Alert type.
     case alert
 
     /// Contact management
-    case contactManagement
-    
-    var stringValue: String {
-        switch self {
-        case .channelSubscription: return "channel_subscription"
-        case .contactSubscription: return "contact_subscription"
-        case .contactSubscriptionGroup: return "contact_subscription_group"
-        case .alert: return "alert"
-        case .contactManagement: return "contact_management"
-        }
-    }
-
-    static func fromString(_ value: String) throws
-        -> PreferenceCenterConfigItemType
-    {
-        switch value {
-        case "channel_subscription": return .channelSubscription
-        case "contact_subscription": return .contactSubscription
-        case "contact_subscription_group": return .contactSubscriptionGroup
-        case "alert": return .alert
-        case "contact_management": return .contactManagement
-        default:
-            throw AirshipErrors.error("invalid item \(value)")
-        }
-    }
-
-    public var description: String {
-        return stringValue
-    }
+    case contactManagement = "contact_management"
 }
 
 /// Preference section item info.
-public protocol PreferenceCenterConfigItem: Sendable {
+public protocol PreferenceCenterConfigItem: Sendable, Identifiable {
     /// The type.
     var type: PreferenceCenterConfigItemType { get }
 
     /// The identifier.
-    var identifier: String { get }
+    var id: String { get }
 }
     
 /// Preference config section type.
-public enum PreferenceCenterConfigSectionType: Int, CustomStringConvertible,
-    Equatable, Sendable
-{
+public enum PreferenceCenterConfigSectionType: String, Equatable, Sendable, Codable {
     /// Common section type.
-    case common
+    case common = "section"
 
     /// Labeled section break type.
-    case labeledSectionBreak
-
-    var stringValue: String {
-        switch self {
-        case .common: return "section"
-        case .labeledSectionBreak: return "labeled_section_break"
-        }
-    }
-
-    static func fromString(_ value: String) throws
-        -> PreferenceCenterConfigSectionType
-    {
-        switch value {
-        case "section":
-            return .common
-        case "labeled_section_break":
-            return .labeledSectionBreak
-        default:
-            throw AirshipErrors.error("invalid section \(value)")
-        }
-    }
-
-    public var description: String {
-        return stringValue
-    }
+    case labeledSectionBreak = "labeled_section_break"
 }
 
 /// Preference config section.
-public protocol PreferenceCenterConfigSection: Sendable {
+public protocol PreferenceCenterConfigSection: Sendable, Equatable, Identifiable {
 
     /**
      * The section's type.
@@ -976,7 +625,7 @@ public protocol PreferenceCenterConfigSection: Sendable {
     /**
      * The section's identifier.
      */
-    var identifier: String { get }
+    var id: String { get }
 }
 
 extension PreferenceCenterConfig.Item {
@@ -1082,7 +731,7 @@ extension PreferenceCenterConfig.Condition: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .notificationOptIn(let condition):
-            try container.encode(condition.type.description, forKey: .type)
+            try container.encode(condition.type, forKey: .type)
             try condition.encode(to: encoder)
         }
     }
@@ -1097,10 +746,10 @@ extension PreferenceCenterConfig.Section: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .common(let section):
-            try container.encode(section.type.description, forKey: .type)
+            try container.encode(section.type, forKey: .type)
             try section.encode(to: encoder)
         case .labeledSectionBreak(let section):
-            try container.encode(section.type.description, forKey: .type)
+            try container.encode(section.type, forKey: .type)
             try section.encode(to: encoder)
         }
     }
@@ -1110,32 +759,13 @@ extension PreferenceCenterConfig.ChannelSubscription: Encodable {}
 
 extension PreferenceCenterConfig.ContactSubscriptionGroup: Encodable {}
 
-extension PreferenceCenterConfig.ContactSubscriptionGroup.Component: Encodable {
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(_scopes, forKey: ._scopes)
-        try container.encode(display, forKey: .display)
-    }
-}
+extension PreferenceCenterConfig.ContactSubscriptionGroup.Component: Encodable {}
 
-extension PreferenceCenterConfig.ContactSubscription: Encodable {
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-
-        try container.encode(identifier, forKey: .identifier)
-        try container.encode(display, forKey: .display)
-        try container.encode(subscriptionID, forKey: .subscriptionID)
-//        try container.encode(_conditions, forKey: .conditions)
-        try container.encode(_scopes, forKey: ._scopes)
-    }
-}
-
+extension PreferenceCenterConfig.ContactSubscription: Encodable {}
 
 extension PreferenceCenterConfig.Alert: Encodable {}
 
 extension PreferenceCenterConfig.Alert.Button: Encodable {}
-
-extension PreferenceCenterConfigConditionType : Encodable {}
 
 extension PreferenceCenterConfig.Alert.Display: Encodable {}
 
@@ -1143,7 +773,7 @@ extension PreferenceCenterConfig.ContactManagementItem: Encodable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(identifier, forKey: .identifier)
+        try container.encode(id, forKey: .id)
         try container.encode(platform, forKey: .platform)
         try container.encode(display, forKey: .display)
         try container.encodeIfPresent(emptyMessage, forKey: .emptyMessage)
@@ -1158,19 +788,19 @@ extension PreferenceCenterConfig.Item: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .channelSubscription(let item):
-            try container.encode(item.type.description, forKey: .type)
+            try container.encode(item.type, forKey: .type)
             try item.encode(to: encoder)
         case .contactSubscription(let item):
-            try container.encode(item.type.description, forKey: .type)
+            try container.encode(item.type, forKey: .type)
             try item.encode(to: encoder)
         case .contactSubscriptionGroup(let item):
-            try container.encode(item.type.description, forKey: .type)
+            try container.encode(item.type, forKey: .type)
             try item.encode(to: encoder)
         case .alert(let item):
-            try container.encode(item.type.description, forKey: .type)
+            try container.encode(item.type, forKey: .type)
             try item.encode(to: encoder)
         case .contactManagement(let item):
-            try container.encode(item.type.description, forKey: .type)
+            try container.encode(item.type, forKey: .type)
             try item.encode(to: encoder)
         }
     }

@@ -109,12 +109,13 @@ public enum ContactChannel: Sendable, Equatable, Codable, Hashable {
             /// Commercial opted-out value
             public let commercialOptedOut: Date?
 
-            init(channelID: String,
-                 maskedAddress: String,
-                 transactionalOptedIn: Date? = nil,
-                 transactionalOptedOut: Date? = nil,
-                 commercialOptedIn: Date? = nil,
-                 commercialOptedOut: Date? = nil
+            init(
+                channelID: String,
+                maskedAddress: String,
+                transactionalOptedIn: Date? = nil,
+                transactionalOptedOut: Date? = nil,
+                commercialOptedIn: Date? = nil,
+                commercialOptedOut: Date? = nil
             ) {
                 self.channelID = channelID
                 self.maskedAddress = maskedAddress
@@ -123,7 +124,6 @@ public enum ContactChannel: Sendable, Equatable, Codable, Hashable {
                 self.commercialOptedIn = commercialOptedIn
                 self.commercialOptedOut = commercialOptedOut
             }
-
         }
 
         /// Pending info
@@ -145,8 +145,6 @@ public enum ContactChannelUpdate: Sendable, Equatable, Hashable {
     case associated(ContactChannel, channelID: String? = nil)
     case associatedAnonChannel(channelType: ChannelType, channelID: String)
 }
-
-
 
 
 private extension String {

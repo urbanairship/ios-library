@@ -162,18 +162,6 @@ public final class SubscriptionListAction: AirshipAction {
             case action = "action"
             case scope = "scope"
         }
-
-        init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.list = try container.decode(String.self, forKey: .list)
-            self.action = try container.decode(
-                SubscriptionAction.self,
-                forKey: .action
-            )
-            self.scope = try ChannelScope.fromString(
-                try container.decode(String.self, forKey: .scope)
-            )
-        }
     }
 
     enum Edit: Decodable {

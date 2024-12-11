@@ -72,17 +72,6 @@ public class UAPreferenceCenter: NSObject {
         PreferenceCenter.shared.open(preferenceCenterID)
     }
     
-    
-    /**
-     * Returns the configuration of the Preference Center with the given ID.
-     * - Parameters:
-     *   - preferenceCenterID: The preference center ID.
-     */
-    @objc
-    public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
-        return try await PreferenceCenter.shared.config(preferenceCenterID: preferenceCenterID)
-    }
-    
     /**
      * Returns the configuration of the Preference Center as JSON data with the given ID.
      * - Parameters:

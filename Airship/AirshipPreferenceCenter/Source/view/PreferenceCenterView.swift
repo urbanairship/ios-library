@@ -252,7 +252,7 @@ struct PreferenceCenterView_Previews: PreviewProvider {
             sections: [
                 .labeledSectionBreak(
                     PreferenceCenterConfig.LabeledSectionBreak(
-                        identifier: "LabeledSectionBreak",
+                        id: "LabeledSectionBreak",
                         display: PreferenceCenterConfig.CommonDisplay(
                             title: "Labeled Section Break"
                         )
@@ -260,11 +260,11 @@ struct PreferenceCenterView_Previews: PreviewProvider {
                 ),
                 .common(
                     PreferenceCenterConfig.CommonSection(
-                        identifier: "common",
+                        id: "common",
                         items: [
                             .channelSubscription(
                                 PreferenceCenterConfig.ChannelSubscription(
-                                    identifier: "ChannelSubscription",
+                                    id: "ChannelSubscription",
                                     subscriptionID: "ChannelSubscription",
                                     display:
                                         PreferenceCenterConfig.CommonDisplay(
@@ -276,7 +276,7 @@ struct PreferenceCenterView_Previews: PreviewProvider {
                             ),
                             .contactSubscription(
                                 PreferenceCenterConfig.ContactSubscription(
-                                    identifier: "ContactSubscription",
+                                    id: "ContactSubscription",
                                     subscriptionID: "ContactSubscription",
                                     scopes: [.app, .web],
                                     display:
@@ -289,7 +289,7 @@ struct PreferenceCenterView_Previews: PreviewProvider {
                             ),
                             .contactSubscriptionGroup(
                                 PreferenceCenterConfig.ContactSubscriptionGroup(
-                                    identifier: "ContactSubscriptionGroup",
+                                    id: "ContactSubscriptionGroup",
                                     subscriptionID: "ContactSubscriptionGroup",
                                     components: [
                                         PreferenceCenterConfig

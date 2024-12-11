@@ -14,9 +14,7 @@ public class UAScopedSubscriptionListEditor: NSObject {
      */
     @objc(subscribe:scope:)
     public func subscribe(_ subscriptionListID: String, scope: UAChannelScope) {
-        if let scope = ChannelScope(rawValue: scope.rawValue) {
-            self.editor?.subscribe(subscriptionListID, scope: scope)
-        }
+        self.editor?.subscribe(subscriptionListID, scope: scope.toChannelScope)
     }
 
     /**
@@ -27,9 +25,7 @@ public class UAScopedSubscriptionListEditor: NSObject {
      */
     @objc(unsubscribe:scope:)
     public func unsubscribe(_ subscriptionListID: String, scope: UAChannelScope) {
-        if let scope = ChannelScope(rawValue: scope.rawValue) {
-            self.editor?.unsubscribe(subscriptionListID, scope: scope)
-        }
+        self.editor?.unsubscribe(subscriptionListID, scope: scope.toChannelScope)
     }
 
     /**
@@ -63,5 +59,29 @@ public enum UAChannelScope: Int, Sendable, Equatable {
      * SMS channels
      */
     case sms
+
+    var toChannelScope: ChannelScope {
+        return switch(self) {
+        case .app: .app
+        case .web: .web
+        case .email: .email
+        case .sms: .sms
+        }
+    }
+}
+
+extension ChannelScope {
+    var toUAChannelScope: UAChannelScope {
+        return switch(self) {
+        case .app: .app
+        case .web: .web
+        case .email: .email
+        case .sms: .sms
+#if canImport(AirshipCore)
+        default:
+                .app
+#endif
+        }
+    }
 }
 

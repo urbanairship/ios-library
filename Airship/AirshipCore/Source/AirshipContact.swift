@@ -7,7 +7,7 @@ import Foundation
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
-public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked Sendable {
+public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     static let refreshContactPushPayloadKey = "com.urbanairship.contact.update"
 
     public var contactChannelUpdates: AsyncStream<ContactChannelsResult> {
@@ -130,10 +130,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
             .eraseToAnyPublisher()
     }
 
-    public func _getNamedUserID() async -> String? {
-        return await self.namedUserID
-    }
-
     public var namedUserID: String? {
         get async {
             return await self.contactManager.currentNamedUserID()
@@ -180,9 +176,7 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         self.serialQueue = serialQueue
         self.subscriptionListProvider = subscriptionListProvider
         self.cachedSubscriptionLists = CachedValue(date: date)
-        
-        super.init()
-        
+
         self.setupTask = Task {
             await self.migrateNamedUser()
 
@@ -702,11 +696,6 @@ public final class AirshipContact: NSObject, AirshipContactProtocol, @unchecked 
         }.contactID
     }
 
-    public func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
-        let lists = try await self.fetchSubscriptionLists()
-        return AudienceUtils.wrap(lists)
-    }
-
     public func fetchSubscriptionLists() async throws -> [String: [ChannelScope]] {
         let contactID = await getStableContactID()
         return try await subscriptionListProvider.fetch(contactID: contactID)
@@ -910,7 +899,7 @@ extension AirshipContact: AirshipComponent {}
 public extension AirshipNotifications {
 
     /// NSNotification info when a conflict event is emitted.
-    final class ContactConflict: NSObject {
+    final class ContactConflict {
 
         /// NSNotification name.
         public static let name = NSNotification.Name(

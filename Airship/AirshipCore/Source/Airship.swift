@@ -467,7 +467,7 @@ public final class Airship: NSObject, Sendable {
 public final class AirshipNotifications: NSObject {
 
     /// Notification when Airship is ready.
-    public final class AirshipReady: NSObject {
+    public final class AirshipReady {
         /// Notification name
         public static let name = NSNotification.Name(
             "com.urbanairship.airship_ready"

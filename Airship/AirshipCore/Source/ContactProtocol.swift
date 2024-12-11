@@ -2,14 +2,57 @@
 
 public import Combine
 
-
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
-public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
+public protocol AirshipContactProtocol: AnyObject, Sendable {
+
+    /// Current named user ID
+    var namedUserID: String? { get async }
+
+    /// The named user ID current value publisher.
+    var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
+
+    /// Conflict event publisher.
+    var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
+
+    /// Notifies any edits to the subscription lists.
+    var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
+
+    /// Fetches subscription lists.
+    /// - Returns: Subscriptions lists.
+    func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]]
+
+    /// SMS validator delegate to allow overriding the default SMS validation
+    /// - Returns: Bool indicating if SMS is valid.
+    var smsValidatorDelegate: (any SMSValidatorDelegate)? { get set }
+
     /**
-     * The current named user ID if set through the SDK.
+     * Validates MSISDN
+     * - Parameters:
+     *   - msisdn: The mobile phone number to validate.
+     *   - sender: The identifier given to the sender of the SMS message.
      */
-    func _getNamedUserID() async -> String?
+    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
+
+    /**
+     * Re-sends the double opt in prompt via the pending or registered channel.
+     * - Parameters:
+     *   - channel: The pending or registered channel to resend the double opt-in prompt to.
+     */
+    func resend(_ channel: ContactChannel)
+
+    /**
+     * Opts out and disassociates channel
+     * - Parameters:
+     *   - channel: The channel to opt-out and disassociate
+     */
+    func disassociateChannel(_ channel: ContactChannel)
+
+    /// Contact channel updates stream.
+    var contactChannelUpdates: AsyncStream<ContactChannelsResult> { get }
+
+    /// Contact channel updates publisher.
+    var contactChannelPublisher: AnyPublisher<ContactChannelsResult, Never> { get }
 
     /**
      * Associates the contact with the given named user identifier.
@@ -99,62 +142,6 @@ public protocol AirshipBaseContactProtocol: AnyObject, Sendable {
     func editSubscriptionLists(
         _ editorBlock: (ScopedSubscriptionListEditor) -> Void
     )
-
-    /// Fetches subscription lists.
-    /// - Returns: Subscriptions lists.
-    func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes]
-}
-
-/// Airship contact. A contact is distinct from a channel and  represents a "user"
-/// within Airship. Contacts may be named and have channels associated with it.
-public protocol AirshipContactProtocol: AirshipBaseContactProtocol {
-    /// Current named user ID
-    var namedUserID: String? { get async }
-
-    /// The named user ID current value publisher.
-    var namedUserIDPublisher: AnyPublisher<String?, Never> { get }
-
-    /// Conflict event publisher.
-    var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> { get }
-
-    /// Notifies any edits to the subscription lists.
-    var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> { get }
-
-    /// Fetches subscription lists.
-    /// - Returns: Subscriptions lists.
-    func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]]
-
-    /// SMS validator delegate to allow overriding the default SMS validation
-    /// - Returns: Bool indicating if SMS is valid.
-    var smsValidatorDelegate: (any SMSValidatorDelegate)? { get set }
-
-    /**
-     * Validates MSISDN
-     * - Parameters:
-     *   - msisdn: The mobile phone number to validate.
-     *   - sender: The identifier given to the sender of the SMS message.
-     */
-    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
-
-    /**
-     * Re-sends the double opt in prompt via the pending or registered channel.
-     * - Parameters:
-     *   - channel: The pending or registered channel to resend the double opt-in prompt to.
-     */
-    func resend(_ channel: ContactChannel)
-
-    /**
-     * Opts out and disassociates channel
-     * - Parameters:
-     *   - channel: The channel to opt-out and disassociate
-     */
-    func disassociateChannel(_ channel: ContactChannel)
-
-    /// Contact channel updates stream.
-    var contactChannelUpdates: AsyncStream<ContactChannelsResult> { get }
-
-    /// Contact channel updates publisher.
-    var contactChannelPublisher: AnyPublisher<ContactChannelsResult, Never> { get }
 }
 
 

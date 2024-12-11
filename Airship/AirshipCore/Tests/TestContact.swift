@@ -92,10 +92,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     }
     private let subscriptionListEditsSubject = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
 
-    public func _getNamedUserID() async -> String? {
-        return self.namedUserID
-    }
-
     public var isComponentEnabled: Bool = true
 
     public var namedUserID: String?
@@ -151,10 +147,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     }
 
     public func fetchSubscriptionLists() async throws ->  [String: [ChannelScope]] {
-        return [:]
-    }
-
-    public func _fetchSubscriptionLists() async throws ->  [String: ChannelScopes] {
         return [:]
     }
 }
