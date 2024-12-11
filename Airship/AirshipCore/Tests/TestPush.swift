@@ -97,14 +97,9 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
     var deviceToken: String?
     var updateAuthorizedNotificationTypesCalled = false
     var registrationError: Error?
-    var didReceiveRemoteNotificationCallback:
-        (
-            (
-                [AnyHashable: Any], Bool,
-                @escaping (UIBackgroundFetchResult) -> Void
-            ) ->
-                Void
-        )?
+    var didReceiveRemoteNotificationCallback: (
+        ([AnyHashable: Any], Bool) -> UIBackgroundFetchResult
+    )?
     var combinedCategories: Set<UNNotificationCategory> = Set()
 
     func dispatchUpdateAuthorizedNotificationTypes() {
@@ -121,23 +116,21 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
 
     func didReceiveRemoteNotification(
         _ userInfo: [AnyHashable: Any],
-        isForeground: Bool,
-        completionHandler: @escaping (Any) -> Void
-    ) {
-        self.didReceiveRemoteNotificationCallback!(
+        isForeground: Bool
+    ) async -> any Sendable {
+        return self.didReceiveRemoteNotificationCallback!(
             userInfo,
-            isForeground,
-            completionHandler
+            isForeground
         )
     }
 
 
-    func presentationOptionsForNotification(_ notification: UNNotification, completionHandler: (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([])
+    func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return []
     }
 
 
-    func didReceiveNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func didReceiveNotificationResponse(_ response: UNNotificationResponse) async {
         assertionFailure("Unable to create UNNotificationResponse in tests.")
     }
 }

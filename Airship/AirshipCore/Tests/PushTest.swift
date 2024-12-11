@@ -851,130 +851,71 @@ class PushTest: XCTestCase {
     }
 
     @MainActor
-    func testReceivedForegroundNotification() {
+    func testReceivedForegroundNotification() async {
         let expected = ["cool": "payload"]
 
-        let completionHandlerCalled = self.expectation(
-            description: "Completion handler called"
-        )
-        self.push.didReceiveRemoteNotification(
+        let result = await self.push.didReceiveRemoteNotification(
             expected,
-            isForeground: true,
-            completionHandler: { result in
-                let res: UIBackgroundFetchResult =
-                    result as! UIBackgroundFetchResult
-                XCTAssertEqual(UIBackgroundFetchResult.noData, res)
-                completionHandlerCalled.fulfill()
-            }
+            isForeground: true
         )
-
-        self.wait(
-            for: [completionHandlerCalled],
-            timeout: 1,
-            enforceOrder: true
-        )
+        
+        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+        XCTAssertEqual(UIBackgroundFetchResult.noData, res)
     }
 
     @MainActor
-    func testForwardReceivedForegroundNotification() {
+    func testForwardReceivedForegroundNotification() async {
         let expected = ["cool": "payload"]
         self.push.pushNotificationDelegate = self.pushDelegate
 
-        let delegateCalled = self.expectation(description: "Delegate called")
         self.pushDelegate.onReceivedForegroundNotification = {
-            notificaiton,
-            completionHandler in
+            notificaiton in
             XCTAssertEqual(
                 expected as NSDictionary,
                 notificaiton as NSDictionary
             )
-            delegateCalled.fulfill()
-            completionHandler()
         }
 
-        let completionHandlerCalled = self.expectation(
-            description: "Completion handler called"
-        )
-        self.push.didReceiveRemoteNotification(
-            expected,
-            isForeground: true,
-            completionHandler: { result in
-                let res: UIBackgroundFetchResult =
-                    result as! UIBackgroundFetchResult
-                XCTAssertEqual(UIBackgroundFetchResult.noData, res)
-                completionHandlerCalled.fulfill()
-            }
-        )
-
-        self.wait(
-            for: [delegateCalled, completionHandlerCalled],
-            timeout: 1,
-            enforceOrder: true
-        )
-
+        let result = await self.push.didReceiveRemoteNotification(expected, isForeground: true)
+        
+        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+        XCTAssertEqual(UIBackgroundFetchResult.noData, res)
     }
 
     @MainActor
-    func testReceivedBackgroundNotification() {
+    func testReceivedBackgroundNotification() async {
         let expected = ["cool": "payload"]
 
-        let completionHandlerCalled = self.expectation(
-            description: "Completion handler called"
-        )
-        self.push.didReceiveRemoteNotification(
+        let result = await self.push.didReceiveRemoteNotification(
             expected,
-            isForeground: false,
-            completionHandler: { result in
-                let res: UIBackgroundFetchResult =
-                    result as! UIBackgroundFetchResult
-                XCTAssertEqual(UIBackgroundFetchResult.noData, res)
-                completionHandlerCalled.fulfill()
-            }
+            isForeground: false
         )
-
-        self.wait(
-            for: [completionHandlerCalled],
-            timeout: 1,
-            enforceOrder: true
-        )
+        
+        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+        XCTAssertEqual(UIBackgroundFetchResult.noData, res)
     }
 
     @MainActor
-    func testForwardReceivedBackgroundNotification() {
+    func testForwardReceivedBackgroundNotification() async {
         let expected = ["cool": "payload"]
         self.push.pushNotificationDelegate = self.pushDelegate
 
-        let delegateCalled = self.expectation(description: "Delegate called")
         self.pushDelegate.onReceivedBackgroundNotification = {
-            notificaiton,
-            completionHandler in
+            notificaiton in
             XCTAssertEqual(
                 expected as NSDictionary,
                 notificaiton as NSDictionary
             )
-            delegateCalled.fulfill()
-            completionHandler(.newData)
+            return .newData
         }
 
-        let completionHandlerCalled = self.expectation(
-            description: "Completion handler called"
-        )
-        self.push.didReceiveRemoteNotification(
+        let result = await self.push.didReceiveRemoteNotification(
             expected,
-            isForeground: false,
-            completionHandler: { result in
-                let res: UIBackgroundFetchResult =
-                    result as! UIBackgroundFetchResult
-                XCTAssertEqual(UIBackgroundFetchResult.newData, res)
-                completionHandlerCalled.fulfill()
-            }
+            isForeground: false
         )
-
-        self.wait(
-            for: [delegateCalled, completionHandlerCalled],
-            timeout: 1,
-            enforceOrder: true
-        )
+        
+        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
+        XCTAssertEqual(UIBackgroundFetchResult.newData, res)
     }
 
     @MainActor
@@ -1136,50 +1077,40 @@ extension String {
 }
 
 class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
-    
     var onReceivedForegroundNotification:
-        (([AnyHashable: Any], () -> Void) -> Void)?
+        (([AnyHashable: Any]) -> Void)?
     var onReceivedBackgroundNotification:
-        (([AnyHashable: Any], (UIBackgroundFetchResult) -> Void) -> Void)?
-    var onReceivedNotificationResponse:
-        ((UNNotificationResponse, () -> Void) -> Void)?
+        (([AnyHashable: Any]) -> UIBackgroundFetchResult)?
+    var onReceivedNotificationResponse: ((UNNotificationResponse) -> Void)?
     var onExtend:
         (
             (UNNotificationPresentationOptions, UNNotification) ->
                 UNNotificationPresentationOptions
         )?
 
-    func receivedForegroundNotification(
-        _ userInfo: [AnyHashable: Any],
-        completionHandler: @escaping () -> Void
-    ) {
+    func receivedForegroundNotification(_ userInfo: [AnyHashable: Any]) async {
         guard let block = onReceivedForegroundNotification else {
-            completionHandler()
             return
         }
-        block(userInfo, completionHandler)
+        
+        block(userInfo)
     }
 
     func receivedBackgroundNotification(
-        _ userInfo: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
+        _ userInfo: [AnyHashable: Any]
+    ) async -> UIBackgroundFetchResult {
         guard let block = onReceivedBackgroundNotification else {
-            completionHandler(.noData)
-            return
+            return .noData
         }
-        block(userInfo, completionHandler)
+        return block(userInfo)
     }
 
-    func receivedNotificationResponse(
-        _ notificationResponse: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {
+    func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse) async {
         guard let block = onReceivedNotificationResponse else {
-            completionHandler()
             return
         }
-        block(notificationResponse, completionHandler)
+        
+        block(notificationResponse)
     }
 
     func extend(

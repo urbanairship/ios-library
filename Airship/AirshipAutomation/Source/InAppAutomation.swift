@@ -141,15 +141,14 @@ extension InAppAutomation {
     }
 
     func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        self._legacyInAppMessaging.receivedRemoteNotification(notification, completionHandler: completionHandler)
+        _ notification: AirshipJSON // wrapped [AnyHashable: Any]
+    ) async -> UIBackgroundFetchResult {
+        return await self._legacyInAppMessaging.receivedRemoteNotification(notification)
     }
 
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
-        self._legacyInAppMessaging.receivedNotificationResponse(response, completionHandler: completionHandler)
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async {
+        await self._legacyInAppMessaging.receivedNotificationResponse(response)
     }
 #endif
 }

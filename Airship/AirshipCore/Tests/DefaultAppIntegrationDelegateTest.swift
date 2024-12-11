@@ -46,66 +46,53 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     }
 
     @MainActor
-    func testDidReceiveRemoteNotification() throws {
+    func testDidReceiveRemoteNotification() async throws {
         let expectedUserInfo = ["neat": "story"]
 
         self.push.didReceiveRemoteNotificationCallback = {
             userInfo,
-            isForeground,
-            completionHandler in
+            isForeground in
             XCTAssertEqual(
                 expectedUserInfo as NSDictionary,
                 userInfo as NSDictionary
             )
             XCTAssertTrue(isForeground)
-            completionHandler(.noData)
+            return .noData
         }
 
         self.pushableComponent.didReceiveRemoteNotificationCallback = {
-            userInfo,
-            completionHandler in
+            userInfo in
             XCTAssertEqual(
                 expectedUserInfo as NSDictionary,
                 userInfo as NSDictionary
             )
-            completionHandler(.newData)
+            return .newData
         }
 
-        let delegateCalled = expectation(description: "callback called")
-        delegate.didReceiveRemoteNotification(
+        let result = await delegate.didReceiveRemoteNotification(
             userInfo: expectedUserInfo,
             isForeground: true
-        ) { result in
-            XCTAssertEqual(result, .newData)
-            delegateCalled.fulfill()
-        }
-
-        self.wait(for: [delegateCalled], timeout: 10)
+        )
+        
+        XCTAssertEqual(result, .newData)
     }
 }
 
 
 class TestPushableComponent: AirshipPushableComponent, @unchecked Sendable {
-    var didReceiveRemoteNotificationCallback:
-        (
-            ([AnyHashable: Any], @escaping (UIBackgroundFetchResult) -> Void) ->
-                Void
-        )?
+    
+    var didReceiveRemoteNotificationCallback:(
+        ([AnyHashable: Any]) -> UIBackgroundFetchResult
+    )?
 
     public func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        self.didReceiveRemoteNotificationCallback!(
-            notification,
-            completionHandler
-        )
+        _ notification: AirshipJSON
+    ) async -> UIBackgroundFetchResult {
+        let unwrapped = notification.unWrap() as? [AnyHashable: Any] ?? [:]
+        return self.didReceiveRemoteNotificationCallback!(unwrapped)
     }
 
-    public func receivedNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {
+    public func receivedNotificationResponse(_ response: UNNotificationResponse) async {
         assertionFailure("Unable to create UNNotificationResponse in tests.")
     }
 }

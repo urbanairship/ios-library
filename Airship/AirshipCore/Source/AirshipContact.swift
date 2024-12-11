@@ -889,16 +889,15 @@ extension AirshipContact : InternalAirshipContactProtocol {
 
 #if !os(watchOS)
 extension AirshipContact: AirshipPushableComponent {
-    public func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        if notification[Self.refreshContactPushPayloadKey] == nil {
-            completionHandler(.noData)
-        } else {
-            self.contactChannelsProvider.refreshAsync()
-            completionHandler(.newData)
+    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+        guard
+            let userInfo = notification.unwrapAsUserInfo(),
+            userInfo[Self.refreshContactPushPayloadKey] != nil else {
+            return .noData
         }
+        
+        self.contactChannelsProvider.refreshAsync()
+        return .newData
     }
 }
 #endif

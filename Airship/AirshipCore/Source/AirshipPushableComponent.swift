@@ -12,25 +12,21 @@ public protocol AirshipPushableComponent: Sendable {
      * Called when a remote notification is received.
      *  - Parameters:
      *    - notification: The notification.
-     *    - completionHandler: The completion handler that must be called with the fetch result.
      */
     @MainActor
     func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
-    )
+        _ notification: AirshipJSON // wrapped [AnyHashable: Any]
+    ) async -> UIBackgroundFetchResult
     #else
     /**
      * Called when a remote notification is received.
      *  - Parameters:
      *    - notification: The notification.
-     *    - completionHandler: The completion handler that must be called with the fetch result.
      */
     @MainActor
     func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @Sendable @escaping (WKBackgroundFetchResult) -> Void
-    )
+        _ notification: AirshipJSON // wrapped [AnyHashable: Any]
+    ) async -> WKBackgroundFetchResult
     #endif
 
     #if !os(tvOS)
@@ -41,41 +37,27 @@ public protocol AirshipPushableComponent: Sendable {
      *   - completionHandler: The completion handler that must be called after processing the response.
      */
     @MainActor
-    func receivedNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @Sendable @escaping () -> Void
-    )
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async
     #endif
 }
 
 extension AirshipPushableComponent {
 #if !os(watchOS)
     @MainActor
-    public func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        completionHandler(.noData)
+    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+        return .noData
     }
 #else
 
     @MainActor
-    public func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @escaping (WKBackgroundFetchResult) -> Void
-    ) {
-        completionHandler(.noData)
+    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> WKBackgroundFetchResult {
+        return .noData
     }
 #endif
 
 #if !os(tvOS)
-
     @MainActor
-    public func receivedNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {
-        completionHandler()
+    public func receivedNotificationResponse(_ response: UNNotificationResponse) async {
     }
 #endif
 }

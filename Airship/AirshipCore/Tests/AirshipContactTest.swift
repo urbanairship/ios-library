@@ -284,11 +284,13 @@ class AirshipContactTest: XCTestCase {
 
     @MainActor
     func testRefreshContactChannelsOnPush() async throws {
-        self.contact.receivedRemoteNotification(
-            [
-                "com.urbanairship.contact.update": NSNumber(value: true)
-            ]
-        ) { _ in }
+        _ = await self.contact.receivedRemoteNotification(
+            try! AirshipJSON.wrap(
+                [
+                    "com.urbanairship.contact.update": NSNumber(value: true)
+                ]
+            )
+        )
 
         XCTAssertTrue(contactChannelsProvider.refreshedCalled)
     }

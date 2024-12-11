@@ -21,7 +21,7 @@ final class MessageCenterComponent : AirshipComponent, AirshipPushableComponent,
 
     @MainActor
     public func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
+        _ notification: AirshipJSON,
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         self.messageCenter.receivedRemoteNotification(notification, completionHandler: completionHandler)

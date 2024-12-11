@@ -32,11 +32,12 @@ public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
 
 protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void)
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async
 #endif
 
-    func receivedRemoteNotification(_ notification: [AnyHashable : Any],
-                                    completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void)
+    func receivedRemoteNotification(
+        _ notification: AirshipJSON // wrapped [AnyHashable : Any]
+    ) async -> UIBackgroundFetchResult
 }
 
 final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Sendable {
@@ -209,7 +210,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Senda
 extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
 
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async {
         let userInfo = response.notification.request.content.userInfo
 
         guard
@@ -217,39 +218,35 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
             let messageID = userInfo["_"] as? String,
             messageID == self.pendingMessageID
         else {
-            completionHandler()
             return
         }
 
         self.pendingMessageID = nil
 
-        Task {
-            if await self.scheduleExists(identifier: messageID) {
-                AirshipLogger.debug("Pending in-app message replaced")
-                self.analytics.recordDirectOpenEvent(scheduleID: messageID)
-            }
-
-            await self.cancelSchedule(identifier: messageID)
-            completionHandler()
+        if await self.scheduleExists(identifier: messageID) {
+            AirshipLogger.debug("Pending in-app message replaced")
+            self.analytics.recordDirectOpenEvent(scheduleID: messageID)
         }
+
+        await self.cancelSchedule(identifier: messageID)
     }
 #endif
 
-    func receivedRemoteNotification(_ notification: [AnyHashable : Any],
-                                    completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void) {
-        guard let payload = notification[Keys.incomingMessageKey.rawValue] as? [String: Any] else {
-            completionHandler(.noData)
-            return
+    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+        guard
+            let userInfo = notification.unWrap() as? [AnyHashable: Any],
+            let payload = userInfo[Keys.incomingMessageKey.rawValue] as? [String: Any] else {
+            return .noData
         }
 
-        let overrideId = notification["_"] as? String
+        let overrideId = userInfo["_"] as? String
         let messageCenterAction: AirshipJSON?
 
         if
-            let actionRaw = notification[Keys.messageCenterActionKey.rawValue] as? [String: Any],
+            let actionRaw = userInfo[Keys.messageCenterActionKey.rawValue] as? [String: Any],
             let action = try? AirshipJSON.wrap(actionRaw) {
             messageCenterAction = action
-        } else if let messageId = notification[Keys.messageCenterActionKey.rawValue] as? String {
+        } else if let messageId = userInfo[Keys.messageCenterActionKey.rawValue] as? String {
             messageCenterAction = .object([Keys.messageCenterActionKey.rawValue: .string(messageId)])
         } else {
             messageCenterAction = nil
@@ -263,13 +260,10 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
         )
 
         if let message = message {
-            Task {
-                await schedule(message: message)
-                completionHandler(.noData)
-            }
-        } else {
-            completionHandler(.noData)
+            await schedule(message: message)
         }
+        
+        return .noData
     }
 
     private enum Keys: String {

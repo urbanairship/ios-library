@@ -236,16 +236,13 @@ final class RemoteDataTest: AirshipBaseTest {
     func testContentAvailableRefresh() async {
         XCTAssertEqual(0, self.testWorkManager.workRequests.count)
 
-        let expectation = self.expectation(description: "Callback called")
-
-        self.remoteData.receivedRemoteNotification([
+        let json = try! AirshipJSON.wrap([
             "com.urbanairship.remote-data.update": NSNumber(value: true)
-        ], completionHandler: { result in
-            XCTAssertEqual(.newData, result)
-            expectation.fulfill()
-        })
+        ])
+        
+        let result = await self.remoteData.receivedRemoteNotification(json)
+        XCTAssertEqual(.newData, result)
 
-        await fulfillment(of: [expectation], timeout: testExpectationTimeOut)
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
 
@@ -411,11 +408,13 @@ final class RemoteDataTest: AirshipBaseTest {
         XCTAssertEqual(last, changeToken.value)
 
         // Send bg push
-        self.remoteData.receivedRemoteNotification(
-            [
-                "com.urbanairship.remote-data.update": NSNumber(value: true)
-            ]
-        ) { _ in }
+        _ = await self.remoteData.receivedRemoteNotification(
+            try! AirshipJSON.wrap(
+                [
+                    "com.urbanairship.remote-data.update": NSNumber(value: true)
+                ]
+            )
+        )
 
         await self.launchRefreshTask()
         XCTAssertNotEqual(last, changeToken.value)

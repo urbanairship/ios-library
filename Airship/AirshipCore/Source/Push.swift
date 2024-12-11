@@ -991,7 +991,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
 /// - Note: For internal use only. :nodoc:
 extension AirshipPush: InternalPushProtocol {
-
+    
     public func dispatchUpdateAuthorizedNotificationTypes() {
         self.serialQueue.enqueue {
             _ = await self.updateAuthorizedNotificationTypes()
@@ -1021,13 +1021,9 @@ extension AirshipPush: InternalPushProtocol {
         self.registrationDelegate?.apnsRegistrationFailedWithError(error)
     }
 
-    public func presentationOptionsForNotification(
-        _ notification: UNNotification,
-        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
+    public func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions {
         guard self.privacyManager.isEnabled(.push) else {
-            completionHandler([])
-            return
+            return []
         }
 
         var options: UNNotificationPresentationOptions = []
@@ -1062,27 +1058,22 @@ extension AirshipPush: InternalPushProtocol {
             options = self.defaultPresentationOptions
         }
         
-        if let delegateMethod = self.pushNotificationDelegate?.extendPresentationOptions {
-            delegateMethod(options, notification, completionHandler)
-        } else {
-            completionHandler(options)
+        if let delegate = self.pushNotificationDelegate {
+            options = await delegate.extendPresentationOptions(options, notification: notification)
         }
+        
+        
+        return options
     }
 
     #if !os(tvOS)
 
-    public func didReceiveNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {
+    public func didReceiveNotificationResponse(_ response: UNNotificationResponse) async {
         guard self.privacyManager.isEnabled(.push) else {
-            completionHandler()
             return
         }
 
-        if response.actionIdentifier
-            == UNNotificationDefaultActionIdentifier
-        {
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             self.launchNotificationResponse = response
         }
 
@@ -1094,30 +1085,23 @@ extension AirshipPush: InternalPushProtocol {
             ]
         )
 
-        if let callback = self.pushNotificationDelegate?
-            .receivedNotificationResponse
-        {
-            callback(response, completionHandler)
-        } else {
-            completionHandler()
-        }
+        await self.pushNotificationDelegate?.receivedNotificationResponse(response)
     }
 
     #endif
 
+    @MainActor
     public func didReceiveRemoteNotification(
         _ notification: [AnyHashable: Any],
-        isForeground: Bool,
-        completionHandler handler: @escaping (Any) -> Void
-    ) {
+        isForeground: Bool
+    ) async -> any Sendable {
 
         guard self.privacyManager.isEnabled(.push) else {
             #if !os(watchOS)
-            handler(UIBackgroundFetchResult.noData)
+            return UIBackgroundFetchResult.noData
             #else
-            handler(WKBackgroundFetchResult.noData)
+            return WKBackgroundFetchResult.noData
             #endif
-            return
         }
 
         let delegate = self.pushNotificationDelegate
@@ -1132,39 +1116,22 @@ extension AirshipPush: InternalPushProtocol {
         )
 
         if isForeground {
-            if let callback = delegate?.receivedForegroundNotification {
-                callback(
-                    notification,
-                    {
-                        #if !os(watchOS)
-                        handler(UIBackgroundFetchResult.noData)
-                        #else
-                        handler(WKBackgroundFetchResult.noData)
-                        #endif
-                    }
-                )
-            } else {
-                #if !os(watchOS)
-                handler(UIBackgroundFetchResult.noData)
-                #else
-                handler(WKBackgroundFetchResult.noData)
-                #endif
-            }
+            await delegate?.receivedForegroundNotification(notification)
+            #if !os(watchOS)
+            return UIBackgroundFetchResult.noData
+            #else
+            return WKBackgroundFetchResult.noData
+            #endif
         } else {
-            if let callback = delegate?.receivedBackgroundNotification {
-                callback(
-                    notification,
-                    { result in
-                        handler(result)
-                    }
-                )
-            } else {
+            guard let result = await delegate?.receivedBackgroundNotification(notification) else {
                 #if !os(watchOS)
-                handler(UIBackgroundFetchResult.noData)
+                return UIBackgroundFetchResult.noData
                 #else
-                handler(WKBackgroundFetchResult.noData)
+                return WKBackgroundFetchResult.noData
                 #endif
             }
+            
+            return result
         }
     }
 

@@ -5,7 +5,7 @@ import AirshipCore
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 @objc
-public protocol UAPushNotificationDelegate {
+public protocol UAPushNotificationDelegate: Sendable {
     /// Called when a notification is received in the foreground.
     ///
     /// - Parameters:
@@ -82,13 +82,15 @@ public protocol UAPushNotificationDelegate {
     )
 }
 
-class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
+final class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
+    @MainActor
     weak var forwardDelegate: (any UAPushNotificationDelegate)?
 
     init(_ forwardDelegate: any UAPushNotificationDelegate) {
         self.forwardDelegate = forwardDelegate
     }
     
+    @MainActor
     public func receivedForegroundNotification(
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping () -> Void
@@ -102,7 +104,7 @@ class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
     }
     
     #if !os(watchOS)
-    
+    @MainActor
     public func receivedBackgroundNotification(
        _ userInfo: [AnyHashable: Any],
        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
@@ -131,7 +133,7 @@ class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
     
     #endif
     #if !os(tvOS)
-    
+    @MainActor
     public func receivedNotificationResponse(
        _ notificationResponse: UNNotificationResponse,
        completionHandler: @escaping () -> Void
@@ -144,7 +146,7 @@ class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
     }
     
     #endif
-    
+    @MainActor
     public func extendPresentationOptions(
         _ options: UNNotificationPresentationOptions,
         notification: UNNotification,

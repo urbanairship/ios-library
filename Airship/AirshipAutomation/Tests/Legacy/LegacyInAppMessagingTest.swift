@@ -90,13 +90,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "_": pendingMessageID
         ])
         
-        let expectation = XCTestExpectation(description: "processing notification")
-        
-        subject.receivedNotificationResponse(response) {
-            expectation.fulfill()
-        }
-        
-        await fulfillment(of: [expectation], timeout: 5)
+        await subject.receivedNotificationResponse(response)
         
         await assertLastCancalledScheduleIDEquals(pendingMessageID)
         XCTAssertNil(subject.pendingMessageID)
@@ -111,13 +105,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "_": pendingMessageID
         ])
 
-        let expectation = XCTestExpectation(description: "processing notification")
-
-        subject.receivedNotificationResponse(response) {
-            expectation.fulfill()
-        }
-
-        await fulfillment(of: [expectation], timeout: 5)
+        await subject.receivedNotificationResponse(response)
 
         XCTAssertEqual([pendingMessageID], self.analytics.directOpen)
     }
@@ -134,13 +122,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "_": "pendingMessageID"
         ])
         
-        let expectation = XCTestExpectation(description: "processing notification")
-        
-        subject.receivedNotificationResponse(response) {
-            expectation.fulfill()
-        }
-        
-        await fulfillment(of: [expectation], timeout: 5)
+        await subject.receivedNotificationResponse(response)
         
         XCTAssertEqual("mismatched", subject.pendingMessageID)
         await assertLastCancalledScheduleIDEquals(nil)
@@ -156,13 +138,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             "_": "pendingMessageID"
         ])
         
-        let expectation = XCTestExpectation(description: "processing notification")
-        
-        subject.receivedNotificationResponse(response) {
-            expectation.fulfill()
-        }
-        
-        await fulfillment(of: [expectation], timeout: 5)
+        await subject.receivedNotificationResponse(response)
         
         XCTAssertNil(subject.pendingMessageID)
         await assertLastCancalledScheduleIDEquals(nil)
@@ -181,16 +157,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await assertLastCancalledScheduleIDEquals(nil)
         await assertEmptySchedules()
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        
         subject.pendingMessageID = "some-pending"
         
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         
@@ -257,13 +229,11 @@ final class LegacyInAppMessagingTest: XCTestCase {
             ]
         ]
 
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        
         XCTAssertEqual("some-pending", self.analytics.replaced.first!.0)
         XCTAssertEqual("test-id", self.analytics.replaced.first!.1)
     }
@@ -294,16 +264,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await assertLastCancalledScheduleIDEquals(nil)
         await assertEmptySchedules()
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        
         subject.pendingMessageID = "some-pending"
         
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         
@@ -386,18 +352,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
             ]
         ]
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        
         await MainActor.run { [messaging = self.subject!] in
             messaging.displayASAPEnabled = false
         }
         
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         
@@ -431,14 +393,11 @@ final class LegacyInAppMessagingTest: XCTestCase {
             }
         }
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
         
-        await fulfillment(of: [expection], timeout: 5)
-
         let schedule = try await requireFirstSchedule()
         XCTAssertEqual(overridenId, schedule.identifier)
     }
@@ -460,13 +419,10 @@ final class LegacyInAppMessagingTest: XCTestCase {
             }
         }
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         let inAppMessage: InAppMessage
@@ -496,13 +452,10 @@ final class LegacyInAppMessagingTest: XCTestCase {
             }
         }
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        subject.receivedRemoteNotification(["com.urbanairship.in_app": payload]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         XCTAssertEqual(10, schedule.limit)
@@ -513,16 +466,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await assertLastCancalledScheduleIDEquals(nil)
         await assertEmptySchedules()
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        
         subject.pendingMessageID = "some-pending"
         
-        subject.receivedRemoteNotification([:]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap([:])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         await assertLastCancalledScheduleIDEquals(nil)
         await assertEmptySchedules()
@@ -541,17 +490,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await assertEmptySchedules()
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        
-        subject.receivedRemoteNotification([
-            "com.urbanairship.in_app": payload,
-            "_": messageId
-        ]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
-        
-        await fulfillment(of: [expection], timeout: 5)
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap([
+                "com.urbanairship.in_app": payload,
+                "_": messageId
+            ])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
 
         let schedules = await engine.schedules
         XCTAssertTrue(schedules.contains(where: { $0.identifier == messageId }))
@@ -569,20 +514,16 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await assertEmptySchedules()
         
-        let expection = XCTestExpectation(description: "schedule legacy message")
-        
         let onClickJson = try AirshipJSON.wrap(["onclick": "overriden"])
         
-        subject.receivedRemoteNotification([
-            "com.urbanairship.in_app": payload,
-            "_uamid": onClickJson.unWrap()!
-        ]) { result in
-            XCTAssertEqual(UIBackgroundFetchResult.noData, result)
-            expection.fulfill()
-        }
+        let result = await subject.receivedRemoteNotification(
+            try! AirshipJSON.wrap([
+                "com.urbanairship.in_app": payload,
+                "_uamid": onClickJson.unWrap()!
+            ])
+        )
+        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
         
-        await fulfillment(of: [expection], timeout: 5)
-
         let schedule = try await requireFirstSchedule()
         
         switch schedule.data {

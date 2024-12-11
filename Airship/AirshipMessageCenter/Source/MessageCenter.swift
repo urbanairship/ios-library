@@ -273,12 +273,13 @@ extension MessageCenter {
 
     @MainActor
     func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
+        _ notification: AirshipJSON,
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         guard
+            let userInfo = notification.unWrap() as? [AnyHashable: Any],
             let messageID = MessageCenterMessage.parseMessageID(
-                userInfo: notification
+                userInfo: userInfo
             )
         else {
             completionHandler(.noData)

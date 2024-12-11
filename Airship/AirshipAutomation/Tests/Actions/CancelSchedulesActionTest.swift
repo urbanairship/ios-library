@@ -222,12 +222,12 @@ final class TestLegacyInAppMessaging: InternalLegacyInAppMessagingProtocol, @unc
         self.displayASAPEnabled = displayASAPEnabled
     }
     
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @escaping () -> Void) {
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async {
         
     }
     
-    func receivedRemoteNotification(_ notification: [AnyHashable : Any], completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
+    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+        return .noData
     }
     
     var customMessageConverter: AirshipAutomation.MessageConvertor?

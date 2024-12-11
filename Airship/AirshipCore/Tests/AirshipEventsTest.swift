@@ -430,7 +430,7 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
 }
 
 private final class InternalPush: InternalPushProtocol {
-
+    
     var deviceToken: String? = "a12312ad"
 
     func dispatchUpdateAuthorizedNotificationTypes() {}
@@ -441,21 +441,20 @@ private final class InternalPush: InternalPushProtocol {
 
     func didReceiveRemoteNotification(
         _ userInfo: [AnyHashable: Any],
-        isForeground: Bool,
-        completionHandler: @escaping (Any) -> Void
-    ) {}
+        isForeground: Bool
+    ) async -> any Sendable {
+        return 0
+    }
 
     func presentationOptionsForNotification(
-        _ notification: UNNotification,
-        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        completionHandler([])
+        _ notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        return []
     }
 
     func didReceiveNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {}
+        _ response: UNNotificationResponse
+    ) async {}
 
     var combinedCategories: Set<UNNotificationCategory> = Set()
 }

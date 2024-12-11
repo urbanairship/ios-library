@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@preconcurrency
+import UserNotifications
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -21,15 +23,14 @@ final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent
     }
 
     func receivedRemoteNotification(
-        _ notification: [AnyHashable: Any],
-        completionHandler: @Sendable @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        self.inAppAutomation.receivedRemoteNotification(notification, completionHandler: completionHandler)
+        _ notification: AirshipJSON
+    ) async -> UIBackgroundFetchResult {
+        return await self.inAppAutomation.receivedRemoteNotification(notification)
     }
 
 #if !os(tvOS)
-    func receivedNotificationResponse(_ response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
-        self.inAppAutomation.receivedNotificationResponse(response, completionHandler: completionHandler)
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async {
+        await self.inAppAutomation.receivedNotificationResponse(response)
     }
 #endif
 }

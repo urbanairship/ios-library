@@ -185,23 +185,16 @@ protocol InternalPushProtocol: Sendable {
 
     @MainActor
     func didReceiveRemoteNotification(
-        _ userInfo: [AnyHashable: Any],
-        isForeground: Bool,
-        completionHandler: @Sendable @escaping (Any) -> Void
-    )
-
+        _ notification: [AnyHashable: Any],
+        isForeground: Bool
+    ) async -> any Sendable
+    
     @MainActor
-    func presentationOptionsForNotification(
-        _ notification: UNNotification,
-        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    )
+    func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions
     
     #if !os(tvOS)
     @MainActor
-    func didReceiveNotificationResponse(
-        _ response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    )
+    func didReceiveNotificationResponse(_ response: UNNotificationResponse) async
 
     @MainActor
     var combinedCategories: Set<UNNotificationCategory> { get }
