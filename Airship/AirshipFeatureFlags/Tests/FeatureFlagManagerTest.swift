@@ -19,7 +19,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let deferredResolver: TestFeatureFlagResolver = TestFeatureFlagResolver()
     private var privacyManager: AirshipPrivacyManager!
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
-    
+    private let resultCache: FeatureFlagResultCache = FeatureFlagResultCache(cache: TestCache())
+
     private var featureFlagManager: FeatureFlagManager!
 
     override func setUp() async throws {
@@ -37,7 +38,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             audienceChecker: self.audienceChecker,
             deviceInfoProviderFactory: { self.deviceInfoProvider },
             deferredResolver: self.deferredResolver,
-            privacyManager: self.privacyManager
+            privacyManager: self.privacyManager,
+            resultCache: self.resultCache
         )
     }
 
@@ -1377,6 +1379,69 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
     }
 
+    func testResultCacheFlagDoesNotExist() async throws {
+        let cachedValue = FeatureFlag(
+            name: "does-not-exist",
+            isEligible: true,
+            exists: false
+        )
+
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw AirshipErrors.error("other!")
+        }
+
+        await featureFlagManager.resultCache.cacheFlag(flag: cachedValue, ttl: .infinity)
+
+        let flag = try await featureFlagManager.flag(name: "does-not-exist")
+        let flagNoCache = try await featureFlagManager.flag(name: "does-not-exist", useResultCache: false)
+
+        XCTAssertEqual(flag, cachedValue)
+        XCTAssertNotEqual(flagNoCache, cachedValue)
+    }
+
+    func testResultCacheThrows() async throws {
+        let cachedValue = FeatureFlag(
+            name: "foo",
+            isEligible: true,
+            exists: true
+        )
+        await featureFlagManager.resultCache.cacheFlag(flag: cachedValue, ttl: .infinity)
+
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return true
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw AirshipErrors.error("other!")
+        }
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+        do {
+            _ = try await featureFlagManager.flag(name: "foo", useResultCache: false)
+            XCTFail()
+        } catch {}
+
+        XCTAssertEqual(flag, cachedValue)
+    }
 }
 
 final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol, @unchecked Sendable {

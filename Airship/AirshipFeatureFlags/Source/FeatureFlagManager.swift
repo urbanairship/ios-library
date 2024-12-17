@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import Combine
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -36,6 +35,10 @@ public final class FeatureFlagManager: Sendable {
     private let deferredResolver: FeatureFlagDeferredResolverProtocol
     private let privacyManager: AirshipPrivacyManager
 
+    /// Feature flag result cache. This can be used to return a cached result for `flag(name:useResultCache:)`
+    /// if the flag fails to resolve or it does not exist.
+    public let resultCache: FeatureFlagResultCache
+
     private var enabled: Bool {
         return self.privacyManager.isEnabled(.featureFlags)
     }
@@ -47,7 +50,8 @@ public final class FeatureFlagManager: Sendable {
         audienceChecker: DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         deviceInfoProviderFactory: @escaping @Sendable () -> AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: FeatureFlagDeferredResolverProtocol,
-        privacyManager: AirshipPrivacyManager
+        privacyManager: AirshipPrivacyManager,
+        resultCache: FeatureFlagResultCache
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
@@ -55,6 +59,7 @@ public final class FeatureFlagManager: Sendable {
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
         self.deferredResolver = deferredResolver
         self.privacyManager = privacyManager
+        self.resultCache = resultCache
     }
 
     /// Tracks a feature flag interaction event.
@@ -67,17 +72,42 @@ public final class FeatureFlagManager: Sendable {
         analytics.trackInteraction(flag: flag)
     }
 
+
     /// Gets and evaluates  a feature flag
-    /// - Parameter name: The flag name
+    /// - Parameters
+    ///     - name: The flag name
+    ///     - useResultCache: `true` to use the `FeatureFlagResultCache` if the flag fails to resolve or if the resolved flag does not exist,`false` to ignore the result cache.
     /// - Returns: The feature flag.
-    /// - Throws: Throws `FeatureFlagError`
-    public func flag(name: String) async throws -> FeatureFlag {
+    /// - Throws: Throws `FeatureFlagError` if the flag fails to resolve.
+    public func flag(name: String, useResultCache: Bool = true) async throws -> FeatureFlag {
         guard self.enabled else {
             throw AirshipErrors.error("Feature flags disabled.")
         }
 
+        do {
+            let flag = try await resolveFlag(name: name)
+            if !flag.exists, useResultCache {
+                if let fromCache = await resultCache.flag(name: name) {
+                    return fromCache
+                }
+            }
+            return flag
+        } catch {
+            guard
+                useResultCache,
+                let fromCache = await resultCache.flag(name: name)
+            else {
+                throw error
+            }
+            return fromCache
+        }
+    }
+
+
+    func resolveFlag(name: String) async throws -> FeatureFlag {
         // best effort refresh
         await remoteDataAccess.bestEffortRefresh()
+
         let remoteDataFeatureFlagInfo = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
 
         // Check status to make sure we are either up to date or allow stale values

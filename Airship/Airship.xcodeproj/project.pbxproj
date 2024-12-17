@@ -1127,6 +1127,10 @@
 		6ED80794273CA0C800D1F455 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */; };
 		6ED8079A273DA56000D1F455 /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
 		6ED8079B273DA56000D1F455 /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
+		6ED839942D121499009CBB0C /* FeatureFlagResultCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED839932D121499009CBB0C /* FeatureFlagResultCacheTest.swift */; };
+		6ED839962D1214A2009CBB0C /* FeatureFlagResultCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED839952D1214A2009CBB0C /* FeatureFlagResultCache.swift */; };
+		6ED839982D1214B1009CBB0C /* TestCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED839972D1214B1009CBB0C /* TestCache.swift */; };
+		6ED839992D1214B1009CBB0C /* TestCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED839972D1214B1009CBB0C /* TestCache.swift */; };
 		6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
 		6EDAFB272CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
 		6EDAFB282CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
@@ -2787,6 +2791,9 @@
 		6ED735E526CAEABC003B0A7D /* TestLocaleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLocaleManager.swift; sourceTree = "<group>"; };
 		6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		6ED80799273DA56000D1F455 /* ThomasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewController.swift; sourceTree = "<group>"; };
+		6ED839932D121499009CBB0C /* FeatureFlagResultCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagResultCacheTest.swift; sourceTree = "<group>"; };
+		6ED839952D1214A2009CBB0C /* FeatureFlagResultCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagResultCache.swift; sourceTree = "<group>"; };
+		6ED839972D1214B1009CBB0C /* TestCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCache.swift; sourceTree = "<group>"; };
 		6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayout.swift; sourceTree = "<group>"; };
 		6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionRunner.swift; sourceTree = "<group>"; };
 		6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxMessageData.swift; sourceTree = "<group>"; };
@@ -5102,6 +5109,7 @@
 		A61F3A722A5D9D2400EE94CC /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6ED839932D121499009CBB0C /* FeatureFlagResultCacheTest.swift */,
 				A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */,
 				6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */,
 				6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */,
@@ -5124,6 +5132,7 @@
 		A620587F2A5841FA0041FBF9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6ED839952D1214A2009CBB0C /* FeatureFlagResultCache.swift */,
 				A620586B2A5841330041FBF9 /* AirshipFeatureFlags.h */,
 				A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */,
 				6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */,
@@ -5170,6 +5179,7 @@
 		CC04F2001DCAB28300B4842D /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
+				6ED839972D1214B1009CBB0C /* TestCache.swift */,
 				6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */,
 				6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */,
 				3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */,
@@ -7053,6 +7063,7 @@
 				6E2F5A742A60833700CABD3D /* FeatureFlagManager.swift in Sources */,
 				6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */,
 				6E4325F62B7B2F5800A9B000 /* FeatureFlagAnalytics.swift in Sources */,
+				6ED839962D1214A2009CBB0C /* FeatureFlagResultCache.swift in Sources */,
 				6E2F5AB12A67434B00CABD3D /* FeatureFlag.swift in Sources */,
 				A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */,
 				6E6BD2762AF1C1D800B9DFC9 /* DeferredFlagResolver.swift in Sources */,
@@ -7069,6 +7080,7 @@
 				6E2811682BE406A50040D928 /* FeatureFlagDeferredResolverTest.swift in Sources */,
 				6E8BDF012A679E5000F816D9 /* FeatureFlagRemoteDataAccessTest.swift in Sources */,
 				6E28116C2BE40E860040D928 /* FeatureFlagVariablesTest.swift in Sources */,
+				6ED839942D121499009CBB0C /* FeatureFlagResultCacheTest.swift in Sources */,
 				6E4326092B7C396F00A9B000 /* TestAnalytics.swift in Sources */,
 				6E938DBC2AC39A0500F691D9 /* FeatureFlagAnalyticsTest.swift in Sources */,
 				6E8BDEFE2A67938200F816D9 /* FeatureFlagInfoTest.swift in Sources */,
@@ -7076,6 +7088,7 @@
 				6E2F5AB22A67589400CABD3D /* TestDate.swift in Sources */,
 				6E2F5AB82A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */,
 				6E2F5AB32A6758ED00CABD3D /* TestNetworkMonitor.swift in Sources */,
+				6ED839982D1214B1009CBB0C /* TestCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7473,6 +7486,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ED839992D1214B1009CBB0C /* TestCache.swift in Sources */,
 				6ECB62862A36C1EE0095C85C /* NativeBridgeActionHandlerTest.swift in Sources */,
 				6E5B1A052AFF090B0019CA61 /* SessionTrackerTest.swift in Sources */,
 				6E4325D32B7AD96800A9B000 /* AirshipTest.swift in Sources */,
