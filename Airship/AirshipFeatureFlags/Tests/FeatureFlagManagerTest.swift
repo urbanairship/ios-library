@@ -43,7 +43,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
     func testFlagAccessWaitsForRefreshIfOutOfDate() async throws {
         let expectation = XCTestExpectation()
-        self.remoteDataAccess.waitForRefreshBlock = {
+        self.remoteDataAccess.bestEffortRefresh = {
             expectation.fulfill()
         }
         self.remoteDataAccess.flagInfos = [
@@ -65,7 +65,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
     func testFlagAccessWaitsForRefreshIfFlagNotFound() async throws {
         let expectation = XCTestExpectation()
-        self.remoteDataAccess.waitForRefreshBlock = {
+        self.remoteDataAccess.bestEffortRefresh = {
             expectation.fulfill()
         }
         self.remoteDataAccess.status = .outOfDate
@@ -75,7 +75,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
     func testFlagAccessWaitsForRefreshIfStaleNotAllowed() async throws {
         let expectation = XCTestExpectation()
-        self.remoteDataAccess.waitForRefreshBlock = {
+        self.remoteDataAccess.bestEffortRefresh = {
             self.remoteDataAccess.status = .upToDate
             expectation.fulfill()
         }
@@ -888,8 +888,72 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
     }
 
+    func testStaleAllowedOutOfDate() async throws {
+        self.remoteDataAccess.status = .outOfDate
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(nil)
+                    )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: false)
+            )
+        ]
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+        XCTAssertEqual(
+            flag,
+            FeatureFlag(
+                name: "foo",
+                isEligible: true,
+                exists: true,
+                variables: nil,
+                reportingInfo: FeatureFlag.ReportingInfo(
+                    reportingMetadata: .string("reporting"),
+                    contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                    channelID: self.deviceInfoProvider.channelID
+                )
+            )
+        )
+    }
+
     func testOutOfDate() async throws {
         self.remoteDataAccess.status = .outOfDate
+
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(nil)
+                    )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: false)
+            ),
+            FeatureFlagInfo(
+                id: "some other ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(nil)
+                    )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
+            )
+        ]
 
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
@@ -1329,9 +1393,9 @@ final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol
         lastOutdatedRemoteInfo = remoteDataInfo;
     }
     
-    var waitForRefreshBlock: (() -> Void)?
-    func waitForRefresh() async {
-        self.waitForRefreshBlock?()
+    var bestEffortRefresh: (() -> Void)?
+    func bestEffortRefresh() async {
+        self.bestEffortRefresh?()
     }
     
     var status: RemoteDataSourceStatus = .upToDate

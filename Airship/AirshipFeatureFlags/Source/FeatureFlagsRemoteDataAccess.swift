@@ -10,7 +10,7 @@ protocol FeatureFlagRemoteDataAccessProtocol: Sendable {
     func remoteDataFlagInfo(name: String) async -> RemoteDataFeatureFlagInfo
     var status: RemoteDataSourceStatus { get async }
 
-    func waitForRefresh() async
+    func bestEffortRefresh() async
     func notifyOutdated(remoteDateInfo: RemoteDataInfo?) async
 }
 
@@ -33,7 +33,7 @@ final class FeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol {
         }
     }
 
-    func waitForRefresh() async  {
+    func bestEffortRefresh() async {
         await remoteData.waitRefresh(source: RemoteDataSource.app, maxTime: 15.0)
     }
 
@@ -74,6 +74,13 @@ struct RemoteDataFeatureFlagInfo {
     let name: String
     let flagInfos: [FeatureFlagInfo]
     let remoteDataInfo: RemoteDataInfo?
+
+
+    var disallowStale: Bool {
+        return flagInfos.contains { flagInfo in
+            flagInfo.evaluationOptions?.disallowStaleValue == true
+        }
+    }
 }
 
 

@@ -18,7 +18,6 @@ public enum FeatureFlagError: Error, Equatable {
 
 enum FeatureFlagEvaluationError: Error, Equatable {
     case outOfDate
-    case staleNotAllowed
     case connectionError(errorMessage: String)
 }
 
@@ -76,75 +75,66 @@ public final class FeatureFlagManager: Sendable {
         guard self.enabled else {
             throw AirshipErrors.error("Feature flags disabled.")
         }
-        return try await flag(name: name, allowRefresh: true)
-    }
 
-    private func flag(name: String, allowRefresh: Bool) async throws -> FeatureFlag {
+        // best effort refresh
+        await remoteDataAccess.bestEffortRefresh()
         let remoteDataFeatureFlagInfo = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
-        let status = await self.remoteDataAccess.status
+
+        // Check status to make sure we are either up to date or allow stale values
+        let status = await remoteDataAccess.status
+        guard
+            status == .upToDate || remoteDataFeatureFlagInfo.disallowStale == false
+        else {
+            if (status == .outOfDate) {
+                throw FeatureFlagError.outOfDate
+            } else {
+                throw FeatureFlagError.staleData
+            }
+        }
 
         do {
-            try self.ensureRemoteDataValid(
-                status: status,
-                remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
-            )
-
+            // Attempt to evaluate
             return try await self.evaluate(
                 remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
             )
         } catch {
-            switch (error) {
-            case FeatureFlagEvaluationError.connectionError(let errorMessage):
-                throw FeatureFlagError.connectionError(errorMessage: errorMessage)
-            case FeatureFlagEvaluationError.outOfDate:
-                await self.remoteDataAccess.notifyOutdated(
-                    remoteDateInfo: remoteDataFeatureFlagInfo.remoteDataInfo
+            // If it's not an outOfDate evaluation error, throw the error
+            guard case FeatureFlagEvaluationError.outOfDate = error else {
+                throw mapError(error)
+            }
+
+            // Notify out of date
+            await self.remoteDataAccess.notifyOutdated(
+                remoteDateInfo: remoteDataFeatureFlagInfo.remoteDataInfo
+            )
+
+            // Best effort refresh again
+            await remoteDataAccess.bestEffortRefresh()
+
+            // Only continue if we actually have updated the status
+            guard await remoteDataAccess.status == .upToDate else {
+                throw mapError(error)
+            }
+
+            // Try one more time
+            do {
+                return try await self.evaluate(
+                    remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
                 )
-
-                if (allowRefresh) {
-                    await self.remoteDataAccess.waitForRefresh()
-                    return try await self.flag(name: name, allowRefresh: false)
-                }
-                throw FeatureFlagError.outOfDate
-
-            case FeatureFlagEvaluationError.staleNotAllowed:
-                if (allowRefresh) {
-                    await self.remoteDataAccess.waitForRefresh()
-                    return try await self.flag(name: name, allowRefresh: false)
-                }
-                throw FeatureFlagError.staleData
-            default:
-                AirshipLogger.error("Unexpected error \(error)")
-                throw FeatureFlagError.failedToFetchData
+            } catch {
+                throw mapError(error)
             }
         }
     }
 
-    private func ensureRemoteDataValid(
-        status: RemoteDataSourceStatus,
-        remoteDataFeatureFlagInfo: RemoteDataFeatureFlagInfo
-    ) throws {
-        switch(status) {
-        case .upToDate:
-            return
-        case .stale:
-            guard !remoteDataFeatureFlagInfo.flagInfos.isEmpty else {
-                throw FeatureFlagEvaluationError.outOfDate
-            }
-
-            let disallowStale = remoteDataFeatureFlagInfo.flagInfos.first { flagInfo in
-                flagInfo.evaluationOptions?.disallowStaleValue == true
-            }
-
-            guard disallowStale == nil else {
-                throw FeatureFlagEvaluationError.staleNotAllowed
-            }
-
-        case .outOfDate:
-            throw FeatureFlagEvaluationError.outOfDate
-        #if canImport(AirshipCore)
-        default: break
-        #endif
+    private func mapError(_ error: Error) -> any Error {
+        return switch (error) {
+        case FeatureFlagEvaluationError.connectionError(let errorMessage):
+            FeatureFlagError.connectionError(errorMessage: errorMessage)
+        case FeatureFlagEvaluationError.outOfDate:
+            FeatureFlagError.outOfDate
+        default:
+            FeatureFlagError.failedToFetchData
         }
     }
 
@@ -154,7 +144,6 @@ public final class FeatureFlagManager: Sendable {
         let name = remoteDataFeatureFlagInfo.name
         let flagInfos = remoteDataFeatureFlagInfo.flagInfos
         let deviceInfoProvider = deviceInfoProviderFactory()
-
 
         for (index, flagInfo) in flagInfos.enumerated() {
             let isLast = index == (flagInfos.count - 1)
@@ -194,11 +183,11 @@ public final class FeatureFlagManager: Sendable {
         return FeatureFlag.makeNotFound(name: name)
     }
     
-    private func flag(_ flag: FeatureFlag, 
-                      applyingControlFrom info: FeatureFlagInfo,
-                      deviceInfoProvider: AudienceDeviceInfoProvider
+    private func flag(
+        _ flag: FeatureFlag,
+        applyingControlFrom info: FeatureFlagInfo,
+        deviceInfoProvider: AudienceDeviceInfoProvider
     ) async throws -> FeatureFlag {
-        
         guard
             flag.isEligible,
             let control = info.controlOptins
@@ -366,8 +355,6 @@ public final class FeatureFlagManager: Sendable {
             return nil
         }
     }
-
-
 }
 
 

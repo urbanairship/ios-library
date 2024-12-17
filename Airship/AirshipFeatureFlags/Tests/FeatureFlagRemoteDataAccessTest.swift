@@ -21,7 +21,8 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
         )
     }
 
-    func testWaitForRefresh() async throws {
+    func testBestEffortRefresh() async throws {
+        
         let expectation = XCTestExpectation()
         self.remoteData.waitForRefreshBlock = { source, time in
             XCTAssertEqual(source, .app)
@@ -29,7 +30,7 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
             expectation.fulfill()
         }
 
-        await self.remoteDataAccess.waitForRefresh()
+        await self.remoteDataAccess.bestEffortRefresh()
         await self.fulfillment(of: [expectation])
     }
 
