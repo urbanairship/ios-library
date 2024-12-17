@@ -52,7 +52,6 @@
             "url" : "https://logonoid.com/images/jurassic-park-logo.png"
         },
         "template" : "media_right",
-        "placement" : "bottom",
         "duration" : 100.0
     }
 }

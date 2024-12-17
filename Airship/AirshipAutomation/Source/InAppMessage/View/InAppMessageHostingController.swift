@@ -114,17 +114,16 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
             widthConstraint.isActive = true
         }
 
-        if let topConstraint = topConstraint, let bottomConstraint = bottomConstraint, let placement = self.placement {
-            switch placement {
+        if let topConstraint = topConstraint, let bottomConstraint = bottomConstraint {
+            switch self.placement {
             case .top:
                 topConstraint.isActive = true
                 bottomConstraint.isActive = false
                 heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.top
 
-            case .bottom:
+            default:
                 topConstraint.isActive = false
                 bottomConstraint.isActive = true
-
                 heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.bottom
             }
         }

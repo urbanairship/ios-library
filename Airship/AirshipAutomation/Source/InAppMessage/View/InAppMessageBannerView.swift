@@ -313,7 +313,7 @@ fileprivate extension View {
             case .top:
                 self
                 nub.padding(.vertical, itemSpacing / 2)
-            case .bottom:
+            default:
                 nub.padding(.vertical, itemSpacing / 2)
                 self
             }
@@ -330,7 +330,7 @@ fileprivate extension View {
                 self.applyTransition(placement: .top)
                 Spacer()
             }
-        case .bottom:
+        default:
             VStack {
                 Spacer()
                 self.applyTransition(placement: .bottom)
@@ -350,7 +350,7 @@ fileprivate extension View {
                     removal: .move(edge: .top).combined(with: .opacity)
                 )
             )
-        case .bottom:
+        default:
             self.transition(
                 .asymmetric(
                     insertion: .move(edge: .bottom),
