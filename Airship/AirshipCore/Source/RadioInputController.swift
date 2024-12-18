@@ -1,7 +1,7 @@
-import Combine
+/* Copyright Airship and Contributors */
+
 import Foundation
 import SwiftUI
-
 
 struct RadioInputController: View {
     let info: ThomasViewInfo.RadioInputController
@@ -17,15 +17,8 @@ struct RadioInputController: View {
             .accessible(self.info.accessible)
             .formElement()
             .environmentObject(radioInputState)
-            .airshipOnChangeOf(self.radioInputState.selectedItem) { [weak parentFormState, weak radioInputState] incoming in
-                let data = FormInputData(
-                    self.info.properties.identifier,
-                    value: .radio(incoming),
-                    attributeName: self.info.properties.attributeName,
-                    attributeValue: radioInputState?.attributeValue,
-                    isValid: incoming != nil || self.info.validation.isRequired != true
-                )
-                parentFormState?.updateFormInput(data)
+            .airshipOnChangeOf(self.radioInputState.selectedItem) { incoming in
+                updateFormState(incoming)
             }
             .onAppear {
                 restoreFormState()
@@ -39,9 +32,22 @@ struct RadioInputController: View {
             ),
             let value = value
         else {
+            updateFormState(self.radioInputState.selectedItem)
             return
         }
 
         self.radioInputState.selectedItem = value
     }
+
+    private func updateFormState(_ value: String?) {
+        let data = FormInputData(
+            self.info.properties.identifier,
+            value: .radio(value),
+            attributeName: self.info.properties.attributeName,
+            attributeValue: self.radioInputState.attributeValue,
+            isValid: value != nil || self.info.validation.isRequired != true
+        )
+        self.parentFormState.updateFormInput(data)
+    }
+
 }
