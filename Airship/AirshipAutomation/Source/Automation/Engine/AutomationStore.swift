@@ -25,6 +25,12 @@ protocol ScheduleStoreProtocol: Sendable {
     ) async throws -> AutomationScheduleData?
 
     @discardableResult
+    func updateSchedule(
+        scheduleData: AutomationScheduleData,
+        block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
+    ) async throws -> AutomationScheduleData?
+
+    @discardableResult
     func upsertSchedules(
         scheduleIDs: [String],
         updateBlock: @Sendable @escaping (String, AutomationScheduleData?) throws -> AutomationScheduleData
@@ -81,6 +87,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
     ) async throws -> AutomationScheduleData? {
         return try await prepareCoreData().performWithResult { context in
+
             let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
             request.includesPropertyValues = true
             request.predicate = NSPredicate(format: "identifier == %@", scheduleID)
@@ -90,6 +97,28 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             }
 
             var data = try entity.toScheduleData()
+            try block(&data)
+            try entity.update(data: data)
+            return data
+        }
+    }
+
+    @discardableResult
+    func updateSchedule(
+        scheduleData: AutomationScheduleData,
+        block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
+    ) async throws -> AutomationScheduleData? {
+        return try await prepareCoreData().performWithResult { context in
+
+            let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
+            request.includesPropertyValues = true
+            request.predicate = NSPredicate(format: "identifier == %@", scheduleData.schedule.identifier)
+
+            guard let entity = try context.fetch(request).first else {
+                return nil
+            }
+
+            var data = try entity.toScheduleData(existingData: scheduleData)
             try block(&data)
             try entity.update(data: data)
             return data
@@ -120,6 +149,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
                 }
                 let data = try updateBlock(identifier, existing)
                 let entity = try (entityMap[identifier] ?? ScheduleEntity.make(context: context))
+
                 try entity.update(data: data)
                 result.append(data)
             }
@@ -138,6 +168,17 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         return try await prepareCoreData().performWithResult { context in
             let predicate = NSPredicate(format: "group == %@", group)
             return try self.deleteSchedules(predicate: predicate, context: context)
+        }
+    }
+
+    func getLastScheduleModifiedDate(scheduleID: String) async throws -> Date? {
+        return try await prepareCoreData().performWithResult { context in
+            let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
+            request.predicate = NSPredicate(format: "identifier == %@", scheduleID)
+            request.propertiesToFetch = ["lastScheduleModifiedDate"]
+            request.includesPropertyValues = true
+
+            return try context.fetch(request).first?.lastScheduleModifiedDate
         }
     }
 
@@ -342,7 +383,6 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         try await migrateData()
         return coreData
     }
-    
 }
 
 
@@ -360,6 +400,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
     @NSManaged var schedule: Data
     @NSManaged var scheduleState: String
     @NSManaged var scheduleStateChangeDate: Date
+    @NSManaged var lastScheduleModifiedDate: Date?
     @NSManaged var executionCount: Int
     @NSManaged var triggerInfo: Data?
     @NSManaged var preparedScheduleInfo: Data?
@@ -386,6 +427,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
         self.executionCount = data.executionCount
         self.triggerSessionID = data.triggerSessionID
         self.associatedData = data.associatedData
+        self.lastScheduleModifiedDate = data.lastScheduleModifiedDate
         self.schedule = try AirshipJSON.defaultEncoder.encode(data.schedule)
 
         self.preparedScheduleInfo = if let info = data.preparedScheduleInfo {
@@ -402,8 +444,14 @@ fileprivate class ScheduleEntity: NSManagedObject {
 
     }
 
-    func toScheduleData() throws -> AutomationScheduleData {
-        let schedule = try AirshipJSON.defaultDecoder.decode(AutomationSchedule.self, from: self.schedule)
+    func toScheduleData(existingData: AutomationScheduleData? = nil) throws -> AutomationScheduleData {
+        let existingScheduleMatch = existingData?.scheduleStateChangeDate == self.scheduleStateChangeDate
+        let schedule: AutomationSchedule = if let existingData, existingScheduleMatch {
+            existingData.schedule
+        } else {
+            try AirshipJSON.defaultDecoder.decode(AutomationSchedule.self, from: self.schedule)
+        }
+
         let triggerInfo: TriggeringInfo? = if let data = self.triggerInfo {
             try AirshipJSON.defaultDecoder.decode(TriggeringInfo.self, from: data)
         } else {
@@ -423,6 +471,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
         return AutomationScheduleData(
             schedule: schedule,
             scheduleState: scheduleState,
+            lastScheduleModifiedDate: self.lastScheduleModifiedDate ?? .distantPast,
             scheduleStateChangeDate: self.scheduleStateChangeDate,
             executionCount: executionCount,
             triggerInfo: triggerInfo,

@@ -2971,6 +2971,7 @@
 		99303B052BD97F89002174CA /* ChannelListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListViewCell.swift; sourceTree = "<group>"; };
 		993AFDFD2C1B2D9A00AA875B /* PreferenceCenterConfig+ContactManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PreferenceCenterConfig+ContactManagement.swift"; sourceTree = "<group>"; };
 		993F91FA2CA37874001B1C2E /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
+		994376502D0A0C9C001746A2 /* AirshipAutomation 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AirshipAutomation 3.xcdatamodel"; sourceTree = "<group>"; };
 		99560C1D2BAE2FFA00F28BDC /* ChannelTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTextField.swift; sourceTree = "<group>"; };
 		99560C212BAE3D5D00F28BDC /* LabeledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledButton.swift; sourceTree = "<group>"; };
 		99560C272BB3843600F28BDC /* PreferenceCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterUtils.swift; sourceTree = "<group>"; };
@@ -9813,10 +9814,11 @@
 		6E1CBE2A2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				994376502D0A0C9C001746A2 /* AirshipAutomation 3.xcdatamodel */,
 				6E1CBE2B2BAA2AEA00519D9C /* AirshipAutomation 2.xcdatamodel */,
 				6E1CBE2C2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodel */,
 			);
-			currentVersion = 6E1CBE2B2BAA2AEA00519D9C /* AirshipAutomation 2.xcdatamodel */;
+			currentVersion = 994376502D0A0C9C001746A2 /* AirshipAutomation 3.xcdatamodel */;
 			path = AirshipAutomation.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

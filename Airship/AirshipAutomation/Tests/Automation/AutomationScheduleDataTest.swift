@@ -27,6 +27,7 @@ final class AutomationScheduleDataTest: XCTestCase {
                 data: .actions(.string("actions"))
             ),
             scheduleState: .idle,
+            lastScheduleModifiedDate: self.date,
             scheduleStateChangeDate: self.date,
             executionCount: 0,
             triggerSessionID: UUID().uuidString
