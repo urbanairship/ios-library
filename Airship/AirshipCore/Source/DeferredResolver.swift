@@ -51,13 +51,14 @@ public protocol AirshipDeferredResolverProtocol : Sendable {
     ) async -> AirshipDeferredResult<T>
 }
 
-final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
+actor AirshipDeferredResolver : AirshipDeferredResolverProtocol {
 
     private final let audienceOverridesProvider: AudienceOverridesProvider
     private final let client: DeferredAPIClientProtocol
-    private final let locationMap: AirshipAtomicValue<[URL: URL]> = AirshipAtomicValue([:])
+    private final var locationMap: [URL: URL] = [:]
+    private final var outdatedURLs: Set<URL> = Set()
 
-    convenience init(
+    init(
         config: RuntimeConfig,
         audienceOverrides: AudienceOverridesProvider
     ) {
@@ -79,6 +80,9 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
         request: DeferredRequest,
         resultParser: @escaping @Sendable (Data) async throws -> T
     ) async -> AirshipDeferredResult<T> {
+        guard !outdatedURLs.contains(request.url) else {
+            return .outOfDate
+        }
 
         let audienceOverrides = await audienceOverridesProvider.channelOverrides(
             channelID: request.channelID,
@@ -93,7 +97,7 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
             localeCountry: request.locale.getRegionCode()
         )
 
-        let requestURL = locationMap.value[request.url] ?? request.url
+        let requestURL = locationMap[request.url] ?? request.url
 
         return await resolve(
             url: requestURL,
@@ -159,15 +163,17 @@ final class AirshipDeferredResolver : AirshipDeferredResolverProtocol {
                 return .retriableError(statusCode: result.statusCode)
             }
         case 404: return .notFound
-        case 409: return .outOfDate
+        case 409:
+            outdatedURLs.insert(url)
+            return .outOfDate
         case 429:
             if let location = result.locationHeader {
-                locationMap.value[url] = location
+                locationMap[url] = location
             }
             return .retriableError(retryAfter: result.retryAfter, statusCode: result.statusCode)
         case 307:
             if let location = result.locationHeader {
-                locationMap.value[url] = location
+                locationMap[url] = location
 
                 if let retry = result.retryAfter, retry > 0 {
                     return .retriableError(retryAfter: retry, statusCode: result.statusCode)
