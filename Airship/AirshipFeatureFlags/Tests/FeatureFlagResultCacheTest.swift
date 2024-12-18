@@ -18,7 +18,7 @@ final class FeatureFlagResultCacheTest: XCTestCase {
 
     public func testSet() async {
         let flag = FeatureFlag(name: UUID().uuidString, isEligible: true, exists: true)
-        await resultCache.cacheFlag(flag: flag, ttl: 100)
+        await resultCache.cache(flag: flag, ttl: 100)
 
         let entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")!
         XCTAssertEqual(
@@ -30,9 +30,9 @@ final class FeatureFlagResultCacheTest: XCTestCase {
 
     public func testUpdate() async {
         var flag = FeatureFlag(name: UUID().uuidString, isEligible: true, exists: true)
-        await resultCache.cacheFlag(flag: flag, ttl: 100)
+        await resultCache.cache(flag: flag, ttl: 100)
         flag.isEligible = false
-        await resultCache.cacheFlag(flag: flag, ttl: 99)
+        await resultCache.cache(flag: flag, ttl: 99)
 
         let entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")!
         XCTAssertEqual(
@@ -48,7 +48,7 @@ final class FeatureFlagResultCacheTest: XCTestCase {
 
     public func testDelete() async {
         let flag = FeatureFlag(name: UUID().uuidString, isEligible: true, exists: true)
-        await resultCache.cacheFlag(flag: flag, ttl: 100)
+        await resultCache.cache(flag: flag, ttl: 100)
         var entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")
         XCTAssertNotNil(entry)
 

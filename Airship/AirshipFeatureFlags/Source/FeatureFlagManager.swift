@@ -105,22 +105,7 @@ public final class FeatureFlagManager: Sendable {
 
 
     func resolveFlag(name: String) async throws -> FeatureFlag {
-        // best effort refresh
-        await remoteDataAccess.bestEffortRefresh()
-
-        let remoteDataFeatureFlagInfo = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
-
-        // Check status to make sure we are either up to date or allow stale values
-        let status = await remoteDataAccess.status
-        guard
-            status == .upToDate || remoteDataFeatureFlagInfo.disallowStale == false
-        else {
-            if (status == .outOfDate) {
-                throw FeatureFlagError.outOfDate
-            } else {
-                throw FeatureFlagError.staleData
-            }
-        }
+        let remoteDataFeatureFlagInfo = try await remoteDataFeatureFlagInfo(name: name)
 
         do {
             // Attempt to evaluate
@@ -153,6 +138,32 @@ public final class FeatureFlagManager: Sendable {
                 )
             } catch {
                 throw mapError(error)
+            }
+        }
+    }
+
+    private func remoteDataFeatureFlagInfo(
+        name: String
+    ) async throws -> RemoteDataFeatureFlagInfo {
+
+        switch(await remoteDataAccess.status) {
+        case .upToDate:
+            return await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+        case .stale, .outOfDate:
+            let info = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+            if info.disallowStale || info.flagInfos.isEmpty {
+                await self.remoteDataAccess.bestEffortRefresh()
+                let updatedStatus = await self.remoteDataAccess.status
+                switch(updatedStatus) {
+                case .upToDate:
+                    return await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+                case .outOfDate:
+                    throw FeatureFlagError.outOfDate
+                case .stale:
+                    throw FeatureFlagError.staleData
+                }
+            } else {
+                return info
             }
         }
     }

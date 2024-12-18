@@ -9,22 +9,22 @@ import AirshipCore
 /// Feature Flag result cache
 public actor FeatureFlagResultCache {
     private static let cacheKeyPrefix: String = "FeatureFlagResultCache:"
-    private let cache: any AirshipCache
+    private let airshipCache: any AirshipCache
 
     init(cache: any AirshipCache) {
-        self.cache = cache
+        self.airshipCache = cache
     }
 
     /// Caches a flag for the given cachTTL.
     /// - Parameters:
     ///     - flag: The flag to cache
     ///     - ttl: The time to cache the value for.
-    public func cacheFlag(flag: FeatureFlag, ttl: TimeInterval) async {
+    public func cache(flag: FeatureFlag, ttl: TimeInterval) async {
         guard let key = Self.makeKey(flag.name) else {
             return
         }
 
-        await cache.setCachedValue(flag, key: key, ttl: ttl)
+        await airshipCache.setCachedValue(flag, key: key, ttl: ttl)
     }
 
     /// Gets a flag from the cache.
@@ -35,7 +35,7 @@ public actor FeatureFlagResultCache {
         guard let key = Self.makeKey(name) else {
             return nil
         }
-        return await cache.getCachedValue(key: key)
+        return await airshipCache.getCachedValue(key: key)
     }
 
     /// Removes a flag from the cache.
@@ -46,7 +46,7 @@ public actor FeatureFlagResultCache {
             return
         }
 
-        return await cache.deleteCachedValue(key: key)
+        return await airshipCache.deleteCachedValue(key: key)
     }
 
     private static func makeKey(_ name: String) -> String? {

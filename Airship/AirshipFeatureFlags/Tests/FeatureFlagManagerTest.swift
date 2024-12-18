@@ -43,7 +43,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
-    func testFlagAccessWaitsForRefreshIfOutOfDate() async throws {
+    func testFlagAccessWaitsForRefreshIfOutOfDateAndStaleNotAllowed() async throws {
         let expectation = XCTestExpectation()
         self.remoteDataAccess.bestEffortRefresh = {
             expectation.fulfill()
@@ -57,7 +57,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 reportingMetadata: .string("reporting"),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
-                )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
             )
         ]
         self.remoteDataAccess.status = .outOfDate
@@ -1391,7 +1392,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             throw AirshipErrors.error("other!")
         }
 
-        await featureFlagManager.resultCache.cacheFlag(flag: cachedValue, ttl: .infinity)
+        await featureFlagManager.resultCache.cache(flag: cachedValue, ttl: .infinity)
 
         let flag = try await featureFlagManager.flag(name: "does-not-exist")
         let flagNoCache = try await featureFlagManager.flag(name: "does-not-exist", useResultCache: false)
@@ -1406,7 +1407,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             isEligible: true,
             exists: true
         )
-        await featureFlagManager.resultCache.cacheFlag(flag: cachedValue, ttl: .infinity)
+        await featureFlagManager.resultCache.cache(flag: cachedValue, ttl: .infinity)
 
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
