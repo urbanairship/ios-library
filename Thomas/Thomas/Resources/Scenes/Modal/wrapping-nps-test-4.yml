@@ -1,0 +1,427 @@
+# MOBILE-3069
+---
+version: 1
+presentation:
+  type: modal
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    device:
+      lock_orientation: portrait
+    size:
+      max_width: 100%
+      max_height: 100%
+      width: 100%
+      min_width: 100%
+      height: 100%
+      min_height: 100%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        type: hex
+        hex: "#000000"
+        alpha: 0.2
+view:
+  type: pager_controller
+  identifier: ea47eaac-4865-428a-bdfc-b512b899cc51
+  view:
+    identifier: 6d4062aa-16ff-4234-aa70-014dc0e1de88
+    nps_identifier: 58c4f1c2-99f5-4a9a-998c-e5561abf056a
+    type: nps_form_controller
+    submit: submit_event
+    response_type: nps
+    view:
+      type: container
+      items:
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 100%
+          height: 100%
+        view:
+          type: pager
+          disable_swipe: true
+          items:
+          - identifier: '068715c7-6b86-4530-a930-8546607e3776'
+            type: pager_item
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+              - identifier: scroll_container
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: scroll_layout
+                  direction: vertical
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                    - size:
+                        width: 100%
+                        height: auto
+                      margin:
+                        top: 48
+                        bottom: 8
+                        start: 16
+                        end: 16
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                        - size:
+                            width: 100%
+                            height: auto
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - margin:
+                                top: 20
+                                bottom: 8
+                              size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: label
+                                text: How likely is it that you would recommend [your
+                                  company, product, etc.] to a friend or colleague?
+                                text_appearance:
+                                  font_size: 20
+                                  color:
+                                    default:
+                                      type: hex
+                                      hex: "#111111"
+                                      alpha: 1
+                                  alignment: center
+                                  styles:
+                                  - underlined
+                                  - bold
+                                  - italic
+                                  font_families:
+                                  - sans-serif
+                        - size:
+                            width: 100%
+                            height: auto
+                          margin:
+                            top: 0
+                            bottom: 0
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items:
+                                - size:
+                                    width: 50%
+                                    height: auto
+                                  margin:
+                                    bottom: 4
+                                  view:
+                                    type: label
+                                    text: Not Likely
+                                    text_appearance:
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          type: hex
+                                          hex: "#111111"
+                                          alpha: 1
+                                      alignment: start
+                                      styles:
+                                      - underlined
+                                      - bold
+                                      - italic
+                                      font_families:
+                                      - sans-serif
+                                - size:
+                                    width: 50%
+                                    height: auto
+                                  margin:
+                                    bottom: 4
+                                  view:
+                                    type: label
+                                    text: Very Likely
+                                    text_appearance:
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          type: hex
+                                          hex: "#111111"
+                                          alpha: 1
+                                      alignment: end
+                                      styles:
+                                      - underlined
+                                      - bold
+                                      - italic
+                                      font_families:
+                                      - sans-serif
+                            - size:
+                                width: 100%
+                                height: auto
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items:
+                                - size:
+                                    height: 50
+                                    width: 100%
+                                  view:
+                                    type: score
+                                    style:
+                                      type: number_range
+                                      start: 0
+                                      end: 10
+                                      spacing: 2
+                                      bindings:
+                                        selected:
+                                          shapes:
+                                          - type: rectangle
+                                            scale: 1
+                                            border:
+                                              radius: 2
+                                              stroke_width: 1
+                                              stroke_color:
+                                                default:
+                                                  type: hex
+                                                  hex: "#000000"
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#DDDDDD"
+                                                alpha: 1
+                                          text_appearance:
+                                            alignment: center
+                                            font_size: 12
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                        unselected:
+                                          shapes:
+                                          - type: rectangle
+                                            scale: 1
+                                            border:
+                                              radius: 2
+                                              stroke_width: 1
+                                              stroke_color:
+                                                default:
+                                                  type: hex
+                                                  hex: "#000000"
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#FFFFFF"
+                                                alpha: 1
+                                          text_appearance:
+                                            font_size: 12
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                    identifier: 58c4f1c2-99f5-4a9a-998c-e5561abf056a
+                                    required: true
+                    - size:
+                        height: 100%
+                        width: 100%
+                      view:
+                        type: media
+                        media_fit: center_inside
+                        url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/9e13236f-de64-49ef-b77b-3140fa7a1f03
+                        media_type: image
+                      margin:
+                        top: 0
+                        bottom: 8
+                        start: 0
+                        end: 0
+              - margin:
+                  top: 8
+                  bottom: 0
+                  start: 16
+                  end: 16
+                size:
+                  height: auto
+                  width: 100%
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items:
+                  - margin:
+                      top: 4
+                      bottom: 16
+                      start: 0
+                      end: 0
+                    size:
+                      width: 100%
+                      height: 48
+                    view:
+                      type: label_button
+                      identifier: submit_feedback--Submit
+                      label:
+                        type: label
+                        text: Submit
+                        text_appearance:
+                          font_size: 14
+                          color:
+                            default:
+                              type: hex
+                              hex: "#FFFFFF"
+                              alpha: 1
+                          alignment: center
+                          styles: [ ]
+                          font_families:
+                          - sans-serif
+                      actions: { }
+                      enabled:
+                      - form_validation
+                      button_click:
+                      - form_submit
+                      - pager_next
+                      background_color:
+                        default:
+                          type: hex
+                          hex: "#222222"
+                          alpha: 1
+                      border:
+                        radius: 0
+                        stroke_width: 1
+                        stroke_color:
+                          default:
+                            type: hex
+                            hex: "#222222"
+                            alpha: 1
+                  background_color:
+                    default:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+              background_color:
+                default:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+          - identifier: a232866d-dcc1-45f9-83e1-a6b5df90f40a
+            type: pager_item
+            view:
+              type: container
+              items:
+              - margin:
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: horizontal
+                  items: [ ]
+                  background_color:
+                    default:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+              - margin:
+                  start: 0
+                  end: 0
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: media
+                  media_fit: center_crop
+                  url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/84bdd2d5-f345-431a-aacc-dc246072ddb5
+                  media_type: image
+              - margin:
+                  top: 0
+                  bottom: 0
+                  start: 16
+                  end: 16
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - identifier: scroll_container
+                    size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - size:
+                          height: 100%
+                          width: 100%
+                        view:
+                          type: container
+                          items:
+                          - margin:
+                              bottom: 16
+                            position:
+                              horizontal: center
+                              vertical: center
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: linear_layout
+                              direction: vertical
+                              items:
+                              - identifier: scroll_container
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: scroll_layout
+                                  direction: vertical
+                                  view:
+                                    type: linear_layout
+                                    direction: vertical
+                                    items: [ ]
+      - position:
+          horizontal: end
+          vertical: top
+        size:
+          width: 48
+          height: 48
+        view:
+          type: image_button
+          image:
+            scale: 0.4
+            type: icon
+            icon: close
+            color:
+              default:
+                type: hex
+                hex: "#F07ADC"
+                alpha: 1
+          identifier: dismiss_button
+          button_click:
+          - dismiss
