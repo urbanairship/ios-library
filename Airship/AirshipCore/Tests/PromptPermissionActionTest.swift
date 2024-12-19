@@ -46,7 +46,7 @@ class PromptPermissionActionTest: XCTestCase {
 
     func testPrompt() async throws {
         let actionValue: [String: Any] = [
-            "permission": AirshipPermission.location.stringValue,
+            "permission": AirshipPermission.location.rawValue,
             "enable_airship_usage": true,
             "fallback_system_settings": true,
         ]
@@ -75,7 +75,7 @@ class PromptPermissionActionTest: XCTestCase {
 
     func testPromptDefaultArguments() async throws {
         let actionValue = [
-            "permission": AirshipPermission.displayNotifications.stringValue
+            "permission": AirshipPermission.displayNotifications.rawValue
         ]
         let arguments = ActionArguments(
             value: try! AirshipJSON.wrap(actionValue),
@@ -126,7 +126,7 @@ class PromptPermissionActionTest: XCTestCase {
 
     func testResultReceiver() async throws {
         let actionValue: [String: Any] = [
-            "permission": AirshipPermission.location.stringValue
+            "permission": AirshipPermission.location.rawValue
         ]
 
         let resultReceived = self.expectation(description: "Result received")

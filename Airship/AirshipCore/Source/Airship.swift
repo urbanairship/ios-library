@@ -14,7 +14,7 @@ import WatchKit
 
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
 /// before accessing any instances on Airship or Airship modules.
-public final class Airship: NSObject, Sendable {
+public final class Airship: Sendable {
 
     /// Airship deep link scheme
     /// - Note: For internal use only. :nodoc:
@@ -464,7 +464,7 @@ public final class Airship: NSObject, Sendable {
 }
 
 /// NSNotificationCenter keys event names
-public final class AirshipNotifications: NSObject {
+public final class AirshipNotifications {
 
     /// Notification when Airship is ready.
     public final class AirshipReady {

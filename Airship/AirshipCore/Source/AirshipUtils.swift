@@ -23,7 +23,7 @@ public class ConnectionType: NSObject {
 }
 
 /// The `Utils` object provides an interface for utility methods.
-public class AirshipUtils: NSObject {
+public final class AirshipUtils {
 
     // MARK: Device Utilities
 

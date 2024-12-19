@@ -6,7 +6,7 @@ import Foundation
 
 
 /// This singleton provides an interface to the channel functionality.
-final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendable {
+final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
     private static let legacyTagsSettingsKey = "UAPushTags"
 
@@ -133,8 +133,6 @@ final class AirshipChannel: NSObject, AirshipChannelProtocol, @unchecked Sendabl
             AirshipLogger.debug("Channel creation disabled.")
             self.isChannelCreationEnabled = false
         }
-
-        super.init()
 
         self.migrateTags()
 
@@ -556,7 +554,7 @@ extension AirshipChannel: AirshipComponent {}
 public extension AirshipNotifications {
 
     /// NSNotification info when the channel is created.
-    final class ChannelCreated: NSObject {
+    final class ChannelCreated {
 
         /// NSNotification name.
         public static let name = NSNotification.Name(

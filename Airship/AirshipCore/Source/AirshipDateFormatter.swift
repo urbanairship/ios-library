@@ -3,7 +3,7 @@
 import Foundation
 
 /// - Note: for internal use only.  :nodoc:
-public class AirshipDateFormatter: NSObject {
+public final class AirshipDateFormatter {
 
     public enum Format: Int {
         /// ISO 8601

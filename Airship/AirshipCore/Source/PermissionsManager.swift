@@ -82,7 +82,7 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
         var map: [String: String] = [:]
         for permission in configuredPermissions {
             let status = await checkPermissionStatus(permission)
-            map[permission.stringValue] = status.stringValue
+            map[permission.rawValue] = status.rawValue
         }
         return map
     }

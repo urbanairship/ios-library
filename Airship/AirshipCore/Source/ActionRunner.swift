@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// A helper class for running actions by name or by reference.
-public final class ActionRunner: NSObject {
+public final class ActionRunner {
 
     /// Runs an action
     /// - Parameters:

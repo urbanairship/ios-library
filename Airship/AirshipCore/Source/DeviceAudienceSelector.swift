@@ -159,7 +159,7 @@ public extension DeviceAudienceSelector {
         if let permissionPredicate = self.permissionPredicate {
             var map: [String: String] = [:]
             for entry in permissions {
-                map[entry.key.stringValue] = entry.value.stringValue
+                map[entry.key.rawValue] = entry.value.rawValue
             }
 
 

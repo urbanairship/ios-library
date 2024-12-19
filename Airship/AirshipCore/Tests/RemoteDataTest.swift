@@ -304,12 +304,20 @@ final class RemoteDataTest: AirshipBaseTest {
 
         let expectation = XCTestExpectation()
         expectation.expectedFulfillmentCount = 3
+
+        let first = XCTestExpectation()
+        let isFirst = AirshipAtomicValue<Bool>(false)
+
         let subscription = self.remoteData.publisher(types: ["foo"])
             .sink { payloads in
+                if isFirst.compareAndSet(expected: false, value: true) {
+                    first.fulfill()
+                }
                 expectation.fulfill()
                 XCTAssertTrue(payloads.isEmpty)
             }
 
+        await self.fulfillmentCompat(of: [first], timeout: 10)
         await self.launchRefreshTask()
         await self.fulfillmentCompat(of: [expectation], timeout: 10)
         subscription.cancel()

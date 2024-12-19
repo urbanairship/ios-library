@@ -3,7 +3,7 @@
 import Foundation
 
 /// Email registration options
-public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
+public struct EmailRegistrationOptions: Codable, Sendable, Equatable, Hashable {
 
     /**
      * Transactional opted-in value
@@ -127,33 +127,5 @@ public final class EmailRegistrationOptions: NSObject, Codable, Sendable {
     // Migration purposes
     fileprivate struct JsonValue: Decodable {
         let jsonEncodedValue: String?
-    }
-
-    func isEqual(to options: EmailRegistrationOptions) -> Bool {
-        return doubleOptIn == options.doubleOptIn &&
-        properties == options.properties &&
-        commercialOptedIn == options.commercialOptedIn &&
-        transactionalOptedIn == options.transactionalOptedIn
-    }
-
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let options = object as? EmailRegistrationOptions else {
-            return false
-        }
-
-        if self === options {
-            return true
-        }
-
-        return isEqual(to: options)
-    }
-
-    func hash() -> Int {
-        var result = 1
-        result = 31 * result + doubleOptIn.hashValue
-        result = 31 * result + properties.hashValue
-        result = 31 * result + commercialOptedIn.hashValue
-        result = 31 * result + transactionalOptedIn.hashValue
-        return result
     }
 }

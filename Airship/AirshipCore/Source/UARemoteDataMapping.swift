@@ -3,6 +3,7 @@
 import Foundation
 import CoreData
 
+@objc(UARemoteDataMappingV3toV4)
 class UARemoteDataMappingV3toV4: NSEntityMigrationPolicy {
 
     override func createDestinationInstances(
@@ -34,7 +35,7 @@ class UARemoteDataMappingV3toV4: NSEntityMigrationPolicy {
     }
 }
 
-
+@objc(UARemoteDataMappingV2toV4)
 class UARemoteDataMappingV2toV4: NSEntityMigrationPolicy {
 
     override func createDestinationInstances(
@@ -66,7 +67,7 @@ class UARemoteDataMappingV2toV4: NSEntityMigrationPolicy {
 }
 
 
-
+@objc(UARemoteDataMappingV1toV4)
 class UARemoteDataMappingV1toV4: NSEntityMigrationPolicy {
 
     override func createDestinationInstances(

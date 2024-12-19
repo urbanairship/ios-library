@@ -8,7 +8,7 @@ import Foundation
 /// knocks (app foregrounds) within a specific timeframe. Channel Capture can be enabled
 /// or disabled in Airship Config.
 @available(tvOS, unavailable)
-final public class ChannelCapture: NSObject, Sendable {
+final public class ChannelCapture: Sendable {
     private static let knocksToTriggerChannelCapture = 6
     private static let knocksMaxTimeSeconds: TimeInterval = 30
     private static let pasteboardExpirationSeconds: TimeInterval = 60
@@ -47,8 +47,6 @@ final public class ChannelCapture: NSObject, Sendable {
         self.pasteboard = pasteboard
 
         self.enabled = config.airshipConfig.isChannelCaptureEnabled
-
-        super.init()
 
         notificationCenter.addObserver(
             self,

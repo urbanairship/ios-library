@@ -15,7 +15,7 @@ public enum AirshipBoundaryEvent: Int, Sendable {
 }
 
 /// A region event captures information regarding a region event for analytics.
-public class RegionEvent: NSObject {
+public class RegionEvent {
 
     public static let eventType: String = "region_event"
 
@@ -91,7 +91,6 @@ public class RegionEvent: NSObject {
         self.boundaryEvent = boundaryEvent
         self.circularRegion = circularRegion
         self.proximityRegion = proximityRegion
-        super.init()
     }
 
     /**

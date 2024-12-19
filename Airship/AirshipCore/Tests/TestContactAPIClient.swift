@@ -22,7 +22,7 @@ class TestContactAPIClient: ContactsAPIClientProtocol, @unchecked Sendable {
     ((String, String, ChannelType) async throws -> AirshipHTTPResponse<ContactAssociateChannelResult>)?
 
     var disassociateChannelCallback:
-    ((Bool, String, String) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult>)?
+    ((Bool, String, ChannelType) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult>)?
 
     var disassociateEmailCallback:
     ((Bool, String, String) async throws -> AirshipHTTPResponse<ContactDisassociateChannelResult>)?

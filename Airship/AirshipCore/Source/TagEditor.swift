@@ -3,7 +3,7 @@
 import Foundation
 
 /// Tag editor.
-public class TagEditor: NSObject {
+public class TagEditor {
 
     typealias TagApplicator = ([String]) -> [String]
 
@@ -12,7 +12,6 @@ public class TagEditor: NSObject {
 
     init(onApply: @escaping (TagApplicator) -> Void) {
         self.onApply = onApply
-        super.init()
     }
 
     /**

@@ -255,7 +255,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         // Permissions
         for permission in self.permissionsManager.configuredPermissions {
             let status = await self.permissionsManager.checkPermissionStatus(permission)
-            headers["X-UA-Permission-\(permission.stringValue)"] = status.stringValue
+            headers["X-UA-Permission-\(permission.rawValue)"] = status.rawValue
         }
 
         return headers
@@ -464,7 +464,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
             self.dataStore.object(forKey: AirshipAnalytics.associatedIdentifiers)
             as? [String: String]
         return AssociatedIdentifiers(
-            dictionary: storedIDs != nil ? storedIDs : [:]
+            identifiers: storedIDs ?? [:]
         )
     }
 

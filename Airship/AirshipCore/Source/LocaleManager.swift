@@ -16,7 +16,7 @@ public protocol AirshipLocaleManagerProtocol: AnyObject, Sendable {
 }
 
 
-final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
+final class AirshipLocaleManager: AirshipLocaleManagerProtocol {
 
     fileprivate static let storeKey = "com.urbanairship.locale.locale"
 
@@ -54,7 +54,6 @@ final class AirshipLocaleManager: NSObject, AirshipLocaleManagerProtocol {
         self.dataStore = dataStore
         self.config = config
         self.notificationCenter = notificationCenter
-        super.init()
 
         self.notificationCenter.addObserver(
             self,

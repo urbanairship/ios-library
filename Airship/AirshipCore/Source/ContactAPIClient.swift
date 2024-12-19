@@ -162,7 +162,7 @@ final class ContactAPIClient: ContactsAPIClientProtocol {
             subscriptionLists: nil,
             associate: [
                 ContactUpdateRequestBody.AssociateChannelOperation(
-                    deviceType: channelType.stringValue,
+                    deviceType: channelType,
                     channelID: channelID
                 )
             ]
@@ -488,7 +488,7 @@ enum DisassociateOptions: Sendable, Equatable, Codable, Hashable {
     case sms(SMS)
 
     init(channelID: String, channelType: ChannelType, optOut: Bool) {
-        self = .channel(Channel(channelID: channelID, optOut: optOut, channelType: channelType.stringValue))
+        self = .channel(Channel(channelID: channelID, optOut: optOut, channelType: channelType))
     }
 
     init(emailAddress: String, optOut: Bool) {
@@ -502,7 +502,7 @@ enum DisassociateOptions: Sendable, Equatable, Codable, Hashable {
     struct Channel: Sendable, Equatable, Codable, Hashable {
         let channelID: String
         let optOut: Bool
-        let channelType: String
+        let channelType: ChannelType
 
         enum CodingKeys: String, CodingKey {
             case channelID = "channel_id"
@@ -575,7 +575,7 @@ enum ResendOptions: Sendable, Equatable, Codable, Hashable {
     case sms(SMS)
 
     init(channelID: String, channelType: ChannelType) {
-        self = .channel(Channel(channelType: channelType.stringValue, channelID: channelID))
+        self = .channel(Channel(channelType: channelType, channelID: channelID))
     }
 
     init(emailAddress: String) {
@@ -587,7 +587,7 @@ enum ResendOptions: Sendable, Equatable, Codable, Hashable {
     }
 
     struct Channel: Sendable, Equatable, Codable, Hashable {
-        let channelType: String
+        let channelType: ChannelType
         let channelID: String
 
         enum CodingKeys: String, CodingKey {
@@ -676,7 +676,7 @@ fileprivate struct ContactUpdateRequestBody: Encodable {
     }
 
     struct AssociateChannelOperation: Encodable {
-        let deviceType: String
+        let deviceType: ChannelType
         let channelID: String
 
         enum CodingKeys: String, CodingKey {

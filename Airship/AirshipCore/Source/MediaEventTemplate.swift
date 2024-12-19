@@ -2,7 +2,7 @@
 
 /// A MediaEventTemplate represents a custom media event template for the
 /// application.
-public class MediaEventTemplate: NSObject {
+public class MediaEventTemplate {
     /**
      * The event's ID.
      */
@@ -142,7 +142,6 @@ public class MediaEventTemplate: NSObject {
         self.eventValue = value
         self.source = source
         self.medium = medium
-        super.init()
     }
 
     /**

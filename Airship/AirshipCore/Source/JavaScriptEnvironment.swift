@@ -31,14 +31,14 @@ public protocol JavaScriptEnvironmentProtocol: Sendable {
 
 
 /// The JavaScript environment builder that is used by the native bridge.
-public final class JavaScriptEnvironment: NSObject, JavaScriptEnvironmentProtocol, @unchecked Sendable {
+public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, @unchecked Sendable {
 
     private var extensions: [String] = []
     private var lock: AirshipLock = AirshipLock()
     private let channel: () -> any AirshipChannelProtocol
     private let contact: () -> any AirshipContactProtocol
 
-    public override convenience init() {
+    public convenience init() {
         self.init(
             channel: Airship.componentSupplier(),
             contact: Airship.componentSupplier()

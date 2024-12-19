@@ -24,7 +24,7 @@ public protocol AppStateTrackerProtocol: Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecked Sendable {
+public final class AppStateTracker: AppStateTrackerProtocol, @unchecked Sendable {
 
 
     public static let didBecomeActiveNotification = NSNotification.Name(
@@ -84,7 +84,6 @@ public final class AppStateTracker: NSObject, AppStateTrackerProtocol, @unchecke
         self.adapter = adapter
         self.notificationCenter = notificationCenter
         self.stateValue = AirshipMainActorValue(adapter.state)
-        super.init()
 
         Task { @MainActor in
             self.ensureForegroundSet()

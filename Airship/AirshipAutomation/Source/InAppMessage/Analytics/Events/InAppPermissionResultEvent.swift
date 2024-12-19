@@ -16,16 +16,16 @@ struct InAppPermissionResultEvent: InAppEvent {
         endingStatus: AirshipPermissionStatus
     ) {
         self.data = PermissionResultData(
-            permission: permission.stringValue,
-            startingStatus: startingStatus.stringValue,
-            endingStatus: endingStatus.stringValue
+            permission: permission,
+            startingStatus: startingStatus,
+            endingStatus: endingStatus
         )
     }
 
     private struct PermissionResultData: Encodable, Sendable {
-        var permission: String
-        var startingStatus: String
-        var endingStatus: String
+        var permission: AirshipPermission
+        var startingStatus: AirshipPermissionStatus
+        var endingStatus: AirshipPermissionStatus
 
         enum CodingKeys: String, CodingKey {
             case permission

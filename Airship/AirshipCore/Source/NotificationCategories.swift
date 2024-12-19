@@ -4,7 +4,7 @@ import Foundation
 
 #if !os(tvOS)
 /// Utility methods to create categories from plist files or dictionaries.
-public class NotificationCategories: NSObject {
+public final class NotificationCategories {
     // MARK: - Notification Categories Factories
 
     /**

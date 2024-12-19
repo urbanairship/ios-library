@@ -1165,7 +1165,7 @@ final class ContactManagerTest: XCTestCase {
         let register = XCTestExpectation()
         self.apiClient.disassociateChannelCallback = { contactID, channelID, type in
             XCTAssertEqual(channelID, expectedChannelID)
-            XCTAssertEqual(type, ChannelType.email.stringValue)
+            XCTAssertEqual(type, ChannelType.email)
             register.fulfill()
             return AirshipHTTPResponse(
                 result: ContactDisassociateChannelResult(channelID: channelID),

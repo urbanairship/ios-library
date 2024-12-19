@@ -3,7 +3,7 @@
 import Foundation
 
 /// Attributes editor.
-public final class AttributesEditor: NSObject {
+public final class AttributesEditor {
 
     private let date: any AirshipDateProtocol
     private var sets: [String: AirshipJSON] = [:]
@@ -16,7 +16,6 @@ public final class AttributesEditor: NSObject {
     ) {
         self.completionHandler = completionHandler
         self.date = date
-        super.init()
     }
 
     convenience init(

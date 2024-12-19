@@ -2,7 +2,7 @@
 
 /// Defines analytics identifiers to be associated with
 /// the device.
-public class AssociatedIdentifiers: NSObject {
+public class AssociatedIdentifiers {
 
     /**
      * Maximum number of associated IDs that can be set.
@@ -62,17 +62,8 @@ public class AssociatedIdentifiers: NSObject {
 
     private var identifiers: [String: String]
 
-    public init(identifiers: [String: String]?) {
+    public init(identifiers: [String: String]? = nil) {
         self.identifiers = identifiers ?? [:]
-        super.init()
-    }
-
-    public convenience init(dictionary: [String: String]?) {
-        self.init(identifiers: dictionary)
-    }
-
-    public override convenience init() {
-        self.init(identifiers: nil)
     }
 
     /**

@@ -8,7 +8,7 @@ import AirshipCore
 final class AssociatedIdentifiersTest: XCTestCase {
 
     func testIDs() {
-        let identifiers = AssociatedIdentifiers(dictionary: ["custom key": "custom value"])
+        let identifiers = AssociatedIdentifiers(identifiers: ["custom key": "custom value"])
         identifiers.vendorID = "vendor ID"
         identifiers.advertisingID = "advertising ID"
         identifiers.advertisingTrackingEnabled = false

@@ -2,7 +2,7 @@
 
 /// AccountEventTemplate represents a custom account event template for the
 /// application.
-public class AccountEventTemplate: NSObject {
+public class AccountEventTemplate {
 
     private let eventName: String
 
@@ -36,7 +36,6 @@ public class AccountEventTemplate: NSObject {
     public init(eventName: String, value: NSNumber? = nil) {
         self.eventName = eventName
         self.eventValue = value
-        super.init()
     }
 
     /**

@@ -5,7 +5,7 @@
 import Foundation
 
 // Model object for holding data associated with JS delegate calls
-public final class JavaScriptCommand: NSObject, Sendable {
+public struct JavaScriptCommand: Sendable, CustomDebugStringConvertible {
 
     // A name, derived from the host passed in the delegate call URL.
     public let name: String?
@@ -56,10 +56,9 @@ public final class JavaScriptCommand: NSObject, Sendable {
         self.name = url.host
     }
 
-    public override var description: String {
+    public var debugDescription: String {
         "JavaScriptCommand{name=\(String(describing: name)), options=\(options)}, arguments=\(arguments), url=\(url)})"
     }
-    
 }
 
 #endif

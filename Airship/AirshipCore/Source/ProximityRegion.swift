@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// A proximity region defines an identifier, major and minor.
-public class ProximityRegion: NSObject {
+public class ProximityRegion {
 
     let latitude: Double?
     let longitude: Double?

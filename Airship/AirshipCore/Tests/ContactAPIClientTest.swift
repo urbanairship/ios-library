@@ -506,7 +506,7 @@ class ContactAPIClientTest: XCTestCase {
         ) as! [String: Any]
 
         let expectedBody = [
-            "channel_type": expectedChannelType.stringValue,
+            "channel_type": expectedChannelType.rawValue,
             "channel_id": expectedChannelID,
             "opt_out": true
         ] as [String : Any]
@@ -541,7 +541,7 @@ class ContactAPIClientTest: XCTestCase {
         ) as! [String: Any]
 
         let expectedBody = [
-            "channel_type": expectedChannelType.stringValue,
+            "channel_type": expectedChannelType.rawValue,
             "email_address": expectedEmailAddress,
             "opt_out": false
         ] as [String : Any]
@@ -572,7 +572,7 @@ class ContactAPIClientTest: XCTestCase {
         ) as! [String: Any]
 
         let expectedBody = [
-            "channel_type": expectedChannelType.stringValue,
+            "channel_type": expectedChannelType.rawValue,
             "msisdn": expectedMSISDN,
             "sender": expectedSender,
             "opt_out": false
@@ -602,7 +602,7 @@ class ContactAPIClientTest: XCTestCase {
         ) as! [String: Any]
 
         let expectedBody = [
-            "channel_type": expectedChannelType.stringValue,
+            "channel_type": expectedChannelType.rawValue,
             "email_address": expectedEmail
         ] as [String : Any]
 
@@ -631,7 +631,7 @@ class ContactAPIClientTest: XCTestCase {
         ) as! [String: Any]
 
         let expectedBody = [
-            "channel_type": expectedChannelType.stringValue,
+            "channel_type": expectedChannelType.rawValue,
             "sender": expectedSenderID,
             "msisdn": expectedMSISDN
         ] as [String : Any]
@@ -659,7 +659,7 @@ class ContactAPIClientTest: XCTestCase {
         ) as! [String: Any]
 
         let expectedBody = [
-            "channel_type": expectedChannelType.stringValue,
+            "channel_type": expectedChannelType.rawValue,
             "channel_id": expectedChannelID
         ] as [String : Any]
 

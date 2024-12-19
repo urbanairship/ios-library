@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// Predefined attributes.
-public class Attributes: NSObject {
+public struct Attributes: Sendable {
 
     /**
     * Title attribute.
@@ -103,4 +103,5 @@ public class Attributes: NSObject {
     */
     public static let advertisingId = "advertising_id"
 
+    private init() {}
 }

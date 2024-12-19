@@ -3,7 +3,7 @@
 import Foundation
 
 /// Tag groups editor.
-public class TagGroupsEditor: NSObject {
+public class TagGroupsEditor {
 
     private var tagUpdates: [TagGroupUpdate] = []
     private var allowDeviceTagGroup = false
@@ -15,7 +15,6 @@ public class TagGroupsEditor: NSObject {
     ) {
         self.allowDeviceTagGroup = allowDeviceTagGroup
         self.completionHandler = completionHandler
-        super.init()
     }
 
     convenience init(completionHandler: @escaping ([TagGroupUpdate]) -> Void) {

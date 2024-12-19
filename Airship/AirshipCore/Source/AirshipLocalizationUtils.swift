@@ -3,7 +3,7 @@
 import Foundation
 
 /// - NOTE: Internal use only :nodoc:
-public class AirshipLocalizationUtils: NSObject {
+public final class AirshipLocalizationUtils {
 
     private static func sanitizedLocalizedString(
         _ localizedString: String,

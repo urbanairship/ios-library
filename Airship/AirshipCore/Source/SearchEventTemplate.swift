@@ -2,7 +2,7 @@
 
 /// A SearchEventTemplate represents a custom search event template for the
 /// application.
-public class SearchEventTemplate: NSObject {
+public class SearchEventTemplate {
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
@@ -41,7 +41,6 @@ public class SearchEventTemplate: NSObject {
      * 2^31 - 1 or it will invalidate the event.
      */
     public init(value: NSNumber? = nil) {
-        super.init()
         self.eventValue = value
     }
 

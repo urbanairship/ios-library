@@ -275,7 +275,7 @@ class AnalyticsTest: XCTestCase {
     func testAssociateDeviceIdentifiers() async throws {
         let analytics = self.analytics
         let events = try await self.produceEvents(count: 1) {
-            let ids = AssociatedIdentifiers(dictionary: ["neat": "id"])
+            let ids = AssociatedIdentifiers(identifiers: ["neat": "id"])
             analytics?.associateDeviceIdentifiers(ids)
         }
 

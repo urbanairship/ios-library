@@ -1183,7 +1183,7 @@ extension AirshipPush: AirshipComponent {}
 public extension AirshipNotifications {
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    final class ReceivedNotificationResponse: NSObject {
+    final class ReceivedNotificationResponse {
 
         /// NSNotification name.
         public static let name = NSNotification.Name(
@@ -1196,7 +1196,7 @@ public extension AirshipNotifications {
 
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    final class RecievedNotification: NSObject {
+    final class RecievedNotification {
 
         /// NSNotification name.
         public static let name = NSNotification.Name(

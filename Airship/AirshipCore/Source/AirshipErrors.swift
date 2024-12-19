@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 /// - Note: for internal use only.  :nodoc:
-public final class AirshipErrors: NSObject {
+public final class AirshipErrors {
     public class func parseError(_ message: String) -> any Error {
         return NSError(
             domain: "com.urbanairship.parse_error",

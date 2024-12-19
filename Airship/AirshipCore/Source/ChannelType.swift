@@ -3,7 +3,7 @@
 import Foundation
 
 /// Channel type
-public enum ChannelType: Int, Codable, CustomStringConvertible, Sendable, Equatable {
+public enum ChannelType: String, Codable, Sendable, Equatable {
 
     /**
      * Email channel
@@ -19,37 +19,4 @@ public enum ChannelType: Int, Codable, CustomStringConvertible, Sendable, Equata
      * Open channel
      */
     case open
-
-    /// The string value of the channel type
-    /// - Returns: The string value of the channel type
-    var stringValue: String {
-        switch self {
-        case .email:
-            return "email"
-        case .sms:
-            return "sms"
-        case .open:
-            return "open"
-        }
-    }
-
-    /// Returns a channel type from a string.
-    /// - Parameter value: The string value
-    /// - Returns: A channel type.
-    static func fromString(_ value: String) throws -> ChannelType {
-        switch value {
-        case "email":
-            return .email
-        case "sms":
-            return .sms
-        case "open":
-            return .open
-        default:
-            throw AirshipErrors.error("invalid channel type \(value)")
-        }
-    }
-
-    public var description: String {
-        return stringValue
-    }
 }

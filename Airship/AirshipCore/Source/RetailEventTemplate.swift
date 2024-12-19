@@ -4,7 +4,7 @@ import Foundation
 
 /// A RetailEventTemplate represents a custom retail event template for the
 /// application.
-public class RetailEventTemplate: NSObject {
+public class RetailEventTemplate {
 
     /**
      * The event's value. The value must be between -2^31 and
@@ -339,7 +339,6 @@ public class RetailEventTemplate: NSObject {
         self.medium = medium
         self.wishlistID = wishlistID
         self.wishlistName = wishlistName
-        super.init()
     }
 
     /**

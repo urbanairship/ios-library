@@ -3,7 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-public class AirshipBase64: NSObject {
+public final class AirshipBase64 {
 
     public class func data(from base64String: String) -> Data? {
         var normalizedString = base64String.components(separatedBy: .newlines)

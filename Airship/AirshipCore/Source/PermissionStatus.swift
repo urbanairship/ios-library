@@ -3,23 +3,13 @@
 import Foundation
 
 /// Permission status
-public enum AirshipPermissionStatus: UInt, Sendable {
+public enum AirshipPermissionStatus: String, Sendable, Codable {
     /// Could not determine the permission status.
-    case notDetermined
+    case notDetermined = "not_determined"
 
     /// Permission is granted.
     case granted
 
     /// Permission is denied.
     case denied
-
-    /// The string value of the status
-    /// - Returns: The string value of the status
-    public var stringValue: String {
-        switch self {
-        case .notDetermined: return "not_determined"
-        case .granted: return "granted"
-        case .denied: return "denied"
-        }
-    }
 }

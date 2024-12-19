@@ -15,7 +15,7 @@ import Foundation
 /// - Opt in state (push and notifications)
 /// - SDK version
 /// - Accengage Device ID (Accengage module for migration)
-public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
+public final class AirshipPrivacyManager: @unchecked Sendable {
 
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
 
@@ -81,8 +81,6 @@ public final class AirshipPrivacyManager: NSObject, @unchecked Sendable {
         self.config = config
         self.defaultEnabledFeatures = defaultEnabledFeatures
         self.notificationCenter = notificationCenter
-
-        super.init()
 
         if config.airshipConfig.resetEnabledFeatures {
             self.dataStore.removeObject(forKey:  AirshipPrivacyManager.enabledFeaturesKey)
@@ -343,7 +341,7 @@ extension AirshipFeature: Codable {
 public extension AirshipNotifications {
 
     /// NSNotification info when enabled feature changed on PrivacyManager.
-    final class PrivacyManagerUpdated: NSObject {
+    final class PrivacyManagerUpdated {
 
         /// NSNotification name.
         public static let name = NSNotification.Name(
