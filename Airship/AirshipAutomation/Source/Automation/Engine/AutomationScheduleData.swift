@@ -9,7 +9,10 @@ import Foundation
 struct AutomationScheduleData: Sendable, Equatable, CustomDebugStringConvertible {
     var schedule: AutomationSchedule
     var scheduleState: AutomationScheduleState
+
+    /// The last time the `schedule` field was updated.
     var lastScheduleModifiedDate: Date
+
     var scheduleStateChangeDate: Date
     var executionCount: Int
     var triggerInfo: TriggeringInfo?
@@ -48,7 +51,6 @@ extension AutomationScheduleData {
         guard scheduleState != state else { return }
         self.scheduleState = state
         self.scheduleStateChangeDate = date
-        self.lastScheduleModifiedDate = date
     }
 
     mutating func finished(date: Date) {

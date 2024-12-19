@@ -161,10 +161,14 @@ public final class FeatureFlagManager: Sendable {
                     throw FeatureFlagError.outOfDate
                 case .stale:
                     throw FeatureFlagError.staleData
+                @unknown default:
+                    throw AirshipErrors.error("Unexpected state")
                 }
             } else {
                 return info
             }
+        @unknown default:
+            throw AirshipErrors.error("Unexpected state")
         }
     }
 
