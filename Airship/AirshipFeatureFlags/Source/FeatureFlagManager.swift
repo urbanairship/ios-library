@@ -161,18 +161,14 @@ public final class FeatureFlagManager: Sendable {
                     throw FeatureFlagError.outOfDate
                 case .stale:
                     throw FeatureFlagError.staleData
-#if canImport(AirshipCore)
                 @unknown default:
-                    throw FeatureFlagError.staleData
-#endif
+                    throw AirshipErrors.error("Unexpected state")
                 }
             } else {
                 return info
             }
-#if canImport(AirshipCore)
         @unknown default:
-            throw FeatureFlagError.staleData
-#endif
+            throw AirshipErrors.error("Unexpected state")
         }
     }
 

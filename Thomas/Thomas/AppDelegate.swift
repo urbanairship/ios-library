@@ -15,29 +15,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
 
-        // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-        // or set runtime properties here.
-        var config = AirshipConfig.default()
-        config.isWebViewInspectionEnabled = true
-        
-        // Set log level for debugging config loading (optional)
-        // It will be set to the value in the loaded config upon takeOff
-        config.logLevel = .verbose
-
-        if config.validate() != true {
+        do {
+            // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
+            // or set runtime properties here.
+            var config = try AirshipConfig.default()
+            config.isWebViewInspectionEnabled = true
+            try Airship.takeOff(config, launchOptions: launchOptions)
+        } catch {
             showInvalidConfigAlert()
             return true
         }
 
-        // You can then programmatically override the plist values:
-        // config.developmentAppKey = "YourKey"
-        // etc.
-
-        // Call takeOff (which creates the UAirship singleton)
-        Airship.takeOff(config, launchOptions: launchOptions)
-
-        // Print out the application configuration for debugging (optional)
-        print("Config:\n \(config)")
 
         CustomViewExampleHelper.registerWeatherView()
         CustomViewExampleHelper.registerMapRouteView()

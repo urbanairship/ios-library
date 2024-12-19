@@ -472,6 +472,7 @@
 		6E664BE526C5817B00A2C8E5 /* TestContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE426C5817B00A2C8E5 /* TestContact.swift */; };
 		6E664BE726C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE626C5B21600A2C8E5 /* ModifyAttributesAction.swift */; };
 		6E664BEA26C6DB7600A2C8E5 /* AirshipUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E664BE926C6DB7500A2C8E5 /* AirshipUtils.swift */; };
+		6E66BA7F2D14B61A0083A9FD /* WrappingLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66BA7E2D14B61A0083A9FD /* WrappingLayout.swift */; };
 		6E68028B2B850DDE00F4591F /* ApplicationMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1512683DBC300A2CBD0 /* ApplicationMetrics.swift */; };
 		6E68028C2B85149900F4591F /* ApplicationMetricsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6529DF4BB5003F7A8D /* ApplicationMetricsTest.swift */; };
 		6E68028E2B852F6A00F4591F /* AutomationScheduleDataTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68028D2B852F6A00F4591F /* AutomationScheduleDataTest.swift */; };
@@ -1760,6 +1761,7 @@
 		6E664BE426C5817B00A2C8E5 /* TestContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestContact.swift; sourceTree = "<group>"; };
 		6E664BE626C5B21600A2C8E5 /* ModifyAttributesAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifyAttributesAction.swift; sourceTree = "<group>"; };
 		6E664BE926C6DB7500A2C8E5 /* AirshipUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipUtils.swift; sourceTree = "<group>"; };
+		6E66BA7E2D14B61A0083A9FD /* WrappingLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingLayout.swift; sourceTree = "<group>"; };
 		6E68028D2B852F6A00F4591F /* AutomationScheduleDataTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduleDataTest.swift; sourceTree = "<group>"; };
 		6E68028F2B8671E700F4591F /* InAppAutomationComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppAutomationComponent.swift; sourceTree = "<group>"; };
 		6E6802912B86732200F4591F /* PreferenceCenterComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterComponent.swift; sourceTree = "<group>"; };
@@ -3035,6 +3037,7 @@
 		6E1C9C42271F744E009EF9EF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6E66BA7E2D14B61A0083A9FD /* WrappingLayout.swift */,
 				6EF1E9292CD00698005EAA07 /* PagerSwipeDirection.swift */,
 				6EF1E9252CD005E2005EAA07 /* PagerUtils.swift */,
 				6EFD6D86272A53FB005B26F1 /* PagerController.swift */,
@@ -5496,6 +5499,7 @@
 				6E698DF226790AC300654DB2 /* AirshipPrivacyManager.swift in Sources */,
 				6E96ED16294197D90053CC91 /* EventUploadTuningInfo.swift in Sources */,
 				6E95292C268B98A200398B54 /* MediaEventTemplate.swift in Sources */,
+				6E66BA7F2D14B61A0083A9FD /* WrappingLayout.swift in Sources */,
 				A6A5530A26D548AF002B20F6 /* NativeBridge.swift in Sources */,
 				6E91E45828EF423400B6F25E /* AirshipWorkResult.swift in Sources */,
 				6EED68192CE272790087CDCB /* ThomasAutomatedAccessibilityAction.swift in Sources */,

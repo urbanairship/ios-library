@@ -1,10 +1,23 @@
 
 # iOS Changelog
 
+## Version 18.14.0 December 19, 2024
+Minor release that fixes issues with Banner In-App Automations, reduces power usage with In-App Automations & Scenes, and updates how Feature Flags are resolved. 
+
+### Changes
+- Added `resultCache` to `FeatureFlagManager`. This cache is managed by the app and can be optionally used when resolving a flag as a fallback if the flag fails to resolve or if
+the flag rule set does not exist.
+- FeatureFlag resolution will now resolve a rule set even if the listing is out of date.
+- Fixed issue with In-App Automation banners constraints, causing the banner to sometimes steal focus from the underlying app screen or not fully display.
+- Fixed issue with Surveys that require multi choice or single choice questions not blocking submission.
+- Reduced the CPU overhead with In-App Automations & Scene execution to reduce overall power usage.
+
+
 ## Version 18.13.0 December 5, 2024
 Minor release that improves a11y support, updated Preference Center UI, and fixes several minor and improvements in Scenes and in-app message banners.
 
 ### Changes
+- Added support for email collection in Scenes
 - Updated Preference Center UI to use standard padding, titles, and colors to improve the look and feel across different platforms.
 - Added support to mark a label as a heading in Scenes.
 - Added support for auto-height modals in Scenes.
