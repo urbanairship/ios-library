@@ -4,14 +4,6 @@ import Foundation
 import SwiftUI
 
 extension View {
-    @ViewBuilder
-    func showing(isShowing: Bool) -> some View {
-        if isShowing {
-            self
-        } else {
-            EmptyView()
-        }
-    }
 
     @ViewBuilder
     func addBackground(color: Color) -> some View {

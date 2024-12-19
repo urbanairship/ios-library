@@ -13,7 +13,7 @@ import AirshipCore
 class InAppMessageEnvironment: ObservableObject {
     private let delegate: InAppMessageViewDelegate
 
-    @Published var imageLoader: AirshipImageLoader?
+    let imageLoader: AirshipImageLoader
     let nativeBridgeExtension: NativeBridgeExtensionDelegate?
     let actionRunner: InAppActionRunner?
 
@@ -26,11 +26,7 @@ class InAppMessageEnvironment: ObservableObject {
     ) {
         self.delegate = delegate
 
-        self.imageLoader = if let provider = extensions?.imageProvider {
-            AirshipImageLoader(imageProvider: provider)
-        } else {
-            nil
-        }
+        self.imageLoader = AirshipImageLoader(imageProvider: extensions?.imageProvider)
 
         self.nativeBridgeExtension = extensions?.nativeBridgeExtension
         self.actionRunner = extensions?.actionRunner

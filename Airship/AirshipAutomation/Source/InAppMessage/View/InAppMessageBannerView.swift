@@ -56,8 +56,7 @@ struct InAppMessageBannerView: View {
         if let media = displayContent.media {
             MediaView(
                 mediaInfo: media,
-                mediaTheme: self.theme.media,
-                imageLoader: environment.imageLoader
+                mediaTheme: self.theme.media
             )
             .padding(.horizontal, -theme.media.padding.leading)
             .frame(
@@ -184,7 +183,6 @@ struct InAppMessageBannerView: View {
 
     private var banner: some View {
         messageBody
-            .showing(isShowing: isShowing)
             .frame(maxWidth: theme.maxWidth)
             .background(
                 (displayContent.backgroundColor?.color ?? Color.white)
@@ -209,6 +207,7 @@ struct InAppMessageBannerView: View {
                     return Color.airshipTappableClear
                 })
             )
+            .showing(isShowing: isShowing)
             .padding(theme.padding)
             .applyTransitioningPlacement(placement: displayContent.placement ?? .bottom)
             .offset(x: 0, y: swipeOffset)
@@ -302,6 +301,16 @@ fileprivate extension View {
             self.transformEffect(.identity)
         }
     }
+
+    @ViewBuilder
+    func showing(isShowing: Bool) -> some View {
+        if isShowing {
+            self.opacity(1)
+        } else {
+            self.hidden().opacity(0)
+        }
+    }
+
     @ViewBuilder
     func addNub(
         placement: InAppMessageDisplayContent.Banner.Placement,

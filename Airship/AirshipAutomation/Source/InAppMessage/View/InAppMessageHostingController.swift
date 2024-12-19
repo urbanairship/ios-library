@@ -48,6 +48,7 @@ class InAppMessageHostingController<Content> : UIHostingController<Content> wher
 
 #endif
 
+import Combine
 
 class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessageBannerView> {
 
@@ -60,12 +61,14 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     private let bannerConstraints: InAppMessageBannerConstraints
     private let placement: InAppMessageDisplayContent.Banner.Placement?
 
+    private var subscription: AnyCancellable?
     private weak var window: UIWindow?
 
     init(window: UIWindow,
          rootView: InAppMessageBannerView,
          placement: InAppMessageDisplayContent.Banner.Placement?,
-         bannerConstraints: InAppMessageBannerConstraints) {
+         bannerConstraints: InAppMessageBannerConstraints
+    ) {
         self.bannerConstraints = bannerConstraints
         self.placement = placement
         self.window = window
@@ -87,17 +90,20 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
                 UIAccessibility.post(notification: .screenChanged, argument: self)
             }
         }
+
+        subscription = bannerConstraints.$size.sink { [weak self] size in
+            self?.handleBannerConstraints()
+        }
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        handleBannerConstraints()
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        subscription?.cancel()
     }
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         if let window = self.window {
-
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
@@ -108,27 +114,22 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     }
 
     func handleBannerConstraints() {
-        if let heightConstraint = heightConstraint, let widthConstraint = widthConstraint, let centerXConstraint = centerXConstraint {
-            centerXConstraint.isActive = true
-            heightConstraint.isActive = true
-            widthConstraint.isActive = true
+        self.centerXConstraint?.isActive = true
+        self.heightConstraint?.isActive = true
+        self.widthConstraint?.isActive = true
+        self.widthConstraint?.constant = self.bannerConstraints.size.width
+
+        switch self.placement {
+        case .top:
+            self.topConstraint?.isActive = true
+            self.bottomConstraint?.isActive = false
+            self.heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.top
+
+        default:
+            self.topConstraint?.isActive = false
+            self.bottomConstraint?.isActive = true
+            self.heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.bottom
         }
-
-        if let topConstraint = topConstraint, let bottomConstraint = bottomConstraint {
-            switch self.placement {
-            case .top:
-                topConstraint.isActive = true
-                bottomConstraint.isActive = false
-                heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.top
-
-            default:
-                topConstraint.isActive = false
-                bottomConstraint.isActive = true
-                heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.bottom
-            }
-        }
-
-        widthConstraint?.constant = self.bannerConstraints.size.width
 
         self.view.layoutIfNeeded()
     }
