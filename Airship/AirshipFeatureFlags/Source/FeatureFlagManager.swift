@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import Combine
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -18,7 +17,6 @@ public enum FeatureFlagError: Error, Equatable {
 
 enum FeatureFlagEvaluationError: Error, Equatable {
     case outOfDate
-    case staleNotAllowed
     case connectionError(errorMessage: String)
 }
 
@@ -37,6 +35,10 @@ public final class FeatureFlagManager: Sendable {
     private let deferredResolver: any FeatureFlagDeferredResolverProtocol
     private let privacyManager: AirshipPrivacyManager
 
+    /// Feature flag result cache. This can be used to return a cached result for `flag(name:useResultCache:)`
+    /// if the flag fails to resolve or it does not exist.
+    public let resultCache: FeatureFlagResultCache
+
     private var enabled: Bool {
         return self.privacyManager.isEnabled(.featureFlags)
     }
@@ -48,7 +50,8 @@ public final class FeatureFlagManager: Sendable {
         audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: any FeatureFlagDeferredResolverProtocol,
-        privacyManager: AirshipPrivacyManager
+        privacyManager: AirshipPrivacyManager,
+        resultCache: FeatureFlagResultCache
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
@@ -56,6 +59,7 @@ public final class FeatureFlagManager: Sendable {
         self.deviceInfoProviderFactory = deviceInfoProviderFactory
         self.deferredResolver = deferredResolver
         self.privacyManager = privacyManager
+        self.resultCache = resultCache
     }
 
     /// Tracks a feature flag interaction event.
@@ -68,83 +72,118 @@ public final class FeatureFlagManager: Sendable {
         analytics.trackInteraction(flag: flag)
     }
 
+
     /// Gets and evaluates  a feature flag
-    /// - Parameter name: The flag name
+    /// - Parameters
+    ///     - name: The flag name
+    ///     - useResultCache: `true` to use the `FeatureFlagResultCache` if the flag fails to resolve or if the resolved flag does not exist,`false` to ignore the result cache.
     /// - Returns: The feature flag.
-    /// - Throws: Throws `FeatureFlagError`
-    public func flag(name: String) async throws -> FeatureFlag {
+    /// - Throws: Throws `FeatureFlagError` if the flag fails to resolve.
+    public func flag(name: String, useResultCache: Bool = true) async throws -> FeatureFlag {
         guard self.enabled else {
             throw AirshipErrors.error("Feature flags disabled.")
         }
-        return try await flag(name: name, allowRefresh: true)
-    }
-
-    private func flag(name: String, allowRefresh: Bool) async throws -> FeatureFlag {
-        let remoteDataFeatureFlagInfo = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
-        let status = await self.remoteDataAccess.status
 
         do {
-            try self.ensureRemoteDataValid(
-                status: status,
-                remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
-            )
+            let flag = try await resolveFlag(name: name)
+            if !flag.exists, useResultCache {
+                if let fromCache = await resultCache.flag(name: name) {
+                    return fromCache
+                }
+            }
+            return flag
+        } catch {
+            guard
+                useResultCache,
+                let fromCache = await resultCache.flag(name: name)
+            else {
+                throw error
+            }
+            return fromCache
+        }
+    }
 
+
+    func resolveFlag(name: String) async throws -> FeatureFlag {
+        let remoteDataFeatureFlagInfo = try await remoteDataFeatureFlagInfo(name: name)
+
+        do {
+            // Attempt to evaluate
             return try await self.evaluate(
                 remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
             )
         } catch {
-            switch (error) {
-            case FeatureFlagEvaluationError.connectionError(let errorMessage):
-                throw FeatureFlagError.connectionError(errorMessage: errorMessage)
-            case FeatureFlagEvaluationError.outOfDate:
-                await self.remoteDataAccess.notifyOutdated(
-                    remoteDateInfo: remoteDataFeatureFlagInfo.remoteDataInfo
+            // If it's not an outOfDate evaluation error, throw the error
+            guard case FeatureFlagEvaluationError.outOfDate = error else {
+                throw mapError(error)
+            }
+
+            // Notify out of date
+            await self.remoteDataAccess.notifyOutdated(
+                remoteDateInfo: remoteDataFeatureFlagInfo.remoteDataInfo
+            )
+
+            // Best effort refresh again
+            await remoteDataAccess.bestEffortRefresh()
+
+            // Only continue if we actually have updated the status
+            guard await remoteDataAccess.status == .upToDate else {
+                throw mapError(error)
+            }
+
+            // Try one more time
+            do {
+                return try await self.evaluate(
+                    remoteDataFeatureFlagInfo: remoteDataFeatureFlagInfo
                 )
-
-                if (allowRefresh) {
-                    await self.remoteDataAccess.waitForRefresh()
-                    return try await self.flag(name: name, allowRefresh: false)
-                }
-                throw FeatureFlagError.outOfDate
-
-            case FeatureFlagEvaluationError.staleNotAllowed:
-                if (allowRefresh) {
-                    await self.remoteDataAccess.waitForRefresh()
-                    return try await self.flag(name: name, allowRefresh: false)
-                }
-                throw FeatureFlagError.staleData
-            default:
-                AirshipLogger.error("Unexpected error \(error)")
-                throw FeatureFlagError.failedToFetchData
+            } catch {
+                throw mapError(error)
             }
         }
     }
 
-    private func ensureRemoteDataValid(
-        status: RemoteDataSourceStatus,
-        remoteDataFeatureFlagInfo: RemoteDataFeatureFlagInfo
-    ) throws {
-        switch(status) {
+    private func remoteDataFeatureFlagInfo(
+        name: String
+    ) async throws -> RemoteDataFeatureFlagInfo {
+
+        switch(await remoteDataAccess.status) {
         case .upToDate:
-            return
-        case .stale:
-            guard !remoteDataFeatureFlagInfo.flagInfos.isEmpty else {
-                throw FeatureFlagEvaluationError.outOfDate
+            return await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+        case .stale, .outOfDate:
+            let info = await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+            if info.disallowStale || info.flagInfos.isEmpty {
+                await self.remoteDataAccess.bestEffortRefresh()
+                let updatedStatus = await self.remoteDataAccess.status
+                switch(updatedStatus) {
+                case .upToDate:
+                    return await self.remoteDataAccess.remoteDataFlagInfo(name: name)
+                case .outOfDate:
+                    throw FeatureFlagError.outOfDate
+                case .stale:
+                    throw FeatureFlagError.staleData
+#if canImport(AirshipCore)
+                @unknown default:
+                    throw FeatureFlagError.staleData
+#endif
+                }
+            } else {
+                return info
             }
+#if canImport(AirshipCore)
+        @unknown default:
+            throw FeatureFlagError.staleData
+#endif
+        }
+    }
 
-            let disallowStale = remoteDataFeatureFlagInfo.flagInfos.first { flagInfo in
-                flagInfo.evaluationOptions?.disallowStaleValue == true
-            }
-
-            guard disallowStale == nil else {
-                throw FeatureFlagEvaluationError.staleNotAllowed
-            }
-
-        case .outOfDate:
-            throw FeatureFlagEvaluationError.outOfDate
-        #if canImport(AirshipCore)
-        default: break
-        #endif
+    private func mapError(_ error: any Error) -> any Error {
+        return switch (error) {
+        case FeatureFlagEvaluationError.connectionError(let errorMessage):
+            FeatureFlagError.connectionError(errorMessage: errorMessage)
+        case FeatureFlagEvaluationError.outOfDate:
+            FeatureFlagError.outOfDate
+        default:
+            FeatureFlagError.failedToFetchData
         }
     }
 
@@ -154,7 +193,6 @@ public final class FeatureFlagManager: Sendable {
         let name = remoteDataFeatureFlagInfo.name
         let flagInfos = remoteDataFeatureFlagInfo.flagInfos
         let deviceInfoProvider = deviceInfoProviderFactory()
-
 
         for (index, flagInfo) in flagInfos.enumerated() {
             let isLast = index == (flagInfos.count - 1)
@@ -194,11 +232,11 @@ public final class FeatureFlagManager: Sendable {
         return FeatureFlag.makeNotFound(name: name)
     }
     
-    private func flag(_ flag: FeatureFlag, 
-                      applyingControlFrom info: FeatureFlagInfo,
-                      deviceInfoProvider: any AudienceDeviceInfoProvider
+    private func flag(
+        _ flag: FeatureFlag,
+        applyingControlFrom info: FeatureFlagInfo,
+        deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> FeatureFlag {
-        
         guard
             flag.isEligible,
             let control = info.controlOptins
@@ -366,8 +404,6 @@ public final class FeatureFlagManager: Sendable {
             return nil
         }
     }
-
-
 }
 
 

@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 
-
 struct AirshipToggle: View {
     let info: ThomasViewInfo.Toggle
     let constraints: ViewConstraints

@@ -12,9 +12,11 @@ import AirshipCore
 #endif
 
 struct MediaView: View {
+    @EnvironmentObject
+    var environment: InAppMessageEnvironment
+
     var mediaInfo: InAppMessageMediaInfo
     var mediaTheme: InAppMessageTheme.Media
-    var imageLoader: AirshipImageLoader? /// Ideally this would be an associated value on the media info enum
 
     var body: some View {
         switch mediaInfo.type {
@@ -31,21 +33,20 @@ struct MediaView: View {
 
     @ViewBuilder
     private var mediaImageView: some View {
-        if let imageLoader = imageLoader {
-            AirshipAsyncImage(
-                url: mediaInfo.url,
-                imageLoader: imageLoader,
-                image: { image, _ in
-                    image
-                        .resizable()
-                        .scaledToFit()
-                },
-                placeholder: {
-                    ProgressView()
-                }
-            )
-            .padding(mediaTheme.padding)
-        }
+        AirshipAsyncImage(
+            url: mediaInfo.url,
+            imageLoader: environment.imageLoader,
+            image: { image, imageSize in
+                 image
+                    .resizable()
+                    .scaledToFit()
+            },
+            placeholder: {
+                ProgressView()
+            }
+        )
+        .padding(mediaTheme.padding)
+
     }
 
 #if canImport(WebKit)

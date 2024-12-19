@@ -1,6 +1,17 @@
 
 # iOS Changelog
 
+## Version 18.13.0 December 5, 2024
+Minor release that improves a11y support, updated Preference Center UI, and fixes several minor and improvements in Scenes and in-app message banners.
+
+### Changes
+- Updated Preference Center UI to use standard padding, titles, and colors to improve the look and feel across different platforms.
+- Added support to mark a label as a heading in Scenes.
+- Added support for auto-height modals in Scenes.
+- Fixed banner duration not dismissing the banner.
+- Fixed dismissal issues for banners with a height less than 100pts.
+- Fixed padding issue in bottom-placed in-app banners.
+
 ## Version 18.12.2 November 26, 2024
 Patch release that resolves a minor memory-related bug and adds more useful logging around Feature Flag evaluation.
 

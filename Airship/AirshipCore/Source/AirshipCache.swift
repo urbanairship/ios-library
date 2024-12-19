@@ -1,6 +1,8 @@
 import CoreData
 
 public protocol AirshipCache: Actor {
+    func deleteCachedValue(key: String) async
+
     func getCachedValue<T: Codable & Sendable>(key: String) async -> T?
     func getCachedValue<T: Codable & Sendable>(key: String, decoder: JSONDecoder) async -> T?
     func setCachedValue<T: Codable & Sendable>(_ value: T?, key: String, ttl: TimeInterval) async
@@ -115,6 +117,19 @@ actor CoreDataAirshipCache: AirshipCache {
     func setCachedValue<T>(_ value: T?, key: String, ttl: TimeInterval) async where T : Decodable, T : Encodable, T : Sendable {
         return await setCachedValue(value, key: key, ttl: ttl, encoder: AirshipJSON.defaultEncoder)
     }
+
+    func deleteCachedValue(key: String) async {
+        await self.cleanUpTask.value
+
+        do {
+            try await requireCoreData().perform { context in
+                try context.deleteCacheEntity(key: key)
+            }
+        } catch {
+            AirshipLogger.error("Failed to delete cached value for key \(key) \(error)")
+        }
+    }
+
 
     func setCachedValue<T>(
         _ value: T?, key:

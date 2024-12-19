@@ -427,8 +427,7 @@ final class MessageCenterListTest: XCTestCase {
         }
 
         var refreshes = AsyncStream<Bool> { continuation in
-
-            var responses = AirshipAtomicValue([[message], []])
+            let responses = AirshipAtomicValue([[message], []])
             self.client.onRetrieve = { _, _, _ in
                 defer {
                     continuation.yield(true)

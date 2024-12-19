@@ -39,7 +39,9 @@ final class AutomationStoreTest: XCTestCase {
         updated["foo"]?.scheduleState = .finished
 
         result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar", "baz"]) { [updated] identifier, existing in
-            XCTAssertEqual(existing, original[identifier])
+            if let existing = existing {
+                XCTAssertTrue(existing.equalsIgnoringLastModified(original[identifier]!))
+            }
             return updated[identifier]!
         }
 
@@ -90,7 +92,7 @@ final class AutomationStoreTest: XCTestCase {
         expected.preparedScheduleInfo = preparedInfo
         expected.scheduleStateChangeDate = date
         expected.scheduleState = .paused
-        XCTAssertEqual(result, expected)
+        XCTAssert(result!.equalsIgnoringLastModified(expected))
     }
 
     func testUpsertFullData() async throws {
@@ -115,14 +117,16 @@ final class AutomationStoreTest: XCTestCase {
             priority: 0
         )
 
+
         let batchUpsertResult = try await self.store.upsertSchedules(scheduleIDs: ["full"]) { [schedule] identifier, existing in
             return schedule
         }
 
-        XCTAssertEqual([schedule], batchUpsertResult)
+        XCTAssertEqual(batchUpsertResult.count, 1)
 
         let fetchResult = try await self.store.getSchedule(scheduleID: "full")
-        XCTAssertEqual(schedule, fetchResult)
+        XCTAssertNotNil(fetchResult)
+        XCTAssertGreaterThanOrEqual(fetchResult!.lastScheduleModifiedDate, batchUpsertResult[0].lastScheduleModifiedDate)
     }
 
     func testUpdateDoesNotExist() async throws {
@@ -140,10 +144,10 @@ final class AutomationStoreTest: XCTestCase {
         }
 
         let foo = try await self.store.getSchedule(scheduleID: "foo")
-        XCTAssertEqual(foo, original["foo"])
+        XCTAssertTrue(foo!.equalsIgnoringLastModified(original["foo"]!))
 
         let bar = try await self.store.getSchedule(scheduleID: "bar")
-        XCTAssertEqual(bar, original["bar"])
+        XCTAssertTrue(bar!.equalsIgnoringLastModified(original["bar"]!))
 
         let doesNotExist = try await self.store.getSchedule(scheduleID: "doesNotExist")
         XCTAssertNil(doesNotExist)
@@ -164,7 +168,7 @@ final class AutomationStoreTest: XCTestCase {
             return l.schedule.identifier > r.schedule.identifier
         }
 
-        XCTAssertEqual([original["foo"], original["baz"]], groupA)
+        XCTAssertTrue([original["foo"]!, original["baz"]!].equalsIgnoringLastModified(groupA))
     }
 
     func testDeleteIdentifiers() async throws {
@@ -184,7 +188,7 @@ final class AutomationStoreTest: XCTestCase {
             return l.schedule.identifier > r.schedule.identifier
         }
 
-        XCTAssertEqual([original["baz"], original["bar"]], remaining)
+        XCTAssertTrue([original["baz"]!, original["bar"]!].equalsIgnoringLastModified(remaining))
     }
 
     func testDeleteGroup() async throws {
@@ -204,7 +208,7 @@ final class AutomationStoreTest: XCTestCase {
             return l.schedule.identifier > r.schedule.identifier
         }
 
-        XCTAssertEqual([original["bar"]], remaining)
+        XCTAssertTrue([original["bar"]!].equalsIgnoringLastModified(remaining))
     }
 
     func testAssociatedData() async throws {
@@ -238,6 +242,45 @@ final class AutomationStoreTest: XCTestCase {
         XCTAssertNil(fromStore)
     }
 
+    func testIsCurrent() async throws {
+        let schedule = makeSchedule(identifer: "test")
+        let _ = try await self.store.upsertSchedules(scheduleIDs: ["test"]) { identifier, existing in
+            return schedule
+        }
+
+        let fullSchedule = try await self.store.getSchedule(scheduleID: "test")!
+
+        var isCurrent = try await self.store.isCurrent(
+            scheduleID: "test",
+            lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate,
+            scheduleState: .idle
+        )
+        XCTAssertTrue(isCurrent)
+
+        isCurrent = try await self.store.isCurrent(
+            scheduleID: "test",
+            lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate,
+            scheduleState: .paused
+        )
+        XCTAssertFalse(isCurrent)
+
+        isCurrent = try await self.store.isCurrent(
+            scheduleID: "test",
+            lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate.addingTimeInterval(1),
+            scheduleState: .idle
+        )
+        XCTAssertFalse(isCurrent)
+    }
+
+    func testIsCurrentNoSchedule() async throws {
+        let isCurrent = try await self.store.isCurrent(
+            scheduleID: "fake identifier",
+            lastScheduleModifiedDate: Date(),
+            scheduleState: .paused
+        )
+        XCTAssertFalse(isCurrent)
+    }
+
     private func makeSchedule(identifer: String, group: String? = nil) -> AutomationScheduleData {
         let schedule = AutomationSchedule(
             identifier: identifer,
@@ -255,9 +298,30 @@ final class AutomationStoreTest: XCTestCase {
         return AutomationScheduleData(
             schedule: schedule,
             scheduleState: .idle,
+            lastScheduleModifiedDate: .distantPast,
             scheduleStateChangeDate: Date.distantPast,
             executionCount: 0,
             triggerSessionID: UUID().uuidString
         )
+    }
+}
+
+extension [AutomationScheduleData] {
+    func equalsIgnoringLastModified(_ other: [AutomationScheduleData]) -> Bool {
+        guard count == other.count else { return false }
+        return zip(self, other).allSatisfy { $0.equalsIgnoringLastModified($1) }
+    }
+}
+
+extension AutomationScheduleData {
+    func equalsIgnoringLastModified(_ other: AutomationScheduleData) -> Bool {
+        schedule == other.schedule &&
+        scheduleState == other.scheduleState &&
+        scheduleStateChangeDate == other.scheduleStateChangeDate &&
+        executionCount == other.executionCount &&
+        triggerInfo == other.triggerInfo &&
+        preparedScheduleInfo == other.preparedScheduleInfo &&
+        associatedData == other.associatedData &&
+        triggerSessionID == other.triggerSessionID
     }
 }

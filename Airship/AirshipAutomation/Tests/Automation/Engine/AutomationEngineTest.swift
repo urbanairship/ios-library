@@ -158,12 +158,22 @@ final class AutomationEngineTest: XCTestCase {
     func testUpsertSchedules() async throws {
         var schedule = try await self.engine.getSchedule(identifier: "test")
         XCTAssertNil(schedule)
+
+        var storedSchedule = try await self.automationStore.getSchedule(scheduleID: "test")
+        XCTAssertNil(storedSchedule)
+
+        let beforeDate = AirshipDate().now
+
         try await self.engine.upsertSchedules([AutomationSchedule(identifier: "test", triggers: [], data: .inAppMessage(
             InAppMessage(
                 name: "test",
                 displayContent: .custom(.string("test"))
             )))])
         schedule = try await self.engine.getSchedule(identifier: "test")
+
+        storedSchedule = try await self.automationStore.getSchedule(scheduleID: "test")
+
+        XCTAssertGreaterThan(storedSchedule!.lastScheduleModifiedDate, beforeDate)
         XCTAssertNotNil(schedule)
     }
     

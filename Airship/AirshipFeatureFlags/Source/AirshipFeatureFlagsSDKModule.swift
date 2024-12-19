@@ -35,7 +35,8 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
                 cache: cache,
                 deferredResolver: deferredResolver
             ), 
-            privacyManager: privacyManager
+            privacyManager: privacyManager,
+            resultCache: FeatureFlagResultCache(cache: cache)
         )
 
         let component = FeatureFlagComponent(featureFlagManager: manager)

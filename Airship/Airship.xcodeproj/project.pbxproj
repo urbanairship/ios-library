@@ -722,6 +722,10 @@
 		6ED735E226CAE2D7003B0A7D /* TestChannelRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735E126CAE2D7003B0A7D /* TestChannelRegistrar.swift */; };
 		6ED735E426CAE8AA003B0A7D /* TestChannelAudienceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735E326CAE8AA003B0A7D /* TestChannelAudienceManager.swift */; };
 		6ED735E626CAEABC003B0A7D /* TestLocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735E526CAEABC003B0A7D /* TestLocaleManager.swift */; };
+		6ED7BE602D13D9E300B6A124 /* TestCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BE5F2D13D9E300B6A124 /* TestCache.swift */; };
+		6ED7BE612D13D9E300B6A124 /* TestCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BE5F2D13D9E300B6A124 /* TestCache.swift */; };
+		6ED7BE632D13D9FE00B6A124 /* FeatureFlagResultCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BE622D13D9FE00B6A124 /* FeatureFlagResultCache.swift */; };
+		6ED7BE652D13DA0400B6A124 /* FeatureFlagResultCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED7BE642D13DA0400B6A124 /* FeatureFlagResultCacheTest.swift */; };
 		6ED80793273CA0C800D1F455 /* EnvironmentValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */; };
 		6ED8079A273DA56000D1F455 /* ThomasViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED80799273DA56000D1F455 /* ThomasViewController.swift */; };
 		6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
@@ -1995,6 +1999,10 @@
 		6ED735E126CAE2D7003B0A7D /* TestChannelRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelRegistrar.swift; sourceTree = "<group>"; };
 		6ED735E326CAE8AA003B0A7D /* TestChannelAudienceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelAudienceManager.swift; sourceTree = "<group>"; };
 		6ED735E526CAEABC003B0A7D /* TestLocaleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestLocaleManager.swift; sourceTree = "<group>"; };
+		6ED7BE5E2D13D9B600B6A124 /* AirshipAutomation 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AirshipAutomation 3.xcdatamodel"; sourceTree = "<group>"; };
+		6ED7BE5F2D13D9E300B6A124 /* TestCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCache.swift; sourceTree = "<group>"; };
+		6ED7BE622D13D9FE00B6A124 /* FeatureFlagResultCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagResultCache.swift; sourceTree = "<group>"; };
+		6ED7BE642D13DA0400B6A124 /* FeatureFlagResultCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagResultCacheTest.swift; sourceTree = "<group>"; };
 		6ED80792273CA0C800D1F455 /* EnvironmentValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentValues.swift; sourceTree = "<group>"; };
 		6ED80799273DA56000D1F455 /* ThomasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewController.swift; sourceTree = "<group>"; };
 		6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayout.swift; sourceTree = "<group>"; };
@@ -4290,6 +4298,7 @@
 		A61F3A722A5D9D2400EE94CC /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6ED7BE642D13DA0400B6A124 /* FeatureFlagResultCacheTest.swift */,
 				A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */,
 				6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */,
 				6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */,
@@ -4312,6 +4321,7 @@
 		A620587F2A5841FA0041FBF9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6ED7BE622D13D9FE00B6A124 /* FeatureFlagResultCache.swift */,
 				A620586B2A5841330041FBF9 /* AirshipFeatureFlags.h */,
 				A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */,
 				6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */,
@@ -4475,6 +4485,7 @@
 		CC04F2001DCAB28300B4842D /* TestUtils */ = {
 			isa = PBXGroup;
 			children = (
+				6ED7BE5F2D13D9E300B6A124 /* TestCache.swift */,
 				6E9C2BCF2D023216000089A9 /* RuntimeConfig.swift */,
 				6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */,
 				6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */,
@@ -6154,6 +6165,7 @@
 				6E2F5A742A60833700CABD3D /* FeatureFlagManager.swift in Sources */,
 				6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */,
 				6E4325F62B7B2F5800A9B000 /* FeatureFlagAnalytics.swift in Sources */,
+				6ED7BE632D13D9FE00B6A124 /* FeatureFlagResultCache.swift in Sources */,
 				6E2F5AB12A67434B00CABD3D /* FeatureFlag.swift in Sources */,
 				A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */,
 				6E6BD2762AF1C1D800B9DFC9 /* DeferredFlagResolver.swift in Sources */,
@@ -6176,8 +6188,10 @@
 				6E938DBC2AC39A0500F691D9 /* FeatureFlagAnalyticsTest.swift in Sources */,
 				6E8BDEFE2A67938200F816D9 /* FeatureFlagInfoTest.swift in Sources */,
 				6E2F5AB52A67599400CABD3D /* TestRemoteData.swift in Sources */,
+				6ED7BE602D13D9E300B6A124 /* TestCache.swift in Sources */,
 				6E2F5AB22A67589400CABD3D /* TestDate.swift in Sources */,
 				6E2F5AB82A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */,
+				6ED7BE652D13DA0400B6A124 /* FeatureFlagResultCacheTest.swift in Sources */,
 				6E2F5AB32A6758ED00CABD3D /* TestNetworkMonitor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6270,6 +6284,7 @@
 				6EFAFB8429561F23008AD187 /* ModifyAttributesActionTest.swift in Sources */,
 				6018AF572B29C20A008E528B /* SearchEventTemplateTest.swift in Sources */,
 				60A5CC0C2B29AE890017EDB2 /* ProximityRegionTest.swift in Sources */,
+				6ED7BE612D13D9E300B6A124 /* TestCache.swift in Sources */,
 				6E92ECAC284EA7DB0038802D /* AnalyticsTest.swift in Sources */,
 				6ECB62842A36A7510095C85C /* DeepLinkActionTest.swift in Sources */,
 				6E87BE1B26E2C59D0005D20D /* TestAnalytics.swift in Sources */,
@@ -8045,10 +8060,11 @@
 		6E1CBE2A2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				6ED7BE5E2D13D9B600B6A124 /* AirshipAutomation 3.xcdatamodel */,
 				6E1CBE2B2BAA2AEA00519D9C /* AirshipAutomation 2.xcdatamodel */,
 				6E1CBE2C2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodel */,
 			);
-			currentVersion = 6E1CBE2B2BAA2AEA00519D9C /* AirshipAutomation 2.xcdatamodel */;
+			currentVersion = 6ED7BE5E2D13D9B600B6A124 /* AirshipAutomation 3.xcdatamodel */;
 			path = AirshipAutomation.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

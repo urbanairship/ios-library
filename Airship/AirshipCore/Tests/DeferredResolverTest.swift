@@ -143,8 +143,6 @@ final class DeferredResolverTest: XCTestCase {
         XCTAssertEqual(result, .retriableError(statusCode: statusCode))
     }
 
-
-
     func testResolveTimedOut() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -198,6 +196,36 @@ final class DeferredResolverTest: XCTestCase {
         }
 
         let result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
+            return data
+        }
+
+        XCTAssertEqual(result, .outOfDate)
+    }
+
+    func testResolveOutOfDateURL() async throws {
+        let request = DeferredRequest(
+            url: exampleURL,
+            channelID: "some channel ID",
+            locale: Locale(identifier: "de-DE"),
+            notificationOptIn: true
+        )
+
+        let body = "some body".data(using: .utf8)
+        self.client.onResolve = { _, _, _, _, _, _ in
+            return AirshipHTTPResponse(result: body, statusCode: 409, headers: [:])
+        }
+
+        var result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
+            return data
+        }
+        XCTAssertEqual(result, .outOfDate)
+
+        self.client.onResolve = { _, _, _, _, _, _ in
+            XCTFail()
+            throw AirshipErrors.error("Failed")
+        }
+
+        result = await resolver.resolve(request: request) { data in
             return data
         }
 

@@ -5,6 +5,7 @@
         <attribute name="executionCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="group" optional="YES" attributeType="String"/>
         <attribute name="identifier" attributeType="String"/>
+        <attribute name="lastScheduleModifiedDate" optional="YES" attributeType="Date" defaultDateTimeInterval="755651940" usesScalarValueType="NO"/>
         <attribute name="preparedScheduleInfo" optional="YES" attributeType="Binary"/>
         <attribute name="schedule" attributeType="Binary"/>
         <attribute name="scheduleState" attributeType="String"/>

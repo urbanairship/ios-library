@@ -137,6 +137,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         for identifier in identifiers {
             try await self.updateState(identifier: identifier) { data in
                 data.schedule.end = now
+                data.lastScheduleModifiedDate = now
                 data.finished(date: now)
             }
         }
@@ -157,6 +158,7 @@ actor AutomationEngine : AutomationEngineProtocol {
 
             var updated = try schedule.updateOrCreate(data: data, date: self.date.now)
             updated.updateState(date: date.now)
+            updated.lastScheduleModifiedDate = date.now
             return updated
         }
 
@@ -257,14 +259,14 @@ actor AutomationEngine : AutomationEngineProtocol {
             if data.scheduleState == .executing, let preparedInfo = data.preparedScheduleInfo {
                 let behavior = await self.executor.interrupted(schedule: data.schedule, preparedScheduleInfo: preparedInfo)
 
-                updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
+                updated = try await self.updateState(data: data) {  data in
                     data.executionInterrupted(date: now, retry: behavior == .retry)
                 }
                 if (updated?.scheduleState == .paused) {
                     handleInterval(updated?.schedule.interval ?? 0.0, scheduleID: data.schedule.identifier)
                 }
             } else {
-                updated = try await self.updateState(identifier: data.schedule.identifier) {  data in
+                updated = try await self.updateState(data: data) {  data in
                     data.prepareInterrupted(date: now)
                 }
             }
@@ -338,7 +340,7 @@ fileprivate extension AutomationEngine {
     private func startTaskToProcessTriggeredSchedule(scheduleID: String) async {
         AirshipLogger.trace("Starting task to process schedule \(scheduleID)")
 
-        // pause the current contex
+        // pause the current context
         await withUnsafeContinuation { continuation in
             Task {
                 // actor context
@@ -350,28 +352,6 @@ fileprivate extension AutomationEngine {
                     AirshipLogger.error("Failed to process triggered schedule \(scheduleID) error: \(error)")
                 }
             }
-        }
-    }
-
-    private func verifyTriggeredData(scheduleID: String) async throws {
-        guard
-            let data = try await self.store.getSchedule(scheduleID: scheduleID)
-        else {
-            AirshipLogger.trace("Aborting processing schedule \(scheduleID), no longer in database.")
-            return
-        }
-
-        guard
-            data.isInState([.triggered])
-        else {
-            AirshipLogger.trace("Aborting processing schedule \(data), no longer triggered.")
-            return
-        }
-
-        guard data.isActive(date: self.date.now) else {
-            AirshipLogger.trace("Aborting processing schedule \(data), no longer active.")
-            await self.preparer.cancelled(schedule: data.schedule)
-            return
         }
     }
 
@@ -451,7 +431,7 @@ fileprivate extension AutomationEngine {
         await waitForConditions(preparedData: preparedData)
 
         guard await checkStillValid(prepared: preparedData) else {
-            let updated = try await self.updateState(identifier: preparedData.scheduleData.schedule.identifier) { [date] data in
+            let updated = try await self.updateState(data: preparedData.scheduleData) { [date] data in
                 data.executionInvalidated(date: date.now)
             }
 
@@ -529,14 +509,18 @@ fileprivate extension AutomationEngine {
         self.pendingExecution[preparedData.scheduleID] = preparedData
     }
 
+
     private func checkStillValid(prepared: PreparedData) async -> Bool {
         // Make sure we are still up to date. Data might change due to a change
         // in the data, schedule was cancelled, or if a delay cancellation trigger
         // was fired.
         guard
-            let fromStore = try? await self.store.getSchedule(scheduleID: prepared.scheduleData.schedule.identifier),
-            fromStore.scheduleState == .prepared,
-            fromStore.schedule == prepared.scheduleData.schedule
+            let isCurrent = try? await self.store.isCurrent(
+                scheduleID: prepared.scheduleID,
+                lastScheduleModifiedDate: prepared.scheduleData.lastScheduleModifiedDate,
+                scheduleState: prepared.scheduleData.scheduleState
+            ),
+            isCurrent
         else {
             AirshipLogger.trace("Prepared schedule no longer up to date, no longer valid \(prepared.scheduleData)")
             return false
@@ -584,7 +568,7 @@ fileprivate extension AutomationEngine {
 
         switch prepareResult {
         case .prepared(let preparedSchedule):
-            let updated = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+            let updated = try await self.updateState(data: data) { [date] data in
                 data.prepared(info: preparedSchedule.info, date: date.now)
             }
 
@@ -607,12 +591,12 @@ fileprivate extension AutomationEngine {
             try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
             return nil
         case .skip:
-            _ = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+            _ = try await self.updateState(data: data) { [date] data in
                 data.prepareCancelled(date: date.now, penalize: false)
             }
             return nil
         case .penalize:
-            _ = try await self.updateState(identifier: data.schedule.identifier) { [date] data in
+            _ = try await self.updateState(data: data) { [date] data in
                 data.prepareCancelled(date: date.now, penalize: true)
             }
             return nil
@@ -623,7 +607,6 @@ fileprivate extension AutomationEngine {
     private func attemptExecution(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> Bool {
         AirshipLogger.trace("Starting to execute schedule \(data)")
 
-        let scheduleID = data.schedule.identifier
 
         let readyResult = self.checkReady(data: data, preparedSchedule: preparedSchedule)
         switch (readyResult) {
@@ -631,7 +614,7 @@ fileprivate extension AutomationEngine {
             break
 
         case .invalidate:
-            let updated = try await self.updateState(identifier: scheduleID) { [date] data in
+            let updated = try await self.updateState(data: data) { [date] data in
                 data.executionInvalidated(date: date.now)
             }
 
@@ -648,7 +631,7 @@ fileprivate extension AutomationEngine {
             return false
 
         case .skip:
-            try await self.updateState(identifier: scheduleID) { [date] data in
+            try await self.updateState(data: data) { [date] data in
                 data.executionSkipped(date: date.now)
             }
             await self.preparer.cancelled(schedule: data.schedule)
@@ -657,6 +640,7 @@ fileprivate extension AutomationEngine {
 
 
         let executeResult = try await self.execute(preparedSchedule: preparedSchedule)
+        let scheduleID = data.schedule.identifier
 
         switch (executeResult) {
         case .cancel:
@@ -724,13 +708,31 @@ fileprivate extension AutomationEngine {
         return result
     }
 
+    /// Same as updateState(identifier:block) but will try to skip parsing the schedule if the last modified time
+    /// for it is the same. Temp fix to reduce energy usage until we move star/end to the top level of the schedule
+    /// so we can mutate just the state without the full schedule.
+    @discardableResult
+    func updateState(
+        data: AutomationScheduleData,
+        block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
+    ) async throws -> AutomationScheduleData? {
+        let updated = try await self.store.updateSchedule(scheduleData: data, block:block)
+        if let updated  {
+            try await self.triggersProcessor.updateScheduleState(
+                scheduleID: updated.schedule.identifier,
+                state: updated.scheduleState
+            )
+        }
+        return updated
+    }
+
     @discardableResult
     func updateState(
         identifier: String,
         block: @escaping @Sendable (inout AutomationScheduleData) throws -> Void
     ) async throws -> AutomationScheduleData? {
         let updated = try await self.store.updateSchedule(scheduleID: identifier, block: block)
-        if let updated = updated {
+        if let updated  {
             try await self.triggersProcessor.updateScheduleState(
                 scheduleID: identifier,
                 state: updated.scheduleState
@@ -746,6 +748,7 @@ fileprivate extension AutomationSchedule {
             return AutomationScheduleData(
                 schedule: self,
                 scheduleState: .idle,
+                lastScheduleModifiedDate: date,
                 scheduleStateChangeDate: date,
                 executionCount: 0,
                 triggerSessionID: UUID().uuidString

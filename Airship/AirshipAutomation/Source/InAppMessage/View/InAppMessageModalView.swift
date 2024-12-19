@@ -42,7 +42,7 @@ struct InAppMessageModalView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: theme.media, imageLoader: environment.imageLoader)
+            MediaView(mediaInfo: media, mediaTheme: theme.media)
         }
     }
 

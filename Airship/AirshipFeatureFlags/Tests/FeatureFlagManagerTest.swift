@@ -19,7 +19,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let deferredResolver: TestFeatureFlagResolver = TestFeatureFlagResolver()
     private var privacyManager: AirshipPrivacyManager!
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
-    
+    private let resultCache: FeatureFlagResultCache = FeatureFlagResultCache(cache: TestCache())
+
     private var featureFlagManager: FeatureFlagManager!
 
     override func setUp() async throws {
@@ -37,13 +38,14 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             audienceChecker: self.audienceChecker,
             deviceInfoProviderFactory: { self.deviceInfoProvider },
             deferredResolver: self.deferredResolver,
-            privacyManager: self.privacyManager
+            privacyManager: self.privacyManager,
+            resultCache: self.resultCache
         )
     }
 
-    func testFlagAccessWaitsForRefreshIfOutOfDate() async throws {
+    func testFlagAccessWaitsForRefreshIfOutOfDateAndStaleNotAllowed() async throws {
         let expectation = XCTestExpectation()
-        self.remoteDataAccess.waitForRefreshBlock = {
+        self.remoteDataAccess.bestEffortRefresh = {
             expectation.fulfill()
         }
         self.remoteDataAccess.flagInfos = [
@@ -55,7 +57,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 reportingMetadata: .string("reporting"),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
-                )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
             )
         ]
         self.remoteDataAccess.status = .outOfDate
@@ -65,7 +68,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
     func testFlagAccessWaitsForRefreshIfFlagNotFound() async throws {
         let expectation = XCTestExpectation()
-        self.remoteDataAccess.waitForRefreshBlock = {
+        self.remoteDataAccess.bestEffortRefresh = {
             expectation.fulfill()
         }
         self.remoteDataAccess.status = .outOfDate
@@ -75,7 +78,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
     func testFlagAccessWaitsForRefreshIfStaleNotAllowed() async throws {
         let expectation = XCTestExpectation()
-        self.remoteDataAccess.waitForRefreshBlock = {
+        self.remoteDataAccess.bestEffortRefresh = {
             self.remoteDataAccess.status = .upToDate
             expectation.fulfill()
         }
@@ -888,8 +891,72 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
     }
 
+    func testStaleAllowedOutOfDate() async throws {
+        self.remoteDataAccess.status = .outOfDate
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(nil)
+                    )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: false)
+            )
+        ]
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+        XCTAssertEqual(
+            flag,
+            FeatureFlag(
+                name: "foo",
+                isEligible: true,
+                exists: true,
+                variables: nil,
+                reportingInfo: FeatureFlag.ReportingInfo(
+                    reportingMetadata: .string("reporting"),
+                    contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                    channelID: self.deviceInfoProvider.channelID
+                )
+            )
+        )
+    }
+
     func testOutOfDate() async throws {
         self.remoteDataAccess.status = .outOfDate
+
+        self.remoteDataAccess.flagInfos = [
+            FeatureFlagInfo(
+                id: "some ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(nil)
+                    )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: false)
+            ),
+            FeatureFlagInfo(
+                id: "some other ID",
+                created: Date(),
+                lastUpdated: Date(),
+                name: "foo",
+                reportingMetadata: .string("reporting"),
+                flagPayload: .staticPayload(
+                    FeatureFlagPayload.StaticInfo(
+                        variables: .fixed(nil)
+                    )
+                ),
+                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
+            )
+        ]
 
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
@@ -1313,6 +1380,69 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
     }
 
+    func testResultCacheFlagDoesNotExist() async throws {
+        let cachedValue = FeatureFlag(
+            name: "does-not-exist",
+            isEligible: true,
+            exists: false
+        )
+
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw AirshipErrors.error("other!")
+        }
+
+        await featureFlagManager.resultCache.cache(flag: cachedValue, ttl: .infinity)
+
+        let flag = try await featureFlagManager.flag(name: "does-not-exist")
+        let flagNoCache = try await featureFlagManager.flag(name: "does-not-exist", useResultCache: false)
+
+        XCTAssertEqual(flag, cachedValue)
+        XCTAssertNotEqual(flagNoCache, cachedValue)
+    }
+
+    func testResultCacheThrows() async throws {
+        let cachedValue = FeatureFlag(
+            name: "foo",
+            isEligible: true,
+            exists: true
+        )
+        await featureFlagManager.resultCache.cache(flag: cachedValue, ttl: .infinity)
+
+        let flagInfo = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting one"),
+            audienceSelector: DeviceAudienceSelector(newUser: true),
+            flagPayload: .deferredPayload(
+                FeatureFlagPayload.DeferredInfo(
+                    deferred: .init(url: URL(string: "some-url://")!)
+                )
+            )
+        )
+
+        self.remoteDataAccess.flagInfos = [
+            flagInfo
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            return true
+        }
+
+        await self.deferredResolver.setOnResolve { _, _ in
+            throw AirshipErrors.error("other!")
+        }
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+        do {
+            _ = try await featureFlagManager.flag(name: "foo", useResultCache: false)
+            XCTFail()
+        } catch {}
+
+        XCTAssertEqual(flag, cachedValue)
+    }
 }
 
 final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol, @unchecked Sendable {
@@ -1329,9 +1459,9 @@ final class TestFeatureFlagRemoteDataAccess: FeatureFlagRemoteDataAccessProtocol
         lastOutdatedRemoteInfo = remoteDataInfo;
     }
     
-    var waitForRefreshBlock: (() -> Void)?
-    func waitForRefresh() async {
-        self.waitForRefreshBlock?()
+    var bestEffortRefresh: (() -> Void)?
+    func bestEffortRefresh() async {
+        self.bestEffortRefresh?()
     }
     
     var status: RemoteDataSourceStatus = .upToDate

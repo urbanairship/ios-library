@@ -346,6 +346,7 @@ fileprivate extension UAScheduleData {
         let automationScheduleData = AutomationScheduleData(
             schedule: schedule,
             scheduleState: scheduleState,
+            lastScheduleModifiedDate: AirshipDate().now,
             scheduleStateChangeDate: self.executionStateChangeDate ?? Date.distantPast,
             executionCount: self.triggeredCount?.intValue ?? 0,
             triggerInfo: triggerInfo,

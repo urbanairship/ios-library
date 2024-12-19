@@ -1,7 +1,7 @@
-import Combine
+/* Copyright Airship and Contributors */
+
 import Foundation
 import SwiftUI
-
 
 struct CheckboxController: View {
     let info: ThomasViewInfo.CheckboxController
@@ -28,25 +28,8 @@ struct CheckboxController: View {
             .accessible(self.info.accessible)
             .formElement()
             .environmentObject(checkboxState)
-            .airshipOnChangeOf(self.checkboxState.selectedItems) { [info, weak formState] incoming in
-                let selected = Array(incoming)
-                let isFilled =
-                selected.count >= (info.properties.minSelection ?? 0)
-                    && selected.count
-                <= (info.properties.maxSelection ?? Int.max)
-
-                let isValid =
-                    isFilled
-                    || (selected.count == 0
-                        && info.validation.isRequired == false)
-
-                let data = FormInputData(
-                    self.info.properties.identifier,
-                    value: .multipleCheckbox(selected),
-                    isValid: isValid
-                )
-
-                formState?.updateFormInput(data)
+            .airshipOnChangeOf(self.checkboxState.selectedItems) { incoming in
+                updateFormState(incoming)
             }
             .onAppear {
                 restoreFormState()
@@ -61,9 +44,28 @@ struct CheckboxController: View {
         guard case let .multipleCheckbox(value) = formValue,
             let value = value
         else {
+            updateFormState(self.checkboxState.selectedItems)
             return
         }
 
         self.checkboxState.selectedItems = Set<String>(value)
+    }
+
+    private func updateFormState(_ value: Set<String>) {
+        let selected = Array(value)
+        let isFilled =
+        selected.count >= (info.properties.minSelection ?? 0)
+            && selected.count
+        <= (info.properties.maxSelection ?? Int.max)
+
+        let isValid = isFilled || (selected.count == 0 && info.validation.isRequired == false)
+
+        let data = FormInputData(
+            self.info.properties.identifier,
+            value: .multipleCheckbox(selected),
+            isValid: isValid
+        )
+
+        formState.updateFormInput(data)
     }
 }
