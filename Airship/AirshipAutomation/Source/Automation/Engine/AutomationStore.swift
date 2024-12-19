@@ -42,6 +42,7 @@ protocol ScheduleStoreProtocol: Sendable {
     func getSchedule(scheduleID: String) async throws -> AutomationScheduleData?
     func getSchedules(group: String) async throws -> [AutomationScheduleData]
     func getSchedules(scheduleIDs: [String]) async throws -> [AutomationScheduleData]
+    func isCurrent(scheduleID: String, lastScheduleModifiedDate: Date, scheduleState: AutomationScheduleState) async throws -> Bool
 }
 
 actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
@@ -171,14 +172,15 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         }
     }
 
-    func getLastScheduleModifiedDate(scheduleID: String) async throws -> Date? {
+    func isCurrent(scheduleID: String, lastScheduleModifiedDate: Date, scheduleState: AutomationScheduleState) async throws -> Bool {
         return try await prepareCoreData().performWithResult { context in
             let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
             request.predicate = NSPredicate(format: "identifier == %@", scheduleID)
-            request.propertiesToFetch = ["lastScheduleModifiedDate"]
+            request.propertiesToFetch = ["lastScheduleModifiedDate", "scheduleState"]
             request.includesPropertyValues = true
 
-            return try context.fetch(request).first?.lastScheduleModifiedDate
+            let entity = try context.fetch(request).first
+            return entity?.lastScheduleModifiedDate == lastScheduleModifiedDate &&  entity?.scheduleState == scheduleState.rawValue
         }
     }
 

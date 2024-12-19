@@ -242,22 +242,43 @@ final class AutomationStoreTest: XCTestCase {
         XCTAssertNil(fromStore)
     }
 
-    func testGetLastScheduleModifiedDate() async throws {
+    func testIsCurrent() async throws {
         let schedule = makeSchedule(identifer: "test")
         let _ = try await self.store.upsertSchedules(scheduleIDs: ["test"]) { identifier, existing in
             return schedule
         }
 
-        let fullSchedule = try await self.store.getSchedule(scheduleID: "test")
-        let lastScheduleModifiedDate = try await self.store.getLastScheduleModifiedDate(scheduleID: "test")
+        let fullSchedule = try await self.store.getSchedule(scheduleID: "test")!
 
-        XCTAssertNotNil(lastScheduleModifiedDate)
-        XCTAssertEqual(lastScheduleModifiedDate, fullSchedule?.lastScheduleModifiedDate)
+        var isCurrent = try await self.store.isCurrent(
+            scheduleID: "test",
+            lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate,
+            scheduleState: .idle
+        )
+        XCTAssertTrue(isCurrent)
+
+        isCurrent = try await self.store.isCurrent(
+            scheduleID: "test",
+            lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate,
+            scheduleState: .paused
+        )
+        XCTAssertFalse(isCurrent)
+
+        isCurrent = try await self.store.isCurrent(
+            scheduleID: "test",
+            lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate.addingTimeInterval(1),
+            scheduleState: .idle
+        )
+        XCTAssertFalse(isCurrent)
     }
 
-    func testGetLastScheduleModifiedDateFakeIdentifier() async throws {
-        let lastScheduleModifiedDate = try await self.store.getLastScheduleModifiedDate(scheduleID: "fake identifier")
-        XCTAssertNil(lastScheduleModifiedDate)
+    func testIsCurrentNoSchedule() async throws {
+        let isCurrent = try await self.store.isCurrent(
+            scheduleID: "fake identifier",
+            lastScheduleModifiedDate: Date(),
+            scheduleState: .paused
+        )
+        XCTAssertFalse(isCurrent)
     }
 
     private func makeSchedule(identifer: String, group: String? = nil) -> AutomationScheduleData {

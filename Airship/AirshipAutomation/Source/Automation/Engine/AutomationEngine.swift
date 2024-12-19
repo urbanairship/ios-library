@@ -497,8 +497,13 @@ fileprivate extension AutomationEngine {
         // Make sure we are still up to date. Data might change due to a change
         // in the data, schedule was cancelled, or if a delay cancellation trigger
         // was fired.
-        guard let storedLastScheduleModifiedDate = try? await self.store.getLastScheduleModifiedDate(scheduleID: prepared.scheduleID),
-            prepared.scheduleData.lastScheduleModifiedDate == storedLastScheduleModifiedDate
+        guard
+            let isCurrent = try? await self.store.isCurrent(
+                scheduleID: prepared.scheduleID,
+                lastScheduleModifiedDate: prepared.scheduleData.lastScheduleModifiedDate,
+                scheduleState: prepared.scheduleData.scheduleState
+            ),
+            isCurrent
         else {
             AirshipLogger.trace("Prepared schedule no longer up to date, no longer valid \(prepared.scheduleData)")
             return false
