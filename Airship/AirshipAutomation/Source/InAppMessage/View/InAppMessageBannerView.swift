@@ -185,6 +185,18 @@ struct InAppMessageBannerView: View {
         messageBody
             .frame(maxWidth: theme.maxWidth)
             .background(
+                GeometryReader(content: { contentMetrics -> Color in
+                    let size = contentMetrics.size
+                    DispatchQueue.main.async {
+                        if self.lastSize != size {
+                            self.bannerConstraints.size = size
+                            self.lastSize = size
+                        }
+                    }
+                    return Color.airshipTappableClear
+                })
+            )
+            .background(
                 (displayContent.backgroundColor?.color ?? Color.white)
                     .cornerRadius(displayContent.borderRadius ?? 0)
                     .edgesIgnoringSafeArea(displayContent.placement == .top ? .top : .bottom)
@@ -194,18 +206,6 @@ struct InAppMessageBannerView: View {
                         x: theme.shadow.xOffset,
                         y: theme.shadow.yOffset
                     )
-            )
-            .background(
-                GeometryReader(content: { contentMetrics -> Color in
-                    let size = contentMetrics.size
-                    DispatchQueue.main.async {
-                        if self.bannerConstraints.size != lastSize {
-                            self.bannerConstraints.size = size
-                            self.lastSize = size
-                        }
-                    }
-                    return Color.airshipTappableClear
-                })
             )
             .showing(isShowing: isShowing)
             .padding(theme.padding)
