@@ -1455,17 +1455,6 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 var bindings: Bindings
                 var start: Int
                 var end: Int
-                let wrapping: Wrapping?
-
-                struct Wrapping: ThomasSerializable {
-                    let lineSpacing: Double?
-                    let maxItemsPerLine: Int?
-
-                    enum CodingKeys: String, CodingKey {
-                        case lineSpacing = "line_spacing"
-                        case maxItemsPerLine = "max_items_per_line"
-                    }
-                }
 
                 enum CodingKeys: String, CodingKey {
                     case spacing
@@ -1473,7 +1462,6 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                     case start
                     case end
                     case type
-                    case wrapping
                 }
 
                 struct Bindings: ThomasSerializable {
