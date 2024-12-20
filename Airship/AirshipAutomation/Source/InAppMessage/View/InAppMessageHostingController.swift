@@ -82,7 +82,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         super.viewDidAppear(animated)
 
         createBannerConstraints()
-        handleBannerConstraints()
+        handleBannerConstraints(size: self.bannerConstraints.size)
 
         if UIAccessibility.isVoiceOverRunning {
             DispatchQueue.main.asyncAfter(deadline: .now() + InAppMessageBannerView.animationInOutDuration) {
@@ -91,7 +91,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         }
 
         subscription = bannerConstraints.$size.sink { [weak self] size in
-            self?.handleBannerConstraints()
+            self?.handleBannerConstraints(size: size)
         }
     }
 
@@ -112,22 +112,22 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         }
     }
 
-    func handleBannerConstraints() {
+    func handleBannerConstraints(size: CGSize) {
         self.centerXConstraint?.isActive = true
         self.heightConstraint?.isActive = true
         self.widthConstraint?.isActive = true
-        self.widthConstraint?.constant = self.bannerConstraints.size.width
+        self.widthConstraint?.constant = size.width
 
         switch self.placement {
         case .top:
             self.topConstraint?.isActive = true
             self.bottomConstraint?.isActive = false
-            self.heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.top
+            self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.top
 
         default:
             self.topConstraint?.isActive = false
             self.bottomConstraint?.isActive = true
-            self.heightConstraint?.constant = self.bannerConstraints.size.height + self.view.safeAreaInsets.bottom
+            self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.bottom
         }
 
         self.view.layoutIfNeeded()
