@@ -4,6 +4,10 @@ import Foundation
 @preconcurrency
 import UserNotifications
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 #if canImport(AirshipCore)
 import AirshipCore
 #endif

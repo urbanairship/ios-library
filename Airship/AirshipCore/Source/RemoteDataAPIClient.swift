@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 protocol RemoteDataAPIClientProtocol: Sendable {
     func fetchRemoteData(
         url: URL,

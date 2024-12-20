@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// A MediaEventTemplate represents a custom media event template for the
 /// application.
 public class MediaEventTemplate {

@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// Opens a deep link URL.
 ///
 /// Expected argument values: A valid URL String.

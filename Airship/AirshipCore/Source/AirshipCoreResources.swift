@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// Airship core resources
 public final class AirshipCoreResources {
 

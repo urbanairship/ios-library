@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// AccountEventTemplate represents a custom account event template for the
 /// application.
 public class AccountEventTemplate {

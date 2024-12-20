@@ -1,5 +1,7 @@
 // Copyright Airship and Contributors
 
+import Foundation
+
 /// Matcher for a JSON payload.
 public final class JSONMatcher: NSObject, Sendable {
 

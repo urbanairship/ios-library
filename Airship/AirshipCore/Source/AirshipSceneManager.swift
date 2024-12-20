@@ -2,6 +2,8 @@
 
 #if !os(watchOS)
 
+import UIKit
+
 /// - Note: for internal use only.  :nodoc:
 public protocol AirshipSceneManagerProtocol: Sendable {
     @MainActor

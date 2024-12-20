@@ -7,6 +7,11 @@ import Combine
 import AirshipCore
 #endif
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+
 /// Delegate protocol for receiving callbacks related to message center.
 public protocol MessageCenterDisplayDelegate {
 

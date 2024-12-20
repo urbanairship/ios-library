@@ -5,7 +5,7 @@ import Foundation
 import UserNotifications
 
 struct MediaAttachmentPayload: Sendable, Decodable {
-    
+
     let media: [ContentMedia]
     let textContent: ContentText?
     let options: PayloadOptions
@@ -19,7 +19,7 @@ struct MediaAttachmentPayload: Sendable, Decodable {
         case content = "content"
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let payloadUrl: [[String: String]]
@@ -43,7 +43,7 @@ struct MediaAttachmentPayload: Sendable, Decodable {
         self.textContent = try container.decodeIfPresent(ContentText.self, forKey: .content)
     }
     
-    struct ContentText: Decodable {
+    struct ContentText: Decodable, Sendable {
         let title: String?
         let subtitle: String?
         let body: String?
@@ -55,7 +55,7 @@ struct MediaAttachmentPayload: Sendable, Decodable {
         }
     }
     
-    struct ContentMedia {
+    struct ContentMedia: Sendable {
         let url: URL
         let urldID: String?
         
@@ -79,7 +79,7 @@ struct MediaAttachmentPayload: Sendable, Decodable {
             if !isValid { return nil }
         }
         
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             let urlString = try container.decode(String.self, forKey: .url)
             guard let url = URL(string: urlString) else {
@@ -90,7 +90,7 @@ struct MediaAttachmentPayload: Sendable, Decodable {
         }
     }
     
-    struct PayloadOptions: Decodable {
+    struct PayloadOptions: Decodable, Sendable {
         private static let cropRequiredFields = ["x", "y", "width", "height"]
         let crop: [String: Double]?
         let time: Double?
@@ -108,7 +108,7 @@ struct MediaAttachmentPayload: Sendable, Decodable {
             self.hidden = nil
         }
         
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.time = try container.decodeIfPresent(Double.self, forKey: .time)
             self.hidden = try container.decodeIfPresent(Bool.self, forKey: .hidden)
@@ -130,9 +130,9 @@ struct MediaAttachmentPayload: Sendable, Decodable {
             }
         }
         
-        func generateNotificationAttachmentOptions(hideThumbnail: Bool) -> [String: Any] {
-            var result: [String: Any] = [UNNotificationAttachmentOptionsThumbnailHiddenKey: hideThumbnail]
-            
+        func generateNotificationAttachmentOptions(hideThumbnail: Bool) -> [String: any Sendable] {
+            var result: [String: any Sendable] = [UNNotificationAttachmentOptionsThumbnailHiddenKey: hideThumbnail]
+
             if let crop = self.crop {
                 let normalized = crop.reduce(into: [String: Double]()) { partialResult, entry in
                     partialResult[entry.key.capitalized] = entry.value

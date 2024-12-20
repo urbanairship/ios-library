@@ -2,6 +2,11 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+
 /// LiveActivity protocol. Makes everything testable.
 protocol LiveActivityPushToStartTrackerProtocol: Sendable {
     var attributeType: String { get }

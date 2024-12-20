@@ -2,6 +2,14 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
 
 protocol URLOpenerProtocol: Sendable {
     @MainActor

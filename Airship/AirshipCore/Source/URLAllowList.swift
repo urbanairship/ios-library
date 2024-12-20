@@ -2,6 +2,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 /// Delegate protocol for accepting and rejecting URLs.
 public protocol URLAllowListDelegate: Sendable {
     /**

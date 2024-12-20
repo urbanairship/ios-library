@@ -3,6 +3,10 @@
 import Combine
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 @MainActor
 class ThomasEnvironment: ObservableObject {
     private let delegate: any ThomasDelegate

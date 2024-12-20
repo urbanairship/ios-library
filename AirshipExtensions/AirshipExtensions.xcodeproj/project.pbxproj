@@ -22,6 +22,7 @@
 		60F8E7582B8D259B00460EDF /* UANotificationServiceExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F8E7572B8D259B00460EDF /* UANotificationServiceExtensionTests.swift */; };
 		60F8E75A2B8E5A4100460EDF /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4AEE3A2B6B3E94008AEAC1 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */; };
+		6E66BB1A2D14F6B60083A9FD /* AirshipNotificationMutationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66BB192D14F6B20083A9FD /* AirshipNotificationMutationProvider.swift */; };
 		DF0C1B19244E483C0011ACCA /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */; };
 		DFE03D082450E73400622F11 /* AirshipNotificationContentExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BFF18AE23854F0C00013FB9 /* AirshipNotificationContentExtension.framework */; };
 /* End PBXBuildFile section */
@@ -67,6 +68,7 @@
 		60F8E7572B8D259B00460EDF /* UANotificationServiceExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UANotificationServiceExtensionTests.swift; sourceTree = "<group>"; };
 		60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipNotificationServiceExtension.h; sourceTree = "<group>"; };
 		6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = airship.jpg; path = AirshipNotificationServiceExtension/airship.jpg; sourceTree = SOURCE_ROOT; };
+		6E66BB192D14F6B20083A9FD /* AirshipNotificationMutationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNotificationMutationProvider.swift; sourceTree = "<group>"; };
 		DF0C1B14244E483C0011ACCA /* AirshipNotificationServiceExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationServiceExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFE03D032450E73400622F11 /* AirshipNotificationContentExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationContentExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -217,6 +219,7 @@
 			isa = PBXGroup;
 			children = (
 				6014AD682C1CB6360072DCF0 /* ChallengeResolver.swift */,
+				6E66BB192D14F6B20083A9FD /* AirshipNotificationMutationProvider.swift */,
 				60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */,
 				60F8E7532B89272300460EDF /* UANotificationServiceExtension.swift */,
 				60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */,
@@ -422,6 +425,7 @@
 			files = (
 				60F8E7522B88AF8D00460EDF /* MediaAttachmentPayload.swift in Sources */,
 				60F8E7542B89272300460EDF /* UANotificationServiceExtension.swift in Sources */,
+				6E66BB1A2D14F6B60083A9FD /* AirshipNotificationMutationProvider.swift in Sources */,
 				6014AD692C1CB6360072DCF0 /* ChallengeResolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -668,6 +672,18 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_CONCISE_MAGIC_FILE = YES;
+				SWIFT_UPCOMING_FEATURE_DEPRECATE_APPLICATION_MAIN = YES;
+				SWIFT_UPCOMING_FEATURE_DISABLE_OUTWARD_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_FORWARD_TRAILING_CLOSURES = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_IMPLICIT_OPEN_EXISTENTIALS = YES;
+				SWIFT_UPCOMING_FEATURE_INFER_SENDABLE_FROM_CAPTURES = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
+				SWIFT_UPCOMING_FEATURE_ISOLATED_DEFAULT_VALUES = YES;
+				SWIFT_UPCOMING_FEATURE_REGION_BASED_ISOLATION = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
@@ -699,6 +715,18 @@
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_CONCISE_MAGIC_FILE = YES;
+				SWIFT_UPCOMING_FEATURE_DEPRECATE_APPLICATION_MAIN = YES;
+				SWIFT_UPCOMING_FEATURE_DISABLE_OUTWARD_ACTOR_ISOLATION = YES;
+				SWIFT_UPCOMING_FEATURE_EXISTENTIAL_ANY = YES;
+				SWIFT_UPCOMING_FEATURE_FORWARD_TRAILING_CLOSURES = YES;
+				SWIFT_UPCOMING_FEATURE_GLOBAL_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_IMPLICIT_OPEN_EXISTENTIALS = YES;
+				SWIFT_UPCOMING_FEATURE_INFER_SENDABLE_FROM_CAPTURES = YES;
+				SWIFT_UPCOMING_FEATURE_INTERNAL_IMPORTS_BY_DEFAULT = YES;
+				SWIFT_UPCOMING_FEATURE_ISOLATED_DEFAULT_VALUES = YES;
+				SWIFT_UPCOMING_FEATURE_REGION_BASED_ISOLATION = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};

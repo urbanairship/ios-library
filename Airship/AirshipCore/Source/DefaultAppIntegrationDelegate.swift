@@ -2,6 +2,18 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
+#if canImport(AirshipBasement)
+import AirshipBasement
+#endif
+
 @preconcurrency
 import UserNotifications
 

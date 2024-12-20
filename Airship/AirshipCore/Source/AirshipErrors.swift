@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipErrors {
     public class func parseError(_ message: String) -> any Error {

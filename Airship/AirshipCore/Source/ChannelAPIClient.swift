@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// - Note: For internal use only. :nodoc:
 final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
     private let channelPath = "/api/channels/"

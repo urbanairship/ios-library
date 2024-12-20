@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import UserNotifications
 
 #if canImport(AirshipCore)
 public import AirshipCore

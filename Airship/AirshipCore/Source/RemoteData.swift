@@ -2,6 +2,11 @@
 
 @preconcurrency
 import Combine
+import Foundation
+
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// NOTE: For internal use only. :nodoc:
 final class RemoteData: AirshipComponent, RemoteDataProtocol {

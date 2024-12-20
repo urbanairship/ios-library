@@ -2,6 +2,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
+import UIKit
 import Foundation
 
 public protocol JavaScriptEnvironmentProtocol: Sendable {

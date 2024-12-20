@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// An action that adds a custom event.
 ///
 /// Expected argument values: A dictionary of keys for the custom event. When a

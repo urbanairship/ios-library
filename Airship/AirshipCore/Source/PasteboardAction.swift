@@ -1,5 +1,10 @@
 /* Copyright Airship and Contributors */
 
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
 /// Sets the pasteboard's string.
 ///
 /// Expected argument values: String or an Object with the pasteboard's string

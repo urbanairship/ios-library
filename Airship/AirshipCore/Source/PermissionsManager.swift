@@ -2,6 +2,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 /// Airship permissions manager.
 ///
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need

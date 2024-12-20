@@ -2,6 +2,9 @@
 
 public import CoreData
 
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// - Note: For internal use only. :nodoc:
 public actor UACoreData {

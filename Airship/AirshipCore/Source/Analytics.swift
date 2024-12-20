@@ -2,6 +2,12 @@
 
 import Combine
 import Foundation
+import UserNotifications
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {

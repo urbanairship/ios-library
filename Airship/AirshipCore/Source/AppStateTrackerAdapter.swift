@@ -22,6 +22,8 @@ enum AppLifeCycleEvent: Sendable {
 
 
 #if os(watchOS)
+import WatchKit
+
 final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
     var state: ApplicationState {
         let appState = WKExtension.shared().applicationState
@@ -93,6 +95,8 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
     }
 }
 #else
+import UIKit
+
 final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
     var state: ApplicationState {
         let appState = UIApplication.shared.applicationState

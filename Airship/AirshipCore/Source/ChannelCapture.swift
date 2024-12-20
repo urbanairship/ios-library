@@ -2,6 +2,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 #if !os(watchOS)
 
 /// Channel Capture copies the channelId to the device clipboard after a specific number of

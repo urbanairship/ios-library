@@ -1,5 +1,7 @@
 // Copyright Airship and Contributors
 
+import Foundation
+
 /// Defines a JSON value matcher.
 public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     private static let atMostKey = "at_most"

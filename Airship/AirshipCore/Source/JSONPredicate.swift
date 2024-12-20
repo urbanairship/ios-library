@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// Predicate for JSON payloads.
 public final class JSONPredicate: NSObject, Sendable, Codable {
     private static let andTypeKey = "and"

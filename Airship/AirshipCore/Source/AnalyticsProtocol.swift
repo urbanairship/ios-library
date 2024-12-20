@@ -3,6 +3,10 @@
 import Foundation
 public import Combine
 
+#if canImport(UserNotifications)
+import UserNotifications
+#endif
+
 /// Analytics protocol
 public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
 

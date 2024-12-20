@@ -3,6 +3,9 @@
 import Foundation
 
 #if !os(tvOS)
+
+import UserNotifications
+
 /// Utility methods to create categories from plist files or dictionaries.
 public final class NotificationCategories {
     // MARK: - Notification Categories Factories

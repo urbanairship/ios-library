@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// A SearchEventTemplate represents a custom search event template for the
 /// application.
 public class SearchEventTemplate {

@@ -6,10 +6,14 @@ import Foundation
 @preconcurrency
 import UserNotifications
 
-#if os(watchOS)
+#if canImport(WatchKit)
 import WatchKit
+#endif
+
+#if canImport(UIKit)
 import UIKit
 #endif
+
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {

@@ -2,9 +2,15 @@
 
 import Foundation
 
-#if os(watchOS)
+#if canImport(WatchKit)
 import WatchKit
 #endif
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
+import UserNotifications
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 public protocol PushNotificationDelegate: AnyObject, Sendable {

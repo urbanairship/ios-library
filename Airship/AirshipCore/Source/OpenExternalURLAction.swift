@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// Opens a URL, either in safari or using custom URL schemes.
 ///
 /// Expected argument values: A valid URL String.

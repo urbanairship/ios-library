@@ -4,6 +4,9 @@
 public import Combine
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.

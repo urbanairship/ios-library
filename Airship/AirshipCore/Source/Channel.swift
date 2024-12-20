@@ -4,6 +4,10 @@
 import Combine
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 
 /// This singleton provides an interface to the channel functionality.
 final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {

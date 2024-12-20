@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 #if canImport(AirshipCore)
 import AirshipCore
 #elseif canImport(AirshipKit)

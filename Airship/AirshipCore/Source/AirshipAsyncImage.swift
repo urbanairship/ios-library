@@ -42,7 +42,7 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
                             receiveCompletion: { completion in
                                 if case let .failure(error) = completion {
                                     AirshipLogger.error(
-                                        "Unable to load image \(error)"
+                                        "Unable to load image \(self.url): \(error)"
                                     )
                                 }
                             },

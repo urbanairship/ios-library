@@ -2,9 +2,18 @@
 
 import Foundation
 
-#if os(watchOS)
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(WatchKit)
 import WatchKit
 #endif
+
+#if canImport(AirshipBasement)
+import AirshipBasement
+#endif
+
 
 /**
  * Airship manages the shared state for all Airship services. Airship.takeOff should be

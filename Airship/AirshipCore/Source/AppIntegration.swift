@@ -1,11 +1,21 @@
 /* Copyright Airship and Contributors */
 
-#if os(watchOS)
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(WatchKit)
 import WatchKit
 #endif
 
+#if canImport(AirshipBasement)
+import AirshipBasement
+#endif
+
+import Foundation
 @preconcurrency
 import UserNotifications
+
 
 /// Application hooks required by Airship. If `automaticSetupEnabled` is enabled
 /// (enabled by default), Airship will automatically integrate these calls into
