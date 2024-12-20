@@ -1456,6 +1456,9 @@
 		998572BF2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */; };
 		998572C12B3CF97B0091E9C9 /* DefaultAssetFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */; };
 		999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999DC85D2B5B721D0048C6AF /* HTMLView.swift */; };
+		99AB3D5C2CD1B6E6008916BD /* WrappingLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AB3D5B2CD1B6E6008916BD /* WrappingLayout.swift */; };
+		99AB3D5D2CD1B6EC008916BD /* WrappingLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AB3D5B2CD1B6E6008916BD /* WrappingLayout.swift */; };
+		99AB3D5E2CD1B6ED008916BD /* WrappingLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AB3D5B2CD1B6E6008916BD /* WrappingLayout.swift */; };
 		99C3CC762BCF23DF00B5BED5 /* SMSValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */; };
 		99C3CC792BCF3E5B00B5BED5 /* SMSValidatorAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC772BCF3DF700B5BED5 /* SMSValidatorAPIClientTest.swift */; };
 		99C3CC7A2BCF3FA200B5BED5 /* SMSValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */; };
@@ -2985,6 +2988,7 @@
 		998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetDownloader.swift; sourceTree = "<group>"; };
 		998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetFileManager.swift; sourceTree = "<group>"; };
 		999DC85D2B5B721D0048C6AF /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
+		99AB3D5B2CD1B6E6008916BD /* WrappingLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingLayout.swift; sourceTree = "<group>"; };
 		99C3CC752BCF23DF00B5BED5 /* SMSValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidator.swift; sourceTree = "<group>"; };
 		99C3CC772BCF3DF700B5BED5 /* SMSValidatorAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidatorAPIClientTest.swift; sourceTree = "<group>"; };
 		99C3CC7C2BCF401B00B5BED5 /* SMSValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidatorTest.swift; sourceTree = "<group>"; };
@@ -4996,6 +5000,7 @@
 				6EF27DE22730E6F900548DA3 /* RadioInputController.swift */,
 				6EF27DE82730E85700548DA3 /* RadioInput.swift */,
 				A6849386273290520021675E /* Score.swift */,
+				99AB3D5B2CD1B6E6008916BD /* WrappingLayout.swift */,
 			);
 			name = Forms;
 			sourceTree = "<group>";
@@ -6361,6 +6366,7 @@
 				6E1CBD812BA3A30300519D9C /* AirshipEmbeddedInfo.swift in Sources */,
 				6E4325CE2B7AD5A200A9B000 /* AirshipComponent.swift in Sources */,
 				6EC7E48226A60C060038CFDD /* ChannelProtocol.swift in Sources */,
+				99AB3D5C2CD1B6E6008916BD /* WrappingLayout.swift in Sources */,
 				6E2F5A8A2A66088100CABD3D /* AudienceDeviceInfoProvider.swift in Sources */,
 				6E664BDD26C4CD8700A2C8E5 /* OpenExternalURLAction.swift in Sources */,
 				6E75F50529C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
@@ -7260,6 +7266,7 @@
 				A6722A64281A9EB80033F54D /* ChannelAPIClient.swift in Sources */,
 				6E299FE128D14258001305A7 /* AirshipRequestSession.swift in Sources */,
 				A6722A66281A9EB80033F54D /* ChannelRegistrar.swift in Sources */,
+				99AB3D5E2CD1B6ED008916BD /* WrappingLayout.swift in Sources */,
 				6E9B4876288F0CE000C905B1 /* RateAppAction.swift in Sources */,
 				A6722A67281A9EB80033F54D /* ChannelProtocol.swift in Sources */,
 				A6722A68281A9EB80033F54D /* ChannelBulkUpdateAPIClient.swift in Sources */,
@@ -7660,6 +7667,7 @@
 				6E1CBD822BA3A30300519D9C /* AirshipEmbeddedInfo.swift in Sources */,
 				6E4325CF2B7AD5A200A9B000 /* AirshipComponent.swift in Sources */,
 				6EF27DDC27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
+				99AB3D5D2CD1B6EC008916BD /* WrappingLayout.swift in Sources */,
 				6E2F5A8B2A66088100CABD3D /* AudienceDeviceInfoProvider.swift in Sources */,
 				6E6ED1602683DBC300A2CBD0 /* AirshipCoreResources.swift in Sources */,
 				6E91E45028EF423400B6F25E /* AirshipWorkerType.swift in Sources */,

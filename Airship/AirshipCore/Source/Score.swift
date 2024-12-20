@@ -3,9 +3,7 @@
 import Foundation
 import SwiftUI
 
-
 struct Score: View {
-
     let info: ThomasViewInfo.Score
     let constraints: ViewConstraints
 
@@ -14,27 +12,59 @@ struct Score: View {
     @Environment(\.colorScheme) var colorScheme
 
     @ViewBuilder
+    private func makeNumberRangeScoreItems(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, constraints: ViewConstraints) -> some View {
+        ForEach((style.start...style.end), id: \.self) { index in
+            let isOn = Binding(
+                get: { self.score == index },
+                set: { if $0 { updateScore(index) } }
+            )
+            Toggle(isOn: isOn.animation()) {}
+                .toggleStyle(
+                    AirshipNumberRangeToggleStyle(
+                        style: style,
+                        viewConstraints: constraints,
+                        value: index,
+                        colorScheme: colorScheme,
+                        disabled: !formState.isFormInputEnabled
+                    )
+                )
+        }
+    }
+
+    @ViewBuilder
     private func createScore(_ constraints: ViewConstraints) -> some View {
         switch self.info.properties.style {
         case .numberRange(let style):
-            HStack(spacing: style.spacing ?? 0) {
-                ForEach((style.start...style.end), id: \.self) { index in
-                    let isOn = Binding<Bool>(
-                        get: { self.score == index },
-                        set: { if $0 { updateScore(index) } }
+            if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *), style.wrapping != nil {
+                let minTappableSize = CGSize(
+                    width: max(constraints.width ?? 0, 44),
+                    height: max(constraints.height ?? 0, 44)
+                )
+                let itemSpacing = CGFloat(style.spacing ?? 0)
+                let lineSpacing = CGFloat(style.wrapping?.lineSpacing ?? 0)
+                let maxItemsPerLine = style.wrapping?.maxItemsPerLine
+                WrappingLayout(
+                    viewConstraints: constraints,
+                    itemSpacing: itemSpacing,
+                    lineSpacing: lineSpacing,
+                    maxItemsPerLine: maxItemsPerLine
+                ) {
+                    let constraints = ViewConstraints(
+                        width: max(minTappableSize.width, constraints.width ?? 0),
+                        height: max(minTappableSize.height, constraints.height ?? 0),
+                        maxWidth: constraints.maxWidth,
+                        maxHeight: constraints.maxHeight,
+                        isHorizontalFixedSize: constraints.isHorizontalFixedSize,
+                        isVerticalFixedSize: constraints.isVerticalFixedSize,
+                        safeAreaInsets: constraints.safeAreaInsets
                     )
-
-                    Toggle(isOn: isOn.animation()) {}
-                        .toggleStyle(
-                            AirshipNumberRangeToggleStyle(
-                                style: style,
-                                viewConstraints: constraints,
-                                value: index,
-                                colorScheme: colorScheme,
-                                disabled: !formState.isFormInputEnabled
-                            )
-                        )
+                    makeNumberRangeScoreItems(style: style, constraints: constraints)
                 }
+            } else {
+                HStack(spacing: style.spacing ?? 0) {
+                    makeNumberRangeScoreItems(style: style, constraints: constraints)
+                }
+                .constraints(constraints)
             }
         }
     }
@@ -42,7 +72,6 @@ struct Score: View {
     var body: some View {
         let constraints = modifiedConstraints()
         createScore(constraints)
-            .constraints(constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
             .accessible(self.info.accessible)
             .formElement()
@@ -69,12 +98,11 @@ struct Score: View {
     }
 
     func calculateHeight(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, width: CGFloat?)
-        -> CGFloat?
+    -> CGFloat?
     {
         guard let width = width else {
             return nil
         }
-
         let count = Double((style.start...style.end).count)
         let spacing = (count - 1.0) * (style.spacing ?? 0.0)
         let remainingSpace = width - spacing
@@ -118,12 +146,10 @@ struct Score: View {
 
         self.score = value
     }
-
 }
 
 
 private struct AirshipNumberRangeToggleStyle: ToggleStyle {
-
     let style: ThomasViewInfo.Score.ScoreStyle.NumberRange
     let viewConstraints: ViewConstraints
     let value: Int
@@ -148,14 +174,12 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         .opacity(isOn ? 1 : 0)
                     }
                     Text(String(self.value))
-                        .textAppearance(style.bindings.selected.textAppearance
-                        )
+                        .textAppearance(style.bindings.selected.textAppearance)
                 }
                 .opacity(isOn ? 1 : 0)
                 .airshipApplyIf(disabled) {  view in
                     view.colorMultiply(ThomasConstants.disabledColor)
                 }
-
                 Group {
                     if let shapes = style.bindings.unselected.shapes {
                         ForEach(0..<shapes.count, id: \.self) { index in
