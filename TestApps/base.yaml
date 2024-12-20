@@ -8,14 +8,6 @@ targets:
     sources: [TestApp]
     settings:
       INFOPLIST_FILE: TestApp/Info.plist
-  TestContentExtension:
-    type: app-extension
-    deploymentTarget: "14.0"
-    platform: iOS
-    sources: [TestContentExtension]
-    settings:
-      INFOPLIST_FILE: TestContentExtension/Info.plist
-      PRODUCT_BUNDLE_IDENTIFIER: com.urbanairship.TestApp.TestContentExtension
   TestServiceExtension:
     type: app-extension
     deploymentTarget: "14.0"

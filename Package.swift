@@ -22,10 +22,6 @@ let package = Package(
             targets: ["AirshipMessageCenter"]
         ),
         .library(
-            name: "AirshipNotificationContentExtension",
-            targets: ["AirshipNotificationContentExtension"]
-        ),
-        .library(
             name: "AirshipNotificationServiceExtension",
             targets: ["AirshipNotificationServiceExtension"]
         ),

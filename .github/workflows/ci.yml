@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Test
-        run: make test-content-extension test-service-extension
+        run: make test-service-extension
 
   run-package-tests:
     runs-on: macos-15-xlarge

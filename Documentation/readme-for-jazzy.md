@@ -11,6 +11,5 @@ services into your iOS applications.
 - [AirshipMessageCenter Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipMessageCenter)
 - [AirshipPreferenceCenter Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipPreferenceCenter)
 - [AirshipNotificationServiceExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationServiceExtension)
-- [AirshipNotificationContentExtension Docs](https://docs.airship.com/reference/libraries/ios/latest/AirshipNotificationContentExtension)
 - [Getting started guide](http://docs.airship.com/platform/ios/)
 - [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)

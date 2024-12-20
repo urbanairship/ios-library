@@ -15,12 +15,7 @@ targets:
         product: AirshipPreferenceCenter
       - package: Airship
         product: AirshipDebug
-      - target: TestContentExtension
       - target: TestServiceExtension
-  TestContentExtension:
-    dependencies:
-     - package: Airship
-       product: AirshipNotificationContentExtension
   TestServiceExtension:
     dependencies:
       - package: Airship

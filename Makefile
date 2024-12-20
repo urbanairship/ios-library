@@ -66,7 +66,7 @@ build-sample-watchos: setup
 	bash ./scripts/build_sample_watchos.sh "watchOSSample_WatchKit_Extension" "${derived_data_path}"
 
 .PHONY: test
-test: setup test-core test-preference-center test-message-center test-automation test-feature-flags test-content-extension test-service-extension
+test: setup test-core test-preference-center test-message-center test-automation test-feature-flags test-service-extension
 
 .PHONY: test-core
 test-core: setup
@@ -88,10 +88,6 @@ test-automation: setup
 test-feature-flags: setup
 	bash ./scripts/run_tests.sh AirshipFeatureFlags "${derived_data_path}"
 
-.PHONY: test-content-extension
-test-content-extension: setup
-	bash ./scripts/run_tests.sh AirshipNotificationContentExtension "${derived_data_path}"
-
 .PHONY: test-service-extension
 test-service-extension: setup
 	bash ./scripts/run_tests.sh AirshipNotificationServiceExtension "${derived_data_path}"
@@ -104,7 +100,6 @@ test-packages: setup
 pod-publish: setup
 	bundle exec pod trunk push Airship.podspec
 	bundle exec pod trunk push AirshipServiceExtension.podspec
-	bundle exec pod trunk push AirshipContentExtension.podspec
 
 .PHONY: pod-lint
 pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
@@ -128,7 +123,6 @@ pod-lint-visionos: setup
 .PHONY: pod-lint-extensions
 pod-lint-extensions: setup
 	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests --allow-warnings
-	bundle exec pod lib lint AirshipContentExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests --allow-warnings
 
 .PHONY: clean
 clean:

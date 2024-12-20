@@ -93,12 +93,10 @@ build_archive "AirshipRelease tvOS" "tvOS"
 # iOS
 build_archive "AirshipRelease" "iOS"
 build_archive "AirshipNotificationServiceExtension" "iOS"
-build_archive "AirshipNotificationContentExtension" "iOS"
 
 # Catalyst
 build_archive "AirshipRelease" "maccatalyst"
 build_archive "AirshipNotificationServiceExtension" "maccatalyst"
-build_archive "AirshipNotificationContentExtension" "maccatalyst"
 
 # visionOS
 build_archive "AirshipRelease" "visionOS"
@@ -206,24 +204,12 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipNotificationServiceExtension/iphonesimulator.xcarchive/dSYMs/AirshipNotificationServiceExtension.framework.dSYM" \
   -output "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
 
-# Package AirshipNotificationContentExtension
-xcrun xcodebuild -create-xcframework \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphoneos.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphoneos.xcarchive/dSYMs/AirshipNotificationContentExtension.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/iphonesimulator.xcarchive/dSYMs/AirshipNotificationContentExtension.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/mac.xcarchive/Products/Library/Frameworks/AirshipNotificationContentExtension.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipNotificationContentExtension/mac.xcarchive/dSYMs/AirshipNotificationContentExtension.framework.dSYM" \
-  -output "$OUTPUT/AirshipNotificationContentExtension.xcframework"
-
 
 # Sign the frameworks
-
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipBasement.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipCore.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipMessageCenter.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipPreferenceCenter.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationContentExtension.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipFeatureFlags.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"

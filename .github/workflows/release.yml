@@ -130,17 +130,6 @@ jobs:
       - name: Test
         run: make test-service-extension
 
-  run-tests-content-extension:
-    needs: check-version
-    runs-on: macos-15-xlarge
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install xcodegen
-        run: brew install xcodegen
-      - name: Test
-        run: make test-content-extension
-
   deploy-github:
     permissions:
       contents: write
