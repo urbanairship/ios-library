@@ -6,8 +6,8 @@ import Foundation
 public struct AudienceHashSelector: Codable, Sendable, Equatable {
     let hash: Hash
     let bucket: Bucket
-    let sticky: Sticky?
-    
+    var sticky: Sticky?
+
     init(hash: Hash, bucket: Bucket, sticky: Sticky? = nil) {
         self.hash = hash
         self.bucket = bucket

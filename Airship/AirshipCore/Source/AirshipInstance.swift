@@ -109,7 +109,7 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
         )
 
         let cache = CoreDataAirshipCache(appKey: appCredentials.appKey)
-        let audienceChecker = DefaultDeviceAudienceChecker()
+        let audienceChecker = DefaultDeviceAudienceChecker(cache: cache)
 
         
         let analytics = AirshipAnalytics(

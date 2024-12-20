@@ -12,21 +12,14 @@ public protocol DeviceAudienceChecker: Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-public struct AirshipDeviceAudienceResult: Sendable {
-    public var isMatch: Bool
+struct DefaultDeviceAudienceChecker: DeviceAudienceChecker {
+    private let hashChecker: HashChecker
 
-    fileprivate mutating func negate() {
-        isMatch = !isMatch
+    public init(cache: any AirshipCache) {
+        self.hashChecker = HashChecker(cache: cache)
     }
 
-    public static let match: AirshipDeviceAudienceResult = .init(isMatch: true)
-    public static let miss: AirshipDeviceAudienceResult = .init(isMatch: false)
-}
-
-struct DefaultDeviceAudienceChecker: DeviceAudienceChecker {
-    init() {}
-
-    func evaluate(
+    public func evaluate(
         audienceSelector: CompoundDeviceAudienceSelector?,
         newUserEvaluationDate: Date,
         deviceInfoProvider: any AudienceDeviceInfoProvider
@@ -37,28 +30,54 @@ struct DefaultDeviceAudienceChecker: DeviceAudienceChecker {
 
         return try await audienceSelector.evaluate(
             newUserEvaluationDate: newUserEvaluationDate,
-            deviceInfoProvider: deviceInfoProvider
+            deviceInfoProvider: deviceInfoProvider,
+            hashChecker: hashChecker
         )
     }
 }
 
 
+extension Array where Element == AirshipDeviceAudienceResult {
+    var reducedResult: AirshipDeviceAudienceResult {
+        var isMatch: Bool = true
+        var reportingMetadata: [AirshipJSON]? = nil
+
+        self.forEach {
+            isMatch = isMatch && $0.isMatch
+            if let reporting = $0.reportingMetadata {
+                if (reportingMetadata == nil) {
+                    reportingMetadata = []
+                }
+                reportingMetadata?.append(contentsOf: reporting)
+            }
+        }
+
+        return AirshipDeviceAudienceResult(
+            isMatch: isMatch,
+            reportingMetadata: reportingMetadata
+        )
+    }
+}
+
 extension CompoundDeviceAudienceSelector {
     func evaluate(
         newUserEvaluationDate: Date = Date.distantPast,
-        deviceInfoProvider: any AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()
+        deviceInfoProvider: any AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider(),
+        hashChecker: HashChecker
     ) async throws -> AirshipDeviceAudienceResult {
         switch self {
         case .atomic(let audience):
             return try await audience.evaluate(
                 newUserEvaluationDate: newUserEvaluationDate,
-                deviceInfoProvider: deviceInfoProvider
+                deviceInfoProvider: deviceInfoProvider,
+                hashChecker: hashChecker
             )
 
         case .not(let selector):
             var result = try await selector.evaluate(
                 newUserEvaluationDate: newUserEvaluationDate,
-                deviceInfoProvider: deviceInfoProvider
+                deviceInfoProvider: deviceInfoProvider,
+                hashChecker: hashChecker
             )
 
             result.negate()
@@ -69,20 +88,15 @@ extension CompoundDeviceAudienceSelector {
             for selector in selectors {
                 let selectorResult = try await selector.evaluate(
                     newUserEvaluationDate: newUserEvaluationDate,
-                    deviceInfoProvider: deviceInfoProvider
+                    deviceInfoProvider: deviceInfoProvider,
+                    hashChecker: hashChecker
                 )
                 results.append(selectorResult)
                 if !selectorResult.isMatch {
                     break
                 }
             }
-
-            // Combine results
-            let isMatch = results.allSatisfy { result in
-                result.isMatch
-            }
-
-            return AirshipDeviceAudienceResult(isMatch: isMatch)
+            return results.reducedResult
 
 
         case .or(let selectors):
@@ -90,7 +104,8 @@ extension CompoundDeviceAudienceSelector {
             for selector in selectors {
                 let selectorResult = try await selector.evaluate(
                     newUserEvaluationDate: newUserEvaluationDate,
-                    deviceInfoProvider: deviceInfoProvider
+                    deviceInfoProvider: deviceInfoProvider,
+                    hashChecker: hashChecker
                 )
 
                 results.append(selectorResult)
@@ -99,12 +114,7 @@ extension CompoundDeviceAudienceSelector {
                 }
             }
 
-            // Combine results
-            let isMatch = results.isEmpty || results.contains { result in
-                result.isMatch
-            }
-
-            return AirshipDeviceAudienceResult(isMatch: isMatch)
+            return results.reducedResult
         }
     }
 }
@@ -115,7 +125,8 @@ extension DeviceAudienceSelector {
 
     func evaluate(
         newUserEvaluationDate: Date = Date.distantPast,
-        deviceInfoProvider: any AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider()
+        deviceInfoProvider: any AudienceDeviceInfoProvider = DefaultAudienceDeviceInfoProvider(),
+        hashChecker: HashChecker
     ) async throws -> AirshipDeviceAudienceResult {
 
         AirshipLogger.trace("Evaluating audience conditions \(self)")
@@ -169,12 +180,16 @@ extension DeviceAudienceSelector {
             return .miss
         }
 
-        guard try await checkHash(deviceInfoProvider: deviceInfoProvider) else {
+        let hashCheckerResult = try await hashChecker.evaluate(
+            hashSelector: self.hashSelector,
+            deviceInfoProvider: deviceInfoProvider
+        )
+
+        if (hashCheckerResult.isMatch) {
             AirshipLogger.trace("Hash condition not met for audience: \(self)")
-            return .miss
         }
 
-        return .match
+        return hashCheckerResult
     }
 
     private func checkNewUser(deviceInfoProvider: any AudienceDeviceInfoProvider, newUserEvaluationDate: Date) -> Bool {
@@ -291,18 +306,6 @@ extension DeviceAudienceSelector {
 
             return true
         }
-    }
-
-    private func checkHash(deviceInfoProvider: any AudienceDeviceInfoProvider) async throws -> Bool {
-        guard let hash = self.hashSelector else {
-            return true
-        }
-
-        let contactID = await deviceInfoProvider.stableContactInfo.contactID
-        let channelID = try await deviceInfoProvider.channelID
-
-
-        return hash.evaluate(channelID: channelID, contactID: contactID)
     }
 
 }

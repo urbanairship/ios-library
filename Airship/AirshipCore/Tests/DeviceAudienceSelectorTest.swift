@@ -3,24 +3,62 @@
 import XCTest
 @testable import AirshipCore
 
-final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
+final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
 
     private let testDeviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
-    
+    private let audienceChecker = DefaultDeviceAudienceChecker(cache: TestCache())
+
+    private let stickyHash = AudienceHashSelector(
+        hash: AudienceHashSelector.Hash(
+            prefix: "e66a2371-fecf-41de-9238-cb6c28a86cec:",
+            property: .contact,
+            algorithm: .farm,
+            seed: 100,
+            numberOfBuckets: 16384,
+            overrides: nil
+        ),
+        bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000),
+        sticky: AudienceHashSelector.Sticky(
+            id: "sticky ID",
+            reportingMetadata: .string("sticky reporting"),
+            lastAccessTTL: 100.0
+        )
+    )
+
+    private let stickyHashInverse = AudienceHashSelector(
+        hash: AudienceHashSelector.Hash(
+            prefix: "e66a2371-fecf-41de-9238-cb6c28a86cec:",
+            property: .contact,
+            algorithm: .farm,
+            seed: 100,
+            numberOfBuckets: 16384,
+            overrides: nil
+        ),
+        bucket: AudienceHashSelector.Bucket(min: 0, max: 11600),
+        sticky: AudienceHashSelector.Sticky(
+            id: "sticky ID",
+            reportingMetadata: .string("inverse sticky reporting"),
+            lastAccessTTL: 100.0
+        )
+    )
+
     func testAirshipNotReadyThrows() async throws {
         testDeviceInfo.isAirshipReady = false
-        let audience = DeviceAudienceSelector()
         do {
-            _ = try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
+            _ = try await self.audienceChecker.evaluate(
+                audienceSelector: .atomic(DeviceAudienceSelector()),
+                newUserEvaluationDate: .now,
+                deviceInfoProvider: self.testDeviceInfo
+            )
             XCTFail("Should throw")
         } catch {}
     }
 
     func testEmptyAudience() async throws {
-        let audience = DeviceAudienceSelector()
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: DeviceAudienceSelector(),
+            isMatch: true
+        )
     }
 
     func testNewUserCondition() async throws {
@@ -28,82 +66,88 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
         testDeviceInfo.installDate = now
         let audience = DeviceAudienceSelector(newUser: true)
 
-        try await assertTrue {
-            try await audience.evaluate(
-                newUserEvaluationDate: now,
-                deviceInfoProvider: self.testDeviceInfo
-            )
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            newUserEvaluationDate: now,
+            isMatch: true
+        )
 
-        try await assertTrue {
-            try await audience.evaluate(
-                newUserEvaluationDate: now.advanced(by: -1.0),
-                deviceInfoProvider: self.testDeviceInfo
-            )
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            newUserEvaluationDate: now.advanced(by: -1.0),
+            isMatch: true
+        )
 
-        try await assertFalse {
-            try await audience.evaluate(
-                newUserEvaluationDate: now.advanced(by: 1.0),
-                deviceInfoProvider: self.testDeviceInfo
-            )
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            newUserEvaluationDate: now.advanced(by: 1.0),
+            isMatch: false
+        )
     }
 
     func testNotifiicationOptIn() async throws {
         self.testDeviceInfo.isUserOptedInPushNotifications = false
-
         let audience = DeviceAudienceSelector(notificationOptIn: true)
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
+
 
         self.testDeviceInfo.isUserOptedInPushNotifications = true
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testNotifiicationOptOut() async throws {
         self.testDeviceInfo.isUserOptedInPushNotifications = true
 
         let audience = DeviceAudienceSelector(notificationOptIn: false)
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.isUserOptedInPushNotifications = false
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testRequireAnalyticsTrue() async throws {
         self.testDeviceInfo.analyticsEnabled = true
 
         let audience = DeviceAudienceSelector(requiresAnalytics: true)
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
 
         self.testDeviceInfo.analyticsEnabled = false
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
     }
 
     func testRequireAnalyticsFalse() async throws {
         self.testDeviceInfo.analyticsEnabled = true
 
         let audience = DeviceAudienceSelector(requiresAnalytics: false)
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
 
         self.testDeviceInfo.analyticsEnabled = false
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testLocale() async throws {
@@ -112,34 +156,40 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             languageIDs: [ "fr", "en-CA"]
         )
         
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.locale = Locale(identifier: "en-GB")
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.locale = Locale(identifier: "en")
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.locale = Locale(identifier: "fr-FR")
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
 
         self.testDeviceInfo.locale = Locale(identifier: "en-CA")
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
 
         self.testDeviceInfo.locale = Locale(identifier: "en-CA-POSIX")
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testTags() async throws {
@@ -147,19 +197,22 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             tagSelector: .and([.tag("bar"), .tag("foo")])
         )
 
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.tags = Set(["foo"])
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.tags = Set(["foo", "bar"])
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testTestDevices() async throws {
@@ -167,19 +220,22 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             testDevices: ["obIvSbh47TjjqfCrPatbXQ==\n"] // test channel
         )
 
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.channelID = "wrong channnel"
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.channelID = "test channel"
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testVersion() async throws {
@@ -192,19 +248,22 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             )
         )
 
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
-        
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
+
         self.testDeviceInfo.appVersion = "1.0.0"
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.appVersion = "1.1.1"
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testPermissions() async throws {
@@ -217,19 +276,22 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             )
         )
 
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.permissions = [.displayNotifications: .denied]
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.permissions = [.displayNotifications: .granted]
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testLocationOptIn() async throws {
@@ -237,19 +299,22 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             locationOptIn: true
         )
 
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.permissions = [.location: .denied]
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.permissions = [.location: .granted]
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testLocationOptOut() async throws {
@@ -257,19 +322,22 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
             locationOptIn: false
         )
 
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
 
         self.testDeviceInfo.permissions = [.location: .denied]
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
 
         self.testDeviceInfo.permissions = [.location: .granted]
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
     }
 
     func testContactHash() async throws {
@@ -292,14 +360,16 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
         self.testDeviceInfo.channelID = "not a match"
 
         self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testChannelHash() async throws {
@@ -321,64 +391,313 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
 
         self.testDeviceInfo.channelID = "not a match"
         self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
-        try await assertFalse {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
 
         self.testDeviceInfo.channelID = "match"
-        try await assertTrue {
-            try await audience.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
-    }
-
-    func assertTrue(
-        block: @Sendable () async throws -> AirshipDeviceAudienceResult,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) async throws {
-        let result = try await block().isMatch
-        XCTAssertTrue(result, file: file, line: line)
-    }
-
-    func assertFalse(
-        block: @Sendable () async throws -> AirshipDeviceAudienceResult,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) async throws {
-        let result = try await block().isMatch
-        XCTAssertFalse(result, file: file, line: line)
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testDeviceTypes() async throws {
-        let emptyDeviceTypes = DeviceAudienceSelector(
+        let audience = DeviceAudienceSelector(
             deviceTypes: ["android", "ios"]
         )
 
-        try await assertTrue {
-            try await emptyDeviceTypes.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true
+        )
     }
 
     func testDeviceTypesNoIOS() async throws {
-        let emptyDeviceTypes = DeviceAudienceSelector(
+        let audience = DeviceAudienceSelector(
             deviceTypes: ["android", "web"]
         )
 
-        try await assertFalse {
-            try await emptyDeviceTypes.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
     }
 
     func testEmtpyDeviceTypes() async throws {
-        let emptyDeviceTypes = DeviceAudienceSelector(
+        let audience = DeviceAudienceSelector(
             deviceTypes: []
         )
 
-        try await assertFalse {
-            try await emptyDeviceTypes.evaluate(deviceInfoProvider: self.testDeviceInfo)
-        }
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false
+        )
     }
 
+    func testStickyHash() async throws {
+        self.testDeviceInfo.channelID = UUID().uuidString
+
+        let audience = DeviceAudienceSelector(
+            hashSelector: stickyHash
+        )
+
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
+
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: false,
+            reportingMetadata: [stickyHash.sticky!.reportingMetadata!]
+        )
+
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
+        try await self.assert(
+            audienceSelector: audience,
+            isMatch: true,
+            reportingMetadata: [stickyHash.sticky!.reportingMetadata!]
+        )
+
+        // Update sticky hash to swap matches
+        let updatedAudience = DeviceAudienceSelector(
+            hashSelector: stickyHashInverse
+        )
+
+        // Should be the same results
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
+        try await self.assert(
+            audienceSelector: updatedAudience,
+            isMatch: false,
+            reportingMetadata: [stickyHash.sticky!.reportingMetadata!]
+        )
+
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
+        try await self.assert(
+            audienceSelector: updatedAudience,
+            isMatch: true,
+            reportingMetadata: [stickyHash.sticky!.reportingMetadata!]
+        )
+
+        // New contacts should reevaluate
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "also is a match")
+        try await self.assert(
+            audienceSelector: updatedAudience,
+            isMatch: true,
+            reportingMetadata: [stickyHashInverse.sticky!.reportingMetadata!]
+        )
+    }
+
+    func testORMatch() async throws {
+        self.testDeviceInfo.analyticsEnabled = false
+        let audience = CompoundDeviceAudienceSelector.or(
+            [
+                .atomic(DeviceAudienceSelector(requiresAnalytics: false)),
+                .atomic(DeviceAudienceSelector(requiresAnalytics: true)),
+            ]
+        )
+
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: true
+        )
+    }
+
+    func testORMiss() async throws {
+        self.testDeviceInfo.analyticsEnabled = false
+        self.testDeviceInfo.isUserOptedInPushNotifications = false
+
+        let audience = CompoundDeviceAudienceSelector.or(
+            [
+                .atomic(DeviceAudienceSelector(requiresAnalytics: true)),
+                .atomic(DeviceAudienceSelector(notificationOptIn: true)),
+            ]
+        )
+
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: false
+        )
+    }
+
+    func testEmptyOR() async throws {
+        let audience = CompoundDeviceAudienceSelector.or([])
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: true
+        )
+    }
+
+    func testANDMatch() async throws {
+        self.testDeviceInfo.analyticsEnabled = true
+        self.testDeviceInfo.isUserOptedInPushNotifications = true
+
+        let audience = CompoundDeviceAudienceSelector.or(
+            [
+                .atomic(DeviceAudienceSelector(requiresAnalytics: true)),
+                .atomic(DeviceAudienceSelector(notificationOptIn: true)),
+            ]
+        )
+
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: true
+        )
+    }
+
+    func testANDMiss() async throws {
+        self.testDeviceInfo.analyticsEnabled = false
+        self.testDeviceInfo.isUserOptedInPushNotifications = true
+
+        let audience = CompoundDeviceAudienceSelector.and(
+            [
+                .atomic(DeviceAudienceSelector(requiresAnalytics: true)),
+                .atomic(DeviceAudienceSelector(notificationOptIn: true)),
+            ]
+        )
+
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: false
+        )
+    }
+
+    func testEmptyAND() async throws {
+        let audience = CompoundDeviceAudienceSelector.and([])
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: true
+        )
+    }
+
+    func testNOT() async throws {
+        self.testDeviceInfo.analyticsEnabled = false
+        self.testDeviceInfo.isUserOptedInPushNotifications = true
+
+        let audience = CompoundDeviceAudienceSelector.not(
+            .and(
+                [
+                    .atomic(DeviceAudienceSelector(requiresAnalytics: true)),
+                    .atomic(DeviceAudienceSelector(notificationOptIn: true)),
+                ]
+            )
+        )
+
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: true
+        )
+    }
+
+    func testStickyHashShortCircuitOR() async throws {
+        var stickyHashDiffID = stickyHash
+        stickyHashDiffID.sticky = AudienceHashSelector.Sticky(
+            id: UUID().uuidString,
+            reportingMetadata: .string(UUID().uuidString),
+            lastAccessTTL: 100.0
+        )
+
+        self.testDeviceInfo.channelID = UUID().uuidString
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
+
+        // short circuits, only get the first one
+        try await self.assert(
+            compoundSelector: .or(
+                [
+                    .atomic(DeviceAudienceSelector(hashSelector: stickyHash)),
+                    .atomic(DeviceAudienceSelector(hashSelector: stickyHashDiffID)),
+                ]
+            ),
+            isMatch: true,
+            reportingMetadata: [stickyHash.sticky!.reportingMetadata!]
+        )
+    }
+
+    func testStickyHashShortCircuitAND() async throws {
+        var stickyHashDiffID = stickyHash
+        stickyHashDiffID.sticky = AudienceHashSelector.Sticky(
+            id: UUID().uuidString,
+            reportingMetadata: .string(UUID().uuidString),
+            lastAccessTTL: 100.0
+        )
+
+        self.testDeviceInfo.channelID = UUID().uuidString
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
+
+        // short circuits, only get the first one
+        try await self.assert(
+            compoundSelector: .and(
+                [
+                    .atomic(DeviceAudienceSelector(hashSelector: stickyHashInverse)),
+                    .atomic(DeviceAudienceSelector(hashSelector: stickyHashDiffID)),
+                ]
+            ),
+            isMatch: false,
+            reportingMetadata: [stickyHashInverse.sticky!.reportingMetadata!]
+        )
+    }
+
+    func testStickyHashMultiple() async throws {
+        var stickyHashDiffID = stickyHash
+        stickyHashDiffID.sticky = AudienceHashSelector.Sticky(
+            id: UUID().uuidString,
+            reportingMetadata: .string(UUID().uuidString),
+            lastAccessTTL: 100.0
+        )
+
+        self.testDeviceInfo.channelID = UUID().uuidString
+        self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
+
+        // short circuits, only get the first one
+        try await self.assert(
+            compoundSelector: .and(
+                [
+                    .atomic(DeviceAudienceSelector(hashSelector: stickyHash)),
+                    .atomic(DeviceAudienceSelector(hashSelector: stickyHashDiffID)),
+                ]
+            ),
+            isMatch: true,
+            reportingMetadata: [
+                stickyHash.sticky!.reportingMetadata!,
+                stickyHashDiffID.sticky!.reportingMetadata!
+            ]
+        )
+    }
+
+    func assert(
+        audienceSelector: DeviceAudienceSelector,
+        newUserEvaluationDate: Date = Date.distantPast,
+        isMatch: Bool,
+        reportingMetadata: [AirshipJSON]? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        try await self.assert(
+            compoundSelector: .atomic(audienceSelector),
+            newUserEvaluationDate: newUserEvaluationDate,
+            isMatch: isMatch,
+            reportingMetadata: reportingMetadata,
+            file: file,
+            line: line
+        )
+    }
+
+    func assert(
+        compoundSelector: CompoundDeviceAudienceSelector,
+        newUserEvaluationDate: Date = Date.distantPast,
+        isMatch: Bool,
+        reportingMetadata: [AirshipJSON]? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let result = try await self.audienceChecker.evaluate(
+            audienceSelector: compoundSelector,
+            newUserEvaluationDate: newUserEvaluationDate,
+            deviceInfoProvider: self.testDeviceInfo
+        )
+
+        XCTAssertEqual(result.isMatch, isMatch, file: file, line: line)
+        XCTAssertEqual(result.reportingMetadata, reportingMetadata, file: file, line: line)
+    }
 }
 
 
