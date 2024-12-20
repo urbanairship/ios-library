@@ -60,4 +60,14 @@ struct AdditionalAudienceCheckOverrides: Codable, Sendable, Equatable {
     }
 }
 
+extension AutomationAudience.MissBehavior {
+    var schedulePrepareResult: SchedulePrepareResult {
+        switch self {
+        case .cancel: return .cancel
+        case .penalize: return .penalize
+        case .skip: return .skip
+        }
+    }
+}
+
 

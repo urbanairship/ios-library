@@ -47,7 +47,7 @@ public final class FeatureFlagManager: Sendable {
         dataStore: PreferenceDataStore,
         remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol,
         analytics: any FeatureFlagAnalyticsProtocol,
-        audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        audienceChecker: any DeviceAudienceChecker,
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: any FeatureFlagDeferredResolverProtocol,
         privacyManager: AirshipPrivacyManager,
@@ -240,17 +240,13 @@ public final class FeatureFlagManager: Sendable {
             return flag
         }
         
-        let isAudienceMatch = if let audience = control.audience {
-            try await self.audienceChecker.evaluate(
-                audience: audience,
-                newUserEvaluationDate: info.created,
-                deviceInfoProvider: deviceInfoProvider
-            )
-        } else {
-            true
-        }
+        let isAudienceMatch = try await self.audienceChecker.evaluate(
+            audienceSelector: control.compoundAudience?.selector,
+            newUserEvaluationDate: info.created,
+            deviceInfoProvider: deviceInfoProvider
+        )
         
-        if !isAudienceMatch {
+        if !isAudienceMatch.isMatch {
             return flag
         }
         
@@ -279,15 +275,16 @@ public final class FeatureFlagManager: Sendable {
         flagInfo: FeatureFlagInfo,
         deviceInfoProvider: any AudienceDeviceInfoProvider
     ) async throws -> Bool {
-        guard let audienceSelector = flagInfo.audienceSelector else {
-            return true
-        }
-
-        return try await self.audienceChecker.evaluate(
-            audience: audienceSelector,
+        let result = try await self.audienceChecker.evaluate(
+            audienceSelector: .combine(
+                compoundSelector: flagInfo.compoundAudience?.selector,
+                deviceSelector: flagInfo.audienceSelector
+            ),
             newUserEvaluationDate: flagInfo.created,
             deviceInfoProvider: deviceInfoProvider
         )
+        
+        return result.isMatch
     }
 
     private func evaluateDeferred(
@@ -379,16 +376,18 @@ public final class FeatureFlagManager: Sendable {
             return VariableResult(data: data, reportingMetadata: nil)
         case .variant(let variants):
             for variant in variants {
-                if let audienceSelector = variant.audienceSelector {
-                    let result = try? await self.audienceChecker.evaluate(
-                        audience: audienceSelector,
-                        newUserEvaluationDate: flagInfo.created,
-                        deviceInfoProvider: deviceInfoProvider
-                    )
 
-                    if (result != true) {
-                        continue
-                    }
+                let result = try? await self.audienceChecker.evaluate(
+                    audienceSelector: .combine(
+                        compoundSelector: variant.compoundAudience?.selector,
+                        deviceSelector: variant.audienceSelector
+                    ),
+                    newUserEvaluationDate: flagInfo.created,
+                    deviceInfoProvider: deviceInfoProvider
+                )
+                
+                if (result?.isMatch != true) {
+                    continue
                 }
 
                 return VariableResult(

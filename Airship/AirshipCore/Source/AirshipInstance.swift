@@ -107,7 +107,10 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
             channel: channel,
             runtimeConfig: self.config
         )
-        
+
+        let cache = CoreDataAirshipCache(appKey: appCredentials.appKey)
+        let audienceChecker = DefaultDeviceAudienceChecker()
+
         
         let analytics = AirshipAnalytics(
             config: self.config,
@@ -149,7 +152,8 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
         
         self.experimentManager = ExperimentManager(
             dataStore: dataStore,
-            remoteData: remoteData
+            remoteData: remoteData,
+            audienceChecker: audienceChecker
         )
         
         let meteredUsage = AirshipMeteredUsage(
@@ -186,7 +190,8 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
             experimentsManager: experimentManager,
             meteredUsage: meteredUsage,
             deferredResolver: deferredResolver,
-            cache: CoreDataAirshipCache(appKey: appCredentials.appKey)
+            cache: cache,
+            audienceChecker: audienceChecker
         )
         
         var components: [any AirshipComponent] = [

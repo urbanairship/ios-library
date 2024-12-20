@@ -14,7 +14,7 @@ final class ExperimentManager: ExperimentDataProvider {
     init(
         dataStore: PreferenceDataStore,
         remoteData: any RemoteDataProtocol,
-        audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        audienceChecker: any DeviceAudienceChecker,
         date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.dataStore = dataStore
@@ -32,6 +32,7 @@ final class ExperimentManager: ExperimentDataProvider {
             return nil
         }
 
+        
         let contactID = await deviceInfoProvider.stableContactInfo.contactID
         let channelID = try await deviceInfoProvider.channelID
 
@@ -40,10 +41,13 @@ final class ExperimentManager: ExperimentDataProvider {
 
         for experiment in experiments {
             isMatch = try await self.audienceChecker.evaluate(
-                audience: experiment.audienceSelector,
+                audienceSelector: .combine(
+                    compoundSelector: experiment.compoundAudience?.selector,
+                    deviceSelector: experiment.audienceSelector
+                ),
                 newUserEvaluationDate: experiment.created,
                 deviceInfoProvider: deviceInfoProvider
-            )
+            ).isMatch
 
             evaluatedMetadata.append(experiment.reportingMetadata)
 

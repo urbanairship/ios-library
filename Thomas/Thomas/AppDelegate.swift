@@ -16,8 +16,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
 
         do {
-            // Populate AirshipConfig.plist with your app's info from https://go.urbanairship.com
-            // or set runtime properties here.
             var config = try AirshipConfig.default()
             config.isWebViewInspectionEnabled = true
             try Airship.takeOff(config, launchOptions: launchOptions)
@@ -25,7 +23,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             showInvalidConfigAlert()
             return true
         }
-
 
         CustomViewExampleHelper.registerWeatherView()
         CustomViewExampleHelper.registerMapRouteView()

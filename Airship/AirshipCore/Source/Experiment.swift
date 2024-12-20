@@ -10,15 +10,21 @@ enum ResultionType: String, Codable, Sendable, Equatable {
     case `static` = "static"
 }
 
+struct ExperimentCompoundAudience: Codable, Sendable, Equatable {
+    var selector: CompoundDeviceAudienceSelector
+}
+
 
 struct Experiment: Codable, Sendable, Equatable {
+
     let id: String
     let type: ExperimentType
     let resolutionType: ResultionType
     let lastUpdated: Date
     let created: Date
     let reportingMetadata: AirshipJSON
-    let audienceSelector: DeviceAudienceSelector
+    let audienceSelector: DeviceAudienceSelector?
+    let compoundAudience: ExperimentCompoundAudience?
     let exclusions: [MessageCriteria]?
     let timeCriteria: AirshipTimeCriteria?
 
@@ -34,6 +40,7 @@ struct Experiment: Codable, Sendable, Equatable {
         case resolutionType = "type"
         case reportingMetadata = "reporting_metadata"
         case audienceSelector = "audience_selector"
+        case compoundAudience = "compound_audience"
         case exclusions = "message_exclusions"
         case timeCriteria = "time_criteria"
     }
@@ -45,7 +52,8 @@ struct Experiment: Codable, Sendable, Equatable {
         lastUpdated: Date,
         created: Date,
         reportingMetadata: AirshipJSON,
-        audienceSelector: DeviceAudienceSelector,
+        audienceSelector: DeviceAudienceSelector? = nil,
+        compoundAudience: ExperimentCompoundAudience? = nil,
         exclusions: [MessageCriteria]? = nil,
         timeCriteria: AirshipTimeCriteria? = nil
     ) {
@@ -56,6 +64,7 @@ struct Experiment: Codable, Sendable, Equatable {
         self.created = created
         self.reportingMetadata = reportingMetadata
         self.audienceSelector = audienceSelector
+        self.compoundAudience = compoundAudience
         self.exclusions = exclusions
         self.timeCriteria = timeCriteria
     }
@@ -70,9 +79,10 @@ struct Experiment: Codable, Sendable, Equatable {
         self.type = try definitionContainer.decode(ExperimentType.self, forKey: .type)
         self.resolutionType = try definitionContainer.decode(ResultionType.self, forKey: .resolutionType)
         self.reportingMetadata = try definitionContainer.decode(AirshipJSON.self, forKey: .reportingMetadata)
-        self.audienceSelector = try definitionContainer.decode(DeviceAudienceSelector.self, forKey: .audienceSelector)
+        self.audienceSelector = try definitionContainer.decodeIfPresent(DeviceAudienceSelector.self, forKey: .audienceSelector)
         self.exclusions = try definitionContainer.decodeIfPresent([MessageCriteria].self, forKey: .exclusions)
         self.timeCriteria = try definitionContainer.decodeIfPresent(AirshipTimeCriteria.self, forKey: .timeCriteria)
+        self.compoundAudience = try definitionContainer.decodeIfPresent(ExperimentCompoundAudience.self, forKey: .compoundAudience)
     }
 
     func encode(to encoder: any Encoder) throws {
@@ -86,7 +96,8 @@ struct Experiment: Codable, Sendable, Equatable {
         try definition.encode(self.type, forKey: .type)
         try definition.encode(self.resolutionType, forKey: .resolutionType)
         try definition.encode(self.reportingMetadata, forKey: .reportingMetadata)
-        try definition.encode(self.audienceSelector, forKey: .audienceSelector)
+        try definition.encodeIfPresent(self.audienceSelector, forKey: .audienceSelector)
+        try definition.encodeIfPresent(self.compoundAudience, forKey: .compoundAudience)
         try definition.encodeIfPresent(self.exclusions, forKey: .exclusions)
         try definition.encodeIfPresent(self.timeCriteria, forKey: .timeCriteria)
     }
@@ -102,5 +113,9 @@ struct Experiment: Codable, Sendable, Equatable {
         decoder.dateDecodingStrategy = .formatted(Self.dateFormatter)
         return decoder
     }()
+
+
 }
+
+
 

@@ -7,14 +7,18 @@ import AirshipCore
 
 final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
     func evaluate(
-        audience: DeviceAudienceSelector,
+        audienceSelector: CompoundDeviceAudienceSelector?,
         newUserEvaluationDate: Date,
         deviceInfoProvider: AirshipCore.AudienceDeviceInfoProvider
-    ) async throws -> Bool {
-        return try await self.onEvaluate?(audience, newUserEvaluationDate, deviceInfoProvider) ?? false
+    ) async throws -> AirshipDeviceAudienceResult {
+        guard let audienceSelector else {
+            return .match
+        }
+
+        return try await self.onEvaluate!(audienceSelector, newUserEvaluationDate, deviceInfoProvider)
     }
 
-    var onEvaluate: ((DeviceAudienceSelector, Date,  AudienceDeviceInfoProvider) async throws -> Bool)!
+    var onEvaluate: ((CompoundDeviceAudienceSelector, Date,  AudienceDeviceInfoProvider) async throws -> AirshipDeviceAudienceResult)!
 }
 
 final class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {

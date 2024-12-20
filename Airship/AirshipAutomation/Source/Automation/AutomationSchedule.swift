@@ -46,6 +46,10 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
 
     /// On device automation selector
     public var audience: AutomationAudience?
+    
+    /// Compoud audience. If both `audience` and `compoundAudience`, they will both
+    /// be evaluated to determine if the schedule should be executed.
+    public var compoundAudience: AutomationCompoundAudience?
 
     /// Delay after trigger and prepare steps before execution
     public var delay: AutomationDelay?
@@ -89,6 +93,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case start
         case end
         case audience
+        case compoundAudience = "compound_audience"
         case delay
         case interval
         case campaigns
@@ -125,6 +130,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     ///   - start: Start date
     ///   - end: End date
     ///   - audience: On device automation selector
+    ///   - compoundAudience: Compound automation selector
     ///   - delay: Duration after trigger and prepare steps after which execution occurs
     ///   - interval: Execution interval
     ///   - bypassHoldoutGroups: If the schedule should bypass holdout groups or not
@@ -139,6 +145,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         start: Date? = nil,
         end: Date? = nil,
         audience: AutomationAudience? = nil,
+        compoundAudience: AutomationCompoundAudience? = nil,
         delay: AutomationDelay? = nil,
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
@@ -153,6 +160,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.start = start
         self.end = end
         self.audience = audience
+        self.compoundAudience = compoundAudience
         self.delay = delay
         self.interval = interval
         self.data = data
@@ -181,6 +189,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         start: Date? = nil,
         end: Date? = nil,
         audience: AutomationAudience? = nil,
+        compoundAudience: AutomationCompoundAudience? = nil,
         delay: AutomationDelay? = nil,
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
@@ -203,6 +212,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.start = start
         self.end = end
         self.audience = audience
+        self.compoundAudience = compoundAudience
         self.delay = delay
         self.interval = interval
         self.data = data
@@ -232,6 +242,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.start = try container.decodeIfPresent(String.self, forKey: .start)?.toDate()
         self.end = try container.decodeIfPresent(String.self, forKey: .end)?.toDate()
         self.audience = try container.decodeIfPresent(AutomationAudience.self, forKey: .audience)
+        self.compoundAudience = try container.decodeIfPresent(AutomationCompoundAudience.self, forKey: .compoundAudience)
         self.delay = try container.decodeIfPresent(AutomationDelay.self, forKey: .delay)
         self.interval = try container.decodeIfPresent(TimeInterval.self, forKey: .interval)
         self.campaigns = try container.decodeIfPresent(AirshipJSON.self, forKey: .campaigns)
@@ -287,6 +298,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.start?.toISOString(), forKey: .start)
         try container.encodeIfPresent(self.end?.toISOString(), forKey: .end)
         try container.encodeIfPresent(self.audience, forKey: .audience)
+        try container.encodeIfPresent(self.compoundAudience, forKey: .compoundAudience)
         try container.encodeIfPresent(self.delay, forKey: .delay)
         try container.encodeIfPresent(self.interval, forKey: .interval)
         try container.encodeIfPresent(self.campaigns, forKey: .campaigns)

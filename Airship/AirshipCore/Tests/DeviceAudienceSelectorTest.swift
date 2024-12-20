@@ -332,20 +332,20 @@ final class DeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
     }
 
     func assertTrue(
-        block: @Sendable () async throws -> Bool,
+        block: @Sendable () async throws -> AirshipDeviceAudienceResult,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
-        let result = try await block()
+        let result = try await block().isMatch
         XCTAssertTrue(result, file: file, line: line)
     }
 
     func assertFalse(
-        block: @Sendable () async throws -> Bool,
+        block: @Sendable () async throws -> AirshipDeviceAudienceResult,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
-        let result = try await block()
+        let result = try await block().isMatch
         XCTAssertFalse(result, file: file, line: line)
     }
 

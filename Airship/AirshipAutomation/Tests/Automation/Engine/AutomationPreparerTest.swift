@@ -119,7 +119,10 @@ final class AutomationPreparerTest: XCTestCase {
             audience: AutomationAudience(
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .skip
-            )
+            ),
+            compoundAudience: .init(
+                selector: .atomic(.init(newUser: true)),
+                missBehavior: .cancel)
         )
 
         self.remoteDataAccess.contactIDBlock = { _ in
@@ -133,10 +136,10 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { audience, created, provider in
-            XCTAssertEqual(audience, automationSchedule.audience?.audienceSelector)
+        self.audienceChecker.onEvaluate = { audience, created, _ in
+            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
             XCTAssertEqual(created, automationSchedule.created)
-            return false
+            return .miss
         }
 
         let prepareResult = await self.preparer.prepare(
@@ -174,9 +177,9 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(audience, automationSchedule.audience?.audienceSelector)
+            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
             XCTAssertEqual(created, automationSchedule.created)
-            return false
+            return .miss
         }
 
         let prepareResult = await self.preparer.prepare(
@@ -186,6 +189,87 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         XCTAssertTrue(prepareResult.isPenalize)
+    }
+    
+    func testAudienceCheckFirst() async throws {
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            triggers: [],
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            ),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: .skip
+            ),
+            compoundAudience: .init(
+                selector: .atomic(.init(newUser: true)),
+                missBehavior: .cancel)
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in
+            return nil
+        }
+
+        self.remoteDataAccess.requiresUpdateBlock = { _ in
+            return false
+        }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in
+            return true
+        }
+
+        self.audienceChecker.onEvaluate = { audience, created, _ in
+            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
+            XCTAssertEqual(created, automationSchedule.created)
+            return .miss
+        }
+
+        let prepareResult = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        XCTAssertTrue(prepareResult.isSkipped)
+    }
+    
+    func testCompoundAudienceCheck() async throws {
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            triggers: [],
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            ),
+            audience: nil,
+            compoundAudience: .init(
+                selector: .atomic(.init(newUser: true)),
+                missBehavior: .cancel)
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in
+            return nil
+        }
+
+        self.remoteDataAccess.requiresUpdateBlock = { _ in
+            return false
+        }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in
+            return true
+        }
+
+        self.audienceChecker.onEvaluate = { audience, created, provider in
+            XCTAssertEqual(audience, automationSchedule.compoundAudience?.selector)
+            XCTAssertEqual(created, automationSchedule.created)
+            return .miss
+        }
+
+        let prepareResult = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        XCTAssertTrue(prepareResult.isCancelled)
     }
 
 
@@ -214,9 +298,9 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(audience, automationSchedule.audience?.audienceSelector)
+            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
             XCTAssertEqual(created, automationSchedule.created)
-            return false
+            return .miss
         }
 
         let prepareResult = await self.preparer.prepare(
@@ -255,7 +339,7 @@ final class AutomationPreparerTest: XCTestCase {
         self.audienceChecker.onEvaluate = { _, _, provider in
             let contactID = await provider.stableContactInfo.contactID
             XCTAssertEqual("contact ID", contactID)
-            return false
+            return .miss
         }
 
         let _ = await self.preparer.prepare(
@@ -294,8 +378,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _,  _, _ in
+            return .match
         }
 
         let checker = TestFrequencyChecker()
@@ -334,7 +418,7 @@ final class AutomationPreparerTest: XCTestCase {
 
         XCTAssertNotNil(prepared.frequencyChecker)
     }
-
+    
     func testPrepareMessageCheckerError() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -364,8 +448,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         await self.frequencyLimits.setCheckerBlock { _ in
@@ -407,8 +491,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { audience, created, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         await self.audienceAdditionalResolver.setResult(false)
@@ -476,8 +560,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let checker = TestFrequencyChecker()
@@ -534,8 +618,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let checker = TestFrequencyChecker()
@@ -603,8 +687,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let checker = TestFrequencyChecker()
@@ -684,8 +768,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let checker = TestFrequencyChecker()
@@ -757,8 +841,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         self.deferredResolver.onData = { request in
@@ -806,8 +890,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let checker = TestFrequencyChecker()
@@ -872,8 +956,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let experimentResult = ExperimentResult(
@@ -945,8 +1029,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         let experimentResult = ExperimentResult(
@@ -1020,9 +1104,10 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
+
         self.experiments.onEvaluate = { info, provider in
             XCTFail()
             return nil
@@ -1079,8 +1164,8 @@ final class AutomationPreparerTest: XCTestCase {
             return true
         }
 
-        self.audienceChecker.onEvaluate = { _, _, provider in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         self.experiments.onEvaluate = { info, provider in

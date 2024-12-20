@@ -28,6 +28,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! (any InternalAnalyticsProtocol)
         let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! (any AirshipMeteredUsageProtocol)
         let cache = dependencies[SDKDependencyKeys.cache] as! (any AirshipCache)
+        let audienceChecker = dependencies[SDKDependencyKeys.audienceChecker] as! (any DeviceAudienceChecker)
 
         /// Utils
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)
@@ -58,6 +59,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             messagePreparer: messagePreparer,
             deferredResolver: deferredResolver,
             frequencyLimits: frequencyLimits,
+            audienceChecker: audienceChecker,
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
             config: config,

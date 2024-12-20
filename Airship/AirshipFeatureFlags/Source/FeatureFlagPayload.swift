@@ -6,6 +6,14 @@ import Foundation
 import AirshipCore
 #endif
 
+struct FeatureFlagCompoundAudience: Codable, Sendable, Equatable {
+    var selector: CompoundDeviceAudienceSelector
+
+    init(selector: CompoundDeviceAudienceSelector) {
+        self.selector = selector
+    }
+}
+
 struct FeatureFlagInfo: Decodable, Equatable {
     /**
      * Unique id of the flag, a UUID
@@ -36,6 +44,9 @@ struct FeatureFlagInfo: Decodable, Equatable {
       * Optional audience selector
       */
     let audienceSelector: DeviceAudienceSelector?
+
+    /// Optional compound audience
+    let compoundAudience: FeatureFlagCompoundAudience?
 
     /**
      * Optional time span in which the flag should be active
@@ -68,11 +79,16 @@ struct FeatureFlagInfo: Decodable, Equatable {
         case type
         case reportingMetadata = "reporting_metadata"
         case audienceSelector = "audience_selector"
+        case compoundAudience = "compound_audience"
         case timeCriteria = "time_criteria"
         case variables
         case evaluationOptions = "evaluation_options"
         case control
         case name
+    }
+    
+    private enum CompoundAudienceKeys: String, CodingKey {
+        case selector
     }
 
     init(
@@ -82,6 +98,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
         name: String,
         reportingMetadata: AirshipJSON,
         audienceSelector: DeviceAudienceSelector? = nil,
+        compoundAudience: FeatureFlagCompoundAudience? = nil,
         timeCriteria: AirshipTimeCriteria? = nil,
         flagPayload: FeatureFlagPayload,
         evaluationOptions: EvaluationOptions? = nil,
@@ -93,6 +110,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
         self.name = name
         self.reportingMetadata = reportingMetadata
         self.audienceSelector = audienceSelector
+        self.compoundAudience = compoundAudience
         self.timeCriteria = timeCriteria
         self.flagPayload = flagPayload
         self.evaluationOptions = evaluationOptions
@@ -135,6 +153,7 @@ struct FeatureFlagInfo: Decodable, Equatable {
 
         self.name = try payloadContainer.decode(String.self, forKey: .name)
         self.audienceSelector = try payloadContainer.decodeIfPresent(DeviceAudienceSelector.self, forKey: .audienceSelector)
+        self.compoundAudience = try payloadContainer.decodeIfPresent(FeatureFlagCompoundAudience.self, forKey: .compoundAudience)
         self.timeCriteria = try payloadContainer.decodeIfPresent(AirshipTimeCriteria.self, forKey: .timeCriteria)
         self.reportingMetadata = try payloadContainer.decode(AirshipJSON.self, forKey: .reportingMetadata)
         self.evaluationOptions = try payloadContainer.decodeIfPresent(EvaluationOptions.self, forKey: .evaluationOptions)
@@ -212,14 +231,49 @@ enum FeatureFlagVariables: Codable, Equatable {
     struct VariablesVariant: Codable, Equatable {
         let id: String
         let audienceSelector: DeviceAudienceSelector?
+        let compoundAudience: FeatureFlagCompoundAudience?
         let reportingMetadata: AirshipJSON
         let data: AirshipJSON?
 
         enum CodingKeys: String, CodingKey {
             case id
             case audienceSelector = "audience_selector"
+            case compoundAudience = "compound_audience"
             case reportingMetadata = "reporting_metadata"
             case data
+        }
+
+        init(
+            id: String,
+            audienceSelector: DeviceAudienceSelector? = nil,
+            compoundAudience: FeatureFlagCompoundAudience? = nil,
+            reportingMetadata: AirshipJSON,
+            data: AirshipJSON?
+        ) {
+            self.id = id
+            self.audienceSelector = audienceSelector
+            self.compoundAudience = compoundAudience
+            self.reportingMetadata = reportingMetadata
+            self.data = data
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.id = try container.decode(String.self, forKey: .id)
+            self.audienceSelector = try container.decodeIfPresent(DeviceAudienceSelector.self, forKey: .audienceSelector)
+            self.compoundAudience = try container.decodeIfPresent(FeatureFlagCompoundAudience.self, forKey: .compoundAudience)
+            self.reportingMetadata = try container.decode(AirshipJSON.self, forKey: .reportingMetadata)
+            self.data = try container.decodeIfPresent(AirshipJSON.self, forKey: .data)
+        }
+        
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(id, forKey: .id)
+            try container.encodeIfPresent(audienceSelector, forKey: .audienceSelector)
+            try container.encodeIfPresent(compoundAudience, forKey: .compoundAudience)
+            try container.encode(reportingMetadata, forKey: .reportingMetadata)
+            try container.encodeIfPresent(data, forKey: .data)
+            
         }
     }
 
@@ -275,38 +329,36 @@ extension FeatureFlagInfo {
 }
 
 struct ControlOptions: Codable, Equatable {
-    
-    let audience: DeviceAudienceSelector?
+    let compoundAudience: FeatureFlagCompoundAudience?
     let reportingMetadata: AirshipJSON
     let controlType: ControlType
     
     private enum CodingKeys: String, CodingKey {
-        case audience = "audience_selector"
+        case compoundAudience = "compound_audience"
         case reportintMetadata = "reporting_metadata"
     }
     
     init(
-        audience: DeviceAudienceSelector?,
+        compoundAudience: FeatureFlagCompoundAudience?,
         reportingMetadata: AirshipJSON,
         controlType: ControlType
     ) {
-        self.audience = audience
+        self.compoundAudience = compoundAudience
         self.reportingMetadata = reportingMetadata
         self.controlType = controlType
     }
     
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.audience = try container.decodeIfPresent(DeviceAudienceSelector.self, forKey: .audience)
+        self.compoundAudience = try container.decodeIfPresent(FeatureFlagCompoundAudience.self, forKey: .compoundAudience)
         self.reportingMetadata = try container.decode(AirshipJSON.self, forKey: .reportintMetadata)
         self.controlType = try ControlType(from: decoder)
     }
     
     func encode(to encoder: any Encoder) throws {
         try controlType.encode(to: encoder)
-        
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(audience, forKey: .audience)
+        try container.encodeIfPresent(compoundAudience, forKey: .compoundAudience)
         try container.encode(reportingMetadata, forKey: .reportintMetadata)
     }
     

@@ -6,10 +6,18 @@ import Foundation
 public struct AudienceHashSelector: Codable, Sendable, Equatable {
     let hash: Hash
     let bucket: Bucket
+    let sticky: Sticky?
+    
+    init(hash: Hash, bucket: Bucket, sticky: Sticky? = nil) {
+        self.hash = hash
+        self.bucket = bucket
+        self.sticky = sticky
+    }
     
     enum CodingKeys: String, CodingKey {
         case hash = "audience_hash"
         case bucket = "audience_subset"
+        case sticky
     }
 
     struct Hash: Codable, Sendable, Equatable {
@@ -61,6 +69,44 @@ public struct AudienceHashSelector: Codable, Sendable, Equatable {
 
         func contains(_ value: UInt64) -> Bool {
             return value >= min && value <= max
+        }
+    }
+
+    /// Sticky has will cache the result under the `id` for the length of the `lastAccessTTL`.
+    struct Sticky: Codable, Sendable, Equatable {
+        /// The sticky ID.
+        let id: String
+        
+        /// Reporting metadata.
+        let reportingMetadata: AirshipJSON?
+
+        /// Time to cache the result.
+        var lastAccessTTL: TimeInterval
+
+        enum CodingKeys: String, CodingKey {
+            case id
+            case reportingMetadata = "reporting_metadata"
+            case lastAccessTTLMilliseconds = "last_access_ttl"
+        }
+
+        func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(id, forKey: .id)
+            try container.encode(reportingMetadata, forKey: .reportingMetadata)
+            try container.encode((lastAccessTTL * 1000.0), forKey: .lastAccessTTLMilliseconds)
+        }
+
+        init(id: String, reportingMetadata: AirshipJSON?, lastAccessTTL: TimeInterval) {
+            self.id = id
+            self.reportingMetadata = reportingMetadata
+            self.lastAccessTTL = lastAccessTTL
+        }
+
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            id = try container.decode(String.self, forKey: .id)
+            reportingMetadata = try container.decode(AirshipJSON?.self, forKey: .reportingMetadata)
+            lastAccessTTL = TimeInterval(try container.decode(Double.self, forKey: .lastAccessTTLMilliseconds)/1000.0)
         }
     }
 

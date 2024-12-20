@@ -13,70 +13,78 @@ final class FeatureFlagVariablesTest: XCTestCase {
     func testCodableVariant() throws {
         let json = """
               {
-                 "type":"variant",
-                 "variants":[
-                    {
-                       "id":"dda26cb5-e40b-4bc8-abb1-eb88240f7fd7",
-                       "reporting_metadata":{
-                          "flag_id":"27f26d85-0550-4df5-85f0-7022fa7a5925",
-                          "variant_id":"dda26cb5-e40b-4bc8-abb1-eb88240f7fd7"
-                       },
-                       "audience_selector":{
-                          "hash":{
-                             "audience_hash":{
-                                "hash_prefix":"686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
-                                "num_hash_buckets":100,
-                                "hash_identifier":"contact",
-                                "hash_algorithm":"farm_hash"
-                             },
-                             "audience_subset":{
-                                "min_hash_bucket":0,
-                                "max_hash_bucket":9
-                             }
-                          }
-                       },
-                       "data":{
-                          "arbitrary_key_1":"some_value",
-                          "arbitrary_key_2":"some_other_value"
-                       }
+                "type": "variant",
+                "variants": [
+                  {
+                    "id": "dda26cb5-e40b-4bc8-abb1-eb88240f7fd7",
+                    "reporting_metadata": {
+                      "flag_id": "27f26d85-0550-4df5-85f0-7022fa7a5925",
+                      "variant_id": "dda26cb5-e40b-4bc8-abb1-eb88240f7fd7"
                     },
-                    {
-                       "id":"15422380-ce8f-49df-a7b1-9755b88ec0ef",
-                       "reporting_metadata":{
-                          "flag_id":"27f26d85-0550-4df5-85f0-7022fa7a5925",
-                          "variant_id":"15422380-ce8f-49df-a7b1-9755b88ec0ef"
-                       },
-                       "audience_selector":{
-                          "hash":{
-                             "audience_hash":{
-                                "hash_prefix":"686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
-                                "num_hash_buckets":100,
-                                "hash_identifier":"contact",
-                                "hash_algorithm":"farm_hash"
-                             },
-                             "audience_subset":{
-                                "min_hash_bucket":0,
-                                "max_hash_bucket":19
-                             }
-                          }
-                       },
-                       "data":{
-                          "arbitrary_key_1":"different_value",
-                          "arbitrary_key_2":"different_other_value"
-                       }
+                    "audience_selector": {
+                      "hash": {
+                        "audience_hash": {
+                          "hash_prefix": "686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
+                          "num_hash_buckets": 100,
+                          "hash_identifier": "contact",
+                          "hash_algorithm": "farm_hash"
+                        },
+                        "audience_subset": {
+                          "min_hash_bucket": 0,
+                          "max_hash_bucket": 9
+                        }
+                      }
                     },
-                    {
-                       "id":"40e08a3d-8901-40fc-a01a-e6c263bec895",
-                       "reporting_metadata":{
-                          "flag_id":"27f26d85-0550-4df5-85f0-7022fa7a5925",
-                          "variant_id":"40e08a3d-8901-40fc-a01a-e6c263bec895"
-                       },
-                       "data":{
-                          "arbitrary_key_1":"some default value",
-                          "arbitrary_key_2":"some other default value"
-                       }
+                    "compound_audience": {
+                      "selector": {
+                        "type": "atomic",
+                        "audience": {
+                          "new_user": true
+                        }
+                      }
+                    },
+                    "data": {
+                      "arbitrary_key_1": "some_value",
+                      "arbitrary_key_2": "some_other_value"
                     }
-                 ]
+                  },
+                  {
+                    "id": "15422380-ce8f-49df-a7b1-9755b88ec0ef",
+                    "reporting_metadata": {
+                      "flag_id": "27f26d85-0550-4df5-85f0-7022fa7a5925",
+                      "variant_id": "15422380-ce8f-49df-a7b1-9755b88ec0ef"
+                    },
+                    "audience_selector": {
+                      "hash": {
+                        "audience_hash": {
+                          "hash_prefix": "686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
+                          "num_hash_buckets": 100,
+                          "hash_identifier": "contact",
+                          "hash_algorithm": "farm_hash"
+                        },
+                        "audience_subset": {
+                          "min_hash_bucket": 0,
+                          "max_hash_bucket": 19
+                        }
+                      }
+                    },
+                    "data": {
+                      "arbitrary_key_1": "different_value",
+                      "arbitrary_key_2": "different_other_value"
+                    }
+                  },
+                  {
+                    "id": "40e08a3d-8901-40fc-a01a-e6c263bec895",
+                    "reporting_metadata": {
+                      "flag_id": "27f26d85-0550-4df5-85f0-7022fa7a5925",
+                      "variant_id": "40e08a3d-8901-40fc-a01a-e6c263bec895"
+                    },
+                    "data": {
+                      "arbitrary_key_1": "some default value",
+                      "arbitrary_key_2": "some other default value"
+                    }
+                  }
+                ]
               }
         """
 
@@ -102,6 +110,7 @@ final class FeatureFlagVariablesTest: XCTestCase {
                             bucket: .init(min: 0, max: 9)
                         )
                     ),
+                    compoundAudience: .init(selector: .atomic(DeviceAudienceSelector(newUser: true))),
                     reportingMetadata: try AirshipJSON.wrap(
                         [
                             "flag_id": "27f26d85-0550-4df5-85f0-7022fa7a5925",
@@ -130,6 +139,7 @@ final class FeatureFlagVariablesTest: XCTestCase {
                             bucket: .init(min: 0, max: 19)
                         )
                     ),
+                    compoundAudience: nil,
                     reportingMetadata: try AirshipJSON.wrap(
                         [
                             "flag_id": "27f26d85-0550-4df5-85f0-7022fa7a5925",
@@ -146,6 +156,7 @@ final class FeatureFlagVariablesTest: XCTestCase {
                 .init(
                     id: "40e08a3d-8901-40fc-a01a-e6c263bec895",
                     audienceSelector: nil,
+                    compoundAudience: nil,
                     reportingMetadata: try AirshipJSON.wrap(
                         [
                             "flag_id": "27f26d85-0550-4df5-85f0-7022fa7a5925",

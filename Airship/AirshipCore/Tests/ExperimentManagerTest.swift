@@ -30,6 +30,10 @@ final class ExperimentManagerTest: XCTestCase {
         let experiment = Experiment.generate(id: "valid")
         self.remoteData.payloads = [createPayload([experiment.toString, "{ \"not valid\": true }"])]
 
+        self.audienceChecker.onEvaluate = { audience, _, _ in
+            .init(isMatch: true)
+        }
+
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
             deviceInfoProvider: self.deviceInfo
@@ -52,6 +56,9 @@ final class ExperimentManagerTest: XCTestCase {
             createPayload([experiment2.toString])
         ]
 
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            .init(isMatch: false)
+        }
 
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
@@ -103,6 +110,10 @@ final class ExperimentManagerTest: XCTestCase {
         let experiment = Experiment.generate(id: "fake-id", reportingMetadata: AirshipJSON.string("reporting data!"))
         self.remoteData.payloads = [createPayload([experiment.toString])]
 
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            .init(isMatch: false)
+        }
+
         let result = try await subject.evaluateExperiments(
             info: MessageInfo.empty,
             deviceInfoProvider: self.deviceInfo
@@ -142,8 +153,8 @@ final class ExperimentManagerTest: XCTestCase {
             experiment2.toString
         ])]
 
-        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, _ in
-            return audience == audienceSelector2
+        self.audienceChecker.onEvaluate = { audience, _, _ in
+            .init(isMatch: audience == .atomic(audienceSelector2))
         }
 
         let result = try await subject.evaluateExperiments(
@@ -194,8 +205,8 @@ final class ExperimentManagerTest: XCTestCase {
             experiment2.toString
         ])]
 
-        self.audienceChecker.onEvaluate = { audience, newUserEvaluationDate, _ in
-            return audience == audienceSelector2
+        self.audienceChecker.onEvaluate = { audience, _, _ in
+            .init(isMatch: audience == .atomic(audienceSelector2))
         }
 
         let result = try await subject.evaluateExperiments(
@@ -246,7 +257,7 @@ final class ExperimentManagerTest: XCTestCase {
 
 
         self.audienceChecker.onEvaluate = { _, _, _ in
-            return true
+            return .match
         }
 
         let result = try await subject.evaluateExperiments(

@@ -51,7 +51,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         messagePreparer: any AutomationPreparerDelegate<InAppMessage, PreparedInAppMessageData>,
         deferredResolver: any AirshipDeferredResolverProtocol,
         frequencyLimits: any FrequencyLimitManagerProtocol,
-        audienceChecker: any DeviceAudienceChecker = DefaultDeviceAudienceChecker(),
+        audienceChecker: any DeviceAudienceChecker,
         experiments: any ExperimentDataProvider,
         remoteDataAccess: any AutomationRemoteDataAccessProtocol,
         config: RuntimeConfig,
@@ -119,15 +119,31 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
             if let audience = schedule.audience {
                 let match = try await self.audienceChecker.evaluate(
-                    audience: audience.audienceSelector,
+                    audienceSelector: .atomic(audience.audienceSelector),
                     newUserEvaluationDate: schedule.created ?? .distantPast,
                     deviceInfoProvider: deviceInfoProvider
                 )
 
-                if (!match) {
+                if (!match.isMatch) {
                     AirshipLogger.trace("Local audience miss \(schedule.identifier)")
                     return .success(
-                        result: schedule.missedAudiencePrepareResult,
+                        result: audience.missBehavior?.schedulePrepareResult ?? .penalize,
+                        ignoreReturnOrder: true
+                    )
+                }
+            }
+            
+            if let audience = schedule.compoundAudience {
+                let match = try await self.audienceChecker.evaluate(
+                    audienceSelector: audience.selector,
+                    newUserEvaluationDate: schedule.created ?? .distantPast,
+                    deviceInfoProvider: deviceInfoProvider
+                )
+
+                if (!match.isMatch) {
+                    AirshipLogger.trace("Local audience miss \(schedule.identifier)")
+                    return .success(
+                        result: audience.missBehavior.schedulePrepareResult,
                         ignoreReturnOrder: true
                     )
                 }
@@ -287,7 +303,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 }
             } else {
                 return .success(
-                    result: schedule.missedAudiencePrepareResult,
+                    result: schedule.missedDeferredAudienceResult,
                     ignoreReturnOrder: true
                 )
             }
@@ -318,11 +334,13 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 }
 
 fileprivate extension AutomationSchedule {
-    var missedAudiencePrepareResult: SchedulePrepareResult {
-        switch (self.audience?.missBehavior ?? .penalize) {
-        case .cancel: return .cancel
-        case .penalize: return .penalize
-        case .skip: return .skip
+    var missedDeferredAudienceResult: SchedulePrepareResult {
+        if let compoundAudience {
+            return compoundAudience.missBehavior.schedulePrepareResult
+        } else if let audienceMiss = audience?.missBehavior {
+            return audienceMiss.schedulePrepareResult
+        } else {
+            return .penalize
         }
     }
 

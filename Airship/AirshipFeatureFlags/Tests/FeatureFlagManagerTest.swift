@@ -150,6 +150,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             name: "foo",
             reportingMetadata: .string("reporting"),
             audienceSelector: DeviceAudienceSelector(newUser: true),
+            compoundAudience: .init(selector: .not(.atomic(DeviceAudienceSelector(newUser: false)))),
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(variables: nil)
             )
@@ -160,11 +161,12 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate,  _ in
-            XCTAssertEqual(selector, flagInfo.audienceSelector)
+        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
+            XCTAssertEqual(selector, .combine(compoundSelector: flagInfo.compoundAudience?.selector, deviceSelector: flagInfo.audienceSelector)!)
             XCTAssertEqual(newUserDate, flagInfo.created)
-            return true
+            return .match
         }
+
         let flag = try await featureFlagManager.flag(name: "foo")
         let expected = FeatureFlag(
             name: "foo",
@@ -199,7 +201,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         self.audienceChecker.onEvaluate = { _, _, _ in
-            return false
+            return .miss
         }
 
         let flag = try await featureFlagManager.flag(name: "foo")
@@ -248,7 +250,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         self.audienceChecker.onEvaluate = { _, _, _ in
-            return false
+            return .miss
         }
 
         let flag = try await featureFlagManager.flag(name: "foo")
@@ -297,7 +299,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         self.audienceChecker.onEvaluate = { _, _, _ in
-            return false
+            return .miss
         }
 
         let flag = try await featureFlagManager.flag(name: "foo")
@@ -347,8 +349,12 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo1, flagInfo2
         ]
 
-        self.audienceChecker.onEvaluate = { selector, _, _ in
-            return selector == flagInfo2.audienceSelector
+        self.audienceChecker.onEvaluate = { selector,  _, _ in
+            return if selector == .atomic(flagInfo2.audienceSelector!) {
+                .match
+            } else {
+                .miss
+            }
         }
 
         let flag = try await featureFlagManager.flag(name: "foo")
@@ -358,6 +364,64 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             isEligible: true,
             exists: true,
             variables: AirshipJSON.string("flagInfo2 variables"),
+            reportingInfo: FeatureFlag.ReportingInfo(
+                reportingMetadata: .string("reporting"),
+                contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+                channelID: self.deviceInfoProvider.channelID
+            )
+        )
+
+        XCTAssertEqual(expected, flag)
+    }
+    
+    func testMultipleFlagsCompound() async throws {
+        let flagInfo1 = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting"),
+            audienceSelector: nil,
+            compoundAudience: .init(selector: .atomic(DeviceAudienceSelector(newUser: true))),
+            flagPayload: .staticPayload(
+                FeatureFlagPayload.StaticInfo(variables: nil)
+            )
+        )
+
+        let flagInfo2 = FeatureFlagInfo(
+            id: "some ID",
+            created: Date(),
+            lastUpdated: Date(),
+            name: "foo",
+            reportingMetadata: .string("reporting"),
+            audienceSelector: DeviceAudienceSelector(newUser: false),
+            flagPayload: .staticPayload(
+                FeatureFlagPayload.StaticInfo(
+                    variables: .fixed(AirshipJSON.string("flagInfo2 variables"))
+                )
+            )
+        )
+
+        self.remoteDataAccess.status = .upToDate
+        self.remoteDataAccess.flagInfos = [
+            flagInfo1, flagInfo2
+        ]
+
+        self.audienceChecker.onEvaluate = { selector, _, _ in
+            return if selector == flagInfo1.compoundAudience?.selector {
+                .match
+            } else {
+                .miss
+            }
+        }
+
+        let flag = try await featureFlagManager.flag(name: "foo")
+
+        let expected = FeatureFlag(
+            name: "foo",
+            isEligible: true,
+            exists: true,
+            variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
                 reportingMetadata: .string("reporting"),
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
@@ -409,7 +473,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
         self.audienceChecker.onEvaluate = { selector, _, _ in
             // match second variant
-            return selector == variables[1].audienceSelector
+            return if selector == .atomic(variables[1].audienceSelector!) {
+                .match
+            } else {
+                .miss
+            }
         }
 
         let flag = try await featureFlagManager.flag(name: "foo")
@@ -450,7 +518,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 )
             ),
             controlOptions: .init(
-                audience: controlAudience,
+                compoundAudience: .init(selector: .atomic(controlAudience)),
                 reportingMetadata: .string("supersede"),
                 controlType: .flag)
         )
@@ -461,13 +529,15 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
         
         var audienceMatched = false
+
         self.audienceChecker.onEvaluate = { selector, _, _ in
-            if selector == controlAudience {
-                return audienceMatched
+            return if selector == .atomic(controlAudience), audienceMatched {
+                .match
+            } else {
+                .miss
             }
-            
-            return true
         }
+
         
         let noControlFlag = try await featureFlagManager.flag(name: "foo")
         
@@ -526,7 +596,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 )
             ),
             controlOptions: .init(
-                audience: controlAudience,
+                compoundAudience: .init(selector: .atomic(controlAudience)),
                 reportingMetadata: .string("supersede"),
                 controlType: .variables(.string("variables-overrides")))
         )
@@ -538,11 +608,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         
         var audienceMatched = false
         self.audienceChecker.onEvaluate = { selector, _, _ in
-            if selector == controlAudience {
-                return audienceMatched
+            return if selector == .atomic(controlAudience), audienceMatched {
+                .match
+            } else {
+                .miss
             }
-            
-            return true
         }
         
         let noControlFlag = try await featureFlagManager.flag(name: "foo")
@@ -635,8 +705,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         self.audienceChecker.onEvaluate = { selector, _, _ in
-            // match second variant
-            return selector == variables[1].audienceSelector
+            return if selector == .atomic(variables[1].audienceSelector!) {
+                .match
+            } else {
+                .miss
+            }
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
@@ -690,8 +763,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         self.audienceChecker.onEvaluate = { selector, _, _ in
-            // match second variant
-            return selector == variables[1].audienceSelector
+            return if selector == .atomic(variables[1].audienceSelector!) {
+                .match
+            } else {
+                .miss
+            }
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
@@ -731,8 +807,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo,
         ]
 
-        self.audienceChecker.onEvaluate = { selector, _, _ in
-            return false
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .miss
         }
 
         let flag = try await featureFlagManager.flag(name: "foo")
@@ -969,8 +1045,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     }
 
     func testMultipleFlagsNotEligible() async throws {
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return false
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .miss
         }
 
         self.remoteDataAccess.flagInfos = [
@@ -1020,8 +1096,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     }
 
     func testTrackInteractive() async throws {
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return false
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .miss
         }
 
         self.remoteDataAccess.flagInfos = [
@@ -1122,8 +1198,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         await self.deferredResolver.setOnResolve { [deviceInfoProvider] request, info in
@@ -1159,8 +1235,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return false
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .miss
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
@@ -1214,8 +1290,12 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return selector.newUser == true
+        self.audienceChecker.onEvaluate = { selector, _, _ in
+            if selector == .atomic(DeviceAudienceSelector(newUser: true)) {
+                return .match
+            } else {
+                return .miss
+            }
         }
 
         await self.deferredResolver.setOnResolve { request, info in
@@ -1279,8 +1359,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
@@ -1321,8 +1401,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .miss
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
@@ -1363,8 +1443,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
@@ -1427,8 +1507,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             flagInfo
         ]
 
-        self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            return true
+        self.audienceChecker.onEvaluate = { _, _, _ in
+            return .match
         }
 
         await self.deferredResolver.setOnResolve { _, _ in

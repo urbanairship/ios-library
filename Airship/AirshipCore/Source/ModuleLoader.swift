@@ -19,6 +19,8 @@ public struct SDKDependencyKeys {
     public static let experimentsProvider = "experiments"
     public static let meteredUsage = "metered_usage"
     public static let sceneManager = "scene_manager"
+    public static let audienceChecker = "audience_checker"
+
 }
 
 /// NOTE: For internal use only. :nodoc:
@@ -52,7 +54,8 @@ class ModuleLoader {
         experimentsManager: any ExperimentDataProvider,
         meteredUsage: AirshipMeteredUsage,
         deferredResolver: any AirshipDeferredResolverProtocol,
-        cache: any AirshipCache
+        cache: any AirshipCache,
+        audienceChecker: any DeviceAudienceChecker
     ) {
 
         var dependencies: [String: Any] = [
@@ -69,7 +72,8 @@ class ModuleLoader {
             SDKDependencyKeys.deferredResolver: deferredResolver,
             SDKDependencyKeys.cache: cache,
             SDKDependencyKeys.experimentsProvider: experimentsManager,
-            SDKDependencyKeys.meteredUsage: meteredUsage
+            SDKDependencyKeys.meteredUsage: meteredUsage,
+            SDKDependencyKeys.audienceChecker: audienceChecker
         ]
 
 #if !os(watchOS)
