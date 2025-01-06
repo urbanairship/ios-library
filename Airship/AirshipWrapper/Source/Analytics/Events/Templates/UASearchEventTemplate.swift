@@ -88,7 +88,6 @@ public class UASearchEventTemplate: NSObject {
         }
     }
 
-    @objc
     public init(template: SearchEventTemplate) {
         self.template = template
     }

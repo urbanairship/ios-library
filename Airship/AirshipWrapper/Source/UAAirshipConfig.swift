@@ -543,4 +543,31 @@ public class UAHelpers: NSObject {
             return CloudSite.us
         }
     }
+    
+    public static func toChannelType(type: ChannelType) -> UAChannelType {
+        switch(type){
+        case ChannelType.email:
+            return UAChannelType.email
+        case ChannelType.open:
+            return UAChannelType.open
+        case ChannelType.sms:
+            return UAChannelType.sms
+        default:
+            return UAChannelType.email
+        }
+    }
+    
+    public static func toAirshipChannelType(type: UAChannelType) -> ChannelType {
+        switch(type){
+        case UAChannelType.email:
+            return ChannelType.email
+        case UAChannelType.open:
+            return ChannelType.open
+        case UAChannelType.sms:
+            return ChannelType.sms
+        default:
+            return ChannelType.email
+        }
+    }
+    
 }

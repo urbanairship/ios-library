@@ -15,20 +15,10 @@ public class UAChannel: NSObject {
     }
     
     @objc
-    public func editTags(_ editorBlock: (TagEditor) -> Void) {
-        Airship.channel.editTags(editorBlock)
-    }
-    
-    @objc
     public func editTagGroups() -> UATagGroupsEditor? {
         let tagGroupsEditor = UATagGroupsEditor()
         tagGroupsEditor.editor = Airship.channel.editTagGroups()
         return tagGroupsEditor
-    }
-    
-    @objc
-    public func editTagGroups(_ editorBlock: (TagGroupsEditor) -> Void) {
-        Airship.channel.editTagGroups(editorBlock)
     }
     
     @objc
@@ -48,11 +38,6 @@ public class UAChannel: NSObject {
         let attributesEditor =  UAAttributesEditor()
         attributesEditor.editor = Airship.channel.editAttributes()
         return attributesEditor
-    }
-    
-    @objc
-    public func editAttributes(_ editorBlock: (AttributesEditor) -> Void) {
-        Airship.channel.editAttributes(editorBlock)
     }
     
     @objc(enableChannelCreation)

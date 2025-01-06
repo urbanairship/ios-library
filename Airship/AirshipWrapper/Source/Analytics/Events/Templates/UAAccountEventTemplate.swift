@@ -72,7 +72,6 @@ public class UAAccountEventTemplate: NSObject {
         }
     }
     
-    @objc
     public init(template: AccountEventTemplate) {
         self.template = template
     }

@@ -33,6 +33,10 @@ let package = Package(
             name: "AirshipFeatureFlags",
             targets: ["AirshipFeatureFlags"]
         ),
+	.library(
+            name: "AirshipWrapper",
+            targets: ["AirshipWrapper"]
+        ),
         .library(
             name: "AirshipDebug",
             targets: ["AirshipDebug"]
@@ -173,6 +177,22 @@ let package = Package(
                 "Source/AirshipFeatureFlags.h",
                 "Info.plist",
                 "Tests",
+            ],
+            sources: ["Source"]
+        ),
+	.target(
+            name: "AirshipWrapper",
+            dependencies: [
+		.target(name: "AirshipBasement"),
+                .target(name: "AirshipCore"),
+                .target(name: "AirshipPreferenceCenter"),
+                .target(name: "AirshipMessageCenter"),
+                .target(name: "AirshipAutomation"),
+                .target(name: "AirshipFeatureFlags")
+            ],
+            path: "Airship/AirshipWrapper",
+            exclude: [
+                "AirshipWrapper.h"
             ],
             sources: ["Source"]
         ),

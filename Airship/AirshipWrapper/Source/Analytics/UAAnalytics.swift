@@ -31,7 +31,9 @@ public class UAAnalytics: NSObject {
     }
 
     @objc
-    public func recordRegionEvent(_ event: RegionEvent) {
-        Airship.analytics.recordRegionEvent(event)
+    public func recordRegionEvent(_ event: UARegionEvent) {
+        if let regionEvent = event.regionEvent {
+            Airship.analytics.recordRegionEvent(regionEvent)
+        }
     }
 }

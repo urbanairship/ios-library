@@ -7,7 +7,7 @@ public import AirshipCore
 @objc
 public class UARegionEvent: NSObject {
     
-    private var regionEvent: RegionEvent?
+    var regionEvent: RegionEvent?
     
     @objc
     public static let eventType: String = "region_event"
@@ -37,7 +37,6 @@ public class UARegionEvent: NSObject {
         self.init(event: regionEvent)
     }
     
-    @objc
     public init(event: RegionEvent?) {
         self.regionEvent = event
     }
@@ -72,6 +71,7 @@ public class UARegionEvent: NSObject {
      *
      * - Returns: Region event object or `nil` if error occurs.
      */
+    
     @objc(
         regionEventWithRegionID:
             source:
@@ -83,10 +83,10 @@ public class UARegionEvent: NSObject {
         regionID: String,
         source: String,
         boundaryEvent: UABoundaryEvent,
-        circularRegion: CircularRegion?,
-        proximityRegion: ProximityRegion?
+        circularRegion: UACircularRegion?,
+        proximityRegion: UAProximityRegion?
     ) -> UARegionEvent {
-        let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent.event, circularRegion: circularRegion, proximityRegion: proximityRegion)
+        let regionEvent = RegionEvent(regionID: regionID, source: source, boundaryEvent: boundaryEvent.event, circularRegion: circularRegion?.region, proximityRegion: proximityRegion?.region)
         return UARegionEvent(event: regionEvent)
     }
 }
@@ -97,5 +97,23 @@ public class UABoundaryEvent: NSObject {
     
     public init(boundaryEvent: AirshipBoundaryEvent) {
         event = boundaryEvent
+    }
+}
+
+@objc
+public class UACircularRegion: NSObject {
+    var region: CircularRegion
+    
+    public init(circularRegion: CircularRegion) {
+        region = circularRegion
+    }
+}
+
+@objc
+public class UAProximityRegion: NSObject {
+    var region: ProximityRegion
+    
+    public init(proximityRegion: ProximityRegion) {
+        region = proximityRegion
     }
 }

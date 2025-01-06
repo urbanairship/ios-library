@@ -53,9 +53,7 @@ public class UAAirshipContact: NSObject {
      */
     @objc
     public func associateChannel(_ channelID: String, type: UAChannelType) {
-        if let type = ChannelType(rawValue: type.rawValue) {
-            Airship.contact.associateChannel(channelID, type: type)
-        }
+        Airship.contact.associateChannel(channelID, type: UAHelpers.toAirshipChannelType(type: type))
     }
 
     

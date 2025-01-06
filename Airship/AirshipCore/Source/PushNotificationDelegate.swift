@@ -57,6 +57,7 @@ public protocol PushNotificationDelegate: AnyObject, Sendable {
     ) async -> UNNotificationPresentationOptions
 }
 
+
 public extension PushNotificationDelegate {
     func extendPresentationOptions(
         _ options: UNNotificationPresentationOptions,
@@ -65,10 +66,12 @@ public extension PushNotificationDelegate {
         return []
     }
 
+    @MainActor
     func receivedForegroundNotification(_ userInfo: [AnyHashable: Any]) async {
     }
 
     #if !os(watchOS)
+    @MainActor
     func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
         return .noData
     }

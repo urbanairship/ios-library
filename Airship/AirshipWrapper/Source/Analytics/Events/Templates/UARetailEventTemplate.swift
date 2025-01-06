@@ -102,7 +102,6 @@ public class UARetailEventTemplate: NSObject {
         }
     }
     
-    @objc
     public init(template: RetailEventTemplate) {
         self.template = template
     }

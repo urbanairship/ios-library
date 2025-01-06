@@ -102,7 +102,6 @@ public class UAMediaEventTemplate: NSObject {
         }
     }
     
-    @objc
     public init(template: MediaEventTemplate) {
         self.template = template
     }
