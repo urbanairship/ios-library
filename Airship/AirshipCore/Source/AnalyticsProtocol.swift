@@ -8,7 +8,7 @@ import UserNotifications
 #endif
 
 /// Analytics protocol
-public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
+public protocol AirshipAnalyticsProtocol: AnyObject, Sendable {
 
     /// The conversion send ID. :nodoc:
     var conversionSendID: String? { get }
@@ -55,14 +55,11 @@ public protocol AirshipBaseAnalyticsProtocol: AnyObject, Sendable {
     ///   - ext: The SDK extension.
     ///   - version: The version.
     func registerSDKExtension(_ ext: AirshipSDKExtension, version: String)
-}
 
-
-/// Airship Analytics
-public protocol AirshipAnalyticsProtocol: AirshipBaseAnalyticsProtocol {
     /// A publisher of event data that is tracked through Airship.
     var eventPublisher: AnyPublisher<AirshipEventData, Never> { get }
 }
+
 
 /// Internal Analytics protocol
 /// For internal use only. :nodoc:

@@ -3,8 +3,12 @@
 public import Combine
 import Foundation
 
+#if canImport(ActivityKit)
+public import ActivityKit
+#endif
+
 /// Airship Channel protocol.
-public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
+public protocol AirshipChannelProtocol: AnyObject, Sendable {
     /**
      * The Channel ID.
      */
@@ -87,14 +91,7 @@ public protocol AirshipBaseChannelProtocol: AnyObject, Sendable {
      * Enables channel creation if channelCreationDelayEnabled was set to `YES` in the config.
      */
     func enableChannelCreation()
-}
 
-#if canImport(ActivityKit)
-public import ActivityKit
-#endif
-
-/// Airship Channel protocol.
-public protocol AirshipChannelProtocol: AirshipBaseChannelProtocol {
 
     /// Async stream of channel ID updates.
     var identifierUpdates: AsyncStream<String> { get }
