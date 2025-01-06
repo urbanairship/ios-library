@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipMessageCenter
+import AirshipMessageCenter
 
 /// Delegate protocol for receiving callbacks related to message center.
-@objc(UAMessageCenterDisplayDelegate)
+@objc
 public protocol UAMessageCenterDisplayDelegate {
 
     /// Called when a message is requested to be displayed.
@@ -36,29 +36,38 @@ public protocol UAMessageCenterPredicate: Sendable {
 }
 
 @objc
-public class UAMessageCenter: NSObject {
+public final class UAMessageCenter: NSObject, Sendable {
+
+    @MainActor
+    private let storage = Storage()
     
-    private var _displayDelegate: (any UAMessageCenterDisplayDelegate)?
+
     /// Message center display delegate.
     @objc
     @MainActor
-    public var displayDelegate: (any UAMessageCenterDisplayDelegate)? {
-        didSet {
-            if let displayDelegate {
-                MessageCenter.shared.displayDelegate = UAMessageCenterDisplayDelegateWrapper(delegate: displayDelegate)
+    public weak var displayDelegate: (any UAMessageCenterDisplayDelegate)? {
+        get {
+            guard let wrapped = MessageCenter.shared.displayDelegate as? UAMessageCenterDisplayDelegateWrapper else {
+                return nil
+            }
+            return wrapped.forwardDelegate
+        }
+
+        set {
+            if let newValue {
+                let wrapper = UAMessageCenterDisplayDelegateWrapper(newValue)
+                MessageCenter.shared.displayDelegate = wrapper
+                storage.displayDelegate = wrapper
             } else {
                 MessageCenter.shared.displayDelegate = nil
+                storage.displayDelegate = nil
             }
         }
     }
     
     /// Message center inbox.
     @objc
-    var inbox: UAMessageCenterInbox {
-        get {
-            return UAMessageCenterInbox()
-        }
-    }
+    public let inbox: UAMessageCenterInbox = UAMessageCenterInbox()
 
     /// Loads a Message center theme from a plist file. If you are embedding the MessageCenterView directly
     ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
@@ -70,7 +79,6 @@ public class UAMessageCenter: NSObject {
         try MessageCenter.shared.setThemeFromPlist(plist)
     }
 
-    private var _predicate: (any UAMessageCenterPredicate)?
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
     ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
     @objc
@@ -108,29 +116,33 @@ public class UAMessageCenter: NSObject {
         MessageCenter.shared.dismiss()
     }
 
+    @MainActor
+    fileprivate final class Storage  {
+        var displayDelegate: (any MessageCenterDisplayDelegate)?
+    }
+
 }
 
-public class UAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisplayDelegate {
-    private let delegate: any UAMessageCenterDisplayDelegate
-    
-    init(delegate: any UAMessageCenterDisplayDelegate) {
-        self.delegate = delegate
+fileprivate final class UAMessageCenterDisplayDelegateWrapper: NSObject, MessageCenterDisplayDelegate {
+    weak var forwardDelegate: (any UAMessageCenterDisplayDelegate)?
+    init(_ forwardDelegate: any UAMessageCenterDisplayDelegate) {
+        self.forwardDelegate = forwardDelegate
     }
     
     public func displayMessageCenter(messageID: String) {
-        self.delegate.displayMessageCenter(messageID: messageID)
+        self.forwardDelegate?.displayMessageCenter(messageID: messageID)
     }
     
     public func displayMessageCenter() {
-        self.delegate.dismissMessageCenter()
+        self.forwardDelegate?.dismissMessageCenter()
     }
     
     public func dismissMessageCenter() {
-        self.delegate.dismissMessageCenter()
+        self.forwardDelegate?.dismissMessageCenter()
     }
 }
 
-public final class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
+fileprivate final class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
     private let delegate: any UAMessageCenterPredicate
     
     init(delegate: any UAMessageCenterPredicate) {

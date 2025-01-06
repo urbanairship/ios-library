@@ -32,7 +32,7 @@ public protocol MessageCenterDisplayDelegate {
 }
 
 /// Airship Message Center module.
-public final class MessageCenter: NSObject, Sendable {
+public final class MessageCenter: Sendable {
     /// Message center display delegate.
     @MainActor
     public var displayDelegate: (any MessageCenterDisplayDelegate)? {
@@ -46,11 +46,6 @@ public final class MessageCenter: NSObject, Sendable {
 
     private let mutable: MutableValues
     private let privacyManager: AirshipPrivacyManager
-
-    /// Message center inbox.
-    var _inbox: any MessageCenterInboxBaseProtocol {
-        return self.inbox
-    }
 
     /// Message center inbox.
     public let inbox: any MessageCenterInboxProtocol
@@ -120,8 +115,6 @@ public final class MessageCenter: NSObject, Sendable {
         self.inbox = inbox
         self.privacyManager = privacyManager
         self.mutable = MutableValues(controller: controller, theme: MessageCenterThemeLoader.defaultPlist())
-
-        super.init()
 
         if let plist = config.airshipConfig.messageCenterStyleConfig {
             do {

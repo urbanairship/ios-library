@@ -1,28 +1,28 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipMessageCenter
+import AirshipMessageCenter
 
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
+/// Message Center user.
 @objc
-public class UAMessageCenterUser: NSObject {
-    
-    public var mcUser: MessageCenterUser
-    
-    public init(user: MessageCenterUser) {
+public final class UAMessageCenterUser: NSObject, Sendable {
+
+    private let mcUser: MessageCenterUser
+
+    init(user: MessageCenterUser) {
         self.mcUser = user
     }
-    
+
+    /// The password.
     @objc
-    /// The username.
     public var password: String {
         get {
             return mcUser.password
         }
     }
 
+    /// The username.
     @objc
-    /// The password.
     public var username: String {
         get {
             return mcUser.username

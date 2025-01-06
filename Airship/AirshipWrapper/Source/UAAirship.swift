@@ -8,11 +8,12 @@ import AirshipCore
 /// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
 /// before accessing any instances on Airship or Airship modules.
 @objc
-public class UAAirship: NSObject {
+public final class UAAirship: NSObject, Sendable {
 
     private static let storage = Storage()
     private static let _push: UAPush = UAPush()
     private static let _privacyManager: UAPrivacyManager = UAPrivacyManager()
+    private static let _messageCenter: UAMessageCenter = UAMessageCenter()
 
     /// Asserts that Airship is flying (initalized)
     public static func assertAirshipIsFlying() {
@@ -27,6 +28,14 @@ public class UAAirship: NSObject {
         assertAirshipIsFlying()
         return _push
     }
+
+    /// Push instance
+    @objc
+    public static var messageCenter: UAMessageCenter {
+        assertAirshipIsFlying()
+        return _messageCenter
+    }
+
 
     /// Privacy manager
     @objc

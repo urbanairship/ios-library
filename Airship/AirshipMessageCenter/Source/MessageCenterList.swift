@@ -8,20 +8,8 @@ import Foundation
 public import AirshipCore
 #endif
 
-/// Airship Message Center inbox base protocol.
-public protocol MessageCenterInboxBaseProtocol: AnyObject, Sendable {
-
-    /// Gets the list of messages in the inbox.
-    /// - Returns: the list of messages in the inbox.
-    func _getMessages() async -> [MessageCenterMessage]
-
-    /// Gets the user associated to the Message Center if there is one associated already.
-    /// - Returns: the user associated to the Message Center, otherwise `nil`.
-    func _getUser() async -> MessageCenterUser?
-
-    /// Gets the number of messages that are currently unread.
-    /// - Returns: the number of messages that are currently unread.
-    func _getUnreadCount() async -> Int
+/// Airship Message Center inbox protocol.
+public protocol MessageCenterInboxProtocol: AnyObject, Sendable {
 
     /// Refreshes the list of messages in the inbox.
     /// - Returns: `true` if the messages was refreshed, otherwise `false`.
@@ -59,10 +47,7 @@ public protocol MessageCenterInboxBaseProtocol: AnyObject, Sendable {
     ///     - messageID: The message ID.
     /// - Returns: The associated `MessageCenterMessage` object or nil if a message was unable to be found.
     func message(forID messageID: String) async -> MessageCenterMessage?
-}
 
-/// Airship Message Center inbox protocol.
-public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
     /// Publisher that emits messages.
     @MainActor
     var messagePublisher: AnyPublisher<[MessageCenterMessage], Never> { get }
@@ -90,7 +75,6 @@ public protocol MessageCenterInboxProtocol: MessageCenterInboxBaseProtocol {
     /// - Returns: `true` if the messages was refreshed, otherwise `false`.
     @discardableResult
     func refreshMessages(timeout: TimeInterval) async throws -> Bool
-
 }
 
 /// Airship Message Center inbox.
@@ -161,19 +145,34 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
 
     public var messages: [MessageCenterMessage] {
         get async {
-            return await _getMessages()
+            guard self.enabled else {
+                AirshipLogger.error("Message center is disabled")
+                return []
+            }
+            return await self.store.messages
         }
     }
 
     public var user: MessageCenterUser? {
         get async {
-            return await _getUser()
+            guard self.enabled else {
+                AirshipLogger.error("Message center is disabled")
+                return nil
+            }
+
+            await self.startUpTask?.value
+            return await self.store.user
         }
     }
 
     public var unreadCount: Int {
         get async {
-            return await _getUnreadCount()
+            guard self.enabled else {
+                AirshipLogger.error("Message center is disabled")
+                return 0
+            }
+
+            return await self.store.unreadCount
         }
     }
     
@@ -324,33 +323,6 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
             try await self?.taskSleeper.sleep(timeInterval: delay)
             self?.dispatchUpdateWorkRequest()
         }
-    }
-
-    public func _getMessages() async -> [MessageCenterMessage] {
-        guard self.enabled else {
-            AirshipLogger.error("Message center is disabled")
-            return []
-        }
-        return await self.store.messages
-    }
-
-    public func _getUser() async -> MessageCenterUser? {
-        guard self.enabled else {
-            AirshipLogger.error("Message center is disabled")
-            return nil
-        }
-
-        await self.startUpTask?.value
-        return await self.store.user
-    }
-
-    public func _getUnreadCount() async -> Int {
-        guard self.enabled else {
-            AirshipLogger.error("Message center is disabled")
-            return 0
-        }
-
-        return await self.store.unreadCount
     }
 
     private let updateChannel: AirshipAsyncChannel<UpdateType> = AirshipAsyncChannel()

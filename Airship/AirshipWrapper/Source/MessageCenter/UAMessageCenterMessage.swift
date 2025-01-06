@@ -1,15 +1,15 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipMessageCenter
+import AirshipMessageCenter
 
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
+/// Message center message.
 @objc
-public class UAMessageCenterMessage: NSObject {
-    
-    public var mcMessage: MessageCenterMessage
-    
-    public init(message: MessageCenterMessage) {
+public final class UAMessageCenterMessage: NSObject, Sendable {
+
+    let mcMessage: MessageCenterMessage
+
+    init(message: MessageCenterMessage) {
         self.mcMessage = message
     }
 
@@ -19,9 +19,6 @@ public class UAMessageCenterMessage: NSObject {
     public var id: String {
         get {
             return mcMessage.id
-        }
-        set {
-            mcMessage.id = newValue
         }
     }
 
