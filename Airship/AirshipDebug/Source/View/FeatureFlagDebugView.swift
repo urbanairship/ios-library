@@ -41,7 +41,7 @@ public struct FeatureFlagDebugView: View {
 
         init() {
             if Airship.isFlying {
-                self.cancellable = AirshipDebugManager.shared
+                self.cancellable = Airship.debugManager
                     .featureFlagPublisher
                     .receive(on: RunLoop.main)
                     .map { result in
@@ -107,7 +107,7 @@ private struct FeaturFlagDetailsView: View {
                         }
 
                         Button("Track Interaction") {
-                            FeatureFlagManager.shared.trackInteraction(flag: result)
+                            Airship.featureFlagManager.trackInteraction(flag: result)
                         }.frame(maxWidth: .infinity, alignment: .center)
                     } else {
                         VStack {
@@ -212,7 +212,7 @@ private struct FeaturFlagDetailsView: View {
             self.error = nil
             Task { @MainActor in
                 do {
-                    self.result = try await FeatureFlagManager.shared.flag(name: name)
+                    self.result = try await Airship.featureFlagManager.flag(name: name)
                 } catch {
                     self.error = error.localizedDescription
                 }

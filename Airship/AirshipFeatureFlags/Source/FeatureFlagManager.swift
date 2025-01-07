@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 
@@ -24,8 +24,9 @@ enum FeatureFlagEvaluationError: Error, Equatable {
 public final class FeatureFlagManager: Sendable {
 
     /// The shared FeatureFlagManager instance. `Airship.takeOff` must be called before accessing this instance.
+    @available(*, deprecated, message: "Use Airship.featureFlagManager instead")
     public static var shared: FeatureFlagManager {
-        return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
+        return Airship.featureFlagManager
     }
 
     private let remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol
@@ -436,5 +437,12 @@ fileprivate extension FeatureFlag {
                 channelID: try await deviceInfoProvider.channelID
             )
         )
+    }
+}
+
+public extension Airship {
+    /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
+    static var featureFlagManager: FeatureFlagManager {
+        return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
     }
 }

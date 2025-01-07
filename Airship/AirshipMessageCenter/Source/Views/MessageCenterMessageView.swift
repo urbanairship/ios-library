@@ -332,13 +332,13 @@ private struct MessageCenterMessageContentView: View {
         if let message = message {
             return message
         }
-        var message = await MessageCenter.shared.inbox.message(
+        var message = await Airship.messageCenter.inbox.message(
             forID: messageID
         )
 
         if message == nil {
-            await MessageCenter.shared.inbox.refreshMessages()
-            message = await MessageCenter.shared.inbox.message(
+            await Airship.messageCenter.inbox.refreshMessages()
+            message = await Airship.messageCenter.inbox.message(
                 forID: messageID
             )
         }
@@ -352,7 +352,7 @@ private struct MessageCenterMessageContentView: View {
     -> URLRequest
     {
         guard let message = await getMessage(messageID),
-              let user = await MessageCenter.shared.inbox.user
+              let user = await Airship.messageCenter.inbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -372,7 +372,7 @@ private struct MessageCenterMessageContentView: View {
         messageID: String
     ) async throws -> MessageCenterNativeBridgeExtension {
         guard let message = await getMessage(messageID),
-              let user = await MessageCenter.shared.inbox.user
+              let user = await Airship.messageCenter.inbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -423,12 +423,12 @@ private struct MessageCenterMessageContentView: View {
 
                     if Airship.isFlying {
                         Task {
-                            let message = await MessageCenter.shared.inbox
+                            let message = await Airship.messageCenter.inbox
                                 .message(
                                     forID: messageID
                                 )
                             if let message = message {
-                                await MessageCenter.shared.inbox.markRead(
+                                await Airship.messageCenter.inbox.markRead(
                                     messages: [message]
                                 )
                             }
@@ -496,7 +496,7 @@ private struct MessageCenterMessageContentView: View {
         if theme.hideDeleteButton != true {
             Button("ua_delete_message".messageCenterLocalizedString) {
                 Task {
-                    await MessageCenter.shared.inbox.delete(
+                    await Airship.messageCenter.inbox.delete(
                         messageIDs: [self.messageID]
                     )
                 }

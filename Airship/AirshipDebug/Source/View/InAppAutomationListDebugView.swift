@@ -59,7 +59,7 @@ public struct InAppAutomationListDebugView: View {
 
         init() {
             if Airship.isFlying {
-                self.cancellable = AirshipDebugManager.shared
+                self.cancellable = Airship.debugManager
                     .inAppAutomationsPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in

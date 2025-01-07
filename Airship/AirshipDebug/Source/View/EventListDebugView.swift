@@ -62,7 +62,7 @@ public struct EventListDebugView: View {
 
         init() {
             if Airship.isFlying {
-                self.cancellable = AirshipDebugManager.shared
+                self.cancellable = Airship.debugManager
                     .eventReceivedPublisher
                     .sink { [weak self] incoming in
                         self?.refreshEvents()
@@ -74,7 +74,7 @@ public struct EventListDebugView: View {
 
         private func refreshEvents() {
             Task {
-                let events = await AirshipDebugManager.shared.events(
+                let events = await Airship.debugManager.events(
                     searchString: self.searchString
                 )
                 await MainActor.run {

@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 #if canImport(UIKit)
@@ -99,8 +99,9 @@ public final class MessageCenter: Sendable {
     }
 
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
+    @available(*, deprecated, message: "Use Airship.messageCenter instead")
     public static var shared: MessageCenter {
-        return Airship.requireComponent(ofType: MessageCenterComponent.self).messageCenter
+        return Airship.messageCenter
     }
     
     @MainActor
@@ -342,5 +343,12 @@ extension MessageCenter {
     fileprivate func dismissDefaultMessageCenter() {
         self.mutable.currentDisplay?.cancel()
         self.mutable.currentDisplay = nil
+    }
+}
+
+public extension Airship {
+    /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
+    static var messageCenter: MessageCenter {
+        return Airship.requireComponent(ofType: MessageCenterComponent.self).messageCenter
     }
 }

@@ -105,12 +105,14 @@ struct LabeledButton: View {
     
     @ViewBuilder
     var body: some View {
+#if !os(tvOS)
         let defaultStrokeColor = type == .outlineType ? AirshipSystemColors.label : Color.clear
         let strokeColor = colorScheme.airshipResolveColor(light: theme?.backgroundColor, dark: theme?.backgroundColorDark) ?? defaultStrokeColor
         
         let borderShape = RoundedRectangle(cornerRadius: cornerRadius)
         let strokeWidth = type == .outlineType ? outlineWidth : 0
-        
+#endif
+
         Button {
             action()
         } label: {

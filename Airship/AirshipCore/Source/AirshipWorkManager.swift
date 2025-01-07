@@ -78,13 +78,11 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
 
     public func registerWorker(
         _ workID: String,
-        type: AirshipWorkerType,
         workHandler: @Sendable @escaping (AirshipWorkRequest) async throws ->
             AirshipWorkResult
     ) {
         let worker = Worker(
             workID: workID,
-            type: type,
             conditionsMonitor: conditionsMonitor,
             rateLimiter: rateLimitor,
             backgroundTasks: backgroundTasks,

@@ -18,7 +18,7 @@ class MessageCenterListItemViewModel: ObservableObject {
     public init(message: MessageCenterMessage) {
 
         self.message = message
-        MessageCenter.shared.inbox
+        Airship.messageCenter.inbox
             .messagePublisher
             .compactMap({ messages in
                 messages.filter { $0.id == message.id }.first

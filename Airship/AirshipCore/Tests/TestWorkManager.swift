@@ -8,7 +8,6 @@ class TestWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
     
     struct Worker {
         let workID: String
-        let type: AirshipWorkerType
         let workHandler: (AirshipWorkRequest) async throws -> AirshipWorkResult
     }
     
@@ -23,13 +22,11 @@ class TestWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
     var workers: [Worker] = []
     func registerWorker(
         _ workID: String,
-        type: AirshipWorkerType,
         workHandler: @escaping (AirshipWorkRequest) async throws -> AirshipWorkResult
     ) {
         self.workers.append(
             Worker(
                 workID: workID,
-                type: type,
                 workHandler: workHandler
             )
         )

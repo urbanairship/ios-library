@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Open delegate.
@@ -24,8 +24,9 @@ public protocol PreferenceCenterOpenDelegate {
 public final class PreferenceCenter: Sendable {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
+    @available(*, deprecated, message: "Use Airship.preferenceCenter instead")
     public static var shared: PreferenceCenter {
-        return Airship.requireComponent(ofType: PreferenceCenterComponent.self).preferenceCenter
+        return Airship.preferenceCenter
     }
 
     private static let payloadType = "preference_forms"
@@ -224,3 +225,9 @@ extension PreferenceCenter {
     }
 }
 
+public extension Airship {
+    /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
+    static var preferenceCenter: PreferenceCenter {
+        return Airship.requireComponent(ofType: PreferenceCenterComponent.self).preferenceCenter
+    }
+}

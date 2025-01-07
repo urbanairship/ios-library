@@ -113,7 +113,6 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     ///
     /// - Parameters:
     ///     - permission: The permission.
-    ///     - completionHandler: The completion handler.
     @MainActor
     public func checkPermissionStatus(
         _ permission: AirshipPermission
@@ -148,7 +147,6 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     /// - Parameters:
     ///     - permission: The permission.
     ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
-    ///     - completionHandler: The completion handler.
     @MainActor
     public func requestPermission(
         _ permission: AirshipPermission,
@@ -357,9 +355,9 @@ struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
     private func systemSettingURLForPermission(_ permission: AirshipPermission) -> URL? {
         let string = switch(permission) {
         case .displayNotifications:
-            if #available(iOS 16.0, tvOS 16.0, macCatalyst 16.0, visionOS 1.0, *) {
+            if #available(iOS 16.0, macCatalyst 16.0, *) {
                 UIApplication.openNotificationSettingsURLString
-            } else if #available(iOS 15.4, tvOS 15.4, macCatalyst 15.4, *) {
+            } else if #available(iOS 15.4, macCatalyst 15.4, *) {
                 UIApplicationOpenNotificationSettingsURLString
             } else {
                 UIApplication.openSettingsURLString

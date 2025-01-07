@@ -15,13 +15,7 @@ import AirshipBasement
 #endif
 
 
-/**
- * Airship manages the shared state for all Airship services. Airship.takeOff should be
- * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
- * to initialize the shared instance.
- */
-
-/// Main entry point for Airship. The application must call `takeOff` during `application:didFinishLaunchingWithOptions:`
+/// Main entry point for Airship. The application must call `takeOff` within `applicationdidfinishlaunching(_:)`
 /// before accessing any instances on Airship or Airship modules.
 public final class Airship: Sendable {
 

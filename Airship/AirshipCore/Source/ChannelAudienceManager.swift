@@ -105,8 +105,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         (self.liveActivityUpdates, self.liveActivityUpdatesContinuation) = AsyncStream<[LiveActivityUpdate]>.airshipMakeStreamWithContinuation()
 
         self.workManager.registerWorker(
-            ChannelAudienceManager.updateTaskID,
-            type: .serial
+            ChannelAudienceManager.updateTaskID
         ) { [weak self] _ in
             return try await self?.handleUpdateTask() ?? .success
         }

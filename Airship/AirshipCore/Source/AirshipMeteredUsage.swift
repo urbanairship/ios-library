@@ -68,8 +68,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         self.workManager = workManager
         
         self.workManager.registerWorker(
-            AirshipMeteredUsage.workID,
-            type: .serial
+            AirshipMeteredUsage.workID
         ) { [weak self] _ in
             guard let self else {
                 return .success

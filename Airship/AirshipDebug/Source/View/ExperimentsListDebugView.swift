@@ -48,7 +48,7 @@ public struct ExperimentsListsDebugView: View {
 
         init() {
             if Airship.isFlying {
-                self.cancellable = AirshipDebugManager.shared
+                self.cancellable = Airship.debugManager
                     .experimentsPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in

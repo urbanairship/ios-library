@@ -6,7 +6,6 @@ import Foundation
 public protocol AirshipWorkManagerProtocol: Sendable {
     func registerWorker(
         _ workID: String,
-        type: AirshipWorkerType,
         workHandler: @Sendable @escaping (AirshipWorkRequest) async throws ->
             AirshipWorkResult
     )

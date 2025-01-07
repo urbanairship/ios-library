@@ -5,17 +5,13 @@ import SwiftUI
 import UIKit
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #elseif canImport(AirshipKit)
-import AirshipKit
+public import AirshipKit
 #endif
 
 public final class AirshipDebugManager: @unchecked Sendable {
-
-    public static var shared: AirshipDebugManager {
-        return Airship.requireComponent(ofType: DebugComponent.self).debugManager
-    }
-
+    
     private var currentDisplay: (any AirshipMainActorCancellable)?
     private let pushDataManager: PushDataManager
     private let eventDataManager: EventDataManager
@@ -279,5 +275,13 @@ private struct DebugRootView: View {
                 }
         }
         .navigationViewStyle(.stack)
+    }
+}
+
+
+public extension Airship {
+    /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
+    static var debugManager: AirshipDebugManager {
+        return Airship.requireComponent(ofType: DebugComponent.self).debugManager
     }
 }

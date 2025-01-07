@@ -310,7 +310,7 @@ private class AirshipDebugViewModel: ObservableObject {
     var displayInterval: TimeInterval {
         didSet {
             guard Airship.isFlying else { return }
-            InAppAutomation.shared.inAppMessaging.displayInterval =
+            Airship.inAppAutomation.inAppMessaging.displayInterval =
                 displayInterval
         }
     }
@@ -360,7 +360,7 @@ private class AirshipDebugViewModel: ObservableObject {
             self.backgroundPushEnabled =
                 Airship.push.backgroundPushNotificationsEnabled
             self.displayInterval =
-                InAppAutomation.shared.inAppMessaging.displayInterval
+                Airship.inAppAutomation.inAppMessaging.displayInterval
             subscribeUpdates()
         } else {
             self.channelID = "TakeOff not called"

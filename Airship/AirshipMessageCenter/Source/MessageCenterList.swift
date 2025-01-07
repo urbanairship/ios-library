@@ -204,8 +204,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
         }
         
         workManager.registerWorker(
-            updateWorkID,
-            type: .serial
+            updateWorkID
         ) { [weak self] request in
             self?.refreshOnExpireTask.value?.cancel()
             return try await self?.updateInbox() ?? .success

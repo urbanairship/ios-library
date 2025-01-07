@@ -19,7 +19,7 @@ class PushTest: XCTestCase {
     private var apnsRegistrar: TestAPNSRegistrar!
     private let badger = TestBadger()
     private let registrationDelegate = TestRegistraitonDelegate()
-    private let pushDelegate = TestPushNotificationDelegate()
+    private var pushDelegate: TestPushNotificationDelegate!
 
     private var config = AirshipConfig()
     private var privacyManager: AirshipPrivacyManager!
@@ -27,6 +27,7 @@ class PushTest: XCTestCase {
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
+        self.pushDelegate = await TestPushNotificationDelegate()
         self.apnsRegistrar = await TestAPNSRegistrar()
         self.permissionsManager = await AirshipPermissionsManager()
         self.privacyManager = await AirshipPrivacyManager(
@@ -1076,6 +1077,7 @@ extension String {
     }
 }
 
+@MainActor
 class TestPushNotificationDelegate: NSObject, PushNotificationDelegate {
     var onReceivedForegroundNotification:
         (([AnyHashable: Any]) -> Void)?

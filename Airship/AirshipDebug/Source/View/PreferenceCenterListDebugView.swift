@@ -43,7 +43,7 @@ public struct PreferenceCenterListDebugView: View {
 
         init() {
             if Airship.isFlying {
-                self.cancellable = AirshipDebugManager.shared
+                self.cancellable = Airship.debugManager
                     .preferenceFormsPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in

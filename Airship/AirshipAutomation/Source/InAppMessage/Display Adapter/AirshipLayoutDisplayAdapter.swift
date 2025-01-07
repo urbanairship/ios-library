@@ -17,7 +17,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
     @MainActor
     var themeManager: InAppAutomationThemeManager {
-        return InAppAutomation.shared.inAppMessaging.themeManager
+        return Airship.inAppAutomation.inAppMessaging.themeManager
     }
 
     init(

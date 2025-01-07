@@ -47,7 +47,7 @@ public final class UAMessageCenter: NSObject, Sendable {
     @MainActor
     public weak var displayDelegate: (any UAMessageCenterDisplayDelegate)? {
         get {
-            guard let wrapped = MessageCenter.shared.displayDelegate as? UAMessageCenterDisplayDelegateWrapper else {
+            guard let wrapped = Airship.messageCenter.displayDelegate as? UAMessageCenterDisplayDelegateWrapper else {
                 return nil
             }
             return wrapped.forwardDelegate
@@ -56,10 +56,10 @@ public final class UAMessageCenter: NSObject, Sendable {
         set {
             if let newValue {
                 let wrapper = UAMessageCenterDisplayDelegateWrapper(newValue)
-                MessageCenter.shared.displayDelegate = wrapper
+                Airship.messageCenter.displayDelegate = wrapper
                 storage.displayDelegate = wrapper
             } else {
-                MessageCenter.shared.displayDelegate = nil
+                Airship.messageCenter.displayDelegate = nil
                 storage.displayDelegate = nil
             }
         }
@@ -76,7 +76,7 @@ public final class UAMessageCenter: NSObject, Sendable {
     @objc
     @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
-        try MessageCenter.shared.setThemeFromPlist(plist)
+        try Airship.messageCenter.setThemeFromPlist(plist)
     }
 
     /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
@@ -86,9 +86,9 @@ public final class UAMessageCenter: NSObject, Sendable {
     public var predicate: (any UAMessageCenterPredicate)? {
         didSet {
             if let predicate {
-                MessageCenter.shared.predicate = UAMessageCenterPredicateWrapper(delegate: predicate)
+                Airship.messageCenter.predicate = UAMessageCenterPredicateWrapper(delegate: predicate)
             } else {
-                MessageCenter.shared.predicate = nil
+                Airship.messageCenter.predicate = nil
             }
         }
     }
@@ -97,7 +97,7 @@ public final class UAMessageCenter: NSObject, Sendable {
     @objc
     @MainActor
     public func display() {
-        MessageCenter.shared.display()
+        Airship.messageCenter.display()
     }
 
     /// Display the given message with animation.
@@ -106,14 +106,14 @@ public final class UAMessageCenter: NSObject, Sendable {
     @objc(displayWithMessageID:)
     @MainActor
     public func display(messageID: String) {
-        MessageCenter.shared.display(messageID: messageID)
+        Airship.messageCenter.display(messageID: messageID)
     }
 
     /// Dismiss the message center.
     @objc
     @MainActor
     public func dismiss() {
-        MessageCenter.shared.dismiss()
+        Airship.messageCenter.dismiss()
     }
 
     @MainActor

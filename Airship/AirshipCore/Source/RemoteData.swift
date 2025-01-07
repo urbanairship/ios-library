@@ -149,8 +149,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         )
         
         self.workManager.registerWorker(
-            RemoteData.refreshTaskID,
-            type: .serial
+            RemoteData.refreshTaskID
         ) { [weak self] _ in
             return try await self?.handleRefreshTask() ?? .success
         }

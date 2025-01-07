@@ -582,7 +582,6 @@
 		6E91E44328EF423400B6F25E /* WorkRateLimiterActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91E43228EF423300B6F25E /* WorkRateLimiterActor.swift */; };
 		6E91E44628EF423400B6F25E /* AirshipWorkManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91E43328EF423300B6F25E /* AirshipWorkManagerProtocol.swift */; };
 		6E91E44C28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91E43528EF423300B6F25E /* AirshipWorkRequest.swift */; };
-		6E91E44F28EF423400B6F25E /* AirshipWorkerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91E43628EF423300B6F25E /* AirshipWorkerType.swift */; };
 		6E91E45228EF423400B6F25E /* AirshipWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91E43728EF423300B6F25E /* AirshipWorkManager.swift */; };
 		6E91E45828EF423400B6F25E /* AirshipWorkResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91E43928EF423400B6F25E /* AirshipWorkResult.swift */; };
 		6E92EC8A284933750038802D /* PromptPermissionAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E92EC89284933750038802D /* PromptPermissionAction.swift */; };
@@ -1880,7 +1879,6 @@
 		6E91E43228EF423300B6F25E /* WorkRateLimiterActor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkRateLimiterActor.swift; sourceTree = "<group>"; };
 		6E91E43328EF423300B6F25E /* AirshipWorkManagerProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipWorkManagerProtocol.swift; sourceTree = "<group>"; };
 		6E91E43528EF423300B6F25E /* AirshipWorkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipWorkRequest.swift; sourceTree = "<group>"; };
-		6E91E43628EF423300B6F25E /* AirshipWorkerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipWorkerType.swift; sourceTree = "<group>"; };
 		6E91E43728EF423300B6F25E /* AirshipWorkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipWorkManager.swift; sourceTree = "<group>"; };
 		6E91E43928EF423400B6F25E /* AirshipWorkResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipWorkResult.swift; sourceTree = "<group>"; };
 		6E92EC89284933750038802D /* PromptPermissionAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptPermissionAction.swift; sourceTree = "<group>"; };
@@ -3888,7 +3886,6 @@
 		6E91E42E28EF420700B6F25E /* WorkManager */ = {
 			isa = PBXGroup;
 			children = (
-				6E91E43628EF423300B6F25E /* AirshipWorkerType.swift */,
 				6E91E43728EF423300B6F25E /* AirshipWorkManager.swift */,
 				6E91E43328EF423300B6F25E /* AirshipWorkManagerProtocol.swift */,
 				6E91E43528EF423300B6F25E /* AirshipWorkRequest.swift */,
@@ -6063,7 +6060,6 @@
 				6E75F50529C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
 				3237D5F22B865D990055932B /* JSONValueTransformer.swift in Sources */,
 				6EED68162CE271F80087CDCB /* ThomasFormSubmitBehavior.swift in Sources */,
-				6E91E44F28EF423400B6F25E /* AirshipWorkerType.swift in Sources */,
 				6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */,
 				60D3BCD02A154D9400E07524 /* MessageCriteria.swift in Sources */,
 				608B16E62C2C1138005298FA /* SubscriptionListProvider.swift in Sources */,

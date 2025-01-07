@@ -44,7 +44,7 @@ public struct ReceivedPushListDebugView: View {
         init() {
             if Airship.isFlying {
                 self.refreshPush()
-                self.cancellable = AirshipDebugManager.shared
+                self.cancellable = Airship.debugManager
                     .pushNotifiacitonReceivedPublisher
                     .sink { [weak self] _ in
                         self?.refreshPush()
@@ -54,7 +54,7 @@ public struct ReceivedPushListDebugView: View {
 
         private func refreshPush() {
             Task {
-                let notifications = await AirshipDebugManager.shared
+                let notifications = await Airship.debugManager
                     .pushNotifications()
                 await MainActor.run {
                     self.pushNotifications = notifications

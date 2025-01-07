@@ -40,8 +40,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
         self.taskSleeper = taskSleeper
 
         self.workManager.registerWorker(
-            EventUploadScheduler.workID,
-            type: .serial
+            EventUploadScheduler.workID
         ) { [weak self] _ in
             guard let self else {
                 return .success

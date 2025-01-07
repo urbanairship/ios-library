@@ -105,8 +105,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         }
 
         self.workManager.registerWorker(
-            ChannelRegistrar.workID,
-            type: .serial
+            ChannelRegistrar.workID
         ) { [weak self] request in
            return try await self?.handleRegistrationWorkRequest(request) ?? .success
         }

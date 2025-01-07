@@ -8,7 +8,7 @@ import UIKit
 #endif
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 
@@ -34,8 +34,9 @@ public final class InAppAutomation: Sendable {
     }
 
     /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
+    @available(*, deprecated, message: "Use Airship.inAppAutomation instead")
     public static var shared: InAppAutomation {
-        return Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
+        return Airship.inAppAutomation
     }
 
     @MainActor
@@ -159,3 +160,9 @@ extension InAppAutomation {
 }
 
 
+public extension Airship {
+    /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
+    static var inAppAutomation: InAppAutomation {
+        return Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
+    }
+}

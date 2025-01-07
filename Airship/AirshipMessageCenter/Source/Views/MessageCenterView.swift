@@ -36,7 +36,7 @@ public struct MessageCenterView: View {
         self.controller = if let controller {
             controller
         } else if Airship.isFlying {
-            MessageCenter.shared.controller
+            Airship.messageCenter.controller
         } else {
             MessageCenterController()
         }

@@ -108,8 +108,7 @@ actor ContactManager: ContactManagerProtocol {
         ) = AsyncStream<ContactUpdate>.airshipMakeStreamWithContinuation()
 
         self.workManager.registerWorker(
-            ContactManager.updateTaskID,
-            type: .serial
+            ContactManager.updateTaskID
         ) { [weak self] _ in
             if (try await self?.performNextOperation() != false) {
                 return .success

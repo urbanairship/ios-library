@@ -17,7 +17,6 @@ actor Worker {
     private static let maxBackOff = 120.0
 
     let workID: String
-    private let type: AirshipWorkerType
     private let conditionsMonitor: WorkConditionsMonitor
     private let rateLimiter: WorkRateLimiter
     private let backgroundTasks: any WorkBackgroundTasksProtocol
@@ -28,7 +27,6 @@ actor Worker {
 
     init(
         workID: String,
-        type: AirshipWorkerType,
         conditionsMonitor: WorkConditionsMonitor,
         rateLimiter: WorkRateLimiter,
         backgroundTasks: any WorkBackgroundTasksProtocol,
@@ -36,7 +34,6 @@ actor Worker {
             AirshipWorkResult
     ) {
         self.workID = workID
-        self.type = type
         self.conditionsMonitor = conditionsMonitor
         self.rateLimiter = rateLimiter
         self.backgroundTasks = backgroundTasks
@@ -109,16 +106,8 @@ actor Worker {
             }
 
             tasks.insert(task)
-            switch self.type {
-            case .concurrent:
-                Task {
-                    try? await task.result.get()
-                    tasks.remove(task)
-                }
-            case .serial:
-                try? await task.result.get()
-                tasks.remove(task)
-            }
+            try? await task.result.get()
+            tasks.remove(task)
         }
     }
 
@@ -187,28 +176,14 @@ actor Worker {
     func calculateBackgroundWaitTime(
         maxTime: TimeInterval
     ) async -> TimeInterval {
-        switch self.type {
-        case .serial:
-            guard let pending = self.pending.first else {
-                return 0.0
-            }
-
-            return await calculateBackgroundWaitTime(
-                workRequest: pending.request,
-                maxTime: maxTime
-            )
-        case .concurrent:
-            var wait = 0.0
-            for pendingRequest in self.pending {
-                let requestWait = await self.calculateBackgroundWaitTime(
-                    workRequest: pendingRequest.request,
-                    maxTime: maxTime
-                )
-                wait = max(wait, requestWait)
-            }
-
-            return wait
+        guard let pending = self.pending.first else {
+            return 0.0
         }
+
+        return await calculateBackgroundWaitTime(
+            workRequest: pending.request,
+            maxTime: maxTime
+        )
     }
 
 
