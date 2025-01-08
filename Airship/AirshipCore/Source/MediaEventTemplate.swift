@@ -2,170 +2,130 @@
 
 import Foundation
 
-/// A MediaEventTemplate represents a custom media event template for the
-/// application.
-public class MediaEventTemplate {
-    /**
-     * The event's ID.
-     */
-    public var identifier: String?
+public extension CustomEvent {
 
-    /**
-     * The event's category.
-     */
-    public var category: String?
+    /// Media event types
+    enum MediaTemplate: Sendable {
+        /// Browsed media
+        case browsed
 
-    /**
-     * The event's type.
-     */
-    public var type: String?
+        /// Consumed media
+        case consumed
 
-    /**
-     * The event's description.
-     */
-    public var eventDescription: String?
+        /// Shared media
+        /// - Parameters:
+        ///     - source: Optional source.
+        ///     - medium: Optional medium.
+        case shared(source: String? = nil, medium: String? = nil)
 
-    private var _isFeature: Bool?
+        /// Starred media
+        case starred
 
-    /**
-     * `YES` if the event is a feature, else `NO`.
-     */
-    public var isFeature: Bool {
-        get {
-            return self._isFeature ?? false
-        }
-        set {
-            self._isFeature = newValue
+        fileprivate static let templateName: String = "media"
+
+        fileprivate var eventName: String {
+            return switch self {
+            case .browsed: "browsed_content"
+            case .consumed: "consumed_content"
+            case .shared: "shared_content"
+            case .starred: "starred_content"
+            }
         }
     }
 
-    /**
-     * The event's author. The author's length must not exceed 255 characters
-     * or it will invalidate the event.
-     */
-    public var author: String?
+    /// Additional media template properties
+    struct MediaProperties: Encodable, Sendable {
+        /// The event's ID.
+        public var id: String?
 
-    /**
-     * The event's publishedDate. The publishedDate's length must not exceed 255 characters
-     * or it will invalidate the event.
-     */
-    public var publishedDate: String?
+        /// The event's category.
+        public var category: String?
 
-    private let eventName: String
-    private let medium: String?
-    private let source: String?
-    private let eventValue: NSNumber?
+        /// The event's type.
+        public var type: String?
 
-    /**
-     * Factory method for creating a browsed content event template.
-     * - Returns: A Media event template instance
-     */
-    public class func browsedTemplate() -> MediaEventTemplate {
-        return MediaEventTemplate("browsed_content")
+        /// The event's description.
+        public var eventDescription: String?
+
+        /// The event's author.
+        public var author: String?
+
+        /// The event's published date.
+        public var publishedDate: Date?
+
+        /// If the event is a feature
+        public var isFeature: Bool?
+
+        /// If the value is a lifetime value or not.
+        public var isLTV: Bool
+
+        var source: String? = nil
+        var medium: String? = nil
+
+        public init(
+            id: String? = nil,
+            category: String? = nil,
+            type: String? = nil,
+            eventDescription: String? = nil,
+            isLTV: Bool = false,
+            author: String? = nil,
+            publishedDate: Date? = nil,
+            isFeature: Bool? = nil
+        ) {
+            self.id = id
+            self.category = category
+            self.type = type
+            self.eventDescription = eventDescription
+            self.isLTV = isLTV
+            self.author = author
+            self.publishedDate = publishedDate
+            self.isFeature = isFeature
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case isLTV = "ltv"
+            case isFeature = "feature"
+            case id
+            case category
+            case type
+            case source
+            case medium
+            case eventDescription = "description"
+            case author
+            case publishedDate = "published_date"
+        }
     }
 
-    /**
-     * Factory method for creating a starred content event template.
-     * - Returns: A Media event template instance
-     */
-    public class func starredTemplate() -> MediaEventTemplate {
-        return MediaEventTemplate("starred_content")
-
-    }
-
-    /**
-     * Factory method for creating a shared content event template.
-     * - Returns: A Media event template instance
-     */
-    public class func sharedTemplate() -> MediaEventTemplate {
-        return sharedTemplate(source: nil, medium: nil)
-    }
-
-    /**
-     * Factory method for creating a shared content event template.
-     * If the source or medium exceeds 255 characters it will cause the event to be invalid.
-     *
-     * - Parameter source: The source as an NSString.
-     * - Parameter medium: The medium as an NSString.
-     * - Returns: A Media event template instance
-     */
-    public class func sharedTemplate(source: String?, medium: String?)
-        -> MediaEventTemplate
-    {
-        return MediaEventTemplate(
-            "shared_content",
-            value: nil,
-            source: source,
-            medium: medium
-        )
-    }
-
-    /**
-     * Factory method for creating a consumed content event template.
-     * - Returns: A Media event template instance
-     */
-    public class func consumedTemplate() -> MediaEventTemplate {
-        return consumedTemplate(value: nil)
-    }
-
-    /**
-     * Factory method for creating a consumed content event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Media event template instance
-     */
-    public class func consumedTemplate(valueString: String?)
-        -> MediaEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return consumedTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a consumed content event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Media event template instance
-     */
-    public class func consumedTemplate(value: NSNumber?) -> MediaEventTemplate {
-        return MediaEventTemplate("consumed_content", value: value)
-    }
-
-    public init(
-        _ eventName: String,
-        value: NSNumber? = nil,
-        source: String? = nil,
-        medium: String? = nil
+    /// Constructs a custom event using the media template.
+    /// - Parameters:
+    ///     - mediaTemplate: The media template.
+    ///     - properties: Media properties.
+    ///     - encoder: Encoder used to encode the additional properties. Defaults to `CustomEvent.defaultEncoder`.
+    init(
+        mediaTemplate: MediaTemplate,
+        properties: MediaProperties = MediaProperties(),
+        encoder: @autoclosure () -> JSONEncoder = CustomEvent.defaultEncoder()
     ) {
-        self.eventName = eventName
-        self.eventValue = value
-        self.source = source
-        self.medium = medium
-    }
+        self = .init(name: mediaTemplate.eventName)
+        self.templateType = MediaTemplate.templateName
 
-    /**
-     * Creates the custom media event.
-     */
-    public func createEvent() -> CustomEvent {
-        var propertyDictionary: [String: Any] = [:]
-        propertyDictionary["ltv"] = self.eventValue != nil
-        propertyDictionary["id"] = self.identifier
-        propertyDictionary["category"] = self.category
-        propertyDictionary["type"] = self.type
-        propertyDictionary["feature"] = self.isFeature
-        propertyDictionary["published_date"] = self.publishedDate
-        propertyDictionary["source"] = self.source
-        propertyDictionary["medium"] = self.medium
-        propertyDictionary["description"] = self.eventDescription
-        propertyDictionary["author"] = self.author
+        var mutableProperties = properties
 
-        let event = CustomEvent(name: self.eventName)
-        event.templateType = "media"
-        event.eventValue = self.eventValue
-        event.properties = propertyDictionary
-        return event
+        switch (mediaTemplate) {
+        case .browsed: break
+        case .starred: break
+        case .consumed: break
+        case .shared(source: let source, medium: let medium):
+            mutableProperties.source = source
+            mutableProperties.medium = medium
+        }
+
+        do {
+            try self.setProperties(mutableProperties, encoder: encoder())
+        } catch {
+            /// Should never happen so we are just catching the exception and logging
+            AirshipLogger.error("Failed to generate event \(error)")
+        }
     }
 }
+

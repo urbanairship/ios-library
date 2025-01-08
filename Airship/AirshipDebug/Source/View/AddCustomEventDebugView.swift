@@ -120,9 +120,9 @@ public struct AddCustomEventView: View {
                 return
             }
 
-            let event = CustomEvent(
+            var event = CustomEvent(
                 name: self.eventName,
-                value: self.eventValue as NSNumber
+                value: self.eventValue
             )
             if !self.transactionID.isEmpty {
                 event.transactionID = self.transactionID
@@ -131,7 +131,7 @@ public struct AddCustomEventView: View {
                 event.interactionID = self.interactionID
                 event.interactionType = self.interactionType
             }
-            event.properties = self.properties.mapValues { $0.unwrappedValue }
+            try? event.setProperties(self.properties.mapValues { $0.unwrappedValue })
 
             event.track()
         }

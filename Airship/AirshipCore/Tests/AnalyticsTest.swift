@@ -392,7 +392,7 @@ class AnalyticsTest: XCTestCase {
                     metadata: nil,
                     formatValue: false
                 ),
-                value: nil
+                value: 1.0
             )
         )
     }

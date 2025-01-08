@@ -1,7 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if canImport(AirshipCore)
 import AirshipMessageCenter
+import AirshipCore
+#endif
 
 /// Message center message.
 @objc

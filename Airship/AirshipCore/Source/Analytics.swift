@@ -298,7 +298,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
                     metadata: self.conversionPushMetadata,
                     formatValue: false
                 ),
-                value: event.eventValue?.doubleValue
+                value: (event.eventValue as NSDecimalNumber).doubleValue
             ),
             date: self.date.now,
             sessionID: self.sessionTracker.sessionState.sessionID
@@ -669,3 +669,4 @@ fileprivate struct ScreenState {
     var previous: String?
     var startDate: Date?
 }
+

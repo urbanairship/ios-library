@@ -278,7 +278,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         }
 
         let result: AirshipDeferredResult<DeferredScheduleResult> = await deferredResolver.resolve(request: request) { data in
-            return try AirshipJSON.defaultDecoder.decode(DeferredScheduleResult.self, from: data)
+            return try JSONDecoder().decode(DeferredScheduleResult.self, from: data)
         }
 
         AirshipLogger.trace("Deferred result \(schedule.identifier) \(result)")

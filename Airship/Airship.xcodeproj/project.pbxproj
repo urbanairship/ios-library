@@ -1440,9 +1440,7 @@
 		60FCA3092B51364A005C9232 /* LegacyInAppMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessageTest.swift; sourceTree = "<group>"; };
 		60FCA30B2B51492A005C9232 /* LegacyInAppMessagingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppMessagingTest.swift; sourceTree = "<group>"; };
 		60FCA3242B5EF3A8005C9232 /* AutomationEventFeedTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventFeedTest.swift; sourceTree = "<group>"; };
-		6E0031A82D08BB880004F53E /* UAFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAFeature.swift; sourceTree = "<group>"; };
 		6E0031AA2D08CC8A0004F53E /* AirshipAuthorizedNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAuthorizedNotificationSettings.swift; sourceTree = "<group>"; };
-		6E0031AC2D08CF4B0004F53E /* UAAuthorizedNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAuthorizedNotificationSettings.swift; sourceTree = "<group>"; };
 		6E032A4F2B210E6000404630 /* RemoteConfigTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigTest.swift; sourceTree = "<group>"; };
 		6E062D02271656DE001A74A1 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		6E062D04271656F8001A74A1 /* LinearLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinearLayout.swift; sourceTree = "<group>"; };
@@ -2244,8 +2242,6 @@
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
 		A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagManagerTest.swift; sourceTree = "<group>"; };
-		A61F93DC2CE3905B0087D665 /* UAMessageCenterMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterMessage.swift; sourceTree = "<group>"; };
-		A61F93DE2CE39D1A0087D665 /* UAMessageCenterUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterUser.swift; sourceTree = "<group>"; };
 		A62058692A5841330041FBF9 /* AirshipFeatureFlags.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipFeatureFlags.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A620586B2A5841330041FBF9 /* AirshipFeatureFlags.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipFeatureFlags.h; sourceTree = "<group>"; };
 		A62058702A5841330041FBF9 /* AirshipFeatureFlagsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipFeatureFlagsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2255,16 +2251,10 @@
 		A63A567528F449D8004B8951 /* TestWorkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkManager.swift; sourceTree = "<group>"; };
 		A63A567728F457FE004B8951 /* TestWorkRateLimiterActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWorkRateLimiterActor.swift; sourceTree = "<group>"; };
 		A641E1472BDBBDB400DE6FAA /* AirshipWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A641E1492BDBBDB400DE6FAA /* AirshipWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipWrapper.h; sourceTree = "<group>"; };
-		A641E1652BE1247700DE6FAA /* UAAirshipConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipConfig.swift; sourceTree = "<group>"; };
 		A649F50A252F4F39005453CB /* UAInbox 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 2.xcdatamodel"; sourceTree = "<group>"; };
 		A658DE0A2727020100007672 /* ImageButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		A658DE182728498900007672 /* AirshipWebview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebview.swift; sourceTree = "<group>"; };
 		A658DE2A272AFB0400007672 /* AirshipImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageLoader.swift; sourceTree = "<group>"; };
-		A65BEF2B2BEE5BE500F6C5D7 /* UAAirship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirship.swift; sourceTree = "<group>"; };
-		A65BEF312BF658C300F6C5D7 /* UAPush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAPush.swift; sourceTree = "<group>"; };
-		A65BEF7B2BF7A01500F6C5D7 /* UARegistrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegistrationDelegate.swift; sourceTree = "<group>"; };
-		A65BEF7D2BF7A02A00F6C5D7 /* UAPushNotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPushNotificationDelegate.swift; sourceTree = "<group>"; };
 		A67229B928199D430033F54D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		A67229BB28199D590033F54D /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		A67229BD28199D6A0033F54D /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -2273,8 +2263,6 @@
 		A67F87D1268DECCE00EF5F43 /* ContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClient.swift; sourceTree = "<group>"; };
 		A6849386273290520021675E /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
 		A684939C273436370021675E /* FontViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontViewModifier.swift; sourceTree = "<group>"; };
-		A692023A2C10AC08007197EF /* UAAppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAppIntegration.swift; sourceTree = "<group>"; };
-		A692023F2C133DBA007197EF /* OUAPreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPreferenceCenter.swift; sourceTree = "<group>"; };
 		A69C987E27E247B20063A101 /* SubscriptionListAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListAction.swift; sourceTree = "<group>"; };
 		A6A5530926D548AF002B20F6 /* NativeBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridge.swift; sourceTree = "<group>"; };
 		A6A5530F26D548D6002B20F6 /* JavaScriptEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptEnvironment.swift; sourceTree = "<group>"; };
@@ -2282,96 +2270,6 @@
 		A6A8077B26C1566E00CB266E /* AirshipColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColorUtils.swift; sourceTree = "<group>"; };
 		A6AC44822B923ACB00769ED2 /* TestInAppMessageAutomationExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInAppMessageAutomationExecutor.swift; sourceTree = "<group>"; };
 		A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListActionTest.swift; sourceTree = "<group>"; };
-		A6CC581B2D243BF4006ACB30 /* AirshipWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipWrapper.h; sourceTree = "<group>"; };
-		A6CC581C2D243BF4006ACB30 /* UAAccountEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAccountEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC581D2D243BF4006ACB30 /* UAMediaEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMediaEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC581E2D243BF4006ACB30 /* UARetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARetailEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC581F2D243BF4006ACB30 /* UASearchEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASearchEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58212D243BF4006ACB30 /* UACustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UACustomEvent.swift; sourceTree = "<group>"; };
-		A6CC58222D243BF4006ACB30 /* UARegionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegionEvent.swift; sourceTree = "<group>"; };
-		A6CC58242D243BF4006ACB30 /* UAAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAnalytics.swift; sourceTree = "<group>"; };
-		A6CC58262D243BF4006ACB30 /* UAAttributesEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAttributesEditor.swift; sourceTree = "<group>"; };
-		A6CC58272D243BF4006ACB30 /* UAChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAChannel.swift; sourceTree = "<group>"; };
-		A6CC58282D243BF4006ACB30 /* UATagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagEditor.swift; sourceTree = "<group>"; };
-		A6CC58292D243BF4006ACB30 /* UATagGroupsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagGroupsEditor.swift; sourceTree = "<group>"; };
-		A6CC582B2D243BF4006ACB30 /* UAAirshipContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipContact.swift; sourceTree = "<group>"; };
-		A6CC582D2D243BF4006ACB30 /* UAMessageCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenter.swift; sourceTree = "<group>"; };
-		A6CC582E2D243BF4006ACB30 /* UAMessageCenterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterList.swift; sourceTree = "<group>"; };
-		A6CC582F2D243BF4006ACB30 /* UAMessageCenterMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterMessage.swift; sourceTree = "<group>"; };
-		A6CC58302D243BF4006ACB30 /* UAMessageCenterUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterUser.swift; sourceTree = "<group>"; };
-		A6CC58322D243BF4006ACB30 /* OUAPreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPreferenceCenter.swift; sourceTree = "<group>"; };
-		A6CC58342D243BF4006ACB30 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
-		A6CC58362D243BF4006ACB30 /* UAAuthorizedNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAuthorizedNotificationSettings.swift; sourceTree = "<group>"; };
-		A6CC58372D243BF4006ACB30 /* UAPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPush.swift; sourceTree = "<group>"; };
-		A6CC58382D243BF4006ACB30 /* UAPushNotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPushNotificationDelegate.swift; sourceTree = "<group>"; };
-		A6CC58392D243BF4006ACB30 /* UARegistrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegistrationDelegate.swift; sourceTree = "<group>"; };
-		A6CC583B2D243BF4006ACB30 /* UAScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6CC583C2D243BF4006ACB30 /* UASubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6CC583E2D243BF4006ACB30 /* UAAirship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirship.swift; sourceTree = "<group>"; };
-		A6CC583F2D243BF4006ACB30 /* UAAirshipConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipConfig.swift; sourceTree = "<group>"; };
-		A6CC58402D243BF4006ACB30 /* UAAppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAppIntegration.swift; sourceTree = "<group>"; };
-		A6CC58412D243BF4006ACB30 /* UADeepLinkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADeepLinkDelegate.swift; sourceTree = "<group>"; };
-		A6CC58422D243BF4006ACB30 /* UAFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAFeature.swift; sourceTree = "<group>"; };
-		A6CC58612D26FC1F006ACB30 /* AirshipWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipWrapper.h; sourceTree = "<group>"; };
-		A6CC58622D26FC1F006ACB30 /* UAAccountEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAccountEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58632D26FC1F006ACB30 /* UAMediaEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMediaEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58642D26FC1F006ACB30 /* UARetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARetailEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58652D26FC1F006ACB30 /* UASearchEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASearchEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58672D26FC1F006ACB30 /* UACustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UACustomEvent.swift; sourceTree = "<group>"; };
-		A6CC58682D26FC1F006ACB30 /* UARegionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegionEvent.swift; sourceTree = "<group>"; };
-		A6CC586A2D26FC1F006ACB30 /* UAAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAnalytics.swift; sourceTree = "<group>"; };
-		A6CC586C2D26FC1F006ACB30 /* UAAttributesEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAttributesEditor.swift; sourceTree = "<group>"; };
-		A6CC586D2D26FC1F006ACB30 /* UAChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAChannel.swift; sourceTree = "<group>"; };
-		A6CC586E2D26FC1F006ACB30 /* UATagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagEditor.swift; sourceTree = "<group>"; };
-		A6CC586F2D26FC1F006ACB30 /* UATagGroupsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagGroupsEditor.swift; sourceTree = "<group>"; };
-		A6CC58712D26FC1F006ACB30 /* UAAirshipContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipContact.swift; sourceTree = "<group>"; };
-		A6CC58732D26FC1F006ACB30 /* UAMessageCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenter.swift; sourceTree = "<group>"; };
-		A6CC58742D26FC1F006ACB30 /* UAMessageCenterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterList.swift; sourceTree = "<group>"; };
-		A6CC58752D26FC1F006ACB30 /* UAMessageCenterMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterMessage.swift; sourceTree = "<group>"; };
-		A6CC58762D26FC1F006ACB30 /* UAMessageCenterUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterUser.swift; sourceTree = "<group>"; };
-		A6CC58782D26FC1F006ACB30 /* OUAPreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPreferenceCenter.swift; sourceTree = "<group>"; };
-		A6CC587A2D26FC1F006ACB30 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
-		A6CC587C2D26FC1F006ACB30 /* UAAuthorizedNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAuthorizedNotificationSettings.swift; sourceTree = "<group>"; };
-		A6CC587D2D26FC1F006ACB30 /* UAPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPush.swift; sourceTree = "<group>"; };
-		A6CC587E2D26FC1F006ACB30 /* UAPushNotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPushNotificationDelegate.swift; sourceTree = "<group>"; };
-		A6CC587F2D26FC1F006ACB30 /* UARegistrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegistrationDelegate.swift; sourceTree = "<group>"; };
-		A6CC58812D26FC1F006ACB30 /* UAScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6CC58822D26FC1F006ACB30 /* UASubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6CC58842D26FC1F006ACB30 /* UAAirship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirship.swift; sourceTree = "<group>"; };
-		A6CC58852D26FC1F006ACB30 /* UAAirshipConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipConfig.swift; sourceTree = "<group>"; };
-		A6CC58862D26FC1F006ACB30 /* UAAppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAppIntegration.swift; sourceTree = "<group>"; };
-		A6CC58872D26FC1F006ACB30 /* UADeepLinkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADeepLinkDelegate.swift; sourceTree = "<group>"; };
-		A6CC58882D26FC1F006ACB30 /* UAFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAFeature.swift; sourceTree = "<group>"; };
-		A6CC58A72D26FC78006ACB30 /* AirshipWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipWrapper.h; sourceTree = "<group>"; };
-		A6CC58A82D26FC78006ACB30 /* UAAccountEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAccountEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58A92D26FC78006ACB30 /* UAMediaEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMediaEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58AA2D26FC78006ACB30 /* UARetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARetailEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58AB2D26FC78006ACB30 /* UASearchEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASearchEventTemplate.swift; sourceTree = "<group>"; };
-		A6CC58AD2D26FC78006ACB30 /* UACustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UACustomEvent.swift; sourceTree = "<group>"; };
-		A6CC58AE2D26FC78006ACB30 /* UARegionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegionEvent.swift; sourceTree = "<group>"; };
-		A6CC58B02D26FC78006ACB30 /* UAAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAnalytics.swift; sourceTree = "<group>"; };
-		A6CC58B22D26FC78006ACB30 /* UAAttributesEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAttributesEditor.swift; sourceTree = "<group>"; };
-		A6CC58B32D26FC78006ACB30 /* UAChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAChannel.swift; sourceTree = "<group>"; };
-		A6CC58B42D26FC78006ACB30 /* UATagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagEditor.swift; sourceTree = "<group>"; };
-		A6CC58B52D26FC78006ACB30 /* UATagGroupsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagGroupsEditor.swift; sourceTree = "<group>"; };
-		A6CC58B72D26FC78006ACB30 /* UAAirshipContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipContact.swift; sourceTree = "<group>"; };
-		A6CC58B92D26FC78006ACB30 /* UAMessageCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenter.swift; sourceTree = "<group>"; };
-		A6CC58BA2D26FC78006ACB30 /* UAMessageCenterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterList.swift; sourceTree = "<group>"; };
-		A6CC58BB2D26FC78006ACB30 /* UAMessageCenterMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterMessage.swift; sourceTree = "<group>"; };
-		A6CC58BC2D26FC78006ACB30 /* UAMessageCenterUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterUser.swift; sourceTree = "<group>"; };
-		A6CC58BE2D26FC78006ACB30 /* OUAPreferenceCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OUAPreferenceCenter.swift; sourceTree = "<group>"; };
-		A6CC58C02D26FC78006ACB30 /* UAPrivacyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
-		A6CC58C22D26FC78006ACB30 /* UAAuthorizedNotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAuthorizedNotificationSettings.swift; sourceTree = "<group>"; };
-		A6CC58C32D26FC78006ACB30 /* UAPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPush.swift; sourceTree = "<group>"; };
-		A6CC58C42D26FC78006ACB30 /* UAPushNotificationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPushNotificationDelegate.swift; sourceTree = "<group>"; };
-		A6CC58C52D26FC78006ACB30 /* UARegistrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegistrationDelegate.swift; sourceTree = "<group>"; };
-		A6CC58C72D26FC78006ACB30 /* UAScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6CC58C82D26FC78006ACB30 /* UASubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6CC58CA2D26FC78006ACB30 /* UAAirship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirship.swift; sourceTree = "<group>"; };
-		A6CC58CB2D26FC78006ACB30 /* UAAirshipConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAirshipConfig.swift; sourceTree = "<group>"; };
-		A6CC58CC2D26FC78006ACB30 /* UAAppIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAppIntegration.swift; sourceTree = "<group>"; };
-		A6CC58CD2D26FC78006ACB30 /* UADeepLinkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADeepLinkDelegate.swift; sourceTree = "<group>"; };
-		A6CC58CE2D26FC78006ACB30 /* UAFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAFeature.swift; sourceTree = "<group>"; };
 		A6CC58ED2D26FCBA006ACB30 /* AirshipWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirshipWrapper.h; path = Source/AirshipWrapper.h; sourceTree = "<group>"; };
 		A6CC58EE2D26FCBA006ACB30 /* UAAccountEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAccountEventTemplate.swift; sourceTree = "<group>"; };
 		A6CC58EF2D26FCBA006ACB30 /* UAMediaEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMediaEventTemplate.swift; sourceTree = "<group>"; };
@@ -2407,24 +2305,6 @@
 		A6D6D49C2A0260780072A5CA /* AirshipAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAction.swift; sourceTree = "<group>"; };
 		A6D6D49E2A02608C0072A5CA /* ActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionResult.swift; sourceTree = "<group>"; };
 		A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngineTest.swift; sourceTree = "<group>"; };
-		A6F0D1192BFBA85400F9EA2D /* UAChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAChannel.swift; sourceTree = "<group>"; };
-		A6F0D11B2BFBA91F00F9EA2D /* UATagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagEditor.swift; sourceTree = "<group>"; };
-		A6F0D1202BFBA9C000F9EA2D /* UASubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6F0D1222BFDF4B700F9EA2D /* UATagGroupsEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UATagGroupsEditor.swift; sourceTree = "<group>"; };
-		A6F0D1242BFDF5DF00F9EA2D /* UAAttributesEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAttributesEditor.swift; sourceTree = "<group>"; };
-		A6F0D12B2C00EF5200F9EA2D /* UAAirshipContact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UAAirshipContact.swift; sourceTree = "<group>"; };
-		A6F0D12D2C00F02400F9EA2D /* UAScopedSubscriptionListEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAScopedSubscriptionListEditor.swift; sourceTree = "<group>"; };
-		A6F0D1302C0612A700F9EA2D /* UAMessageCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenter.swift; sourceTree = "<group>"; };
-		A6F0D1322C0612B500F9EA2D /* UAMessageCenterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMessageCenterList.swift; sourceTree = "<group>"; };
-		A6F507652C3543AE00F679BC /* UAAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAnalytics.swift; sourceTree = "<group>"; };
-		A6F507682C35446800F679BC /* UACustomEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UACustomEvent.swift; sourceTree = "<group>"; };
-		A6F5076A2C35447400F679BC /* UARegionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARegionEvent.swift; sourceTree = "<group>"; };
-		A6F5076D2C35449200F679BC /* UAMediaEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAMediaEventTemplate.swift; sourceTree = "<group>"; };
-		A6F5076F2C3544A300F679BC /* UAAccountEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAccountEventTemplate.swift; sourceTree = "<group>"; };
-		A6F507712C3544B900F679BC /* UASearchEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASearchEventTemplate.swift; sourceTree = "<group>"; };
-		A6F507732C3544C800F679BC /* UARetailEventTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARetailEventTemplate.swift; sourceTree = "<group>"; };
-		A6F507832C3E6F8700F679BC /* UAPrivacyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAPrivacyManager.swift; sourceTree = "<group>"; };
-		A6F507942C466FBD00F679BC /* UADeepLinkDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UADeepLinkDelegate.swift; sourceTree = "<group>"; };
 		BD8C10762865F92200358622 /* CreateSMSChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSMSChannelView.swift; sourceTree = "<group>"; };
 		BD8C10772865F92200358622 /* AddChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelView.swift; sourceTree = "<group>"; };
 		BD8C107D2865F92200358622 /* CreateEmailChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateEmailChannelView.swift; sourceTree = "<group>"; };
@@ -4490,371 +4370,8 @@
 				A6CC59122D26FCBA006ACB30 /* UAAppIntegration.swift */,
 				A6CC59132D26FCBA006ACB30 /* UADeepLinkDelegate.swift */,
 				A6CC59142D26FCBA006ACB30 /* UAFeature.swift */,
-				A6CC58A72D26FC78006ACB30 /* AirshipWrapper.h */,
-				A6CC58B12D26FC78006ACB30 /* Analytics */,
-				A6CC58B62D26FC78006ACB30 /* Channel */,
-				A6CC58B82D26FC78006ACB30 /* Contact */,
-				A6CC58BD2D26FC78006ACB30 /* MessageCenter */,
-				A6CC58BF2D26FC78006ACB30 /* PreferenceCenter */,
-				A6CC58C12D26FC78006ACB30 /* PrivacyManager */,
-				A6CC58C62D26FC78006ACB30 /* Push */,
-				A6CC58C92D26FC78006ACB30 /* Subscription Lists */,
-				A6CC58CA2D26FC78006ACB30 /* UAAirship.swift */,
-				A6CC58CB2D26FC78006ACB30 /* UAAirshipConfig.swift */,
-				A6CC58CC2D26FC78006ACB30 /* UAAppIntegration.swift */,
-				A6CC58CD2D26FC78006ACB30 /* UADeepLinkDelegate.swift */,
-				A6CC58CE2D26FC78006ACB30 /* UAFeature.swift */,
-				A6CC58612D26FC1F006ACB30 /* AirshipWrapper.h */,
-				A6CC586B2D26FC1F006ACB30 /* Analytics */,
-				A6CC58702D26FC1F006ACB30 /* Channel */,
-				A6CC58722D26FC1F006ACB30 /* Contact */,
-				A6CC58772D26FC1F006ACB30 /* MessageCenter */,
-				A6CC58792D26FC1F006ACB30 /* PreferenceCenter */,
-				A6CC587B2D26FC1F006ACB30 /* PrivacyManager */,
-				A6CC58802D26FC1F006ACB30 /* Push */,
-				A6CC58832D26FC1F006ACB30 /* Subscription Lists */,
-				A6CC58842D26FC1F006ACB30 /* UAAirship.swift */,
-				A6CC58852D26FC1F006ACB30 /* UAAirshipConfig.swift */,
-				A6CC58862D26FC1F006ACB30 /* UAAppIntegration.swift */,
-				A6CC58872D26FC1F006ACB30 /* UADeepLinkDelegate.swift */,
-				A6CC58882D26FC1F006ACB30 /* UAFeature.swift */,
-				A6CC581B2D243BF4006ACB30 /* AirshipWrapper.h */,
-				A6CC58252D243BF4006ACB30 /* Analytics */,
-				A6CC582A2D243BF4006ACB30 /* Channel */,
-				A6CC582C2D243BF4006ACB30 /* Contact */,
-				A6CC58312D243BF4006ACB30 /* MessageCenter */,
-				A6CC58332D243BF4006ACB30 /* PreferenceCenter */,
-				A6CC58352D243BF4006ACB30 /* PrivacyManager */,
-				A6CC583A2D243BF4006ACB30 /* Push */,
-				A6CC583D2D243BF4006ACB30 /* Subscription Lists */,
-				A6CC583E2D243BF4006ACB30 /* UAAirship.swift */,
-				A6CC583F2D243BF4006ACB30 /* UAAirshipConfig.swift */,
-				A6CC58402D243BF4006ACB30 /* UAAppIntegration.swift */,
-				A6CC58412D243BF4006ACB30 /* UADeepLinkDelegate.swift */,
-				A6CC58422D243BF4006ACB30 /* UAFeature.swift */,
-				6E0031A82D08BB880004F53E /* UAFeature.swift */,
-				A6F507642C35438700F679BC /* Analytics */,
-				A6F507822C3E6F7200F679BC /* PrivacyManager */,
-				A65BEF782BF79FEC00F6C5D7 /* Push */,
-				A641E1492BDBBDB400DE6FAA /* AirshipWrapper.h */,
-				A6F0D12F2C06129400F9EA2D /* MessageCenter */,
-				A692023E2C133D9E007197EF /* PreferenceCenter */,
-				A641E1652BE1247700DE6FAA /* UAAirshipConfig.swift */,
-				A65BEF2B2BEE5BE500F6C5D7 /* UAAirship.swift */,
-				A692023A2C10AC08007197EF /* UAAppIntegration.swift */,
-				A6F0D12A2C00EF2B00F9EA2D /* Contact */,
-				A6F0D11F2BFBA98A00F9EA2D /* Subscription Lists */,
-				A6F0D1182BFBA80100F9EA2D /* Channel */,
-				A6F507942C466FBD00F679BC /* UADeepLinkDelegate.swift */,
 			);
 			path = AirshipWrapper;
-			sourceTree = "<group>";
-		};
-		A65BEF782BF79FEC00F6C5D7 /* Push */ = {
-			isa = PBXGroup;
-			children = (
-				6E0031AC2D08CF4B0004F53E /* UAAuthorizedNotificationSettings.swift */,
-				A65BEF312BF658C300F6C5D7 /* UAPush.swift */,
-				A65BEF7B2BF7A01500F6C5D7 /* UARegistrationDelegate.swift */,
-				A65BEF7D2BF7A02A00F6C5D7 /* UAPushNotificationDelegate.swift */,
-			);
-			path = Push;
-			sourceTree = "<group>";
-		};
-		A692023E2C133D9E007197EF /* PreferenceCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A692023F2C133DBA007197EF /* OUAPreferenceCenter.swift */,
-			);
-			path = PreferenceCenter;
-			sourceTree = "<group>";
-		};
-		A6CC58202D243BF4006ACB30 /* Templates */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC581C2D243BF4006ACB30 /* UAAccountEventTemplate.swift */,
-				A6CC581D2D243BF4006ACB30 /* UAMediaEventTemplate.swift */,
-				A6CC581E2D243BF4006ACB30 /* UARetailEventTemplate.swift */,
-				A6CC581F2D243BF4006ACB30 /* UASearchEventTemplate.swift */,
-			);
-			path = Templates;
-			sourceTree = "<group>";
-		};
-		A6CC58232D243BF4006ACB30 /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58202D243BF4006ACB30 /* Templates */,
-				A6CC58212D243BF4006ACB30 /* UACustomEvent.swift */,
-				A6CC58222D243BF4006ACB30 /* UARegionEvent.swift */,
-			);
-			path = Events;
-			sourceTree = "<group>";
-		};
-		A6CC58252D243BF4006ACB30 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58232D243BF4006ACB30 /* Events */,
-				A6CC58242D243BF4006ACB30 /* UAAnalytics.swift */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		A6CC582A2D243BF4006ACB30 /* Channel */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58262D243BF4006ACB30 /* UAAttributesEditor.swift */,
-				A6CC58272D243BF4006ACB30 /* UAChannel.swift */,
-				A6CC58282D243BF4006ACB30 /* UATagEditor.swift */,
-				A6CC58292D243BF4006ACB30 /* UATagGroupsEditor.swift */,
-			);
-			path = Channel;
-			sourceTree = "<group>";
-		};
-		A6CC582C2D243BF4006ACB30 /* Contact */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC582B2D243BF4006ACB30 /* UAAirshipContact.swift */,
-			);
-			path = Contact;
-			sourceTree = "<group>";
-		};
-		A6CC58312D243BF4006ACB30 /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC582D2D243BF4006ACB30 /* UAMessageCenter.swift */,
-				A6CC582E2D243BF4006ACB30 /* UAMessageCenterList.swift */,
-				A6CC582F2D243BF4006ACB30 /* UAMessageCenterMessage.swift */,
-				A6CC58302D243BF4006ACB30 /* UAMessageCenterUser.swift */,
-			);
-			path = MessageCenter;
-			sourceTree = "<group>";
-		};
-		A6CC58332D243BF4006ACB30 /* PreferenceCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58322D243BF4006ACB30 /* OUAPreferenceCenter.swift */,
-			);
-			path = PreferenceCenter;
-			sourceTree = "<group>";
-		};
-		A6CC58352D243BF4006ACB30 /* PrivacyManager */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58342D243BF4006ACB30 /* UAPrivacyManager.swift */,
-			);
-			path = PrivacyManager;
-			sourceTree = "<group>";
-		};
-		A6CC583A2D243BF4006ACB30 /* Push */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58362D243BF4006ACB30 /* UAAuthorizedNotificationSettings.swift */,
-				A6CC58372D243BF4006ACB30 /* UAPush.swift */,
-				A6CC58382D243BF4006ACB30 /* UAPushNotificationDelegate.swift */,
-				A6CC58392D243BF4006ACB30 /* UARegistrationDelegate.swift */,
-			);
-			path = Push;
-			sourceTree = "<group>";
-		};
-		A6CC583D2D243BF4006ACB30 /* Subscription Lists */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC583B2D243BF4006ACB30 /* UAScopedSubscriptionListEditor.swift */,
-				A6CC583C2D243BF4006ACB30 /* UASubscriptionListEditor.swift */,
-			);
-			path = "Subscription Lists";
-			sourceTree = "<group>";
-		};
-		A6CC58662D26FC1F006ACB30 /* Templates */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58622D26FC1F006ACB30 /* UAAccountEventTemplate.swift */,
-				A6CC58632D26FC1F006ACB30 /* UAMediaEventTemplate.swift */,
-				A6CC58642D26FC1F006ACB30 /* UARetailEventTemplate.swift */,
-				A6CC58652D26FC1F006ACB30 /* UASearchEventTemplate.swift */,
-			);
-			path = Templates;
-			sourceTree = "<group>";
-		};
-		A6CC58692D26FC1F006ACB30 /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58662D26FC1F006ACB30 /* Templates */,
-				A6CC58672D26FC1F006ACB30 /* UACustomEvent.swift */,
-				A6CC58682D26FC1F006ACB30 /* UARegionEvent.swift */,
-			);
-			path = Events;
-			sourceTree = "<group>";
-		};
-		A6CC586B2D26FC1F006ACB30 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58692D26FC1F006ACB30 /* Events */,
-				A6CC586A2D26FC1F006ACB30 /* UAAnalytics.swift */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		A6CC58702D26FC1F006ACB30 /* Channel */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC586C2D26FC1F006ACB30 /* UAAttributesEditor.swift */,
-				A6CC586D2D26FC1F006ACB30 /* UAChannel.swift */,
-				A6CC586E2D26FC1F006ACB30 /* UATagEditor.swift */,
-				A6CC586F2D26FC1F006ACB30 /* UATagGroupsEditor.swift */,
-			);
-			path = Channel;
-			sourceTree = "<group>";
-		};
-		A6CC58722D26FC1F006ACB30 /* Contact */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58712D26FC1F006ACB30 /* UAAirshipContact.swift */,
-			);
-			path = Contact;
-			sourceTree = "<group>";
-		};
-		A6CC58772D26FC1F006ACB30 /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58732D26FC1F006ACB30 /* UAMessageCenter.swift */,
-				A6CC58742D26FC1F006ACB30 /* UAMessageCenterList.swift */,
-				A6CC58752D26FC1F006ACB30 /* UAMessageCenterMessage.swift */,
-				A6CC58762D26FC1F006ACB30 /* UAMessageCenterUser.swift */,
-			);
-			path = MessageCenter;
-			sourceTree = "<group>";
-		};
-		A6CC58792D26FC1F006ACB30 /* PreferenceCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58782D26FC1F006ACB30 /* OUAPreferenceCenter.swift */,
-			);
-			path = PreferenceCenter;
-			sourceTree = "<group>";
-		};
-		A6CC587B2D26FC1F006ACB30 /* PrivacyManager */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC587A2D26FC1F006ACB30 /* UAPrivacyManager.swift */,
-			);
-			path = PrivacyManager;
-			sourceTree = "<group>";
-		};
-		A6CC58802D26FC1F006ACB30 /* Push */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC587C2D26FC1F006ACB30 /* UAAuthorizedNotificationSettings.swift */,
-				A6CC587D2D26FC1F006ACB30 /* UAPush.swift */,
-				A6CC587E2D26FC1F006ACB30 /* UAPushNotificationDelegate.swift */,
-				A6CC587F2D26FC1F006ACB30 /* UARegistrationDelegate.swift */,
-			);
-			path = Push;
-			sourceTree = "<group>";
-		};
-		A6CC58832D26FC1F006ACB30 /* Subscription Lists */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58812D26FC1F006ACB30 /* UAScopedSubscriptionListEditor.swift */,
-				A6CC58822D26FC1F006ACB30 /* UASubscriptionListEditor.swift */,
-			);
-			path = "Subscription Lists";
-			sourceTree = "<group>";
-		};
-		A6CC58AC2D26FC78006ACB30 /* Templates */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58A82D26FC78006ACB30 /* UAAccountEventTemplate.swift */,
-				A6CC58A92D26FC78006ACB30 /* UAMediaEventTemplate.swift */,
-				A6CC58AA2D26FC78006ACB30 /* UARetailEventTemplate.swift */,
-				A6CC58AB2D26FC78006ACB30 /* UASearchEventTemplate.swift */,
-			);
-			path = Templates;
-			sourceTree = "<group>";
-		};
-		A6CC58AF2D26FC78006ACB30 /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58AC2D26FC78006ACB30 /* Templates */,
-				A6CC58AD2D26FC78006ACB30 /* UACustomEvent.swift */,
-				A6CC58AE2D26FC78006ACB30 /* UARegionEvent.swift */,
-			);
-			path = Events;
-			sourceTree = "<group>";
-		};
-		A6CC58B12D26FC78006ACB30 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58AF2D26FC78006ACB30 /* Events */,
-				A6CC58B02D26FC78006ACB30 /* UAAnalytics.swift */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		A6CC58B62D26FC78006ACB30 /* Channel */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58B22D26FC78006ACB30 /* UAAttributesEditor.swift */,
-				A6CC58B32D26FC78006ACB30 /* UAChannel.swift */,
-				A6CC58B42D26FC78006ACB30 /* UATagEditor.swift */,
-				A6CC58B52D26FC78006ACB30 /* UATagGroupsEditor.swift */,
-			);
-			path = Channel;
-			sourceTree = "<group>";
-		};
-		A6CC58B82D26FC78006ACB30 /* Contact */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58B72D26FC78006ACB30 /* UAAirshipContact.swift */,
-			);
-			path = Contact;
-			sourceTree = "<group>";
-		};
-		A6CC58BD2D26FC78006ACB30 /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58B92D26FC78006ACB30 /* UAMessageCenter.swift */,
-				A6CC58BA2D26FC78006ACB30 /* UAMessageCenterList.swift */,
-				A6CC58BB2D26FC78006ACB30 /* UAMessageCenterMessage.swift */,
-				A6CC58BC2D26FC78006ACB30 /* UAMessageCenterUser.swift */,
-			);
-			path = MessageCenter;
-			sourceTree = "<group>";
-		};
-		A6CC58BF2D26FC78006ACB30 /* PreferenceCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58BE2D26FC78006ACB30 /* OUAPreferenceCenter.swift */,
-			);
-			path = PreferenceCenter;
-			sourceTree = "<group>";
-		};
-		A6CC58C12D26FC78006ACB30 /* PrivacyManager */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58C02D26FC78006ACB30 /* UAPrivacyManager.swift */,
-			);
-			path = PrivacyManager;
-			sourceTree = "<group>";
-		};
-		A6CC58C62D26FC78006ACB30 /* Push */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58C22D26FC78006ACB30 /* UAAuthorizedNotificationSettings.swift */,
-				A6CC58C32D26FC78006ACB30 /* UAPush.swift */,
-				A6CC58C42D26FC78006ACB30 /* UAPushNotificationDelegate.swift */,
-				A6CC58C52D26FC78006ACB30 /* UARegistrationDelegate.swift */,
-			);
-			path = Push;
-			sourceTree = "<group>";
-		};
-		A6CC58C92D26FC78006ACB30 /* Subscription Lists */ = {
-			isa = PBXGroup;
-			children = (
-				A6CC58C72D26FC78006ACB30 /* UAScopedSubscriptionListEditor.swift */,
-				A6CC58C82D26FC78006ACB30 /* UASubscriptionListEditor.swift */,
-			);
-			path = "Subscription Lists";
 			sourceTree = "<group>";
 		};
 		A6CC58F22D26FCBA006ACB30 /* Templates */ = {
@@ -4872,8 +4389,8 @@
 			isa = PBXGroup;
 			children = (
 				A6CC58F22D26FCBA006ACB30 /* Templates */,
-				A6CC58F32D26FCBA006ACB30 /* UACustomEvent.swift */,
 				A6CC58F42D26FCBA006ACB30 /* UARegionEvent.swift */,
+				A6CC58F32D26FCBA006ACB30 /* UACustomEvent.swift */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -4978,83 +4495,6 @@
 				6E6363E729DCEB84009C358A /* ContactManagerTest.swift */,
 			);
 			name = Contacts;
-			sourceTree = "<group>";
-		};
-		A6F0D1182BFBA80100F9EA2D /* Channel */ = {
-			isa = PBXGroup;
-			children = (
-				A6F0D1192BFBA85400F9EA2D /* UAChannel.swift */,
-				A6F0D11B2BFBA91F00F9EA2D /* UATagEditor.swift */,
-				A6F0D1222BFDF4B700F9EA2D /* UATagGroupsEditor.swift */,
-				A6F0D1242BFDF5DF00F9EA2D /* UAAttributesEditor.swift */,
-			);
-			path = Channel;
-			sourceTree = "<group>";
-		};
-		A6F0D11F2BFBA98A00F9EA2D /* Subscription Lists */ = {
-			isa = PBXGroup;
-			children = (
-				A6F0D1202BFBA9C000F9EA2D /* UASubscriptionListEditor.swift */,
-				A6F0D12D2C00F02400F9EA2D /* UAScopedSubscriptionListEditor.swift */,
-			);
-			path = "Subscription Lists";
-			sourceTree = "<group>";
-		};
-		A6F0D12A2C00EF2B00F9EA2D /* Contact */ = {
-			isa = PBXGroup;
-			children = (
-				A6F0D12B2C00EF5200F9EA2D /* UAAirshipContact.swift */,
-			);
-			path = Contact;
-			sourceTree = "<group>";
-		};
-		A6F0D12F2C06129400F9EA2D /* MessageCenter */ = {
-			isa = PBXGroup;
-			children = (
-				A6F0D1302C0612A700F9EA2D /* UAMessageCenter.swift */,
-				A61F93DE2CE39D1A0087D665 /* UAMessageCenterUser.swift */,
-				A61F93DC2CE3905B0087D665 /* UAMessageCenterMessage.swift */,
-				A6F0D1322C0612B500F9EA2D /* UAMessageCenterList.swift */,
-			);
-			path = MessageCenter;
-			sourceTree = "<group>";
-		};
-		A6F507642C35438700F679BC /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				A6F507672C35445700F679BC /* Events */,
-				A6F507652C3543AE00F679BC /* UAAnalytics.swift */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		A6F507672C35445700F679BC /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				A6F5076C2C35448100F679BC /* Templates */,
-				A6F507682C35446800F679BC /* UACustomEvent.swift */,
-				A6F5076A2C35447400F679BC /* UARegionEvent.swift */,
-			);
-			path = Events;
-			sourceTree = "<group>";
-		};
-		A6F5076C2C35448100F679BC /* Templates */ = {
-			isa = PBXGroup;
-			children = (
-				A6F5076D2C35449200F679BC /* UAMediaEventTemplate.swift */,
-				A6F5076F2C3544A300F679BC /* UAAccountEventTemplate.swift */,
-				A6F507712C3544B900F679BC /* UASearchEventTemplate.swift */,
-				A6F507732C3544C800F679BC /* UARetailEventTemplate.swift */,
-			);
-			path = Templates;
-			sourceTree = "<group>";
-		};
-		A6F507822C3E6F7200F679BC /* PrivacyManager */ = {
-			isa = PBXGroup;
-			children = (
-				A6F507832C3E6F8700F679BC /* UAPrivacyManager.swift */,
-			);
-			path = PrivacyManager;
 			sourceTree = "<group>";
 		};
 		BD8C10742865F92200358622 /* Contact */ = {

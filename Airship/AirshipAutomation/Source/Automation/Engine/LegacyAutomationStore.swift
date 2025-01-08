@@ -196,8 +196,11 @@ fileprivate extension UAScheduleTriggerData {
         scheduleID: String,
         executionType:  TriggerExecutionType
     ) throws -> (trigger: AutomationTrigger, triggerData: TriggerData) {
+
+        let decoder = JSONDecoder()
+
         let predicate: JSONPredicate? = if let data = self.predicateData {
-            try AirshipJSON.defaultDecoder.decode(JSONPredicate.self, from: data)
+            try decoder.decode(JSONPredicate.self, from: data)
         } else {
             nil
         }
@@ -262,18 +265,20 @@ fileprivate extension UAScheduleData {
             throw AirshipErrors.error("Unable to parse data")
         }
 
+        let decoder = JSONDecoder()
+
         let scheduleData: AutomationSchedule.ScheduleData = switch(type) {
         case .inAppMessage:
-                .inAppMessage(try AirshipJSON.defaultDecoder.decode(InAppMessage.self, from: data))
+                .inAppMessage(try decoder.decode(InAppMessage.self, from: data))
         case .actions:
-                .actions(try AirshipJSON.defaultDecoder.decode(AirshipJSON.self, from: data))
+                .actions(try decoder.decode(AirshipJSON.self, from: data))
         case .deferred:
-                .deferred(try AirshipJSON.defaultDecoder.decode(DeferredAutomationData.self, from: data))
+                .deferred(try decoder.decode(DeferredAutomationData.self, from: data))
         }
 
         var audience: AutomationAudience?
         if let data = self.audience?.data(using: .utf8) {
-            audience = try AirshipJSON.defaultDecoder.decode(AutomationAudience.self, from: data)
+            audience = try decoder.decode(AutomationAudience.self, from: data)
         }
 
         var editGracePeriodDays: UInt?

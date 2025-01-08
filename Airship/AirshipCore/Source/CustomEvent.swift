@@ -4,215 +4,173 @@ import Foundation
 
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.
-public class CustomEvent: NSObject {
+public struct CustomEvent: Sendable {
 
-    /// The event type
-    public static let eventType: String  = "enhanced_custom_event"
-
-    private static let interactionMCRAP = "ua_mcrap"
-
-    /**
-     * The max properties size in bytes.
-     */
+    /// Max properties size in bytes
     public static let maxPropertiesSize = 65536
 
-    // Public data keys
-    public static let eventNameKey = "event_name"
-    public static let eventValueKey = "event_value"
-    public static let eventPropertiesKey = "properties"
-    public static let eventTransactionIDKey = "transaction_id"
-    public static let eventInteractionIDKey = "interaction_id"
-    public static let eventInteractionTypeKey = "interaction_type"
-
+    static let eventNameKey = "event_name"
+    static let eventValueKey = "event_value"
+    static let eventPropertiesKey = "properties"
+    static let eventTransactionIDKey = "transaction_id"
+    static let eventInteractionIDKey = "interaction_id"
+    static let eventInteractionTypeKey = "interaction_type"
     static let eventInAppKey = "in_app"
-
-    // Private data keys
     static let eventConversionMetadataKey = "conversion_metadata"
     static let eventConversionSendIDKey = "conversion_send_id"
     static let eventTemplateTypeKey = "template_type"
+    static let eventType: String  = "enhanced_custom_event"
+    static let interactionMCRAP = "ua_mcrap"
 
-    /**
-     * The send ID that triggered the event.
-     * - Note: For internal use only. :nodoc:
-     */
-    public var conversionSendID: String?
+    /// Internal conversion send ID
+    var conversionSendID: String?
 
-    /**
-     * The conversion push metadata.
-     * - Note: For internal use only. :nodoc:
-     */
-    public var conversionPushMetadata: String?
+    /// Internal conversion push metadata
+    var conversionPushMetadata: String?
 
-    /**
-     * The event's template type. The template type's length must not exceed 255 characters or it will
-     * invalidate the event.
-     * - Note: For internal use only. :nodoc:
-     */
-    public var templateType: String?
+    /// Template type
+    var templateType: String?
 
-    private var _eventValue: NSDecimalNumber?
+    /// The in-app message context for custom event attribution
+    var inApp: AirshipJSON?
 
-    public static var defaultEncoder: JSONEncoder {
+    /// Default encoder. Uses `iso8601` date encoding strategy.
+    public static func defaultEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         return encoder
     }
 
+    /// The event's value. The value must be between -2^31 and
+    /// 2^31 - 1 or it will invalidate the event.
+    public var eventValue: Decimal
 
-    /// The in-app message context for custom event attribution
-    /// NOTE: For internal use only. :nodoc:
-    var inApp: AirshipJSON?
-    
-    /**
-     * The event's value. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     */
-    public var eventValue: NSNumber? {
-        get {
-            return self._eventValue
-        }
-        set {
-            if let newValue = newValue {
-                if let decimal = newValue as? NSDecimalNumber {
-                    self._eventValue = decimal
-                } else {
-                    let converted = NSDecimalNumber.init(
-                        decimal: newValue.decimalValue
-                    )
-                    self._eventValue = converted
-                }
-            } else {
-                self._eventValue = nil
-            }
-        }
-    }
+    /// The event's name. The name's length must not exceed 255 characters or it will  or it will
+    /// invalidate the event.
+    public var eventName: String
 
-    private lazy var analytics = Airship.requireComponent(
-        ofType: (any AirshipAnalyticsProtocol).self
-    )
-
-    /**
-     * The event's name. The name's length must not exceed 255 characters or it will
-     * invalidate the event.
-     */
-    public var eventName: String?
-
-    /**
-     * The event's transaction ID. The ID's length must not exceed 255 characters or it will
-     * invalidate the event.
-     */
+    /// The event's transaction ID. The ID's length must not exceed 255 characters or it will
+    /// invalidate the event.
     public var transactionID: String?
 
-    /**
-     * The event's interaction type. The type's length must not exceed 255 characters or it will
-     * invalidate the event.
-     */
+    /// The event's interaction type. The type's length must not exceed 255 characters or it will
+    /// invalidate the event.
     public var interactionType: String?
 
-    /**
-     * The event's interaction ID. The ID's length must not exceed 255 characters or it will
-     * invalidate the event.
-     */
+    /// The event's interaction ID. The ID's length must not exceed 255 characters or it will
+    /// invalidate the event.
     public var interactionID: String?
 
-    /**
-     * The event's properties. Properties must be valid JSON.
-     */
-    public var properties: [String: Any] = [:]
+    /// The event's properties.
+    public private(set) var properties: [String: AirshipJSON] = [:]
 
-    public var data: [AnyHashable: Any] {
-        return self.eventBody(
-            sendID: self.analytics.conversionSendID,
-            metadata: self.analytics.conversionPushMetadata,
-            formatValue: true
-        ).unWrap() as? [AnyHashable : Any] ?? [:]
+    /// Sets a property string value.
+    /// - Parameters:
+    ///     - string: The string value to set.
+    ///     - forKey: The properties key
+    public mutating func setProperty(
+        string: String,
+        forKey key: String
+    ) {
+        properties[key] = .string(string)
     }
 
-    /**
-     * Constructor for testing. :nodoc:
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter value: The event value.
-     * - Returns: A Custom event instance
-     */
-    public init(name: String, value: NSNumber?) {
+    /// Removes a property.
+    /// - Parameters:
+    ///     - forKey: The properties key
+    public mutating func removeProperty(
+        forKey key: String
+    ) {
+        properties[key] = nil
+    }
+
+    /// Sets a property double value.
+    /// - Parameters:
+    ///     - double: The double value to set.
+    ///     - forKey: The properties key
+    public mutating func setProperty(
+        double: Double,
+        forKey key: String
+    ) {
+        properties[key] = .number(double)
+    }
+
+    /// Sets a property bool value.
+    /// - Parameters:
+    ///     - bool: The bool value to set.
+    ///     - forKey: The properties key
+    public mutating func setProperty(
+        bool: Bool,
+        forKey key: String
+    ) {
+        properties[key] = .bool(bool)
+    }
+
+    /// Sets a property value.
+    /// - Parameters:
+    ///     - value: The value to set.
+    ///     - forKey: The properties key
+    ///     - encoder: JSONEncoder to use.'
+    public mutating func setProperty(
+        value: Any?,
+        forKey key: String,
+        encoder: @autoclosure () -> JSONEncoder = Self.defaultEncoder()
+    ) throws {
+        guard let value = value else {
+            properties[key] = nil
+            return
+        }
+
+        properties[key] = try AirshipJSON.wrap(value, encoder: encoder())
+    }
+
+    /// Sets a property value.
+    /// - Parameters:
+    ///     - value: The values to set. The value must result in a JSON object or an error will be thrown.
+    ///     - encoder: JSONEncoder to use.
+    public mutating func setProperties(
+        _ object: Any?,
+        encoder: @autoclosure () -> JSONEncoder = Self.defaultEncoder()
+    ) throws {
+        guard let object = object else {
+            properties = [:]
+            return
+        }
+
+        let json = try AirshipJSON.wrap(object, encoder: encoder())
+        guard json.isObject, let properties = json.object else {
+            throw AirshipErrors.error("Properties must be an object")
+        }
+
+        self.properties = properties
+    }
+
+    /// Default constructor.
+    /// - Parameter name: The name of the event. The event's name must not exceed
+    /// 255 characters or it will invalidate the event.
+    /// - Parameter value: The event value. The value must be between -2^31 and
+    /// 2^31 - 1 or it will invalidate the event. Defaults to 1.
+    public init(name: String, value: Double = 1.0) {
         self.eventName = name
-        super.init()
-        self.eventValue = value
-    }
-
-    /**
-     * Constructor
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter stringValue: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    public convenience init(name: String, stringValue: String?) {
-        let decimalValue =
-            stringValue != nil ? NSDecimalNumber(string: stringValue) : nil
-        self.init(name: name, value: decimalValue)
-    }
-
-    /**
-     * Constructor.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     */
-    public convenience init(name: String) {
-        self.init(name: name, value: nil)
-    }
-
-    /**
-     * Factory method for creating a custom event.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    public class func event(name: String) -> CustomEvent {
-        return CustomEvent(name: name)
-    }
-
-    /**
-     * Factory method for creating a custom event with a value from a string.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter string: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    public class func event(name: String, string: String?) -> CustomEvent {
-        return CustomEvent(name: name, stringValue: string)
-    }
-
-    /**
-     * Factory method for creating a custom event with a value.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    public class func event(name: String, value: NSNumber?) -> CustomEvent {
-        guard let value else {
-            return CustomEvent(name: name)
-        }
-
-         if let decimal = value as? NSDecimalNumber {
-            return CustomEvent(name: name, value: decimal)
+        if value.isFinite {
+            self.eventValue = Decimal(value)
         } else {
-            let converted = NSDecimalNumber(decimal: value.decimalValue)
-            return CustomEvent(name: name, value: converted)
+            self.eventValue = Decimal(1.0)
         }
     }
 
+    /// Default constructor.
+    /// - Parameter name: The name of the event. The event's name must not exceed
+    /// 255 characters or it will invalidate the event.
+    /// - Parameter value: The event value. The value must be between -2^31 and
+    /// 2^31 - 1 or it will invalidate the event. Defaults to 1.
+    public init(name: String, decimalValue: Decimal) {
+        self.eventName = name
+        self.eventValue = decimalValue
+    }
+}
+
+extension CustomEvent {
     public func isValid() -> Bool {
         let areFieldsValid = validateFields()
         let isValueValid = validateValue()
@@ -220,12 +178,7 @@ public class CustomEvent: NSObject {
         return areFieldsValid && isValueValid && areProperitiesValid
     }
 
-    /**
-     * Sets the custom event's interaction type and identifier as coming from a Message Center message.
-     * - Parameter messageID: The message ID.
-     * - Note: For internal use only. :nodoc:
-     */
-    public func setInteractionFromMessageCenterMessage(_ messageID: String?) {
+    mutating func setInteractionFromMessageCenterMessage(_ messageID: String) {
         self.interactionID = messageID
         self.interactionType = CustomEvent.interactionMCRAP
     }
@@ -234,14 +187,6 @@ public class CustomEvent: NSObject {
      * - Note: For internal use only. :nodoc:
      */
     func eventBody(sendID: String?, metadata: String?, formatValue: Bool) -> AirshipJSON {
-        var wrappedProperities: AirshipJSON? = nil
-
-        do {
-            wrappedProperities = try AirshipJSON.wrap(properties, encoder: Self.defaultEncoder)
-        } catch {
-            AirshipLogger.error("Failed to wrap properites \(properties): \(error)")
-        }
-
         return AirshipJSON.makeObject { object in
             object.set(string: eventName, key: CustomEvent.eventNameKey)
             object.set(string: conversionSendID ?? sendID, key: CustomEvent.eventConversionSendIDKey)
@@ -250,49 +195,43 @@ public class CustomEvent: NSObject {
             object.set(string: interactionType, key: CustomEvent.eventInteractionTypeKey)
             object.set(string: transactionID, key: CustomEvent.eventTransactionIDKey)
             object.set(string: templateType, key: CustomEvent.eventTemplateTypeKey)
-            object.set(json: wrappedProperities, key: CustomEvent.eventPropertiesKey)
+            object.set(json: .object(properties), key: CustomEvent.eventPropertiesKey)
             object.set(json: inApp, key: CustomEvent.eventInAppKey)
 
             if formatValue {
-                let number = (self._eventValue ?? 1.0).multiplying(byPowerOf10: 6)
-                object.set(double: Double(number.int64Value), key: CustomEvent.eventValueKey)
+                let number = (self.eventValue as NSDecimalNumber).multiplying(byPowerOf10: 6)
+                object.set(double: number.doubleValue.rounded(.down), key: CustomEvent.eventValueKey)
             } else {
-                object.set(double: eventValue?.doubleValue ?? 1.0, key: CustomEvent.eventValueKey)
+                object.set(double: (self.eventValue as NSDecimalNumber).doubleValue, key: CustomEvent.eventValueKey)
             }
         }
     }
 
     /**
-     * Adds the event to analytics.
+     * Adds the event to analytics. A wrapper arou
      */
     public func track() {
-        self.analytics.recordCustomEvent(self)
+        Airship.analytics.recordCustomEvent(self)
     }
 
-    public override var debugDescription: String {
-        "CustomEvent(data: \(self.eventBody(sendID: nil, metadata: nil, formatValue: false)))"
-    }
-    
     private func validateValue() -> Bool {
-        if let eventValue = self._eventValue {
-            if eventValue == NSDecimalNumber.notANumber {
-                AirshipLogger.error("Event value is not a number.")
-                return false
-            }
+        if !eventValue.isFinite {
+            AirshipLogger.error("Event value \(eventValue) is not finite.")
+            return false
+        }
 
-            if eventValue.compare(NSNumber(value: Int32.max)).rawValue > 0 {
-                AirshipLogger.error(
-                    "Event value \(eventValue) is larger than 2^31-1."
-                )
-                return false
-            }
+        if eventValue > Decimal(Int32.max) {
+            AirshipLogger.error(
+                "Event value \(eventValue) is larger than 2^31-1."
+            )
+            return false
+        }
 
-            if eventValue.compare(NSNumber(value: Int32.min)).rawValue < 0 {
-                AirshipLogger.error(
-                    "Event value \(eventValue) is smaller than -2^31."
-                )
-                return false
-            }
+        if eventValue < Decimal(Int32.min) {
+            AirshipLogger.error(
+                "Event value \(eventValue) is smaller than -2^31."
+            )
+            return false
         }
 
         return true
@@ -300,7 +239,7 @@ public class CustomEvent: NSObject {
 
     private func validateProperties() -> Bool {
         do {
-            let encodedProperties = try AirshipJSON.wrap(properties, encoder: Self.defaultEncoder).toData()
+            let encodedProperties = try AirshipJSON.object(properties).toData()
             if encodedProperties.count > CustomEvent.maxPropertiesSize {
                 AirshipLogger.error(
                     "Event properties (%lu bytes) are larger than the maximum size of \(CustomEvent.maxPropertiesSize) bytes."

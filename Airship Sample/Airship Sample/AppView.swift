@@ -77,7 +77,7 @@ struct AppView: View {
         .onShake {
             shakeCount += 1
 
-            let event = CustomEvent(name: "shake", value: NSNumber(value: shakeCount))
+            let event = CustomEvent(name: "shake_event", value: Double(shakeCount))
             event.track()
 
             AppState.shared.toastMessage = Toast.Message(

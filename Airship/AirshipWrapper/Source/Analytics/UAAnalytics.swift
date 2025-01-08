@@ -2,10 +2,9 @@
 
 import Foundation
 #if canImport(AirshipCore)
-public import AirshipCore
+import AirshipCore
 #endif
 
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
 public class UAAnalytics: NSObject {
 
@@ -26,8 +25,8 @@ public class UAAnalytics: NSObject {
     }
     
     @objc
-    public func recordCustomEvent(_ event: CustomEvent) {
-        Airship.analytics.recordCustomEvent(event)
+    public func recordCustomEvent(_ event: UACustomEvent) {
+        Airship.analytics.recordCustomEvent(event.customEvent)
     }
 
     @objc

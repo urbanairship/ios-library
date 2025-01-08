@@ -420,8 +420,8 @@ fileprivate class ScheduleEntity: NSManagedObject {
         return data
     }
 
-
     func update(data: AutomationScheduleData) throws {
+        let encoder = JSONEncoder()
         self.identifier = data.schedule.identifier
         self.group = data.schedule.group
         self.scheduleState = data.scheduleState.rawValue
@@ -430,16 +430,16 @@ fileprivate class ScheduleEntity: NSManagedObject {
         self.triggerSessionID = data.triggerSessionID
         self.associatedData = data.associatedData
         self.lastScheduleModifiedDate = data.lastScheduleModifiedDate
-        self.schedule = try AirshipJSON.defaultEncoder.encode(data.schedule)
+        self.schedule = try encoder.encode(data.schedule)
 
         self.preparedScheduleInfo = if let info = data.preparedScheduleInfo {
-            try AirshipJSON.defaultEncoder.encode(info)
+            try encoder.encode(info)
         } else {
             nil
         }
 
         self.triggerInfo = if let info = data.triggerInfo {
-            try AirshipJSON.defaultEncoder.encode(info)
+            try encoder.encode(info)
         } else {
             nil
         }
@@ -447,21 +447,22 @@ fileprivate class ScheduleEntity: NSManagedObject {
     }
 
     func toScheduleData(existingData: AutomationScheduleData? = nil) throws -> AutomationScheduleData {
+        let decoder = JSONDecoder()
         let existingScheduleMatch = existingData?.scheduleStateChangeDate == self.scheduleStateChangeDate
         let schedule: AutomationSchedule = if let existingData, existingScheduleMatch {
             existingData.schedule
         } else {
-            try AirshipJSON.defaultDecoder.decode(AutomationSchedule.self, from: self.schedule)
+            try decoder.decode(AutomationSchedule.self, from: self.schedule)
         }
 
         let triggerInfo: TriggeringInfo? = if let data = self.triggerInfo {
-            try AirshipJSON.defaultDecoder.decode(TriggeringInfo.self, from: data)
+            try decoder.decode(TriggeringInfo.self, from: data)
         } else {
             nil
         }
 
         let preparedScheduleInfo: PreparedScheduleInfo? = if let data = self.preparedScheduleInfo {
-            try AirshipJSON.defaultDecoder.decode(PreparedScheduleInfo.self, from: data)
+            try decoder.decode(PreparedScheduleInfo.self, from: data)
         } else {
             nil
         }
@@ -511,10 +512,10 @@ fileprivate class TriggerEntity: NSManagedObject {
     func update(data: TriggerData) throws {
         self.triggerID = data.triggerID
         self.scheduleID = data.scheduleID
-        self.state = try AirshipJSON.defaultEncoder.encode(data)
+        self.state = try JSONEncoder().encode(data)
     }
 
     func toTriggerData() throws -> TriggerData {
-        try AirshipJSON.defaultDecoder.decode(TriggerData.self, from: self.state)
+        try JSONDecoder().decode(TriggerData.self, from: self.state)
     }
 }

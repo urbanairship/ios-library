@@ -2322,8 +2322,8 @@ final class ThomasViewModelTest: XCTestCase {
 
     func testActionPayload() throws {
         let payload = ThomasActionsPayload(value: try AirshipJSON.wrap(["foo": "bar"]))
-        let encoded = try AirshipJSON.defaultEncoder.encode(payload)
-        let decoded = try AirshipJSON.defaultDecoder.decode(ThomasActionsPayload.self, from: encoded)
+        let encoded = try JSONEncoder().encode(payload)
+        let decoded = try JSONDecoder().decode(ThomasActionsPayload.self, from: encoded)
         XCTAssertEqual(payload, decoded)
     }
 
@@ -2338,8 +2338,9 @@ final class ThomasViewModelTest: XCTestCase {
                 ]
             ]
         ]))
-        let encoded = try AirshipJSON.defaultEncoder.encode(payload)
-        let decoded = try AirshipJSON.defaultDecoder.decode(ThomasActionsPayload.self, from: encoded)
+        
+        let encoded = try JSONEncoder().encode(payload)
+        let decoded = try JSONDecoder().decode(ThomasActionsPayload.self, from: encoded)
         XCTAssertEqual(payload, decoded)
 
         XCTAssertEqual("bar2", payload.value.object?["foo"]?.string)

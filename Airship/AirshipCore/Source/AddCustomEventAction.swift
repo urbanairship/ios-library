@@ -40,7 +40,7 @@ public final class AddCustomEventAction: AirshipAction {
             throw AirshipErrors.error("Invalid custom event argument: \(arguments.value)")
         }
 
-        let eventValue = parseString(dict, key: CustomEvent.eventValueKey)
+        let eventValue = parseDouble(dict, key: CustomEvent.eventValueKey)
         let interactionID = parseString(
             dict,
             key: CustomEvent.eventInteractionIDKey
@@ -55,7 +55,7 @@ public final class AddCustomEventAction: AirshipAction {
         )
         let properties = dict[CustomEvent.eventPropertiesKey] as? [String: Any]
 
-        let event = CustomEvent(name: eventName, stringValue: eventValue)
+        var event = CustomEvent(name: eventName, value: eventValue ?? 1.0)
 
         if let inApp = arguments.metadata[Self._inAppMetadata] {
             do {
@@ -66,7 +66,7 @@ public final class AddCustomEventAction: AirshipAction {
         }
 
         event.transactionID = transactionID
-        event.properties = properties ?? [:]
+        try event.setProperties(properties)
 
         if interactionID != nil || interactionType != nil {
             event.interactionType = interactionType
@@ -103,5 +103,19 @@ public final class AddCustomEventAction: AirshipAction {
             return "\(value)"
         }
         return value as? String
+    }
+
+    func parseDouble(_ dict: [AnyHashable: Any]?, key: String) -> Double? {
+        guard let value = dict?[key] else {
+            return nil
+        }
+
+        guard let value = value as? Double else {
+            if let string = parseString(dict, key: key) {
+                return Double(string)
+            }
+            return nil
+        }
+        return value
     }
 }

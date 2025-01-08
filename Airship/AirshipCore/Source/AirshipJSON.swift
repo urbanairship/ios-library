@@ -5,7 +5,12 @@ import Foundation
  * Airship JSON.
  */
 public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
-    public static var defaultEncoder: JSONEncoder { return JSONEncoder() }
+    public static var defaultEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }
+
     public static var defaultDecoder: JSONDecoder { return JSONDecoder() }
 
     case string(String)
@@ -100,7 +105,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
         return try decoder.decode(AirshipJSON.self, from: data)
     }
 
-    public static func wrap(_ value: Any?, encoder: JSONEncoder = AirshipJSON.defaultEncoder) throws -> AirshipJSON {
+    public static func wrap(_ value: Any?, encoder: @autoclosure () -> JSONEncoder = AirshipJSON.defaultEncoder) throws -> AirshipJSON {
         guard let value = value else {
             return .null
         }
@@ -115,10 +120,6 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
 
         if let url = value as? URL {
             return .string(url.absoluteString)
-        }
-
-        if let date = value as? Date {
-            return .string(AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter))
         }
 
         if let number = value as? NSNumber {
@@ -142,7 +143,7 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
 
         if let array = value as? [Any?] {
             let mapped: [AirshipJSON] = try array.map { child in
-                try wrap(child, encoder: encoder)
+                try wrap(child, encoder: encoder())
             }
 
             return .array(mapped)
@@ -150,13 +151,14 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
 
         if let object = value as? [String: Any?] {
             let mapped: [String: AirshipJSON] = try object.mapValues { child in
-                try wrap(child, encoder: encoder)
+                try wrap(child, encoder: encoder())
             }
 
             return .object(mapped)
         }
 
         if let codable = value as? (any Encodable) {
+            let encoder = encoder()
             return try wrap(
                 JSONSerialization.jsonObject(with: try encoder.encode(codable), options: .fragmentsAllowed),
                 encoder: encoder

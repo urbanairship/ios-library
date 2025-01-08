@@ -1,204 +1,115 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
-public class UAMediaEventTemplate: NSObject {
-    
-    private var template: MediaEventTemplate
-    
-    /**
-     * The event's ID.
-     */
-    @objc
-    public var identifier: String? {
-        get {
-           return template.identifier
-        }
-        set {
-            template.identifier = newValue
-        }
-    }
+public final class UACustomEventMediaTemplate: NSObject {
 
-    /**
-     * The event's category.
-     */
-    @objc
-    public var category: String? {
-        get {
-           return template.category
-        }
-        set {
-            template.category = newValue
-        }
-    }
+    fileprivate var template: CustomEvent.MediaTemplate
 
-    /**
-     * The event's type.
-     */
-    @objc
-    public var type: String? {
-        get {
-           return template.type
-        }
-        set {
-            template.type = newValue
-        }
-    }
-
-    /**
-     * The event's description.
-     */
-    @objc
-    public var eventDescription: String? {
-        get {
-           return template.eventDescription
-        }
-        set {
-            template.eventDescription = newValue
-        }
-    }
-
-    /**
-     * `YES` if the event is a feature, else `NO`.
-     */
-    @objc
-    public var isFeature: Bool {
-        get {
-            return template.isFeature
-        }
-        set {
-            template.isFeature = newValue
-        }
-    }
-
-    /**
-     * The event's author. The author's length must not exceed 255 characters
-     * or it will invalidate the event.
-     */
-    @objc
-    public var author: String? {
-        get {
-           return template.author
-        }
-        set {
-            template.author = newValue
-        }
-    }
-
-    /**
-     * The event's publishedDate. The publishedDate's length must not exceed 255 characters
-     * or it will invalidate the event.
-     */
-    @objc
-    public var publishedDate: String? {
-        get {
-           return template.publishedDate
-        }
-        set {
-            template.publishedDate = newValue
-        }
-    }
-    
-    public init(template: MediaEventTemplate) {
+    private init(template: CustomEvent.MediaTemplate) {
         self.template = template
     }
 
-    /**
-     * Factory method for creating a browsed content event template.
-     * - Returns: A Media event template instance
-     */
     @objc
-    public class func browsedTemplate() -> UAMediaEventTemplate {
-        let template = MediaEventTemplate("browsed_content")
-        return UAMediaEventTemplate(template: template)
+    public static func browsed() -> UACustomEventMediaTemplate {
+        self.init(template: .browsed)
     }
 
-    /**
-     * Factory method for creating a starred content event template.
-     * - Returns: A Media event template instance
-     */
     @objc
-    public class func starredTemplate() -> UAMediaEventTemplate {
-        let template = MediaEventTemplate("starred_content")
-        return UAMediaEventTemplate(template: template)
+    public static func consumed() -> UACustomEventMediaTemplate {
+        self.init(template: .consumed)
     }
 
-    /**
-     * Factory method for creating a shared content event template.
-     * - Returns: A Media event template instance
-     */
     @objc
-    public class func sharedTemplate() -> UAMediaEventTemplate {
-        return sharedTemplate(source: nil, medium: nil)
+    public static func shared(source: String?, medium: String?) -> UACustomEventMediaTemplate {
+        self.init(template: .shared(source: source, medium: medium))
     }
 
-    /**
-     * Factory method for creating a shared content event template.
-     * If the source or medium exceeds 255 characters it will cause the event to be invalid.
-     *
-     * - Parameter source: The source as an NSString.
-     * - Parameter medium: The medium as an NSString.
-     * - Returns: A Media event template instance
-     */
-    @objc(sharedTemplateWithSource:withMedium:)
-    public class func sharedTemplate(source: String?, medium: String?)
-        -> UAMediaEventTemplate
-    {
-        let template = MediaEventTemplate(
-            "shared_content",
-            value: nil,
-            source: source,
-            medium: medium
+    @objc
+    public static func starred() -> UACustomEventMediaTemplate {
+        self.init(template: .starred)
+    }
+}
+
+@objc
+public class UACustomEventMediaProperties: NSObject {
+
+    /// The event's ID.
+    @objc
+    public var id: String?
+
+    /// The event's category.
+    @objc
+    public var category: String?
+
+    /// The event's type.
+    @objc
+    public var type: String?
+
+    /// The event's description.
+    @objc
+    public var eventDescription: String?
+
+    /// The event's author.
+    @objc
+    public var author: String?
+
+    /// The event's published date.
+    @objc
+    public var publishedDate: Date?
+
+    /// If the event is a feature
+    @objc
+    public var isFeature: NSNumber?
+
+    /// If the value is a lifetime value or not.
+    @objc
+    public var isLTV: Bool
+
+    @objc
+    public init(id: String? = nil, category: String? = nil, type: String? = nil, eventDescription: String? = nil, isLTV: Bool = false, author: String? = nil, publishedDate: Date? = nil, isFeature: NSNumber? = nil) {
+        self.id = id
+        self.category = category
+        self.type = type
+        self.eventDescription = eventDescription
+        self.author = author
+        self.publishedDate = publishedDate
+        self.isFeature = isFeature
+        self.isLTV = isLTV
+    }
+
+    fileprivate var properties: CustomEvent.MediaProperties {
+        return CustomEvent.MediaProperties(
+            id: self.id,
+            category: self.category,
+            type: self.type,
+            eventDescription: self.eventDescription,
+            isLTV: self.isLTV,
+            author: self.author,
+            publishedDate: self.publishedDate,
+            isFeature: self.isFeature?.boolValue
         )
-        return UAMediaEventTemplate(template: template)
     }
+}
 
-    /**
-     * Factory method for creating a consumed content event template.
-     * - Returns: A Media event template instance
-     */
+@objc
+public extension UACustomEvent {
     @objc
-    public class func consumedTemplate() -> UAMediaEventTemplate {
-        return consumedTemplate(value: nil)
+    convenience init(mediaTemplate: UACustomEventMediaTemplate) {
+        let customEvent = CustomEvent(mediaTemplate: mediaTemplate.template)
+        self.init(event: customEvent)
     }
 
-    /**
-     * Factory method for creating a consumed content event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Media event template instance
-     */
-    @objc(consumedTemplateWithValueFromString:)
-    public class func consumedTemplate(valueString: String?)
-        -> UAMediaEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return consumedTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a consumed content event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Media event template instance
-     */
-    @objc(consumedTemplateWithValue:)
-    public class func consumedTemplate(value: NSNumber?) -> UAMediaEventTemplate {
-        let template = MediaEventTemplate("consumed_content", value: value)
-        return UAMediaEventTemplate(template: template)
-    }
-
-    /**
-     * Creates the custom media event.
-     */
     @objc
-    public func createEvent() -> CustomEvent {
-        return self.template.createEvent()
+    convenience init(mediaTemplate: UACustomEventMediaTemplate, properties: UACustomEventMediaProperties) {
+        let customEvent = CustomEvent(
+            mediaTemplate: mediaTemplate.template,
+            properties: properties.properties
+        )
+        self.init(event: customEvent)
     }
 }

@@ -22,7 +22,7 @@ final class FeatureFlagResultCacheTest: XCTestCase {
 
         let entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")!
         XCTAssertEqual(
-            try AirshipJSON.defaultDecoder.decode(FeatureFlag.self, from: entry.data),
+            try JSONDecoder().decode(FeatureFlag.self, from: entry.data),
             flag
         )
         XCTAssertEqual(entry.ttl, 100)
@@ -36,7 +36,7 @@ final class FeatureFlagResultCacheTest: XCTestCase {
 
         let entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")!
         XCTAssertEqual(
-            try AirshipJSON.defaultDecoder.decode(FeatureFlag.self, from: entry.data),
+            try JSONDecoder().decode(FeatureFlag.self, from: entry.data),
             flag
         )
         XCTAssertEqual(entry.ttl, 99)

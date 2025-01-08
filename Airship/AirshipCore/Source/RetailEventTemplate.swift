@@ -2,368 +2,150 @@
 
 import Foundation
 
-/// A RetailEventTemplate represents a custom retail event template for the
-/// application.
-public class RetailEventTemplate {
 
-    /**
-     * The event's value. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     */
-    public var eventValue: NSNumber?
+public extension CustomEvent {
 
-    /**
-     * The event's transaction ID. The transaction ID's length must not exceed 255
-     * characters or it will invalidate the event.
-     */
-    public var transactionID: String?
+    /// Retail templates
+    enum RetailTemplate: Sendable {
+        /// Browsed
+        case browsed
 
-    /**
-     * The event's ID.
-     */
-    public var identifier: String?
+        /// Added to cart
+        case addedToCart
 
-    /**
-     * The event's category.
-     */
-    public var category: String?
+        /// Starred
+        case starred
 
-    /**
-     * The event's description.
-     */
-    public var eventDescription: String?
+        /// Purchased
+        case purchased
 
-    /**
-     * The brand.
-     */
-    public var brand: String?
+        /// Shared
+        /// - Parameters:
+        ///     - source: Optional source.
+        ///     - medium: Optional medium.
+        case shared(source: String? = nil, medium: String? = nil)
 
-    /**
-     * If the item is new or not.
-     */
-    public var isNewItem: Bool {
-        get {
-            return self._isNewItem ?? false
-        }
-        set {
-            self._isNewItem = newValue
+        /// Added to wishlist
+        /// - Parameters:
+        ///     - id: Optional id.
+        ///     - name: Optional name.
+        case wishlist(id: String? = nil, name: String? = nil)
+
+        fileprivate static let templateName: String = "retail"
+
+        fileprivate var eventName: String {
+            return switch self {
+            case .browsed: "browsed"
+            case .addedToCart: "added_to_cart"
+            case .starred: "starred_product"
+            case .purchased: "purchased"
+            case .shared: "shared_product"
+            case .wishlist: "wishlist"
+            }
         }
     }
 
-    /**
-     * The currency.
-     */
-    public var currency: String?
+    /// Additional retail template properties
+    struct RetailProperties: Encodable, Sendable {
+        /// The event's ID.
+        public var id: String?
 
-    private var _isNewItem: Bool?
-    private let eventName: String
-    private let source: String?
-    private let medium: String?
-    private let wishlistName: String?
-    private let wishlistID: String?
+        /// The event's category.
+        public var category: String?
 
-    /**
-     * Factory method for creating a browsed event template.
-     * - Returns: A Retail event template instance
-     */
-    public class func browsedTemplate() -> RetailEventTemplate {
-        return browsedTemplate(value: nil)
+        /// The event's type.
+        public var type: String?
+
+        /// The event's description.
+        public var eventDescription: String?
+
+        /// The brand.
+        public var brand: String?
+
+        /// If its a new item or not.
+        public var isNewItem: Bool?
+
+        /// The currency.
+        public var currency: String?
+
+        /// If the value is a lifetime value or not.
+        public var isLTV: Bool
+
+        // Set from templates
+        fileprivate var source: String? = nil
+        fileprivate var medium: String? = nil
+        fileprivate var wishlistName: String? = nil
+        fileprivate var wishlistID: String? = nil
+
+        public init(
+            id: String? = nil,
+            category: String? = nil,
+            type: String? = nil,
+            eventDescription: String? = nil,
+            isLTV: Bool = false,
+            brand: String? = nil,
+            isNewItem: Bool? = nil,
+            currency: String? = nil
+        ) {
+            self.id = id
+            self.category = category
+            self.type = type
+            self.eventDescription = eventDescription
+            self.brand = brand
+            self.isNewItem = isNewItem
+            self.currency = currency
+            self.isLTV = isLTV
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case id
+            case category
+            case type
+            case eventDescription = "description"
+            case brand
+            case isNewItem = "new_item"
+            case currency
+            case isLTV = "ltv"
+            case source
+            case medium
+            case wishlistName = "wishlist_name"
+            case wishlistID = "wishlist_id"
+        }
     }
 
-    /**
-     * Factory method for creating a browsed event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func browsedTemplate(valueString: String?)
-        -> RetailEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return browsedTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a browsed event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func browsedTemplate(value: NSNumber?) -> RetailEventTemplate {
-        return RetailEventTemplate("browsed", value: value)
-    }
-
-    /**
-     * Factory method for creating an addedToCart event template.
-     * - Returns: A Retail event template instance
-     */
-    public class func addedToCartTemplate() -> RetailEventTemplate {
-        return addedToCartTemplate(value: nil)
-    }
-
-    /**
-     * Factory method for creating an addedToCart event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func addedToCartTemplate(valueString: String?)
-        -> RetailEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return addedToCartTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating an addedToCart event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func addedToCartTemplate(value: NSNumber?)
-        -> RetailEventTemplate
-    {
-        return RetailEventTemplate("added_to_cart", value: value)
-    }
-
-    /**
-     * Factory method for creating a starredProduct event template
-     * - Returns: A Retail event template instance
-     */
-    public class func starredProductTemplate() -> RetailEventTemplate {
-        return starredProductTemplate(value: nil)
-    }
-
-    /**
-     * Factory method for creating a starredProduct event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func starredProductTemplate(valueString: String?)
-        -> RetailEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return starredProductTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a starredProduct event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func starredProductTemplate(value: NSNumber?)
-        -> RetailEventTemplate
-    {
-        return RetailEventTemplate("starred_product", value: value)
-    }
-
-    /**
-     * Factory method for creating a purchased event template.
-     * - Returns: A Retail event template instance
-     */
-    public class func purchasedTemplate() -> RetailEventTemplate {
-        return purchasedTemplate(value: nil)
-    }
-
-    /**
-     * Factory method for creating a purchased event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func purchasedTemplate(valueString: String?)
-        -> RetailEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return purchasedTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a purchased event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func purchasedTemplate(value: NSNumber?) -> RetailEventTemplate
-    {
-        return RetailEventTemplate("purchased", value: value)
-    }
-
-    /**
-     * Factory method for creating a sharedProduct template event.
-     * - Returns: A Retail event template instance
-     */
-    public class func sharedProductTemplate() -> RetailEventTemplate {
-        return sharedProductTemplate(value: nil, source: nil, medium: nil)
-    }
-
-    /**
-     * Factory method for creating a sharedProduct event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func sharedProductTemplate(valueString: String?)
-        -> RetailEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return sharedProductTemplate(
-            value: decimalValue,
-            source: nil,
-            medium: nil
-        )
-    }
-
-    /**
-     * Factory method for creating a sharedProduct event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Retail event template instance
-     */
-    public class func sharedProductTemplate(value: NSNumber?)
-        -> RetailEventTemplate
-    {
-        return sharedProductTemplate(value: value, source: nil, medium: nil)
-    }
-
-    /**
-     * Factory method for creating a sharedProduct event template.
-     * - Parameter source: The source as an NSString.
-     * - Parameter medium: The medium as an NSString
-     * - Returns: A Retail event template instance.
-     */
-    public class func sharedProductTemplate(source: String?, medium: String?)
-        -> RetailEventTemplate
-    {
-        return sharedProductTemplate(value: nil, source: source, medium: medium)
-    }
-
-    /**
-     * Factory method for creating a sharedProduct event template with a value.
-     *
-     * - Parameter valueString: The value of the event as as string. The value must be between
-     * -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Parameter source: The source as an NSString.
-     * - Parameter medium: The medium as an NSString.
-     * - Returns: A Retail event template instance
-     */
-    public class func sharedProductTemplate(
-        valueString: String?,
-        source: String?,
-        medium: String?
-    ) -> RetailEventTemplate {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return sharedProductTemplate(
-            value: decimalValue,
-            source: source,
-            medium: medium
-        )
-    }
-
-    /**
-     * Factory method for creating a sharedProduct event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Parameter source: The source as an NSString.
-     * - Parameter medium: The medium as an NSString.
-     * - Returns: A Retail event template instance
-     */
-    public class func sharedProductTemplate(
-        value: NSNumber?,
-        source: String?,
-        medium: String?
-    ) -> RetailEventTemplate {
-        return RetailEventTemplate(
-            "shared_product",
-            value: value,
-            source: source,
-            medium: medium
-        )
-    }
-
-    /**
-     * Factory method for creating a wishlist event template.
-     * - Returns: A Retail event template instance
-     */
-    public class func wishlistTemplate() -> RetailEventTemplate {
-        return wishlistTemplate(name: nil, wishlistID: nil)
-    }
-
-    /**
-     * Factory method for creating a wishlist event template with a wishlist name and ID.
-     *
-     * - Parameter name: The name of the wishlist as as string.
-     * - Parameter wishlistID: The ID of the wishlist as as string.
-     * - Returns: A Retail event template instance
-     */
-    public class func wishlistTemplate(name: String?, wishlistID: String?)
-        -> RetailEventTemplate
-    {
-        return RetailEventTemplate(
-            "wishlist",
-            wishlistName: name,
-            wishlistID: wishlistID
-        )
-    }
-
-    public init(
-        _ eventName: String,
-        value: NSNumber? = nil,
-        source: String? = nil,
-        medium: String? = nil,
-        wishlistName: String? = nil,
-        wishlistID: String? = nil
+    /// Constructs a custom event using the retail template.
+    /// - Parameters:
+    ///     - accountTemplate: The retail template.
+    ///     - properties: Optional additional properties
+    ///     - encoder: Encoder used to encode the additional properties. Defaults to `CustomEvent.defaultEncoder`.
+    init(
+        retailTemplate: RetailTemplate,
+        properties: RetailProperties = RetailProperties(),
+        encoder: @autoclosure () -> JSONEncoder = CustomEvent.defaultEncoder()
     ) {
-        self.eventName = eventName
-        self.eventValue = value
-        self.source = source
-        self.medium = medium
-        self.wishlistID = wishlistID
-        self.wishlistName = wishlistName
-    }
+        self = .init(name: retailTemplate.eventName)
+        self.templateType = RetailTemplate.templateName
 
-    /**
-     * Creates the custom media event.
-     */
-    public func createEvent() -> CustomEvent {
-        var propertyDictionary: [String: Any] = [:]
-        propertyDictionary["ltv"] =
-            self.eventName == "purchased" && self.eventValue != nil
-        propertyDictionary["id"] = self.identifier
-        propertyDictionary["category"] = self.category
-        propertyDictionary["brand"] = self.brand
-        propertyDictionary["new_item"] = self._isNewItem
-        propertyDictionary["source"] = self.source
-        propertyDictionary["medium"] = self.medium
-        propertyDictionary["wishlist_name"] = self.wishlistName
-        propertyDictionary["wishlist_id"] = self.wishlistID
-        propertyDictionary["description"] = self.eventDescription
-        propertyDictionary["currency"] = self.currency
+        var mutableProperties = properties
 
-        let event = CustomEvent(name: self.eventName)
-        event.templateType = "retail"
-        event.eventValue = self.eventValue
-        event.transactionID = self.transactionID
-        event.properties = propertyDictionary
-        return event
+        switch retailTemplate {
+        case .browsed: break
+        case .addedToCart: break
+        case .starred: break
+        case .purchased: break
+        case .shared(source: let source, medium: let medium):
+            mutableProperties.source = source
+            mutableProperties.medium = medium
+        case .wishlist(id: let id, name: let name):
+            mutableProperties.wishlistID = id
+            mutableProperties.wishlistName = name
+        }
+
+        do {
+            try self.setProperties(mutableProperties, encoder: encoder())
+        } catch {
+            /// Should never happen so we are just catching the exception and logging
+            AirshipLogger.error("Failed to generate event \(error)")
+        }
     }
 }

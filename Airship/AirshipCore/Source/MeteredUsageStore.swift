@@ -41,7 +41,7 @@ final class MeteredUsageStore: Sendable {
             }
 
             eventData.identifier = event.eventID
-            eventData.data = try AirshipJSON.defaultEncoder.encode(event)
+            eventData.data = try JSONEncoder().encode(event)
         }
     }
 
@@ -105,7 +105,7 @@ final class MeteredUsageStore: Sendable {
                 }
 
                 do {
-                    return try AirshipJSON.defaultDecoder.decode(AirshipMeteredUsageEvent.self, from: data)
+                    return try JSONDecoder().decode(AirshipMeteredUsageEvent.self, from: data)
                 } catch {
                     AirshipLogger.error("Unable to read event, deleting. \(error)")
                     context.delete(eventData)

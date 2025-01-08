@@ -2,169 +2,83 @@
 
 import Foundation
 
-/// AccountEventTemplate represents a custom account event template for the
-/// application.
-public class AccountEventTemplate {
+public extension CustomEvent {
 
-    private let eventName: String
+    /// Account template
+    enum AccountTemplate: Sendable {
+        /// Account registered
+        case registered
 
-    /**
-     * The event's value. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     */
-    public var eventValue: NSNumber?
+        /// User logged in
+        case loggedIn
 
-    /**
-     * The event's transaction ID. The transaction ID's length must not exceed 255
-     * characters or it will invalidate the event.
-     */
-    public var transactionID: String?
+        /// User logged out
+        case loggedOut
 
-    /**
-     * The event's identifier.
-     */
-    public var userID: String?
+        fileprivate static let templateName: String = "account"
 
-    /**
-     * The event's category.
-     */
-    public var category: String?
-
-    /**
-     * The event's type.
-     */
-    public var type: String?
-
-    public init(eventName: String, value: NSNumber? = nil) {
-        self.eventName = eventName
-        self.eventValue = value
+        fileprivate var eventName: String {
+            return switch self {
+            case .registered: "registered_account"
+            case .loggedIn: "logged_in"
+            case .loggedOut: "logged_out"
+            }
+        }
     }
 
-    /**
-     * Factory method for creating a registered account event template.
-     * - Returns: An Account event template instance
-     */
-    public class func registeredTemplate() -> AccountEventTemplate {
-        return registeredTemplate(value: nil)
+    /// Additional acount template properties
+    struct AccountProperties: Encodable, Sendable {
+
+        /// User ID.
+        public var userID: String?
+
+        /// The event's category.
+        public var category: String?
+
+        /// The event's type.
+        public var type: String?
+
+        /// If the value is a lifetime value or not.
+        public var isLTV: Bool
+
+        public init(
+            category: String? = nil,
+            type: String? = nil,
+            isLTV: Bool = false,
+            userID: String? = nil
+        ) {
+            self.userID = userID
+            self.category = category
+            self.type = type
+            self.isLTV = isLTV
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case userID = "user_id"
+            case category
+            case type
+            case isLTV = "ltv"
+        }
     }
 
-    /**
-     * Factory method for creating a registered account event template with a value from a string.
-     *
-     * - Parameter valueString: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: An Account event template instance
-     */
-    public class func registeredTemplate(valueString: String?)
-        -> AccountEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return registeredTemplate(value: decimalValue)
-    }
+    /// Constructs a custom event using the account template.
+    /// - Parameters:
+    ///     - accountTemplate: The account template.
+    ///     - properties: Optional additional properties
+    ///     - encoder: Encoder used to encode the additional properties. Defaults to `CustomEvent.defaultEncoder`.
+    init(
+        accountTemplate: AccountTemplate,
+        properties: AccountProperties = AccountProperties(),
+        encoder: @autoclosure () -> JSONEncoder = CustomEvent.defaultEncoder()
+    ) {
+        self = .init(name: accountTemplate.eventName)
+        self.templateType = AccountTemplate.templateName
 
-    /**
-     * Factory method for creating a registered account event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: An Account event template instance
-     */
-    public class func registeredTemplate(value: NSNumber?)
-        -> AccountEventTemplate
-    {
-        return AccountEventTemplate(
-            eventName: "registered_account",
-            value: value
-        )
-    }
-
-    /**
-     * Factory method for creating a logged in account event template.
-     * - Returns: An Account event template instance
-     */
-    public class func loggedInTemplate() -> AccountEventTemplate {
-        return loggedInTemplate(value: nil)
-    }
-
-    /**
-     * Factory method for creating a logged in account event template with a value from a string.
-     *
-     * - Parameter valueString: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: An Account event template instance
-     */
-    public class func loggedInTemplate(valueString: String?)
-        -> AccountEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return loggedInTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a logged in account event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: An Account event template instance
-     */
-    public class func loggedInTemplate(value: NSNumber?) -> AccountEventTemplate
-    {
-        return AccountEventTemplate(eventName: "logged_in", value: value)
-    }
-
-    /**
-     * Factory method for creating a logged out account event template.
-     * - Returns: An Account event template instance
-     */
-    public class func loggedOutTemplate() -> AccountEventTemplate {
-        return loggedOutTemplate(value: nil)
-    }
-
-    /**
-     * Factory method for creating a logged out account event template with a value from a string.
-     *
-     * - Parameter valueString: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: An Account event template instance
-     */
-    public class func loggedOutTemplate(valueString: String?)
-        -> AccountEventTemplate
-    {
-        let decimalValue =
-            valueString != nil ? NSDecimalNumber(string: valueString) : nil
-        return loggedOutTemplate(value: decimalValue)
-    }
-
-    /**
-     * Factory method for creating a logged out account event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: An Account event template instance
-     */
-    public class func loggedOutTemplate(value: NSNumber?)
-        -> AccountEventTemplate
-    {
-        return AccountEventTemplate(eventName: "logged_out", value: value)
-    }
-
-    /**
-     * Creates the custom account event.
-     */
-    public func createEvent() -> CustomEvent? {
-        var propertyDictionary: [String: Any] = [:]
-        propertyDictionary["ltv"] = self.eventValue != nil
-        propertyDictionary["user_id"] = self.userID
-        propertyDictionary["category"] = self.category
-        propertyDictionary["type"] = self.type
-
-        let event = CustomEvent(name: self.eventName)
-        event.templateType = "account"
-        event.eventValue = self.eventValue
-        event.transactionID = self.transactionID
-        event.properties = propertyDictionary
-        return event
+        do {
+            try self.setProperties(properties, encoder: encoder())
+        } catch {
+            /// Should never happen so we are just catching the exception and logging
+            AirshipLogger.error("Failed to generate event \(error)")
+        }
     }
 }

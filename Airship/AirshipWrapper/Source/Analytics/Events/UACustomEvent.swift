@@ -1,40 +1,21 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
 public class UACustomEvent: NSObject {
     
-    private var customEvent: CustomEvent
-    
-    /**
-     * The max number of properties.
-     */
-    @objc
-    public static let maxPropertiesSize = 65536
-
-    // Public data keys
-    @objc
-    public static let eventNameKey = "event_name"
-    @objc
-    public static let eventValueKey = "event_value"
-    @objc
-    public static let eventPropertiesKey = "properties"
-    @objc
-    public static let eventTransactionIDKey = "transaction_id"
-    @objc
-    public static let eventInteractionIDKey = "interaction_id"
-    @objc
-    public static let eventInteractionTypeKey = "interaction_type"
+    var customEvent: CustomEvent
 
     /**
      * The event's value. The value must be between -2^31 and
      * 2^31 - 1 or it will invalidate the event.
      */
     @objc
-    public var eventValue: NSNumber? {
+    public var eventValue: Decimal {
         get {
            return customEvent.eventValue
         }
@@ -48,7 +29,7 @@ public class UACustomEvent: NSObject {
      * invalidate the event.
      */
     @objc
-    public var eventName: String? {
+    public var eventName: String {
         get {
            return customEvent.eventName
         }
@@ -105,80 +86,42 @@ public class UACustomEvent: NSObject {
     @objc
     public var properties: [String: Any] {
         get {
-           return customEvent.properties
-        }
-        set {
-            customEvent.properties = newValue
+            return customEvent.properties.mapValues { $0.unWrap() as Any }
         }
     }
 
+    /// Default constructor.
+    /// - Parameter name: The name of the event. The event's name must not exceed
+    /// 255 characters or it will invalidate the event.
     @objc
-    public var data: [AnyHashable: Any] {
-        get {
-           return customEvent.data
-        }
-    }
-
-    /**
-     * Constructor
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter stringValue: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    @objc
-    public convenience init(name: String, stringValue: String?) {
-        let customEvent = CustomEvent(name: name, stringValue: stringValue)
+    public convenience init(name: String) {
+        let customEvent = CustomEvent(name: name)
         self.init(event: customEvent)
     }
 
-    /**
-     * Factory method for creating a custom event.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    @objc(eventWithName:)
-    public class func event(name: String) -> UACustomEvent {
-        let customEvent = CustomEvent(name: name)
-        return UACustomEvent(event: customEvent)
-    }
-
-    /**
-     * Factory method for creating a custom event with a value from a string.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter string: The value of the event as a string. The value must be a valid
-     * number between -2^31 and 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    @objc(eventWithName:valueFromString:)
-    public class func event(name: String, string: String?) -> UACustomEvent {
-        let customEvent = CustomEvent(name: name, stringValue: string)
-        return UACustomEvent(event: customEvent)
-    }
-
-    /**
-     * Factory method for creating a custom event with a value.
-     *
-     * - Parameter name: The name of the event. The event's name must not exceed
-     * 255 characters or it will invalidate the event.
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: A Custom event instance
-     */
-    @objc(eventWithName:value:)
-    public class func event(name: String, value: NSNumber?) -> UACustomEvent {
-        let customEvent = CustomEvent(name: name, value: value)
-        return UACustomEvent(event: customEvent)
-    }
-
+    /// Default constructor.
+    /// - Parameter name: The name of the event. The event's name must not exceed
+    /// 255 characters or it will invalidate the event.
+    /// - Parameter value: The event value. The value must be between -2^31 and
+    /// 2^31 - 1 or it will invalidate the event. Defaults to 1.
     @objc
-    public init(event: CustomEvent) {
+    public convenience init(name: String, value: Double) {
+        let customEvent = CustomEvent(name: name, value: value)
+        self.init(event: customEvent)
+    }
+
+    /// Default constructor.
+    /// - Parameter name: The name of the event. The event's name must not exceed
+    /// 255 characters or it will invalidate the event.
+    /// - Parameter decimalValue: The event value. The value must be between -2^31 and
+    /// 2^31 - 1 or it will invalidate the event. Defaults to 1.
+    @objc
+    public convenience init(name: String, decimalValue: Decimal) {
+        let customEvent = CustomEvent(name: name, decimalValue: decimalValue)
+        self.init(event: customEvent)
+    }
+
+    init(event: CustomEvent) {
         self.customEvent = event
     }
     
@@ -193,5 +136,65 @@ public class UACustomEvent: NSObject {
     @objc
     public func track() {
         customEvent.track()
+    }
+
+    /// Sets a property string value.
+    /// - Parameters:
+    ///     - string: The string value to set.
+    ///     - forKey: The properties key
+    public func setProperty(
+        string: String,
+        forKey key: String
+    ) {
+        customEvent.setProperty(string: string, forKey: key)
+    }
+
+    /// Removes a property.
+    /// - Parameters:
+    ///     - forKey: The properties key
+    public func removeProperty(
+        forKey key: String
+    ) {
+        customEvent.removeProperty(forKey: key)
+    }
+
+    /// Sets a property double value.
+    /// - Parameters:
+    ///     - double: The double value to set.
+    ///     - forKey: The properties key
+    public func setProperty(
+        double: Double,
+        forKey key: String
+    ) {
+        customEvent.setProperty(double: double, forKey: key)
+    }
+
+    /// Sets a property bool value.
+    /// - Parameters:
+    ///     - bool: The bool value to set.
+    ///     - forKey: The properties key
+    public func setProperty(
+        bool: Bool,
+        forKey key: String
+    ) {
+        customEvent.setProperty(bool: bool, forKey: key)
+    }
+
+    /// Sets a property value.
+    /// - Parameters:
+    ///     - value: The value to set.
+    ///     - forKey: The properties key
+    public func setProperty(
+        value: Any?,
+        forKey key: String
+    ) throws {
+        try customEvent.setProperty(value: value, forKey: key)
+    }
+
+    /// Sets a property value.
+    /// - Parameters:
+    ///     - value: The values to set. The value must result in a JSON object or an error will be thrown.
+    public func setProperties(_ object: Any?) throws {
+        try customEvent.setProperties(object)
     }
 }

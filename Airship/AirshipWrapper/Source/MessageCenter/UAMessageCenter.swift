@@ -1,7 +1,11 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if canImport(AirshipCore)
 import AirshipMessageCenter
+import AirshipCore
+#endif
+
 
 /// Delegate protocol for receiving callbacks related to message center.
 @objc

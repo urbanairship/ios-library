@@ -53,7 +53,7 @@ final class MessageDisplayHistoryStore: MessageDisplayHistoryStoreProtocol {
         queue.enqueue { [store] in
             do {
                 try await store.updateSchedule(scheduleID: scheduleID) { data in
-                    data.associatedData = try AirshipJSON.defaultEncoder.encode(history)
+                    data.associatedData = try JSONEncoder().encode(history)
                 }
             } catch {
                 AirshipLogger.error("Failed to save message history \(error)")
@@ -70,7 +70,7 @@ final class MessageDisplayHistoryStore: MessageDisplayHistoryStoreProtocol {
                         return
                     }
 
-                    let history: MessageDisplayHistory = try AirshipJSON.defaultDecoder.decode(MessageDisplayHistory.self, from: data)
+                    let history: MessageDisplayHistory = try JSONDecoder().decode(MessageDisplayHistory.self, from: data)
                     continuation.resume(returning: history)
                 } catch {
                     AirshipLogger.error("Failed to save message history \(error)")

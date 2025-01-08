@@ -1,137 +1,88 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-public import AirshipCore
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
-public class UASearchEventTemplate: NSObject {
-    
-    private var template: SearchEventTemplate
-    
-    /**
-     * The event's value. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     */
-    @objc
-    public var eventValue: NSNumber? {
-        get {
-           return template.eventValue
-        }
-        set {
-            template.eventValue = newValue
-        }
-    }
+public class UACustomEventSearchTemplate: NSObject {
 
-    /**
-     * The event's type.
-     */
-    @objc
-    public var type: String? {
-        get {
-           return template.type
-        }
-        set {
-            template.type = newValue
-        }
-    }
+    fileprivate var template: CustomEvent.SearchTemplate
 
-    /**
-     * The event's identifier.
-     */
-    @objc
-    public var identifier: String? {
-        get {
-           return template.identifier
-        }
-        set {
-            template.identifier = newValue
-        }
-    }
-
-    /**
-     * The event's category.
-     */
-    @objc
-    public var category: String? {
-        get {
-           return template.category
-        }
-        set {
-            template.category = newValue
-        }
-    }
-
-    /**
-     * The event's query.
-     */
-    @objc
-    public var query: String? {
-        get {
-           return template.query
-        }
-        set {
-            template.query = newValue
-        }
-    }
-
-    /**
-     * The event's total results.
-     */
-    @objc
-    public var totalResults: Int {
-        get {
-           return template.totalResults
-        }
-        set {
-            template.totalResults = newValue
-        }
-    }
-
-    public init(template: SearchEventTemplate) {
+    private init(template: CustomEvent.SearchTemplate) {
         self.template = template
     }
-    
-    /**
-     * Default constructor.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     */
-    public convenience init(value: NSNumber? = nil) {
-        let template = SearchEventTemplate(value: value)
-        self.init(template: template)
-    }
 
-    /**
-     * Factory method for creating a search event template with a value.
-     *
-     * - Parameter value: The value of the event. The value must be between -2^31 and
-     * 2^31 - 1 or it will invalidate the event.
-     * - Returns: SearchEventTemplate instance.
-     */
-    @objc(templateWithValue:)
-    public class func template(value: NSNumber) -> UASearchEventTemplate {
-        let template = SearchEventTemplate(value: value)
-        return UASearchEventTemplate(template: template)
-    }
-
-    /**
-     * Factory method for creating a search event template.
-     * - Returns: SearchEventTemplate instance.
-     */
-    @objc(template)
-    public class func template() -> UASearchEventTemplate {
-        let template = SearchEventTemplate()
-        return UASearchEventTemplate(template: template)
-    }
-
-    /**
-     * Creates the custom search event.
-     * - Returns: Created UACustomEvent instance.
-     */
     @objc
-    public func createEvent() -> CustomEvent {
-        return self.template.createEvent()
+    public static func search() -> UACustomEventSearchTemplate {
+        return UACustomEventSearchTemplate(template: .search)
+    }
+}
+
+@objc
+public class UACustomEventSearchProperties: NSObject {
+
+    /// The event's ID.
+    @objc
+    public var id: String?
+
+    /// The search query.
+    @objc
+    public var query: String?
+
+    /// The total search results
+    @objc
+    public var totalResults: NSNumber?
+
+    /// The event's category.
+    @objc
+    public var category: String?
+
+    /// The event's type.
+    @objc
+    public var type: String?
+
+    /// If the value is a lifetime value or not.
+    @objc
+    public var isLTV: Bool
+
+    @objc
+    public init(id: String? = nil, query: String? = nil, totalResults: NSNumber? = nil, category: String? = nil, type: String? = nil, isLTV: Bool = false) {
+        self.id = id
+        self.query = query
+        self.totalResults = totalResults
+        self.category = category
+        self.type = type
+        self.isLTV = isLTV
+    }
+
+    fileprivate var properties: CustomEvent.SearchProperties {
+        CustomEvent.SearchProperties(
+            id: self.id,
+            category: self.category,
+            type: self.type,
+            isLTV: self.isLTV,
+            query: self.query,
+            totalResults: self.totalResults?.intValue
+        )
+    }
+}
+
+@objc
+public extension UACustomEvent {
+    @objc
+    convenience init(searchTemplate: UACustomEventSearchTemplate) {
+        let customEvent = CustomEvent(searchTemplate: searchTemplate.template)
+        self.init(event: customEvent)
+    }
+
+    @objc
+    convenience init(searchTemplate: UACustomEventSearchTemplate, properties: UACustomEventSearchProperties) {
+        let customEvent = CustomEvent(
+            searchTemplate: searchTemplate.template,
+            properties: properties.properties
+        )
+        self.init(event: customEvent)
     }
 }

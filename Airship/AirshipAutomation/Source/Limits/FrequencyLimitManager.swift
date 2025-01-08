@@ -90,7 +90,7 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, @unchecked Sen
     }
 
     func setConstraints(data: Data) async throws {
-        let constraints = try AirshipJSON.defaultDecoder.decode(
+        let constraints = try JSONDecoder().decode(
             [FrequencyConstraint].self,
             from: data
         )

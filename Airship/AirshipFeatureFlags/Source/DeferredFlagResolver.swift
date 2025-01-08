@@ -93,7 +93,7 @@ actor FeatureFlagDeferredResolver: FeatureFlagDeferredResolverProtocol {
         }
         
         let result = await deferredResolver.resolve(request: request) { data in
-            return try AirshipJSON.defaultDecoder.decode(DeferredFlag.self, from: data)
+            return try JSONDecoder().decode(DeferredFlag.self, from: data)
         }
 
         switch(result) {

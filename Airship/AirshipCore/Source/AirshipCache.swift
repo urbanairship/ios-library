@@ -4,9 +4,7 @@ public protocol AirshipCache: Actor {
     func deleteCachedValue(key: String) async
 
     func getCachedValue<T: Codable & Sendable>(key: String) async -> T?
-    func getCachedValue<T: Codable & Sendable>(key: String, decoder: JSONDecoder) async -> T?
     func setCachedValue<T: Codable & Sendable>(_ value: T?, key: String, ttl: TimeInterval) async
-    func setCachedValue<T: Codable & Sendable>(_ value: T?, key: String, ttl: TimeInterval, encoder: JSONEncoder) async
 }
 
 actor CoreDataAirshipCache: AirshipCache {
@@ -15,6 +13,8 @@ actor CoreDataAirshipCache: AirshipCache {
     private let sdkVersion: String
     private let date: any AirshipDateProtocol
     private let cleanUpTask: Task<Void, Never>
+
+
 
     static func makeCoreData(appKey: String) -> UACoreData? {
         let modelURL = AirshipCoreResources.bundle.url(
@@ -76,13 +76,9 @@ actor CoreDataAirshipCache: AirshipCache {
         }
     }
 
-    func getCachedValue<T>(key: String) async -> T? where T : Decodable, T : Encodable, T : Sendable {
-        return await getCachedValue(key: key, decoder: AirshipJSON.defaultDecoder)
-    }
 
     func getCachedValue<T>(
-        key: String,
-        decoder: JSONDecoder
+        key: String
     ) async -> T? where T : Decodable, T : Encodable, T : Sendable {
         await self.cleanUpTask.value
         do {
@@ -105,17 +101,13 @@ actor CoreDataAirshipCache: AirshipCache {
                     return nil
                 }
 
-                return try decoder.decode(T.self, from: data)
+                return try JSONDecoder().decode(T.self, from: data)
             }
             return result
         } catch {
             AirshipLogger.error("Failed to fetch cached value \(key) \(error)")
             return nil
         }
-    }
-
-    func setCachedValue<T>(_ value: T?, key: String, ttl: TimeInterval) async where T : Decodable, T : Encodable, T : Sendable {
-        return await setCachedValue(value, key: key, ttl: ttl, encoder: AirshipJSON.defaultEncoder)
     }
 
     func deleteCachedValue(key: String) async {
@@ -130,11 +122,9 @@ actor CoreDataAirshipCache: AirshipCache {
         }
     }
 
-
     func setCachedValue<T>(
         _ value: T?, key:
-        String, ttl: TimeInterval,
-        encoder: JSONEncoder
+        String, ttl: TimeInterval
     ) async where T : Decodable, T : Encodable, T : Sendable {
         await self.cleanUpTask.value
 
@@ -145,7 +135,7 @@ actor CoreDataAirshipCache: AirshipCache {
                 entity.sdkVersion = self.sdkVersion
                 entity.appVersion = self.appVersion
                 entity.expiry = self.date.now + ttl
-                entity.data = try AirshipJSON.defaultEncoder.encode(value)
+                entity.data = try JSONEncoder().encode(value)
             }
         } catch {
             AirshipLogger.error("Failed to cache value for key \(key) \(error)")
