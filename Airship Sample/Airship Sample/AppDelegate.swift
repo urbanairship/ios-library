@@ -30,8 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         Airship.push.defaultPresentationOptions = [.sound, .banner, .list]
 
         Airship.deepLinkDelegate = self
-        MessageCenter.shared.displayDelegate = self
-        PreferenceCenter.shared.openDelegate = self
+        Airship.messageCenter.displayDelegate = self
+        Airship.preferenceCenter.openDelegate = self
 
         NotificationCenter.default.addObserver(
             forName: AppStateTracker.didBecomeActiveNotification,

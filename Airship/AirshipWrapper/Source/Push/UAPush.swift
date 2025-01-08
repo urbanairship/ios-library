@@ -2,7 +2,7 @@
 
 import Foundation
 #if canImport(AirshipCore)
-public import AirshipCore
+import AirshipCore
 #endif
 
 
@@ -223,13 +223,6 @@ public final class UAPush: NSObject, Sendable {
             return Airship.push.isPushNotificationsOptedIn
         }
     }
-
-    public var notificationStatus: AirshipNotificationStatus {
-        get async {
-            return await Airship.push.notificationStatus
-        }
-    }
-
    
     #if !os(watchOS)
 

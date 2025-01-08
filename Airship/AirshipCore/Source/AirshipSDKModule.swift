@@ -9,5 +9,5 @@ public protocol AirshipSDKModule: NSObject {
     var components: [any AirshipComponent] { get }
 
     @MainActor
-    static func load(dependencies: [String: Any]) -> (any AirshipSDKModule)?
+    static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)?
 }

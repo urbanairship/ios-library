@@ -137,17 +137,6 @@ let package = Package(
             ]
         ),
         .target(
-            name: "AirshipNotificationContentExtension",
-            path: "AirshipExtensions/AirshipNotificationContentExtension",
-            exclude: [
-                "Source/AirshipNotificationContentExtension.h",
-                "Info.plist",
-                "Tests",
-            ],
-            sources: ["Source"],
-            publicHeadersPath: "Source/Public"
-        ),
-        .target(
             name: "AirshipNotificationServiceExtension",
             path: "AirshipExtensions/AirshipNotificationServiceExtension",
             exclude: [

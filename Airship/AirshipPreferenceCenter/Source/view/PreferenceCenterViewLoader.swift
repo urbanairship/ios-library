@@ -61,7 +61,7 @@ final class PreferenceCenterViewLoader: ObservableObject {
             throw AirshipErrors.error("TakeOff not called")
         }
 
-        let config = try await PreferenceCenter.shared.config(
+        let config = try await Airship.preferenceCenter.config(
             preferenceCenterID: preferenceCenterID
         )
 

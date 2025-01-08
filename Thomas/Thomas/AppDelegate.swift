@@ -29,7 +29,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         CustomViewExampleHelper.registerCameraView()
         CustomViewExampleHelper.registerBiometricLoginView()
 
-        InAppAutomation.shared.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
+        Airship.inAppAutomation.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
             theme.maxWidth = 300
             theme.maxHeight = 300
         }
@@ -39,7 +39,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             try await Airship.push.resetBadge()
         }
 
-        InAppAutomation.shared.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
+        Airship.inAppAutomation.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
             if message.extras?.object?["squareview"]?.string == "true" {
                 theme.maxWidth = (min(UIScreen.main.bounds.size.width, UIScreen.main.bounds.size.height)-24*2)
                 theme.maxHeight = theme.maxWidth

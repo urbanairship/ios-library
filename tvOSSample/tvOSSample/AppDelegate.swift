@@ -21,8 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Prefere
 
         Airship.channel.editTags { $0.add(["tvos"]) }
         Airship.deepLinkDelegate = self
-//        MessageCenter.shared.displayDelegate = self
-        PreferenceCenter.shared.openDelegate = self
+        Airship.preferenceCenter.openDelegate = self
 
         NotificationCenter.default.addObserver(
             forName: AppStateTracker.didBecomeActiveNotification,

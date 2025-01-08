@@ -27,7 +27,7 @@ struct AppView: View {
     @ViewBuilder
     private var messageCenterTab: some View {
         MessageCenterView(
-            controller: MessageCenter.shared.controller
+            controller: Airship.messageCenter.controller
         )
         .tabItem {
             Label(

@@ -30,15 +30,15 @@ class AppState: ObservableObject {
     
     init() {
         if Airship.isFlying {
-            MessageCenter.shared.inbox.unreadCountPublisher
+            Airship.messageCenter.inbox.unreadCountPublisher
                 .receive(on: RunLoop.main)
                 .sink { unreadCount in
                     self.unreadCount = unreadCount
                 }
                 .store(in: &self.subscriptions)
             
-            MessageCenter.shared.controller = messageCenterController
-            MessageCenter.shared.controller.statePublisher
+            Airship.messageCenter.controller = messageCenterController
+            Airship.messageCenter.controller.statePublisher
                 .receive(on: RunLoop.main)
                 .sink { status in
                     self.status = status

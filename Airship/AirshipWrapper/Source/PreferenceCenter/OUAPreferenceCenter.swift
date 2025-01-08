@@ -1,8 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+#if canImport(AirshipCore)
 import AirshipCore
-public import AirshipPreferenceCenter
+import AirshipPreferenceCenter
+#endif
 
 /// Open delegate.
 @objc
@@ -18,47 +20,57 @@ public protocol UAPreferenceCenterOpenDelegate {
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
-public class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
-    private let delegate: any UAPreferenceCenterOpenDelegate
-    
-    init(delegate: any UAPreferenceCenterOpenDelegate) {
-        self.delegate = delegate
+final class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
+    weak var forwardDelegate: (any UAPreferenceCenterOpenDelegate)?
+
+    init(_ forwardDelegate: any UAPreferenceCenterOpenDelegate) {
+        self.forwardDelegate = forwardDelegate
     }
     
     public func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {
-        return self.delegate.openPreferenceCenter(preferenceCenterID)
+        return self.forwardDelegate?.openPreferenceCenter(preferenceCenterID) ?? false
     }
 }
 
 @objc
 public class UAPreferenceCenter: NSObject {
-    
+
+    @MainActor
+    private let storage = Storage()
+
+
     /**
      * Open delegate.
      *
      * If set, the delegate will be called instead of launching the OOTB preference center screen. Must be set
      * on the main actor.
      */
-    private var _openDelegate: (any PreferenceCenterOpenDelegate)?
     @objc
     @MainActor
-    public var openDelegate: (any UAPreferenceCenterOpenDelegate)? {
-        didSet {
-            if let openDelegate {
-                _openDelegate = UAPreferenceCenterOpenDelegateWrapper(delegate: openDelegate)
-                
-                PreferenceCenter.shared.openDelegate = _openDelegate
+    public weak var openDelegate: (any UAPreferenceCenterOpenDelegate)? {
+        get {
+            guard let wrapped = Airship.preferenceCenter.openDelegate as? UAPreferenceCenterOpenDelegateWrapper else {
+                return nil
+            }
+            return wrapped.forwardDelegate
+        }
+
+        set {
+            if let newValue {
+                let wrapper = UAPreferenceCenterOpenDelegateWrapper(newValue)
+                Airship.preferenceCenter.openDelegate = wrapper
+                storage.openDelegate = wrapper
             } else {
-                PreferenceCenter.shared.openDelegate = nil
+                Airship.preferenceCenter.openDelegate = nil
+                storage.openDelegate = nil
             }
         }
     }
     
-    
     @objc
     @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
-        try PreferenceCenter.shared.setThemeFromPlist(plist)
+        try  Airship.preferenceCenter.setThemeFromPlist(plist)
     }
     
     /**
@@ -69,7 +81,7 @@ public class UAPreferenceCenter: NSObject {
     @objc(openPreferenceCenter:)
     @MainActor
     public func open(_ preferenceCenterID: String) {
-        PreferenceCenter.shared.open(preferenceCenterID)
+        Airship.preferenceCenter.open(preferenceCenterID)
     }
     
     /**
@@ -79,7 +91,12 @@ public class UAPreferenceCenter: NSObject {
      */
     @objc
     public func jsonConfig(preferenceCenterID: String) async throws -> Data {
-        return try await PreferenceCenter.shared.jsonConfig(preferenceCenterID: preferenceCenterID)
+        return try await Airship.preferenceCenter.jsonConfig(preferenceCenterID: preferenceCenterID)
+    }
+
+    @MainActor
+    fileprivate final class Storage  {
+        var openDelegate: (any PreferenceCenterOpenDelegate)?
     }
 }
 

@@ -22,7 +22,7 @@ struct AppView: View {
             VStack {
                 Text("Messages").font(.title)
 //                MessageCenterView()
-//                    .messageCenterTheme(MessageCenter.shared.theme!)
+//                    .messageCenterTheme(Airship.messageCenter.theme!)
             }
 //            .messageCenterMessageViewStyle(CustomMessageViewStyle())
             .tabItem {

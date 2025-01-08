@@ -31,7 +31,7 @@ public final class ScheduleAction: AirshipAction {
     }
     
     var automation: InAppAutomation {
-        return overrideAutomation ?? InAppAutomation.shared
+        return overrideAutomation ??  Airship.inAppAutomation
     }
     
     public func accepts(arguments: ActionArguments) async -> Bool {

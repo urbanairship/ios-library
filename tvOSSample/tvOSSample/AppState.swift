@@ -25,7 +25,7 @@ class AppState: ObservableObject {
     
     init() {
         if Airship.isFlying {
-//            MessageCenter.shared.inbox.unreadCountPublisher
+//            Airship.messageCenter.inbox.unreadCountPublisher
 //                .receive(on: RunLoop.main)
 //                .sink { unreadCount in
 //                    self.unreadCount = unreadCount

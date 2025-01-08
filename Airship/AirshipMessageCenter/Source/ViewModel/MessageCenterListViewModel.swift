@@ -23,7 +23,7 @@ class MessageCenterListViewModel: ObservableObject {
 
     init() {
         if Airship.isFlying {
-            messageCenter = MessageCenter.shared
+            messageCenter = Airship.messageCenter
         } else {
             messageCenter = nil
         }

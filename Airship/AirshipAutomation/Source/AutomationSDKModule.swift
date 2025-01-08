@@ -16,31 +16,18 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         self.components = components
     }
 
-    public static func load(dependencies: [String : Any]) -> (any AirshipSDKModule)? {
-        // Dependencies
-        let dataStore = dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
-        let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
-        let remoteData = dependencies[SDKDependencyKeys.remoteData] as! (any RemoteDataProtocol)
-        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! (any AirshipDeferredResolverProtocol)
-        let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
-        let experiments = dependencies[SDKDependencyKeys.experimentsProvider] as! (any ExperimentDataProvider)
-        let sceneManager = dependencies[SDKDependencyKeys.sceneManager] as! (any AirshipSceneManagerProtocol)
-        let messageSceneManager = InAppMessageSceneManager(sceneManger: sceneManager)
-        let airshipAnalytics = dependencies[SDKDependencyKeys.analytics] as! (any InternalAnalyticsProtocol)
-        let meteredUsage = dependencies[SDKDependencyKeys.meteredUsage] as! (any AirshipMeteredUsageProtocol)
-        let cache = dependencies[SDKDependencyKeys.cache] as! (any AirshipCache)
-        let audienceChecker = dependencies[SDKDependencyKeys.audienceChecker] as! (any DeviceAudienceChecker)
-
+    public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
         /// Utils
-        let remoteDataAccess = AutomationRemoteDataAccess(remoteData: remoteData)
+        let messageSceneManager = InAppMessageSceneManager(sceneManger: AirshipSceneManager.shared)
+        let remoteDataAccess = AutomationRemoteDataAccess(remoteData: args.remoteData)
         let assetManager = AssetCacheManager()
-        let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: dataStore)
-        let frequencyLimits = FrequencyLimitManager(config: config)
+        let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: args.dataStore)
+        let frequencyLimits = FrequencyLimitManager(config: args.config)
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
-        let eventRecorder = InAppEventRecorder(airshipAnalytics: airshipAnalytics, meteredUsage: meteredUsage)
-        let metrics = ApplicationMetrics(dataStore: dataStore, privacyManager: privacyManager)
+        let eventRecorder = InAppEventRecorder(airshipAnalytics: args.analytics, meteredUsage: args.meteredUsage)
+        let metrics = ApplicationMetrics(dataStore: args.dataStore, privacyManager: args.privacyManager)
 
-        let automationStore = AutomationStore(config: config)
+        let automationStore = AutomationStore(config: args.config)
 
         let analyticsFactory = InAppMessageAnalyticsFactory(
             eventRecorder: eventRecorder,
@@ -58,15 +45,15 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let automationPreparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,
-            deferredResolver: deferredResolver,
+            deferredResolver: args.deferredResolver,
             frequencyLimits: frequencyLimits,
-            audienceChecker: audienceChecker,
-            experiments: experiments,
+            audienceChecker: args.audienceChecker,
+            experiments: args.experimentsManager,
             remoteDataAccess: remoteDataAccess,
-            config: config,
+            config: args.config,
             additionalAudienceResolver: AdditionalAudienceCheckerResolver(
-                config: config,
-                cache: cache
+                config: args.config,
+                cache: args.cache
             )
         )
 
@@ -89,7 +76,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let feed = AutomationEventFeed(
             applicationMetrics: metrics,
             applicationStateTracker: AppStateTracker.shared,
-            analyticsFeed: airshipAnalytics.eventFeed
+            analyticsFeed: args.analytics.eventFeed
         )
         feed.attach()
 
@@ -101,11 +88,11 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
             eventFeed: feed,
             triggersProcessor: AutomationTriggerProcessor(store: automationStore),
-            delayProcessor: AutomationDelayProcessor(analytics: airshipAnalytics)
+            delayProcessor: AutomationDelayProcessor(analytics: args.analytics)
         )
 
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(
-            dataStore: dataStore,
+            dataStore: args.dataStore,
             remoteDataAccess: remoteDataAccess,
             engine: engine,
             frequencyLimitManager: frequencyLimits
@@ -118,7 +105,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
 
         let legacyInAppMessaging = LegacyInAppMessaging(
             analytics: LegacyInAppAnalytics(recorder: eventRecorder),
-            dataStore: dataStore,
+            dataStore: args.dataStore,
             automationEngine: engine
         )
 
@@ -127,9 +114,9 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             inAppMessaging: inAppMessaging,
             legacyInAppMessaging: legacyInAppMessaging,
             remoteDataSubscriber: remoteDataSubscriber,
-            dataStore: dataStore,
-            privacyManager: privacyManager,
-            config: config
+            dataStore: args.dataStore,
+            privacyManager: args.privacyManager,
+            config: args.config
         )
 
         return AutomationSDKModule(

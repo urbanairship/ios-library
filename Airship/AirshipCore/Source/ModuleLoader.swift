@@ -3,23 +3,22 @@
 import Foundation
 
 /// NOTE: For internal use only. :nodoc:
-public struct SDKDependencyKeys {
-    public static let channel = "channel"
-    public static let contact = "contact"
-    public static let push = "push"
-    public static let remoteData = "remote_data"
-    public static let config = "config"
-    public static let dataStore = "dataStore"
-    public static let analytics = "analytics"
-    public static let privacyManager = "privacy_manager"
-    public static let permissionsManager = "permissions_manager"
-    public static let workManager = "work_manager"
-    public static let deferredResolver = "deferred_resolver"
-    public static let cache = "airship_cache"
-    public static let experimentsProvider = "experiments"
-    public static let meteredUsage = "metered_usage"
-    public static let sceneManager = "scene_manager"
-    public static let audienceChecker = "audience_checker"
+public struct AirshiopModuleLoaderArgs {
+    public let config: RuntimeConfig
+    public let dataStore: PreferenceDataStore
+    public let channel: any InternalAirshipChannelProtocol&AirshipChannelProtocol
+    public let contact: any AirshipContactProtocol
+    public let push: any AirshipPushProtocol
+    public let remoteData: any RemoteDataProtocol
+    public let analytics: any InternalAnalyticsProtocol&AirshipAnalyticsProtocol
+    public let privacyManager: AirshipPrivacyManager
+    public let permissionsManager: AirshipPermissionsManager
+    public let experimentsManager: any ExperimentDataProvider
+    public let meteredUsage: AirshipMeteredUsage
+    public let deferredResolver: any AirshipDeferredResolverProtocol
+    public let cache: any AirshipCache
+    public let audienceChecker: any DeviceAudienceChecker
+    public let workManager: any AirshipWorkManagerProtocol
 
 }
 
@@ -58,39 +57,31 @@ class ModuleLoader {
         audienceChecker: any DeviceAudienceChecker
     ) {
 
-        var dependencies: [String: Any] = [
-            SDKDependencyKeys.config: config,
-            SDKDependencyKeys.dataStore: dataStore,
-            SDKDependencyKeys.channel: channel,
-            SDKDependencyKeys.contact: contact,
-            SDKDependencyKeys.push: push,
-            SDKDependencyKeys.remoteData: remoteData,
-            SDKDependencyKeys.analytics: analytics,
-            SDKDependencyKeys.privacyManager: privacyManager,
-            SDKDependencyKeys.permissionsManager: permissionsManager,
-            SDKDependencyKeys.workManager: AirshipWorkManager.shared,
-            SDKDependencyKeys.deferredResolver: deferredResolver,
-            SDKDependencyKeys.cache: cache,
-            SDKDependencyKeys.experimentsProvider: experimentsManager,
-            SDKDependencyKeys.meteredUsage: meteredUsage,
-            SDKDependencyKeys.audienceChecker: audienceChecker
-        ]
+        let args = AirshiopModuleLoaderArgs(
+            config: config,
+            dataStore: dataStore,
+            channel: channel,
+            contact: contact,
+            push: push,
+            remoteData: remoteData,
+            analytics: analytics,
+            privacyManager: privacyManager,
+            permissionsManager: permissionsManager,
+            experimentsManager: experimentsManager,
+            meteredUsage: meteredUsage,
+            deferredResolver: deferredResolver,
+            cache: cache,
+            audienceChecker: audienceChecker,
+            workManager: AirshipWorkManager.shared
+        )
 
-#if !os(watchOS)
-        dependencies[SDKDependencyKeys.sceneManager] = AirshipSceneManager.shared
-#endif
-
-        let swiftModules = ModuleLoader.loadModules(dependencies)
-        let swiftComponents = swiftModules.compactMap { $0.components }.reduce([], +)
-        let swiftActionManifests = swiftModules.compactMap { $0.actionsManifest }
-
-
-        self.components = swiftComponents
-        self.actionManifests = swiftActionManifests
+        let modules = ModuleLoader.loadModules(args)
+        self.components = modules.compactMap { $0.components }.reduce([], +)
+        self.actionManifests = modules.compactMap { $0.actionsManifest }
     }
 
     @MainActor
-    private class func loadModules(_ dependencies: [String: Any]) -> [any AirshipSDKModule]
+    private class func loadModules(_ args: AirshiopModuleLoaderArgs) -> [any AirshipSDKModule]
     {
         let sdkModules: [any AirshipSDKModule] = SDKModuleNames.allCases.compactMap {
             guard
@@ -100,7 +91,7 @@ class ModuleLoader {
             }
 
             AirshipLogger.debug("Loading module \($0)")
-            return moduleClass.load(dependencies: dependencies)
+            return moduleClass.load(args)
         }
 
         return sdkModules

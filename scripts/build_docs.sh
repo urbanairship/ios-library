@@ -27,34 +27,10 @@ function build_docs_swift {
   --config "$ROOT_PATH/Documentation/.jazzy.json"
 }
 
-
-function build_docs {
-  # $1 Project
-  # $2 Module
-  # $3 Umbrella header path
-
-   bundle exec jazzy \
-  --objc \
-  --module $2  \
-  --module-version $AIRSHIP_VERSION \
-  --framework-root "$ROOT_PATH/$1" \
-  --umbrella-header "$ROOT_PATH/$1/$2/$3" \
-  --output "$OUTPUT/$2" \
-  --sdk iphonesimulator \
-  --skip-undocumented \
-  --hide-documentation-coverage \
-  --config "$ROOT_PATH/Documentation/.jazzy.json"
-}
-
 echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
-
-build_docs "Airship" "AirshipBasement"  "Source/Public/AirshipBasement.h"
-
 build_docs_swift "Airship" "AirshipCore"
 build_docs_swift "Airship" "AirshipPreferenceCenter"
 build_docs_swift "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
 build_docs_swift "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
 build_docs_swift "Airship" "AirshipFeatureFlags"  "Source/AirshipFeatureFlags.h"
-
-build_docs "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
-build_docs "AirshipExtensions" "AirshipNotificationContentExtension" "Source/AirshipNotificationContentExtension.h"
+build_docs_swift "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"

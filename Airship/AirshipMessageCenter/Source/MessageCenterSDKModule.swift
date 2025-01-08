@@ -18,30 +18,13 @@ public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
         self.components = [MessageCenterComponent(messageCenter: messageCenter)]
     }
 
-    public static func load(
-        dependencies: [String: Any]
-    ) -> (any AirshipSDKModule)? {
-        let dataStore = dependencies[SDKDependencyKeys.dataStore] as? PreferenceDataStore
-        let config = dependencies[SDKDependencyKeys.config] as? RuntimeConfig
-        let channel = dependencies[SDKDependencyKeys.channel] as? (any InternalAirshipChannelProtocol)
-        let privacyManager = dependencies[SDKDependencyKeys.privacyManager] as? AirshipPrivacyManager
-        let workManager = dependencies[SDKDependencyKeys.workManager] as? (any AirshipWorkManagerProtocol)
-
-        guard let dataStore = dataStore,
-              let config = config,
-              let channel = channel,
-              let privacyManager = privacyManager,
-              let workManager = workManager
-        else {
-            return nil
-        }
-
+    public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
         let messageCenter = MessageCenter(
-            dataStore: dataStore,
-            config: config,
-            channel: channel,
-            privacyManager: privacyManager,
-            workManager: workManager
+            dataStore: args.dataStore,
+            config: args.config,
+            channel: args.channel,
+            privacyManager: args.privacyManager,
+            workManager: args.workManager
         )
 
         return MessageCenterSDKModule(messageCenter: messageCenter)

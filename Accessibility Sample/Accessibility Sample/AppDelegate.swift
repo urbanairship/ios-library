@@ -32,8 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
 
         Airship.deepLinkDelegate = self
 
-        MessageCenter.shared.displayDelegate = self
-        PreferenceCenter.shared.openDelegate = self
+        Airship.messageCenter.displayDelegate = self
+        Airship.preferenceCenter.openDelegate = self
 
         NotificationCenter.default.addObserver(
             forName: AppStateTracker.didBecomeActiveNotification,
@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,
 
     func displayMessageCenter(messageID: String) {
         AppState.shared.selectedTab = .messageCenter
-        MessageCenter.shared.controller.navigate(messageID: messageID)
+        Airship.messageCenter.controller.navigate(messageID: messageID)
     }
 
     func displayMessageCenter() {

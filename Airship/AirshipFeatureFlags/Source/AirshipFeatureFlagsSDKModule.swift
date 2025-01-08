@@ -15,31 +15,18 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
 
     public let components: [any AirshipComponent]
 
-    public static func load(dependencies: [String : Any]) -> (any AirshipSDKModule)? {
-        let dataStore =
-            dependencies[SDKDependencyKeys.dataStore] as! PreferenceDataStore
-        let remoteData =
-        dependencies[SDKDependencyKeys.remoteData] as! (any RemoteDataProtocol)
-
-        let airshipAnalytcs = dependencies[SDKDependencyKeys.analytics] as! (any InternalAnalyticsProtocol)
-        let deferredResolver = dependencies[SDKDependencyKeys.deferredResolver] as! (any AirshipDeferredResolverProtocol)
-        let cache = dependencies[SDKDependencyKeys.cache] as! (any AirshipCache)
-        let audienceChecker = dependencies[SDKDependencyKeys.audienceChecker] as! (any DeviceAudienceChecker)
-
-        let privacyManager =
-            dependencies[SDKDependencyKeys.privacyManager] as! AirshipPrivacyManager
-        
+    public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
         let manager = FeatureFlagManager(
-            dataStore: dataStore,
-            remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: remoteData),
-            analytics: FeatureFlagAnalytics(airshipAnalytics: airshipAnalytcs),
-            audienceChecker: audienceChecker,
+            dataStore: args.dataStore,
+            remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: args.remoteData),
+            analytics: FeatureFlagAnalytics(airshipAnalytics: args.analytics),
+            audienceChecker: args.audienceChecker,
             deferredResolver: FeatureFlagDeferredResolver(
-                cache: cache,
-                deferredResolver: deferredResolver
-            ), 
-            privacyManager: privacyManager,
-            resultCache: FeatureFlagResultCache(cache: cache)
+                cache: args.cache,
+                deferredResolver: args.deferredResolver
+            ),
+            privacyManager: args.privacyManager,
+            resultCache: FeatureFlagResultCache(cache: args.cache)
         )
 
         let component = FeatureFlagComponent(featureFlagManager: manager)

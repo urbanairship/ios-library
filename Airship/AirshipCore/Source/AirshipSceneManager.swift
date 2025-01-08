@@ -1,13 +1,16 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
 #if !os(watchOS)
-
 import UIKit
+#endif
 
 /// - Note: for internal use only.  :nodoc:
 public protocol AirshipSceneManagerProtocol: Sendable {
+#if !os(watchOS)
     @MainActor
     var lastActiveScene: UIWindowScene  { get throws }
+#endif
 }
 
 
@@ -18,6 +21,8 @@ public protocol AirshipSceneManagerProtocol: Sendable {
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
     public static let shared = AirshipSceneManager()
+
+#if !os(watchOS)
 
     private var scenes: [UIWindowScene] = []
 
@@ -99,7 +104,7 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked 
         }
         return scene
     }
+#endif
 
 }
 
-#endif

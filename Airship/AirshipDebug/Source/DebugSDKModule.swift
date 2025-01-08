@@ -15,15 +15,11 @@ public class DebugSDKModule: NSObject, AirshipSDKModule {
 
     public let components: [any AirshipComponent]
 
-    public static func load(dependencies: [String : Any]) -> (any AirshipSDKModule)? {
-        let analytics = dependencies[SDKDependencyKeys.analytics] as! (any AirshipAnalyticsProtocol)
-        let remoteData = dependencies[SDKDependencyKeys.remoteData] as! (any RemoteDataProtocol)
-        let config = dependencies[SDKDependencyKeys.config] as! RuntimeConfig
-
+    public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
         let debugManager = AirshipDebugManager(
-            config: config,
-            analytics: analytics,
-            remoteData: remoteData
+            config: args.config,
+            analytics: args.analytics,
+            remoteData: args.remoteData
         )
         return DebugSDKModule(debugManager)
     }
