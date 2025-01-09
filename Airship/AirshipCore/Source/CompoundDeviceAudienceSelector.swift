@@ -70,7 +70,7 @@ public extension CompoundDeviceAudienceSelector {
         deviceSelector: DeviceAudienceSelector?
     ) -> CompoundDeviceAudienceSelector? {
         if let compoundSelector, let deviceSelector {
-            return .and([compoundSelector, .atomic(deviceSelector)])
+            return .and([.atomic(deviceSelector), compoundSelector])
         } else if let compoundSelector {
             return compoundSelector
         } else if let deviceSelector {

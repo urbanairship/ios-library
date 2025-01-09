@@ -5,6 +5,20 @@ import XCTest
 
 final class CompoundDeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
 
+    func testCombing() {
+        let selector = DeviceAudienceSelector(newUser: true)
+        let compound = CompoundDeviceAudienceSelector.atomic(DeviceAudienceSelector(newUser: false))
+        let combined = CompoundDeviceAudienceSelector.combine(compoundSelector: compound, deviceSelector: selector)
+
+        let expected = CompoundDeviceAudienceSelector.and(
+            [
+                .atomic(DeviceAudienceSelector(newUser: true)),
+                .atomic(DeviceAudienceSelector(newUser: false))
+            ]
+        )
+        XCTAssertEqual(expected, combined)
+    }
+    
     func testParsing() throws {
         [
             (

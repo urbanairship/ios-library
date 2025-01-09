@@ -117,9 +117,14 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 self.remoteDataAccess.contactID(forSchedule: schedule)
             )
 
-            if let audience = schedule.audience {
+            let audience = CompoundDeviceAudienceSelector.combine(
+                compoundSelector: schedule.compoundAudience?.selector,
+                deviceSelector: schedule.audience?.audienceSelector
+            )
+
+            if let audience {
                 let match = try await self.audienceChecker.evaluate(
-                    audienceSelector: .atomic(audience.audienceSelector),
+                    audienceSelector: audience,
                     newUserEvaluationDate: schedule.created ?? .distantPast,
                     deviceInfoProvider: deviceInfoProvider
                 )
@@ -127,27 +132,12 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 if (!match.isMatch) {
                     AirshipLogger.trace("Local audience miss \(schedule.identifier)")
                     return .success(
-                        result: audience.missBehavior?.schedulePrepareResult ?? .penalize,
+                        result: schedule.audienceMissBehaviorResult,
                         ignoreReturnOrder: true
                     )
                 }
             }
-            
-            if let audience = schedule.compoundAudience {
-                let match = try await self.audienceChecker.evaluate(
-                    audienceSelector: audience.selector,
-                    newUserEvaluationDate: schedule.created ?? .distantPast,
-                    deviceInfoProvider: deviceInfoProvider
-                )
 
-                if (!match.isMatch) {
-                    AirshipLogger.trace("Local audience miss \(schedule.identifier)")
-                    return .success(
-                        result: audience.missBehavior.schedulePrepareResult,
-                        ignoreReturnOrder: true
-                    )
-                }
-            }
 
             let experimentResult: ExperimentResult? = if schedule.evaluateExperiments {
                 try await self.experiments.evaluateExperiments(
@@ -303,7 +293,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 }
             } else {
                 return .success(
-                    result: schedule.missedDeferredAudienceResult,
+                    result: schedule.audienceMissBehaviorResult,
                     ignoreReturnOrder: true
                 )
             }
@@ -334,7 +324,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 }
 
 fileprivate extension AutomationSchedule {
-    var missedDeferredAudienceResult: SchedulePrepareResult {
+    var audienceMissBehaviorResult: SchedulePrepareResult {
         if let compoundAudience {
             return compoundAudience.missBehavior.schedulePrepareResult
         } else if let audienceMiss = audience?.missBehavior {

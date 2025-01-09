@@ -137,7 +137,13 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
+            XCTAssertEqual(
+                audience,
+                CompoundDeviceAudienceSelector.combine(
+                    compoundSelector: automationSchedule.compoundAudience!.selector,
+                    deviceSelector: automationSchedule.audience!.audienceSelector
+                )
+            )
             XCTAssertEqual(created, automationSchedule.created)
             return .miss
         }
@@ -148,7 +154,8 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isSkipped)
+        /// Uses compound selector if available
+        XCTAssertTrue(prepareResult.isCancelled)
     }
     
     func testAudienceMismatchPenalize() async throws {
@@ -204,7 +211,8 @@ final class AutomationPreparerTest: XCTestCase {
             ),
             compoundAudience: .init(
                 selector: .atomic(.init(newUser: true)),
-                missBehavior: .cancel)
+                missBehavior: .cancel
+            )
         )
 
         self.remoteDataAccess.contactIDBlock = { _ in
@@ -219,7 +227,13 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
+            XCTAssertEqual(
+                audience,
+                CompoundDeviceAudienceSelector.combine(
+                    compoundSelector: automationSchedule.compoundAudience!.selector,
+                    deviceSelector: automationSchedule.audience!.audienceSelector
+                )
+            )
             XCTAssertEqual(created, automationSchedule.created)
             return .miss
         }
@@ -230,7 +244,7 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isSkipped)
+        XCTAssertTrue(prepareResult.isCancelled)
     }
     
     func testCompoundAudienceCheck() async throws {
