@@ -18,8 +18,7 @@ enum UAVersionMatcherRangeBoundary: Int {
 /// Version matcher.
 public class VersionMatcher: NSObject {
 
-    private static let EXACT_VERSION_PATTERN =
-        "^([0-9]+)(\\.[0-9]+)?(\\.[0-9]+)?$"
+    private static let EXACT_VERSION_PATTERN = "^([0-9]+)(\\.([0-9]+)((\\.([0-9]+))?(.*)))?$"
     private static let START_INCLUSIVE = "["
     private static let START_EXCLUSIVE = "]"
     private static let START_INFINITE = "("
@@ -58,22 +57,25 @@ public class VersionMatcher: NSObject {
         let strippedVersionConstraint = VersionMatcher.removeWhitespace(
             versionConstraint
         )
+
         self.versionConstraint = versionConstraint
 
-        if let parsedConstraint = VersionMatcher.parseExactVersionConstraint(
-            strippedVersionConstraint
-        ) {
-            self.constraintType = .exactVersion
-            self.parsedConstraint = parsedConstraint
-        } else if let parsedConstraint =
-            VersionMatcher.parseSubVersionConstraint(
+        if
+            let parsedConstraint = VersionMatcher.parseSubVersionConstraint(
                 strippedVersionConstraint
             )
         {
             self.constraintType = .subVersion
             self.parsedConstraint = parsedConstraint
-        } else if let parsedConstraint =
-            VersionMatcher.parseVersionRangeConstraint(
+        } else if
+            let parsedConstraint = VersionMatcher.parseExactVersionConstraint(
+                strippedVersionConstraint
+            )
+        {
+            self.constraintType = .exactVersion
+            self.parsedConstraint = parsedConstraint
+        }  else if
+            let parsedConstraint = VersionMatcher.parseVersionRangeConstraint(
                 strippedVersionConstraint
             )
         {
@@ -129,7 +131,7 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "exact version" pattern
      */
-    public class func isExactVersion(_ versionConstraint: String) -> Bool {
+    class func isExactVersion(_ versionConstraint: String) -> Bool {
         return self.parseExactVersionConstraint(versionConstraint) != nil
     }
 
@@ -172,13 +174,13 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "sub version" pattern
      */
-    public class func isSubVersion(_ versionConstraint: String) -> Bool {
+    class func isSubVersion(_ versionConstraint: String) -> Bool {
         return self.parseSubVersionConstraint(versionConstraint) != nil
     }
 
-    private class func parseSubVersionConstraint(_ versionConstraint: String)
-        -> [AnyHashable: Any]?
-    {
+    private class func parseSubVersionConstraint(
+        _ versionConstraint: String
+    ) -> [AnyHashable: Any]? {
         var versionConstraint = versionConstraint
         versionConstraint = self.removeWhitespace(versionConstraint)
 
@@ -243,7 +245,7 @@ public class VersionMatcher: NSObject {
      *   - versionConstraint: constraint string
      * - Returns: true if versionConstraint matches the "version range" pattern
      */
-    public class func isVersionRange(_ versionConstraint: String) -> Bool {
+    class func isVersionRange(_ versionConstraint: String) -> Bool {
         return self.parseVersionRangeConstraint(versionConstraint) != nil
     }
 
@@ -431,7 +433,8 @@ public class VersionMatcher: NSObject {
             }
             let result = AirshipUtils.compareVersion(
                 startOfRange,
-                toVersion: checkVersion
+                toVersion: checkVersion,
+                maxVersionParts: 3
             )
             switch startBoundary {
             case .inclusive:
@@ -466,7 +469,8 @@ public class VersionMatcher: NSObject {
             }
             let result = AirshipUtils.compareVersion(
                 checkVersion,
-                toVersion: endOfRange
+                toVersion: endOfRange,
+                maxVersionParts: 3
             )
             switch endBoundary {
             case .inclusive:

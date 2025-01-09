@@ -131,19 +131,25 @@ public final class AirshipUtils {
     /// - Parameters:
     ///   - fromVersion: The first version.
     ///   - toVersion: The second version.
+    ///   - maxVersionParts: Max number of version parts to compare. Use 3 to only compare major.minor.patch
     ///
     /// - Returns: a `ComparisonResult`.
-    public class func compareVersion(_ fromVersion: String, toVersion: String)
-        -> ComparisonResult
-    {
-        let fromParts = fromVersion.components(separatedBy: ".")
-            .map {
-                ($0 as NSString).integerValue
-            }
-        let toParts = toVersion.components(separatedBy: ".")
-            .map {
-                ($0 as NSString).integerValue
-            }
+    public class func compareVersion(
+        _ fromVersion: String,
+        toVersion: String,
+        maxVersionParts: Int? = nil
+    ) -> ComparisonResult {
+        if let maxVersionParts, maxVersionParts <= 0 {
+            return .orderedSame
+        }
+
+        let fromParts = fromVersion.components(separatedBy: ".").map {
+            ($0 as NSString).integerValue
+        }
+
+        let toParts = toVersion.components(separatedBy: ".").map {
+            ($0 as NSString).integerValue
+        }
 
         var i = 0
         while fromParts.count > i || toParts.count > i {
@@ -156,6 +162,10 @@ public final class AirshipUtils {
                 return .orderedDescending
             }
             i += 1
+
+            if let maxVersionParts, maxVersionParts <= i {
+                break
+            }
         }
 
         return .orderedSame
