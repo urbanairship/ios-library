@@ -67,7 +67,7 @@ final class JSONPredicateTest: XCTestCase {
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
         XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
     }
-    
+
     func testJSONMatcherPredicate() {
         let predicate = JSONPredicate(jsonMatcher: stringMatcher)
         XCTAssertTrue(predicate.evaluate("cool"))
@@ -107,7 +107,38 @@ final class JSONPredicateTest: XCTestCase {
         // Verify the JSONValue recreates the expected payload
         XCTAssertEqual(json.toNsDictionary(), try! JSONPredicate(json: json).payload().toNsDictionary())
     }
-    
+
+    func testJSONPredicateNotNoArray() throws {
+        let json: String = """
+        {
+           "not": {
+             "value":{
+                "equals":"bar"
+             },
+             "scope":[
+                "foo"
+             ]
+          }
+        }
+        """
+
+        let decoded: JSONPredicate = try JSONDecoder().decode(
+            JSONPredicate.self,
+            from: json.data(using: .utf8)!
+        )
+
+        let expected: JSONPredicate = .notPredicate(
+            subpredicate: JSONPredicate(
+                jsonMatcher: JSONMatcher(
+                    valueMatcher: JSONValueMatcher.matcherWhereStringEquals("bar"),
+                    scope: ["foo"]
+                )
+            )
+        )
+
+        XCTAssertEqual(decoded, expected)
+    }
+
     func testAndPredicate() {
         let fooPredicate = JSONPredicate(jsonMatcher: fooMatcher)
         let storyPredicate = JSONPredicate(jsonMatcher: storyMatcher)

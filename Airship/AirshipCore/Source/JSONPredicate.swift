@@ -60,12 +60,26 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
 
         if let type = type {
             var subpredicates: [JSONPredicate] = []
-            guard let typeInfo = parsedJson[type] as? [Any] else {
+
+            var typeInfo: [Any]? = nil
+
+            if type == JSONPredicate.notTypeKey {
+                if let array = parsedJson[type] as? [Any] {
+                    typeInfo = array
+                } else if let single = parsedJson[type] {
+                    typeInfo = [single]
+                }
+            } else {
+                typeInfo = parsedJson[type] as? [Any]
+            }
+
+            guard let typeInfo else {
                 AirshipLogger.error("Attempted to deserialize invalid object")
                 throw AirshipErrors.parseError(
                     "Attempted to deserialize invalid object"
                 )
             }
+
 
             if ((type == JSONPredicate.notTypeKey) && typeInfo.count != 1)
                 || typeInfo.count == 0
