@@ -194,19 +194,19 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -output "$OUTPUT/AirshipFeatureFlags.xcframework"
 
-# Package AirshipWrapper
+# Package AirshipObjectiveC
 xcrun xcodebuild -create-xcframework \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipWrapper.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipWrapper.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipWrapper.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipWrapper.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipWrapper.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipWrapper.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipWrapper.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipWrapper.framework.dSYM" \
-  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipWrapper.framework" \
-  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipWrapper.framework.dSYM" \
-  -output "$OUTPUT/AirshipWrapper.xcframework"
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipObjectiveC.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipObjectiveC.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipObjectiveC.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipObjectiveC.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipObjectiveC.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipObjectiveC.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipObjectiveC.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipObjectiveC.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipObjectiveC.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipObjectiveC.framework.dSYM" \
+  -output "$OUTPUT/AirshipObjectiveC.xcframework"
   
 # Package AirshipNotificationServiceExtension
 xcrun xcodebuild -create-xcframework \
@@ -227,4 +227,4 @@ codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipFeatureFlags.xcframework"
 codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipWrapper.xcframework"
+codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipObjectiveC.xcframework"

@@ -67,4 +67,14 @@ Pod::Spec.new do |s|
       airshipFeatureFlags.ios.exclude_files             = "Airship/AirshipFeatureFlags/Source/AirshipFeatureFlags.h"
       airshipFeatureFlags.dependency                      "Airship/Core"
    end
+
+   s.subspec "ObjectiveC" do |objectiveC|
+      objectiveC.ios.source_files              = "Airship/AirshipObjectiveC/Source/**/*.{h,m,swift}"
+      objectiveC.ios.exclude_files             = "Airship/AirshipObjectiveC/Source/AirshipObjectiveC.h"
+      objectiveC.dependency                      "Airship/Core"
+      objectiveC.dependency                      "Airship/Automation"
+      objectiveC.dependency                      "Airship/MessageCenter"
+      objectiveC.dependency                      "Airship/PreferenceCenter"
+      objectiveC.dependency                      "Airship/FeatureFlags"
+   end
 end

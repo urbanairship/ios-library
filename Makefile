@@ -1,5 +1,5 @@
 
-XCODE ?= 16.1
+XCODE ?= 16.2
 
 export XCBEAUTIY_RENDERER ?= github-actions
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=18.0,name=iPhone 16 Pro Max
@@ -64,6 +64,11 @@ build-sample-ios: setup
 .PHONY: build-sample-watchos
 build-sample-watchos: setup
 	bash ./scripts/build_sample_watchos.sh "watchOSSample_WatchKit_Extension" "${derived_data_path}"
+
+.PHONY: build-sample-objective-c
+build-sample-objective-c: setup
+	bash ./scripts/build_sample.sh "ObjcSample" "${derived_data_path}"
+	
 
 .PHONY: test
 test: setup test-core test-preference-center test-message-center test-automation test-feature-flags test-service-extension

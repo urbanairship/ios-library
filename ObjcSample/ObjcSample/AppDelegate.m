@@ -2,7 +2,8 @@
 
 #import "AppDelegate.h"
 
-@import AirshipWrapper;
+@import UserNotifications;
+@import AirshipObjectiveC;
 
 @interface AppDelegate () <UADeepLinkDelegate, UAMessageCenterDisplayDelegate,
                            UAPreferenceCenterOpenDelegate>
@@ -19,8 +20,8 @@
     cfg.developmentLogLevel = UAAirshipLogLevelVerbose;
     cfg.productionLogLevel = UAAirshipLogLevelVerbose;
 
-    [UAAirship takeOff:cfg launchOptions:launchOptions error: nil];
-    UAAirship.deepLinkDelegate = self;
+    [UAirship takeOff:cfg launchOptions:launchOptions error: nil];
+    UAirship.deepLinkDelegate = self;
 
     UAMessageCenter *messageCenter = [UAMessageCenter new];
     [messageCenter display];
