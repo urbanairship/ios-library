@@ -523,7 +523,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         let audience = CompoundDeviceAudienceSelector.or([])
         try await self.assert(
             compoundSelector: audience,
-            isMatch: true
+            isMatch: false
         )
     }
 

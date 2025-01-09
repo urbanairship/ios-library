@@ -4,9 +4,16 @@ import Foundation
 
 /// Compound audience selector
 public indirect enum CompoundDeviceAudienceSelector: Sendable, Codable, Equatable {
+    /// Atomic selector. Defines an actual audience selector.
     case atomic(DeviceAudienceSelector)
+
+    /// NOT selector. Negates the results.
     case not(CompoundDeviceAudienceSelector)
+
+    /// AND selector. All selectors have to evaluate true to match. If empty, evaluates to true.
     case and([CompoundDeviceAudienceSelector])
+
+    /// OR selector. At least once selector has to evaluate true to match. If empty, evaluates to false.
     case or([CompoundDeviceAudienceSelector])
 
     enum CodingKeys: String, CodingKey {

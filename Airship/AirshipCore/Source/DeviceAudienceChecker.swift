@@ -84,6 +84,10 @@ extension CompoundDeviceAudienceSelector {
             return result
 
         case .and(let selectors):
+            guard !selectors.isEmpty else {
+                return AirshipDeviceAudienceResult.match
+            }
+
             var results: [AirshipDeviceAudienceResult] = []
             for selector in selectors {
                 let selectorResult = try await selector.evaluate(
@@ -98,8 +102,11 @@ extension CompoundDeviceAudienceSelector {
             }
             return results.reducedResult
 
-
         case .or(let selectors):
+            guard !selectors.isEmpty else {
+                return AirshipDeviceAudienceResult.miss
+            }
+
             var results: [AirshipDeviceAudienceResult] = []
             for selector in selectors {
                 let selectorResult = try await selector.evaluate(
