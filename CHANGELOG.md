@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 18.14.2 January 9, 2025
+Patch release to fix extra spacing in a Banner In-App Automations if its missing the heading or body.
+
+### Changes
+- Fix Banner In-App Automation extra spacing.
+
 ## Version 18.14.1 December 20, 2024
 Patch release to fix Banner In-App Automations if the image is taller than the text.
 

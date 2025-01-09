@@ -39,6 +39,7 @@ struct InAppMessageBannerView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityAddTraits(.isStaticText)
+                .applyAlignment(placement: heading.alignment ?? .left)
         }
     }
 
@@ -48,6 +49,7 @@ struct InAppMessageBannerView: View {
             TextView(textInfo: body, textTheme: self.theme.body)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isStaticText)
+                .applyAlignment(placement: body.alignment ?? .left)
         }
     }
 
@@ -110,15 +112,15 @@ struct InAppMessageBannerView: View {
             HStack(alignment: .top, spacing: 16) {
                 mediaView
                 VStack(alignment: .center, spacing: 16) {
-                    headerView.applyAlignment(placement: displayContent.heading?.alignment ?? .left)
-                    bodyView.applyAlignment(placement: displayContent.body?.alignment ?? .left)
+                    headerView
+                    bodyView
                 }
             }
         case .mediaRight:
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .center, spacing: 16) {
-                    headerView.applyAlignment(placement: displayContent.heading?.alignment ?? .left)
-                    bodyView.applyAlignment(placement: displayContent.body?.alignment ?? .left)
+                    headerView
+                    bodyView
                 }
                 mediaView
             }
