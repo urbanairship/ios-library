@@ -9,6 +9,11 @@ import AirshipCore
 public final class UAChannel: NSObject, Sendable {
 
     @objc
+    public var identifier: String? {
+        return Airship.channel.identifier
+    }
+    
+    @objc
     public func editTags() -> UATagEditor? {
         let tagEditor = UATagEditor()
         tagEditor.editor = Airship.channel.editTags()

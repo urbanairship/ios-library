@@ -29,4 +29,16 @@ public final class UAAnalytics: NSObject, Sendable {
     public func recordCustomEvent(_ event: UACustomEvent) {
         Airship.analytics.recordCustomEvent(event.customEvent)
     }
+    
+    @objc
+    public func associateDeviceIdentifier(_ associatedIdentifiers: UAAssociatedIdentifiers) {
+        let identifiers = AssociatedIdentifiers.init(identifiers: associatedIdentifiers.identifiers)
+        Airship.analytics.associateDeviceIdentifiers(identifiers)
+    }
+    
+    @objc
+    public func currentAssociatedDeviceIdentifiers() -> UAAssociatedIdentifiers {
+        let identifiers = Airship.analytics.currentAssociatedDeviceIdentifiers()
+        return UAAssociatedIdentifiers.init(identifiers: identifiers.allIDs)
+    }
 }
