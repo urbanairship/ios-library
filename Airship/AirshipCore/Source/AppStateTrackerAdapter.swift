@@ -51,7 +51,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.didBecomeActive)
                 }
             }
@@ -63,7 +63,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.willResignActive)
                 }
             }
@@ -75,7 +75,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.willEnterForeground)
                 }
             }
@@ -87,7 +87,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.didEnterBackground)
                 }
             }
@@ -125,7 +125,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.didBecomeActive)
                 }
             }
@@ -137,7 +137,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.willResignActive)
                 }
             }
@@ -149,7 +149,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.willEnterForeground)
                 }
             }
@@ -161,7 +161,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: { _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.didEnterBackground)
                 }
             }
@@ -173,7 +173,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
             object: nil,
             queue: nil,
             using: {  _ in
-                Task { @MainActor in
+                MainActor.assumeIsolated {
                     eventHandler(.willTerminate)
                 }
             }

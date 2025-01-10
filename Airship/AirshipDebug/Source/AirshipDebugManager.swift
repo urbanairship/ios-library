@@ -112,11 +112,11 @@ public final class AirshipDebugManager: @unchecked Sendable {
                     body: body
                 )
                 
-                Task {
+                Task { @MainActor in
                     await self.eventDataManager.saveEvent(airshipEvent)
+                    self.eventReceivedSubject.send(airshipEvent)
                 }
                 
-                self.eventReceivedSubject.send(airshipEvent)
             }
 
         self.observePayloadEvents()

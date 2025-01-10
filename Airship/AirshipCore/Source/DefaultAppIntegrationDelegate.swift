@@ -34,11 +34,13 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         self.pushableComponents = pushableComponents
     }
 
+    @MainActor
     public func onBackgroundAppRefresh() {
         AirshipLogger.info("Application received background app refresh")
         self.push.dispatchUpdateAuthorizedNotificationTypes()
     }
 
+    @MainActor
     public func didRegisterForRemoteNotifications(deviceToken: Data) {
         let tokenString = AirshipUtils.deviceTokenStringFromDeviceToken(deviceToken)
 
@@ -46,22 +48,20 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
             "Application registered device token: \(tokenString)"
         )
     
-        Task { @MainActor in
-            self.push.didRegisterForRemoteNotifications(deviceToken)
-            self.analytics.onDeviceRegistration(token: tokenString)
-        }
+        self.push.didRegisterForRemoteNotifications(deviceToken)
+        self.analytics.onDeviceRegistration(token: tokenString)
     }
 
+    @MainActor
     public func didFailToRegisterForRemoteNotifications(error: any Error) {
         AirshipLogger.error(
             "Application failed to register for remote notifications with error \(error)"
         )
-        Task { @MainActor in
-            self.push.didFailToRegisterForRemoteNotifications(error)
-        }
+        self.push.didFailToRegisterForRemoteNotifications(error)
     }
     
     #if !os(watchOS)
+    @MainActor
     func didReceiveRemoteNotification(
         userInfo: [AnyHashable : Any],
         isForeground: Bool
@@ -82,6 +82,7 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         return UIBackgroundFetchResult(rawValue: result) ?? .noData
     }
     #else
+    @MainActor
     public func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
         isForeground: Bool
@@ -103,7 +104,8 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         return WKBackgroundFetchResult(rawValue: result) ?? .noData
     }
     #endif
-    
+
+    @MainActor
     func willPresentNotification(
         notification: UNNotification,
         presentationOptions options: UNNotificationPresentationOptions = []
@@ -111,17 +113,16 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         #if os(tvOS) || os(watchOS)
         return
         #else
-        await Task { @MainActor in
-            _ = await self.processPush(
-                notification.request.content.userInfo,
-                isForeground: true,
-                presentationOptions: options
-            )
-        }.value
+        _ = await self.processPush(
+            notification.request.content.userInfo,
+            isForeground: true,
+            presentationOptions: options
+        )
         #endif
     }
 
     #if !os(tvOS)
+    @MainActor
     public func didReceiveNotificationResponse(response: UNNotificationResponse) async {
         AirshipLogger.info(
             "Application received notification response: \(response)"
@@ -138,27 +139,25 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
             userInfo: unwrapUserInfo(wrappedUserInfo) ?? [:],
             actionID: actionID
         )
-        
-        // Analytics
-        await Task { @MainActor @Sendable in
-            let action = await self.notificationAction(
-                categoryID: categoryID,
-                actionID: actionID
-            )
-            
-            self.analytics.onNotificationResponse(
-                response: response,
-                action: action
-            )
 
-            // Pushable components
-            for component in pushableComponents {
-                await component.receivedNotificationResponse(response)
-            }
-        }.value
-        
+        // Analytics
+        let action = self.notificationAction(
+            categoryID: categoryID,
+            actionID: actionID
+        )
+
+        self.analytics.onNotificationResponse(
+            response: response,
+            action: action
+        )
+
+        // Pushable components
+        for component in pushableComponents {
+            await component.receivedNotificationResponse(response)
+        }
+
         if let actionsPayload = actionsPayload {
-            let action = await self.notificationAction(
+            let action = self.notificationAction(
                 categoryID: categoryID,
                 actionID: actionID
             )
@@ -177,9 +176,7 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
             )
         }
 
-        await Task { @MainActor in
-            await self.push.didReceiveNotificationResponse(response)
-        }.value
+        await self.push.didReceiveNotificationResponse(response)
     }
     #endif
     
@@ -194,7 +191,8 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         
         return restored
     }
-    
+
+    @MainActor
     public func presentationOptionsForNotification(
         _ notification: UNNotification,
         completionHandler: @Sendable @escaping (UNNotificationPresentationOptions) -> Void
@@ -315,16 +313,18 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
     }
 
     @available(tvOS, unavailable)
-    private func notificationAction(categoryID: String, actionID: String) async
-        -> UNNotificationAction?
-    {
+    @MainActor
+    private func notificationAction(
+        categoryID: String,
+        actionID: String
+    ) -> UNNotificationAction? {
         guard actionID != UNNotificationDefaultActionIdentifier else {
             return nil
         }
 
         var category: UNNotificationCategory?
         #if !os(tvOS)
-        category = await self.push.combinedCategories.first(where: {
+        category = self.push.combinedCategories.first(where: {
             return $0.identifier == categoryID
         })
         #endif

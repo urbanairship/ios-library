@@ -26,19 +26,22 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
         )
     }
 
+    @MainActor
     func testOnBackgroundAppRefresh() throws {
         delegate.onBackgroundAppRefresh()
         XCTAssertTrue(push.updateAuthorizedNotificationTypesCalled)
     }
 
+    @MainActor
     func testDidRegisterForRemoteNotifications() async throws {
         let data = Data()
         delegate.didRegisterForRemoteNotifications(deviceToken: data)
-        let token = await push.deviceToken?.data(using: .utf8)
+        let token = push.deviceToken?.data(using: .utf8)
         XCTAssertEqual(data, token)
         XCTAssertTrue(self.analytics.onDeviceRegistrationCalled)
     }
 
+    @MainActor
     func testDidFailToRegisterForRemoteNotifications() throws {
         let error = AirshipErrors.error("some error")
         delegate.didFailToRegisterForRemoteNotifications(error: error)

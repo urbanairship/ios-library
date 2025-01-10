@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 NS_SWIFT_NAME(AppIntegrationDelegate)
 NS_SWIFT_SENDABLE
+NS_SWIFT_UI_ACTOR
 @protocol UAAppIntegrationDelegate <NSObject>
 
 - (void)onBackgroundAppRefresh;

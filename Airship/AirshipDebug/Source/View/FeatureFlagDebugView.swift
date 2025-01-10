@@ -22,7 +22,7 @@ public struct FeatureFlagDebugView: View {
             Section(header: Text("")) {
                 List(self.viewModel.entries, id: \.name) { entry in
                     NavigationLink(
-                        destination: FeaturFlagDetailsView(entry:entry)
+                        destination: FeaturFlagDetailsView(entry: entry)
                     ) {
                         VStack(alignment: .leading) {
                             Text(entry.name)

@@ -16,11 +16,9 @@ public struct EventListDebugView: View {
 
     @ViewBuilder
     public func makeList() -> some View {
-        List(self.viewModel.events, id: \.self) { event in
+        List(self.viewModel.events, id: \.identifier) { event in
             NavigationLink(
-                destination: EventDetailsView(
-                    event: event
-                )
+                destination: EventDetailsView(event: event)
             ) {
                 VStack(alignment: .leading) {
                     Text(event.type)
@@ -39,9 +37,7 @@ public struct EventListDebugView: View {
     public var body: some View {
         Form {
             Section(header: Text("Events")) {
-                makeList().searchable(
-                    text: self.$viewModel.searchString.preventWhiteSpace()
-                )
+                makeList()
             }
         }
         .navigationTitle("Events".localized())
@@ -73,13 +69,11 @@ public struct EventListDebugView: View {
         }
 
         private func refreshEvents() {
-            Task {
+            Task { @MainActor in
                 let events = await Airship.debugManager.events(
                     searchString: self.searchString
                 )
-                await MainActor.run {
-                    self.events = events
-                }
+                self.events = events
             }
         }
     }

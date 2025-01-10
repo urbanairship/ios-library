@@ -227,11 +227,13 @@ public class AppIntegration {
         }
         
         delegate.presentationOptionsForNotification(notification) { presentationOptions in
-            delegate.willPresentNotification(
-                notification: notification,
-                presentationOptions: presentationOptions
-            ) {
-                completionHandler(presentationOptions)
+            Task { @MainActor in
+                delegate.willPresentNotification(
+                    notification: notification,
+                    presentationOptions: presentationOptions
+                ) {
+                    completionHandler(presentationOptions)
+                }
             }
         }
     }
