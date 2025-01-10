@@ -15,7 +15,7 @@ import AirshipBasement
 #endif
 
 
-/// Main entry point for Airship. The application must call `takeOff` within `applicationdidfinishlaunching(_:)`
+/// Main entry point for Airship. The application must call `takeOff` within `application(_:didFinishLaunchingWithOptions:)`
 /// before accessing any instances on Airship or Airship modules.
 public final class Airship: Sendable {
 

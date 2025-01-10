@@ -3,6 +3,8 @@
 @testable
 import AirshipCore
 
+import UserNotifications
+import UIKit
 import Foundation
 import Combine
 

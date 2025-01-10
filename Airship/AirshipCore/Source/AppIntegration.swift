@@ -33,7 +33,7 @@ public class AppIntegration {
         )
     }
 
-    #if !os(watchOS)
+#if !os(watchOS)
 
     /**
      * Must be called by the UIApplicationDelegate's
@@ -114,26 +114,21 @@ public class AppIntegration {
     @MainActor
     public class func application(
         _ application: UIApplication,
-        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @Sendable @escaping (
-            UIBackgroundFetchResult
-        ) -> Void
-    ) {
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any]
+    ) async -> UIBackgroundFetchResult {
 
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
-            completionHandler(.noData)
-            return
+            return .noData
         }
 
         let isForeground = application.applicationState == .active
-        delegate.didReceiveRemoteNotification(
+        return await delegate.didReceiveRemoteNotification(
             userInfo: userInfo,
-            isForeground: isForeground,
-            completionHandler: completionHandler
+            isForeground: isForeground
         )
     }
-    #else
+#else
     /**
      * Must be called by the WKExtensionDelegate's
      * didRegisterForRemoteNotificationsWithDeviceToken:.
@@ -181,26 +176,21 @@ public class AppIntegration {
      */
     @MainActor
     public class func didReceiveRemoteNotification(
-        userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @Sendable @escaping (
-            WKBackgroundFetchResult
-        ) -> Void
-    ) {
+        userInfo: [AnyHashable: Any]
+    ) async -> WKBackgroundFetchResult {
 
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
-            completionHandler(.noData)
-            return
+            return .noData
         }
 
         let isForeground = WKExtension.shared().applicationState == .active
-        delegate.didReceiveRemoteNotification(
+        return await delegate.didReceiveRemoteNotification(
             userInfo: userInfo,
-            isForeground: isForeground,
-            completionHandler: completionHandler
+            isForeground: isForeground
         )
     }
-    #endif
+#endif
 
 
     /**
@@ -210,32 +200,20 @@ public class AppIntegration {
      * - Parameters:
      *   - center: The notification center.
      *   - notification: The notification.
-     *   - completionHandler: The completion handler.
      */
     @MainActor
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @Sendable @escaping (
-            _ options: UNNotificationPresentationOptions
-        ) -> Void
-    ) {
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
-            completionHandler([])
-            return
+            return []
         }
         
-        delegate.presentationOptionsForNotification(notification) { presentationOptions in
-            Task { @MainActor in
-                delegate.willPresentNotification(
-                    notification: notification,
-                    presentationOptions: presentationOptions
-                ) {
-                    completionHandler(presentationOptions)
-                }
-            }
-        }
+        let presentationOptions = await delegate.presentationOptionsForNotification(notification)
+        await delegate.willPresentNotification(notification: notification, presentationOptions: presentationOptions)
+        return presentationOptions
     }
 
     #if !os(tvOS)
@@ -246,23 +224,19 @@ public class AppIntegration {
      * - Parameters:
      *   - center: The notification center.
      *   - response: The notification response.
-     *   - completionHandler: The completion handler.
      */
     @MainActor
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @Sendable @escaping () -> Void
-    ) {
+        didReceive response: UNNotificationResponse
+    ) async  {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
-            completionHandler()
             return
         }
 
-        delegate.didReceiveNotificationResponse(
-            response: response,
-            completionHandler: completionHandler
+        await delegate.didReceiveNotificationResponse(
+            response: response
         )
     }
     #endif

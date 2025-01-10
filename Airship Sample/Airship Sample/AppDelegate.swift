@@ -9,6 +9,7 @@ import UIKit
 import ActivityKit
 #endif
 
+@MainActor
 class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
     MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate
 {

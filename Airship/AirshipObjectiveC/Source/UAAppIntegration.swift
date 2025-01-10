@@ -17,8 +17,9 @@ import AirshipCore
 /// the application by swizzling methods. If `automaticSetupEnabled` is disabled,
 /// the application must call through to every method provided by this class.
 @objc
-public class UAAppIntegration: NSObject {
-    
+@MainActor
+public final class UAAppIntegration: NSObject {
+
 #if !os(watchOS)
     
     /**
@@ -30,7 +31,6 @@ public class UAAppIntegration: NSObject {
      *   - completionHandler: The completion handler.
      */
     @objc(application:performFetchWithCompletionHandler:)
-    @MainActor
     public class func application(
         _ application: UIApplication,
         performFetchWithCompletionHandler completionHandler: @Sendable @escaping (
@@ -49,7 +49,6 @@ public class UAAppIntegration: NSObject {
      *   - deviceToken: The device token.
      */
     @objc(application:didRegisterForRemoteNotificationsWithDeviceToken:)
-    @MainActor
     public class func application(
         _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -66,7 +65,6 @@ public class UAAppIntegration: NSObject {
      *   - error: The error.
      */
     @objc
-    @MainActor
     public class func application(
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: any Error
@@ -81,18 +79,13 @@ public class UAAppIntegration: NSObject {
      * - Parameters:
      *   - application: The application
      *   - userInfo: The remote notification.
-     *   - completionHandler: The completion handler.
      */
-    @objc
-    @MainActor
+    @objc(application:didReceiveRemoteNotification:fetchCompletionHandler:)
     public class func application(
         _ application: UIApplication,
-        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @Sendable @escaping (
-            UIBackgroundFetchResult
-        ) -> Void
-    ) {
-        AppIntegration.application(application, didReceiveRemoteNotification: userInfo, fetchCompletionHandler: completionHandler)
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any]
+    ) async -> UIBackgroundFetchResult  {
+        return await AppIntegration.application(application, didReceiveRemoteNotification: userInfo)
     }
 #else
     /**
@@ -102,7 +95,6 @@ public class UAAppIntegration: NSObject {
      * - Parameters:
      *   - deviceToken: The device token.
      */
-    @MainActor
     @objc(didRegisterForRemoteNotificationsWithDeviceToken:)
     public class func didRegisterForRemoteNotificationsWithDeviceToken(
         deviceToken: Data
@@ -118,29 +110,24 @@ public class UAAppIntegration: NSObject {
      *   - error: The error.
      */
     @objc
-    @MainActor
     public class func didFailToRegisterForRemoteNotificationsWithError(
         error: Error
     ) {
         AppIntegration.didFailToRegisterForRemoteNotificationsWithError(error)
     }
+    
     /**
      * Must be called by the WKExtensionDelegate's
      * didReceiveRemoteNotification:fetchCompletionHandler:.
      *
      * - Parameters:
      *   - userInfo: The remote notification.
-     *   - completionHandler: The completion handler.
      */
-    @objc
-    @MainActor
+    @objc(application:didReceiveRemoteNotification:fetchCompletionHandler:)
     public class func didReceiveRemoteNotification(
-        userInfo: [AnyHashable: Any],
-        fetchCompletionHandler completionHandler: @escaping (
-            WKBackgroundFetchResult
-        ) -> Void
-    ) {
-        AppIntegration.didReceiveRemoteNotification(userInfo: userInfo, fetchCompletionHandler:completionHandler)
+        userInfo: [AnyHashable: Any]
+    ) async -> WKBackgroundFetchResult {
+        return await AppIntegration.didReceiveRemoteNotification(userInfo: userInfo)
     }
 #endif
     
@@ -151,18 +138,13 @@ public class UAAppIntegration: NSObject {
      * - Parameters:
      *   - center: The notification center.
      *   - notification: The notification.
-     *   - completionHandler: The completion handler.
      */
-    @MainActor
     @objc(userNotificationCenter:willPresentNotification:withCompletionHandler:)
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        willPresent notification: UNNotification,
-        withCompletionHandler completionHandler: @Sendable @escaping (
-            _ options: UNNotificationPresentationOptions
-        ) -> Void
-    ) {
-        AppIntegration.userNotificationCenter(center, willPresent: notification, withCompletionHandler: completionHandler)
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        return await AppIntegration.userNotificationCenter(center, willPresent: notification)
     }
     
 #if !os(tvOS)
@@ -173,20 +155,13 @@ public class UAAppIntegration: NSObject {
      * - Parameters:
      *   - center: The notification center.
      *   - response: The notification response.
-     *   - completionHandler: The completion handler.
      */
-    @MainActor
-    @objc(
-        userNotificationCenter:
-            didReceiveNotificationResponse:
-            withCompletionHandler:
-    )
+    @objc(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse,
-        withCompletionHandler completionHandler: @Sendable @escaping () -> Void
-    ) {
-        AppIntegration.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
+        didReceive response: UNNotificationResponse
+    ) async {
+        await AppIntegration.userNotificationCenter(center, didReceive: response)
     }
 #endif
 }

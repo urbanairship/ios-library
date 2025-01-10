@@ -3,12 +3,14 @@
 import XCTest
 
 @testable import AirshipCore
+@testable import AirshipBasement
 
 class AppIntegrationTests: XCTestCase {
-    private let testDelegate = TestIntegrationDelegate()
+    private var testDelegate: TestIntegrationDelegate!
 
     @MainActor
     override func setUpWithError() throws {
+        self.testDelegate = TestIntegrationDelegate()
         AppIntegration.integrationDelegate = self.testDelegate
     }
 
@@ -52,47 +54,36 @@ class AppIntegrationTests: XCTestCase {
     }
 
     @MainActor
-    func testDidReceiveRemoteNotifications() throws {
+    func testDidReceiveRemoteNotifications() async throws {
         let notification = ["some": "alert"]
 
         let testHookCalled = expectation(description: "Callback called")
-        self.testDelegate.didReceiveRemoteNotificationCallback = {
-            userInfo,
-            isForeground,
-            completionHandler in
+        self.testDelegate.didReceiveRemoteNotificationCallback = { userInfo, isForeground in
             XCTAssertEqual(
                 notification as NSDictionary,
                 userInfo as NSDictionary
             )
             testHookCalled.fulfill()
-            completionHandler(.newData)
+            return .newData
         }
 
-        let appCallbackCalled = expectation(description: "Callback called")
-        AppIntegration.application(
+        let result = await AppIntegration.application(
             UIApplication.shared,
             didReceiveRemoteNotification: notification
-        ) { result in
-            XCTAssertEqual(result, .newData)
-            appCallbackCalled.fulfill()
-        }
+        )
 
-        wait(for: [testHookCalled, appCallbackCalled], timeout: 10)
+        XCTAssertEqual(result, .newData)
+
+        await fulfillment(of: [testHookCalled], timeout: 10)
     }
 }
 
-class TestIntegrationDelegate: NSObject, AppIntegrationDelegate {
+@MainActor
+final class TestIntegrationDelegate: NSObject, AppIntegrationDelegate {
     var onBackgroundAppRefreshCalled: Bool?
     var deviceToken: Data?
     var registrationError: Error?
-    var didReceiveRemoteNotificationCallback:
-        (
-            (
-                [AnyHashable: Any], Bool,
-                @escaping (UIBackgroundFetchResult) -> Void
-            ) ->
-                Void
-        )?
+    var didReceiveRemoteNotificationCallback: (@MainActor ([AnyHashable: Any], Bool) async -> UIBackgroundFetchResult)?
 
     func onBackgroundAppRefresh() {
         self.onBackgroundAppRefreshCalled = true
@@ -108,32 +99,28 @@ class TestIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
     func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
-        isForeground: Bool,
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        self.didReceiveRemoteNotificationCallback!(
+        isForeground: Bool
+    ) async -> UIBackgroundFetchResult {
+        return await self.didReceiveRemoteNotificationCallback!(
             userInfo,
-            isForeground,
-            completionHandler
+            isForeground
         )
     }
 
     func willPresentNotification(
         notification: UNNotification,
-        presentationOptions options: UNNotificationPresentationOptions = [],
-        completionHandler: @escaping () -> Void
-    ) {
+        presentationOptions options: UNNotificationPresentationOptions = []
+    ) async {
         assertionFailure("Unable to mock UNNotification.")
     }
 
     func didReceiveNotificationResponse(
-        response: UNNotificationResponse,
-        completionHandler: @escaping () -> Void
-    ) {
+        response: UNNotificationResponse
+    ) async {
         assertionFailure("Unable to mock UNNotificationResponse.")
     }
     
-    func presentationOptionsForNotification(_ notification: UNNotification, completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([])
+    func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions {
+        return []
     }
 }

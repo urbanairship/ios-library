@@ -194,13 +194,9 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
 
     @MainActor
     public func presentationOptionsForNotification(
-        _ notification: UNNotification,
-        completionHandler: @Sendable @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-        Task { @Sendable in
-            let options = await self.push.presentationOptionsForNotification(notification)
-            completionHandler(options)
-        }
+        _ notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        return await self.push.presentationOptionsForNotification(notification)
     }
 
     @MainActor
