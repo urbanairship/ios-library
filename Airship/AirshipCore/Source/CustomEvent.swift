@@ -112,15 +112,10 @@ public struct CustomEvent: Sendable {
     ///     - forKey: The properties key
     ///     - encoder: JSONEncoder to use.'
     public mutating func setProperty(
-        value: Any?,
+        value: Any,
         forKey key: String,
         encoder: @autoclosure () -> JSONEncoder = Self.defaultEncoder()
     ) throws {
-        guard let value = value else {
-            properties[key] = nil
-            return
-        }
-
         properties[key] = try AirshipJSON.wrap(value, encoder: encoder())
     }
 
@@ -129,14 +124,9 @@ public struct CustomEvent: Sendable {
     ///     - value: The values to set. The value must result in a JSON object or an error will be thrown.
     ///     - encoder: JSONEncoder to use.
     public mutating func setProperties(
-        _ object: Any?,
+        _ object: Any,
         encoder: @autoclosure () -> JSONEncoder = Self.defaultEncoder()
     ) throws {
-        guard let object = object else {
-            properties = [:]
-            return
-        }
-
         let json = try AirshipJSON.wrap(object, encoder: encoder())
         guard json.isObject, let properties = json.object else {
             throw AirshipErrors.error("Properties must be an object")

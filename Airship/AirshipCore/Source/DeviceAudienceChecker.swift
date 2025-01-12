@@ -192,7 +192,7 @@ extension DeviceAudienceSelector {
             deviceInfoProvider: deviceInfoProvider
         )
 
-        if (hashCheckerResult.isMatch) {
+        if !hashCheckerResult.isMatch {
             AirshipLogger.trace("Hash condition not met for audience: \(self)")
         }
 

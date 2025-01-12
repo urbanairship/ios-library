@@ -66,7 +66,9 @@ public final class AddCustomEventAction: AirshipAction {
         }
 
         event.transactionID = transactionID
-        try event.setProperties(properties)
+        if let properties {
+            try event.setProperties(properties)
+        }
 
         if interactionID != nil || interactionType != nil {
             event.interactionType = interactionType
