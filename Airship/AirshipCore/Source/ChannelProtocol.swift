@@ -3,7 +3,7 @@
 public import Combine
 import Foundation
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
 public import ActivityKit
 #endif
 
@@ -99,7 +99,7 @@ public protocol AirshipChannelProtocol: AnyObject, Sendable {
     /// Publishes edits made to the subscription lists through the SDK
     var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> { get }
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
 
     /// Gets an AsyncSequence of `LiveActivityRegistrationStatus` updates for a given live acitvity name.
     /// - Parameters:

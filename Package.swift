@@ -181,7 +181,7 @@ let package = Package(
             ],
             path: "Airship/AirshipObjectiveC",
             exclude: [
-                "AirshipObjectiveC.h"
+                "Source/AirshipObjectiveC.h"
             ],
             sources: ["Source"]
         ),

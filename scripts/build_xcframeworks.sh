@@ -178,6 +178,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipPreferenceCenter.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/dSYMs/AirshipPreferenceCenter.framework.dSYM" \
   -output "$OUTPUT/AirshipPreferenceCenter.xcframework"
 
 # Package AirshipFeatureFlags
@@ -192,6 +196,10 @@ xcrun xcodebuild -create-xcframework \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvos.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/Products/Library/Frameworks/AirshipFeatureFlags.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease tvOS/appletvsimulator.xcarchive/dSYMs/AirshipFeatureFlags.framework.dSYM" \
   -output "$OUTPUT/AirshipFeatureFlags.xcframework"
 
 # Package AirshipObjectiveC

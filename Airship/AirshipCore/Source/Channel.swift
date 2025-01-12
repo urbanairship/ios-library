@@ -484,7 +484,7 @@ extension AirshipChannel: InternalAirshipChannelProtocol {
     }
 }
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
 import ActivityKit
 @available(iOS 16.1, *)
 extension AirshipChannel {

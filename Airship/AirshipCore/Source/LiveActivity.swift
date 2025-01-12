@@ -29,7 +29,7 @@ protocol LiveActivityProtocol: Sendable {
 }
 
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
 
 public import ActivityKit
 

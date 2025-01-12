@@ -1,4 +1,5 @@
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
+
 public import ActivityKit
 
 /// Restores live activity tracking

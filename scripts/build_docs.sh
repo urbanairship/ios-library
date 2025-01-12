@@ -13,7 +13,6 @@ OUTPUT="$1"
 function build_docs_swift {
   # $1 Project
   # $2 Module
-  # $3 Umbrella header path
 
    bundle exec jazzy \
   --module $2  \
@@ -21,7 +20,7 @@ function build_docs_swift {
   --build-tool-arguments -scheme,$2 \
   --framework-root "$ROOT_PATH/$1" \
   --output "$OUTPUT/$2" \
-  --sdk iphonesimulator \
+  --sdk iphoneos \
   --skip-undocumented \
   --hide-documentation-coverage \
   --config "$ROOT_PATH/Documentation/.jazzy.json"
@@ -30,8 +29,8 @@ function build_docs_swift {
 echo -ne "\n\n *********** BUILDING DOCS *********** \n\n"
 build_docs_swift "Airship" "AirshipCore"
 build_docs_swift "Airship" "AirshipPreferenceCenter"
-build_docs_swift "Airship" "AirshipMessageCenter"  "Source/AirshipMessageCenter.h"
-build_docs_swift "Airship" "AirshipAutomation"  "Source/AirshipAutomation.h"
-build_docs_swift "Airship" "AirshipFeatureFlags"  "Source/AirshipFeatureFlags.h"
-build_docs_swift "Airship" "AirshipObjectiveC"  "Source/AirshipObjectiveC.h"
-build_docs_swift "AirshipExtensions" "AirshipNotificationServiceExtension" "Source/AirshipNotificationServiceExtension.h"
+build_docs_swift "Airship" "AirshipMessageCenter"
+build_docs_swift "Airship" "AirshipAutomation"
+build_docs_swift "Airship" "AirshipFeatureFlags"
+build_docs_swift "Airship" "AirshipObjectiveC"
+build_docs_swift "AirshipExtensions" "AirshipNotificationServiceExtension"
