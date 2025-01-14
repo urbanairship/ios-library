@@ -163,6 +163,9 @@ struct ButtonView: View {
                            borderWidth: 2)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+#if os(tvOS)
+        .buttonStyle(.card)
+#endif
     }
 
     private func onTap() {

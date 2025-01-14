@@ -1041,13 +1041,6 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
-		6E0B8746294A9C950064B7BD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 494DD9561B0EB677009C134E;
-			remoteInfo = AirshipCore;
-		};
 		6E107F032B30B887007AFC4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -4783,7 +4776,6 @@
 			);
 			dependencies = (
 				6E0B8743294A9C780064B7BD /* PBXTargetDependency */,
-				6E0B8747294A9C950064B7BD /* PBXTargetDependency */,
 			);
 			name = AirshipAutomation;
 			productName = AirshipAutomationSwift;
@@ -6256,11 +6248,6 @@
 			isa = PBXTargetDependency;
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E0B8742294A9C780064B7BD /* PBXContainerItemProxy */;
-		};
-		6E0B8747294A9C950064B7BD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 494DD9561B0EB677009C134E /* AirshipCore */;
-			targetProxy = 6E0B8746294A9C950064B7BD /* PBXContainerItemProxy */;
 		};
 		6E107F042B30B887007AFC4D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

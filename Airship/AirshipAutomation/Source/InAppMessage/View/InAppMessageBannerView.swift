@@ -213,7 +213,9 @@ struct InAppMessageBannerView: View {
             .padding(theme.padding)
             .applyTransitioningPlacement(placement: displayContent.placement ?? .bottom)
             .offset(x: 0, y: swipeOffset)
+#if !os(tvOS)
             .simultaneousGesture(swipeGesture)
+#endif
             .onAppear {
                 setShowing(state: true)
                 timer.onAppear()
@@ -253,6 +255,7 @@ struct InAppMessageBannerView: View {
         }
     }
 
+#if !os(tvOS)
     private var swipeGesture: some Gesture {
         let minSwipeDistance: CGFloat = if self.bannerConstraints.size.height > 0 {
             min(100.0,  self.bannerConstraints.size.height * 0.5)
@@ -292,6 +295,7 @@ struct InAppMessageBannerView: View {
                 }
             }
     }
+#endif
 }
 
 fileprivate extension View {

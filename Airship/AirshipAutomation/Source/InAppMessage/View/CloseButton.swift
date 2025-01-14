@@ -43,17 +43,16 @@ struct CloseButton: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .center, spacing: 0) {
-                Spacer()
-                dismissButtonImage
-                Spacer()
-            }
+            dismissButtonImage
+                .frame(
+                    width: max(tappableWidth, width),
+                    height: max(tappableHeight, height)
+                )
         }
-        .frame(
-            width: max(tappableWidth, width),
-            height: max(tappableHeight, height)
-        )
-            .accessibilityLabel("Dismiss")
+        .accessibilityLabel("Dismiss")
+#if os(tvOS)
+        .buttonStyle(.card)
+#endif
     }
 }
 
