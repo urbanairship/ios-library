@@ -16,7 +16,7 @@ struct ModalView: View {
     let viewControllerOptions: ThomasViewControllerOptions
     #endif
 
-    @State private var contentSize: (ViewConstraints, CGSize)? = nil
+    @State private var contentSize: CGSize? = nil
 
     var body: some View {
         GeometryReader { metrics in
@@ -85,14 +85,9 @@ struct ModalView: View {
             safeAreaInsets: safeAreaInsets
         )
 
-        var contentSize: CGSize?
-        if windowConstraints == self.contentSize?.0 {
-            contentSize = self.contentSize?.1
-        }
-
         var contentConstraints = windowConstraints.contentConstraints(
             placement.size,
-            contentSize: contentSize,
+            contentSize: self.contentSize,
             margin: placement.margin
         )
 
@@ -127,13 +122,12 @@ struct ModalView: View {
                 constraints: contentConstraints
             )
             .background(
-                GeometryReader(content: { contentMetrics -> Color in
-                    let size = contentMetrics.size
+                GeometryReader { contentMetrics -> Color in
                     DispatchQueue.main.async {
-                        self.contentSize = (windowConstraints, size)
+                        self.contentSize = contentMetrics.size
                     }
                     return Color.clear
-                })
+                }
             )
             .thomasBackground(
                 color: placement.backgroundColor,
@@ -149,11 +143,10 @@ struct ModalView: View {
         .background(
             modalBackground(placement)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .transaction { $0.animation = nil }
         )
         .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
         .opacity(self.contentSize == nil ? 0 : 1)
-        .animation(nil, value: self.contentSize?.1 ?? CGSize.zero)
+        .animation(nil, value: self.contentSize)
     }
 
     @ViewBuilder

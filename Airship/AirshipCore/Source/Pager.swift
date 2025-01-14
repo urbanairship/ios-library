@@ -324,6 +324,7 @@ struct Pager: View {
 #endif
             .constraints(constraints)
             .thomasCommon(self.info)
+            .airshipGeometryGroupCompat()
     }
 
     // MARK: Handle Gesture

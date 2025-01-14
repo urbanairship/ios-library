@@ -43,6 +43,15 @@ extension View {
     }
 
     @ViewBuilder
+    func airshipGeometryGroupCompat() -> some View {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            self.geometryGroup()
+        } else {
+            self.transformEffect(.identity)
+        }
+    }
+
+    @ViewBuilder
     internal func addTapGesture(action: @escaping () -> Void) -> some View {
         if #available(iOS 13.0, macOS 10.15, tvOS 16.0, watchOS 6.0, *) {
             self.onTapGesture(perform: action)

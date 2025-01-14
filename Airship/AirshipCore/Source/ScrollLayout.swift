@@ -13,7 +13,7 @@ struct ScrollLayout: View {
     /// View constraints.
     let constraints: ViewConstraints
     
-    @State private var contentSize: (ViewConstraints, CGSize)? = nil
+    @State private var contentSize: CGSize? = nil
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @State private var scrollTask: (String, Task<Void, Never>)?
     
@@ -35,7 +35,7 @@ struct ScrollLayout: View {
                         GeometryReader(content: { contentMetrics -> Color in
                             let size = contentMetrics.size
                             DispatchQueue.main.async {
-                                self.contentSize = (constraints, size)
+                                self.contentSize = size
                             }
                             return Color.clear
                         })
@@ -89,11 +89,9 @@ struct ScrollLayout: View {
         .airshipApplyIf(self.shouldApplyFrameSize) {
             switch (info.properties.direction) {
             case .vertical:
-                let height = self.contentSize?.0 == self.constraints ? self.contentSize?.1.height : 0
-                $0.frame(maxHeight: height ?? 0)
+                $0.frame(maxHeight: self.contentSize?.height ?? 0)
             case .horizontal:
-                let width = self.contentSize?.0 == self.constraints ? self.contentSize?.1.width : 0
-                $0.frame(maxWidth: width ?? 0)
+                $0.frame(maxWidth: self.contentSize?.width ?? 0)
             }
         }
     }

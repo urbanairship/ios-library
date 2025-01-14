@@ -35,6 +35,7 @@ struct LinearLayout: View {
 #endif
             }
         }
+        .airshipGeometryGroupCompat()
         .constraints(self.constraints, alignment: .top)
     }
 

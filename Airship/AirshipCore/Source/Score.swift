@@ -28,6 +28,7 @@ struct Score: View {
                         disabled: !formState.isFormInputEnabled
                     )
                 )
+                .airshipGeometryGroupCompat()
         }
     }
 

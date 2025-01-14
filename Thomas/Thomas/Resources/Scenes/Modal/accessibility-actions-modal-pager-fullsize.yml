@@ -17,7 +17,7 @@ view:
     type: container
     border:
       radius: 30
-      stroke_width: 2
+      stroke_width: 20
       stroke_color:
         default:
           hex: "#333333"
