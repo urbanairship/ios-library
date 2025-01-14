@@ -5,6 +5,19 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// The privacy manager allow enabling/disabling features in the SDK.
+/// The SDK will not make any network requests or collect data if all features are disabled, with
+/// a few exceptions when going from enabled -> disabled. To have the SDK opt-out of all features on startup,
+/// set the default enabled features in the Config to an empty option set, or in the
+/// airshipconfig.plist file with `enabledFeatures = none`.
+/// If any feature is enabled, the SDK will collect and send the following data:
+/// - Channel ID
+/// - Locale
+/// - TimeZone
+/// - Platform
+/// - Opt in state (push and notifications)
+/// - SDK version
+/// - Accengage Device ID (Accengage module for migration)
 @objc
 public final class UAPrivacyManager: NSObject, Sendable {
 

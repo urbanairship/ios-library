@@ -5,6 +5,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Provides an interface to the channel functionality.
 @objc
 public final class UAChannel: NSObject, Sendable {
 

@@ -6,6 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Protocol to be implemented by deep link handlers.
 @objc
 public protocol UADeepLinkDelegate: Sendable {
     

@@ -6,6 +6,8 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// CustomEvent captures information regarding a custom event for
+/// Analytics.
 @objc
 public class UACustomEvent: NSObject {
     

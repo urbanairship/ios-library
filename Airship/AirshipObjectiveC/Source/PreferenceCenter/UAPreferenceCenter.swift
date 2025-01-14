@@ -21,7 +21,7 @@ public protocol UAPreferenceCenterOpenDelegate {
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
-final class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
+fileprivate final class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpenDelegate {
     weak var forwardDelegate: (any UAPreferenceCenterOpenDelegate)?
 
     init(_ forwardDelegate: any UAPreferenceCenterOpenDelegate) {
@@ -33,6 +33,7 @@ final class UAPreferenceCenterOpenDelegateWrapper: NSObject, PreferenceCenterOpe
     }
 }
 
+/// Airship PreferenceCenter module.
 @objc
 public final class UAPreferenceCenter: NSObject, Sendable {
 

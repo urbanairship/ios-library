@@ -18,63 +18,75 @@ public final class UAAuthorizedNotificationSettings: NSObject, OptionSet, Sendab
 
     // Badge
     @objc
-    public static let badge = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.badge.rawValue
-    )
+    public static func badge() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.badge.rawValue)
+    }
 
     // Sound
     @objc
-    public static let sound = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.sound.rawValue
-    )
+    public static func sound() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.sound.rawValue)
+    }
 
     // Alert
     @objc
-    public static let alert = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.alert.rawValue
-    )
+    public static func alert() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.alert.rawValue)
+    }
 
     // Car Play
     @objc
-    public static let carPlay = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.carPlay.rawValue
-    )
+    public static func carPlay() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.carPlay.rawValue)
+    }
 
     // Lock Screen
     @objc
-    public static let lockScreen = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.lockScreen.rawValue
-    )
+    public static func lockScreen() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.lockScreen.rawValue)
+    }
 
     // Notification Center
     @objc
-    public static let notificationCenter = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.notificationCenter.rawValue
-    )
+    public static func notificationCenter() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.notificationCenter.rawValue)
+    }
 
     // Critical alert
     @objc
-    public static let criticalAlert = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.criticalAlert.rawValue
-    )
+    public static func criticalAlert() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.criticalAlert.rawValue)
+    }
 
     // Announcement
     @objc
-    public static let announcement = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.announcement.rawValue
-    )
+    public static func announcement() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.announcement.rawValue)
+    }
 
     // Scheduled delivery
     @objc
-    public static let scheduledDelivery = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.scheduledDelivery.rawValue
-    )
+    public static func scheduledDelivery() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.scheduledDelivery.rawValue)
+    }
 
     // Time sensitive
     @objc
-    public static let timeSensitive = UAAuthorizedNotificationSettings(
-        rawValue: AirshipAuthorizedNotificationSettings.timeSensitive.rawValue
-    )
+    public static func timeSensitive() -> UAAuthorizedNotificationSettings {
+        return UAAuthorizedNotificationSettings(rawValue: AirshipAuthorizedNotificationSettings.timeSensitive.rawValue)
+    }
+    
+    public override var hash: Int {
+        return Int(rawValue)
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let that = object as? UAAuthorizedNotificationSettings else {
+            return false
+        }
+
+        return rawValue == that.rawValue
+    }
 }
 
 extension AirshipAuthorizedNotificationSettings {

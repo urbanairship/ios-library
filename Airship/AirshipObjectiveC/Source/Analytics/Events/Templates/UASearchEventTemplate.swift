@@ -6,6 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Search template
 @objc
 public class UACustomEventSearchTemplate: NSObject {
 

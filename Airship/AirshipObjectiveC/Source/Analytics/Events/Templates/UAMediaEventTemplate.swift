@@ -6,6 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Media template
 @objc
 public final class UACustomEventMediaTemplate: NSObject {
 

@@ -6,7 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
-
+/// Tag groups editor.
 @objc
 public class UATagGroupsEditor: NSObject {
     

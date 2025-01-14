@@ -6,8 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
-
-/// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
+/// Retail template
 @objc
 public final class UACustomEventRetailTemplate: NSObject {
 

@@ -6,6 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// The Analytics object provides an interface to the Airship Analytics API.
 @objc
 public final class UAAnalytics: NSObject, Sendable {
 

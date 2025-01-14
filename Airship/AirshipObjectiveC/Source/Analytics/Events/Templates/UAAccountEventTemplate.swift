@@ -6,7 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
-
+/// Account template
 @objc
 public final class UACustomEventAccountTemplate: NSObject {
 

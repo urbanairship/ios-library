@@ -499,7 +499,7 @@ class UAHelpers: NSObject {
             return UAAirshipLogLevel.debug
         case AirshipLogLevel.verbose:
             return UAAirshipLogLevel.verbose
-        default:
+        @unknown default:
             return UAAirshipLogLevel.undefined
         }
     }
@@ -531,7 +531,7 @@ class UAHelpers: NSObject {
             return UACloudSite.us
         case CloudSite.eu:
             return UACloudSite.eu
-        default:
+        @unknown default:
             return UACloudSite.us
         }
     }
@@ -555,7 +555,7 @@ class UAHelpers: NSObject {
             return UAChannelType.open
         case ChannelType.sms:
             return UAChannelType.sms
-        default:
+        @unknown default:
             return UAChannelType.email
         }
     }

@@ -5,6 +5,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Attributes editor.
 @objc
 public class UAAttributesEditor: NSObject {
     

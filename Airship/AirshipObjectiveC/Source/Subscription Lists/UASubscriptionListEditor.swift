@@ -6,6 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Subscription list editor.
 @objc
 public class UASubscriptionListEditor: NSObject {
     

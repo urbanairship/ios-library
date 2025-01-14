@@ -6,6 +6,7 @@ public import Foundation
 import AirshipCore
 #endif
 
+/// Scoped subscription list editor.
 @objc
 public class UAScopedSubscriptionListEditor: NSObject {
     
@@ -83,7 +84,7 @@ extension ChannelScope {
         case .email: .email
         case .sms: .sms
 #if canImport(AirshipCore)
-        default:
+        @unknown default:
                 .app
 #endif
         }

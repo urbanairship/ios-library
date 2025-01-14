@@ -8,7 +8,6 @@ public import UserNotifications
 import AirshipCore
 #endif
 
-
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc
 public final class UAPush: NSObject, Sendable {

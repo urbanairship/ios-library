@@ -7,7 +7,6 @@ import AirshipMessageCenter
 import AirshipCore
 #endif
 
-
 /// Delegate protocol for receiving callbacks related to message center.
 @objc
 public protocol UAMessageCenterDisplayDelegate {
@@ -147,7 +146,7 @@ fileprivate final class UAMessageCenterDisplayDelegateWrapper: NSObject, Message
     }
 }
 
-fileprivate final class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
+final class UAMessageCenterPredicateWrapper: NSObject, MessageCenterPredicate {
     private let delegate: any UAMessageCenterPredicate
     
     init(delegate: any UAMessageCenterPredicate) {
