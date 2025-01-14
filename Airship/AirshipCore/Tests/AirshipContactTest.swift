@@ -833,7 +833,7 @@ class AirshipContactTest: XCTestCase {
         }
 
         self.contactManager.contactUpdatesContinuation.yield(.conflict(event))
-        await fulfillmentCompat(of: [expectation])
+        await fulfillment(of: [expectation])
         subscription.cancel()
     }
 
@@ -854,7 +854,7 @@ class AirshipContactTest: XCTestCase {
         }
 
         self.contactManager.contactUpdatesContinuation.yield(.conflict(event))
-        await fulfillmentCompat(of: [expectation])
+        await fulfillment(of: [expectation])
     }
 
     private func verifyOperations(_ operations: [ContactOperation], file: StaticString = #filePath, line: UInt = #line) async {
@@ -868,7 +868,7 @@ class AirshipContactTest: XCTestCase {
             expectation.fulfill()
         }
 
-        await fulfillmentCompat(of: [expectation], timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 
     private func waitOnContactQueue() async {
@@ -877,7 +877,7 @@ class AirshipContactTest: XCTestCase {
             expectation.fulfill()
         }
 
-        await fulfillmentCompat(of: [expectation], timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 
 }

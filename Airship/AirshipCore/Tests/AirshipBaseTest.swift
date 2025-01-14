@@ -21,16 +21,6 @@ class AirshipBaseTest: XCTestCase {
      * A preference airship with unique appkey/secret. A runtime config is created
      * lazily when first used.
      */
-    lazy var config: RuntimeConfig = RuntimeConfig.testConfig()
-    
+    lazy var config: RuntimeConfig = RuntimeConfig.testConfig()    
 }
 
-
-extension XCTestCase {
-    
-    func fulfillmentCompat(of: [XCTestExpectation], timeout: TimeInterval? = nil, enforceOrder: Bool = false) async {
-        await fulfillment(of: of, timeout: timeout ?? 10.0, enforceOrder: enforceOrder)
-    }
-
-    
-}

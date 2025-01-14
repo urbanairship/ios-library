@@ -95,7 +95,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
 
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
+        await self.fulfillment(of: [channelUpdated], timeout: 10.0)
     }
     
     func testCreateChannelRestores() async throws {
@@ -153,7 +153,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
 
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
+        await self.fulfillment(of: [channelUpdated], timeout: 10.0)
     }
     
     func testRestoreFallBackToCreateOnInvalidID() async throws {
@@ -188,7 +188,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
 
-        await self.fulfillmentCompat(of: [create], timeout: 10.0)
+        await self.fulfillment(of: [create], timeout: 10.0)
     }
 
     func testCreateChannelExisting() async throws {
@@ -231,7 +231,7 @@ class ChannelRegistrarTest: XCTestCase {
 
         XCTAssertEqual(.success, result)
 
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10.0)
+        await self.fulfillment(of: [channelUpdated], timeout: 10.0)
     }
 
     func testCreateChannelError() async throws {
@@ -359,7 +359,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
+        await self.fulfillment(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateChannelError() async throws {
@@ -517,7 +517,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
+        await self.fulfillment(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateLocationChanged() async throws {
@@ -567,7 +567,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
+        await self.fulfillment(of: [channelUpdated], timeout: 10)
     }
 
     func testUpdateMinPayload() async throws {
@@ -620,7 +620,7 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.fulfillmentCompat(of: [channelUpdated], timeout: 10)
+        await self.fulfillment(of: [channelUpdated], timeout: 10)
     }
 
     @MainActor

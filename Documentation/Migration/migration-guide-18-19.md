@@ -4,9 +4,12 @@ The Airship SDK 19.0 introduces significant updates to improve Swift API support
 
 ---
 
-## Xcode requirements
+## SDK 19 requirements
 
-SDK 19.0 requires **Xcode 16.2 or newer**.
+- **Xcode 16.2 or newer**
+- iOS 15+
+- tvOS 18+
+- visionOS 1+
 
 ---
 
@@ -25,7 +28,6 @@ Objective-C support has been removed from the core Airship frameworks to leverag
 The `AirshipConfig` class has been converted to a struct. Key updates include:
 
 1. **Property Changes**:
-
    - Properties like `appKey` and `appSecret` are now determined during `takeOff` based on the `inProduction` flag.
    - `inProduction` is now an optional Bool. If set the value will be used. If not, it will be inferred by inspecting the APNS environment.
 
@@ -121,10 +123,10 @@ Accessors for module components have been standardized:
 
 `UANotificationOptions` and `UAAuthorizationStatus` have been removed. Use Apple's equivalents instead:
 
-| SDK 18.x Type         | SDK 19.x Replacement  |
-| --------------------- | --------------------- |
-| UANotificationOptions | UNNotificationOptions |
-| UAAuthorizationStatus | UNAuthorizationStatus |
+| SDK 18.x Type         | SDK 19.x Replacement   |
+| --------------------- | ---------------------- |
+| UANotificationOptions | UNAuthorizationOptions |
+| UAAuthorizationStatus | UNAuthorizationStatus  |
 
 `UAAuthorizedNotificationSettings` has been ported to Swift and is now named `AirshipAuthorizedNotificationSettings`:
 

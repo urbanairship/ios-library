@@ -130,7 +130,7 @@ final class ModifyAttributesActionTest: XCTestCase {
             )
         )
 
-        await fulfillmentCompat(of: [attributesSet])
+        await fulfillment(of: [attributesSet])
 
     }
 }

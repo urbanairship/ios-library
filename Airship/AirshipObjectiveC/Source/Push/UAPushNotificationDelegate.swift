@@ -23,7 +23,8 @@ public protocol UAPushNotificationDelegate: Sendable {
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping () -> Void
     )
-    #if !os(watchOS)
+
+#if !os(watchOS)
     /// Called when a notification is received in the background.
     ///
     /// - Parameters:
@@ -34,7 +35,7 @@ public protocol UAPushNotificationDelegate: Sendable {
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     )
-    #else
+#else
     /// Called when a notification is received in the background.
     ///
     /// - Parameters:
@@ -45,8 +46,9 @@ public protocol UAPushNotificationDelegate: Sendable {
         _ userInfo: [AnyHashable: Any],
         completionHandler: @escaping (WKBackgroundFetchResult) -> Void
     )
-    #endif
-    #if !os(tvOS)
+#endif
+
+#if !os(tvOS)
     /// Called when a notification is received in the background or foreground and results in a user interaction.
     /// User interactions can include launching the application from the push, or using an interactive control on the notification interface
     /// such as a button or text field.
@@ -61,20 +63,9 @@ public protocol UAPushNotificationDelegate: Sendable {
         _ notificationResponse: UNNotificationResponse,
         completionHandler: @escaping () -> Void
     )
-    #endif
-    /// Called when a notification has arrived in the foreground and is available for display.
-    ///
-    /// - Parameters:
-    ///   - options: The notification presentation options.
-    ///   - notification: The notification.
-    /// - Returns: a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
-    @objc(extendPresentationOptions:notification:)
-    func extend(
-        _ options: UNNotificationPresentationOptions,
-        notification: UNNotification
-    ) -> UNNotificationPresentationOptions
+#endif
 
-    
+
     /// Called when a notification has arrived in the foreground and is available for display.
     ///
     /// - Parameters:
@@ -89,14 +80,59 @@ public protocol UAPushNotificationDelegate: Sendable {
     )
 }
 
+@MainActor
 final class UAPushNotificationDelegateWrapper: NSObject, PushNotificationDelegate {
-    @MainActor
+
     weak var forwardDelegate: (any UAPushNotificationDelegate)?
 
     init(_ forwardDelegate: any UAPushNotificationDelegate) {
         self.forwardDelegate = forwardDelegate
     }
-    
+
+    func receivedForegroundNotification(_ userInfo: [AnyHashable : Any]) async {
+        await withCheckedContinuation { [forwardDelegate] continuation in
+            forwardDelegate?.receivedForegroundNotification(userInfo) {
+                continuation.resume()
+            }
+        }
+    }
+
+#if !os(watchOS)
+    func receivedBackgroundNotification(_ userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
+        await withCheckedContinuation { [forwardDelegate] continuation in
+            forwardDelegate?.receivedBackgroundNotification(userInfo) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+#else
+    func receivedBackgroundNotification(_ userInfo: [AnyHashable : Any]) async -> WKBackgroundFetchResult {
+        await withCheckedContinuation { [forwardDelegate] continuation in
+            forwardDelegate?.receivedBackgroundNotification(userInfo) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+#endif
+
+#if !os(tvOS)
+    func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse) async {
+        await withCheckedContinuation { [forwardDelegate] continuation in
+            forwardDelegate?.receivedNotificationResponse(notificationResponse) {
+                continuation.resume()
+            }
+        }
+    }
+#endif
+
+    func extendPresentationOptions(_ options: UNNotificationPresentationOptions, notification: UNNotification) async -> UNNotificationPresentationOptions {
+        await withCheckedContinuation { [forwardDelegate] continuation in
+            forwardDelegate?.extendPresentationOptions(options, notification: notification) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+
     @MainActor
     public func receivedForegroundNotification(
         _ userInfo: [AnyHashable: Any],

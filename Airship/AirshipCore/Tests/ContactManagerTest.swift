@@ -147,7 +147,7 @@ final class ContactManagerTest: XCTestCase {
         )
 
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
 
         let contactInfo = await self.contactManager.currentContactIDInfo()
         XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
@@ -187,7 +187,7 @@ final class ContactManagerTest: XCTestCase {
         )
 
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
 
         let contactInfo = await self.contactManager.currentContactIDInfo()
         XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
@@ -234,7 +234,7 @@ final class ContactManagerTest: XCTestCase {
         )
 
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
 
         let contactInfo = await self.contactManager.currentContactIDInfo()
         XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
@@ -272,7 +272,7 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
 
         await self.contactManager.addOperation(.verify(self.date.now + 1, required: true))
 
@@ -373,7 +373,7 @@ final class ContactManagerTest: XCTestCase {
         )
 
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [resolve, identify])
+        await fulfillment(of: [resolve, identify])
 
         let contactInfo = await self.contactManager.currentContactIDInfo()
         XCTAssertEqual(nonAnonIdentifyResponse.contact.contactID, contactInfo?.contactID)
@@ -496,7 +496,7 @@ final class ContactManagerTest: XCTestCase {
         )
 
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [resolve, reset])
+        await fulfillment(of: [resolve, reset])
 
         await self.verifyUpdates(
             [
@@ -537,7 +537,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(authToken, self.anonIdentifyResponse.token)
 
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
 
         await self.verifyUpdates([
             .contactIDUpdate(
@@ -595,7 +595,7 @@ final class ContactManagerTest: XCTestCase {
             XCTFail("Should throw")
         } catch {}
 
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
     }
 
     func testExpireAuthToken() async throws {
@@ -645,7 +645,7 @@ final class ContactManagerTest: XCTestCase {
             XCTFail("Should throw")
         } catch {}
 
-        await fulfillmentCompat(of: [resolve])
+        await fulfillment(of: [resolve])
     }
 
     func testGenerateDefaultContactInfo() async {
@@ -915,7 +915,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+        await self.fulfillment(of: [resolve, register], timeout: 10)
     }
 
     func testRegisterOpen() async throws {
@@ -962,7 +962,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+        await self.fulfillment(of: [resolve, register], timeout: 10)
     }
 
     func testRegisterSMS() async throws {
@@ -1005,7 +1005,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+        await self.fulfillment(of: [resolve, register], timeout: 10)
     }
 
     func testResendEmail() async throws {
@@ -1049,7 +1049,7 @@ final class ContactManagerTest: XCTestCase {
 
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+        await self.fulfillment(of: [resolve, resend], timeout: 10)
     }
 
     func testResendSMS() async throws {
@@ -1094,7 +1094,7 @@ final class ContactManagerTest: XCTestCase {
 
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+        await self.fulfillment(of: [resolve, resend], timeout: 10)
     }
 
     func testResendChannel() async throws {
@@ -1139,7 +1139,7 @@ final class ContactManagerTest: XCTestCase {
 
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, resend], timeout: 10)
+        await self.fulfillment(of: [resolve, resend], timeout: 10)
     }
 
     func testDisassociate() async throws {
@@ -1181,7 +1181,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+        await self.fulfillment(of: [resolve, register], timeout: 10)
     }
 
     func testAssociateChannel() async throws {
@@ -1224,7 +1224,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, register], timeout: 10)
+        await self.fulfillment(of: [resolve, register], timeout: 10)
     }
 
     func testUpdate() async throws {
@@ -1295,7 +1295,7 @@ final class ContactManagerTest: XCTestCase {
         )
         XCTAssertEqual(result, .success)
 
-        await self.fulfillmentCompat(of: [resolve, update, audienceCallback], timeout: 10)
+        await self.fulfillment(of: [resolve, update, audienceCallback], timeout: 10)
     }
 
     func testConflict() async throws {

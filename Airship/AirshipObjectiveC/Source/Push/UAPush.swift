@@ -228,11 +228,15 @@ public final class UAPush: NSObject, Sendable {
    
     #if !os(watchOS)
 
-    public func setBadgeNumber(_ newBadgeNumber: Int) async throws {
-        try await Airship.push.setBadgeNumber(newBadgeNumber)
+    /// Sets the badge number.
+    /// - Parameters:
+    ///     - badge: The badge to set
+    @objc
+    public func setBadgeNumber(_ badge: Int) async throws {
+        try await Airship.push.setBadgeNumber(badge)
     }
 
-    /// deprecation warning
+    /// Gets the badge number.
     @objc
     @MainActor
     public var badgeNumber: Int {
@@ -241,6 +245,7 @@ public final class UAPush: NSObject, Sendable {
         }
     }
 
+    /// Enables/disables auto badge.
     @objc
     public var autobadgeEnabled: Bool {
         set {
@@ -252,9 +257,10 @@ public final class UAPush: NSObject, Sendable {
         }
     }
 
+    /// Resets the badge.
     @objc
     @MainActor
-    func resetBadge() async throws {
+    public func resetBadge() async throws {
         try await Airship.push.resetBadge()
     }
 

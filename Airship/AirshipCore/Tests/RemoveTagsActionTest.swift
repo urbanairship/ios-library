@@ -134,7 +134,7 @@ final class RemoveTagsActionTest: XCTestCase {
             channel.tags
         )
         
-        await self.fulfillmentCompat(of: [tagGroupsSet], timeout: 10)
+        await self.fulfillment(of: [tagGroupsSet], timeout: 10)
     }
 }
 

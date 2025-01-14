@@ -8,11 +8,15 @@ import AirshipAutomation
 #endif
 
 /**
- * Provides a control interface for creating, canceling and executing in-app automations.
+ * In-App Automation
  */
 @objc
 public final class UAInAppAutomation: NSObject, Sendable {
-        
+
+    /// In-App messaging
+    @objc
+    public let inAppMessaging: UAInAppMessaging = UAInAppMessaging()
+
     /// Paused state of in-app automation.
     @MainActor
     public var isPaused: Bool {

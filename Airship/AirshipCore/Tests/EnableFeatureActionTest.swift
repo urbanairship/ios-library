@@ -68,7 +68,7 @@ class EnableFeatureActionTest: XCTestCase {
 
       
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillmentCompat(of: [prompted], timeout: 10)
+        await self.fulfillment(of: [prompted], timeout: 10)
     }
 
     func testBackgroundLocation() async throws {
@@ -90,7 +90,7 @@ class EnableFeatureActionTest: XCTestCase {
         }
 
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillmentCompat(of: [prompted], timeout: 10)
+        await self.fulfillment(of: [prompted], timeout: 10)
     }
 
     func testNotifications() async throws {
@@ -112,7 +112,7 @@ class EnableFeatureActionTest: XCTestCase {
         }
 
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillmentCompat(of: [prompted], timeout: 10)
+        await self.fulfillment(of: [prompted], timeout: 10)
     }
 
     func testInvalidArgument() async throws {
@@ -167,6 +167,6 @@ class EnableFeatureActionTest: XCTestCase {
         }
       
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillmentCompat(of: [resultReceived], timeout: 10)
+        await self.fulfillment(of: [resultReceived], timeout: 10)
     }
 }

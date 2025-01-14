@@ -105,7 +105,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [expectation])
+        await fulfillment(of: [expectation])
 
         result = try? await self.workManager.launchTask(
             request: AirshipWorkRequest(
@@ -342,7 +342,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [expectation])
+        await fulfillment(of: [expectation])
     }
 
     func testLiveActivityUpdateAdjustTimestamps() async throws {
@@ -410,7 +410,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [expectation])
+        await fulfillment(of: [expectation])
     }
 
     func testLiveActivityUpdatesStream() async throws {
@@ -449,7 +449,7 @@ class ChannelAudienceManagerTest: XCTestCase {
             )
         )
         XCTAssertEqual(result, .success)
-        await fulfillmentCompat(of: [expectation])
+        await fulfillment(of: [expectation])
 
         var iterator = self.audienceManager.liveActivityUpdates.makeAsyncIterator()
         let actualUpdates = await iterator.next()

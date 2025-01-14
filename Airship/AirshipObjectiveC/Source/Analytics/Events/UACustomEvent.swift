@@ -145,6 +145,7 @@ public class UACustomEvent: NSObject {
     /// - Parameters:
     ///     - string: The string value to set.
     ///     - forKey: The properties key
+    @objc
     public func setProperty(
         string: String,
         forKey key: String
@@ -155,6 +156,7 @@ public class UACustomEvent: NSObject {
     /// Removes a property.
     /// - Parameters:
     ///     - forKey: The properties key
+    @objc
     public func removeProperty(
         forKey key: String
     ) {
@@ -165,6 +167,7 @@ public class UACustomEvent: NSObject {
     /// - Parameters:
     ///     - double: The double value to set.
     ///     - forKey: The properties key
+    @objc
     public func setProperty(
         double: Double,
         forKey key: String
@@ -176,6 +179,7 @@ public class UACustomEvent: NSObject {
     /// - Parameters:
     ///     - bool: The bool value to set.
     ///     - forKey: The properties key
+    @objc
     public func setProperty(
         bool: Bool,
         forKey key: String
@@ -187,8 +191,9 @@ public class UACustomEvent: NSObject {
     /// - Parameters:
     ///     - value: The value to set.
     ///     - forKey: The properties key
+    @objc
     public func setProperty(
-        value: Any?,
+        value: Any,
         forKey key: String
     ) throws {
         try customEvent.setProperty(value: value, forKey: key)
@@ -197,7 +202,8 @@ public class UACustomEvent: NSObject {
     /// Sets a property value.
     /// - Parameters:
     ///     - value: The values to set. The value must result in a JSON object or an error will be thrown.
-    public func setProperties(_ object: Any?) throws {
+    @objc
+    public func setProperties(_ object: Any) throws {
         try customEvent.setProperties(object)
     }
 }

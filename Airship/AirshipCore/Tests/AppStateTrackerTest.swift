@@ -25,7 +25,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .didBecomeActive)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -36,7 +36,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .willEnterForeground)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -47,7 +47,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .didEnterBackground)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -58,7 +58,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .willResignActive)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
 
@@ -70,7 +70,7 @@ final class AppStateTrackerTest: XCTestCase {
 
         adapter.dispatchEvent(event: .willTerminate)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
 
@@ -85,7 +85,7 @@ final class AppStateTrackerTest: XCTestCase {
         adapter.dispatchEvent(event: .didEnterBackground)
         adapter.dispatchEvent(event: .didBecomeActive)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
     @MainActor
@@ -99,7 +99,7 @@ final class AppStateTrackerTest: XCTestCase {
         adapter.dispatchEvent(event: .didBecomeActive)
         adapter.dispatchEvent(event: .didEnterBackground)
 
-        await self.fulfillmentCompat(of:expectations, timeout: 1.0)
+        await self.fulfillment(of: expectations, timeout: 1.0)
     }
 
     private func expectNotification(name: Notification.Name) -> XCTestExpectation {

@@ -127,7 +127,7 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         
 
         await subject.waitFullRefresh(schedule: schedule)
-        await self.fulfillmentCompat(of: [expectation])
+        await self.fulfillment(of: [expectation])
     }
 
     func testWaitForFullRefreshNilInfo() async {
@@ -140,7 +140,7 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
 
         let schedule = makeSchedule(remoteDataInfo: nil)
         await subject.waitFullRefresh(schedule: schedule)
-        await self.fulfillmentCompat(of: [expectation])
+        await self.fulfillment(of: [expectation])
     }
 
     func testBestEffortRefresh() async {
@@ -159,7 +159,7 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         }
 
         let result = await subject.bestEffortRefresh(schedule: schedule)
-        await self.fulfillmentCompat(of: [expectation])
+        await self.fulfillment(of: [expectation])
         XCTAssertTrue(result)
     }
 
@@ -178,7 +178,7 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         }
 
         let result = await subject.bestEffortRefresh(schedule: schedule)
-        await self.fulfillmentCompat(of: [expectation])
+        await self.fulfillment(of: [expectation])
         XCTAssertFalse(result)
     }
 

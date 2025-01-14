@@ -43,6 +43,7 @@ public protocol PushNotificationDelegate: AnyObject, Sendable {
     /// - Parameters:
     ///   - notificationResponse: UNNotificationResponse object representing the user's response
     /// to the notification and the associated notification contents.
+    @MainActor
     func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse) async
     #endif
     
@@ -51,39 +52,9 @@ public protocol PushNotificationDelegate: AnyObject, Sendable {
     /// - Parameters:
     ///   - options: The notification presentation options.
     ///   - notification: The notification.
+    @MainActor
     func extendPresentationOptions(
         _ options: UNNotificationPresentationOptions,
         notification: UNNotification
     ) async -> UNNotificationPresentationOptions
-}
-
-
-public extension PushNotificationDelegate {
-    func extendPresentationOptions(
-        _ options: UNNotificationPresentationOptions,
-        notification: UNNotification) async -> UNNotificationPresentationOptions {
-            
-        return []
-    }
-
-    @MainActor
-    func receivedForegroundNotification(_ userInfo: [AnyHashable: Any]) async {
-    }
-
-    #if !os(watchOS)
-    @MainActor
-    func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
-        return .noData
-    }
-    
-    #else
-    func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> WKBackgroundFetchResult {
-        return .noData
-    }
-    #endif
-
-    #if !os(tvOS)
-    func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse) async {
-    }
-    #endif
 }

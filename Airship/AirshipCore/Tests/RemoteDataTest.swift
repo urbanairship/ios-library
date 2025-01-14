@@ -118,7 +118,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
 
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
     }
 
     func testNotifyOutdatedApp() async {
@@ -137,7 +137,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
 
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
     }
 
     func testNotifyOutdatedEnqueusRefreshTask() async {
@@ -174,7 +174,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let result = await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
 
         XCTAssertFalse(result)
     }
@@ -195,7 +195,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let result = await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
 
         XCTAssertTrue(result)
     }
@@ -211,7 +211,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let result = await self.remoteData.status(source: .contact)
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
 
         XCTAssertEqual(.upToDate, result)
     }
@@ -227,7 +227,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let result = await self.remoteData.status(source: .app)
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
 
         XCTAssertEqual(.stale, result)
     }
@@ -317,9 +317,9 @@ final class RemoteDataTest: AirshipBaseTest {
                 XCTAssertTrue(payloads.isEmpty)
             }
 
-        await self.fulfillmentCompat(of: [first], timeout: 10)
+        await self.fulfillment(of: [first], timeout: 10)
         await self.launchRefreshTask()
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
         subscription.cancel()
     }
 
@@ -341,7 +341,7 @@ final class RemoteDataTest: AirshipBaseTest {
             refreshFinished.fulfill()
         }
 
-        await self.fulfillmentCompat(of: [refreshFinished])
+        await self.fulfillment(of: [refreshFinished])
 
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
@@ -365,7 +365,7 @@ final class RemoteDataTest: AirshipBaseTest {
         
 
         let result = await self.launchRefreshTask()
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
 
         XCTAssertEqual(result, .success)
     }
@@ -388,7 +388,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let result = await self.launchRefreshTask()
-        await self.fulfillmentCompat(of: [expectation], timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10)
 
         XCTAssertEqual(result, .failure)
     }

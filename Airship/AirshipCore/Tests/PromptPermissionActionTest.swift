@@ -70,7 +70,7 @@ class PromptPermissionActionTest: XCTestCase {
 
         let result = try await self.action.perform(arguments: arguments)
         XCTAssertNil(result)
-        await self.fulfillmentCompat(of: [prompted], timeout: 10)
+        await self.fulfillment(of: [prompted], timeout: 10)
     }
 
     func testPromptDefaultArguments() async throws {
@@ -97,7 +97,7 @@ class PromptPermissionActionTest: XCTestCase {
 
         let result = try await self.action.perform(arguments: arguments)
         XCTAssertNil(result)
-        await self.fulfillmentCompat(of: [prompted], timeout: 10)
+        await self.fulfillment(of: [prompted], timeout: 10)
     }
 
     func testInvalidPermission() async throws {
@@ -160,6 +160,6 @@ class PromptPermissionActionTest: XCTestCase {
         }
 
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillmentCompat(of: [resultReceived], timeout: 10)
+        await self.fulfillment(of: [resultReceived], timeout: 10)
     }
 }
