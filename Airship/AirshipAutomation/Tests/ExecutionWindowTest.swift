@@ -795,8 +795,9 @@ final class ExectutionWindowTest: XCTestCase {
 
     func testMonthlyNextYear() throws {
         // Feb 15
-        var date = calendar.date(bySetting: .day, value: 15, of: referenceDate)!
-        date = calendar.date(bySetting: .month, value: 2, of: date)!
+        var date = calendar.date(bySetting: .month, value: 2, of: referenceDate)!
+        date = calendar.date(bySetting: .day, value: 15, of: date)!
+
 
         let window = try ExecutionWindow(
             include: [
@@ -804,7 +805,7 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(348.days))
+        XCTAssertEqual(windowAvailibility(window, date: date), .retry(334.days))
     }
 
     func testIncludeMonthlyWithTimeZone() throws {
