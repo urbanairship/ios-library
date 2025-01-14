@@ -14,6 +14,7 @@ class ChannelTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var config = AirshipConfig()
     private var privacyManager: AirshipPrivacyManager!
+    private var permissionsManager: AirshipPermissionsManager!
     private var channel: AirshipChannel!
 
     override func setUp() async throws {
@@ -24,6 +25,8 @@ class ChannelTest: XCTestCase {
             defaultEnabledFeatures: [],
             notificationCenter: self.notificationCenter
         )
+        
+        self.permissionsManager = await AirshipPermissionsManager()
 
         self.channel = await createChannel()
     }
@@ -34,6 +37,7 @@ class ChannelTest: XCTestCase {
             dataStore: self.dataStore,
             config: .testConfig(airshipConfig: self.config),
             privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
             localeManager: self.localeManager,
             audienceManager: self.audienceManager,
             channelRegistrar: self.channelRegistrar,
@@ -142,6 +146,15 @@ class ChannelTest: XCTestCase {
 
     func testCRAPayload() async throws {
         self.privacyManager.enableFeatures(.all)
+        
+        let locationPermission = TestPermissionsDelegate()
+        locationPermission.permissionStatus = .granted
+        
+        let notificationPermission = TestPermissionsDelegate()
+        notificationPermission.permissionStatus = .denied
+        
+        self.permissionsManager.setDelegate(locationPermission, permission: .location)
+        self.permissionsManager.setDelegate(notificationPermission, permission: .displayNotifications)
 
         self.channel.tags = ["foo", "bar"]
         var expectedPayload = ChannelRegistrationPayload()
@@ -157,9 +170,91 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = true
+        expectedPayload.channel.permissions = [
+            "location": "granted",
+            "display_notifications": "denied"
+        ]
 
         let payload = await self.channelRegistrar.channelPayload
         XCTAssertEqual(expectedPayload, payload)
+    }
+    
+    func testCRAPayloadPermissionOnNoFeature() async throws {
+        self.privacyManager.enableFeatures(.all)
+        self.privacyManager.disableFeatures(.tagsAndAttributes)
+        
+        let locationPermission = TestPermissionsDelegate()
+        locationPermission.permissionStatus = .granted
+        
+        let notificationPermission = TestPermissionsDelegate()
+        notificationPermission.permissionStatus = .denied
+        
+        self.permissionsManager.setDelegate(locationPermission, permission: .location)
+        self.permissionsManager.setDelegate(notificationPermission, permission: .displayNotifications)
+
+        self.channel.tags = ["foo", "bar"]
+        var expectedPayload = ChannelRegistrationPayload()
+        expectedPayload.channel.language =
+            Locale.autoupdatingCurrent.getLanguageCode()
+        expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
+        expectedPayload.channel.timeZone =
+            TimeZone.autoupdatingCurrent.identifier
+        expectedPayload.channel.tags = []
+        expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
+        expectedPayload.channel.sdkVersion = AirshipVersion.version
+        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
+        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.carrier = AirshipUtils.carrierName()
+        expectedPayload.channel.setTags = true
+        expectedPayload.channel.permissions = nil
+
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertEqual(expectedPayload, payload)
+    }
+    
+    func testCRAPayloadMinify() async throws {
+        self.privacyManager.enableFeatures(.all)
+        
+        let locationPermission = TestPermissionsDelegate()
+        locationPermission.permissionStatus = .granted
+        
+        let notificationPermission = TestPermissionsDelegate()
+        notificationPermission.permissionStatus = .denied
+        
+        self.permissionsManager.setDelegate(locationPermission, permission: .location)
+        self.permissionsManager.setDelegate(notificationPermission, permission: .displayNotifications)
+
+        self.channel.tags = ["foo", "bar"]
+        var expectedPayload = ChannelRegistrationPayload()
+        expectedPayload.channel.language =
+            Locale.autoupdatingCurrent.getLanguageCode()
+        expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
+        expectedPayload.channel.timeZone =
+            TimeZone.autoupdatingCurrent.identifier
+        expectedPayload.channel.tags = ["foo", "bar"]
+        expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
+        expectedPayload.channel.sdkVersion = AirshipVersion.version
+        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
+        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.carrier = AirshipUtils.carrierName()
+        expectedPayload.channel.setTags = true
+        expectedPayload.channel.permissions = [
+            "location": "granted",
+            "display_notifications": "denied"
+        ]
+
+        let payload = await self.channelRegistrar.channelPayload
+        XCTAssertEqual(expectedPayload, payload)
+        
+        notificationPermission.permissionStatus = .granted
+        
+        let minimized = await self.channelRegistrar.channelPayload.minimizePayload(previous: payload)
+        var expectedMinimized = ChannelRegistrationPayload()
+        expectedMinimized.channel.permissions = [
+            "display_notifications": "granted",
+            "location": "granted",
+        ]
+        XCTAssertEqual(expectedMinimized, minimized)
     }
 
     func testCRAPayloadDisabledDeviceTags() async throws {
@@ -179,6 +274,7 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = false
+        expectedPayload.channel.permissions = [:]
 
         let payload = await self.channelRegistrar.channelPayload
         XCTAssertEqual(expectedPayload, payload)

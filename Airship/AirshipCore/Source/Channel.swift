@@ -17,6 +17,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: AirshipPrivacyManager
+    private let permissionsManager: AirshipPermissionsManager
     private let localeManager: any AirshipLocaleManagerProtocol
     private let audienceManager: any ChannelAudienceManagerProtocol
     private let channelRegistrar: any ChannelRegistrarProtocol
@@ -105,6 +106,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
+        permissionsManager: AirshipPermissionsManager,
         localeManager: any AirshipLocaleManagerProtocol,
         audienceManager: any ChannelAudienceManagerProtocol,
         channelRegistrar: any ChannelRegistrarProtocol,
@@ -115,6 +117,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         self.dataStore = dataStore
         self.config = config
         self.privacyManager = privacyManager
+        self.permissionsManager = permissionsManager
         self.localeManager = localeManager
         self.audienceManager = audienceManager
         self.channelRegistrar = channelRegistrar
@@ -183,6 +186,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: AirshipPrivacyManager,
+        permissionsManager: AirshipPermissionsManager,
         localeManager: any AirshipLocaleManagerProtocol,
         audienceOverridesProvider: any AudienceOverridesProvider
     ) {
@@ -190,6 +194,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
             dataStore: dataStore,
             config: config,
             privacyManager: privacyManager,
+            permissionsManager: permissionsManager,
             localeManager: localeManager,
             audienceManager: ChannelAudienceManager(
                 dataStore: dataStore,
@@ -464,6 +469,20 @@ extension AirshipChannel: AirshipPushableComponent {
             payload.channel.country = currentLocale.getRegionCode()
             payload.channel.timeZone = TimeZone.current.identifier
             payload.channel.sdkVersion = AirshipVersion.version
+        }
+        
+        if self.privacyManager.isEnabled(.tagsAndAttributes) {
+            var permissions: [String: String] = [:]
+            
+            for permission in self.permissionsManager.configuredPermissions {
+                let status = await self.permissionsManager.checkPermissionStatus(
+                    permission
+                )
+                if status != .notDetermined {
+                    permissions[permission.rawValue] = status.rawValue
+                }
+            }
+            payload.channel.permissions = permissions
         }
 
         return payload

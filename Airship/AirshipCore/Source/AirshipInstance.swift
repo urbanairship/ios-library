@@ -99,6 +99,7 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
             dataStore: dataStore,
             config: self.config,
             privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
             localeManager: self.localeManager,
             audienceOverridesProvider: audienceOverridesProvider
         )

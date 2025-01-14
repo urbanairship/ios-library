@@ -82,6 +82,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
         public var carrier: String?
         public var contactID: String?
         public var iOSChannelSettings: iOSChannelSettings?
+        public var permissions: [String: String]?
 
         enum CodingKeys: String, CodingKey {
             case deviceType = "device_type"
@@ -102,6 +103,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
             case contactID = "contact_id"
             case iOSChannelSettings = "ios"
             case isActive = "is_activity"
+            case permissions = "permissions"
         }
 
         fileprivate func minimize(previous: ChannelInfo?) -> ChannelInfo {
@@ -146,6 +148,10 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
                 if channel.carrier == previous.carrier {
                     channel.carrier = nil
                 }
+            }
+            
+            if previous.permissions == channel.permissions {
+                channel.permissions = nil
             }
 
             channel.iOSChannelSettings = channel.iOSChannelSettings?.minimize(
