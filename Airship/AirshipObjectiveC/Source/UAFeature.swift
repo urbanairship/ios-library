@@ -11,49 +11,86 @@ import AirshipCore
 public final class UAFeature: NSObject, OptionSet, Sendable {
     public let rawValue: UInt
 
+
+
     /// Bindings for `AirshipFeature.inAppAutomation`
     @objc
-    public static let inAppAutomation = UAFeature(rawValue: AirshipFeature.inAppAutomation.rawValue)
+    public static func inAppAutomation() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.inAppAutomation.rawValue)
+    }
 
     /// Bindings for `AirshipFeature.messageCenter`
     @objc
-    public static let messageCenter = UAFeature(rawValue: AirshipFeature.messageCenter.rawValue)
+    public static func messageCenter() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.messageCenter.rawValue)
+    }
 
     /// Bindings for `AirshipFeature.push`
     @objc
-    public static let push = UAFeature(rawValue: AirshipFeature.push.rawValue)
+    public static func push() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.push.rawValue)
+    }
 
     /// Bindings for `AirshipFeature.analytics`
     @objc
-    public static let analytics = UAFeature(rawValue: AirshipFeature.analytics.rawValue)
+    public static func analytics() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.analytics.rawValue)
+    }
 
     /// Bindings for `AirshipFeature.tagsAndAttributes`
     @objc
-    public static let tagsAndAttributes = UAFeature(rawValue: AirshipFeature.tagsAndAttributes.rawValue)
+    public static func tagsAndAttributes() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.tagsAndAttributes.rawValue)
+    }
 
     /// Bindings for `AirshipFeature.contacts`
     @objc
-    public static let contacts = UAFeature(rawValue: AirshipFeature.contacts.rawValue)
+    public static func contacts() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.contacts.rawValue)
+    }
 
     /// Bindings for `AirshipFeature.featureFlags`
     @objc
-    public static let featureFlags = UAFeature(rawValue: AirshipFeature.featureFlags.rawValue)
+    public static func featureFlags() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.featureFlags.rawValue)
+    }
 
     /// All features
     @objc
-    public static let all: UAFeature = [
-        inAppAutomation,
-        messageCenter,
-        push,
-        analytics,
-        tagsAndAttributes,
-        contacts,
-        featureFlags
-    ]
+    public static func all() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.all.rawValue)
+    }
+
+    @objc
+    public static func none() -> UAFeature {
+        return UAFeature(rawValue: 0)
+    }
+
+    @objc
+    public convenience init(from: [UAFeature]) {
+        self.init(from)
+    }
+
+    @objc(contains:)
+    public func _contains(_ feature: UAFeature) -> Bool {
+        return self.contains(feature)
+    }
 
     public init(rawValue: UInt) {
         self.rawValue = rawValue
     }
+
+    public override var hash: Int {
+          return Int(rawValue)
+      }
+
+      public override func isEqual(_ object: Any?) -> Bool {
+          guard let that = object as? UAFeature else {
+              return false
+          }
+
+          return rawValue == that.rawValue
+      }
 }
 
 extension UAFeature {
