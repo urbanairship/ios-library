@@ -1,6 +1,25 @@
 
 # iOS Changelog
 
+## Version 19.0.0 January 16, 2025
+Major SDK release with several breaking changes. see the [Migration Guide](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration/migration-guide-18-19.md) for more info.
+
+### Changes
+- Xcode 16.2+ is now required.
+- Updated min versions to iOS 15+ & tvOS 18+.
+- Migrated all modules to Swift 6.
+- Objective-C support has been moved into AirshipObjectiveC framework freeing the SDK to expose Swift only APIs.
+- Updated several APIs to use structs instead of classes.
+- AppIntegration and PushNotificationDelegate expose async methods instead of completion handlers.
+- Airship.takeOff can now throw instead of silently failing for better error handling.
+- New CustomEvent template APIs.
+- Remove unused NotificationContent extension.
+- Fixed Scene animation when the device screen orientation changes with auto-height modals.
+- Added support for wrapping score views in Scenes.
+- Added support for Preference Center and Feature Flags to tvOS.
+- Added support for Feature Flag experimentation.
+
+
 ## Version 18.14.2 January 9, 2025
 Patch release to fix extra spacing in a Banner In-App Automations if its missing the heading or body.
 
