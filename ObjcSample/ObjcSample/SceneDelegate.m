@@ -1,6 +1,9 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "SceneDelegate.h"
+#import "HomeViewController.h"
+#import "MessageCenterViewController.h"
+#import "PreferenceCenterViewController.h"
 
 @interface SceneDelegate ()
 
@@ -9,12 +12,40 @@
 @implementation SceneDelegate
 
 
-- (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions {
-    // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-    // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-    // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-}
+- (void)scene:(UIScene *)scene
+willConnectToSession:(UISceneSession *)session
+      options:(UISceneConnectionOptions *)connectionOptions {
 
+    self.window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
+
+    UIViewController *homeVC = [[HomeViewController alloc] init];
+    homeVC.title = @"Message Center";
+
+    UIViewController *messageCenterVC = [[MessageCenterViewController alloc] init];
+    messageCenterVC.title = @"Message Center";
+
+    UIViewController *preferenceCenterVC = [[PreferenceCenterViewController alloc] init];
+    preferenceCenterVC.title = @"Preference Center";
+
+    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    tabBarController.viewControllers = @[homeVC, messageCenterVC, preferenceCenterVC];
+
+    homeVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Home"
+                                                      image:[UIImage systemImageNamed:@"house"]
+                                              selectedImage:[UIImage systemImageNamed:@"house.fill"]];
+
+    messageCenterVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Message Center"
+                                                               image:[UIImage systemImageNamed:@"tray"]
+                                                       selectedImage:[UIImage systemImageNamed:@"tray.fill"]];
+
+    preferenceCenterVC.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"Preference Center"
+                                                                  image:[UIImage systemImageNamed:@"gear"]
+                                                          selectedImage:[UIImage systemImageNamed:@"gearshape.fill"]];
+
+    self.window.rootViewController = tabBarController;
+
+    [self.window makeKeyAndVisible];
+}
 
 - (void)sceneDidDisconnect:(UIScene *)scene {
     // Called as the scene is being released by the system.

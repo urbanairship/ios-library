@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 #import "AppDelegate.h"
 
@@ -24,7 +24,6 @@
     UAirship.deepLinkDelegate = self;
 
     UAMessageCenter *messageCenter = [UAMessageCenter new];
-    [messageCenter display];
     messageCenter.displayDelegate = self;
 
     UAPush *push = [UAPush new];
@@ -39,6 +38,7 @@
 }
 
 #pragma mark - UISceneSession lifecycle
+
 
 - (UISceneConfiguration *)application:(UIApplication *)application
     configurationForConnectingSceneSession:

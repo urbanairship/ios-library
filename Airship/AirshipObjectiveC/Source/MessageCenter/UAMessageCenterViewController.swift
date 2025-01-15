@@ -36,6 +36,7 @@ public final class UAMessageCenterViewControllerFactory: NSObject, Sendable {
         return MessageCenterViewControllerFactory.make(theme: airshipTheme, predicate: wrapper, controller: MessageCenterController())
     }
     
+
     @objc
     /// Makes a message view controller with the given theme.
     /// - Parameters:
@@ -65,7 +66,37 @@ public final class UAMessageCenterViewControllerFactory: NSObject, Sendable {
         }
         return try MessageCenterViewControllerFactory.make(themePlist: themePlist, controller: MessageCenterController())
     }
-    
+
+    @objc
+    /// Embeds the message center view in another view.
+    /// - Parameters:
+    ///   - theme: The message center theme.
+    ///   - predicate: The message center predicate.
+    ///   - parentViewController: The parent view controller into which we'll embed the message center.
+    /// - Returns: A UIView to be added into another view.
+    @MainActor
+    public class func embed(
+        theme: UAMessageCenterTheme? = nil,
+        predicate: (any UAMessageCenterPredicate)? = nil,
+        in parentViewController: UIViewController
+    ) -> UIView {
+        let childVC = self.make(theme: theme, predicate: predicate)
+        parentViewController.addChild(childVC)
+
+        let containerView = UIView(frame: .zero)
+        containerView.addSubview(childVC.view)
+        childVC.view.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            childVC.view.topAnchor.constraint(equalTo: containerView.topAnchor),
+            childVC.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            childVC.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            childVC.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+        ])
+        childVC.didMove(toParent: parentViewController)
+        return containerView
+    }
+
     private class func toAirshipTheme(theme: UAMessageCenterTheme) -> MessageCenterTheme {
         return MessageCenterTheme(
             refreshTintColor: UAMessageCenterViewControllerFactory.toColor(color: theme.refreshTintColor),
