@@ -134,7 +134,7 @@ jobs:
     permissions:
       contents: write
     runs-on: macos-15-xlarge
-    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-content-extension, run-tests-service-extension, build-package, build-samples]
+    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-service-extension, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -179,7 +179,7 @@ jobs:
 
   deploy-pods:
     runs-on: macos-15-xlarge
-    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-content-extension, run-tests-service-extension, build-package, build-samples]
+    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-service-extension, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -200,7 +200,7 @@ jobs:
 
   deploy-docs:
     runs-on: macos-15-xlarge
-    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-content-extension, run-tests-service-extension, build-package, build-samples]
+    needs: [run-tests-core, run-tests-preference-center, run-tests-message-center, run-tests-automation, run-tests-feature-flags, run-tests-service-extension, build-package, build-samples]
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
