@@ -10,6 +10,10 @@ import AirshipCore
 @objc
 public final class UAAnalytics: NSObject, Sendable {
 
+    override init() {
+        super.init()
+    }
+    
     /// The current session ID.
     @objc
     public var sessionID: String {

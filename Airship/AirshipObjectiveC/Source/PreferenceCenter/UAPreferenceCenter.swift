@@ -37,8 +37,11 @@ fileprivate final class UAPreferenceCenterOpenDelegateWrapper: NSObject, Prefere
 @objc
 public final class UAPreferenceCenter: NSObject, Sendable {
 
-    @MainActor
-    private let storage = Storage()
+    private let storage: Storage = Storage()
+
+    override init() {
+        super.init()
+    }
 
     /**
      * Open delegate.
@@ -95,9 +98,11 @@ public final class UAPreferenceCenter: NSObject, Sendable {
         return try await Airship.preferenceCenter.jsonConfig(preferenceCenterID: preferenceCenterID)
     }
 
-    @MainActor
-    fileprivate final class Storage  {
+    fileprivate final class Storage: Sendable {
+        @MainActor
         var openDelegate: (any PreferenceCenterOpenDelegate)?
+
+        init() {}
     }
 }
 

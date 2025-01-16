@@ -21,6 +21,10 @@ import AirshipCore
 @objc
 public final class UAPrivacyManager: NSObject, Sendable {
 
+    override init() {
+        super.init()
+    }
+    
     /// The current set of enabled features.
     @objc(enabledFeatures)
     public var enabledFeatures: UAFeature {

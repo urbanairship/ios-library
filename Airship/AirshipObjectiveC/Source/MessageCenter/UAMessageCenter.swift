@@ -42,9 +42,12 @@ public protocol UAMessageCenterPredicate: Sendable {
 @objc
 public final class UAMessageCenter: NSObject, Sendable {
 
-    @MainActor
-    private let storage = Storage()
-    
+    private let storage: Storage = Storage()
+
+    override init() {
+        super.init()
+    }
+
 
     /// Message center display delegate.
     @objc
@@ -120,9 +123,12 @@ public final class UAMessageCenter: NSObject, Sendable {
         Airship.messageCenter.dismiss()
     }
 
-    @MainActor
-    fileprivate final class Storage  {
+
+    fileprivate final class Storage: Sendable  {
+        @MainActor
         var displayDelegate: (any MessageCenterDisplayDelegate)?
+
+        init() {}
     }
 
 }

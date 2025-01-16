@@ -11,6 +11,10 @@ import AirshipCore
 @objc
 public final class UAContact: NSObject, Sendable {
 
+    override init() {
+        super.init()
+    }
+
     /// Identifies the contact.
     /// - Parameter namedUserID: The named user ID.
     @objc

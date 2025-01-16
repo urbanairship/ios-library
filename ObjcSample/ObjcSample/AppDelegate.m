@@ -22,17 +22,13 @@
 
     [UAirship takeOff:cfg launchOptions:launchOptions error: nil];
     UAirship.deepLinkDelegate = self;
+    UAirship.messageCenter.displayDelegate = self;
 
-    UAMessageCenter *messageCenter = [UAMessageCenter new];
-    messageCenter.displayDelegate = self;
+    UAirship.push.notificationOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
+    UAirship.push.defaultPresentationOptions = UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionList ;
+    UAirship.push.autobadgeEnabled = YES;
 
-    UAPush *push = [UAPush new];
-    push.notificationOptions = UNNotificationPresentationOptionList | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound;
-    push.defaultPresentationOptions = UNNotificationPresentationOptionSound | UNNotificationPresentationOptionBanner | UNNotificationPresentationOptionList ;
-    push.autobadgeEnabled = YES;
-
-    UAPreferenceCenter *pc = [UAPreferenceCenter new];
-    pc.openDelegate = self;
+    UAirship.preferenceCenter.openDelegate = self;
 
     return YES;
 }

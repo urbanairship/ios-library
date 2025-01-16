@@ -12,8 +12,11 @@ import AirshipCore
 @objc
 public final class UAPush: NSObject, Sendable {
 
-    @MainActor
     private let storage = Storage()
+
+    override init() {
+        super.init()
+    }
 
     /// Enables/disables background remote notifications on this device through Airship.
     /// Defaults to `true`.
@@ -301,10 +304,14 @@ public final class UAPush: NSObject, Sendable {
         Airship.push.setQuietTimeStartHour(startHour, startMinute: startMinute, endHour: endHour, endMinute: endMinute)
     }
 
-    @MainActor
-    fileprivate final class Storage  {
+    fileprivate final class Storage: Sendable  {
+        @MainActor
         var registrationDelegate: (any RegistrationDelegate)?
+
+        @MainActor
         var pushNotificationDelegate: (any PushNotificationDelegate)?
+
+        init() {}
     }
 }
 

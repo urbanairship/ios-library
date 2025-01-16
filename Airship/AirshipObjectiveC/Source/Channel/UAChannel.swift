@@ -9,6 +9,10 @@ import AirshipCore
 @objc
 public final class UAChannel: NSObject, Sendable {
 
+    override init() {
+        super.init()
+    }
+
     @objc
     public var identifier: String? {
         return Airship.channel.identifier

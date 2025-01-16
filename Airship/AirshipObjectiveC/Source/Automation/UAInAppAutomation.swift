@@ -13,6 +13,10 @@ import AirshipAutomation
 @objc
 public final class UAInAppAutomation: NSObject, Sendable {
 
+    override init() {
+        super.init()
+    }
+    
     /// In-App messaging
     @objc
     public let inAppMessaging: UAInAppMessaging = UAInAppMessaging()
