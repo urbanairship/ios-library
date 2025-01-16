@@ -115,7 +115,7 @@ view:
                                             hex: "#FFFFFF"
                                             alpha: 0
                                     text_appearance:
-                                      font_size: 14
+                                      font_size: 10
                                       color:
                                         default:
                                           hex: "#000000"
@@ -128,7 +128,7 @@ view:
                                             hex: "#000000"
                                             alpha: 1
                                     text_appearance:
-                                      font_size: 14
+                                      font_size: 10
                                       color:
                                         default:
                                           hex: "#ffffff"
@@ -260,7 +260,7 @@ view:
                                             hex: "#FFFFFF"
                                             alpha: 0
                                     text_appearance:
-                                      font_size: 42
+                                      font_size: 88
                                       color:
                                         default:
                                           hex: "#000000"
@@ -273,7 +273,7 @@ view:
                                             hex: "#000000"
                                             alpha: 1
                                     text_appearance:
-                                      font_size: 42
+                                      font_size: 88
                                       color:
                                         default:
                                           hex: "#ffffff"
@@ -384,7 +384,7 @@ view:
                                             hex: "#FFFFFF"
                                             alpha: 0
                                     text_appearance:
-                                      font_size: 14
+                                      font_size: 42
                                       color:
                                         default:
                                           hex: "#000000"
@@ -397,7 +397,7 @@ view:
                                             hex: "#000000"
                                             alpha: 1
                                     text_appearance:
-                                      font_size: 14
+                                      font_size: 42
                                       color:
                                         default:
                                           hex: "#ffffff"

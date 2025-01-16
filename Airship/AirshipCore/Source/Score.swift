@@ -37,10 +37,6 @@ struct Score: View {
         switch self.info.properties.style {
         case .numberRange(let style):
             if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *), style.wrapping != nil {
-                let minTappableSize = CGSize(
-                    width: max(constraints.width ?? 0, 44),
-                    height: max(constraints.height ?? 0, 44)
-                )
                 let itemSpacing = CGFloat(style.spacing ?? 0)
                 let lineSpacing = CGFloat(style.wrapping?.lineSpacing ?? 0)
                 let maxItemsPerLine = style.wrapping?.maxItemsPerLine
@@ -50,15 +46,6 @@ struct Score: View {
                     lineSpacing: lineSpacing,
                     maxItemsPerLine: maxItemsPerLine
                 ) {
-                    let constraints = ViewConstraints(
-                        width: max(minTappableSize.width, constraints.width ?? 0),
-                        height: max(minTappableSize.height, constraints.height ?? 0),
-                        maxWidth: constraints.maxWidth,
-                        maxHeight: constraints.maxHeight,
-                        isHorizontalFixedSize: constraints.isHorizontalFixedSize,
-                        isVerticalFixedSize: constraints.isVerticalFixedSize,
-                        safeAreaInsets: constraints.safeAreaInsets
-                    )
                     makeNumberRangeScoreItems(style: style, constraints: constraints)
                 }
             } else {
@@ -150,7 +137,6 @@ struct Score: View {
     }
 }
 
-
 private struct AirshipNumberRangeToggleStyle: ToggleStyle {
     let style: ThomasViewInfo.Score.ScoreStyle.NumberRange
     let viewConstraints: ViewConstraints
@@ -160,6 +146,34 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn
+
+        // Pick which text appearance we should use
+        let selectedAppearance = style.bindings.selected.textAppearance
+        let unselectedAppearance = style.bindings.unselected.textAppearance
+        let appearance = isOn ? selectedAppearance : unselectedAppearance
+
+        let measuredSize = measureTextSize("\(style.end)", with: appearance)
+
+        let minTappableDimension: CGFloat = 44.0
+
+        let fontMetrics = UIFontMetrics.default
+        let scaledWidthSpacing = fontMetrics.scaledValue(for: measuredSize.width)
+        let scaledHeightSpacing = fontMetrics.scaledValue(for: measuredSize.height)
+
+        let minWidth = max(minTappableDimension, measuredSize.width + scaledWidthSpacing)
+        let minHeight = max(minTappableDimension, measuredSize.height + scaledHeightSpacing)
+
+        let maxDimension = max(minWidth, minHeight)
+
+        /// Inject new constraints
+        let viewConstraints = ViewConstraints(width: maxDimension,
+                                              height: maxDimension,
+                                              maxWidth: viewConstraints.maxWidth,
+                                              maxHeight: viewConstraints.maxHeight,
+                                              isHorizontalFixedSize: viewConstraints.isHorizontalFixedSize,
+                                              isVerticalFixedSize: viewConstraints.isVerticalFixedSize,
+                                              safeAreaInsets: viewConstraints.safeAreaInsets)
+
         return Button(action: { configuration.isOn.toggle() }) {
             ZStack {
                 // Drawing both with 1 hidden in case the content size changes between the two
@@ -179,9 +193,10 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         .textAppearance(style.bindings.selected.textAppearance)
                 }
                 .opacity(isOn ? 1 : 0)
-                .airshipApplyIf(disabled) {  view in
+                .airshipApplyIf(disabled) { view in
                     view.colorMultiply(ThomasConstants.disabledColor)
                 }
+
                 Group {
                     if let shapes = style.bindings.unselected.shapes {
                         ForEach(0..<shapes.count, id: \.self) { index in
@@ -201,10 +216,27 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
             }
             .aspectRatio(1, contentMode: .fit)
         }
-        .frame(height: self.viewConstraints.height)
         .animation(Animation.easeInOut(duration: 0.05), value: configuration.isOn)
 #if os(tvOS)
         .buttonStyle(TVButtonStyle())
 #endif
+    }
+
+    private func measureTextSize(_ text: String, with appearance: ThomasTextAppearance?) -> CGSize {
+        guard let appearance = appearance else {
+            return CGSizeZero
+        }
+
+        let font = UIFont.resolveUIFont(appearance)
+        return (text as NSString).size(withAttributes: [.font: font])
+    }
+
+    private func measureTextHeight(_ text: String, with appearance: ThomasTextAppearance?) -> CGFloat {
+        guard let appearance = appearance else {
+            return 0
+        }
+
+        let font = UIFont.resolveUIFont(appearance)
+        return (text as NSString).size(withAttributes: [.font: font]).height
     }
 }

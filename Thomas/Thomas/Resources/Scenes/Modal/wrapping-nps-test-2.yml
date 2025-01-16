@@ -132,8 +132,8 @@ view:
 
     # Score 3 (97 - 105)
     - size:
-        width: auto
-        height: 32
+        width: 90%
+        height: auto
       margin:
         top: 8
         bottom: 8
@@ -150,8 +150,11 @@ view:
           style:
             type: number_range
             spacing: 8
-            start: 97
-            end: 105
+            wrapping:
+              line_spacing: 10
+              max_items_per_line: 11
+            start: 994
+            end: 1000
             bindings:
               selected:
                 shapes:
