@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
     s.homepage                = "https://www.airship.com"
     s.license                 = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
     s.author                  = { "Airship" => "support@airship.com" }
-    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
+    s.source                  = { :git => "https://github.com/urbanairship/ios-library.git", :tag => '19.0.0.1' }
     s.source_files            = "AirshipExtensions/AirshipNotificationServiceExtension/Source/**/*.{swift}"
     s.weak_frameworks         = "UserNotifications"
     s.module_name             = "AirshipServiceExtension"
