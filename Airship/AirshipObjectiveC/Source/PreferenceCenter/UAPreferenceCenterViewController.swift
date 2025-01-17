@@ -6,8 +6,9 @@ public import UIKit
 #if canImport(AirshipCore)
 import AirshipPreferenceCenter
 import AirshipCore
-import SwiftUICore
 #endif
+
+import SwiftUICore
 
 /// Preference Center view controller factory
 @objc

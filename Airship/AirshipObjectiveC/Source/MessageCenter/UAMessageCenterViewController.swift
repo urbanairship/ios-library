@@ -6,8 +6,9 @@ public import UIKit
 #if canImport(AirshipCore)
 import AirshipMessageCenter
 import AirshipCore
-import SwiftUICore
 #endif
+
+import SwiftUICore
 
 /// Message Center view controller factory
 @objc
