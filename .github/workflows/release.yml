@@ -151,12 +151,12 @@ jobs:
           NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
       - name: Download zip distribution
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: airship
           path: ./build
       - name: Download Carthage zip distribution
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: airship-carthage
           path: ./build
@@ -208,7 +208,7 @@ jobs:
         run: |
           echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Download docs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4.1.7
         with:
           name: docs
           path: ./build/Documentation
