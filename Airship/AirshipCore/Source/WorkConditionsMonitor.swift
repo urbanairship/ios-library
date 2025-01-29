@@ -24,8 +24,8 @@ struct WorkConditionsMonitor: @unchecked Sendable {
             conditionsSubject.send()
         }
 
-        Task { [conditionsSubject] in
-            for await _ in await networkMonitor.connectionUpdates {
+        Task { @MainActor [conditionsSubject] in
+            for await _ in networkMonitor.connectionUpdates {
                 conditionsSubject.send()
             }
         }
