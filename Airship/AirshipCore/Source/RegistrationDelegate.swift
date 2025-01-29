@@ -15,6 +15,7 @@ public protocol RegistrationDelegate: AnyObject {
     ///   - authorizedSettings: The settings that were authorized at the time of registration.
     ///   - categories: Set of the categories that were most recently registered.
     ///   - status: The authorization status.
+    @MainActor
     func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
             AirshipAuthorizedNotificationSettings,
@@ -28,6 +29,7 @@ public protocol RegistrationDelegate: AnyObject {
     /// - Parameters:
     ///   - authorizedSettings: The settings that were authorized at the time of registration.
     ///   - status: The authorization status.
+    @MainActor
     func notificationRegistrationFinished(
         withAuthorizedSettings authorizedSettings:
             AirshipAuthorizedNotificationSettings,
@@ -37,6 +39,7 @@ public protocol RegistrationDelegate: AnyObject {
     /// Called when notification authentication changes with the new authorized settings.
     ///
     /// - Parameter authorizedSettings: AirshipAuthorizedNotificationSettings The newly changed authorized settings.
+    @MainActor
     func notificationAuthorizedSettingsDidChange(
         _ authorizedSettings: AirshipAuthorizedNotificationSettings
     )
@@ -45,6 +48,7 @@ public protocol RegistrationDelegate: AnyObject {
     /// delegate method is called.
     ///
     /// - Parameter deviceToken: The APNS device token.
+    @MainActor
     func apnsRegistrationSucceeded(
         withDeviceToken deviceToken: Data
     )
@@ -53,6 +57,7 @@ public protocol RegistrationDelegate: AnyObject {
     /// delegate method is called.
     ///
     /// - Parameter error: An NSError object that encapsulates information why registration did not succeed.
+    @MainActor
     func apnsRegistrationFailedWithError(_ error: any Error)
 }
 
