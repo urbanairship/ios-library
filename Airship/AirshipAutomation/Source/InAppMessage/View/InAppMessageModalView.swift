@@ -42,7 +42,12 @@ struct InAppMessageModalView: View {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: theme.media)
+            if shouldRemoveMediaTopPadding {
+                MediaView(mediaInfo: media, mediaTheme: theme.media)
+                    .padding(.top, -theme.padding.top)
+            } else {
+                MediaView(mediaInfo: media, mediaTheme: theme.media)
+            }
         }
     }
 
@@ -76,11 +81,22 @@ struct InAppMessageModalView: View {
         self.theme = theme
     }
 
+    var shouldRemoveMediaTopPadding: Bool {
+        switch displayContent.template {
+        case .headerMediaBody:
+            displayContent.heading == nil
+        case .headerBodyMedia:
+            displayContent.heading == nil && displayContent.body == nil
+        case .mediaHeaderBody, .none:
+            true
+        }
+    }
+
     @ViewBuilder
     private var content: some View {
-        VStack(spacing:24) {
+        VStack(spacing: 24) {
             ScrollView {
-                VStack(spacing:24) {
+                VStack(spacing: 24) {
                     switch displayContent.template {
                     case .headerMediaBody:
                         headerView
@@ -91,7 +107,9 @@ struct InAppMessageModalView: View {
                         bodyView
                         mediaView
                     case .mediaHeaderBody, .none:
-                        mediaView.padding(.top, -theme.padding.top) /// Remove top padding when media is on top
+                        if displayContent.media != nil {
+                            mediaView
+                        }
                         headerView
                         bodyView
                     }

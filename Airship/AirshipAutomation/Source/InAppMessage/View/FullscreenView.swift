@@ -35,7 +35,12 @@ struct FullscreenView: View, Sendable {
     @ViewBuilder
     private var mediaView: some View {
         if let media = displayContent.media {
-            MediaView(mediaInfo: media, mediaTheme: self.theme.media)
+            if shouldRemoveMediaTopPadding {
+                MediaView(mediaInfo: media, mediaTheme: theme.media)
+                    .padding(.top, -theme.padding.top)
+            } else {
+                MediaView(mediaInfo: media, mediaTheme: theme.media)
+            }
         }
     }
 
@@ -57,6 +62,18 @@ struct FullscreenView: View, Sendable {
         }
     }
 
+
+    var shouldRemoveMediaTopPadding: Bool {
+        switch displayContent.template {
+        case .headerMediaBody:
+            displayContent.heading == nil
+        case .headerBodyMedia:
+            displayContent.heading == nil && displayContent.body == nil
+        case .mediaHeaderBody, .none:
+            true
+        }
+    }
+
     var body: some View {
             ScrollView {
                 VStack(spacing:24) {
@@ -70,7 +87,7 @@ struct FullscreenView: View, Sendable {
                         bodyView
                         mediaView
                     case .mediaHeaderBody, .none:
-                        mediaView.padding(.top, -theme.padding.top) /// Remove top padding when media is on top
+                        mediaView
                         headerView
                         bodyView
                     }
