@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="18.14.2"
+AIRSHIP_VERSION="18.14.3"
 
 Pod::Spec.new do |s|
     s.version                 = AIRSHIP_VERSION
