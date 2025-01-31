@@ -1,0 +1,429 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 100%
+      height: 95%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        hex: "#444444"
+        alpha: .3
+view:
+  type: pager_controller
+  identifier: "pager-controller-id"
+  branching:
+    pager_completions:
+    - when_state_matches:
+        value: 
+          equals: 
+          - "is-complete"
+        scope:
+        - $form
+  view:
+    type: container
+    background_color:
+      default:
+        hex: "#FFFFFF"
+        alpha: 1
+    items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        height: auto
+        width: 100%
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+        - size:
+            height: auto
+            width: 100%
+          margin:
+            top: 16
+            start: 16
+            end: 16
+          view:
+            type: label
+            text: Take a spin
+            text_appearance:
+              alignment: center
+              styles:
+              - bold
+              font_size: 18
+              color:
+                default:
+                  hex: "#000000"
+        - size:
+            height: 250
+            width: 100%
+          margin:
+            start: 64
+            end: 64
+            top: 16
+            bottom: 16
+          view:
+            type: pager
+            items:
+            - identifier: "start-page"
+              branching:
+                next_page:
+                  selectors:
+                  - when_state_matches:
+                      value: 
+                        equals: "cats"
+                      scope:
+                      - next_page
+                    page_id: page-cats-1
+                  - when_state_matches:
+                      value: 
+                        equals: "dogs"
+                      scope:
+                      - next_page
+                    page_id: page-dogs-1
+              view:
+                type: linear_layout
+                background_color:
+                  default:
+                    hex: "#88FF0000"
+                direction: vertical
+                items:
+                - size:
+                    height: auto
+                    width: auto
+                  margin:
+                    start: 16
+                    end: 16
+                    top: 16
+                    bottom: 16
+                  view:
+                    type: label_button
+                    identifier: button_cats
+                    event_handlers:
+                    - type: tap
+                      state_actions:
+                      - type: set
+                        key: next_page
+                        value: cats
+                    background_color:
+                      default:
+                        hex: "#FFD600"
+                    label:
+                      type: label
+                      text_appearance:
+                        font_size: 10
+                        color:
+                          default:
+                            hex: "#333333"
+                        alignment: center
+                      text: 'I like cats'
+                    button_click: ["pager_next"]
+                - size:
+                    height: auto
+                    width: auto
+                  margin:
+                    start: 16
+                    end: 16
+                    top: 16
+                    bottom: 16
+                  view:
+                    type: label_button
+                    identifier: button_dogs
+                    event_handlers:
+                    - type: tap
+                      state_actions:
+                      - type: set
+                        key: next_page
+                        value: dogs
+                    background_color:
+                      default:
+                        hex: "#FFD600"
+                    label:
+                      type: label
+                      text_appearance:
+                        font_size: 10
+                        color:
+                          default:
+                            hex: "#333333"
+                        alignment: center
+                      text: 'I like dogs'
+                    button_click: ["pager_next"]
+            - identifier: "page-cats-1"
+              branching:
+                next_page:
+                  selectors:
+                  - page_id: page-cats-2
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: "#00FF00"
+                items:
+                - position:
+                    vertical: center
+                    horizontal: center
+                  size:
+                    height: auto
+                    width: auto
+                  view:
+                    type: label
+                    text: Cats page 1
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          hex: "#000000"
+                      font_size: 14
+            - identifier: "page-cats-2"
+              branching:
+                next_page:
+                  selectors:
+                  - page_id: page-cats-3
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: "#00FF00"
+                items:
+                - position:
+                    vertical: center
+                    horizontal: center
+                  size:
+                    height: auto
+                    width: auto
+                  view:
+                    type: label
+                    text: Cats page 2
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          hex: "#000000"
+                      font_size: 14
+            - identifier: "page-cats-3"
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: "#00FF00"
+                items:
+                - position:
+                    vertical: center
+                    horizontal: center
+                  size:
+                    height: auto
+                    width: auto
+                  view:
+                    type: label
+                    text: Cats page 3
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          hex: "#000000"
+                      font_size: 14
+            - identifier: "page-dogs-1"
+              branching:
+                next_page:
+                  selectors:
+                  - when_state_matches:
+                      value: 
+                        equals: "dogs"
+                      scope:
+                      - next_page
+                    page_id: page-dogs-2
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: "#0000FF"
+                items:
+                - position:
+                    vertical: center
+                    horizontal: center
+                  size:
+                    height: auto
+                    width: auto
+                  view:
+                    type: label
+                    text: Dogs page 1
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          hex: "#000000"
+                      font_size: 14
+            - identifier: "page-dogs-2"
+              branching:
+                next_page:
+                  selectors:
+                  - page_id: page-dogs-3
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: "#0000FF"
+                items:
+                - position:
+                    vertical: center
+                    horizontal: center
+                  size:
+                    height: auto
+                    width: auto
+                  view:
+                    type: label
+                    text: Dogs page 2
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          hex: "#000000"
+                      font_size: 14
+            - identifier: "page-dogs-3"
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: "#0000FF"
+                items:
+                - position:
+                    vertical: center
+                    horizontal: center
+                  size:
+                    height: auto
+                    width: auto
+                  view:
+                    type: label
+                    text: Dogs page 3
+                    text_appearance:
+                      alignment: center
+                      color:
+                        default:
+                          hex: "#000000"
+                      font_size: 14
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label
+            event_handlers:
+            - type: tap
+              state_actions:
+              - type: set
+                key: next_page
+                value: page-5
+            text_appearance:
+              font_size: 10
+              color:
+                default:
+                  hex: "#333333"
+              alignment: center
+            text: 'Unlock page 5'
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label_button
+            identifier: button1
+            background_color:
+              default:
+                hex: "#FFD600"
+            label:
+              type: label
+              text_appearance:
+                font_size: 10
+                color:
+                  default:
+                    hex: "#333333"
+                alignment: center
+              text: 'Next!'
+            button_click: ["pager_next"]
+            enabled: ["pager_next"]
+        - size:
+            height: auto
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: label_button
+            identifier: button1
+            background_color:
+              default:
+                hex: "#FFD600"
+            label:
+              type: label
+              text_appearance:
+                font_size: 10
+                color:
+                  default:
+                    hex: "#333333"
+                alignment: center
+              text: 'Previous!'
+            button_click: ["pager_previous"]
+            enabled: ["pager_previous"]
+        - size:
+            height: 30
+            width: auto
+          margin:
+            start: 16
+            end: 16
+            top: 16
+            bottom: 16
+          view:
+            type: pager_indicator
+            spacing: 16
+            bindings:
+              selected:
+                shapes:
+                - type: ellipse
+                  aspect_ratio: 1
+                  color:
+                    default:
+                      hex: "#0000FF"
+                icon:
+                  icon: checkmark
+                  color:
+                    default:
+                      hex: "#ffffff"
+                      alpha: 1
+                  scale: .8
+              unselected:
+                shapes:
+                - type: rectangle
+                  aspect_ratio: 1
+                  border:
+                    stroke_color:
+                      default:
+                        hex: "#000000"
+                    stroke_width: 3
+                    radius: 4
+                  color:
+                    default:
+                      hex: "#FF0000"
+                icon:
+                  icon: close
+                  color:
+                    default:
+                      hex: "#ffffff"
+                      alpha: 1
+                  scale: .8
+

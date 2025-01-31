@@ -57,6 +57,11 @@ struct AirshipButton<Label> : View  where Label : View {
     private func doButtonActions() {
         let taps = self.eventHandlers?.filter { $0.type == .tap }
 
+        /// Tap handlers
+        taps?.forEach { tap in
+            handleStateActions(tap.stateActions)
+        }
+
         // Button reporting
         thomasEnvironment.buttonTapped(
             buttonIdentifier: self.identifier,
@@ -67,11 +72,6 @@ struct AirshipButton<Label> : View  where Label : View {
         // Buttons
         handleBehaviors(self.clickBehaviors ?? [])
         handleActions(self.actions)
-
-        /// Tap handlers
-        taps?.forEach { tap in
-            handleStateActions(tap.stateActions)
-        }
     }
 
     private func handleBehaviors(
@@ -98,10 +98,10 @@ struct AirshipButton<Label> : View  where Label : View {
                   )
 
             case .pagerNext:
-                pagerState.pageRequest = .next
+                pagerState.process(request: .next)
 
             case .pagerPrevious:
-                pagerState.pageRequest = .back
+                pagerState.process(request: .back)
 
             case .pagerNextOrDismiss:
                 if pagerState.isLastPage {
@@ -112,14 +112,14 @@ struct AirshipButton<Label> : View  where Label : View {
                         layoutState: layoutState
                     )
                 } else {
-                    pagerState.pageRequest = .next
+                    pagerState.process(request: .next)
                 }
 
             case .pagerNextOrFirst:
                 if pagerState.isLastPage {
-                    pagerState.pageRequest = .first
+                    pagerState.process(request: .first)
                 } else {
-                    pagerState.pageRequest = .next
+                    pagerState.process(request: .next)
                 }
 
             case .pagerPause:

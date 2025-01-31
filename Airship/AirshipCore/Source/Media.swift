@@ -14,7 +14,7 @@ struct Media: View {
     private var mediaID: UUID = UUID()
     private let defaultAspectRatio = 16.0 / 9.0
     @EnvironmentObject var pagerState: PagerState
-    @Environment(\.pageIndex) var pageIndex
+    @Environment(\.pageIdentifier) var pageIdentifier
 
     var videoAspectRatio: CGFloat {
         CGFloat(self.info.properties.video?.aspectRatio ?? defaultAspectRatio)
@@ -44,10 +44,10 @@ struct Media: View {
             MediaWebView(
                 info: self.info
             ) {
-                pagerState.setMediaReady(pageIndex: pageIndex, id: mediaID, isReady: true)
+                pagerState.setMediaReady(pageId: pageIdentifier, id: mediaID, isReady: true)
             }
             .onAppear {
-                pagerState.registerMedia(pageIndex: pageIndex, id: mediaID)
+                pagerState.registerMedia(pageId: pageIdentifier, id: mediaID)
             }
             .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
                 $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)

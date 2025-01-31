@@ -9,10 +9,16 @@ struct PagerController: View {
     @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
     @MainActor
-    init(info: ThomasViewInfo.PagerController, constraints: ViewConstraints) {
+    init(
+        info: ThomasViewInfo.PagerController,
+        constraints: ViewConstraints
+    ) {
         self.info = info
         self.constraints = constraints
-        self._pagerState = StateObject(wrappedValue: PagerState(identifier: info.properties.identifier))
+        self._pagerState = StateObject(wrappedValue: PagerState(
+            identifier: info.properties.identifier,
+            branching: info.properties.branching
+        ))
     }
 
     var body: some View {

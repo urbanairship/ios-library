@@ -24,7 +24,7 @@ private struct ButtonActionsEnabledKey: EnvironmentKey {
 }
 
 private struct PagerPageIndexKey: EnvironmentKey {
-    static let defaultValue: Int = -1
+    static let defaultValue: String = ""
 }
 
 
@@ -58,7 +58,7 @@ extension EnvironmentValues {
         set { self[ButtonActionsEnabledKey.self] = newValue }
     }
 
-    var pageIndex: Int {
+    var pageIdentifier: String {
         get { self[PagerPageIndexKey.self] }
         set { self[PagerPageIndexKey.self] = newValue }
     }

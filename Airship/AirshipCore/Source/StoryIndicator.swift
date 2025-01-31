@@ -31,15 +31,15 @@ struct StoryIndicator: View {
     ) -> some View {
         if (self.info.properties.source.type == .pager) {
 
-            let totalDelay = pagerState.pages.compactMap{ $0.delay }.reduce(0, +)
+            let totalDelay = pagerState.pageStates.compactMap{ $0.delay }.reduce(0, +)
             GeometryReader { metrics in
                 HStack(spacing: style.spacing ?? StoryIndicator.defaultSpacing) {
-                    ForEach(0..<self.pagerState.pages.count, id: \.self) { index in
+                    ForEach(0..<self.pagerState.pageStates.count, id: \.self) { index in
                         
                         let isCurrentPage = self.pagerState.pageIndex == index
                         let isCurrentPageProgressing = progressDelay.wrappedValue < 1
                         let delay = (isCurrentPage && isCurrentPageProgressing) ? progressDelay : nil
-                        let currentDelay = pagerState.pages[index].delay
+                        let currentDelay = pagerState.pageStates[index].delay
                         
                         createChild(
                             index: index,
@@ -53,7 +53,7 @@ struct StoryIndicator: View {
                         }
                     }
                 }.airshipApplyIf(announcePage(info: info), transform: { view in
-                    view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
+                    view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pageStates.count.airshipLocalizedForVoiceOver()))
                 })
             }
             
@@ -110,7 +110,7 @@ struct StoryIndicator: View {
             return self.style.progressColor.toColor(colorScheme)
         }
         
-        if pagerState.isLastPage && pagerState.progress >= 1 {
+        if pagerState.completed && pagerState.progress >= 1 {
             return self.style.progressColor.toColor(colorScheme)
         }
         

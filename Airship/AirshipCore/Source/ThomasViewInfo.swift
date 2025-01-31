@@ -718,12 +718,14 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             }
         }
 
-        struct Item: ThomasSerializable {
+        struct Item: ThomasSerializable, Identifiable {
             let identifier: String
             let view: ThomasViewInfo
             let displayActions: ThomasActionsPayload?
             let automatedActions: [ThomasAutomatedAction]?
             let accessibilityActions: [ThomasAccessibilityAction]?
+            let stateActions: [ThomasStateAction]?
+            let branching: ThomasPageBranching?
 
             enum CodingKeys: String, CodingKey {
                 case identifier = "identifier"
@@ -731,7 +733,11 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case displayActions = "display_actions"
                 case automatedActions = "automated_actions"
                 case accessibilityActions = "accessibility_actions"
+                case stateActions = "state_actions"
+                case branching
             }
+            
+            var id: String { return identifier }
         }
 
         indirect enum Gesture: ThomasSerializable {
@@ -1018,11 +1024,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let type: ViewType = .pagerController
             var view: ThomasViewInfo
             var identifier: String
+            let branching: ThomasPagerControllerBranching?
 
             enum CodingKeys: String, CodingKey {
                 case view = "view"
                 case identifier = "identifier"
                 case type
+                case branching
             }
         }
     }

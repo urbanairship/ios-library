@@ -175,7 +175,7 @@ public struct FormInputData {
         return AirshipJSON.object([:])
     }
 
-    private func getData() -> [String: Any]? {
+    func getData() -> [String: Any]? {
         switch self.value {
         case .toggle(let value):
             return [

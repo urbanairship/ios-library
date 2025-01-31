@@ -2,6 +2,7 @@
 
 import Foundation
 
+
 /// Predicate for JSON payloads.
 public final class JSONPredicate: NSObject, Sendable, Codable {
     private static let andTypeKey = "and"
@@ -149,6 +150,10 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         }
 
         return jsonMatcher?.payload() ?? [:]
+    }
+
+    public func evaluate(json: AirshipJSON) -> Bool {
+        return evaluate(json.unWrap())
     }
 
     /**

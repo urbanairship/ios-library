@@ -48,11 +48,11 @@ internal struct PagerNextButtonEnableBehavior: ViewModifier {
     func body(content: Content) -> some View {
         if let onApply = onApply {
             content.onReceive(self.pagerState.$pageIndex) { pageIndex in
-                onApply(pageIndex < (pagerState.pages.count - 1), .pagerNext)
+                onApply(pageIndex < (pagerState.pageStates.count - 1), .pagerNext)
             }
         } else {
             content.disabled(
-                pagerState.pageIndex >= (pagerState.pages.count - 1)
+                pagerState.pageIndex >= (pagerState.pageStates.count - 1)
             )
         }
     }

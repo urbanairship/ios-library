@@ -155,6 +155,7 @@
 		60C1DB102A8B743C00A1D3DA /* AirshipEmbeddedViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0C2A8B743B00A1D3DA /* AirshipEmbeddedViewManager.swift */; };
 		60C1DB112A8B743C00A1D3DA /* AirshipEmbeddedObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0D2A8B743B00A1D3DA /* AirshipEmbeddedObserver.swift */; };
 		60C1DB122A8B743C00A1D3DA /* EmbeddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60C1DB0E2A8B743C00A1D3DA /* EmbeddedView.swift */; };
+		60CE9BDE2D0B6A0900A8B625 /* ThomasPagerControllerBranching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CE9BDD2D0B6A0900A8B625 /* ThomasPagerControllerBranching.swift */; };
 		60D1D9B82B68FB6400EBE0A4 /* PreparedTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */; };
 		60D1D9BB2B6A53F000EBE0A4 /* PreparedTriggerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */; };
 		60D1D9BD2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */; };
@@ -1392,6 +1393,7 @@
 		60C1DB0C2A8B743B00A1D3DA /* AirshipEmbeddedViewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedViewManager.swift; sourceTree = "<group>"; };
 		60C1DB0D2A8B743B00A1D3DA /* AirshipEmbeddedObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedObserver.swift; sourceTree = "<group>"; };
 		60C1DB0E2A8B743C00A1D3DA /* EmbeddedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmbeddedView.swift; sourceTree = "<group>"; };
+		60CE9BDD2D0B6A0900A8B625 /* ThomasPagerControllerBranching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerControllerBranching.swift; sourceTree = "<group>"; };
 		60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedTrigger.swift; sourceTree = "<group>"; };
 		60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedTriggerTest.swift; sourceTree = "<group>"; };
 		60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTriggerProcessorTest.swift; sourceTree = "<group>"; };
@@ -4117,6 +4119,7 @@
 				6EED67632CDEE75D0087CDCB /* ThomasViewInfo.swift */,
 				6EED68282CE28C960087CDCB /* ThomasVisibilityInfo.swift */,
 				6EED67742CDEE8460087CDCB /* ThomasWindowSize.swift */,
+				60CE9BDD2D0B6A0900A8B625 /* ThomasPagerControllerBranching.swift */,
 			);
 			name = Types;
 			sourceTree = "<group>";
@@ -5615,6 +5618,7 @@
 				6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */,
 				6EED68332CE28FAC0087CDCB /* ThomasConstants.swift in Sources */,
 				A658DE0C2727020200007672 /* ImageButton.swift in Sources */,
+				60CE9BDE2D0B6A0900A8B625 /* ThomasPagerControllerBranching.swift in Sources */,
 				6E0F557F2AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */,
 				6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */,
 				6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */,

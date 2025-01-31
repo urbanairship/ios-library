@@ -53,7 +53,7 @@ struct PagerIndicator: View {
         )
 
         HStack(spacing: self.info.properties.spacing) {
-            ForEach(0..<self.pagerState.pages.count, id: \.self) { index in
+            ForEach(0..<self.pagerState.pageStates.count, id: \.self) { index in
                 if self.pagerState.pageIndex == index {
                     createChild(
                         binding: self.info.properties.bindings.selected,
@@ -72,7 +72,7 @@ struct PagerIndicator: View {
         .constraints(constraints)
         .thomasCommon(self.info)
         .airshipApplyIf(announcePage(info: self.info), transform: { view in
-            view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pages.count.airshipLocalizedForVoiceOver()))
+            view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pageStates.count.airshipLocalizedForVoiceOver()))
         })
     }
 }

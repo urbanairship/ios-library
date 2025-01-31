@@ -18,7 +18,7 @@ class ThomasEnvironment: ObservableObject {
 
     let defaultViewState = ViewState()
 
-    let defaultPagerState = PagerState(identifier: "")
+    let defaultPagerState = PagerState(identifier: "", branching: nil)
 
 
     @Published
@@ -339,15 +339,15 @@ extension PagerState {
     fileprivate func toPagerInfo(index: Int? = nil) -> ThomasPagerInfo {
         let index = index ?? self.pageIndex
         var pageId: String = ""
-        if index < self.pages.count {
-            pageId = self.pages[index].identifier
+        if index < self.pageStates.count {
+            pageId = self.pageStates[index].identifier
         }
 
         return ThomasPagerInfo(
             identifier: self.identifier,
             pageIndex: index,
             pageIdentifier: pageId,
-            pageCount: self.pages.count,
+            pageCount: self.pageStates.count,
             completed: self.completed
         )
     }
