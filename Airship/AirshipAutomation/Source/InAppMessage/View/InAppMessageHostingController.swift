@@ -96,9 +96,9 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         }
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewWillDisappear(_ animated: Bool) {
         subscription?.cancel()
+        super.viewWillDisappear(animated)
     }
 
     func createBannerConstraints() {
