@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 19.0.2 January 31, 2025
+Patch release to fix a crash caused by banner size changes during dismissal.
+
+### Changes
+- Fixed crash caused by banner size changes during dismissal.
+
 ## Version 19.0.1 January 29, 2025
 Patch release that fixes a crash when the device toggles airplane mode. Apps using 19.0.0 should update.
 
