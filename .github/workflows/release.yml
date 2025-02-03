@@ -151,12 +151,12 @@ jobs:
           NOTES="${NOTES//$'\r'/%0D}"
           echo ::set-output name=NOTES::"$NOTES"
       - name: Download zip distribution
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: airship
           path: ./build
       - name: Download Carthage zip distribution
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: airship-carthage
           path: ./build
