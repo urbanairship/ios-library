@@ -103,8 +103,8 @@ test-packages: setup
 
 .PHONY: pod-publish
 pod-publish: setup
-	bundle exec pod trunk push Airship.podspec
-	bundle exec pod trunk push AirshipServiceExtension.podspec
+	bundle exec pod trunk push Airship.podspec --allow-warnings
+	bundle exec pod trunk push AirshipServiceExtension.podspec --allow-warnings
 
 .PHONY: pod-lint
 pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
