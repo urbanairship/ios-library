@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency
-import Combine
+public import Combine
 import Foundation
 
 #if canImport(UIKit)
@@ -165,7 +165,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
             let provider = providers.first { $0.source == .contact }
             let updated = await provider?.setEnabled(remoteConfig?.fetchContactRemoteData ?? false)
             if (isUpdate || updated == true) {
-                self.enqueueRefreshTask()
+                await self.enqueueRefreshTask()
             }
         }
     }
@@ -204,7 +204,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         for provider in self.providers {
             if (provider.source == remoteDataInfo.source) {
                 if (await provider.notifyOutdated(remoteDataInfo: remoteDataInfo)) {
-                    enqueueRefreshTask()
+                    await enqueueRefreshTask()
                 }
                 return
             }
@@ -237,9 +237,10 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     }
 
     @objc
+    @MainActor
     private func enqueueRefreshTask() {
         self.refreshStatusSubjectMap.values.forEach { subject in
-            subject.send(.none)
+            subject.sendMainActor(.none)
         }
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
@@ -276,9 +277,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     
     private func handleRefreshTask() async throws -> AirshipWorkResult {
         guard self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: true) else {
-            self.providers.forEach { provider in
-                refreshResultSubject.send((provider.source, .skipped))
-                refreshStatusSubjectMap[provider.source]?.send(.success)
+            for provider in providers {
+                await refreshResultSubject.sendMainActor((provider.source, .skipped))
+                await refreshStatusSubjectMap[provider.source]?.sendMainActor(.success)
             }
             return .success
         }
@@ -303,12 +304,12 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
 
             var success: Bool = true
             for await (source, result) in group {
-                refreshResultSubject.send((source, result))
+                await refreshResultSubject.sendMainActor((source, result))
                 if (result == .failed) {
                     success = false
-                    refreshStatusSubjectMap[source]?.send(.failed)
+                    await refreshStatusSubjectMap[source]?.sendMainActor(.failed)
                 } else {
-                    refreshStatusSubjectMap[source]?.send(.success)
+                    await refreshStatusSubjectMap[source]?.sendMainActor(.success)
                 }
             }
 
@@ -321,7 +322,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
 
     public func forceRefresh() async {
         self.updateChangeToken()
-        enqueueRefreshTask()
+        await enqueueRefreshTask()
         let sources = self.providers.map { $0.source }
         for source in sources {
             await self.waitRefreshAttempt(source: source)
@@ -463,3 +464,6 @@ extension Sequence where Iterator.Element == RemoteDataPayload {
 fileprivate struct SendablePromise<O, E>: @unchecked Sendable where E : Error {
     let promise: Future<O,E>.Promise
 }
+
+
+

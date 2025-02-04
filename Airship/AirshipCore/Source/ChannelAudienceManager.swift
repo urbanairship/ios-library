@@ -174,18 +174,21 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
                 AudienceUpdate(subscriptionListUpdates: updates)
             )
 
-            updates.forEach {
-                switch $0.type {
-                case .subscribe:
-                    self.subscriptionListEditsSubject.send(
-                        .subscribe($0.listId)
-                    )
-                case .unsubscribe:
-                    self.subscriptionListEditsSubject.send(
-                        .unsubscribe($0.listId)
-                    )
+            Task { @MainActor in
+                updates.forEach {
+                    switch $0.type {
+                    case .subscribe:
+                        self.subscriptionListEditsSubject.send(
+                            .subscribe($0.listId)
+                        )
+                    case .unsubscribe:
+                        self.subscriptionListEditsSubject.send(
+                            .unsubscribe($0.listId)
+                        )
+                    }
                 }
             }
+
             self.enqueueTask()
         }
     }
