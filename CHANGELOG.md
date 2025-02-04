@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 19.0.3 February 4, 2025
+Patch release to fix a crash caused by combine subjects being updated from multiple queues.
+
+### Changes
+- Fixed a crash caused by combine subjects being updated from multiple queues
+
 ## Version 19.0.2 January 31, 2025
 Patch release to fix a crash caused by banner size changes during dismissal.
 
