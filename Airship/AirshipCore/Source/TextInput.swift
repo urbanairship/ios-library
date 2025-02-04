@@ -201,6 +201,16 @@ struct TextInput: View {
         }
     }
 
+    private func channelRegistration(text: String) -> FormInputData.ChannelRegistration? {
+        guard self.info.properties.inputType == .email,
+              let registration = self.info.properties.emailRegistration,
+              text.isEmpty == false
+        else {
+            return nil
+        }
+        return .email(text, registration)
+    }
+
     private func updateValue(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
 
@@ -213,6 +223,7 @@ struct TextInput: View {
             value: isEmailType ? .emailText(trimmed.isEmpty ? nil : trimmed) : .text(trimmed.isEmpty ? nil : trimmed),
             attributeName: self.info.properties.attributeName,
             attributeValue: trimmed.isEmpty ? nil : .string(trimmed),
+            channelRegistration: self.channelRegistration(text: trimmed),
             isValid: isValid
         )
         self.formState.updateFormInput(data)

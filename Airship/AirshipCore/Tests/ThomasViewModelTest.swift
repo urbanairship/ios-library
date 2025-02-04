@@ -924,6 +924,53 @@ final class ThomasViewModelTest: XCTestCase {
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
 
+    func testTextInputModelWithRegistrationCodable() throws {
+        let json = """
+        {
+          "background_color": {
+            "default": {
+              "type": "hex",
+              "hex": "#eae9e9",
+              "alpha": 1
+            }
+          },
+          "border": {
+            "radius": 2,
+            "stroke_width": 1,
+            "stroke_color": {
+              "default": {
+                "type": "hex",
+                "hex": "#63656b",
+                "alpha": 1
+              }
+            }
+          },
+          "type": "text_input",
+          "text_appearance": {
+            "alignment": "start",
+            "font_size": 14,
+            "color": {
+              "default": {
+                "type": "hex",
+                "hex": "#000000",
+                "alpha": 1
+              }
+            }
+          },
+          "identifier": "4e1a5c5f-a4cb-4599-a612-199e06aeaebd",
+          "input_type": "email",
+          "email_registration": {
+            "type": "double_opt_in",
+            "properties": {
+               "from": "iax"
+            }
+          },
+          "required": false
+        }
+        """
+        try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
+    }
+
     func testScoreStyleModelCodable() throws {
         let json = """
         {
@@ -2277,6 +2324,7 @@ final class ThomasViewModelTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasViewInfo.self)
     }
+    
 
     func testStateControllerModelCodable() throws {
         let json = """

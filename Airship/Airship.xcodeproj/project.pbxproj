@@ -312,6 +312,7 @@
 		6E2486F22898341400657CE4 /* ConditionsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F02898341400657CE4 /* ConditionsMonitor.swift */; };
 		6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */; };
 		6E2486FD2899C06100657CE4 /* PreferenceCenterViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */; };
+		6E25DD052D515F33009CF1A4 /* ThomasEmailRegistrationOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2FA28B2D515C5A005893E2 /* ThomasEmailRegistrationOptionsTest.swift */; };
 		6E2811682BE406A50040D928 /* FeatureFlagDeferredResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7EACD22AF4220E00DA286B /* FeatureFlagDeferredResolverTest.swift */; };
 		6E28116C2BE40E860040D928 /* FeatureFlagVariablesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E28116B2BE40E860040D928 /* FeatureFlagVariablesTest.swift */; };
 		6E29474B2AD47E15009EC6DD /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
@@ -343,6 +344,7 @@
 		6E2F5AB72A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */; };
 		6E2F5AB82A675ADC00CABD3D /* TestAudienceChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */; };
 		6E2F5ABA2A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */; };
+		6E2FA2892D51519B005893E2 /* ThomasEmailRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2FA2882D515189005893E2 /* ThomasEmailRegistrationOptions.swift */; };
 		6E34C4B12C7D4B6400B00506 /* ExecutionWindowProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34C4B02C7D4B6400B00506 /* ExecutionWindowProcessor.swift */; };
 		6E34C4B32C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E34C4B22C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift */; };
 		6E382C21276D3E990091A351 /* ThomasValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E382C20276D3E990091A351 /* ThomasValidationTests.swift */; };
@@ -1575,6 +1577,8 @@
 		6E2F5AB02A67434B00CABD3D /* FeatureFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlag.swift; sourceTree = "<group>"; };
 		6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAudienceChecker.swift; sourceTree = "<group>"; };
 		6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagsRemoteDataAccess.swift; sourceTree = "<group>"; };
+		6E2FA2882D515189005893E2 /* ThomasEmailRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEmailRegistrationOptions.swift; sourceTree = "<group>"; };
+		6E2FA28B2D515C5A005893E2 /* ThomasEmailRegistrationOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEmailRegistrationOptionsTest.swift; sourceTree = "<group>"; };
 		6E34C4B02C7D4B6400B00506 /* ExecutionWindowProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindowProcessor.swift; sourceTree = "<group>"; };
 		6E34C4B22C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindowProcessorTest.swift; sourceTree = "<group>"; };
 		6E382C20276D3E990091A351 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
@@ -2983,6 +2987,7 @@
 		6E1C9C38271E90D1009EF9EF /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
+				6E2FA28A2D515C56005893E2 /* Types */,
 				6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */,
 				6E382C20276D3E990091A351 /* ThomasValidationTests.swift */,
 				6ED040EA278B5D7C00FCF773 /* FormStateTest.swift */,
@@ -3130,6 +3135,14 @@
 				6E2E3CA42B32726400B8515B /* InAppMessageNativeBridgeExtensionTest.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		6E2FA28A2D515C56005893E2 /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				6E2FA28B2D515C5A005893E2 /* ThomasEmailRegistrationOptionsTest.swift */,
+			);
+			path = Types;
 			sourceTree = "<group>";
 		};
 		6E411CBD2538CA4100FEE4E8 /* Actions */ = {
@@ -4081,6 +4094,7 @@
 		6EED67642CDEE75D0087CDCB /* Types */ = {
 			isa = PBXGroup;
 			children = (
+				6E2FA2882D515189005893E2 /* ThomasEmailRegistrationOptions.swift */,
 				6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */,
 				6EED679D2CDEEAA90087CDCB /* AirshipLayout.swift */,
 				6EED681C2CE274290087CDCB /* ThomasAccessibilityAction.swift */,
@@ -5675,6 +5689,7 @@
 				60D3BCC62A152A0D00E07524 /* ExperimentManager.swift in Sources */,
 				6E15B72326CEC7030099C92D /* RemoteDataPayload.swift in Sources */,
 				6E91E43A28EF423400B6F25E /* WorkBackgroundTasks.swift in Sources */,
+				6E2FA2892D51519B005893E2 /* ThomasEmailRegistrationOptions.swift in Sources */,
 				6EED68042CE26E1A0087CDCB /* ThomasMargin.swift in Sources */,
 				6E664BDF26C4CD8700A2C8E5 /* FetchDeviceInfoAction.swift in Sources */,
 				3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */,
@@ -6090,6 +6105,7 @@
 				6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 				6E4007182A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift in Sources */,
 				6E4007142A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift in Sources */,
+				6E25DD052D515F33009CF1A4 /* ThomasEmailRegistrationOptionsTest.swift in Sources */,
 				6E1767F829B923D100D65F60 /* TestChannelAuthTokenAPIClient.swift in Sources */,
 				6E92ECA1284A79AB0038802D /* PromptPermissionActionTest.swift in Sources */,
 				6EC0CA722B4B897B00333A87 /* TestExperimentDataProvider.swift in Sources */,

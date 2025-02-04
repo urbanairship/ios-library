@@ -104,6 +104,11 @@ class FormState: ObservableObject {
 }
 
 public struct FormInputData {
+
+    enum ChannelRegistration {
+        case email(String, ThomasEmailRegistrationOptions)
+    }
+    
     private static let typeKey = "type"
     private static let valueKey = "value"
     private static let childrenKey = "children"
@@ -115,18 +120,21 @@ public struct FormInputData {
     let attributeName: ThomasAttributeName?
     let attributeValue: ThomasAttributeValue?
     let isValid: Bool
+    let channelRegistration: ChannelRegistration?
 
     init(
         _ identifier: String,
         value: FormValue,
         attributeName: ThomasAttributeName? = nil,
         attributeValue: ThomasAttributeValue? = nil,
+        channelRegistration: ChannelRegistration? = nil,
         isValid: Bool
     ) {
         self.identifier = identifier
         self.value = value
         self.attributeName = attributeName
         self.attributeValue = attributeValue
+        self.channelRegistration = channelRegistration
         self.isValid = isValid
     }
 
@@ -148,17 +156,30 @@ public struct FormInputData {
         return formData(identifier: identifier)?.value
     }
 
-    func attributes() -> [(ThomasAttributeName, ThomasAttributeValue)] {
+    var attributes: [(ThomasAttributeName, ThomasAttributeValue)] {
         var result: [(ThomasAttributeName, ThomasAttributeValue)] = []
-        if let attributeName = attributeName,
-            let attributeValue = attributeValue
-        {
+        if let attributeName, let attributeValue, isValid {
             result.append((attributeName, attributeValue))
         }
 
         if case let .form(_, _, children) = self.value {
             children.forEach { child in
-                result.append(contentsOf: child.attributes())
+                result.append(contentsOf: child.attributes)
+            }
+        }
+
+        return result
+    }
+
+    var channels: [ChannelRegistration] {
+        var result: [ChannelRegistration] = []
+        if let channelRegistration, isValid {
+            result.append(channelRegistration)
+        }
+
+        if case let .form(_, _, children) = self.value {
+            children.forEach { child in
+                result.append(contentsOf: child.channels)
             }
         }
 
