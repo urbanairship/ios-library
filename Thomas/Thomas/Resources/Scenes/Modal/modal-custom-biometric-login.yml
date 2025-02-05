@@ -61,8 +61,7 @@ view:
                     view:
                       type: custom_view
                       name: biometric_login_custom_view
-                      height: 720
-                      keys:
+                      properties:
                         login_description: "I'm a biometric login view in a glassmorphic style"
                       background_color:
                       selectors:

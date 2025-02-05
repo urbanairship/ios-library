@@ -61,8 +61,7 @@ view:
               view:
                 type: custom_view
                 name: camera_custom_view
-                height: 720
-                keys:
+                properties:
                     camera: "I'm a camera"
                 background_color:
                 selectors:

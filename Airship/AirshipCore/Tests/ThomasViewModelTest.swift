@@ -199,7 +199,7 @@ final class ThomasViewModelTest: XCTestCase {
         {
           "type": "custom_view",
           "name": "ad_custom_view",
-          "json": {
+          "properties": {
             "ad_type": "fashion"
           },
           "background_color": {
