@@ -24,11 +24,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return true
         }
 
-        CustomViewExampleHelper.registerWeatherView()
-        CustomViewExampleHelper.registerMapRouteView()
-        CustomViewExampleHelper.registerCameraView()
-        CustomViewExampleHelper.registerBiometricLoginView()
-
         Airship.inAppAutomation.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
             theme.maxWidth = 300
             theme.maxHeight = 300
