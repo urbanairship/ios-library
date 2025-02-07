@@ -5,7 +5,6 @@ import SwiftUI
 
 struct ModalView: View {
 
-    static let keyboardPadding = 1.0
     @Environment(\.colorScheme) var colorScheme
 
     let presentation: ThomasPresentationInfo.Modal
@@ -31,51 +30,23 @@ struct ModalView: View {
                 createModal(placement: placement, metrics: metrics)
             }
         }
-        .ignoreKeyboardSafeArea()
+        .ignoresSafeArea(ignoreKeyboardSafeArea ? [.keyboard] : [])
     }
 
-    #if !os(watchOS)
-    private func calculateKeyboardHeight(metrics: GeometryProxy) -> Double {
-        guard self.thomasEnvironment.keyboardHeight > 0 else { return 0.0 }
-        return self.thomasEnvironment.keyboardHeight
-            - metrics.safeAreaInsets.bottom + ModalView.keyboardPadding
-    }
-    #endif
-
-    private func calculateKeyboardOverlap(
-        placement: ThomasPresentationInfo.Modal.Placement,
-        keyboardHeight: Double,
-        containerHeight: Double,
-        contentHeight: Double
-    ) -> Double {
-
-        guard keyboardHeight > 0 else { return 0.0 }
-        guard containerHeight > 0, contentHeight > 0 else {
-            return keyboardHeight
-        }
-
-        switch placement.position?.vertical ?? .center {
-        case .center:
-            return max(
-                0,
-                keyboardHeight - ((containerHeight - contentHeight) / 2.0)
-            )
-        case .bottom:
-            return keyboardHeight
-        case .top:
-            return max(0, keyboardHeight - containerHeight + contentHeight)
-        }
+    private var ignoreKeyboardSafeArea: Bool {
+        presentation.ios?.keyboardAvoidance == .overTheTop
     }
 
     private func createModal(
         placement: ThomasPresentationInfo.Modal.Placement,
-        metrics: GeometryProxy) -> some View {
+        metrics: GeometryProxy
+    ) -> some View {
         let ignoreSafeArea = placement.ignoreSafeArea == true
         let safeAreaInsets =
             ignoreSafeArea
             ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
 
-        var alignment = Alignment(
+        let alignment = Alignment(
             horizontal: placement.position?.horizontal.alignment ?? .center,
             vertical: placement.position?.vertical.alignment ?? .center
         )
@@ -85,37 +56,21 @@ struct ModalView: View {
             safeAreaInsets: safeAreaInsets
         )
 
-        var contentConstraints = windowConstraints.contentConstraints(
+        let contentConstraints = windowConstraints.contentConstraints(
             placement.size,
             contentSize: self.contentSize,
             margin: placement.margin
         )
 
-        let windowHeight = windowConstraints.height ?? 0
-        let contentHeight = contentConstraints.height ?? contentSize?.height ?? 0
-        #if !os(watchOS)
-        let keyboardHeight = calculateKeyboardHeight(
-            metrics: metrics
-        )
-        var keyboardOffset = calculateKeyboardOverlap(
-            placement: placement,
-            keyboardHeight: keyboardHeight,
-            containerHeight: windowHeight,
-            contentHeight: contentHeight
-        )
-
-        // If the keyboard will push the content outside the screen,
-        // resize it and position it at the top
-        if (keyboardHeight + contentHeight) >= windowHeight {
-            alignment = Alignment(
-                horizontal: alignment.horizontal,
-                vertical: .top
-            )
-            keyboardOffset = 0
-            contentConstraints.height = windowHeight - keyboardHeight
+        var safeAreasToIgnore: SafeAreaRegions = []
+        if ignoreKeyboardSafeArea {
+            safeAreasToIgnore.insert(.keyboard)
         }
-        #endif
 
+        if ignoreSafeArea {
+            safeAreasToIgnore.insert(.container)
+        }
+        
         return VStack {
             ViewFactory.createView(
                 self.layout.view,
@@ -135,16 +90,13 @@ struct ModalView: View {
                 shadow: placement.shadow
             )
             .margin(placement.margin)
-            #if !os(watchOS)
-            .offset(y: -keyboardOffset)
-            #endif
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
         .background(
             modalBackground(placement)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         )
-        .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all) }
+        .ignoresSafeArea(safeAreasToIgnore)
         .opacity(self.contentSize == nil ? 0 : 1)
         .animation(nil, value: self.contentSize)
     }
@@ -160,7 +112,7 @@ struct ModalView: View {
 
                 Rectangle()
                     .foreground(placement.shade)
-                    .edgesIgnoringSafeArea(.all)
+                    .ignoresSafeArea(.all)
                     .airshipApplyIf(self.presentation.dismissOnTouchOutside == true) {
                         view in
                         // Add tap gesture outside of view to dismiss
@@ -174,7 +126,7 @@ struct ModalView: View {
                         .frame(height: reader.safeAreaInsets.bottom)
                 }
             }
-            .edgesIgnoringSafeArea(.all)
+            .ignoresSafeArea(.all)
         }
     }
 

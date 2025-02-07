@@ -20,6 +20,7 @@ struct WorkConditionsMonitor: @unchecked Sendable {
                 for: AppStateTracker.didEnterBackgroundNotification
             )
         )
+        .receive(on: RunLoop.main)
         .sink { [conditionsSubject] _ in
             conditionsSubject.send()
         }

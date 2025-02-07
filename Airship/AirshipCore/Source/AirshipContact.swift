@@ -618,16 +618,18 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
                 return
             }
 
-            updates.forEach {
-                switch $0.type {
-                case .subscribe:
-                    self.subscriptionListEditsSubject.send(
-                        .subscribe($0.listId, $0.scope)
-                    )
-                case .unsubscribe:
-                    self.subscriptionListEditsSubject.send(
-                        .unsubscribe($0.listId, $0.scope)
-                    )
+            Task { @MainActor in
+                updates.forEach {
+                    switch $0.type {
+                    case .subscribe:
+                        self.subscriptionListEditsSubject.send(
+                            .subscribe($0.listId, $0.scope)
+                        )
+                    case .unsubscribe:
+                        self.subscriptionListEditsSubject.send(
+                            .unsubscribe($0.listId, $0.scope)
+                        )
+                    }
                 }
             }
 

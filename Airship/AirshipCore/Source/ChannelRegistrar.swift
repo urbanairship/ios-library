@@ -216,9 +216,11 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
                 )
             )
 
-            self.updatesSubject.send(
-                .updated(channelID: channelID)
-            )
+            Task { @MainActor in
+                self.updatesSubject.send(
+                    .updated(channelID: channelID)
+                )
+            }
 
             return .success
         } else if response.statusCode == 409 {
@@ -307,13 +309,13 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         
         self.channelID = result.channelID
         
-        self.updatesSubject.send(
+        await self.updatesSubject.sendMainActor(
             .created(
                 channelID: result.channelID,
                 isExisting: response.statusCode == 200
             )
         )
-        
+
         await self.registrationSuccess(
             channelID: result.channelID,
             registrationInfo: LastRegistrationInfo(

@@ -316,6 +316,7 @@ actor LiveActivityRegistry {
 
             return false
         }
+
         liveActivityUpdatesSubject.send()
     }
 
