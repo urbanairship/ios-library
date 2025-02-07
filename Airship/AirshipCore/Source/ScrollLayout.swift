@@ -35,7 +35,9 @@ struct ScrollLayout: View {
                         GeometryReader(content: { contentMetrics -> Color in
                             let size = contentMetrics.size
                             DispatchQueue.main.async {
-                                self.contentSize = size
+                                if (self.contentSize != size) {
+                                    self.contentSize = size
+                                }
                             }
                             return Color.clear
                         })
@@ -154,7 +156,7 @@ struct ScrollLayout: View {
     ) async {
         var remaining = duration
         repeat {
-            proxy.scrollTo(scrollID)
+            proxy.scrollTo(scrollID, anchor: .center)
             remaining = remaining - ScrollLayout.scrollInterval
             try? await Task.sleep(
                 nanoseconds: UInt64(ScrollLayout.scrollInterval * 1_000_000_000)

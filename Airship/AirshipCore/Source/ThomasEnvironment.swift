@@ -30,7 +30,6 @@ class ThomasEnvironment: ObservableObject {
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
-    @Published private(set) var keyboardHeight: Double = 0
     @Published private(set) var keyboardState: KeyboardState = .hidden
 
     @MainActor
@@ -244,31 +243,6 @@ class ThomasEnvironment: ObservableObject {
     #if !os(tvOS) && !os(watchOS)
     @MainActor
     private func subscribeKeyboard() {
-        Publishers.Merge(
-            NotificationCenter.default
-                .publisher(
-                    for: UIResponder.keyboardWillShowNotification
-                )
-                .map {
-                    $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey]
-                        as? CGRect
-                        ?? CGRect.zero
-                }
-                .map { Double($0.height) },
-            NotificationCenter.default
-                .publisher(
-                    for: UIResponder.keyboardWillHideNotification
-                )
-                .map { _ in 0.0 }
-        )
-        .subscribe(on: DispatchQueue.main)
-        .sink { [weak self] value in
-            DispatchQueue.main.async {
-                self?.keyboardHeight = value
-            }
-        }
-        .store(in: &self.subscriptions)
-
         Publishers.Merge3(
             NotificationCenter.default
                 .publisher(for: UIResponder.keyboardDidShowNotification)

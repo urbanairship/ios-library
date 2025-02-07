@@ -86,6 +86,7 @@ enum ThomasPresentationInfo: ThomasSerializable {
         var defaultPlacement: Placement
         var dismissOnTouchOutside: Bool?
         var device: Device?
+        var ios: iOS?
 
         private enum CodingKeys: String, CodingKey {
             case placementSelectors = "placement_selectors"
@@ -93,6 +94,23 @@ enum ThomasPresentationInfo: ThomasSerializable {
             case dismissOnTouchOutside = "dismiss_on_touch_outside"
             case device
             case type
+            case ios
+        }
+
+        /// Keyboard avoidance methods
+        enum KeyboardAvoidanceMethod: String, ThomasSerializable {
+            /// Slide keyboard over the top
+            case overTheTop = "over_the_top"
+            /// Treat it as safe area
+            case safeArea = "sare_area"
+        }
+
+        struct iOS: ThomasSerializable {
+            var keyboardAvoidance: KeyboardAvoidanceMethod?
+
+            private enum CodingKeys: String, CodingKey {
+                case keyboardAvoidance = "keyboard_avoidance"
+            }
         }
 
         struct Placement: ThomasSerializable {

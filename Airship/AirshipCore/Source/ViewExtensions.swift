@@ -5,11 +5,6 @@ public import SwiftUI
 
 extension View {
     @ViewBuilder
-    internal func ignoreKeyboardSafeArea() -> some View {
-        self.ignoresSafeArea(.keyboard)
-    }
-
-    @ViewBuilder
     internal func thomasToggleStyle(
         _ style: ThomasToggleStyleInfo,
         constraints: ViewConstraints
