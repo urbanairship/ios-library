@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency
-public import Combine
+import Combine
 import Foundation
 
 #if canImport(UIKit)
