@@ -14,7 +14,7 @@
       location = "group:tvOSSample/tvOSSample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:watchOSSample/watchOSSample.xcodeproj">
+      location = "group:AirshipWatchOS Sample/AirshipWatchOS Sample.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:ObjcSample/ObjcSample.xcodeproj">
