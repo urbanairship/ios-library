@@ -396,7 +396,9 @@ private class BranchControl: Sendable {
     private func generatePayload(viewState: [String: Any], formState: FormInputData) -> AirshipJSON {
         var data = viewState
         data["$forms"] = [
-            "current": formState.getData()
+            "current": [
+                "data": formState.getData()
+            ]
         ]
         
         do {
