@@ -206,15 +206,6 @@ public final class Airship: Sendable {
 
 
     @MainActor
-    private class func resolveProduction(_ config: AirshipConfig) throws -> Bool {
-        if let inProduction = config.inProduction {
-            return inProduction
-        }
-
-        return try APNSEnvironment.isProduction()
-    }
-
-    @MainActor
     private class func configureLogger(_ config: AirshipConfig, inProduction: Bool) {
         let handler = if let logHandler = config.logHandler {
             logHandler
@@ -242,7 +233,7 @@ public final class Airship: Sendable {
         // Determine production flag and configure logger so we can log errors
         var inProduction: Bool = true
         do {
-            inProduction = try resolveProduction(resolvedConfig)
+            inProduction = try resolvedConfig.resolveInProduction()
             configureLogger(resolvedConfig, inProduction: inProduction)
         } catch {
             configureLogger(resolvedConfig, inProduction: inProduction)

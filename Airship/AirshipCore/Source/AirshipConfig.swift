@@ -497,6 +497,28 @@ public struct AirshipConfig: Decodable, Sendable {
     }
 }
 
+public extension AirshipConfig {
+    /// Resolves the inProduction flag. The value will be resolved with:
+    /// - `inProduction` if set
+    /// - `false` if the target environment is a simulator
+    /// - by inspecting the `embedded.mobileprovision` file to look up the APNS environment.
+    ///
+    /// - returns  The resolved in production flag.
+    /// - throws If the APNS fails to resolve to an environment. Airship will fallback to assuming its inProduction during
+    /// takeOff.
+    func resolveInProduction() throws -> Bool {
+        if let inProduction {
+            return inProduction
+        }
+
+#if targetEnvironment(simulator)
+        return false
+#else
+        return try APNSEnvironment.isProduction()
+#endif
+    }
+}
+
 // The Channel generation method. In `automatic` mode Airship will generate a new channelID and create a new channel.
 // If the restore option is specified and `channelID` is a correct ID, Airship will try to restore a channel with the specified ID
 public enum ChannelGenerationMethod {
