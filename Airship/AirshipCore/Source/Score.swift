@@ -48,6 +48,7 @@ struct Score: View {
                 ) {
                     makeNumberRangeScoreItems(style: style, constraints: constraints)
                 }
+                .accessibilityElement(children: .contain)
             } else {
                 HStack(spacing: style.spacing ?? 0) {
                     makeNumberRangeScoreItems(style: style, constraints: constraints)
