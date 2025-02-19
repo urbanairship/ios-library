@@ -48,7 +48,6 @@ struct Score: View {
                 ) {
                     makeNumberRangeScoreItems(style: style, constraints: constraints)
                 }
-                .accessibilityElement(children: .contain)
             } else {
                 HStack(spacing: style.spacing ?? 0) {
                     makeNumberRangeScoreItems(style: style, constraints: constraints)
@@ -62,7 +61,7 @@ struct Score: View {
         let constraints = modifiedConstraints()
         createScore(constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .accessible(self.info.accessible)
+            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
             .formElement()
             .onAppear {
                 self.restoreFormState()
