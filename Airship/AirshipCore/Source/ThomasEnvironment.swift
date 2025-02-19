@@ -65,31 +65,49 @@ class ThomasEnvironment: ObservableObject {
             layoutContext: layoutState.toLayoutContext()
         )
 
+        applyAttributes(formState: formState)
+        registerChannels(formState: formState)
+    }
+
+    private func registerChannels(formState: FormState) {
+        formState.data.channels.forEach { channelRegistration in
+            switch(channelRegistration) {
+            case .email(let address, let options):
+                Airship.contact.registerEmail(
+                    address,
+                    options: options.makeContactOptions()
+                )
+            }
+        }
+    }
+
+    private func applyAttributes(formState: FormState) {
         let channelEditor = Airship.channel.editAttributes()
         let contactEditor = Airship.contact.editAttributes()
 
-        formState.data.attributes()
-            .forEach {
-                let attributeName = $0.0
-                let attributeValue = $0.1
+        formState.data.attributes.forEach {
+            let attributeName = $0.0
+            let attributeValue = $0.1
 
-                if let attribute = attributeName.channel {
-                    channelEditor.set(
-                        attributeValue: attributeValue,
-                        attribute: attribute
-                    )
-                }
-
-                if let attribute = attributeName.contact {
-                    contactEditor.set(
-                        attributeValue: attributeValue,
-                        attribute: attribute
-                    )
-                }
+            if let attribute = attributeName.channel {
+                channelEditor.set(
+                    attributeValue: attributeValue,
+                    attribute: attribute
+                )
             }
+
+            if let attribute = attributeName.contact {
+                contactEditor.set(
+                    attributeValue: attributeValue,
+                    attribute: attribute
+                )
+            }
+        }
 
         channelEditor.apply()
         contactEditor.apply()
+
+
     }
 
     @MainActor

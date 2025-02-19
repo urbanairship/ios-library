@@ -239,7 +239,7 @@ class FormStateTest: XCTestCase {
             ),
         ]
 
-        let actual = formState.data.attributes()
+        let actual = formState.data.attributes
         XCTAssertEqual(expected.count, actual.count)
         expected.forEach { expectedEntry in
             XCTAssertTrue(

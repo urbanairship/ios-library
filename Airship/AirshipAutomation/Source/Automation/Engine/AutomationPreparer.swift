@@ -161,6 +161,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                     DeferredRequest(
                         url: url,
                         channelID: try await deviceInfoProvider.channelID,
+                        contactID: await deviceInfoProvider.stableContactInfo.contactID,
                         triggerContext: triggerContext,
                         locale: deviceInfoProvider.locale,
                         notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications

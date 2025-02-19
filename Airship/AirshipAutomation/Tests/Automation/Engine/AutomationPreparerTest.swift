@@ -744,6 +744,7 @@ final class AutomationPreparerTest: XCTestCase {
     }
 
     func testPrepareDeferredMessage() async throws {
+
         let message = InAppMessage(
             name: "some name",
             displayContent: .custom(.string("custom")),
@@ -771,7 +772,7 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         self.remoteDataAccess.contactIDBlock = { _ in
-            return "contact ID"
+            return self.deviceInfoProvider.stableContactInfo.contactID
         }
 
         self.remoteDataAccess.requiresUpdateBlock = { _ in
@@ -791,7 +792,17 @@ final class AutomationPreparerTest: XCTestCase {
             return checker
         }
 
+        let expectedRequest = DeferredRequest(
+            url: URL(string: "example://")!,
+            channelID: self.deviceInfoProvider.channelID,
+            contactID: self.deviceInfoProvider.stableContactInfo.contactID,
+            triggerContext: triggerContext,
+            locale: deviceInfoProvider.locale,
+            notificationOptIn: deviceInfoProvider.isUserOptedInPushNotifications
+        )
+
         self.deferredResolver.onData = { request in
+            XCTAssertEqual(request, expectedRequest)
             let data = try! AirshipJSON.wrap([
                 "audience_match": true,
                 "message": message
@@ -804,7 +815,7 @@ final class AutomationPreparerTest: XCTestCase {
             XCTAssertEqual(inAppMessage, message)
             XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
             XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual("contact ID", info.contactID)
+            XCTAssertEqual(self.deviceInfoProvider.stableContactInfo.contactID, info.contactID)
             return preparedData
         }
 

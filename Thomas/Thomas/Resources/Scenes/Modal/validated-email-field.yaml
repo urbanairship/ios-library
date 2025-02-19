@@ -73,6 +73,8 @@ view:
                     type: text_input
                     place_holder: Tap in here
                     identifier: text_input_email
+                    email_registration:
+                        type: double_opt_in
                     icon_end:
                       type: floating
                       icon:
