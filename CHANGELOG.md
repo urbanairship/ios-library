@@ -1,6 +1,18 @@
 
 # iOS Changelog
 
+## Version 19.1.0 February 20, 2025
+Minor release that adds support for email registration in Scenes, fixes bugs, and improves Airship configuration, Scene keyboard avoidance, and logging.
+
+### Changes
+- Updated the keyboard avoidance for Scenes to use standard window insets
+- Added `resolveInProduction()` method on `AirshipConfig` to expose how Airship resolves the `inProduction` flag during takeOff
+- Added support for email registration in Scenes
+- Fixed regression with log level check that was introduced in 19.0.0
+- Fixed voice over with NPS score for Surveys
+- Added logger to `UANotificationServiceExtension`. The logger can be configured by overriding the `airshipConfig` property.
+- Fixed Carthage build failures caused by UIKit Sample project
+
 ## Version 19.0.3 February 4, 2025
 Patch release to fix a crash caused by combine subjects being updated from multiple queues.
 
