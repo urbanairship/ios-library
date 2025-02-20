@@ -194,6 +194,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		604C4A692D66505500E58688 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -298,6 +305,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 327BFC392D53C042009A73C6 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 604C4A692D66505500E58688 /* Products */;
+					ProjectRef = 32BC89922D54CAD5001EAF3D /* Airship.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				327BFC372D53C042009A73C6 /* AirshipWatchOS Sample */,
