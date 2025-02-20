@@ -178,7 +178,7 @@ public final class AirshipLogger: Sendable {
             return
         }
 
-        if skipLogLevelCheck || self.logLevel.rawValue >= logLevel.rawValue {
+        if skipLogLevelCheck || self.logLevel.intValue >= logLevel.intValue {
             logHandler.log(
                 logLevel: logLevel,
                 message: message(),
@@ -186,6 +186,27 @@ public final class AirshipLogger: Sendable {
                 line: line,
                 function: function
             )
+        }
+    }
+}
+
+fileprivate extension AirshipLogLevel {
+    var intValue: Int {
+        switch(self) {
+        case .undefined:
+            -1
+        case .none:
+            0
+        case .error:
+            1
+        case .warn:
+            2
+        case .info:
+            3
+        case .debug:
+            4
+        case .verbose:
+            5
         }
     }
 }

@@ -8,19 +8,30 @@ import UserNotifications
 #if !TARGET_OS_TV
 @objc
 open class UANotificationServiceExtension: UNNotificationServiceExtension {
-    private var downloadTask: Task<Void, any Error>?
-    private var reqeuest: UNNotificationRequest?
-    private var deliverHandler: ((UNNotificationContent) -> Void)?
-    
+    open var airshipConfig: AirshipExtensionConfig { .init() }
+    private var onExpire: (@Sendable () -> Void)?
+
     open override func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @Sendable @escaping (UNNotificationContent) -> Void
     ) {
-        self.deliverHandler = contentHandler
-        self.reqeuest = request
 
-        self.downloadTask = Task { @MainActor in
+        let config = airshipConfig
+        let logger = AirshipExtensionLogger(
+            logHandler: config.logHandler,
+            logLevel: config.logLevel
+        )
+        
+        let downloadTask = Task { @MainActor in
+            logger.debug(
+                "New request received: \(request)"
+            )
+
             guard let mutableContent = request.content.mutableCopy() as? UNMutableNotificationContent else {
+                logger.error(
+                    "Unable to make mutable copy of request"
+                )
+                try Task.checkCancellation()
                 contentHandler(request.content)
                 return
             }
@@ -28,31 +39,48 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
             do {
                 let args = try request.mediaAttachmentPayload
                 guard let args else {
+                    logger.debug(
+                        "Finishing request, no Airship args: \(request.identifier)"
+                    )
+                    try Task.checkCancellation()
                     contentHandler(request.content)
                     return
                 }
 
-                let mutations = try await AirshipNotificationMutationProvider().mutations(for: args)
-                try mutations?.apply(to: mutableContent)
+                logger.info(
+                    "Found Airship arguments for request \(request.identifier): \(args)"
+                )
+                let mutationsProvider = AirshipNotificationMutationProvider(
+                    logger: logger
+                )
+                try await mutationsProvider.mutations(for: args)?.apply(to: mutableContent)
             } catch {
-                print("Failed to apply AirshipMutableNotificaitonArgs: \(error)")
+                logger.error(
+                    "Failed to apply mutations to request \(request.identifier): \(error)"
+                )
             }
 
             try Task.checkCancellation()
+
+            logger.info(
+                "Finished processing request: \(request.identifier): \(mutableContent)"
+            )
             contentHandler(mutableContent)
         }
-    }
-    
-    open override func serviceExtensionTimeWillExpire() {
-        self.downloadTask?.cancel()
 
-        if let reqeuest, let deliverHandler {
-            deliverHandler(reqeuest.content)
+        self.onExpire = {
+            logger.error(
+                "serviceExtensionTimeWillExpire expiring, canceling airshipTask"
+            )
+            downloadTask.cancel()
+            contentHandler(request.content)
         }
     }
+
+    open override func serviceExtensionTimeWillExpire() {
+        self.onExpire?()
+    }
 }
-
-
 
 extension UNNotificationRequest {
     fileprivate static let airshipMediaAttachment = "com.urbanairship.media_attachment"

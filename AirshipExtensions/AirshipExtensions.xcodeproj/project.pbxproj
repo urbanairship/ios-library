@@ -15,6 +15,8 @@
 		60F8E75A2B8E5A4100460EDF /* AirshipNotificationServiceExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E4AEE3A2B6B3E94008AEAC1 /* airship.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */; };
 		6E66BB1A2D14F6B60083A9FD /* AirshipNotificationMutationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E66BB192D14F6B20083A9FD /* AirshipNotificationMutationProvider.swift */; };
+		6EE62B122D668D1B00C2F53B /* AirshipExtensionLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE62B112D668D1600C2F53B /* AirshipExtensionLogger.swift */; };
+		6EE62B162D66AD0800C2F53B /* AirshipExtensionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE62B152D66AD0400C2F53B /* AirshipExtensionConfig.swift */; };
 		DF0C1B19244E483C0011ACCA /* AirshipNotificationServiceExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49AA00FC1D65158C0081989A /* AirshipNotificationServiceExtension.framework */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,8 @@
 		60F8E7592B8E5A0700460EDF /* AirshipNotificationServiceExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipNotificationServiceExtension.h; sourceTree = "<group>"; };
 		6E4AEE382B6B3E2D008AEAC1 /* airship.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = airship.jpg; path = AirshipNotificationServiceExtension/airship.jpg; sourceTree = SOURCE_ROOT; };
 		6E66BB192D14F6B20083A9FD /* AirshipNotificationMutationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNotificationMutationProvider.swift; sourceTree = "<group>"; };
+		6EE62B112D668D1600C2F53B /* AirshipExtensionLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipExtensionLogger.swift; sourceTree = "<group>"; };
+		6EE62B152D66AD0400C2F53B /* AirshipExtensionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipExtensionConfig.swift; sourceTree = "<group>"; };
 		DF0C1B14244E483C0011ACCA /* AirshipNotificationServiceExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipNotificationServiceExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -115,6 +119,8 @@
 		6E21736A237CCEDA0084933A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EE62B152D66AD0400C2F53B /* AirshipExtensionConfig.swift */,
+				6EE62B112D668D1600C2F53B /* AirshipExtensionLogger.swift */,
 				6014AD682C1CB6360072DCF0 /* ChallengeResolver.swift */,
 				6E66BB192D14F6B20083A9FD /* AirshipNotificationMutationProvider.swift */,
 				60F8E7512B88AF8D00460EDF /* MediaAttachmentPayload.swift */,
@@ -240,7 +246,9 @@
 			files = (
 				60F8E7522B88AF8D00460EDF /* MediaAttachmentPayload.swift in Sources */,
 				60F8E7542B89272300460EDF /* UANotificationServiceExtension.swift in Sources */,
+				6EE62B162D66AD0800C2F53B /* AirshipExtensionConfig.swift in Sources */,
 				6E66BB1A2D14F6B60083A9FD /* AirshipNotificationMutationProvider.swift in Sources */,
+				6EE62B122D668D1B00C2F53B /* AirshipExtensionLogger.swift in Sources */,
 				6014AD692C1CB6360072DCF0 /* ChallengeResolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
