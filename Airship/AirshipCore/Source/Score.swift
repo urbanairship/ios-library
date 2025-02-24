@@ -61,7 +61,7 @@ struct Score: View {
         let constraints = modifiedConstraints()
         createScore(constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .accessible(self.info.accessible)
+            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
             .formElement()
             .onAppear {
                 self.restoreFormState()

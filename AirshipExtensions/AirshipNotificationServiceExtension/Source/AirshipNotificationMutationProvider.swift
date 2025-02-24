@@ -4,7 +4,13 @@ import UniformTypeIdentifiers
 import UserNotifications
 
 final class AirshipNotificationMutationProvider: Sendable {
+
     static let supportedExtensions = ["jpg", "jpeg", "png", "gif", "aif", "aiff", "mp3", "mpg", "mpeg", "mp4", "m4a", "wav", "avi"]
+
+    let logger: AirshipExtensionLogger
+    init(logger: AirshipExtensionLogger) {
+        self.logger = logger
+    }
 
     func mutations(for args: MediaAttachmentPayload) async throws -> AirshipNotificationMutations? {
         let attachments = try await withThrowingTaskGroup(of: AirshipAttachment?.self) { [weak self, args] group in
@@ -50,7 +56,11 @@ final class AirshipNotificationMutationProvider: Sendable {
 
         try Task.checkCancellation()
 
+        logger.debug("Downloading attachment \(attachment.url)")
+
         let (localURL, response) = try await download(url: attachment.url)
+
+        logger.debug("Downloading attachment result: \(response)")
 
         try Task.checkCancellation()
 
@@ -124,7 +134,8 @@ final class AirshipNotificationMutationProvider: Sendable {
         let session = URLSession(
             configuration: .default,
             delegate: ChallengeResolver.shared,
-            delegateQueue: nil)
+            delegateQueue: nil
+        )
 
         return try await session.download(from: url)
     }
@@ -187,7 +198,9 @@ struct AirshipNotificationMutations: Sendable {
     func apply(to notificationContent: UNMutableNotificationContent) throws {
         try attachments
             .map { try $0.notificationAttachment }
-            .forEach { notificationContent.attachments.append($0) }
+            .forEach {
+                notificationContent.attachments.append($0)
+            }
 
         if let title = title {
             notificationContent.title = title
