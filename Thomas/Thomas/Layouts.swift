@@ -92,6 +92,11 @@ final class Layouts {
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
             try displayMessage(data)
         }
+
+        if layout.type != .sceneEmbedded {
+            // Save the last non-embedded displayed layout file's filename to user defaults
+            UserDefaults.standard.set(layout.fileName, forKey: "lastLayoutFile")
+        }
     }
 
     private func loadData(filePath: String) throws -> Data {
