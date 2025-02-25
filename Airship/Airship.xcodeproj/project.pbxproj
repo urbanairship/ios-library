@@ -65,6 +65,8 @@
 		325D53FA29648818003421B4 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
 		325D53FB2964885B003421B4 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
+		327361A32D664341008A67E9 /* TVDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327361A22D664341008A67E9 /* TVDatePicker.swift */; };
+		327361A72D678128008A67E9 /* TVSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327361A62D67811E008A67E9 /* TVSlider.swift */; };
 		3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */; };
 		3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */; };
@@ -98,7 +100,7 @@
 		32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF428F07C4800F7F52A /* MessageCenterList.swift */; };
 		32F97AC129E5986B00FED65F /* StoryIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F97AC029E5986B00FED65F /* StoryIndicator.swift */; };
 		3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; platformFilters = (ios, maccatalyst, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* PushProtocol.swift */; };
 		3C693E4E25141CAC00EBFB88 /* AirshipDebugEventData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* AirshipDebugEventData.xcdatamodeld */; };
 		3C693E4F25141CAC00EBFB88 /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
@@ -1302,6 +1304,8 @@
 		32515868272AFB2E00DF8B44 /* MediaWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaWebView.swift; sourceTree = "<group>"; };
 		325D53D9295C7979003421B4 /* ActionRegistryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRegistryTest.swift; sourceTree = "<group>"; };
 		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
+		327361A22D664341008A67E9 /* TVDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVDatePicker.swift; sourceTree = "<group>"; };
+		327361A62D67811E008A67E9 /* TVSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVSlider.swift; sourceTree = "<group>"; };
 		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
 		3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBaseTest.swift; sourceTree = "<group>"; };
 		3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataStoreTest.swift; sourceTree = "<group>"; };
@@ -2480,6 +2484,15 @@
 			path = Limits;
 			sourceTree = "<group>";
 		};
+		327361A12D664320008A67E9 /* TvOSComponents */ = {
+			isa = PBXGroup;
+			children = (
+				327361A22D664341008A67E9 /* TVDatePicker.swift */,
+				327361A62D67811E008A67E9 /* TVSlider.swift */,
+			);
+			path = TvOSComponents;
+			sourceTree = "<group>";
+		};
 		32B5BE2D28F8A7D600F2254B /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -2842,6 +2855,7 @@
 		6E14C97728B3FC5800A55E65 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				327361A12D664320008A67E9 /* TvOSComponents */,
 				BD8C10742865F92200358622 /* Contact */,
 				6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */,
 				6E14C97828B3FC8400A55E65 /* AirshipToast.swift */,
@@ -5263,6 +5277,7 @@
 				DFD2464E2473404C000FD565 /* DebugSDKModule.swift in Sources */,
 				6E14C98928B4421900A55E65 /* SubscriptionListsDebugView.swift in Sources */,
 				6E14C99F28B5A14300A55E65 /* ReceivedPushListDebugView.swift in Sources */,
+				327361A32D664341008A67E9 /* TVDatePicker.swift in Sources */,
 				3CB37A1E251151A400E60392 /* DebugResources.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
 				6E2F5A822A6229B900CABD3D /* AirshipJSONDetailsView.swift in Sources */,
@@ -5271,6 +5286,7 @@
 				6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */,
 				6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */,
 				6E14C9B428B6C9F000A55E65 /* InAppAutomationListDebugView.swift in Sources */,
+				327361A72D678128008A67E9 /* TVSlider.swift in Sources */,
 				6E14C99B28B55EFD00A55E65 /* AnalyticsIdentifiersView.swift in Sources */,
 				6E14C98528B43AC800A55E65 /* TagGroupsDebugView.swift in Sources */,
 				6E14C99D28B5619B00A55E65 /* PreferenceCenterListDebugView.swift in Sources */,
@@ -6250,6 +6266,11 @@
 /* Begin PBXTargetDependency section */
 		3C39D3082384C8B6003C50D4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				xros,
+			);
 			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;
 			targetProxy = 3C39D3072384C8B6003C50D4 /* PBXContainerItemProxy */;
 		};
@@ -6510,15 +6531,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-weak_framework",
-					PassKit,
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -6530,7 +6547,7 @@
 				SWIFT_UPCOMING_FEATURE_ISOLATED_DEFAULT_VALUES = YES;
 				SWIFT_UPCOMING_FEATURE_REGION_BASED_ISOLATION = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Debug;
@@ -6555,15 +6572,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-weak_framework",
-					PassKit,
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -6574,7 +6587,7 @@
 				SWIFT_UPCOMING_FEATURE_ISOLATED_DEFAULT_VALUES = YES;
 				SWIFT_UPCOMING_FEATURE_REGION_BASED_ISOLATION = YES;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2,3,7";
 				VALID_ARCHS = "$(inherited) x86_64";
 			};
 			name = Release;

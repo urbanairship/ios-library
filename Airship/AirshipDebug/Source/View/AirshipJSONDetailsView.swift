@@ -39,11 +39,19 @@ struct AirshipJSONDetailsView: View {
             return
         }
 
-        UIPasteboard.general.string = value
+        value.pastleboard()
         self.toastMessage = AirshipToast.Message(
             id: UUID().uuidString,
             text: "Copied to pasteboard!".localized(),
             duration: 1.0
         )
+    }
+}
+
+extension String {
+    func pastleboard() {
+#if !os(tvOS)
+        UIPasteboard.general.string = self
+#endif
     }
 }

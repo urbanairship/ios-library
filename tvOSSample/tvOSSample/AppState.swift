@@ -23,22 +23,15 @@ class AppState: ObservableObject {
     
     private var subscriptions = Set<AnyCancellable>()
     
-    init() {
-        if Airship.isFlying {
-//            Airship.messageCenter.inbox.unreadCountPublisher
-//                .receive(on: RunLoop.main)
-//                .sink { unreadCount in
-//                    self.unreadCount = unreadCount
-//                }
-//                .store(in: &self.subscriptions)
-        }
-    }
 }
 
 enum SampleTabs: Hashable {
     case home
     case messageCenter
     case preferenceCenter
+#if canImport(AirshipDebug)
+    case debug
+#endif
 }
 
 enum HomeDestination: Hashable {

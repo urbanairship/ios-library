@@ -275,8 +275,10 @@ private struct AddPropetyView: View {
             VStack {
                 Text("JSON".localized())
                 Spacer()
+#if !os(tvOS)
                 TextEditor(text: self.$jsonValue.preventWhiteSpace())
                     .frame(maxWidth: .infinity, minHeight: 300)
+#endif
             }
         case .number:
             HStack {

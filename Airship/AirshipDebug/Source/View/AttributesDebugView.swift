@@ -50,11 +50,19 @@ public struct AttributesDebugView: View {
     func makeValue() -> some View {
         switch self.type {
         case .date:
+#if os(tvOS)
+            TVDatePicker(
+                "Date".localized(),
+                selection: $date,
+                displayedComponents: .all
+            )
+#else
             DatePicker(
                 "Date".localized(),
                 selection: $date,
                 displayedComponents: [.date, .hourAndMinute]
             )
+#endif
         case .text:
             HStack {
                 Text("Text")

@@ -163,9 +163,11 @@ private struct FeaturFlagDetailsView: View {
     @ViewBuilder
     func makeShareLink(_ string: String) -> some View {
         if #available(iOS 16.0, *) {
+#if !os(tvOS)
             ShareLink(item: string) {
                 Image(systemName: "square.and.arrow.up")
             }
+#endif
         } else {
             Button {
                 copyToClipboard(value: string)
@@ -189,8 +191,7 @@ private struct FeaturFlagDetailsView: View {
         guard let value = value else {
             return
         }
-
-        UIPasteboard.general.string = value
+        value.pastleboard()
         self.toastMessage = AirshipToast.Message(
             id: UUID().uuidString,
             text: "Copied to pasteboard!".localized(),

@@ -147,18 +147,31 @@ public struct AirshipDebugView: View {
                     destination: ExperimentsListsDebugView()
                 )
 
+#if os(tvOS)
                 VStack {
                     makeInfoItem(
                         "Display Interval",
                         "\(self.viewModel.displayInterval) seconds"
                     )
-
+                    TVSlider(
+                        displayInterval: self.$viewModel.displayInterval,
+                        range: 0.0...200.0,
+                        step: 1.0
+                    )
+                }
+#else
+                VStack {
+                    makeInfoItem(
+                        "Display Interval",
+                        "\(self.viewModel.displayInterval) seconds"
+                    )
                     Slider(
                         value: self.$viewModel.displayInterval,
                         in: 0.0...200.0,
                         step: 1.0
                     )
                 }
+#endif
             }
 
             Section(header: Text("Preference Center".localized())) {
@@ -201,7 +214,7 @@ public struct AirshipDebugView: View {
             return
         }
 
-        UIPasteboard.general.string = value
+        value.pastleboard()
         self.toastMessage = AirshipToast.Message(
             id: UUID().uuidString,
             text: "Copied to pasteboard!".localized(),

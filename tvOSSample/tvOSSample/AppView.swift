@@ -3,6 +3,7 @@
 import AirshipCore
 import AirshipPreferenceCenter
 import SwiftUI
+import AirshipDebug
 
 struct AppView: View {
 
@@ -20,20 +21,6 @@ struct AppView: View {
                 .tag(SampleTabs.home)
 
             VStack {
-                Text("Messages").font(.title)
-//                MessageCenterView()
-//                    .messageCenterTheme(Airship.messageCenter.theme!)
-            }
-//            .messageCenterMessageViewStyle(CustomMessageViewStyle())
-            .tabItem {
-                Label("Message Center", systemImage: "tray.fill")
-            }
-            .tag(SampleTabs.messageCenter)
-            .onAppear {
-                Airship.analytics.trackScreen("message_center")
-            }
-
-            VStack {
                 Text("Preferences").font(.title)
                 PreferenceCenterView(
                     preferenceCenterID: MainApp.preferenceCenterID
@@ -42,10 +29,23 @@ struct AppView: View {
             .tabItem {
                 Label("Preference Center", systemImage: "person.fill")
             }
-            .tag(SampleTabs.preferenceCenter)
             .onAppear {
                 Airship.analytics.trackScreen("preference_center")
             }
+            .tag(SampleTabs.preferenceCenter)
+            
+#if canImport(AirshipDebug)
+           debug.tabItem {
+               Label(
+                   "Debug",
+                   systemImage: "gear"
+               )
+           }
+           .onAppear {
+               Airship.analytics.trackScreen("debug")
+           }
+           .tag(SampleTabs.debug)
+#endif
         }
         .tabViewStyle(.sidebarAdaptable)
         .overlay(makeToastView())
@@ -57,27 +57,28 @@ struct AppView: View {
         Toast(message: self.$appState.toastMessage)
             .padding()
     }
+    
+#if canImport(AirshipDebug)
+    @ViewBuilder
+    var debug: some View {
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                ZStack{
+                    AirshipDebugView()
+                }
+            }
+        } else {
+            NavigationView {
+                AirshipDebugView()
+            }
+            .navigationViewStyle(.stack)
+        }
+    }
+#endif
+    
 }
 
-struct AppView_Previews: PreviewProvider {
-    static var previews: some View {
-        AppView()
-    }
+#Preview {
+    AppView()
+        .environmentObject(AppState.shared)
 }
-//
-//public struct CustomMessageViewStyle: MessageViewStyle {
-//    @ViewBuilder
-//    @MainActor
-//    public func makeBody(configuration: Configuration) -> some View {
-//        VStack {
-//            Text(configuration.title ?? "").font(.title)
-//                .padding(.bottom)
-//            MessageCenterMessageView(
-//                messageID: configuration.messageID,
-//                title: configuration.title,
-//                dismissAction: configuration.dismissAction
-//            )
-//            .messageCenterMessageViewStyle(.defaultStyle)
-//        }
-//    }
-//}

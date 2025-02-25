@@ -68,18 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Prefere
             self.showInvalidDeepLinkAlert(deepLink)
         }
     }
-//
-//    func displayMessageCenter(messageID: String) {
-//        AppState.shared.selectedTab = .messageCenter
-//        AppState.shared.messageCenterController.navigate(messageID: messageID)
-//    }
-//
-//    func displayMessageCenter() {
-//        AppState.shared.selectedTab = .messageCenter
-//    }
-//
-//    func dismissMessageCenter() {
-//    }
 
     @MainActor
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {

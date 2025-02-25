@@ -156,6 +156,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		325842CF2D633D120006B665 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		327BFC312D53C042009A73C6 = {
 			isa = PBXGroup;
 			children = (

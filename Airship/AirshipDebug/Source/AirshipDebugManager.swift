@@ -183,6 +183,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
 
     @objc func receivedNotificationResponse(notification: NSNotification) {
+#if !os(tvOS)
         guard
             let response =
                 notification.userInfo?[
@@ -194,6 +195,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
         let push = response.notification.request.content.userInfo
         savePush(userInfo: push)
+#endif
     }
 
     func savePush(userInfo: [AnyHashable: Any]) {

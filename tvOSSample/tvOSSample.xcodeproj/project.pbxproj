@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32366FE82D5F4BF500B8B69B /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99B68B901EE08E350038DAE3 /* AirshipConfig.plist */; };
+		32366FF82D5F82A700B8B69B /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5632396E99A00AF2D1A /* AirshipDebug.framework */; };
+		32366FF92D5F82A700B8B69B /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5632396E99A00AF2D1A /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E6DD23D2CED6756009CB521 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40426EAA526000421B9 /* AirshipBasement.framework */; };
 		6E6DD23E2CED6756009CB521 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B40426EAA526000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E6DD23F2CED6756009CB521 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D55B2396E99A00AF2D1A /* AirshipCore.framework */; };
@@ -149,6 +152,7 @@
 				6E6DD23E2CED6756009CB521 /* AirshipBasement.framework in Embed Frameworks */,
 				6E6DD2402CED6756009CB521 /* AirshipCore.framework in Embed Frameworks */,
 				6E6DD2462CED6756009CB521 /* AirshipPreferenceCenter.framework in Embed Frameworks */,
+				32366FF92D5F82A700B8B69B /* AirshipDebug.framework in Embed Frameworks */,
 				6E6DD2422CED6756009CB521 /* AirshipFeatureFlags.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -174,6 +178,7 @@
 				6E6DD23D2CED6756009CB521 /* AirshipBasement.framework in Frameworks */,
 				6E6DD23F2CED6756009CB521 /* AirshipCore.framework in Frameworks */,
 				6E6DD2452CED6756009CB521 /* AirshipPreferenceCenter.framework in Frameworks */,
+				32366FF82D5F82A700B8B69B /* AirshipDebug.framework in Frameworks */,
 				6E6DD2412CED6756009CB521 /* AirshipFeatureFlags.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -403,6 +408,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32366FE82D5F4BF500B8B69B /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

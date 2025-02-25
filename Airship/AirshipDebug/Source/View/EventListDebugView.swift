@@ -131,8 +131,7 @@ private struct EventDetailsView: View {
         guard let value = value else {
             return
         }
-
-        UIPasteboard.general.string = value
+        value.pastleboard()
         self.toastMessage = AirshipToast.Message(
             id: UUID().uuidString,
             text: "Copied to pasteboard!".localized(),
