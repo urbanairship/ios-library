@@ -436,10 +436,9 @@ public final class AirshipUtils {
 
 public extension String {
     func airshipIsValidEmail() -> Bool {
-        let trimmed = self.trimmingCharacters(in: .whitespaces)
-        let emailRegex = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
-        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
-        return emailPredicate.evaluate(with: trimmed)
+        return AirshipInputValidator().validate(
+            email: AirshipInputValidator.Email(self)
+        )
     }
 }
 

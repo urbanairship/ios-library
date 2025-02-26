@@ -508,16 +508,13 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         _ msisdn: String,
         sender: String
     ) async throws -> Bool {
-        guard self.privacyManager.isEnabled(.contacts) else {
-            AirshipLogger.warn(
-                "Contacts disabled. Enable to validate SMS."
-            )
-            throw AirshipErrors.error(
-                "Validation of SMS requires contacts to be enabled."
-            )
+        if let delegate = self.smsValidatorDelegate {
+            AirshipLogger.trace("Validating phone number through delegate")
+            return try await delegate.validateSMS(msisdn: msisdn, sender: sender)
+        } else {
+            AirshipLogger.trace("Using default phone number validator")
+            return try await self.smsValidator.validateSMS(msisdn: msisdn, sender: sender)
         }
-
-        return try await self.smsValidator.validateSMS(msisdn:msisdn, sender: sender)
     }
 
     /// Associates an open channel to the contact.
