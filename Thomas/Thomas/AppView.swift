@@ -1,7 +1,39 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import AirshipCore
 import SwiftUI
+
+struct LastLayoutButtonView: View {
+    @AppStorage("lastLayoutFile") var lastLayoutFile: String?
+
+    var body: some View {
+        Button(action: {
+            let layouts =  Layouts.shared.layouts
+
+            if let lastFileName = lastLayoutFile,
+               let layout = layouts.first(where: { $0.fileName == lastFileName }) {
+                do {
+                    try Layouts.shared.openLayout(layout)
+                } catch {
+                    print("Error opening last layout: \(error)")
+                }
+            }
+        }, label: {
+            HStack {
+                Image(systemName: "clock.arrow.circlepath")
+                Text(lastLayoutFile ?? "No Recent Layout")
+                    .foregroundColor(lastLayoutFile == nil ? .gray : .primary)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(UIColor.secondarySystemBackground))
+            )
+        })
+        .disabled(lastLayoutFile == nil)
+    }
+}
 
 struct AppView: View {
 
@@ -18,6 +50,9 @@ struct AppView: View {
     private var trailingTab: some View {
         NavigationView {
             Form {
+                Section {
+                    LastLayoutButtonView()
+                }
                 Section {
                     NavigationLink {
                         EmbeddedPlaygroundMenuView()
@@ -91,7 +126,8 @@ struct AppView: View {
                     Text("Messages")
                         .font(.headline)
                 }
-            }.navigationTitle("Layout Viewer")
+            }
+            .navigationTitle("Layout Viewer")
         }
         .tabItem {
             Label(
@@ -102,7 +138,7 @@ struct AppView: View {
     }
 
     var body: some View {
-        TabView() {
+        TabView {
             leadingTab
             trailingTab
         }
