@@ -269,8 +269,10 @@
 		6E1892DE2694F1C100417887 /* ChannelRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1892DD2694F1C100417887 /* ChannelRegistrar.swift */; };
 		6E1A15062D6EA3A50056418B /* ThomasFormState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A15052D6EA3A50056418B /* ThomasFormState.swift */; };
 		6E1A15072D6EA3A50056418B /* ThomasFormInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A15042D6EA3A50056418B /* ThomasFormInput.swift */; };
+		6E1A16EF2D6EA8880056418B /* ThomasInputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A16EE2D6EA8880056418B /* ThomasInputValidator.swift */; };
 		6E1A181A2D6ED52F0056418B /* AirshipInputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A18192D6ED5250056418B /* AirshipInputValidator.swift */; };
 		6E1A19242D6F8BDD0056418B /* AirshipInputValidatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A19232D6F8BD50056418B /* AirshipInputValidatorTest.swift */; };
+		6E1A1BB32D6F9D0F0056418B /* ThomasInputValidatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A1BB22D6F9D090056418B /* ThomasInputValidatorTest.swift */; };
 		6E1A9BAB2B5AE38A00A6489B /* InAppMessageDisplayListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BAA2B5AE38A00A6489B /* InAppMessageDisplayListener.swift */; };
 		6E1A9BB02B5B0C4C00A6489B /* AutomationActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BAF2B5B0C4C00A6489B /* AutomationActionRunner.swift */; };
 		6E1A9BB22B5B172F00A6489B /* TestActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BB12B5B172F00A6489B /* TestActionRunner.swift */; };
@@ -1515,8 +1517,10 @@
 		6E1892DD2694F1C100417887 /* ChannelRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRegistrar.swift; sourceTree = "<group>"; };
 		6E1A15042D6EA3A50056418B /* ThomasFormInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormInput.swift; sourceTree = "<group>"; };
 		6E1A15052D6EA3A50056418B /* ThomasFormState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormState.swift; sourceTree = "<group>"; };
+		6E1A16EE2D6EA8880056418B /* ThomasInputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasInputValidator.swift; sourceTree = "<group>"; };
 		6E1A18192D6ED5250056418B /* AirshipInputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInputValidator.swift; sourceTree = "<group>"; };
 		6E1A19232D6F8BD50056418B /* AirshipInputValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInputValidatorTest.swift; sourceTree = "<group>"; };
+		6E1A1BB22D6F9D090056418B /* ThomasInputValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasInputValidatorTest.swift; sourceTree = "<group>"; };
 		6E1A9BAA2B5AE38A00A6489B /* InAppMessageDisplayListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayListener.swift; sourceTree = "<group>"; };
 		6E1A9BAF2B5B0C4C00A6489B /* AutomationActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationActionRunner.swift; sourceTree = "<group>"; };
 		6E1A9BB12B5B172F00A6489B /* TestActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestActionRunner.swift; sourceTree = "<group>"; };
@@ -2986,6 +2990,14 @@
 			path = Mocks;
 			sourceTree = "<group>";
 		};
+		6E1A1BB12D6F9D020056418B /* Environment */ = {
+			isa = PBXGroup;
+			children = (
+				6E1A1BB22D6F9D090056418B /* ThomasInputValidatorTest.swift */,
+			);
+			path = Environment;
+			sourceTree = "<group>";
+		};
 		6E1B7B112B714FED00695561 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
@@ -3009,6 +3021,7 @@
 		6E1C9C38271E90D1009EF9EF /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
+				6E1A1BB12D6F9D020056418B /* Environment */,
 				6E2FA28A2D515C56005893E2 /* Types */,
 				6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */,
 				6E382C20276D3E990091A351 /* ThomasValidationTests.swift */,
@@ -4195,6 +4208,7 @@
 		6EFD6D732729D84D005B26F1 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
+				6E1A16EE2D6EA8880056418B /* ThomasInputValidator.swift */,
 				6E1A15042D6EA3A50056418B /* ThomasFormInput.swift */,
 				6E1A15052D6EA3A50056418B /* ThomasFormState.swift */,
 				6E7112952880DACB004942E4 /* ViewState.swift */,
@@ -5602,6 +5616,7 @@
 				6E96ECFA293FDDD90053CC91 /* AirshipSDKExtension.swift in Sources */,
 				E976486F27A46CC50024518D /* ChannelType.swift in Sources */,
 				6E68203228EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */,
+				6E1A16EF2D6EA8880056418B /* ThomasInputValidator.swift in Sources */,
 				6E92EC8D2849378E0038802D /* PermissionPrompter.swift in Sources */,
 				6EDE5F4F2BA248FF00E33D04 /* TouchViewModifier.swift in Sources */,
 				6E1892DE2694F1C100417887 /* ChannelRegistrar.swift in Sources */,
@@ -6161,6 +6176,7 @@
 				6EC755AF2A4FCD8800851ABB /* AudienceHashSelectorTest.swift in Sources */,
 				3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */,
 				99C3CC792BCF3E5B00B5BED5 /* SMSValidatorAPIClientTest.swift in Sources */,
+				6E1A1BB32D6F9D0F0056418B /* ThomasInputValidatorTest.swift in Sources */,
 				A629F7DA295B514C00671647 /* PasteboardActionTest.swift in Sources */,
 				32E339E32A334A2000CD3BE5 /* AddCustomEventActionTest.swift in Sources */,
 				6EFAFB8429561F23008AD187 /* ModifyAttributesActionTest.swift in Sources */,

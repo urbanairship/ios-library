@@ -99,7 +99,8 @@ final class SessionTrackerTest: XCTestCase {
             )
         ])
 
-        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        let sleeps = await self.taskSleeper.sleeps
+        XCTAssertEqual([1.0], sleeps)
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
@@ -120,7 +121,8 @@ final class SessionTrackerTest: XCTestCase {
             )
         ])
 
-        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        let sleeps = await self.taskSleeper.sleeps
+        XCTAssertEqual([1.0], sleeps)
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
@@ -141,7 +143,8 @@ final class SessionTrackerTest: XCTestCase {
             )
         ])
 
-        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        let sleeps = await self.taskSleeper.sleeps
+        XCTAssertEqual([1.0], sleeps)
         XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
     }
 
@@ -488,10 +491,40 @@ final class SessionTrackerTest: XCTestCase {
     }
 }
 
-final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
+actor TestTaskSleeper : AirshipTaskSleeper {
     var sleeps : [TimeInterval] = []
+
+    private var updates: AirshipAsyncChannel<[TimeInterval]> = AirshipAsyncChannel()
+    var continuations: [CheckedContinuation<Void, Never>] = []
+
+    private var isPaused: Bool = false
+
+    func pause() {
+        self.isPaused = true
+    }
+
+    func resume() {
+        self.isPaused = false
+        continuations.forEach {
+            $0.resume()
+        }
+        continuations.removeAll()
+    }
+
+    var sleepUpdates: AsyncStream<[TimeInterval]> {
+        get async {
+            await updates.makeStream()
+        }
+    }
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleeps.append(timeInterval)
+        await updates.send(sleeps)
+        
+        if (isPaused) {
+            await withCheckedContinuation {
+                continuations.append($0)
+            }
+        }
     }
 }

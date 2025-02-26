@@ -175,7 +175,8 @@ final class EventSchedulerTest: XCTestCase {
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
         XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertEqual([1.0], self.taskSleeper.sleeps)
+        let sleeps = await self.taskSleeper.sleeps
+        XCTAssertEqual([1.0], sleeps)
     }
 
     @MainActor
@@ -184,6 +185,8 @@ final class EventSchedulerTest: XCTestCase {
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
         XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertEqual([5.0], self.taskSleeper.sleeps)
+
+        let sleeps = await self.taskSleeper.sleeps
+        XCTAssertEqual([5.0], sleeps)
     }
 }
