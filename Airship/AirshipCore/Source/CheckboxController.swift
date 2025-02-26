@@ -7,7 +7,7 @@ struct CheckboxController: View {
     let info: ThomasViewInfo.CheckboxController
     let constraints: ViewConstraints
 
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @StateObject var checkboxState: CheckboxState
 
     init(info: ThomasViewInfo.CheckboxController, constraints: ViewConstraints) {
@@ -37,9 +37,9 @@ struct CheckboxController: View {
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.formValue(
+        let formValue = self.formState.data.input(
             identifier: self.info.properties.identifier
-        )
+        )?.value
 
         guard case let .multipleCheckbox(value) = formValue,
             let value = value
@@ -60,7 +60,7 @@ struct CheckboxController: View {
 
         let isValid = isFilled || (selected.count == 0 && info.validation.isRequired == false)
 
-        let data = FormInputData(
+        let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .multipleCheckbox(selected),
             isValid: isValid

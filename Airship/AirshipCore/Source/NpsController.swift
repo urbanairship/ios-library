@@ -9,14 +9,14 @@ struct NpsController: View {
     let info: ThomasViewInfo.NPSController
     let constraints: ViewConstraints
 
-    @StateObject var formState: FormState
+    @StateObject var formState: ThomasFormState
 
     @MainActor
     init(info: ThomasViewInfo.NPSController, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
         self._formState = StateObject(
-            wrappedValue: FormState(
+            wrappedValue: ThomasFormState(
                 identifier: info.properties.identifier,
                 formType: .nps(info.properties.npsIdentifier),
                 formResponseType: info.properties.responseType
@@ -46,7 +46,7 @@ private struct ParentNpsController: View {
     let info: ThomasViewInfo.NPSController
     let constraints: ViewConstraints
 
-    @ObservedObject var formState: FormState
+    @ObservedObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
@@ -80,8 +80,8 @@ private struct ChildNpsController: View {
     let info: ThomasViewInfo.NPSController
     let constraints: ViewConstraints
 
-    @EnvironmentObject var parentFormState: FormState
-    @ObservedObject var formState: FormState
+    @EnvironmentObject var parentFormState: ThomasFormState
+    @ObservedObject var formState: ThomasFormState
 
     var body: some View {
         return
@@ -102,12 +102,11 @@ private struct ChildNpsController: View {
 
     private func restoreFormState() {
         guard
-            let formData = self.parentFormState.data.formData(
+            let formData = self.parentFormState.data.input(
                 identifier: self.info.properties.identifier
             ),
-            case let .form(responseType, formType, children) = formData.value,
+            case let .npsForm(responseType, scoreID, children) = formData.value,
             responseType == self.info.properties.responseType,
-            case let .nps(scoreID) = formType,
             scoreID == self.info.properties.npsIdentifier
         else {
             return

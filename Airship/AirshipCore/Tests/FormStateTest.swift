@@ -8,14 +8,14 @@ class FormStateTest: XCTestCase {
 
     @MainActor
     func testData() throws {
-        let formState = FormState(
+        let formState = ThomasFormState(
             identifier: "some-form-id",
             formType: .form,
             formResponseType: "user_feedback"
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-radio-input",
                 value: .radio("some-radio-input-value"),
                 isValid: true
@@ -23,7 +23,7 @@ class FormStateTest: XCTestCase {
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-toggle-input",
                 value: .toggle(true),
                 isValid: true
@@ -31,7 +31,7 @@ class FormStateTest: XCTestCase {
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-score-input",
                 value: .score(7),
                 isValid: true
@@ -39,7 +39,7 @@ class FormStateTest: XCTestCase {
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-text-input",
                 value: .text("neat text"),
                 isValid: true
@@ -47,29 +47,29 @@ class FormStateTest: XCTestCase {
         )
 
         // Child form data
-        let childData = FormInputData(
+        let childData = ThomasFormInput(
             "some-child-text-input",
             value: .text("some child text"),
             isValid: true
         )
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-child-form",
-                value: .form("app_rating", .form, [childData]),
+                value: .form(responseType: "app_rating", children: [childData]),
                 isValid: true
             )
         )
 
         // Child nps data
-        let childScore = FormInputData(
+        let childScore = ThomasFormInput(
             "some-child-score",
             value: .score(8),
             isValid: true
         )
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-child-nps",
-                value: .form("nps", .nps("some-child-score"), [childScore]),
+                value: .npsForm(responseType: "nps", scoreID: "some-child-score", children: [childScore]),
                 isValid: true
             )
         )
@@ -128,48 +128,45 @@ class FormStateTest: XCTestCase {
 
     @MainActor
     func testAttributes() throws {
-        let formState = FormState(
+        let formState = ThomasFormState(
             identifier: "some-form-id",
             formType: .form,
             formResponseType: "user_feedback"
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-input",
                 value: .radio("some-radio-input-value"),
-                attributeName: ThomasAttributeName(
-                    channel: "some-input-channel-name",
-                    contact: "some-input-contact-name"
+                attribute: .init(
+                    attributeName: ThomasAttributeName(
+                        channel: "some-input-channel-name",
+                        contact: "some-input-contact-name"
+                    ),
+                    attributeValue: .number(10.0)
                 ),
-                attributeValue: .number(10.0),
                 isValid: true
             )
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "missing-attribute-value",
                 value: .text("some child text"),
-                attributeName: ThomasAttributeName(
-                    channel: "missing",
-                    contact: "missing"
-                ),
                 isValid: true
             )
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "missing-attribute-name",
                 value: .text("some child text"),
-                attributeValue: .string("missing"),
                 isValid: true
             )
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "missing-attribute-name-and-value",
                 value: .text("some child text"),
                 isValid: true
@@ -177,40 +174,44 @@ class FormStateTest: XCTestCase {
         )
 
         // Child form data
-        let childData = FormInputData(
+        let childData = ThomasFormInput(
             "some-child-input",
             value: .text("some child text"),
-            attributeName: ThomasAttributeName(
-                channel: "some-child-input-channel-name",
-                contact: "some-child-input-contact-name"
+            attribute: .init(
+                attributeName: ThomasAttributeName(
+                    channel: "some-child-input-channel-name",
+                    contact: "some-child-input-contact-name"
+                ),
+                attributeValue: .string("hello form")
             ),
-            attributeValue: .string("hello form"),
             isValid: true
         )
 
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-child-form",
-                value: .form("user_feedback", .form, [childData]),
+                value: .form(responseType: "user_feedback", children: [childData]),
                 isValid: true
             )
         )
 
         // Child nps data
-        let childScore = FormInputData(
+        let childScore = ThomasFormInput(
             "some-child-score",
             value: .score(8),
-            attributeName: ThomasAttributeName(
-                channel: "some-nps-child-input-channel-name",
-                contact: "some-nps-child-input-contact-name"
+            attribute: .init(
+                attributeName: ThomasAttributeName(
+                    channel: "some-nps-child-input-channel-name",
+                    contact: "some-nps-child-input-contact-name"
+                ),
+                attributeValue: .string("hello nps")
             ),
-            attributeValue: .string("hello nps"),
             isValid: true
         )
         formState.updateFormInput(
-            FormInputData(
+            ThomasFormInput(
                 "some-child-nps",
-                value: .form("nps", .nps("some-child-score"), [childScore]),
+                value: .npsForm(responseType: "nps", scoreID: "some-child-score", children: [childScore]),
                 isValid: true
             )
         )
@@ -244,7 +245,7 @@ class FormStateTest: XCTestCase {
         expected.forEach { expectedEntry in
             XCTAssertTrue(
                 actual.contains(where: {
-                    $0.0 == expectedEntry.0 && $0.1 == expectedEntry.1
+                    $0.attributeName == expectedEntry.0 && $0.attributeValue == expectedEntry.1
                 })
             )
         }

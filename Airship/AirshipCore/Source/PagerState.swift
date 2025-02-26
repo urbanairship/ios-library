@@ -117,7 +117,7 @@ class PagerState: ObservableObject {
     func setPagesAndListenForUpdates(
         pages: [ThomasViewInfo.Pager.Item],
         viewState: ViewState,
-        formState: FormState
+        formState: ThomasFormState
     ) {
         if let branchControl {
             branchControl.configureAndAttachTo(
@@ -292,7 +292,7 @@ private class BranchControl: Sendable {
     @Published private(set) var canGoBack: Bool = true
 
     private var viewState: ViewState?
-    private var formState: FormState?
+    private var formState: ThomasFormState?
     private var history: [ThomasViewInfo.Pager.Item] = []
     private var subscriptions: Set<AnyCancellable> = []
     
@@ -303,7 +303,7 @@ private class BranchControl: Sendable {
     func configureAndAttachTo(
         pages: [ThomasViewInfo.Pager.Item],
         viewState: ViewState,
-        formState: FormState
+        formState: ThomasFormState
     ) {
         detach()
 
@@ -332,7 +332,7 @@ private class BranchControl: Sendable {
             return
         }
 
-        let payload = self.generatePayload(viewState: viewState.state, formState: formState.data)
+        let payload = self.generatePayload(viewState: viewState.state, formState: formState)
 
         self.reEvaluatePath(payload: payload)
         self.evaluateCompletion(payload: payload)
@@ -344,8 +344,8 @@ private class BranchControl: Sendable {
             return
         }
 
-        let payload = self.generatePayload(viewState: viewState.state, formState: formState.data)
-        
+        let payload = self.generatePayload(viewState: viewState.state, formState: formState)
+
         self.canGoBack = if let current = self.history.last {
             current.branching?.canGoBack(json: payload) != false
         } else {
@@ -393,11 +393,11 @@ private class BranchControl: Sendable {
         updateCanGoBack()
     }
     
-    private func generatePayload(viewState: [String: Any], formState: FormInputData) -> AirshipJSON {
+    private func generatePayload(viewState: [String: Any], formState: ThomasFormState) -> AirshipJSON {
         var data = viewState
         data["$forms"] = [
             "current": [
-                "data": formState.getData()
+                "data": formState.data.toPayload()
             ]
         ]
         
@@ -480,7 +480,7 @@ private class BranchControl: Sendable {
             return
         }
         
-        let payload = self.generatePayload(viewState: viewState.state, formState: formState.data)
+        let payload = self.generatePayload(viewState: viewState.state, formState: formState)
         
         let actions = completionChecker.completions
             .filter { $0.predicate?.evaluate(payload) != false }

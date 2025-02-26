@@ -4,19 +4,18 @@ import Combine
 import Foundation
 import SwiftUI
 
-
 struct FormController: View {
 
     let info: ThomasViewInfo.FormController
     let constraints: ViewConstraints
-    @StateObject var formState: FormState
+    @StateObject var formState: ThomasFormState
 
     @MainActor
     init(info: ThomasViewInfo.FormController, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
         self._formState = StateObject(
-            wrappedValue: FormState(
+            wrappedValue: ThomasFormState(
                 identifier: info.properties.identifier,
                 formType: .form,
                 formResponseType: info.properties.responseType
@@ -47,7 +46,7 @@ private struct ParentFormController: View {
     let info: ThomasViewInfo.FormController
     let constraints: ViewConstraints
 
-    @ObservedObject var formState: FormState
+    @ObservedObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
 
@@ -81,8 +80,8 @@ private struct ChildFormController: View {
     let info: ThomasViewInfo.FormController
     let constraints: ViewConstraints
 
-    @EnvironmentObject var parentFormState: FormState
-    @ObservedObject var formState: FormState
+    @EnvironmentObject var parentFormState: ThomasFormState
+    @ObservedObject var formState: ThomasFormState
 
     var body: some View {
         return
@@ -103,12 +102,11 @@ private struct ChildFormController: View {
 
     private func restoreFormState() {
         guard
-            let formData = self.parentFormState.data.formData(
+            let formData = self.parentFormState.data.input(
                 identifier: self.info.properties.identifier
             ),
-            case let .form(responseType, formType, children) = formData.value,
-            responseType == self.info.properties.responseType,
-            case .form = formType
+            case let .form(responseType, children) = formData.value,
+            responseType == self.info.properties.responseType
         else {
             return
         }
@@ -121,7 +119,7 @@ private struct ChildFormController: View {
 
 
 struct FormControllerDebug: View {
-    @EnvironmentObject var state: FormState
+    @EnvironmentObject var state: ThomasFormState
 
     var body: some View {
         Text(String(describing: state.data.toPayload()))

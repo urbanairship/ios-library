@@ -6,7 +6,7 @@ import SwiftUI
 struct RadioInput: View {
     let info: ThomasViewInfo.RadioInput
     let constraints: ViewConstraints
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var radioInputState: RadioInputState
 
     @ViewBuilder

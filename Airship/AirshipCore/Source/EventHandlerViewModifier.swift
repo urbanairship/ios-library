@@ -8,7 +8,7 @@ import SwiftUI
 internal struct EventHandlerViewModifier: ViewModifier {
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject var viewState: ViewState
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var pagerState: PagerState
 
     @Environment(\.layoutState) private var layoutState
@@ -32,20 +32,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
         }
     }
 
-    func unwrapValue(_ formValue: FormValue?) -> Any? {
-        switch formValue {
-        case .toggle(let value): return value
-        case .radio(let value): return value
-        case .multipleCheckbox(let value): return value
-        case .form(_, _, let value): return value.map { $0.toPayload() }
-        case .text(let value): return value
-        case .emailText(let value): return value
-        case .score(let value): return value
-        case .none: return nil
-        }
-    }
-
-    private func handleEvent(type: ThomasEventHandler.EventType, formInputData: FormInputData? = nil) {
+    private func handleEvent(type: ThomasEventHandler.EventType, formInputData: ThomasFormInput? = nil) {
         let handlers = eventHandlers.filter { $0.type == type }
 
         // Process
@@ -56,7 +43,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
     
     private func handleStateAction(
         _ stateActions: [ThomasStateAction],
-        formInputData: FormInputData? = nil
+        formInputData: ThomasFormInput? = nil
     ) {
         stateActions.forEach { action in
             switch action {
@@ -70,7 +57,7 @@ internal struct EventHandlerViewModifier: ViewModifier {
             case .formValue(let details):
                 if let formInputID {
                     let formData = formInputData ?? self.formState.data
-                    let value = unwrapValue(formData.formValue(identifier: formInputID))
+                    let value = formData.input(identifier: formInputID)?.value.unwrappedValue
                     viewState.updateState(key: details.key, value: value)
                 }
             }

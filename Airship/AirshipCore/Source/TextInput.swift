@@ -11,7 +11,7 @@ struct TextInput: View {
     @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.colorScheme) var colorScheme
 
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var viewState: ViewState
 
@@ -176,9 +176,9 @@ struct TextInput: View {
 
     private func restoreFormState() {
         guard
-            case let .text(value) = self.formState.data.formValue(
+            case let .text(value) = self.formState.data.input(
                 identifier: self.info.properties.identifier
-            ),
+            )?.value,
             let value = value
         else {
             return
@@ -201,7 +201,7 @@ struct TextInput: View {
         }
     }
 
-    private func channelRegistration(text: String) -> FormInputData.ChannelRegistration? {
+    private func channelRegistration(text: String) -> ThomasFormInput.ChannelRegistration? {
         guard self.info.properties.inputType == .email,
               let registration = self.info.properties.emailRegistration,
               text.isEmpty == false
@@ -211,18 +211,29 @@ struct TextInput: View {
         return .email(text, registration)
     }
 
+    private func attribute(text: String) -> ThomasFormInput.Attribute? {
+        guard
+            !text.isEmpty,
+            let name = info.properties.attributeName
+        else {
+            return nil
+        }
+
+        return ThomasFormInput.Attribute(
+            attributeName: name,
+            attributeValue: .string(text)
+        )
+    }
+
     private func updateValue(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
-
         let isValid = validate(trimmed)
-
         let isEmailType = self.info.properties.inputType == .email
 
-        let data = FormInputData(
+        let data = ThomasFormInput(
             self.info.properties.identifier,
             value: isEmailType ? .emailText(trimmed.isEmpty ? nil : trimmed) : .text(trimmed.isEmpty ? nil : trimmed),
-            attributeName: self.info.properties.attributeName,
-            attributeValue: trimmed.isEmpty ? nil : .string(trimmed),
+            attribute: self.attribute(text: trimmed),
             channelRegistration: self.channelRegistration(text: trimmed),
             isValid: isValid
         )

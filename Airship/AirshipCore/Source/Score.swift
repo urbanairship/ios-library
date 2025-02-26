@@ -8,7 +8,7 @@ struct Score: View {
     let constraints: ViewConstraints
 
     @State var score: Int?
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @Environment(\.colorScheme) var colorScheme
 
     @ViewBuilder
@@ -101,30 +101,36 @@ struct Score: View {
         return min(remainingSpace / count, 66.0)
     }
 
-    private func updateScore(_ value: Int?) {
-        self.score = value
-        let isValid = value != nil || self.info.validation.isRequired != true
-
-        var attributeValue: ThomasAttributeValue?
-        if let value = value {
-            attributeValue = ThomasAttributeValue.number(Double(value))
+    private func attribute(value: Int?) -> ThomasFormInput.Attribute? {
+        guard
+            let value,
+            let name = info.properties.attributeName
+        else {
+            return nil
         }
 
-        let data = FormInputData(
+        return ThomasFormInput.Attribute(
+            attributeName: name,
+            attributeValue: .number(Double(value))
+        )
+    }
+
+    private func updateScore(_ value: Int?) {
+        self.score = value
+        let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .score(value),
-            attributeName: self.info.properties.attributeName,
-            attributeValue: attributeValue,
-            isValid: isValid
+            attribute: self.attribute(value: value),
+            isValid: value != nil || self.info.validation.isRequired != true
         )
 
         self.formState.updateFormInput(data)
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.formValue(
+        let formValue = self.formState.data.input(
             identifier: self.info.properties.identifier
-        )
+        )?.value
 
         guard
             case let .score(scoreValue) = formValue,

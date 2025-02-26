@@ -5,7 +5,7 @@ import SwiftUI
 
 /// Button view.
 struct AirshipButton<Label> : View  where Label : View {
-    @EnvironmentObject private var formState: FormState
+    @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var pagerState: PagerState
     @EnvironmentObject private var viewState: ViewState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
@@ -15,7 +15,7 @@ struct AirshipButton<Label> : View  where Label : View {
     let identifier: String
     let reportingMetadata: AirshipJSON?
     let description: String?
-    let clickBehaviors:[ThomasButtonClickBehavior]?
+    let clickBehaviors: [ThomasButtonClickBehavior]?
     let eventHandlers: [ThomasEventHandler]?
     let actions: ThomasActionsPayload?
     let tapEffect: ThomasButtonTapEffect?

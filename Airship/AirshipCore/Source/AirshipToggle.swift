@@ -7,7 +7,7 @@ struct AirshipToggle: View {
     let info: ThomasViewInfo.Toggle
     let constraints: ViewConstraints
 
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @State private var isOn: Bool = false
 
     var body: some View {
@@ -39,26 +39,37 @@ struct AirshipToggle: View {
             )
     }
 
+    private var attribute: ThomasFormInput.Attribute? {
+        guard
+            let name = self.info.properties.attributeName,
+            let value = self.info.properties.attributeValue
+        else {
+            return nil
+        }
+
+        return ThomasFormInput.Attribute(
+            attributeName: name,
+            attributeValue: value
+        )
+    }
+
     private func updateValue(_ isOn: Bool) {
-        let isValid = isOn || !(self.info.validation.isRequired ?? false)
-        let data = FormInputData(
+        let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .toggle(isOn),
-            attributeName: self.info.properties.attributeName,
-            attributeValue: isOn ? self.info.properties.attributeValue : nil,
-            isValid: isValid
+            attribute: isOn ? self.attribute : nil,
+            isValid: isOn || !(self.info.validation.isRequired ?? false)
         )
 
         self.formState.updateFormInput(data)
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.formValue(
+        let formValue = self.formState.data.input(
             identifier: self.info.properties.identifier
-        )
+        )?.value
 
-        guard case let .toggle(value) = formValue
-        else {
+        guard case let .toggle(value) = formValue else {
             return
         }
 

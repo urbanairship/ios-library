@@ -10,7 +10,7 @@ struct LayoutState: Sendable {
     )
 
     var pagerState: PagerState?
-    var formState: FormState?
+    var formState: ThomasFormState?
     var buttonState: ButtonState?
 
     func override(pagerState: PagerState?) -> LayoutState {
@@ -19,7 +19,7 @@ struct LayoutState: Sendable {
         return context
     }
 
-    func override(formState: FormState?) -> LayoutState {
+    func override(formState: ThomasFormState?) -> LayoutState {
         var context = self
         context.formState = formState
         return context

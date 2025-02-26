@@ -7,7 +7,7 @@ import SwiftUI
 
 struct FormVisibilityViewModifier: ViewModifier {
     @Environment(\.isVisible) private var isVisible
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -18,15 +18,15 @@ struct FormVisibilityViewModifier: ViewModifier {
                 }
             }
             .airshipOnChangeOf(isVisible) { [weak formState] newValue in
-            if newValue {
-                formState?.markVisible()
+                if newValue {
+                    formState?.markVisible()
+                }
             }
-        }
     }
 }
 
 struct FormInputEnabledViewModifier: ViewModifier {
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
 
     @ViewBuilder
     func body(content: Content) -> some View {

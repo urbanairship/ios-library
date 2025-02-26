@@ -7,7 +7,7 @@ import SwiftUI
 struct Checkbox: View {
     let info: ThomasViewInfo.Checkbox
     let constraints: ViewConstraints
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var checkboxState: CheckboxState
 
     @ViewBuilder

@@ -31,7 +31,6 @@ class EmbeddedPlaygroundMenuViewModel: ObservableObject {
         }
 
         let filePath = resourcePath + viewsPath + "/\(self.selectedFileID).yml"
-        let thefilecontents = try? String(contentsOfFile: filePath, encoding: String.Encoding.utf8)
 
         // Parse the YAML string into a dictionary
         if let fileContents = try? String(contentsOfFile: filePath, encoding: String.Encoding.utf8), let parsedYaml = try? Yams.load(yaml: fileContents) as? [String: Any] {

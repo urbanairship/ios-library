@@ -12,9 +12,11 @@ class ThomasEnvironment: ObservableObject {
     private let delegate: any ThomasDelegate
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
-    let defaultFormState = FormState(identifier: "",
-                                     formType: .form,
-                                     formResponseType: "")
+    let defaultFormState = ThomasFormState(
+        identifier: "",
+        formType: .form,
+        formResponseType: ""
+    )
 
     let defaultViewState = ViewState()
 
@@ -55,7 +57,7 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func submitForm(_ formState: FormState, layoutState: LayoutState) {
+    func submitForm(_ formState: ThomasFormState, layoutState: LayoutState) {
         guard !formState.isSubmitted else {
             return
         }
@@ -69,7 +71,7 @@ class ThomasEnvironment: ObservableObject {
         registerChannels(formState: formState)
     }
 
-    private func registerChannels(formState: FormState) {
+    private func registerChannels(formState: ThomasFormState) {
         formState.data.channels.forEach { channelRegistration in
             switch(channelRegistration) {
             case .email(let address, let options):
@@ -81,25 +83,23 @@ class ThomasEnvironment: ObservableObject {
         }
     }
 
-    private func applyAttributes(formState: FormState) {
+    private func applyAttributes(formState: ThomasFormState) {
         let channelEditor = Airship.channel.editAttributes()
         let contactEditor = Airship.contact.editAttributes()
 
-        formState.data.attributes.forEach {
-            let attributeName = $0.0
-            let attributeValue = $0.1
+        formState.data.attributes.forEach { attribute in
 
-            if let attribute = attributeName.channel {
+            if let name = attribute.attributeName.channel {
                 channelEditor.set(
-                    attributeValue: attributeValue,
-                    attribute: attribute
+                    attributeValue: attribute.attributeValue,
+                    attribute: name
                 )
             }
 
-            if let attribute = attributeName.contact {
+            if let name = attribute.attributeName.contact {
                 contactEditor.set(
-                    attributeValue: attributeValue,
-                    attribute: attribute
+                    attributeValue: attribute.attributeValue,
+                    attribute: name
                 )
             }
         }
@@ -111,7 +111,7 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func formDisplayed(_ formState: FormState, layoutState: LayoutState) {
+    func formDisplayed(_ formState: ThomasFormState, layoutState: LayoutState) {
         self.delegate.onFormDisplayed(
             formInfo: formState.toFormInfo(),
             layoutContext: layoutState.toLayoutContext()
@@ -299,7 +299,7 @@ enum DismissReason {
     case other
 }
 
-extension FormState {
+extension ThomasFormState {
     fileprivate func toFormInfo() -> ThomasFormInfo {
         ThomasFormInfo(
             identifier: self.identifier,

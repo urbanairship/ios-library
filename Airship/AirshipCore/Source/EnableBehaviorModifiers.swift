@@ -7,7 +7,7 @@ import SwiftUI
 internal struct FormSubmissionEnableBehavior: ViewModifier {
     let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -24,7 +24,7 @@ internal struct FormSubmissionEnableBehavior: ViewModifier {
 internal struct ValidFormButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
-    @EnvironmentObject var formState: FormState
+    @EnvironmentObject var formState: ThomasFormState
 
     @ViewBuilder
     func body(content: Content) -> some View {
