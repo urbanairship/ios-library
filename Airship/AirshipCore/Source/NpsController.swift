@@ -19,7 +19,8 @@ struct NpsController: View {
             wrappedValue: ThomasFormState(
                 identifier: info.properties.identifier,
                 formType: .nps(info.properties.npsIdentifier),
-                formResponseType: info.properties.responseType
+                formResponseType: info.properties.responseType,
+                validationMode: info.properties.validationMode ?? .immediate
             )
         )
     }
@@ -40,7 +41,6 @@ struct NpsController: View {
         }
     }
 }
-
 
 private struct ParentNpsController: View {
     let info: ThomasViewInfo.NPSController

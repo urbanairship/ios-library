@@ -10,6 +10,7 @@ enum ThomasButtonClickBehavior: String, ThomasSerializable {
     case pagerNextOrDismiss = "pager_next_or_dismiss"
     case pagerNextOrFirst = "pager_next_or_first"
     case formSubmit = "form_submit"
+    case formValidate = "form_validate"
     case pagerPause = "pager_pause"
     case pagerResume = "pager_resume"
 }
@@ -35,6 +36,8 @@ extension ThomasButtonClickBehavior {
             return 1
         case .formSubmit:
             return 0
+        case .formValidate:
+            return -1
         }
     }
 }

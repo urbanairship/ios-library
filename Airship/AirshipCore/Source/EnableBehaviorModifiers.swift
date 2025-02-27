@@ -12,11 +12,11 @@ internal struct FormSubmissionEnableBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if let onApply = onApply {
-            content.onReceive(self.formState.$isSubmitted) { value in
-                onApply(!value, .formSubmission)
+            content.onReceive(self.formState.$status) { value in
+                onApply(value != .submitted, .formSubmission)
             }
         } else {
-            content.disabled(formState.isSubmitted)
+            content.disabled(formState.status == .submitted)
         }
     }
 }
@@ -29,15 +29,29 @@ internal struct ValidFormButtonEnableBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if let onApply = onApply {
-            content.onReceive(self.formState.$data) { data in
-                onApply(data.isValid, .formValidation)
+            content.airshipOnChangeOf(self.formState.status) { status in
+                onApply(!isValid(status), .formValidation)
             }
         } else {
-            content.disabled(!formState.data.isValid)
+            content.disabled(!isValid(self.formState.status))
+        }
+    }
+
+    func isValid(_ status: ThomasFormStatus) -> Bool {
+        return switch(formState.validationMode) {
+        case .onDemand:
+            switch(formState.status) {
+            case .error, .valid, .pendingValidation: true
+            case .invalid, .validating, .submitted: false
+            }
+        case .immediate:
+            switch(formState.status) {
+            case .error, .valid: true
+            case .pendingValidation, .invalid, .validating, .submitted: false
+            }
         }
     }
 }
-
 
 internal struct PagerNextButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
@@ -58,7 +72,6 @@ internal struct PagerNextButtonEnableBehavior: ViewModifier {
     }
 }
 
-
 struct PagerPreviousButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
@@ -75,7 +88,6 @@ struct PagerPreviousButtonEnableBehavior: ViewModifier {
         }
     }
 }
-
 
 internal struct AggregateEnableBehavior: ViewModifier {
     let behaviors: [ThomasEnableBehavior]
@@ -99,7 +111,6 @@ internal struct AggregateEnableBehavior: ViewModifier {
         }
     }
 }
-
 
 extension View {
     @ViewBuilder

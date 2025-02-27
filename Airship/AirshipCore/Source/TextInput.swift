@@ -5,6 +5,7 @@ import Foundation
 import SwiftUI
 
 struct TextInput: View {
+
     let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
 
@@ -15,12 +16,21 @@ struct TextInput: View {
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var viewState: ViewState
 
-    @State private var input: String = ""
     @State private var isEditing: Bool = false
-    @State private var validationTask: Task<Void, Never>?
+    @State private var lastResult: ThomasInputValidator.Result? = nil
 
-    /// Validation will occur if no edits take place within this duration, resets each time edits take place
-    private static var editValidationDelay: TimeInterval = 1.0
+    @StateObject private var viewModel: ViewModel
+
+    init(info: ThomasViewInfo.TextInput, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+        self._viewModel = StateObject(
+            wrappedValue: ViewModel(
+                inputProperties: info.properties,
+                isRequired: info.validation.isRequired ?? false
+            )
+        )
+    }
 
 #if !os(watchOS)
     private var keyboardType: UIKeyboardType {
@@ -37,41 +47,20 @@ struct TextInput: View {
     }
 #endif
 
-    private func onTextFieldTextChanged(newValue: String) {
-        self.input = newValue
-        self.updateValue(newValue)
-
-        validationTask?.cancel()
-        updateValidationState(isEditing: true)
-
-        validationTask = Task { @MainActor in
-            try? await Task.sleep(nanoseconds: UInt64(Self.editValidationDelay * 1_000_000_000))
-            guard !Task.isCancelled else { return }
-            updateValidationState(isEditing: false)
-        }
-    }
-
     @ViewBuilder
     private func createTextEditor() -> some View {
-        let binding = Binding<String>(
-            get: { self.input },
-            set: { newValue in
-                onTextFieldTextChanged(newValue: newValue)
-            }
-        )
-
         if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
             AirshipTextField(
                 info: self.info,
                 constraints: constraints,
-                binding: binding,
+                binding: self.$viewModel.input,
                 isEditing: $isEditing
             )
         } else {
 #if !os(watchOS)
             AirshipTextView(
                 textAppearance: self.info.properties.textAppearance,
-                text: binding,
+                text: self.$viewModel.input,
                 isEditing: $isEditing
             )
             .constraints(constraints, alignment: .topLeading)
@@ -79,6 +68,7 @@ struct TextInput: View {
                 let focusedID = newValue ? self.info.properties.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
             }
+
 #endif
         }
     }
@@ -91,13 +81,12 @@ struct TextInput: View {
                     .textAppearance(placeHolderTextAppearance())
                     .padding(5)
                     .constraints(constraints, alignment: self.info.properties.textAppearance.alignment?.placeholderAlignment ?? .topLeading)
-                    .opacity(input.isEmpty && !isEditing ? 1 : 0)
+                    .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
                     .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
             }
             HStack {
                 createTextEditor()
 #if !os(watchOS)
-
                     .airshipApplyIf(self.info.properties.inputType == .email) { view in
                         view.textInputAutocapitalization(.never)
                     }
@@ -125,10 +114,30 @@ struct TextInput: View {
         .formElement()
         .onAppear {
             restoreFormState()
-            updateValue(input)
         }
-        .onDisappear {
-            validationTask?.cancel()
+        .airshipOnChangeOf(self.formState.validationIssues) { _ in
+            // We only want to update the validation status on change
+            // of validation issues when we are in immediate mode. The
+            // onValidate mode we only update when the status updates
+            // or if we edit the value.
+            guard self.formState.validationMode == .immediate else { return }
+            updateValidationState()
+        }
+        .airshipOnChangeOf(self.formState.status) { status in
+            // Only update if the status is valid or invalid
+            guard status == .valid || status == .invalid else { return }
+            updateValidationState()
+        }
+        .onReceive(self.viewModel.$formData) { data in
+            if let data {
+                self.formState.updateFormInput(data)
+                switch(self.formState.validationMode) {
+                case .onDemand:
+                    self.info.validation.onEdit?.stateActions.map(handleStateActions)
+                case .immediate:
+                    updateValidationState()
+                }
+            }
         }
     }
 
@@ -138,20 +147,6 @@ struct TextInput: View {
             overrides: self.info.overrides?.iconEnd,
             defaultValue: self.info.properties.iconEnd ?? nil
         )
-    }
-
-    private func updateValidationState(isEditing: Bool) {
-        if isEditing {
-            self.info.validation.onEdit?.stateActions.map(handleStateActions)
-        } else {
-            let isValid = validate(input)
-
-            if isValid {
-                self.info.validation.onValid?.stateActions.map(handleStateActions)
-            } else {
-                self.info.validation.onError?.stateActions.map(handleStateActions)
-            }
-        }
     }
 
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
@@ -184,60 +179,41 @@ struct TextInput: View {
             return
         }
 
-        self.input = value
-    }
-
-    private func validate(_ text: String) -> Bool {
-        let trimmed = text.trimmingCharacters(in: .whitespaces)
-        if (trimmed.isEmpty) {
-            return self.info.validation.isRequired == false
-        }
-
-        switch self.info.properties.inputType {
-        case .email:
-            return trimmed.airshipIsValidEmail()
-        default:
-            return true
+        if (self.viewModel.input != value) {
+            self.viewModel.input = value
         }
     }
 
-    private func channelRegistration(text: String) -> ThomasFormInput.ChannelRegistration? {
-        guard self.info.properties.inputType == .email,
-              let registration = self.info.properties.emailRegistration,
-              text.isEmpty == false
-        else {
-            return nil
-        }
-        return .email(text, registration)
-    }
-
-    private func attribute(text: String) -> ThomasFormInput.Attribute? {
-        guard
-            !text.isEmpty,
-            let name = info.properties.attributeName
-        else {
-            return nil
-        }
-
-        return ThomasFormInput.Attribute(
-            attributeName: name,
-            attributeValue: .string(text)
+    @MainActor
+    private func updateValidationState() {
+        let currentStatus = self.formState.childValidationStatus(
+            child: self.info.properties.identifier
         )
-    }
 
-    private func updateValue(_ text: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespaces)
-        let isValid = validate(trimmed)
-        let isEmailType = self.info.properties.inputType == .email
+        guard let currentStatus else {
+            self.info.validation.onEdit?.stateActions.map(handleStateActions)
+            return
+        }
 
-        let data = ThomasFormInput(
-            self.info.properties.identifier,
-            value: isEmailType ? .emailText(trimmed.isEmpty ? nil : trimmed) : .text(trimmed.isEmpty ? nil : trimmed),
-            attribute: self.attribute(text: trimmed),
-            channelRegistration: self.channelRegistration(text: trimmed),
-            isValid: isValid
-        )
-        self.formState.updateFormInput(data)
+        switch(currentStatus) {
+        case .valid:
+            if self.viewModel.trimmedInput.isEmpty, let onEdit = self.info.validation.onEdit {
+                onEdit.stateActions.map(handleStateActions)
+            } else {
+                self.info.validation.onValid?.stateActions.map(handleStateActions)
+            }
+        case .invalid:
+            // Only update for an error state if the field has been edited
+            // or if the form is in onValidate mode to prevent the intial
+            // error on required fields.
+            guard self.viewModel.didEdit || self.formState.validationMode == .onDemand else {
+                return
+            }
+            self.info.validation.onError?.stateActions.map(handleStateActions)
+        case .error:
+            // ignore
+            break
+        }
     }
 
     private func placeHolderTextAppearance() -> ThomasTextAppearance {
@@ -249,7 +225,107 @@ struct TextInput: View {
         appearance.color = color
         return appearance
     }
+
+    @MainActor
+    fileprivate final class ViewModel: ObservableObject {
+        private let inputProperties: ThomasViewInfo.TextInput.Properties
+        private let isRequired: Bool
+        private let inputValidator: AirshipInputValidator = AirshipInputValidator()
+
+        @Published
+        var formData: ThomasFormInput?
+        private var lastInput: String?
+
+        @Published
+        var input: String = "" {
+            didSet {
+                if !self.input.isEmpty, !didEdit {
+                    didEdit = true
+                }
+                self.updateFormData()
+            }
+        }
+
+        var trimmedInput: String {
+            self.input.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        @Published
+        var didEdit: Bool = false
+
+        init(inputProperties: ThomasViewInfo.TextInput.Properties, isRequired: Bool) {
+            self.inputProperties = inputProperties
+            self.isRequired = isRequired
+            updateFormData()
+        }
+
+        private func attribute(value: String) -> ThomasFormInput.Attribute? {
+            guard
+                !value.isEmpty,
+                let name = inputProperties.attributeName
+            else {
+                return nil
+            }
+
+            return ThomasFormInput.Attribute(
+                attributeName: name,
+                attributeValue: .string(value)
+            )
+        }
+
+        private func updateFormData() {
+            let trimmedInput = self.trimmedInput
+            guard lastInput != trimmedInput else {
+                return
+            }
+            self.lastInput = trimmedInput
+
+            guard !trimmedInput.isEmpty else {
+                let value: ThomasFormInput.Value = switch(self.inputProperties.inputType) {
+                case .email: .emailText(nil)
+                case .number, .text, .textMultiline: .text(nil)
+                }
+
+                self.formData = ThomasFormInput(
+                    inputProperties.identifier,
+                    value: value,
+                    validator: .just(!isRequired)
+                )
+
+                return
+            }
+
+            switch(self.inputProperties.inputType) {
+            case .email:
+                let email = AirshipInputValidator.Email(trimmedInput)
+
+                var channelRegistration: ThomasFormInput.ChannelRegistration?
+                if let options = inputProperties.emailRegistration {
+                    channelRegistration = .email(email.address, options)
+                }
+
+                self.formData = ThomasFormInput(
+                    inputProperties.identifier,
+                    value: .emailText(input),
+                    attribute: self.attribute(value: input),
+                    channelRegistration: channelRegistration,
+                    validator: .async { [inputValidator] in
+                        return inputValidator.validate(email: email)
+                    }
+                )
+            case .number, .text, .textMultiline:
+                self.formData = ThomasFormInput(
+                    inputProperties.identifier,
+                    value: .text(trimmedInput),
+                    attribute: self.attribute(value: trimmedInput),
+                    validator: .just(true)
+                )
+            }
+        }
+    }
+
 }
+
 @available(iOS 16.0, tvOS 16, watchOS 9.0, *)
 struct AirshipTextField: View {
 
@@ -317,6 +393,7 @@ struct AirshipTextField: View {
         }
         return false
     }
+    
 }
 
 
@@ -457,5 +534,11 @@ extension ThomasTextAppearance.TextAlignement {
         case .center:
             return Alignment.top
         }
+    }
+}
+
+fileprivate extension String {
+    var nilIfEmpty: String? {
+        return isEmpty ? nil : self
     }
 }

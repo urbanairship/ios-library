@@ -50,7 +50,7 @@ extension Array where Element == ThomasAutomatedAction {
                 case .pagerPrevious: true
                 case .pagerNextOrDismiss: true
                 case .pagerNextOrFirst: true
-
+                case .formValidate: false
                 case .formSubmit: false
                 case .pagerPause: false
                 case .pagerResume: false

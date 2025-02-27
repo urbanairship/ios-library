@@ -54,11 +54,12 @@ struct AirshipToggle: View {
     }
 
     private func updateValue(_ isOn: Bool) {
+        let isValid = isOn || !(self.info.validation.isRequired ?? false)
         let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .toggle(isOn),
             attribute: isOn ? self.attribute : nil,
-            isValid: isOn || !(self.info.validation.isRequired ?? false)
+            validator: .just(isValid)
         )
 
         self.formState.updateFormInput(data)

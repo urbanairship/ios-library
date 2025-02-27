@@ -535,49 +535,63 @@ struct Pager: View {
     private func handleBehavior(
         _ behaviors: [ThomasButtonClickBehavior]?
     ) {
-        behaviors?.sorted { first, second in
-            first.sortOrder < second.sortOrder
-        }.forEach { behavior in
-            
-            switch(behavior) {
-            case .dismiss:
-                thomasEnvironment.dismiss()
-                
-            case .cancel:
-                thomasEnvironment.dismiss()
-                
-            case .pagerNext:
-                pagerState.process(request: .next)
+        guard let behaviors else { return }
 
-            case .pagerPrevious:
-                pagerState.process(request: .back)
+        Task {
+            if behaviors.contains(.formSubmit) || behaviors.contains(.formValidate) {
+                guard await formState.validate() else { return }
+            }
 
-            case .pagerNextOrDismiss:
-                if pagerState.isLastPage {
+            behaviors.sorted { first, second in
+                first.sortOrder < second.sortOrder
+            }.forEach { behavior in
+
+                switch(behavior) {
+                case .dismiss:
                     thomasEnvironment.dismiss()
-                } else {
-                    pagerState.process(request: .next)
-                }
 
-            case .pagerNextOrFirst:
-                if pagerState.isLastPage {
-                    pagerState.process(request: .first)
-                } else {
-                    pagerState.process(request: .next)
-                }
+                case .cancel:
+                    thomasEnvironment.dismiss()
 
-            case .pagerPause:
-                pagerState.pause()
-                
-            case .pagerResume:
-                pagerState.resume()
-                
-            case .formSubmit:
-                let formState = formState.topFormState
-                thomasEnvironment.submitForm(formState, layoutState: layoutState)
-                formState.markSubmitted()
+                case .pagerNext:
+                    pagerState.process(request: .next)
+
+                case .pagerPrevious:
+                    pagerState.process(request: .back)
+
+                case .pagerNextOrDismiss:
+                    if pagerState.isLastPage {
+                        thomasEnvironment.dismiss()
+                    } else {
+                        pagerState.process(request: .next)
+                    }
+
+                case .pagerNextOrFirst:
+                    if pagerState.isLastPage {
+                        pagerState.process(request: .first)
+                    } else {
+                        pagerState.process(request: .next)
+                    }
+
+                case .pagerPause:
+                    pagerState.pause()
+
+                case .pagerResume:
+                    pagerState.resume()
+
+                case .formValidate:
+                    // Already handled above
+                    break
+
+                case .formSubmit:
+                    guard formState.status == .valid else { return }
+                    let formState = formState.topFormState
+                    thomasEnvironment.submitForm(formState, layoutState: layoutState)
+                    formState.markSubmitted()
+                }
             }
         }
+
     }
 
     private func reportPage(_ index: Int) {

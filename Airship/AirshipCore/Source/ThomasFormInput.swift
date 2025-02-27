@@ -46,7 +46,7 @@ struct ThomasFormInput: Sendable {
     let identifier: String
     let value: Value
 
-    let isValid: Bool
+    let validator: ThomasInputValidator
     private let channelRegistration: ChannelRegistration?
     private let attribute: Attribute?
 
@@ -55,13 +55,13 @@ struct ThomasFormInput: Sendable {
         value: Value,
         attribute: Attribute? = nil,
         channelRegistration: ChannelRegistration? = nil,
-        isValid: Bool
+        validator: ThomasInputValidator
     ) {
         self.identifier = identifier
         self.value = value
         self.attribute = attribute
         self.channelRegistration = channelRegistration
-        self.isValid = isValid
+        self.validator = validator
     }
 
     fileprivate var allInputs: [ThomasFormInput] {

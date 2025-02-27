@@ -59,7 +59,7 @@ struct RadioInputController: View {
             self.info.properties.identifier,
             value: .radio(value),
             attribute: self.attribute,
-            isValid: value != nil || self.info.validation.isRequired != true
+            validator: .just(value != nil || self.info.validation.isRequired != true)
         )
         self.parentFormState.updateFormInput(data)
     }

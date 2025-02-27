@@ -121,7 +121,7 @@ struct Score: View {
             self.info.properties.identifier,
             value: .score(value),
             attribute: self.attribute(value: value),
-            isValid: value != nil || self.info.validation.isRequired != true
+            validator: .just(value != nil || self.info.validation.isRequired != true)
         )
 
         self.formState.updateFormInput(data)

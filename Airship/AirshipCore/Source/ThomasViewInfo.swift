@@ -1060,6 +1060,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var view: ThomasViewInfo
             var responseType: String?
             var formEnableBehaviors: [ThomasEnableBehavior]?
+            var validationMode: ThomasFormValidationMode?
 
             enum CodingKeys: String, CodingKey {
                 case identifier = "identifier"
@@ -1068,6 +1069,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case responseType = "response_type"
                 case formEnableBehaviors = "form_enabled"
                 case type
+                case validationMode = "validation_mode"
             }
         }
     }
@@ -1127,6 +1129,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var view: ThomasViewInfo
             var responseType: String?
             var formEnableBehaviors: [ThomasEnableBehavior]?
+            var validationMode: ThomasFormValidationMode?
 
             enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1136,6 +1139,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case responseType = "response_type"
                 case formEnableBehaviors = "form_enabled"
                 case type
+                case validationMode = "validation_mode"
             }
         }
     }

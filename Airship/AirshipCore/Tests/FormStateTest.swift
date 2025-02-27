@@ -11,14 +11,15 @@ class FormStateTest: XCTestCase {
         let formState = ThomasFormState(
             identifier: "some-form-id",
             formType: .form,
-            formResponseType: "user_feedback"
+            formResponseType: "user_feedback",
+            validationMode: .immediate
         )
 
         formState.updateFormInput(
             ThomasFormInput(
                 "some-radio-input",
                 value: .radio("some-radio-input-value"),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -26,7 +27,7 @@ class FormStateTest: XCTestCase {
             ThomasFormInput(
                 "some-toggle-input",
                 value: .toggle(true),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -34,7 +35,7 @@ class FormStateTest: XCTestCase {
             ThomasFormInput(
                 "some-score-input",
                 value: .score(7),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -42,7 +43,7 @@ class FormStateTest: XCTestCase {
             ThomasFormInput(
                 "some-text-input",
                 value: .text("neat text"),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -50,13 +51,13 @@ class FormStateTest: XCTestCase {
         let childData = ThomasFormInput(
             "some-child-text-input",
             value: .text("some child text"),
-            isValid: true
+            validator: .just(true)
         )
         formState.updateFormInput(
             ThomasFormInput(
                 "some-child-form",
                 value: .form(responseType: "app_rating", children: [childData]),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -64,13 +65,13 @@ class FormStateTest: XCTestCase {
         let childScore = ThomasFormInput(
             "some-child-score",
             value: .score(8),
-            isValid: true
+            validator: .just(true)
         )
         formState.updateFormInput(
             ThomasFormInput(
                 "some-child-nps",
                 value: .npsForm(responseType: "nps", scoreID: "some-child-score", children: [childScore]),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -131,7 +132,8 @@ class FormStateTest: XCTestCase {
         let formState = ThomasFormState(
             identifier: "some-form-id",
             formType: .form,
-            formResponseType: "user_feedback"
+            formResponseType: "user_feedback",
+            validationMode: .immediate
         )
 
         formState.updateFormInput(
@@ -145,7 +147,7 @@ class FormStateTest: XCTestCase {
                     ),
                     attributeValue: .number(10.0)
                 ),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -153,7 +155,7 @@ class FormStateTest: XCTestCase {
             ThomasFormInput(
                 "missing-attribute-value",
                 value: .text("some child text"),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -161,7 +163,7 @@ class FormStateTest: XCTestCase {
             ThomasFormInput(
                 "missing-attribute-name",
                 value: .text("some child text"),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -169,7 +171,7 @@ class FormStateTest: XCTestCase {
             ThomasFormInput(
                 "missing-attribute-name-and-value",
                 value: .text("some child text"),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -184,14 +186,14 @@ class FormStateTest: XCTestCase {
                 ),
                 attributeValue: .string("hello form")
             ),
-            isValid: true
+            validator: .just(true)
         )
 
         formState.updateFormInput(
             ThomasFormInput(
                 "some-child-form",
                 value: .form(responseType: "user_feedback", children: [childData]),
-                isValid: true
+                validator: .just(true)
             )
         )
 
@@ -206,13 +208,13 @@ class FormStateTest: XCTestCase {
                 ),
                 attributeValue: .string("hello nps")
             ),
-            isValid: true
+            validator: .just(true)
         )
         formState.updateFormInput(
             ThomasFormInput(
                 "some-child-nps",
                 value: .npsForm(responseType: "nps", scoreID: "some-child-score", children: [childScore]),
-                isValid: true
+                validator: .just(true)
             )
         )
 

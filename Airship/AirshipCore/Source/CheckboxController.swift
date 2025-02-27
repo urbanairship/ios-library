@@ -63,7 +63,7 @@ struct CheckboxController: View {
         let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .multipleCheckbox(selected),
-            isValid: isValid
+            validator: .just(isValid)
         )
 
         formState.updateFormInput(data)

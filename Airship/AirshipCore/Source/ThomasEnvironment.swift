@@ -15,7 +15,8 @@ class ThomasEnvironment: ObservableObject {
     let defaultFormState = ThomasFormState(
         identifier: "",
         formType: .form,
-        formResponseType: ""
+        formResponseType: "",
+        validationMode: .immediate
     )
 
     let defaultViewState = ViewState()
@@ -58,7 +59,7 @@ class ThomasEnvironment: ObservableObject {
 
     @MainActor
     func submitForm(_ formState: ThomasFormState, layoutState: LayoutState) {
-        guard !formState.isSubmitted else {
+        guard formState.status != .submitted else {
             return
         }
 
@@ -303,7 +304,7 @@ extension ThomasFormState {
     fileprivate func toFormInfo() -> ThomasFormInfo {
         ThomasFormInfo(
             identifier: self.identifier,
-            submitted: self.isSubmitted,
+            submitted: self.status == .submitted,
             formType: self.formTypeString,
             formResponseType: self.formResponseType
         )

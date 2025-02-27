@@ -21,6 +21,9 @@ struct AirshipButton<Label> : View  where Label : View {
     let tapEffect: ThomasButtonTapEffect?
     let label: () -> Label
 
+    @State
+    var isProcessing: Bool = false
+
     init(
         identifier: String,
         reportingMetadata: AirshipJSON? = nil,
@@ -45,16 +48,26 @@ struct AirshipButton<Label> : View  where Label : View {
         Button(
             action: {
                 if (isButtonActionsEnabled) {
-                    doButtonActions()
+                    Task { @MainActor in
+                        isProcessing = true
+                        await doButtonActions()
+                        isProcessing = false
+                    }
                 }
             },
             label: self.label
         )
         .optionalAccessibilityLabel(self.description)
         .buttonTapEffect(tapEffect ?? .default)
+        .disabled(isProcessing)
     }
 
-    private func doButtonActions() {
+    @MainActor
+    private func doButtonActions() async {
+        if clickBehaviors?.contains(.formSubmit) == true || clickBehaviors?.contains(.formValidate) == true {
+            guard await formState.validate() else { return }
+        }
+
         let taps = self.eventHandlers?.filter { $0.type == .tap }
 
         /// Tap handlers
@@ -128,7 +141,12 @@ struct AirshipButton<Label> : View  where Label : View {
             case .pagerResume:
                 pagerState.resume()
 
+            case .formValidate:
+                // Already handled above
+                break
+                
             case .formSubmit:
+                guard formState.status == .valid else { return }
                 let formState = formState.topFormState
                 thomasEnvironment.submitForm(formState, layoutState: layoutState)
                 formState.markSubmitted()
@@ -189,8 +207,6 @@ fileprivate extension View {
             self
         }
     }
-
-
 }
 
 #if os(tvOS)

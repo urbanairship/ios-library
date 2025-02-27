@@ -18,7 +18,8 @@ struct FormController: View {
             wrappedValue: ThomasFormState(
                 identifier: info.properties.identifier,
                 formType: .form,
-                formResponseType: info.properties.responseType
+                formResponseType: info.properties.responseType,
+                validationMode: info.properties.validationMode ?? .immediate
             )
         )
     }
