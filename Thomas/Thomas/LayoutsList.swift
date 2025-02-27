@@ -4,7 +4,6 @@ import AirshipCore
 import SwiftUI
 import WebKit
 
-
 struct LayoutsList: View {
 
     let layouts: [LayoutFile]
@@ -24,19 +23,18 @@ struct LayoutsList: View {
     @State private var configurationFileName = ""
     @State private var showBanner = false
 
-
     var body: some View {
         VStack {
             List {
                 ForEach(self.layouts, id: \.self) { layout in
-                        Button(layout.fileName) {
-                            do {
-                                try Layouts.shared.openLayout(layout)
-                            } catch {
-                                self.showError = true
-                                self.errorMessage = "Failed to open layout \(error)"
-                            }
+                    Button(layout.fileName) {
+                        do {
+                            try Layouts.shared.openLayout(layout)
+                        } catch {
+                            self.showError = true
+                            self.errorMessage = "Failed to open layout \(error)"
                         }
+                    }
                 }
             }
         }
