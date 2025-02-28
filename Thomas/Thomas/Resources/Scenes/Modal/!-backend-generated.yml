@@ -886,18 +886,20 @@ view:
                         - scope:
                           - "$forms"
                           - current
+                          - data
                           - children
                           - be1f3115-6644-44fa-90a7-6d31f65870f3
                           value:
-                            equals: "d36ec69b-0757-4d57-a685-2ac1f60b420b"
+                            equals: d36ec69b-0757-4d57-a685-2ac1f60b420b
                           key: value
                         - scope:
                           - "$forms"
                           - current
+                          - data
                           - children
                           - be1f3115-6644-44fa-90a7-6d31f65870f3
                           value:
-                            equals: "\U0001F610 Average"
+                            equals: 9058eac8-58d6-4f89-a877-7c55790f23b4
                           key: value
                     - page_id: 3cbc6d3e-94f2-4803-90ed-d8978b6a5573
                       when_state_matches:
@@ -905,18 +907,20 @@ view:
                         - scope:
                           - "$forms"
                           - current
+                          - data
                           - children
                           - be1f3115-6644-44fa-90a7-6d31f65870f3
                           value:
-                            equals: " \U0001F641 Poor"
+                            equals: afbcc4f4-c54d-4393-9374-937a199170e9
                           key: value
                         - scope:
                           - "$forms"
                           - current
+                          - data
                           - children
                           - be1f3115-6644-44fa-90a7-6d31f65870f3
                           value:
-                            equals: " \U0001F621 Very Poor"
+                            equals: 25c2d021-9869-4124-a9e5-69b3e24aeb86
                           key: value
                     - page_id: d495142a-38d3-482c-9f14-203501b0518a
                       when_state_matches:
@@ -924,10 +928,11 @@ view:
                         - scope:
                           - "$forms"
                           - current
+                          - data
                           - children
                           - be1f3115-6644-44fa-90a7-6d31f65870f3
                           value:
-                            equals: "\U0001F60A Excellent "
+                            equals: d36ec69b-0757-4d57-a685-2ac1f60b420b
                           key: value
                     - page_id: d495142a-38d3-482c-9f14-203501b0518a
               - identifier: d495142a-38d3-482c-9f14-203501b0518a

@@ -7,7 +7,7 @@ import SwiftUI
 struct AirshipButton<Label> : View  where Label : View {
     @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var pagerState: PagerState
-    @EnvironmentObject private var viewState: ViewState
+    @EnvironmentObject private var thomasState: ThomasState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) private var layoutState
     @Environment(\.isButtonActionsEnabled) private var isButtonActionsEnabled
@@ -161,19 +161,7 @@ struct AirshipButton<Label> : View  where Label : View {
     }
 
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
-        stateActions.forEach { action in
-            switch action {
-            case .setState(let details):
-                viewState.updateState(
-                    key: details.key,
-                    value: details.value?.unWrap()
-                )
-            case .clearState:
-                viewState.clearState()
-            case .formValue(_):
-                AirshipLogger.error("Unable to process form value")
-            }
-        }
+        thomasState.processStateActions(stateActions)
     }
 }
 

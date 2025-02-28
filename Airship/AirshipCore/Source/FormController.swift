@@ -50,6 +50,7 @@ private struct ParentFormController: View {
     @ObservedObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
+    @EnvironmentObject var thomasState: ThomasState
 
     var body: some View {
         ViewFactory.createView(self.info.properties.view, constraints: constraints)
@@ -62,6 +63,7 @@ private struct ParentFormController: View {
                 layoutState.override(formState: formState)
             )
             .environmentObject(formState)
+            .environmentObject(thomasState.copy(formState: formState))
             .airshipOnChangeOf(formState.isVisible) { [weak formState, weak thomasEnvironment] incoming in
                 guard incoming, let formState, let thomasEnvironment else {
                     return
@@ -83,6 +85,7 @@ private struct ChildFormController: View {
 
     @EnvironmentObject var parentFormState: ThomasFormState
     @ObservedObject var formState: ThomasFormState
+    @EnvironmentObject var thomasState: ThomasState
 
     var body: some View {
         return
@@ -95,6 +98,7 @@ private struct ChildFormController: View {
                 self.formState.isEnabled = enabled
             }
             .environmentObject(formState)
+            .environmentObject(thomasState.copy(formState: formState))
             .onAppear {
                 self.restoreFormState()
                 self.formState.parentFormState = self.parentFormState

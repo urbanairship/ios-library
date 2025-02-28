@@ -11,7 +11,7 @@ struct Label: View {
     /// View constraints.
     let constraints: ViewConstraints
 
-    @EnvironmentObject var viewState: ViewState
+    @EnvironmentObject var thomasState: ThomasState
     @Environment(\.colorScheme) var colorScheme
 
     private var markdownText: Text {
@@ -43,9 +43,17 @@ struct Label: View {
 
     private var resolvedText: String {
         return ThomasPropertyOverride.resolveRequired(
-            state: viewState,
+            state: thomasState,
             overrides: self.info.overrides?.text,
             defaultValue: self.info.properties.text
+        )
+    }
+
+    private var resolvedStartIcon: ThomasViewInfo.Label.LabelIcon? {
+        return ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: self.info.overrides?.iconStart,
+            defaultValue: self.info.properties.iconStart
         )
     }
 
@@ -66,22 +74,32 @@ struct Label: View {
     }
 
     var body: some View {
-        self.textView
-            .textAppearance(self.info.properties.textAppearance)
-            .truncationMode(.tail)
-            .constraints(
-                constraints,
-                alignment: self.info.properties.textAppearance.alignment?
-                    .toFrameAlignment()
-                    ?? Alignment.center
-            )
-            .fixedSize(
-                horizontal: false,
-                vertical: self.constraints.height == nil
-            )
-            .thomasCommon(self.info)
-            .accessible(self.info.accessible)
-            .accessibilityRole(self.info.properties.accessibilityRole)
+        HStack(spacing: 0) {
+            if let icon = resolvedStartIcon {
+                let size = info.properties.textAppearance.fontSize
+                Icons.icon(info: icon.icon, colorScheme: colorScheme)
+                    .frame(height: size)
+                    .padding(.trailing, icon.space)
+                    .accessibilityHidden(true)
+            }
+
+            self.textView
+                .textAppearance(self.info.properties.textAppearance)
+                .truncationMode(.tail)
+        }
+        .constraints(
+            constraints,
+            alignment: self.info.properties.textAppearance.alignment?
+                .toFrameAlignment()
+                ?? Alignment.center
+        )
+        .fixedSize(
+            horizontal: false,
+            vertical: self.constraints.height == nil
+        )
+        .thomasCommon(self.info)
+        .accessible(self.info.accessible)
+        .accessibilityRole(self.info.properties.accessibilityRole)
     }
 }
 

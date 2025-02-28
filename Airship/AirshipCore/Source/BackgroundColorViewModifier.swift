@@ -6,7 +6,7 @@ import SwiftUI
 
 struct BackgroundViewModifier: ViewModifier {
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var state: ViewState
+    @EnvironmentObject var state: ThomasState
 
     var backgroundColor: ThomasColor?
     var backgroundColorOverrides: [ThomasPropertyOverride<ThomasColor>]?

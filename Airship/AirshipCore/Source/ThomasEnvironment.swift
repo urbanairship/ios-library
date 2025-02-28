@@ -12,16 +12,15 @@ class ThomasEnvironment: ObservableObject {
     private let delegate: any ThomasDelegate
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
+
     let defaultFormState = ThomasFormState(
         identifier: "",
         formType: .form,
         formResponseType: "",
         validationMode: .immediate
     )
-
-    let defaultViewState = ViewState()
-
     let defaultPagerState = PagerState(identifier: "", branching: nil)
+    let defaultMutableState = ThomasState.MutableState()
 
 
     @Published

@@ -275,6 +275,7 @@
 		6E1A19222D6F875A0056418B /* ThomasFormValidationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A19212D6F87550056418B /* ThomasFormValidationMode.swift */; };
 		6E1A19242D6F8BDD0056418B /* AirshipInputValidatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A19232D6F8BD50056418B /* AirshipInputValidatorTest.swift */; };
 		6E1A1BB32D6F9D0F0056418B /* ThomasInputValidatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A1BB22D6F9D090056418B /* ThomasInputValidatorTest.swift */; };
+		6E1A1D852D70F3700056418B /* ThomasState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A1D842D70F36D0056418B /* ThomasState.swift */; };
 		6E1A9BAB2B5AE38A00A6489B /* InAppMessageDisplayListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BAA2B5AE38A00A6489B /* InAppMessageDisplayListener.swift */; };
 		6E1A9BB02B5B0C4C00A6489B /* AutomationActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BAF2B5B0C4C00A6489B /* AutomationActionRunner.swift */; };
 		6E1A9BB22B5B172F00A6489B /* TestActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1A9BB12B5B172F00A6489B /* TestActionRunner.swift */; };
@@ -543,7 +544,6 @@
 		6E6ED1692683DBC300A2CBD0 /* AirshipNetworkChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1542683DBC300A2CBD0 /* AirshipNetworkChecker.swift */; };
 		6E6ED172268448EC00A2CBD0 /* TestNetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */; };
 		6E6EF9E7270625C400D30C35 /* AirshipEventsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6EF9E6270625C400D30C35 /* AirshipEventsTest.swift */; };
-		6E71129B2880DACB004942E4 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7112952880DACB004942E4 /* ViewState.swift */; };
 		6E71129D2880DACB004942E4 /* EventHandlerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7112962880DACB004942E4 /* EventHandlerViewModifier.swift */; };
 		6E7112A12880DACB004942E4 /* EnableBehaviorModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7112982880DACB004942E4 /* EnableBehaviorModifiers.swift */; };
 		6E7112A32880DACB004942E4 /* VisibilityViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7112992880DACB004942E4 /* VisibilityViewModifier.swift */; };
@@ -1525,6 +1525,7 @@
 		6E1A19212D6F87550056418B /* ThomasFormValidationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormValidationMode.swift; sourceTree = "<group>"; };
 		6E1A19232D6F8BD50056418B /* AirshipInputValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInputValidatorTest.swift; sourceTree = "<group>"; };
 		6E1A1BB22D6F9D090056418B /* ThomasInputValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasInputValidatorTest.swift; sourceTree = "<group>"; };
+		6E1A1D842D70F36D0056418B /* ThomasState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasState.swift; sourceTree = "<group>"; };
 		6E1A9BAA2B5AE38A00A6489B /* InAppMessageDisplayListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageDisplayListener.swift; sourceTree = "<group>"; };
 		6E1A9BAF2B5B0C4C00A6489B /* AutomationActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationActionRunner.swift; sourceTree = "<group>"; };
 		6E1A9BB12B5B172F00A6489B /* TestActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestActionRunner.swift; sourceTree = "<group>"; };
@@ -1820,7 +1821,6 @@
 		6E6ED1542683DBC300A2CBD0 /* AirshipNetworkChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipNetworkChecker.swift; sourceTree = "<group>"; };
 		6E6ED171268448EC00A2CBD0 /* TestNetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestNetworkMonitor.swift; sourceTree = "<group>"; };
 		6E6EF9E6270625C400D30C35 /* AirshipEventsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipEventsTest.swift; sourceTree = "<group>"; };
-		6E7112952880DACB004942E4 /* ViewState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		6E7112962880DACB004942E4 /* EventHandlerViewModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventHandlerViewModifier.swift; sourceTree = "<group>"; };
 		6E7112982880DACB004942E4 /* EnableBehaviorModifiers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnableBehaviorModifiers.swift; sourceTree = "<group>"; };
 		6E7112992880DACB004942E4 /* VisibilityViewModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisibilityViewModifier.swift; sourceTree = "<group>"; };
@@ -4213,11 +4213,11 @@
 		6EFD6D732729D84D005B26F1 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
+				6E1A1D842D70F36D0056418B /* ThomasState.swift */,
 				6E1A16F02D6EAE0E0056418B /* ThomasFormStatus.swift */,
 				6E1A16EE2D6EA8880056418B /* ThomasInputValidator.swift */,
 				6E1A15042D6EA3A50056418B /* ThomasFormInput.swift */,
 				6E1A15052D6EA3A50056418B /* ThomasFormState.swift */,
-				6E7112952880DACB004942E4 /* ViewState.swift */,
 				6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */,
 				6EFD6D81272A53AE005B26F1 /* PagerState.swift */,
 				6E887CD0272C5E8400E83363 /* CheckboxState.swift */,
@@ -5515,6 +5515,7 @@
 				6E87BD8D26D815780005D20D /* AppIntegration.swift in Sources */,
 				6E5A64D92AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */,
 				6E4326012B7C327C00A9B000 /* AirshipEvents.swift in Sources */,
+				6E1A1D852D70F3700056418B /* ThomasState.swift in Sources */,
 				6EED67752CDEE8460087CDCB /* ThomasWindowSize.swift in Sources */,
 				6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */,
 				6EF27DDB27306CA600548DA3 /* AirshipCheckboxToggleStyle.swift in Sources */,
@@ -5640,7 +5641,6 @@
 				6E94760F29BA8FA30025F364 /* ContactManager.swift in Sources */,
 				6E49D7B428401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
 				6E524C732C126F5F002CA094 /* AirshipEventType.swift in Sources */,
-				6E71129B2880DACB004942E4 /* ViewState.swift in Sources */,
 				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
 				6E91E44028EF423400B6F25E /* Worker.swift in Sources */,
 				6E91B44226868C3400DDB1A8 /* ProximityRegion.swift in Sources */,

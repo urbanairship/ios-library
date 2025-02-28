@@ -14,7 +14,7 @@ struct TextInput: View {
 
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @EnvironmentObject private var viewState: ViewState
+    @EnvironmentObject private var thomasState: ThomasState
 
     @State private var isEditing: Bool = false
     @State private var lastResult: ThomasInputValidator.Result? = nil
@@ -143,30 +143,14 @@ struct TextInput: View {
 
     private var resolvedIconEndInfo: ThomasViewInfo.TextInput.IconEndInfo? {
         return ThomasPropertyOverride.resolveOptional(
-            state: viewState,
+            state: thomasState,
             overrides: self.info.overrides?.iconEnd,
             defaultValue: self.info.properties.iconEnd ?? nil
         )
     }
 
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
-        stateActions.forEach { action in
-            switch action {
-            case .setState(let details):
-                withAnimation {
-                    viewState.updateState(
-                        key: details.key,
-                        value: details.value?.unWrap()
-                    )
-                }
-            case .clearState:
-                withAnimation {
-                    viewState.clearState()
-                }
-            case .formValue(_):
-                AirshipLogger.error("Unable to handle state actions for form value")
-            }
-        }
+        thomasState.processStateActions(stateActions, formInput: self.viewModel.formData)
     }
 
     private func restoreFormState() {
@@ -337,7 +321,7 @@ struct AirshipTextField: View {
 
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @EnvironmentObject var viewState: ViewState
+    @EnvironmentObject var viewState: ThomasState
 
     @FocusState private var focused: Bool
 

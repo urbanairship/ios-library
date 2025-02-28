@@ -23,7 +23,7 @@ struct ThomasFormInput: Sendable {
         case emailText(String?)
         case score(Int?)
 
-        var unwrappedValue: Any? {
+        var unwrappedValue: (any Encodable)? {
             switch self {
             case .toggle(let value): return value
             case .radio(let value): return value
@@ -104,7 +104,7 @@ struct ThomasFormInput: Sendable {
         return AirshipJSON.object([:])
     }
 
-    private func getData() -> [String: Any]? {
+    func getData() -> [String: Any]? {
         switch self.value {
         case .toggle(let value):
             return [

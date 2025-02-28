@@ -5,7 +5,8 @@ import SwiftUI
 struct StateController: View {
     let info: ThomasViewInfo.StateController
     let constraints: ViewConstraints
-    @StateObject var state: ViewState = ViewState()
+    @EnvironmentObject var state: ThomasState
+    @StateObject var mutableState: ThomasState.MutableState = ThomasState.MutableState()
 
     init(info: ThomasViewInfo.StateController, constraints: ViewConstraints) {
         self.info = info

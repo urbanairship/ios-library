@@ -48,6 +48,7 @@ private struct ParentNpsController: View {
 
     @ObservedObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject var thomasState: ThomasState
     @Environment(\.layoutState) var layoutState
 
     var body: some View {
@@ -61,6 +62,7 @@ private struct ParentNpsController: View {
                 \.layoutState,
                 layoutState.override(formState: formState)
             )
+            .environmentObject(thomasState.copy(formState: formState))
             .airshipOnChangeOf(formState.isVisible) { [weak formState, weak thomasEnvironment] incoming in
                 guard incoming, let formState, let thomasEnvironment else {
                     return
@@ -81,6 +83,7 @@ private struct ChildNpsController: View {
     let constraints: ViewConstraints
 
     @EnvironmentObject var parentFormState: ThomasFormState
+    @EnvironmentObject var thomasState: ThomasState
     @ObservedObject var formState: ThomasFormState
 
     var body: some View {
@@ -94,6 +97,7 @@ private struct ChildNpsController: View {
                 self.formState.isEnabled = enabled
             }
             .environmentObject(formState)
+            .environmentObject(thomasState.copy(formState: formState))
             .onAppear {
                 restoreFormState()
                 self.formState.parentFormState = self.parentFormState

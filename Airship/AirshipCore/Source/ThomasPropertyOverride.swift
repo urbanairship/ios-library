@@ -12,13 +12,18 @@ struct ThomasPropertyOverride<T: Codable&Sendable&Equatable>: ThomasSerializable
     }
 }
 
-
 extension ThomasPropertyOverride {
 
     @MainActor
-    static func resolveOptional(state: ViewState, overrides: [ThomasPropertyOverride<T>]?, defaultValue: T? = nil) -> T? {
+    static func resolveOptional(
+        state: ThomasState,
+        overrides: [ThomasPropertyOverride<T>]?,
+        defaultValue: T? = nil
+    ) -> T? {
         let override = overrides?.first { override in
-            override.whenStateMatches?.evaluate(state.state) ?? true
+            return override.whenStateMatches?.evaluate(
+                json: state.state
+            ) ?? true
         }
 
         guard let override else {
@@ -29,15 +34,7 @@ extension ThomasPropertyOverride {
     }
 
     @MainActor
-    static func resolveRequired(state: ViewState, overrides: [ThomasPropertyOverride<T>]?, defaultValue: T) -> T {
-        let override = overrides?.first { override in
-            override.whenStateMatches?.evaluate(state.state) ?? true
-        }
-
-        guard let override else {
-            return defaultValue
-        }
-
-        return override.value ?? defaultValue
+    static func resolveRequired(state: ThomasState, overrides: [ThomasPropertyOverride<T>]?, defaultValue: T) -> T {
+        return resolveOptional(state: state, overrides: overrides) ?? defaultValue
     }
 }

@@ -345,6 +345,22 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
         struct Overrides: ThomasSerializable {
             var text: [ThomasPropertyOverride<String>]?
+            var iconStart: [ThomasPropertyOverride<LabelIcon>]?
+
+            private enum CodingKeys: String, CodingKey {
+                case text
+                case iconStart = "icon_start"
+            }
+        }
+
+        enum IconType: String, Codable {
+            case type = "floating"
+        }
+
+        struct LabelIcon: ThomasSerializable {
+            var type: IconType
+            var icon: ThomasIconInfo
+            var space: Double
         }
 
         struct Properties: ThomasSerializable {
@@ -353,6 +369,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var textAppearance: ThomasTextAppearance
             var markdown: ThomasMarkDownOptions?
             var accessibilityRole: AccessibilityRole?
+            var iconStart: LabelIcon?
 
             private enum CodingKeys: String, CodingKey {
                 case type
@@ -360,6 +377,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case textAppearance = "text_appearance"
                 case markdown
                 case accessibilityRole = "accessibility_role"
+                case iconStart = "icon_start"
             }
         }
 

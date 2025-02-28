@@ -57,7 +57,24 @@ view:
                     height: auto
                   view:
                     type: label
-                    text: Give me your email, it's required
+                    text: Give me your email, it's required.
+                    view_overrides:
+                        icon_start:
+                            - value:
+                                space: 8
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: exclamationmark_circle_fill
+                                  color:
+                                      default:
+                                          hex: "#ff0000"
+                                          alpha: 0.5
+                                  scale: 1
+                              when_state_matches:
+                                key: is_valid_email
+                                value:
+                                  equals: false
                     text_appearance:
                       alignment: center
                       font_size: 14
@@ -177,7 +194,7 @@ view:
                     height: auto
                   view:
                     type: label
-                    text: Give me your email, it's required
+                    text: Give me your email, I need it.
                     text_appearance:
                       alignment: center
                       font_size: 14
@@ -320,6 +337,35 @@ view:
                       - dismiss
                     identifier: e49c1d9a-1118-4a7b-8ae8-2e1ce42b0f1a
                     label:
+                      view_overrides:
+                          icon_start:
+                            - value:
+                                type: "floating"
+                                space: 8
+                                icon:
+                                  type: icon
+                                  icon: progress_spinner
+                                  color:
+                                      default:
+                                          hex: "#FFFFFF"
+                                          alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                scope:
+                                    - $forms
+                                    - current
+                                    - status
+                                value:
+                                  equals: "validating"
+                          text:
+                            - value: "Processing ..."
+                              when_state_matches:
+                                scope:
+                                    - $forms
+                                    - current
+                                    - status
+                                value:
+                                  equals: "validating"
                       text: Submit
                       text_appearance:
                         alignment: center

@@ -116,14 +116,12 @@ class PagerState: ObservableObject {
     
     func setPagesAndListenForUpdates(
         pages: [ThomasViewInfo.Pager.Item],
-        viewState: ViewState,
-        formState: ThomasFormState
+        thomasState: ThomasState
     ) {
         if let branchControl {
             branchControl.configureAndAttachTo(
                 pages: pages,
-                viewState: viewState,
-                formState: formState
+                thomasState: thomasState
             )
         } else {
             self.pageStates = pages.map({ $0.toPageState() })
@@ -291,28 +289,29 @@ private class BranchControl: Sendable {
     @Published private(set) var isComplete: Bool = false
     @Published private(set) var canGoBack: Bool = true
 
-    private var viewState: ViewState?
-    private var formState: ThomasFormState?
+    private var thomasState: ThomasState?
     private var history: [ThomasViewInfo.Pager.Item] = []
     private var subscriptions: Set<AnyCancellable> = []
     
     init(completionChecker: ThomasPagerControllerBranching) {
         self.completionChecker = completionChecker
     }
-    
+
+    var payload: AirshipJSON {
+        return self.thomasState?.state ?? .null
+    }
+
     func configureAndAttachTo(
         pages: [ThomasViewInfo.Pager.Item],
-        viewState: ViewState,
-        formState: ThomasFormState
+        thomasState: ThomasState
     ) {
         detach()
 
-        self.formState = formState
-        self.viewState = viewState
+        self.thomasState = thomasState
 
         allPages = pages
 
-        Publishers.CombineLatest(viewState.$state, formState.$data)
+        thomasState.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateState()
@@ -328,24 +327,12 @@ private class BranchControl: Sendable {
     }
 
     private func updateState() {
-        guard let viewState, let formState else {
-            return
-        }
-
-        let payload = self.generatePayload(viewState: viewState.state, formState: formState)
-
-        self.reEvaluatePath(payload: payload)
-        self.evaluateCompletion(payload: payload)
+        self.reEvaluatePath()
+        self.evaluateCompletion()
         updateCanGoBack()
     }
     
     private func updateCanGoBack() {
-        guard let viewState, let formState else {
-            return
-        }
-
-        let payload = self.generatePayload(viewState: viewState.state, formState: formState)
-
         self.canGoBack = if let current = self.history.last {
             current.branching?.canGoBack(json: payload) != false
         } else {
@@ -392,24 +379,8 @@ private class BranchControl: Sendable {
         history.append(page)
         updateCanGoBack()
     }
-    
-    private func generatePayload(viewState: [String: Any], formState: ThomasFormState) -> AirshipJSON {
-        var data = viewState
-        data["$forms"] = [
-            "current": [
-                "data": formState.data.toPayload()
-            ]
-        ]
-        
-        do {
-            return try AirshipJSON.wrap(data)
-        } catch {
-            AirshipLogger.error("Failed to generate view state payload \(error)")
-            return AirshipJSON.null
-        }
-    }
-    
-    private func reEvaluatePath(payload: AirshipJSON) {
+
+    private func reEvaluatePath() {
         if history.isEmpty, !allPages.isEmpty {
             history = [allPages[0]]
         }
@@ -457,7 +428,7 @@ private class BranchControl: Sendable {
         return result
     }
     
-    private func evaluateCompletion(payload: AirshipJSON) {
+    private func evaluateCompletion() {
         guard !isComplete else { return }
         
         var result = false
@@ -476,30 +447,11 @@ private class BranchControl: Sendable {
     }
     
     private func performCompletionStateActions() {
-        guard let viewState, let formState else {
-            return
-        }
-        
-        let payload = self.generatePayload(viewState: viewState.state, formState: formState)
-        
+        guard let thomasState else { return }
         let actions = completionChecker.completions
             .filter { $0.predicate?.evaluate(payload) != false }
             .compactMap { $0.stateActions }
             .flatMap { $0 }
-
-        actions.forEach { action in
-            switch action {
-            case .setState(let details):
-                viewState.updateState(
-                    key: details.key,
-                    value: details.value?.unWrap()
-                )
-            case .clearState:
-                viewState.clearState()
-            case .formValue:
-                AirshipLogger.error("Unable to handle state actions for form value")
-            }
-        }
     }
 }
 

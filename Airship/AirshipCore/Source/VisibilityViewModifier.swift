@@ -5,7 +5,7 @@ import SwiftUI
 internal struct VisibilityViewModifier: ViewModifier {
     let visibilityInfo: ThomasVisibilityInfo
 
-    @EnvironmentObject var viewState: ViewState
+    @EnvironmentObject var thomasState: ThomasState
 
     @ViewBuilder
     func body(content: Content) -> some View {
@@ -16,7 +16,7 @@ internal struct VisibilityViewModifier: ViewModifier {
 
     func isVisible() -> Bool {
         let predicate = visibilityInfo.invertWhenStateMatches
-        guard predicate.evaluate(viewState.state) else {
+        guard predicate.evaluate(thomasState.state) else {
             return visibilityInfo.defaultVisibility
         }
         return !visibilityInfo.defaultVisibility

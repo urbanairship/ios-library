@@ -42,7 +42,7 @@ struct RootView<Content: View>: View {
         content(currentOrientation, resolveWindowSize())
             .environmentObject(thomasEnvironment)
             .environmentObject(thomasEnvironment.defaultFormState)
-            .environmentObject(thomasEnvironment.defaultViewState)
+            .environmentObject(ThomasState(formState: thomasEnvironment.defaultFormState, mutableState: thomasEnvironment.defaultMutableState))
             .environmentObject(thomasEnvironment.defaultPagerState)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())

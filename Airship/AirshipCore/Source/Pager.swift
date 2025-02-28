@@ -22,7 +22,7 @@ struct Pager: View {
 
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var pagerState: PagerState
-    @EnvironmentObject var viewState: ViewState
+    @EnvironmentObject var thomasState: ThomasState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.isVisible) var isVisible
     @Environment(\.layoutState) var layoutState
@@ -148,7 +148,7 @@ struct Pager: View {
             }
             .scrollTargetLayout()
         }
-        .scrollDisabled(self.pagerState.isScrollingDisabled || !self.shouldAddSwipeGesture)
+        .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
         .scrollTargetBehavior(.paging)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
@@ -355,8 +355,7 @@ struct Pager: View {
     private func attachToPagerState() {
         pagerState.setPagesAndListenForUpdates(
             pages: info.properties.items,
-            viewState: viewState,
-            formState: formState
+            thomasState: thomasState
         )
     }
 
@@ -517,19 +516,7 @@ struct Pager: View {
     }
     
     private func handleStateActions(_ actions: [ThomasStateAction]) {
-        actions.forEach { action in
-            switch action {
-            case .setState(let details):
-                viewState.updateState(
-                    key: details.key,
-                    value: details.value?.unWrap()
-                )
-            case .clearState:
-                viewState.clearState()
-            case .formValue(_):
-                AirshipLogger.error("Unable to process form value")
-            }
-        }
+        thomasState.processStateActions(actions)
     }
     
     private func handleBehavior(

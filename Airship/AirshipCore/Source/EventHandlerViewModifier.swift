@@ -7,7 +7,7 @@ import SwiftUI
 
 internal struct EventHandlerViewModifier: ViewModifier {
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @EnvironmentObject var viewState: ViewState
+    @EnvironmentObject var thomasState: ThomasState
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var pagerState: PagerState
 
@@ -27,41 +27,25 @@ internal struct EventHandlerViewModifier: ViewModifier {
         }
         .airshipApplyIf(types.contains(.formInput) && formInputID != nil) { view in
             view.onReceive(self.formState.$data) { incoming in
-                handleEvent(type: .formInput, formInputData: incoming)
+                handleEvent(type: .formInput, formInput: incoming)
             }
         }
     }
 
-    private func handleEvent(type: ThomasEventHandler.EventType, formInputData: ThomasFormInput? = nil) {
+    private func handleEvent(type: ThomasEventHandler.EventType, formInput: ThomasFormInput? = nil) {
         let handlers = eventHandlers.filter { $0.type == type }
 
         // Process
         handlers.forEach { handler in
-            handleStateAction(handler.stateActions, formInputData: formInputData)
+            handleStateAction(handler.stateActions, formInput: formInput)
         }
     }
     
     private func handleStateAction(
         _ stateActions: [ThomasStateAction],
-        formInputData: ThomasFormInput? = nil
+        formInput: ThomasFormInput? = nil
     ) {
-        stateActions.forEach { action in
-            switch action {
-            case .setState(let details):
-                viewState.updateState(
-                    key: details.key,
-                    value: details.value?.unWrap()
-                )
-            case .clearState:
-                viewState.clearState()
-            case .formValue(let details):
-                if let formInputID {
-                    let formData = formInputData ?? self.formState.data
-                    let value = formData.input(identifier: formInputID)?.value.unwrappedValue
-                    viewState.updateState(key: details.key, value: value)
-                }
-            }
-        }
+        thomasState.processStateActions(stateActions, formInput: formInput)
     }
 }
 

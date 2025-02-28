@@ -3,7 +3,7 @@
 import Foundation
 
 /// Represents the possible statuses of a form during its lifecycle.
-enum ThomasFormStatus: String, Equatable, Decodable, Sendable {
+enum ThomasFormStatus: String, Equatable, Codable, Sendable {
     /// The form is valid and all its fields are correctly filled out.
     case valid
 
