@@ -35,11 +35,28 @@ public final class FeatureFlagManager: Sendable {
     private let deviceInfoProviderFactory: @Sendable () -> any AudienceDeviceInfoProvider
     private let deferredResolver: any FeatureFlagDeferredResolverProtocol
     private let privacyManager: AirshipPrivacyManager
+    private let remoteData: any RemoteDataProtocol
 
     /// Feature flag result cache. This can be used to return a cached result for `flag(name:useResultCache:)`
     /// if the flag fails to resolve or it does not exist.
     public let resultCache: FeatureFlagResultCache
 
+    /// Feature flag status updates. Possible values are upToDate, stale and outOfDate.
+    public var featureFlagStatusUpdates: AsyncStream<any Sendable> {
+        get async {
+            return await self.remoteData.statusUpdates { status in
+                return self.toFeatureFlagUpdateStatus(status: status)
+           }
+        }
+    }
+    
+    /// Current feature flag status. Possible values are upToDate, stale and outOfDate.
+    public var featureFlagStatus: FeatureFlagUpdateStatus {
+        get async {
+            return await self.toFeatureFlagUpdateStatus(status: self.remoteDataAccess.status)
+        }
+    }
+    
     private var enabled: Bool {
         return self.privacyManager.isEnabled(.featureFlags)
     }
@@ -47,6 +64,7 @@ public final class FeatureFlagManager: Sendable {
     init(
         dataStore: PreferenceDataStore,
         remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol,
+        remoteData: any RemoteDataProtocol,
         analytics: any FeatureFlagAnalyticsProtocol,
         audienceChecker: any DeviceAudienceChecker,
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
@@ -61,6 +79,7 @@ public final class FeatureFlagManager: Sendable {
         self.deferredResolver = deferredResolver
         self.privacyManager = privacyManager
         self.resultCache = resultCache
+        self.remoteData = remoteData
     }
 
     /// Tracks a feature flag interaction event.
@@ -104,6 +123,12 @@ public final class FeatureFlagManager: Sendable {
         }
     }
 
+    /// Allows to wait for the refresh of the Feature Flag rules.
+    /// /// - Parameters
+    ///     - maxTime: Timeout in seconds.
+    public func waitRefresh(maxTime: TimeInterval? = nil) async {
+        await self.remoteData.waitRefresh(source: RemoteDataSource.app, maxTime: maxTime)
+    }
 
     func resolveFlag(name: String) async throws -> FeatureFlag {
         let remoteDataFeatureFlagInfo = try await remoteDataFeatureFlagInfo(name: name)
@@ -399,6 +424,25 @@ public final class FeatureFlagManager: Sendable {
 
             return nil
         }
+    }
+    
+    private func toFeatureFlagUpdateStatus(status: RemoteDataSourceStatus) -> FeatureFlagUpdateStatus {
+        
+        switch(status) {
+            
+        case .upToDate:
+            return FeatureFlagUpdateStatus.upToDate
+            
+        case .stale:
+            return FeatureFlagUpdateStatus.stale
+            
+        case .outOfDate:
+            return FeatureFlagUpdateStatus.outOfDate
+            
+        @unknown default:
+            return FeatureFlagUpdateStatus.upToDate
+        }
+        
     }
 }
 

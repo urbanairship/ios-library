@@ -19,6 +19,7 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
         let manager = FeatureFlagManager(
             dataStore: args.dataStore,
             remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: args.remoteData),
+            remoteData: args.remoteData,
             analytics: FeatureFlagAnalytics(airshipAnalytics: args.analytics),
             audienceChecker: args.audienceChecker,
             deferredResolver: FeatureFlagDeferredResolver(

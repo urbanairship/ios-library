@@ -10,7 +10,7 @@ import UIKit
 
 /// NOTE: For internal use only. :nodoc:
 final class RemoteData: AirshipComponent, RemoteDataProtocol {
-    fileprivate enum RefreshStatus: Sendable {
+    fileprivate enum RefreshStatus: @unchecked Sendable {
         case none
         case success
         case failed
@@ -32,6 +32,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private let workManager: any AirshipWorkManagerProtocol
     private let privacyManager: AirshipPrivacyManager
     private let appVersion: String
+    private let statusUpdates: AirshipAsyncChannel<any Sendable> = AirshipAsyncChannel()
 
     private let refreshResultSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
     private let refreshStatusSubjectMap: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]
@@ -175,15 +176,18 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     ) async -> RemoteDataSourceStatus {
         for provider in self.providers {
             if (provider.source == source) {
-                return await provider.status(
+                let status = await provider.status(
                     changeToken: self.changeToken,
                     locale: self.localeManager.currentLocale,
-                    randomeValue: self.randomValue
-                )
+                    randomeValue: self.randomValue)
+                await self.statusUpdates.send(status)
+                return status
             }
         }
 
-        return .outOfDate
+        let status: RemoteDataSourceStatus = .outOfDate
+        await self.statusUpdates.send(status)
+        return status
     }
 
     public func isCurrent(
@@ -207,6 +211,32 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
                     await enqueueRefreshTask()
                 }
                 return
+            }
+        }
+    }
+    
+    @MainActor
+    public func statusUpdates<T:Sendable>(map: @escaping (@Sendable (_ status: RemoteDataSourceStatus) -> T)) async -> AsyncStream<T> {
+        return AsyncStream { [weak self, statusUpdates]
+            continuation in
+            let task = Task { [weak self, statusUpdates] in
+                let status = await self?.status(source: RemoteDataSource.app) ?? .upToDate
+                let mappedStatus = map(status)
+                continuation.yield(mappedStatus)
+             
+                let updates = await statusUpdates.makeStream()
+
+                for await item in updates {
+                    if let item = item as? RemoteDataSourceStatus {
+                        continuation.yield(map(item))
+                    }
+                }
+                
+                continuation.finish()
+            }
+            
+            continuation.onTermination = { _ in
+                task.cancel()
             }
         }
     }
@@ -464,6 +494,3 @@ extension Sequence where Iterator.Element == RemoteDataPayload {
 fileprivate struct SendablePromise<O, E>: @unchecked Sendable where E : Error {
     let promise: Future<O,E>.Promise
 }
-
-
-

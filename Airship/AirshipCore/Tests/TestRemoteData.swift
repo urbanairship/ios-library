@@ -6,6 +6,10 @@ import Combine
 
 
 final class TestRemoteData: NSObject, RemoteDataProtocol, @unchecked Sendable {
+    func statusUpdates<T>(map: @escaping (@Sendable (AirshipCore.RemoteDataSourceStatus) -> T)) async -> AsyncStream<T> where T : Sendable {
+        return AsyncStream<T> { _ in }
+    }
+    
     func forceRefresh() async {
     }
 

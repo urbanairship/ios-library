@@ -11,6 +11,7 @@ import AirshipFeatureFlags
 final class AirshipFeatureFlagsTest: XCTestCase {
 
     private let remoteDataAccess: TestFeatureFlagRemoteDataAccess = TestFeatureFlagRemoteDataAccess()
+    private let remoteData: TestRemoteData = TestRemoteData()
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let networkChecker: TestNetworkChecker = TestNetworkChecker()
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
@@ -34,6 +35,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         self.featureFlagManager = FeatureFlagManager(
             dataStore: self.dataStore,
             remoteDataAccess: self.remoteDataAccess,
+            remoteData: self.remoteData,
             analytics: self.analytics,
             audienceChecker: self.audienceChecker,
             deviceInfoProviderFactory: { self.deviceInfoProvider },
