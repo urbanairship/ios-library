@@ -452,6 +452,8 @@ private class BranchControl: Sendable {
             .filter { $0.predicate?.evaluate(payload) != false }
             .compactMap { $0.stateActions }
             .flatMap { $0 }
+
+        thomasState.processStateActions(actions)
     }
 }
 

@@ -6,16 +6,18 @@ import SwiftUI
 
 struct Icons {
 
+    @MainActor
     private static func makeSystemImageIcon(
         name: String,
         resizable: Bool,
         color: Color
     ) -> some View {
         Image(systemName: name)
-            .resizable(resizable)
+            .airshipApplyIf(resizable) { view in view.resizable() }
             .foregroundColor(color)
     }
 
+    @MainActor
     @ViewBuilder
     private static func makeView(
         icon: ThomasIconInfo.Icon,
@@ -73,17 +75,6 @@ struct Icons {
         .aspectRatio(contentMode: .fit)
         .airshipApplyIf(info.scale != nil) { view in
             view.scaleEffect(info.scale ?? 1)
-        }
-    }
-}
-
-extension Image {
-    @ViewBuilder
-    func resizable(_ isResizable: Bool) -> some View  {
-        if isResizable {
-            self.resizable()
-        } else {
-            self
         }
     }
 }
