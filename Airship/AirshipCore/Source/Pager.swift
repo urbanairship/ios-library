@@ -235,7 +235,7 @@ struct Pager: View {
     var body: some View {
         makePager()
             .onAppear(perform: attachToPagerState)
-            .onReceive(pagerState.$pageIndex) { value in
+            .airshipOnChangeOf(pagerState.pageIndex, initial: true) { value in
                 reportPage(value)
                 withAnimation {
                     scrollPosition = value
