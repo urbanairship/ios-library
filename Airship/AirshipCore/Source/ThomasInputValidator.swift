@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 @MainActor
 final class ThomasInputValidator: Sendable {
 

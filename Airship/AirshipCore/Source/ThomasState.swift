@@ -28,7 +28,7 @@ class ThomasState: ObservableObject {
 
         self.state = ThomasStatePayload(
             formStatus: formState.status,
-            formData: formState.data.formData,
+            formData: formState.data.innerData,
             mutableState: .object(mutableState.state)
         ).json
 
@@ -36,7 +36,7 @@ class ThomasState: ObservableObject {
             .map { formStatus, formData, mutableState in
                 ThomasStatePayload(
                     formStatus: formStatus,
-                    formData: formData.formData,
+                    formData: formData.innerData,
                     mutableState: .object(mutableState)
                 ).json
             }
@@ -103,7 +103,9 @@ class ThomasState: ObservableObject {
 }
 
 fileprivate extension ThomasFormInput {
-    var formData: AirshipJSON {
+    // For current form data we need the inner form values with the
+    // form id.
+    var innerData: AirshipJSON {
         do {
             return try AirshipJSON.wrap(self.getData())
         } catch {
@@ -112,6 +114,7 @@ fileprivate extension ThomasFormInput {
         }
     }
 }
+
 fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
     private let state: AirshipJSON?
     private let forms: FormsHolder
