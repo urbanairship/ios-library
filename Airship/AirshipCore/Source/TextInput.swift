@@ -17,7 +17,7 @@ struct TextInput: View {
     @EnvironmentObject private var thomasState: ThomasState
 
     @State private var isEditing: Bool = false
-    @State private var lastResult: ThomasInputValidator.Result? = nil
+    @State private var isValid: Bool?
 
     @StateObject private var viewModel: ViewModel
 
@@ -115,28 +115,20 @@ struct TextInput: View {
         .onAppear {
             restoreFormState()
         }
-        .airshipOnChangeOf(self.formState.validationIssues) { _ in
-            // We only want to update the validation status on change
-            // of validation issues when we are in immediate mode. The
-            // onValidate mode we only update when the status updates
-            // or if we edit the value.
-            guard self.formState.validationMode == .immediate else { return }
-            updateValidationState()
-        }
         .airshipOnChangeOf(self.formState.status) { status in
-            // Only update if the status is valid or invalid
-            guard status == .valid || status == .invalid else { return }
-            updateValidationState()
+            updateValidationState(status)
         }
         .onReceive(self.viewModel.$formData) { data in
-            if let data {
-                self.formState.updateFormInput(data)
-                switch(self.formState.validationMode) {
-                case .onDemand:
-                    self.info.validation.onEdit?.stateActions.map(handleStateActions)
-                case .immediate:
-                    updateValidationState()
-                }
+            guard let data else { return }
+
+            if self.isValid != nil {
+                self.info.validation.onEdit?.stateActions.map(handleStateActions)
+                self.isValid = nil
+            }
+            self.formState.updateFormInput(data)
+
+            if formState.validationMode == .immediate {
+                updateValidationState(self.formState.status)
             }
         }
     }
@@ -169,34 +161,38 @@ struct TextInput: View {
     }
 
     @MainActor
-    private func updateValidationState() {
-        let currentStatus = self.formState.childValidationStatus(
-            child: self.info.properties.identifier
-        )
-
-        guard let currentStatus else {
-            self.info.validation.onEdit?.stateActions.map(handleStateActions)
-            return
-        }
-
-        switch(currentStatus) {
+    private func updateValidationState(
+        _ status: ThomasFormStatus
+    ) {
+        switch (status) {
         case .valid:
-            if self.viewModel.trimmedInput.isEmpty, let onEdit = self.info.validation.onEdit {
-                onEdit.stateActions.map(handleStateActions)
-            } else {
+            guard self.isValid == true else {
                 self.info.validation.onValid?.stateActions.map(handleStateActions)
-            }
-        case .invalid:
-            // Only update for an error state if the field has been edited
-            // or if the form is in onValidate mode to prevent the intial
-            // error on required fields.
-            guard self.viewModel.didEdit || self.formState.validationMode == .onDemand else {
+                self.isValid = true
                 return
             }
-            self.info.validation.onError?.stateActions.map(handleStateActions)
-        case .error:
-            // ignore
-            break
+        case .error(let result), .invalid(let result):
+            let id = self.info.properties.identifier
+            if result.status[id] == .invalid {
+                guard
+                    self.isValid == false
+                else {
+                    // Makes initial required fields not show an error in immediate validation
+                    // mode
+                    if self.formState.validationMode == .onDemand || viewModel.didEdit {
+                        self.info.validation.onError?.stateActions.map(handleStateActions)
+                    }
+                    self.isValid = false
+                    return
+                }
+            } else if result.status[id] == .valid {
+                guard self.isValid == true else {
+                    self.info.validation.onValid?.stateActions.map(handleStateActions)
+                    self.isValid = true
+                    return
+                }
+            }
+        case .validating, .pendingValidation, .submitted: return
         }
     }
 

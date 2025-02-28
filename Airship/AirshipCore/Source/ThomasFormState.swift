@@ -6,6 +6,10 @@ import Combine
 @MainActor
 class ThomasFormState: ObservableObject {
 
+    struct Child {
+        var input: ThomasFormInput
+    }
+
     private static let minAsyncValidationTime: TimeInterval = 1.0
 
     enum FormType: Sendable {
@@ -64,9 +68,6 @@ class ThomasFormState: ObservableObject {
         }
     }
 
-    @Published
-    var validationIssues: [String: ThomasInputValidator.Result] = [:]
-
     var topFormState: ThomasFormState {
         guard let parent = self.parentFormState else {
             return self
@@ -74,13 +75,15 @@ class ThomasFormState: ObservableObject {
         return parent.topFormState
     }
 
-    public let validationMode: ThomasFormValidationMode
-    public let identifier: String
-    public let formType: FormType
-    public let formResponseType: String?
-    private var children: [String: ThomasFormInput] = [:]
+    let validationMode: ThomasFormValidationMode
+    let identifier: String
+    let formType: FormType
+    let formResponseType: String?
+
+    private var children: [String: Child] = [:]
     private var subscriptions: Set<AnyCancellable> = Set()
     private var validationTask: Task<Bool, Never>?
+    private var childResults: [String: ThomasFormStatus.ChildValidationStatus] = [:]
 
     init(
         identifier: String,
@@ -101,18 +104,6 @@ class ThomasFormState: ObservableObject {
         )
     }
 
-    func childValidationStatus(child: String) -> ThomasInputValidator.Result? {
-        if let issue = self.validationIssues[child] {
-            return issue
-        }
-
-        guard let child = data.input(identifier: child) else {
-            return nil
-        }
-
-        return child.validator.result
-    }
-
     func validate() async -> Bool {
         validationTask?.cancel()
 
@@ -131,14 +122,14 @@ class ThomasFormState: ObservableObject {
     func updateFormInput(_ data: ThomasFormInput) {
         guard self.status != .submitted else { return }
         validationTask?.cancel()
-        validationIssues[data.identifier] = nil
+        childResults[data.identifier] = .pendingValidation
 
-        self.children[data.identifier] = data
+        self.children[data.identifier] = Child(input: data)
 
         self.data = formType.makeFormData(
             identifier: identifier,
             responseType: formResponseType,
-            children: Array(self.children.values),
+            children: Array(self.children.values.map { $0.input }),
             validator: .async(earlyValidation: .never) { [weak self] in
                 await self?.validate() ?? false
             }
@@ -173,7 +164,7 @@ class ThomasFormState: ObservableObject {
 
         var childResults: [String: ThomasInputValidator.Result] = [:]
         for (id, child) in self.children {
-            if let result = child.validator.result {
+            if let result = child.input.validator.result {
                 childResults[id] = result
             } else {
                 return nil
@@ -193,7 +184,7 @@ class ThomasFormState: ObservableObject {
             returning: [String: ThomasInputValidator.Result].self
         ) { group in
             for (id, child) in children {
-                let validator = child.validator
+                let validator = child.input.validator
                 group.addTask {
                     let result = await validator.waitResult()
                     return (id, result)
@@ -222,25 +213,35 @@ class ThomasFormState: ObservableObject {
     private func processChildValidationResults(
         _ results: [String: ThomasInputValidator.Result]
     ) -> Bool {
-        self.validationIssues = results.filter {
-            $0.value != .valid
-        }
-
-        self.status = if !self.validationIssues.isEmpty {
-            validationIssues.values.contains(.error) ? .error : .invalid
-        } else {
-            .valid
-        }
-
-        // If we are in immediate validation mode and we hit an error
-        // retry. Backoff is handled in the validators.
-        if self.status == .error, validationMode == .immediate {
-            Task { [weak self] in
-                _ = await self?.validate()
+        self.childResults = results.mapValues { result in
+            switch(result) {
+            case .valid: .valid
+            case .invalid: .invalid
+            case .error: .error
             }
         }
 
-        return validationIssues.isEmpty
+        guard !childResults.values.contains(.invalid) else {
+            self.status = .invalid(.init(status: childResults))
+            return false
+        }
+
+        guard !childResults.values.contains(.error) else {
+            self.status = .error(.init(status: childResults))
+
+            // If we are in immediate validation mode and we hit an error
+            // retry. Backoff is handled in the validators.
+            if validationMode == .immediate {
+                Task { [weak self] in
+                    _ = await self?.validate()
+                }
+            }
+
+            return false
+        }
+
+        self.status = .valid
+        return true
     }
 
     private func updateFormInputEnabled(
@@ -273,15 +274,20 @@ class ThomasFormState: ObservableObject {
     private func updateValidationStatusForPending() {
         guard status != .pendingValidation else { return }
 
-        self.status = if validationIssues.values.contains(.error) {
-            .error
-        } else if validationIssues.values.contains(.invalid) {
-            .invalid
-        } else {
-            .pendingValidation
+        guard !childResults.values.contains(.invalid) else {
+            self.status = .invalid(.init(status: childResults))
+            return
         }
+
+        guard !childResults.values.contains(.error) else {
+            self.status = .error(.init(status: childResults))
+            return
+        }
+
+        self.status = .pendingValidation
     }
 }
+
 
 fileprivate extension ThomasFormState.FormType {
     func makeFormData(
