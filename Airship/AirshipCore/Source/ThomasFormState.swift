@@ -122,7 +122,13 @@ class ThomasFormState: ObservableObject {
     func updateFormInput(_ data: ThomasFormInput) {
         guard self.status != .submitted else { return }
         validationTask?.cancel()
-        childResults[data.identifier] = .pendingValidation
+
+        // Remove the invalid flag if we know the incoming value is not valid
+        // This helps prevent removing the invalid status for things like checkbox
+        // controllers if they have yet to select the right number of items.
+        if childResults[data.identifier] == .invalid, data.validator.result != .invalid {
+            childResults[data.identifier] = .pendingValidation
+        }
 
         self.children[data.identifier] = Child(input: data)
 

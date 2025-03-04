@@ -355,6 +355,7 @@ view:
                                     - $forms
                                     - current
                                     - status
+                                    - type
                                 value:
                                   equals: "validating"
                           text:
@@ -364,6 +365,7 @@ view:
                                     - $forms
                                     - current
                                     - status
+                                    - type
                                 value:
                                   equals: "validating"
                       text: Submit

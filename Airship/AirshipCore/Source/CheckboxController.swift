@@ -8,7 +8,9 @@ struct CheckboxController: View {
     let constraints: ViewConstraints
 
     @EnvironmentObject var formState: ThomasFormState
+    @EnvironmentObject var thomasState: ThomasState
     @StateObject var checkboxState: CheckboxState
+    @State private var isValid: Bool?
 
     init(info: ThomasViewInfo.CheckboxController, constraints: ViewConstraints) {
         self.info = info
@@ -28,12 +30,62 @@ struct CheckboxController: View {
             .accessible(self.info.accessible)
             .formElement()
             .environmentObject(checkboxState)
+            .airshipOnChangeOf(self.formState.status) { status in
+                guard self.formState.validationMode == .onDemand else { return }
+                updateValidationState(status)
+            }
             .airshipOnChangeOf(self.checkboxState.selectedItems) { incoming in
                 updateFormState(incoming)
+
+                guard self.formState.validationMode == .onDemand else { return }
+                if self.isValid != nil {
+                    self.info.validation.onEdit?.stateActions.map(handleStateActions)
+                    self.isValid = nil
+                }
+                updateValidationState(self.formState.status)
             }
             .onAppear {
                 restoreFormState()
             }
+    }
+
+    @MainActor
+    private func updateValidationState(
+        _ status: ThomasFormStatus
+    ) {
+        switch (status) {
+        case .valid:
+            guard self.isValid == true else {
+                self.info.validation.onValid?.stateActions.map(handleStateActions)
+                self.isValid = true
+                return
+            }
+        case .error(let result), .invalid(let result):
+            let id = self.info.properties.identifier
+            if result.status[id] == .invalid {
+                guard
+                    self.isValid == false
+                else {
+                    self.info.validation.onError?.stateActions.map(handleStateActions)
+                    self.isValid = false
+                    return
+                }
+            } else if result.status[id] == .valid {
+                guard self.isValid == true else {
+                    self.info.validation.onValid?.stateActions.map(handleStateActions)
+                    self.isValid = true
+                    return
+                }
+            }
+        case .validating, .pendingValidation, .submitted: return
+        }
+    }
+
+    private func handleStateActions(_ stateActions: [ThomasStateAction]) {
+        thomasState.processStateActions(
+            stateActions,
+            formInput: self.formState.data.input(identifier: self.info.properties.identifier)
+        )
     }
 
     private func restoreFormState() {

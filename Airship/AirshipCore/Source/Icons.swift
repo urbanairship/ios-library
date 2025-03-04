@@ -25,6 +25,12 @@ struct Icons {
         color: Color
     ) -> some View {
         switch icon {
+        case .asterisk:
+            makeSystemImageIcon(
+                name: "asterisk",
+                resizable: resizable,
+                color: color
+            )
         case .checkmark:
             makeSystemImageIcon(
                 name: "checkmark",
