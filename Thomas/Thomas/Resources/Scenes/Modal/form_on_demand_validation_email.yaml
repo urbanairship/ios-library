@@ -22,6 +22,31 @@ view:
         type: on_demand
     identifier: a_form
     submit: submit_event
+    state_triggers:
+        - identifier: toast_trigger
+          trigger_when_state_matches:
+            scope:
+            - $forms
+            - current
+            - status
+            - type
+            value:
+              equals: "error"
+          reset_when_state_matches:
+            not:
+              scope:
+              - $forms
+              - current
+              - status
+              - type
+              value:
+                equals: "error"
+          on_trigger:
+            state_actions:
+                - type: set
+                  key: show_toast
+                  ttl_seconds: 1.5
+                  value: true
     view:
       type: scroll_layout
       direction: vertical
@@ -381,3 +406,60 @@ view:
                         font_size: 24
                       type: label
                     type: label_button
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: auto
+              height: auto
+            margin:
+              top: 24
+              start: 24
+              bottom: 24
+              end: 24
+            view:
+              type: container
+              background_color:
+                default:
+                  hex: "#ff0000"
+                  alpha: .8
+              border:
+                  radius: 5
+                  stroke_width: 1
+                  stroke_color:
+                    default:
+                      type: hex
+                      hex: "#cccccc"
+                      alpha: .8
+              items:
+                -   position:
+                        horizontal: center
+                        vertical: center
+                    size:
+                      width: auto
+                      height: auto
+                    margin:
+                      top: 24
+                      start: 24
+                      bottom: 24
+                      end: 24
+                    view:
+                      text: Error submitting form
+                      text_appearance:
+                        alignment: center
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#FFFFFF"
+                            type: hex
+                        font_families:
+                          - sans-serif
+                        font_size: 24
+                      type: label
+                      visibility:
+                        invert_when_state_matches:
+                          scope:
+                          - show_toast
+                          value:
+                            equals: true
+                        default: false

@@ -1543,6 +1543,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         var visibility: ThomasVisibilityInfo?
         var eventHandlers: [ThomasEventHandler]?
         var enabled: [ThomasEnableBehavior]?
+        var stateTriggers: [ThomasStateTriggers]?
 
         enum CodingKeys: String, CodingKey {
             case border
@@ -1550,6 +1551,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             case visibility
             case eventHandlers = "event_handlers"
             case enabled
+            case stateTriggers = "state_triggers"
         }
     }
 }

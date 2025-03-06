@@ -90,7 +90,7 @@ struct Pager: View {
                     isVerticalFixedSize: self.constraints.isVerticalFixedSize,
                     safeAreaInsets: self.constraints.safeAreaInsets
                 )
-                
+
                 if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
                     if (Self.forceLegacyPager) {
                         makeLegacyPager(childConstraints: childConstraints, metrics: metrics)
@@ -170,7 +170,7 @@ struct Pager: View {
             size = newSize
         }
     }
-    
+
     @ViewBuilder
     private func makePageViews(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
         ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
@@ -219,8 +219,10 @@ struct Pager: View {
                 let action = actions[i]
                 Button {
                     handleEvents(.accessibilityAction(action))
-                    handleActions(action.properties.actions)
-                    handleBehavior(action.properties.behaviors)
+                    self.process(
+                        behaviors: action.properties.behaviors,
+                        actions: action.properties.actions
+                    )
                 } label: {
                     Text(
                         action.accessible.resolveContentDescription ?? "unknown"
@@ -275,10 +277,10 @@ struct Pager: View {
             .thomasCommon(self.info)
             .airshipGeometryGroupCompat()
     }
-    
+
     // MARK: Handle Gesture
 
-    
+
 #if !os(tvOS)
     private func makeSwipeGesture() -> some Gesture {
         return DragGesture(minimumDistance: Self.minDragDistance)
@@ -286,7 +288,7 @@ struct Pager: View {
                 guard self.isLegacyPageSwipeEnabled else {
                     return
                 }
-                
+
                 if (abs(value.translation.width) > Self.minDragDistance) {
                     state = if (value.translation.width > 0) {
                         value.translation.width - Self.minDragDistance
@@ -312,7 +314,7 @@ struct Pager: View {
                 handleSwipe(direction: swipeDirection)
             }
     }
-    
+
     private func handleTap(tapLocation: CGPoint)  {
         guard let size = size else {
             return
@@ -336,13 +338,16 @@ struct Pager: View {
             self.info.retrieveGestures(type: ThomasViewInfo.Pager.Gesture.Tap.self)
                 .filter { $0.location == location }
                 .forEach { gesture in
-                    handleBehavior(gesture.behavior.behaviors)
-                    handleActions(gesture.behavior.actions)
                     handleEvents(
                         .gesture(
                             identifier: gesture.identifier,
                             reportingMetadata: gesture.reportingMetadata
                         )
+                    )
+
+                    self.process(
+                        behaviors: gesture.behavior.behaviors,
+                        actions: gesture.behavior.actions
                     )
                 }
         }
@@ -351,7 +356,7 @@ struct Pager: View {
 #endif
 
     // MARK: Utils methods
-    
+
     private func attachToPagerState() {
         pagerState.setPagesAndListenForUpdates(
             pages: info.properties.items,
@@ -385,8 +390,10 @@ struct Pager: View {
                             reportingMetadata: gesture.reportingMetadata
                         )
                     )
-                    handleBehavior(gesture.behavior.behaviors)
-                    handleActions(gesture.behavior.actions)
+                    self.process(
+                        behaviors: gesture.behavior.behaviors,
+                        actions: gesture.behavior.actions
+                    )
                 }
         case .start:
             guard
@@ -395,7 +402,7 @@ struct Pager: View {
             else {
                 return
             }
-            
+
             self.handleEvents(
                 .defaultSwipe(
                     from: pagerState.pageIndex,
@@ -436,45 +443,111 @@ struct Pager: View {
                     )
                 )
             }
-            handleBehavior(behavior.behaviors)
-            handleActions(behavior.actions)
+
+            self.process(
+                behaviors: behavior.behaviors,
+                actions: behavior.actions
+            )
         }
     }
 
     private func onTimer() {
         guard !isVoiceOverRunning,
-              let automatedActions = pagerState.pageItems[self.pagerState.pageIndex].automatedActions
+              let automatedActions = self.pagerState.pageItems[self.pagerState.pageIndex].automatedActions
         else {
             return
         }
 
-        let duration = pagerState.pageStates[pagerState.pageIndex].delay
-        
-        if self.pagerState.inProgress && (self.pagerState.pageIndex < pagerState.pageItems.count) {
+        let duration = self.pagerState.pageStates[pagerState.pageIndex].delay
 
+        if self.pagerState.inProgress && (self.pagerState.pageIndex < pagerState.pageItems.count) {
             if (self.pagerState.progress < 1) {
                 self.pagerState.progress += Pager.timerTransition / duration
             }
-            
+
             // Check for any automated action past the current duration that have not been executed yet
-            let automatedAction = automatedActions.first {
+            automatedActions.filter {
                 let isExecuted = (self.pagerState.currentPageState.automatedActionStatus[$0.identifier] == true)
                 let isOlder = (self.pagerState.progress * duration) >= ($0.delay ?? 0.0)
                 return !isExecuted && isOlder
+            }.forEach { action in
+                self.processAutomatedAction(action)
             }
-            
-            if let automatedAction = automatedAction  {
-                handleEvents(
-                    .automated(
-                        identifier: automatedAction.identifier,
-                        reportingMetadata: automatedAction.reportingMetadata
-                    )
-                )
-                handleActions(automatedAction.actions)
-                handleBehavior(automatedAction.behaviors)
-                pagerState.markAutomatedActionExecuted(automatedAction.identifier)
-            }
+        }
+    }
 
+    private func processAutomatedAction(_ automatedAction: ThomasAutomatedAction) {
+        self.handleEvents(
+            .automated(
+                identifier: automatedAction.identifier,
+                reportingMetadata: automatedAction.reportingMetadata
+            )
+        )
+
+        self.process(
+            behaviors: automatedAction.behaviors,
+            actions: automatedAction.actions
+        )
+
+        self.pagerState.markAutomatedActionExecuted(automatedAction.identifier)
+    }
+
+    private func process(
+        stateActions: [ThomasStateAction]? = nil,
+        behaviors: [ThomasButtonClickBehavior]? = nil,
+        actions: [ThomasActionsPayload]? = nil
+    ) {
+        // Handle state first
+        if let stateActions {
+            thomasState.processStateActions(stateActions)
+        }
+
+        // Behaviors
+        behaviors?.sortedBehaviors.forEach { behavior in
+            switch(behavior) {
+            case .dismiss:
+                self.thomasEnvironment.dismiss(layoutState: layoutState)
+
+            case .cancel:
+                self.thomasEnvironment.dismiss(cancel: true, layoutState: layoutState)
+
+            case .pagerNext:
+                self.pagerState.process(request: .next)
+
+            case .pagerPrevious:
+                self.pagerState.process(request: .back)
+
+            case .pagerNextOrDismiss:
+                if pagerState.isLastPage {
+                    self.thomasEnvironment.dismiss()
+                } else {
+                    self.pagerState.process(request: .next)
+                }
+
+            case .pagerNextOrFirst:
+                if self.pagerState.isLastPage {
+                    self.pagerState.process(request: .first)
+                } else {
+                    self.pagerState.process(request: .next)
+                }
+
+            case .pagerPause:
+                self.pagerState.pause()
+
+            case .pagerResume:
+                self.pagerState.resume()
+
+            case .formSubmit, .formValidate:
+                // not supported
+                break
+            }
+        }
+
+        // Actions
+        if let actions = actions {
+            actions.forEach { action in
+                self.thomasEnvironment.runActions(action, layoutState: layoutState)
+            }
         }
     }
 
@@ -506,80 +579,6 @@ struct Pager: View {
             break
         }
     }
-    
-    private func handleActions(_ actions: [ThomasActionsPayload]?) {
-        if let actions = actions {
-            actions.forEach { action in
-                thomasEnvironment.runActions(action, layoutState: layoutState)
-            }
-        }
-    }
-    
-    private func handleStateActions(_ actions: [ThomasStateAction]) {
-        thomasState.processStateActions(actions)
-    }
-    
-    private func handleBehavior(
-        _ behaviors: [ThomasButtonClickBehavior]?
-    ) {
-        guard let behaviors else { return }
-
-        Task {
-            if behaviors.contains(.formSubmit) || behaviors.contains(.formValidate) {
-                guard await formState.validate() else { return }
-            }
-
-            behaviors.sorted { first, second in
-                first.sortOrder < second.sortOrder
-            }.forEach { behavior in
-
-                switch(behavior) {
-                case .dismiss:
-                    thomasEnvironment.dismiss()
-
-                case .cancel:
-                    thomasEnvironment.dismiss()
-
-                case .pagerNext:
-                    pagerState.process(request: .next)
-
-                case .pagerPrevious:
-                    pagerState.process(request: .back)
-
-                case .pagerNextOrDismiss:
-                    if pagerState.isLastPage {
-                        thomasEnvironment.dismiss()
-                    } else {
-                        pagerState.process(request: .next)
-                    }
-
-                case .pagerNextOrFirst:
-                    if pagerState.isLastPage {
-                        pagerState.process(request: .first)
-                    } else {
-                        pagerState.process(request: .next)
-                    }
-
-                case .pagerPause:
-                    pagerState.pause()
-
-                case .pagerResume:
-                    pagerState.resume()
-
-                case .formValidate:
-                    // Already handled above
-                    break
-
-                case .formSubmit:
-                    guard formState.status == .valid else { return }
-                    let formState = formState.topFormState
-                    thomasEnvironment.submitForm(formState, layoutState: layoutState)
-                    formState.markSubmitted()
-                }
-            }
-        }
-
-    }
 
     private func reportPage(_ index: Int) {
         guard self.lastReportedIndex != index, !pagerState.pageItems.isEmpty else {
@@ -594,24 +593,20 @@ struct Pager: View {
 
         // Run any actions set on the current page
         let page = pagerState.pageItems[index]
-        
-        if let stateActions = page.stateActions {
-            handleStateActions(stateActions)
+
+        let displayActions: [ThomasActionsPayload]? = if let actions = page.displayActions {
+            [actions]
+        } else {
+            nil
         }
-        
-        self.thomasEnvironment.runActions(
-            page.displayActions,
-            layoutState: layoutState
+
+        self.process(
+            stateActions: page.stateActions,
+            actions: displayActions
         )
-        
-        let automatedAction = page.automatedActions?.first {
-            $0.delay == nil || $0.delay == 0.0
-        }
-        
-        if let automatedAction = automatedAction {
-            handleActions(automatedAction.actions)
-            pagerState.markAutomatedActionExecuted(automatedAction.identifier)
-        }
+
+        // Process any automated navigation actions
+        onTimer()
     }
 
     private func calcDragOffset(index: Int) -> CGFloat {

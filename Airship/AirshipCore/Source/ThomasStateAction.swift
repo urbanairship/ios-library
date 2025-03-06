@@ -42,11 +42,13 @@ enum ThomasStateAction: ThomasSerializable {
         let type: ActionType = .setState
         let key: String
         let value: AirshipJSON?
+        let ttl: TimeInterval?
 
         enum CodingKeys: String, CodingKey {
             case key
             case value
             case type
+            case ttl = "ttl_seconds"
         }
     }
 

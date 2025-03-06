@@ -29,7 +29,7 @@ class ThomasState: ObservableObject {
         self.state = ThomasStatePayload(
             formStatus: formState.status,
             formData: formState.data.innerData,
-            mutableState: .object(mutableState.state)
+            mutableState: mutableState.state
         ).json
 
         Publishers.CombineLatest3(formState.$status, formState.$data, mutableState.$state)
@@ -37,7 +37,7 @@ class ThomasState: ObservableObject {
                 ThomasStatePayload(
                     formStatus: formStatus,
                     formData: formData.innerData,
-                    mutableState: .object(mutableState)
+                    mutableState: mutableState
                 ).json
             }
             .removeDuplicates()
@@ -47,14 +47,6 @@ class ThomasState: ObservableObject {
             .store(in: &subscriptions)
     }
 
-    func clearState() {
-        mutableState.clearState()
-    }
-
-    func updateState(key: String, value: AirshipJSON?) {
-        mutableState.updateState(key: key, value: value)
-    }
-
     func processStateActions(
         _ stateActions: [ThomasStateAction],
         formInput: ThomasFormInput? = nil
@@ -62,16 +54,20 @@ class ThomasState: ObservableObject {
         stateActions.forEach { action in
             switch action {
             case .setState(let details):
-                updateState(
+                self.mutableState.set(
                     key: details.key,
-                    value: details.value
+                    value: details.value,
+                    ttl: details.ttl
                 )
             case .clearState:
-                clearState()
+                self.mutableState.clearState()
             case .formValue(let details):
                 if let formInput {
                     do {
-                        updateState(key: details.key, value: try AirshipJSON.wrap(formInput.value))
+                        self.mutableState.set(
+                            key: details.key,
+                            value: try AirshipJSON.wrap(formInput.value)
+                        )
                     } catch {
                         AirshipLogger.warn("Failed to wrap form value \(error)")
                     }
@@ -84,21 +80,74 @@ class ThomasState: ObservableObject {
 
     @MainActor
     class MutableState: ObservableObject {
-        @Published var state: [String: AirshipJSON] = [:]
+        @Published private(set) var state: AirshipJSON = .object([:])
+        private var appliedState: [String: AirshipJSON] = [:]
+        private var tempMutations: [String: TempMutation] = [:]
+
+        private let taskSleeper: any AirshipTaskSleeper
+
+        init(
+            taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
+        ) {
+            self.taskSleeper = taskSleeper
+        }
 
         fileprivate func clearState() {
-            guard !state.isEmpty else {
-                return
+            tempMutations.removeAll()
+            appliedState.removeAll()
+            updateState()
+        }
+
+        private func updateState() {
+            var state = self.appliedState
+            tempMutations.forEach { key, mutation in
+                state[key] = mutation.value
             }
-
-            objectWillChange.send()
-            state.removeAll()
+            self.state = .object(state)
         }
 
-        fileprivate func updateState(key: String, value: AirshipJSON?) {
-            objectWillChange.send()
-            state[key] = value
+        private func removeTempMutation(_ mutation: TempMutation) {
+            guard tempMutations[mutation.key] == mutation else { return }
+            tempMutations[mutation.key] = nil
+            self.updateState()
         }
+
+        fileprivate func set(
+            key: String,
+            value: AirshipJSON?,
+            ttl: TimeInterval? = nil
+        ) {
+            if let ttl = ttl {
+                let mutation = TempMutation(
+                    id: UUID().uuidString,
+                    key: key,
+                    value: value
+                )
+
+                tempMutations[key] = mutation
+                appliedState[key] = nil
+                updateState()
+
+                Task { [weak self] in
+                    do {
+                        try await self?.taskSleeper.sleep(timeInterval: ttl)
+                    } catch {
+                        AirshipLogger.warn("Failed to sleep for ttl: \(error)")
+                    }
+                    self?.removeTempMutation(mutation)
+                }
+            } else {
+                tempMutations[key] = nil
+                appliedState[key] = value
+                updateState()
+            }
+        }
+    }
+
+    fileprivate struct TempMutation: Sendable, Equatable, Hashable {
+        let id: String
+        let key: String
+        let value: AirshipJSON?
     }
 }
 
@@ -114,6 +163,8 @@ fileprivate extension ThomasFormInput {
         }
     }
 }
+
+
 
 fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
     private let state: AirshipJSON?
@@ -137,8 +188,12 @@ fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
     }
 
     func encode(to encoder: any Encoder) throws {
-        try state?.encode(to: encoder)
-        try forms.encode(to: encoder)
+        do {
+            try state?.encode(to: encoder)
+            try forms.encode(to: encoder)
+        } catch {
+            throw error
+        }
     }
 
     struct FormsHolder: Encodable, Sendable, Equatable {

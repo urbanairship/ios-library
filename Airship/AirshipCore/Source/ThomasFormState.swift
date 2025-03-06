@@ -126,7 +126,7 @@ class ThomasFormState: ObservableObject {
         // Remove the invalid flag if we know the incoming value is not valid
         // This helps prevent removing the invalid status for things like checkbox
         // controllers if they have yet to select the right number of items.
-        if childResults[data.identifier] == .invalid, data.validator.result != .invalid {
+        if childResults[data.identifier] != .invalid || data.validator.result != .invalid {
             childResults[data.identifier] = .pendingValidation
         }
 
@@ -170,7 +170,7 @@ class ThomasFormState: ObservableObject {
 
         var childResults: [String: ThomasInputValidator.Result] = [:]
         for (id, child) in self.children {
-            if let result = child.input.validator.result {
+            if let result = child.input.validator.result, result != .error {
                 childResults[id] = result
             } else {
                 return nil
@@ -285,7 +285,8 @@ class ThomasFormState: ObservableObject {
             return
         }
 
-        guard !childResults.values.contains(.error) else {
+        // Avoid going form invalid -> error after validation
+        guard self.status.isError, !childResults.values.contains(.error) else {
             self.status = .error(.init(status: childResults))
             return
         }

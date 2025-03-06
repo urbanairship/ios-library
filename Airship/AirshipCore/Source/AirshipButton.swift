@@ -90,9 +90,7 @@ struct AirshipButton<Label> : View  where Label : View {
     private func handleBehaviors(
         _ behaviors: [ThomasButtonClickBehavior]?
     ) {
-        behaviors?.sorted { first, second in
-            first.sortOrder < second.sortOrder
-        }.forEach { behavior in
+        behaviors?.sortedBehaviors.forEach { behavior in 
             switch(behavior) {
             case .dismiss:
                 thomasEnvironment.dismiss(

@@ -106,6 +106,7 @@ extension View {
             border: info.commonProperties.border,
             borderOverrides: info.commonOverrides?.border
         )
+        .thomasStateTriggers(info.commonProperties.stateTriggers)
         .thomasEventHandlers(
             info.commonProperties.eventHandlers,
             formInputID: formInputID

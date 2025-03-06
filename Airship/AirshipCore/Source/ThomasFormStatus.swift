@@ -77,4 +77,11 @@ enum ThomasFormStatus: Encodable, Equatable, Sendable {
         /// An error occurred while validating the field.
         case error
     }
+
+    var isError: Bool {
+        return switch(self) {
+        case .error: true
+        default: false
+        }
+    }
 }

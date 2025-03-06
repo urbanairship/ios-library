@@ -460,6 +460,8 @@
 		6E5A64D02AABBEAF00574085 /* AirshipMeteredUsageEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */; };
 		6E5A64D42AABBED600574085 /* MeteredUsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D32AABBED600574085 /* MeteredUsageStore.swift */; };
 		6E5A64D92AABC5A400574085 /* UAMeteredUsage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E5A64D72AABC5A400574085 /* UAMeteredUsage.xcdatamodeld */; };
+		6E5ADF822D7682A300A03799 /* StateSubscriptionsModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5ADF812D7682A200A03799 /* StateSubscriptionsModifier.swift */; };
+		6E5ADF842D7682D600A03799 /* ThomasStateTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5ADF832D7682D300A03799 /* ThomasStateTrigger.swift */; };
 		6E5B1A052AFF090B0019CA61 /* SessionTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5B1A042AFF090B0019CA61 /* SessionTrackerTest.swift */; };
 		6E60EF6A29DF542B003F7A8D /* AnonContactData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60EF6929DF542B003F7A8D /* AnonContactData.swift */; };
 		6E6363E229DCD0CF009C358A /* ContactSubscriptionListClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6363E129DCD0CF009C358A /* ContactSubscriptionListClient.swift */; };
@@ -1735,6 +1737,8 @@
 		6E5A64CF2AABBEAF00574085 /* AirshipMeteredUsageEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipMeteredUsageEvent.swift; sourceTree = "<group>"; };
 		6E5A64D32AABBED600574085 /* MeteredUsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeteredUsageStore.swift; sourceTree = "<group>"; };
 		6E5A64D82AABC5A400574085 /* UAMeteredUsage.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAMeteredUsage.xcdatamodel; sourceTree = "<group>"; };
+		6E5ADF812D7682A200A03799 /* StateSubscriptionsModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateSubscriptionsModifier.swift; sourceTree = "<group>"; };
+		6E5ADF832D7682D300A03799 /* ThomasStateTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasStateTrigger.swift; sourceTree = "<group>"; };
 		6E5B1A042AFF090B0019CA61 /* SessionTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTrackerTest.swift; sourceTree = "<group>"; };
 		6E5C32B727C9A2C9005B2DDE /* AirshipRelease.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipRelease.h; sourceTree = "<group>"; };
 		6E5C32D527C9A54A005B2DDE /* AirshipRelease_tvOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AirshipRelease_tvOS.h; sourceTree = "<group>"; };
@@ -3083,6 +3087,7 @@
 			isa = PBXGroup;
 			children = (
 				6E7112982880DACB004942E4 /* EnableBehaviorModifiers.swift */,
+				6E5ADF812D7682A200A03799 /* StateSubscriptionsModifier.swift */,
 				6E7112962880DACB004942E4 /* EventHandlerViewModifier.swift */,
 				6E7112992880DACB004942E4 /* VisibilityViewModifier.swift */,
 				6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */,
@@ -4137,6 +4142,7 @@
 		6EED67642CDEE75D0087CDCB /* Types */ = {
 			isa = PBXGroup;
 			children = (
+				6E5ADF832D7682D300A03799 /* ThomasStateTrigger.swift */,
 				6E1A19212D6F87550056418B /* ThomasFormValidationMode.swift */,
 				6E2FA2882D515189005893E2 /* ThomasEmailRegistrationOptions.swift */,
 				6EED68E42CE3ECC50087CDCB /* ThomasPropertyOverride.swift */,
@@ -5448,6 +5454,7 @@
 				6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
 				6E1589582AFF023400954A04 /* SessionEvent.swift in Sources */,
 				6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */,
+				6E5ADF822D7682A300A03799 /* StateSubscriptionsModifier.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E49D7C828401D2E00C7BB9D /* APNSRegistrar.swift in Sources */,
 				6E49D7B228401D2E00C7BB9D /* Permission.swift in Sources */,
@@ -5457,6 +5464,7 @@
 				6E698DEC26790AC300654DB2 /* PreferenceDataStore.swift in Sources */,
 				E99605A127A071EA00365AE4 /* EmailRegistrationOptions.swift in Sources */,
 				6EFD6D6E27290C0B005B26F1 /* FormController.swift in Sources */,
+				6E5ADF842D7682D600A03799 /* ThomasStateTrigger.swift in Sources */,
 				6EED67EB2CE269970087CDCB /* ThomasDirection.swift in Sources */,
 				6E91E44C28EF423400B6F25E /* AirshipWorkRequest.swift in Sources */,
 				6EE49BDD2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift in Sources */,

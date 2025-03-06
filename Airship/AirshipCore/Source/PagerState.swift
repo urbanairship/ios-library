@@ -433,7 +433,7 @@ private class BranchControl: Sendable {
         
         var result = false
         for indicator in completionChecker.completions {
-            if indicator.predicate?.evaluate(payload) != false {
+            if indicator.predicate?.evaluate(json: payload) != false {
                 result = true
                 break
             }
@@ -449,7 +449,7 @@ private class BranchControl: Sendable {
     private func performCompletionStateActions() {
         guard let thomasState else { return }
         let actions = completionChecker.completions
-            .filter { $0.predicate?.evaluate(payload) != false }
+            .filter { $0.predicate?.evaluate(json: payload) != false }
             .compactMap { $0.stateActions }
             .flatMap { $0 }
 
@@ -459,11 +459,9 @@ private class BranchControl: Sendable {
 
 fileprivate extension ThomasPageBranching {
     func nextPageId(json: AirshipJSON) -> String? {
-        let unwrapped = json.unWrap()
-        
         return nextPage?
             .first(where: { selector in
-                let isMatched = selector.predicate?.evaluate(unwrapped) != false
+                let isMatched = selector.predicate?.evaluate(json: json) != false
                 return isMatched
             })?
             .pageId
@@ -478,7 +476,7 @@ fileprivate extension ThomasPageBranching {
             return false
         }
         
-        let isAllowed = control.predicate?.evaluate(json) != true
+        let isAllowed = control.predicate?.evaluate(json: json) != true
         
         return isAllowed
     }
