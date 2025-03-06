@@ -53,7 +53,7 @@ public enum AirshipLogLevel: String, Sendable, Decodable {
         let container = try decoder.singleValueContainer()
         do {
             let stringValue = try container.decode(String.self)
-            switch(stringValue) {
+            switch(stringValue.lowercased()) {
             case "undefined":
                 self = .undefined
             case "none":
