@@ -92,6 +92,7 @@ public final class Thomas {
         viewController = ThomasBannerViewController(
             window: window,
             rootView: rootView,
+            position: presentation.defaultPlacement.position,
             options: options,
             constraints: bannerConstraints
         )

@@ -659,6 +659,26 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
     }
 
+    struct NubInfo: ThomasSerializable {
+        var size: ThomasSize
+        var margin: ThomasMargin?
+        var color: ThomasColor
+    }
+
+    struct CornerRadiusInfo: ThomasSerializable {
+        var topLeft: Double?
+        var topRight: Double?
+        var bottomLeft: Double?
+        var bottomRight: Double?
+
+        private enum CodingKeys: String, CodingKey {
+            case topLeft = "top_left"
+            case topRight = "top_right"
+            case bottomLeft = "bottom_left"
+            case bottomRight = "bottom_right"
+        }
+    }
+
     struct EmptyView: BaseInfo {
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?

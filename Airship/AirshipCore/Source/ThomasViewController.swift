@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 #if !os(watchOS)
 
@@ -54,7 +55,12 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
             scrollViewsUpdated = true
         }
     }
-    
+
+    override func accessibilityPerformEscape() -> Bool {
+        self.onDismiss?()
+        return true
+    }
+
     func updateScrollViews(view: UIView) {
         view.subviews.forEach { subView in
             if let subView = subView as? UIScrollView {
@@ -69,13 +75,11 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
             updateScrollViews(view: subView)
         }
     }
-    
 }
 
 
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasBannerViewController: ThomasViewController<BannerView> {
-    
     private var centerXConstraint: NSLayoutConstraint?
     private var topConstraint: NSLayoutConstraint?
     private var bottomConstraint: NSLayoutConstraint?
@@ -83,14 +87,24 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var widthConstraint: NSLayoutConstraint?
 
     private let thomasBannerConstraints: ThomasBannerConstraints
+
+    private let position: ThomasPresentationInfo.Banner.Position?
+
+    private var subscription: AnyCancellable?
     private weak var window: UIWindow?
 
-    init(window: UIWindow, rootView: BannerView, options: ThomasViewControllerOptions, constraints: ThomasBannerConstraints) {
+    init(window: UIWindow,
+        rootView: BannerView,
+        position: ThomasPresentationInfo.Banner.Position,
+        options: ThomasViewControllerOptions,
+        constraints: ThomasBannerConstraints
+    ) {
         self.thomasBannerConstraints = constraints
         self.window = window
+        self.position = position
         super.init(rootView: rootView, options: options)
     }
-    
+
     @objc required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -99,57 +113,49 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
         super.viewDidAppear(animated)
         
         createBannerConstraints()
-        handleBannerConstraints()
+        handleBannerConstraints(size: self.thomasBannerConstraints.size)
 
         if UIAccessibility.isVoiceOverRunning {
-            DispatchQueue.main.asyncAfter(deadline: .now() + BannerView.animationInDuration) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + BannerView.animationInOutDuration) {
                 UIAccessibility.post(notification: .screenChanged, argument: self)
             }
         }
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        handleBannerConstraints()
-        if let size = self.parent?.view.bounds.size, size != self.thomasBannerConstraints.size {
-            self.thomasBannerConstraints.size = size
+
+        subscription = thomasBannerConstraints.$size.sink { [weak self] size in
+            self?.handleBannerConstraints(size: size)
         }
     }
-    
-    func createBannerConstraints () {
+
+    func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         if let window = self.window {
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
+
             heightConstraint = self.view.heightAnchor.constraint(equalToConstant: self.options.bannerSize?.height ?? 0.0)
             widthConstraint = self.view.widthAnchor.constraint(equalToConstant: self.options.bannerSize?.width ?? 0.0)
         }
     }
-    
-    func handleBannerConstraints() {
-        if let heightConstraint = heightConstraint, let widthConstraint = widthConstraint, let centerXConstraint = centerXConstraint {
-            centerXConstraint.isActive = true
-            heightConstraint.isActive = true
-            widthConstraint.isActive = true
+
+    func handleBannerConstraints(size: CGSize) {
+        self.centerXConstraint?.isActive = true
+        self.heightConstraint?.isActive = true
+        self.widthConstraint?.isActive = true
+        self.widthConstraint?.constant = size.width
+
+        switch self.position {
+        case .top:
+            self.topConstraint?.isActive = true
+            self.bottomConstraint?.isActive = false
+            self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.top
+
+        default:
+            self.topConstraint?.isActive = false
+            self.bottomConstraint?.isActive = true
+            self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.bottom
         }
-        
-        if let topConstraint = topConstraint, let bottomConstraint = bottomConstraint, let placement = self.options.bannerPlacement {
-            
-            switch placement.position {
-            case .top:
-                topConstraint.isActive = true
-                bottomConstraint.isActive = false
-            case .bottom:
-                topConstraint.isActive = false
-                bottomConstraint.isActive = true
-            }
-        }
-        
-        if let bannerSize = self.options.bannerSize {
-            heightConstraint?.constant = bannerSize.height
-            widthConstraint?.constant = bannerSize.width
-        }
+
         self.view.layoutIfNeeded()
     }
 }

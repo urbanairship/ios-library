@@ -1,0 +1,117 @@
+version: 1
+presentation:
+  type: banner
+  default_placement:
+    position: top
+    size:
+      width: 100%
+      height: auto
+    margin:
+      top: 0
+      bottom: 0
+      start: 16
+      end: 16
+    nub:
+      size:
+        width: 36
+        height: 4
+      margin:
+        bottom: 8
+      color:
+        default:
+          hex: "#000000"
+          alpha: 0.42
+    border:
+      radius: 12
+      stroke_width: 1
+      stroke_color:
+        default:
+          hex: "#E2E8F0"
+          alpha: 1
+    background_color:
+      default:
+        hex: "#FFFFFF"
+        alpha: 1
+  duration: 8
+view:
+  type: container
+  items:
+    - position:
+        horizontal: center
+        vertical: center
+      size:
+        width: 100%
+        height: auto
+      view:
+        type: linear_layout
+        direction: horizontal
+        items:
+          # Main content
+          - size:
+              width: 100%
+              height: auto
+            margin:
+              top: 16
+              bottom: 16
+              start: 16
+              end: 16
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    bottom: 8
+                  view:
+                    type: label
+                    text: "🎉 Special Offer Inside!"
+                    text_appearance:
+                      font_size: 18
+                      color:
+                        default:
+                          hex: "#1A237E"
+                          alpha: 1
+                      styles:
+                        - bold
+                
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    bottom: 12
+                  view:
+                    type: label
+                    text: "🎁 Check out our amazing deal just for you!"
+                    text_appearance:
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#4A5568"
+                          alpha: 1
+                
+                - size:
+                    width: auto
+                    height: auto
+                  view:
+                    type: label_button
+                    identifier: show_offer_button
+                    background_color:
+                      default:
+                        hex: "#4C1D95"
+                        alpha: 1
+                    border:
+                      radius: 8
+                    label:
+                      type: label
+                      text: "✨ Show Me!"
+                      text_appearance:
+                        font_size: 14
+                        alignment: center
+                        color:
+                          default:
+                            hex: "#FFFFFF"
+                            alpha: 1
+                    button_click:
+                      - dismiss
