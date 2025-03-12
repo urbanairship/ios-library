@@ -1,7 +1,9 @@
+/* Copyright Airship and Contributors */
+
 import Foundation
 import SwiftUI
 
-
+@MainActor
 struct StateController: View {
     let info: ThomasViewInfo.StateController
     let constraints: ViewConstraints

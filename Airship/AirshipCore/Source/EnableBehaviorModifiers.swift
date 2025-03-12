@@ -25,19 +25,40 @@ internal struct ValidFormButtonEnableBehavior: ViewModifier {
     let onApply: ((Bool, ThomasEnableBehavior) -> Void)?
 
     @EnvironmentObject var formState: ThomasFormState
+    @Environment(\.isVisible) private var isVisible
+
+    @State var isEnabled: Bool?
 
     @ViewBuilder
     func body(content: Content) -> some View {
         if let onApply = onApply {
-            content.airshipOnChangeOf(self.formState.status) { status in
-                onApply(!isValid(status), .formValidation)
+            content.airshipOnChangeOf(
+                [isValid, isVisible],
+                initial: true
+            ) { _ in
+                if (isVisible) {
+                    onApply(!isValid, .formValidation)
+                }
             }
         } else {
-            content.disabled(!isValid(self.formState.status))
+            content.airshipOnChangeOf(
+                [isValid, isVisible],
+                initial: true
+            ) { _ in
+                // We have some disable state flash when going from a page that is invalid,
+                // back, then forward back to the invalid page. This small delays
+                // prevents the extra enable/disable
+                if (isVisible) {
+                    DispatchQueue.main.async {
+                        isEnabled = isValid
+                    }
+                }
+            }
+            .disabled(isEnabled == false)
         }
     }
 
-    func isValid(_ status: ThomasFormStatus) -> Bool {
+    var isValid: Bool {
         return switch(formState.validationMode) {
         case .onDemand:
             switch(formState.status) {

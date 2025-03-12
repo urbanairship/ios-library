@@ -7,6 +7,8 @@ struct CheckboxController: View {
     let info: ThomasViewInfo.CheckboxController
     let constraints: ViewConstraints
 
+    @Environment(\.pageIdentifier) var pageID
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasState: ThomasState
     @StateObject var checkboxState: CheckboxState
@@ -84,12 +86,12 @@ struct CheckboxController: View {
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
         thomasState.processStateActions(
             stateActions,
-            formInput: self.formState.data.input(identifier: self.info.properties.identifier)
+            formInput: self.formState.child(identifier: self.info.properties.identifier)
         )
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.input(
+        let formValue = self.formState.child(
             identifier: self.info.properties.identifier
         )?.value
 
@@ -114,10 +116,13 @@ struct CheckboxController: View {
 
         let data = ThomasFormInput(
             self.info.properties.identifier,
-            value: .multipleCheckbox(selected),
-            validator: .just(isValid)
+            value: .multipleCheckbox(selected)
         )
 
-        formState.updateFormInput(data)
+        self.formDataCollector.updateFormInput(
+            data,
+            validator: .just(isValid),
+            pageID: pageID
+        )
     }
 }

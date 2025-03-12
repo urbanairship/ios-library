@@ -7,6 +7,8 @@ struct AirshipToggle: View {
     let info: ThomasViewInfo.Toggle
     let constraints: ViewConstraints
 
+    @Environment(\.pageIdentifier) var pageID
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
     @State private var isOn: Bool = false
 
@@ -58,15 +60,18 @@ struct AirshipToggle: View {
         let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .toggle(isOn),
-            attribute: isOn ? self.attribute : nil,
-            validator: .just(isValid)
+            attribute: isOn ? self.attribute : nil
         )
 
-        self.formState.updateFormInput(data)
+        self.formDataCollector.updateFormInput(
+            data,
+            validator: .just(isValid),
+            pageID: pageID
+        )
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.input(
+        let formValue = self.formState.child(
             identifier: self.info.properties.identifier
         )?.value
 

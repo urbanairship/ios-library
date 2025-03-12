@@ -97,7 +97,7 @@ extension View {
 
     @ViewBuilder
     internal func thomasCommon(
-        _ info: some ThomasViewInfo.BaseInfo,
+        _ info: any ThomasViewInfo.BaseInfo,
         formInputID: String? = nil
     ) -> some View {
         self.thomasBackground(

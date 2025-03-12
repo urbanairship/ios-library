@@ -28,9 +28,9 @@ struct ViewFactory {
         case .emptyView(let info):
             AirshipEmptyView(info: info, constraints: constraints)
         case .formController(let info):
-            FormController(info: info, constraints: constraints)
+            FormController(info: .form(info), constraints: constraints)
         case .npsController(let info):
-            NpsController(info: info, constraints: constraints)
+            FormController(info: .nps(info), constraints: constraints)
         case .textInput(let info):
             TextInput(info: info, constraints: constraints)
         case .pagerController(let info):

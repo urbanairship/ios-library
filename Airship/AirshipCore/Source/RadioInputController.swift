@@ -7,6 +7,8 @@ struct RadioInputController: View {
     let info: ThomasViewInfo.RadioInputController
     let constraints: ViewConstraints
 
+    @Environment(\.pageIdentifier) var pageID
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasState: ThomasState
     @StateObject var radioInputState: RadioInputState = RadioInputState()
@@ -41,7 +43,7 @@ struct RadioInputController: View {
 
     private func restoreFormState() {
         guard
-            case let .radio(value) = self.formState.data.input(
+            case let .radio(value) = self.formState.child(
                 identifier: self.info.properties.identifier
             )?.value,
             let value = value
@@ -88,7 +90,7 @@ struct RadioInputController: View {
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
         thomasState.processStateActions(
             stateActions,
-            formInput: self.formState.data.input(identifier: self.info.properties.identifier)
+            formInput: self.formState.child(identifier: self.info.properties.identifier)
         )
     }
 
@@ -110,10 +112,14 @@ struct RadioInputController: View {
         let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .radio(value),
-            attribute: self.attribute,
-            validator: .just(value != nil || self.info.validation.isRequired != true)
+            attribute: self.attribute
         )
-        self.formState.updateFormInput(data)
+        
+        self.formDataCollector.updateFormInput(
+            data,
+            validator: .just(value != nil || self.info.validation.isRequired != true),
+            pageID: pageID
+        )
     }
 
 }

@@ -2,18 +2,18 @@
 
 import Foundation
 
-struct ThomasFormInput: Sendable {
+struct ThomasFormInput: Sendable, Equatable {
 
-    enum ChannelRegistration: Sendable {
+    enum ChannelRegistration: Sendable, Equatable {
         case email(String, ThomasEmailRegistrationOptions)
     }
 
-    struct Attribute: Sendable {
+    struct Attribute: Sendable, Equatable {
         let attributeName: ThomasAttributeName
         let attributeValue: ThomasAttributeValue
     }
 
-    enum Value: Sendable {
+    enum Value: Sendable, Equatable {
         case toggle(Bool)
         case radio(String?)
         case multipleCheckbox([String]?)
@@ -46,7 +46,6 @@ struct ThomasFormInput: Sendable {
     let identifier: String
     let value: Value
 
-    let validator: ThomasInputValidator
     private let channelRegistration: ChannelRegistration?
     private let attribute: Attribute?
 
@@ -54,14 +53,12 @@ struct ThomasFormInput: Sendable {
         _ identifier: String,
         value: Value,
         attribute: Attribute? = nil,
-        channelRegistration: ChannelRegistration? = nil,
-        validator: ThomasInputValidator
+        channelRegistration: ChannelRegistration? = nil
     ) {
         self.identifier = identifier
         self.value = value
         self.attribute = attribute
         self.channelRegistration = channelRegistration
-        self.validator = validator
     }
 
     fileprivate var allInputs: [ThomasFormInput] {
@@ -80,10 +77,6 @@ struct ThomasFormInput: Sendable {
             }
         }
         return result
-    }
-
-    func input(identifier: String) -> ThomasFormInput? {
-        self.allInputs.first { $0.identifier == identifier }
     }
 
     var attributes: [Attribute] {

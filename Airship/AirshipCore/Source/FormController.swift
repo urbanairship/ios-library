@@ -4,129 +4,175 @@ import Combine
 import Foundation
 import SwiftUI
 
+@MainActor
 struct FormController: View {
 
-    let info: ThomasViewInfo.FormController
-    let constraints: ViewConstraints
-    @StateObject var formState: ThomasFormState
+    enum FormInfo {
+        case nps(ThomasViewInfo.NPSController)
+        case form(ThomasViewInfo.FormController)
+    }
 
-    @MainActor
-    init(info: ThomasViewInfo.FormController, constraints: ViewConstraints) {
-        self.info = info
-        self.constraints = constraints
-        self._formState = StateObject(
-            wrappedValue: ThomasFormState(
-                identifier: info.properties.identifier,
-                formType: .form,
-                formResponseType: info.properties.responseType,
-                validationMode: info.properties.validationMode ?? .immediate
-            )
+    let info: FormInfo
+    let constraints: ViewConstraints
+
+    @EnvironmentObject var formState: ThomasFormState
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
+    @EnvironmentObject var environment: ThomasEnvironment
+    @EnvironmentObject var state: ThomasState
+
+    var body: some View {
+        Content(
+            info: self.info,
+            constraints: constraints,
+            environment: environment,
+            parentFormState: formState,
+            parentFormDataCollector: formDataCollector,
+            parentState: state
         )
     }
 
-    var body: some View {
-        if info.properties.submit != nil {
-            ParentFormController(
-                info: info,
-                constraints: constraints,
-                formState: formState
-            )
-        } else {
-            ChildFormController(
-                info: info,
-                constraints: constraints,
-                formState: formState
-            )
-        }
-    }
-}
+    private struct Content: View {
 
+        let info: FormController.FormInfo
+        let constraints: ViewConstraints
 
-private struct ParentFormController: View {
+        @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+        @Environment(\.layoutState) var layoutState
 
-    let info: ThomasViewInfo.FormController
-    let constraints: ViewConstraints
+        @ObservedObject var formState: ThomasFormState
+        @StateObject var formDataCollector: ThomasFormDataCollector
+        @StateObject var state: ThomasState
 
-    @ObservedObject var formState: ThomasFormState
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.layoutState) var layoutState
-    @EnvironmentObject var thomasState: ThomasState
+        init(
+            info: FormController.FormInfo,
+            constraints: ViewConstraints,
+            environment: ThomasEnvironment,
+            parentFormState: ThomasFormState,
+            parentFormDataCollector: ThomasFormDataCollector,
+            parentState: ThomasState
+        ) {
+            self.info = info
+            self.constraints = constraints
 
-    var body: some View {
-        ViewFactory.createView(self.info.properties.view, constraints: constraints)
-            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .thomasEnableBehaviors(self.info.properties.formEnableBehaviors) { enabled in
-                self.formState.isEnabled = enabled
-            }
-            .environment(
-                \.layoutState,
-                layoutState.override(formState: formState)
-            )
-            .environmentObject(formState)
-            .environmentObject(thomasState.copy(formState: formState))
-            .airshipOnChangeOf(formState.isVisible) { [weak formState, weak thomasEnvironment] incoming in
-                guard incoming, let formState, let thomasEnvironment else {
-                    return
-                }
-                thomasEnvironment.formDisplayed(
-                    formState,
-                    layoutState: layoutState.override(
-                        formState: formState
-                    )
+            // Use the environment to create or retrieve the state in case the view
+            // stack changes and we lose our state.
+            let formState = environment.retrieveState(identifier: info.identifier) {
+                ThomasFormState(
+                    identifier: info.identifier,
+                    formType: info.formType,
+                    formResponseType: info.responseType,
+                    validationMode: info.validationMode ?? .immediate,
+                    parentFormState: info.isParent ? nil : parentFormState
                 )
             }
-    }
-}
 
+            if info.isParent {
+                formState.onSubmit = { [weak environment] form, layoutState in
+                    guard let environment else { throw AirshipErrors.error("Missing environment") }
+                    environment.submitForm(form, layoutState: layoutState)
+                }
+            } else {
+                formState.onSubmit = { [weak parentFormDataCollector] form, layoutState in
+                    guard let parentFormDataCollector else { throw AirshipErrors.error("Missing form collector") }
+                    parentFormDataCollector.updateFormInput(form.data, validator: .just(true), pageID: layoutState.pagerState?.currentPageId)
+                }
+            }
 
-private struct ChildFormController: View {
-    let info: ThomasViewInfo.FormController
-    let constraints: ViewConstraints
-
-    @EnvironmentObject var parentFormState: ThomasFormState
-    @ObservedObject var formState: ThomasFormState
-    @EnvironmentObject var thomasState: ThomasState
-
-    var body: some View {
-        return
-            ViewFactory.createView(
-                self.info.properties.view,
-                constraints: constraints
+            self._formState = ObservedObject(wrappedValue: formState)
+            self._formDataCollector = StateObject(
+                wrappedValue: parentFormDataCollector.copy(formState: formState)
             )
-            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .thomasEnableBehaviors(self.info.properties.formEnableBehaviors) { enabled in
-                self.formState.isEnabled = enabled
-            }
-            .environmentObject(formState)
-            .environmentObject(thomasState.copy(formState: formState))
-            .onAppear {
-                self.restoreFormState()
-                self.formState.parentFormState = self.parentFormState
-            }
-    }
-
-    private func restoreFormState() {
-        guard
-            let formData = self.parentFormState.data.input(
-                identifier: self.info.properties.identifier
-            ),
-            case let .form(responseType, children) = formData.value,
-            responseType == self.info.properties.responseType
-        else {
-            return
+            self._state = StateObject(
+                wrappedValue: parentState.copy(formState: formState)
+            )
         }
 
-        children.forEach {
-            self.formState.updateFormInput($0)
+        var body: some View {
+            ViewFactory.createView(self.info.view, constraints: constraints)
+                .thomasCommon(self.info.thomasInfo, formInputID: self.info.identifier)
+                .thomasEnableBehaviors(self.info.formEnableBehaviors) { enabled in
+                    self.formState.isEnabled = enabled
+                }
+                .environmentObject(formState)
+                .environmentObject(formDataCollector)
+                .environmentObject(state)
+                .airshipOnChangeOf(formState.isVisible) { [weak formState, weak thomasEnvironment] incoming in
+                    guard info.isParent, incoming, let formState, let thomasEnvironment else {
+                        return
+                    }
+                    thomasEnvironment.formDisplayed(
+                        formState,
+                        layoutState: layoutState.override(
+                            formState: formState
+                        )
+                    )
+                }
         }
     }
 }
-
 
 struct FormControllerDebug: View {
     @EnvironmentObject var state: ThomasFormState
 
     var body: some View {
         Text(String(describing: state.data.toPayload()))
+    }
+}
+
+fileprivate extension FormController.FormInfo {
+    var responseType: String? {
+        switch(self) {
+        case .nps(let info): info.properties.responseType
+        case .form(let info): info.properties.responseType
+        }
+    }
+
+    var formType: ThomasFormState.FormType {
+        switch(self) {
+        case .nps(let info): .nps(info.properties.npsIdentifier)
+        case .form: .form
+        }
+    }
+
+    var formEnableBehaviors: [ThomasEnableBehavior]? {
+        switch(self) {
+        case .nps(let info): info.properties.formEnableBehaviors
+        case .form(let info): info.properties.formEnableBehaviors
+        }
+    }
+
+    var identifier: String {
+        switch(self) {
+        case .nps(let info): info.properties.identifier
+        case .form(let info): info.properties.identifier
+        }
+    }
+
+    var isParent: Bool {
+        switch(self) {
+        case .nps(let info): info.properties.submit != nil
+        case .form(let info): info.properties.submit != nil
+        }
+    }
+
+    var validationMode: ThomasFormValidationMode? {
+        switch(self) {
+        case .nps(let info): info.properties.validationMode
+        case .form(let info): info.properties.validationMode
+        }
+    }
+
+    var view: ThomasViewInfo {
+        switch(self) {
+        case .nps(let info): info.properties.view
+        case .form(let info): info.properties.view
+        }
+    }
+
+    var thomasInfo: any ThomasViewInfo.BaseInfo {
+        switch(self) {
+        case .nps(let info): info
+        case .form(let info): info
+        }
     }
 }

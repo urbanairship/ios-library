@@ -23,8 +23,8 @@ private struct ButtonActionsEnabledKey: EnvironmentKey {
     static let defaultValue: Bool = true
 }
 
-private struct PagerPageIndexKey: EnvironmentKey {
-    static let defaultValue: String = ""
+private struct PageIdentifierKey: EnvironmentKey {
+    static let defaultValue: String? = nil
 }
 
 
@@ -58,9 +58,9 @@ extension EnvironmentValues {
         set { self[ButtonActionsEnabledKey.self] = newValue }
     }
 
-    var pageIdentifier: String {
-        get { self[PagerPageIndexKey.self] }
-        set { self[PagerPageIndexKey.self] = newValue }
+    var pageIdentifier: String? {
+        get { self[PageIdentifierKey.self] }
+        set { self[PageIdentifierKey.self] = newValue }
     }
 
     internal var layoutState: LayoutState {

@@ -83,14 +83,16 @@ struct AirshipButton<Label> : View  where Label : View {
         )
 
         // Buttons
-        handleBehaviors(self.clickBehaviors ?? [])
+        await handleBehaviors(self.clickBehaviors ?? [])
         handleActions(self.actions)
     }
 
     private func handleBehaviors(
         _ behaviors: [ThomasButtonClickBehavior]?
-    ) {
-        behaviors?.sortedBehaviors.forEach { behavior in 
+    ) async {
+        guard let behaviors else { return }
+
+        for behavior in behaviors {
             switch(behavior) {
             case .dismiss:
                 thomasEnvironment.dismiss(
@@ -144,10 +146,11 @@ struct AirshipButton<Label> : View  where Label : View {
                 break
                 
             case .formSubmit:
-                guard formState.status == .valid else { return }
-                let formState = formState.topFormState
-                thomasEnvironment.submitForm(formState, layoutState: layoutState)
-                formState.markSubmitted()
+                do {
+                    try await formState.submit(layoutState: layoutState)
+                } catch {
+                    AirshipLogger.error("Failed to submit \(error)")
+                }
             }
         }
     }

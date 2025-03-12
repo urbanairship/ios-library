@@ -8,6 +8,9 @@ struct Score: View {
     let constraints: ViewConstraints
 
     @State var score: Int?
+
+    @Environment(\.pageIdentifier) var pageID
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasState: ThomasState
     @Environment(\.colorScheme) var colorScheme
@@ -110,7 +113,7 @@ struct Score: View {
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
         thomasState.processStateActions(
             stateActions,
-            formInput: self.formState.data.input(identifier: self.info.properties.identifier)
+            formInput: self.formState.child(identifier: self.info.properties.identifier)
         )
     }
     
@@ -165,11 +168,14 @@ struct Score: View {
         let data = ThomasFormInput(
             self.info.properties.identifier,
             value: .score(value),
-            attribute: self.attribute(value: value),
-            validator: .just(value != nil || self.info.validation.isRequired != true)
+            attribute: self.attribute(value: value)
         )
 
-        self.formState.updateFormInput(data)
+        self.formDataCollector.updateFormInput(
+            data,
+            validator: .just(value != nil || self.info.validation.isRequired != true),
+            pageID: pageID
+        )
 
         guard self.formState.validationMode == .onDemand else { return }
         
@@ -181,7 +187,7 @@ struct Score: View {
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.data.input(
+        let formValue = self.formState.child(
             identifier: self.info.properties.identifier
         )?.value
 

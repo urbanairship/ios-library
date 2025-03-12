@@ -19,9 +19,21 @@ class ThomasEnvironment: ObservableObject {
         formResponseType: "",
         validationMode: .immediate
     )
+
     let defaultPagerState = PagerState(identifier: "", branching: nil)
     let defaultMutableState = ThomasState.MutableState()
 
+    private var state: [String: Any] = [:]
+
+    func retrieveState<T: ObservableObject>(identifier: String, create: () -> T) -> T {
+        let key = "\(identifier):\(T.self)"
+        guard let existing = self.state[key] as? T else {
+            let new = create()
+            state[key] = new
+            return new
+        }
+        return existing
+    }
 
     @Published
     var isDismissed = false
@@ -106,8 +118,6 @@ class ThomasEnvironment: ObservableObject {
 
         channelEditor.apply()
         contactEditor.apply()
-
-
     }
 
     @MainActor
@@ -323,7 +333,6 @@ extension ThomasFormState {
             identifier: self.identifier,
             formData: self.data.toPayload() 
         )
-
     }
 }
 

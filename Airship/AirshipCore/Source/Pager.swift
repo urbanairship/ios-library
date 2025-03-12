@@ -4,6 +4,7 @@ import Foundation
 import SwiftUI
 import Combine
 
+@MainActor
 struct Pager: View {
 
     private enum PagerEvent {
@@ -111,6 +112,10 @@ struct Pager: View {
             constraints: constraints
         )
         .environment(\.isVisible, true)
+        .environment(
+            \.pageIdentifier,
+             pagerState.pageItems[0].identifier
+        )
         .constraints(constraints)
         .airshipMeasureView(self.$size)
     }
@@ -152,7 +157,7 @@ struct Pager: View {
         .scrollTargetBehavior(.paging)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
-        .onChange(of: scrollPosition, initial: false) { old, value in
+        .airshipOnChangeOf(scrollPosition, initial: false) { value in
             if let position = value, position != self.pagerState.pageIndex {
                 handleEvents(.defaultSwipe(from: self.pagerState.pageIndex, to: position))
                 self.pagerState.nagivateToPage(id: self.pagerState.pageStates[position].identifier)
@@ -177,7 +182,8 @@ struct Pager: View {
             VStack {
                 ViewFactory.createView(
                     pagerState.pageItems[index].view,
-                    constraints: childConstraints)
+                    constraints: childConstraints
+                )
                 .allowsHitTesting(
                     self.isVisible && pagerState.pageItems[index].identifier == pagerState.currentPageId
                 )

@@ -9,9 +9,11 @@ struct TextInput: View {
     let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
 
+    @Environment(\.pageIdentifier) var pageID
     @Environment(\.sizeCategory) var sizeCategory
     @Environment(\.colorScheme) var colorScheme
 
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
@@ -125,7 +127,12 @@ struct TextInput: View {
                 self.info.validation.onEdit?.stateActions.map(handleStateActions)
                 self.isValid = nil
             }
-            self.formState.updateFormInput(data)
+
+            self.formDataCollector.updateFormInput(
+                data.formInput,
+                validator: data.validator,
+                pageID: pageID
+            )
 
             if formState.validationMode == .immediate {
                 updateValidationState(self.formState.status)
@@ -142,12 +149,12 @@ struct TextInput: View {
     }
 
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
-        thomasState.processStateActions(stateActions, formInput: self.viewModel.formData)
+        thomasState.processStateActions(stateActions, formInput: self.viewModel.formData?.formInput)
     }
 
     private func restoreFormState() {
         guard
-            case let .text(value) = self.formState.data.input(
+            case let .text(value) = self.formState.child(
                 identifier: self.info.properties.identifier
             )?.value,
             let value = value
@@ -212,8 +219,13 @@ struct TextInput: View {
         private let isRequired: Bool
         private let inputValidator: AirshipInputValidator = AirshipInputValidator()
 
+        struct FormData {
+            let formInput: ThomasFormInput
+            let validator: ThomasInputValidator
+        }
+
         @Published
-        var formData: ThomasFormInput?
+        var formData: FormData?
         private var lastInput: String?
 
         @Published
@@ -266,12 +278,13 @@ struct TextInput: View {
                 case .number, .text, .textMultiline: .text(nil)
                 }
 
-                self.formData = ThomasFormInput(
-                    inputProperties.identifier,
-                    value: value,
+                self.formData = FormData(
+                    formInput: ThomasFormInput(
+                        inputProperties.identifier,
+                        value: value
+                    ),
                     validator: .just(!isRequired)
                 )
-
                 return
             }
 
@@ -284,22 +297,28 @@ struct TextInput: View {
                     channelRegistration = .email(email.address, options)
                 }
 
-                self.formData = ThomasFormInput(
-                    inputProperties.identifier,
-                    value: .emailText(input),
-                    attribute: self.attribute(value: input),
-                    channelRegistration: channelRegistration,
+                self.formData = FormData(
+                    formInput: ThomasFormInput(
+                        inputProperties.identifier,
+                        value: .emailText(input),
+                        attribute: self.attribute(value: input),
+                        channelRegistration: channelRegistration
+                    ),
                     validator: .async { [inputValidator] in
                         return inputValidator.validate(email: email)
                     }
                 )
+
             case .number, .text, .textMultiline:
-                self.formData = ThomasFormInput(
-                    inputProperties.identifier,
-                    value: .text(trimmedInput),
-                    attribute: self.attribute(value: trimmedInput),
+                self.formData = FormData(
+                    formInput: ThomasFormInput(
+                        inputProperties.identifier,
+                        value: .text(trimmedInput),
+                        attribute: self.attribute(value: trimmedInput)
+                    ),
                     validator: .just(true)
                 )
+
             }
         }
     }

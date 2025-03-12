@@ -21,6 +21,7 @@ class ThomasState: ObservableObject {
             mutableState: mutableState ?? self.mutableState
         )
     }
+    
 
     init(formState: ThomasFormState, mutableState: MutableState = .init()) {
         self.formState = formState

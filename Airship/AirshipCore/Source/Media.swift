@@ -41,13 +41,15 @@ struct Media: View {
             .accessible(self.info.accessible, hideIfDescriptionIsMissing: true)
         case .video, .youtube:
             #if !os(tvOS) && !os(watchOS)
-            MediaWebView(
-                info: self.info
-            ) {
-                pagerState.setMediaReady(pageId: pageIdentifier, id: mediaID, isReady: true)
+            MediaWebView(info: self.info) {
+                pagerState.setMediaReady(
+                    pageId: pageIdentifier ?? "",
+                    id: mediaID,
+                    isReady: true
+                )
             }
             .onAppear {
-                pagerState.registerMedia(pageId: pageIdentifier, id: mediaID)
+                pagerState.registerMedia(pageId: pageIdentifier ?? "", id: mediaID)
             }
             .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
                 $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)
