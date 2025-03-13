@@ -8,12 +8,14 @@ import UIKit
 
 
 struct BannerView: View {
-    @Environment(\.layoutState) var layoutState
-    @Environment(\.windowSize) private var windowSize
-    @Environment(\.orientation) private var orientation
-    @Environment(\.colorScheme) var colorScheme
 
-    static let animationInOutDuration = 0.2
+    private enum PositionState {
+        case hidden
+        case visible
+    }
+
+    static let animationInDuration = 0.2
+    static let animationOutDuration = 0.2
 
     let viewControllerOptions: ThomasViewControllerOptions
     let presentation: ThomasPresentationInfo.Banner
@@ -25,120 +27,45 @@ struct BannerView: View {
     @ObservedObject
     var bannerConstraints: ThomasBannerConstraints
 
-    @StateObject
-    private var timer: AirshipObservableTimer
-
     /// The dimiss action callback
     let onDismiss: () -> Void
 
-    @State private var isShowing: Bool = false
-    @State private var swipeOffset: CGFloat = 0
-    @State private var isButtonTapsDisabled: Bool = false
+
+    @State private var positionState: PositionState = .hidden
     @State private var contentSize: (ViewConstraints, CGSize)? = nil
 
-    init(
-        viewControllerOptions: ThomasViewControllerOptions,
-        presentation: ThomasPresentationInfo.Banner,
-        layout: AirshipLayout,
-        thomasEnvironment: ThomasEnvironment,
-        bannerConstraints: ThomasBannerConstraints,
-        onDismiss: @escaping () -> Void
-    ) {
-        self.viewControllerOptions = viewControllerOptions
-        self.presentation = presentation
-        self.layout = layout
-        self.thomasEnvironment = thomasEnvironment
-        self.bannerConstraints = bannerConstraints
-        self._timer = StateObject(
-            wrappedValue: AirshipObservableTimer(
-                duration: TimeInterval(presentation.duration ?? Int(INT_MAX))
-            )
-        )
-        self.onDismiss = onDismiss
-    }
+    @Environment(\.layoutState) var layoutState
+    @Environment(\.windowSize) private var windowSize
+    @Environment(\.orientation) private var orientation
 
     var body: some View {
-        ZStack {
-            GeometryReader { metrics in
-                RootView(
-                    thomasEnvironment: thomasEnvironment,
-                    layout: layout
-                ) { orientation, windowSize in
-
-                    let placement = resolvePlacement(
-                        orientation: orientation,
-                        windowSize: windowSize
-                    )
-
-                    let banner = createBanner(
-                        placement: placement,
-                        metrics: metrics
-                    )
-                        .offset(x: 0, y: swipeOffset)
-#if !os(tvOS)
-                        .simultaneousGesture(swipeGesture(placement: placement))
-#endif
-                        .frame(maxWidth: .infinity)
-
-                    Group {
-                        if isShowing {
-                            banner
-                        } else {
-                            banner.opacity(0)
+        GeometryReader { metrics in
+            RootView(
+                thomasEnvironment: thomasEnvironment,
+                layout: layout
+            ) { orientation, windowSize in
+                let placement = resolvePlacement(
+                    orientation: orientation,
+                    windowSize: windowSize
+                )
+                
+                createBanner(placement: placement, metrics: metrics)
+                    .airshipOnChangeOf(thomasEnvironment.isDismissed, { _ in
+                        withAnimation(.linear(duration: BannerView.animationOutDuration)) {
+                            self.positionState = .hidden
+                        }
+                        DispatchQueue.main.asyncAfter(
+                            deadline: .now() + BannerView.animationOutDuration
+                        ) {
+                            onDismiss()
+                        }
+                    })
+                    .onAppear {
+                        withAnimation(.linear(duration: BannerView.animationInDuration)) {
+                            self.positionState = .visible
                         }
                     }
-                    .airshipApplyTransitioningPlacement(
-                        isTopPlacement: placement.position == .top
-                    )
-                }
-                .airshipOnChangeOf(thomasEnvironment.isDismissed) { _ in
-                    setShowing(state: false) {
-                        self.swipeOffset = 0
-                        onDismiss()
-                    }
-                    timer.onDisappear()
-                }
-                .onAppear {
-                    timer.onAppear()
-                    setShowing(state: true)
-                }
-                .airshipOnChangeOf(swipeOffset) { value in
-                    self.isButtonTapsDisabled = value != 0
-                    self.timer.isPaused = value != 0
-                }
-                .onReceive(timer.$isExpired) { expired in
-                    if expired {
-                        self.thomasEnvironment.dismiss()
-                    }
-                }
-                // Invalidate cached content size on orientation change
-                .onChange(of: orientation) { _ in
-                    self.contentSize = nil
-                }
             }
-            .id(orientation)
-            .ignoresSafeArea(ignoreKeyboardSafeArea ? [.keyboard] : [])
-        }
-    }
-
-    private var ignoreKeyboardSafeArea: Bool {
-        presentation.ios?.keyboardAvoidance == .overTheTop
-    }
-
-    @ViewBuilder
-    private func nub(placement: ThomasPresentationInfo.Banner.Placement) -> some View {
-        if let nubInfo = placement.nubInfo {
-            Capsule()
-                .frame(
-                    width: nubInfo.size.width.calculateSize(nil) ?? 36,
-                    height: nubInfo.size.height.calculateSize(nil) ?? 4
-                )
-                .foregroundColor(nubInfo.color.toColor(colorScheme))
-                .margin(nubInfo.margin)
-        } else {
-            Capsule()
-                .frame(width: 36, height: 4)
-                .foregroundColor(Color.red.opacity(0.42))
         }
     }
 
@@ -146,91 +73,61 @@ struct BannerView: View {
         placement: ThomasPresentationInfo.Banner.Placement,
         metrics: GeometryProxy
     ) -> some View {
+        
         let alignment = Alignment(
             horizontal: .center,
             vertical: placement.position == .top ? .top : .bottom
         )
-
+        
         let ignoreSafeArea = placement.ignoreSafeArea == true
-        var safeAreaInsets = ViewConstraints.emptyEdgeSet
-        var safeAreasToIgnore: SafeAreaRegions = []
-
-        if ignoreKeyboardSafeArea {
-            safeAreasToIgnore.insert(.keyboard)
-        }
-
-        if ignoreSafeArea {
-            if placement.position == .top {
-                // The top banner never needs to take the bottom safe area into account
-                safeAreaInsets = EdgeInsets(
-                    top: metrics.safeAreaInsets.top,
-                    leading: metrics.safeAreaInsets.leading,
-                    bottom: 0,
-                    trailing: metrics.safeAreaInsets.trailing
-                )
-            } else {
-                // The bottom banner never needs to take the top safe area into account
-                safeAreaInsets = EdgeInsets(
-                    top: 0,
-                    leading: metrics.safeAreaInsets.leading,
-                    bottom: metrics.safeAreaInsets.bottom,
-                    trailing: metrics.safeAreaInsets.trailing
-                )
-            }
-        }
-
+        let safeAreaInsets = ignoreSafeArea ? metrics.safeAreaInsets : ViewConstraints.emptyEdgeSet
+        
         let constraints = ViewConstraints(
             size: self.bannerConstraints.size,
             safeAreaInsets: safeAreaInsets
         )
-
-        // Reuse cached size if constraints are identical
-        var existingSize: CGSize?
+        
+        var contentSize: CGSize?
         if constraints == self.contentSize?.0 {
-            existingSize = self.contentSize?.1
+            contentSize = self.contentSize?.1
         }
 
         let contentConstraints = constraints.contentConstraints(
             placement.size,
-            contentSize: existingSize,
+            contentSize: contentSize,
             margin: placement.margin
         )
+        
+        let height = constraints.height ?? metrics.size.height
 
         return VStack {
             ViewFactory.createView(
                 layout.view,
                 constraints: contentConstraints
             )
-            .airshipAddNub(
-                isTopPlacement: placement.position == .top,
-                nub: AnyView(nub(placement: placement)),
-                itemSpacing: 16
+            .thomasBackground(
+                color: placement.backgroundColor,
+                border: placement.border
             )
-        }
-        .thomasBackground(
-            color: placement.backgroundColor,
-            border: placement.border
-        )
-        .margin(placement.margin)
-        .shadow(radius: 5)
-        .background(
-            GeometryReader { contentMetrics in
-                Color.clear
-                    .onAppear {
-                        let size = contentMetrics.size
-                        // Update cached size if constraints match
+            .margin(placement.margin)
+            .shadow(radius: 5)
+            .background(
+                GeometryReader(content: { contentMetrics -> Color in
+                    let size = contentMetrics.size
+                    DispatchQueue.main.async {
                         self.contentSize = (constraints, size)
                         self.viewControllerOptions.bannerSize = size
                     }
-            }
-        )
-        .ignoresSafeArea(safeAreasToIgnore)
-        /// Not completely sure why this is only necessary for the bottom placement. The parent alignment is still inset even if we ignore safe area.
-        .padding(.bottom, placement.position == .bottom && ignoreSafeArea ? -metrics.safeAreaInsets.bottom : 0)
-        .constraints(contentConstraints, alignment: alignment, fixedSize: true)
-        .airshipApplyIf(ignoreSafeArea) {
-            $0.edgesIgnoringSafeArea(.all)
+                    return Color.clear
+                })
+            )
         }
+        .offset(
+            x: 0.0,
+            y: calculateOffset(height: height, placement: placement)
+        )
+        .constraints(contentConstraints, alignment: alignment, fixedSize: true)
+        .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
     }
 
     private func resolvePlacement(
@@ -238,15 +135,17 @@ struct BannerView: View {
         windowSize: ThomasWindowSize
     ) -> ThomasPresentationInfo.Banner.Placement {
 
-        var placement = presentation.defaultPlacement
-        for placementSelector in presentation.placementSelectors ?? [] {
-            if let requiredSize = placementSelector.windowSize,
-               requiredSize != windowSize {
+        var placement = self.presentation.defaultPlacement
+        for placementSelector in self.presentation.placementSelectors ?? [] {
+            if placementSelector.windowSize != nil
+                && placementSelector.windowSize != windowSize
+            {
                 continue
             }
 
-            if let requiredOrientation = placementSelector.orientation,
-               requiredOrientation != orientation {
+            if placementSelector.orientation != nil
+                && placementSelector.orientation != orientation
+            {
                 continue
             }
 
@@ -254,56 +153,17 @@ struct BannerView: View {
             placement = placementSelector.placement
         }
 
-        viewControllerOptions.bannerPlacement = placement
+        self.viewControllerOptions.bannerPlacement = placement
+
         return placement
     }
 
-    private func setShowing(state: Bool, completion: (() -> Void)? = nil) {
-        withAnimation(.easeInOut(duration: BannerView.animationInOutDuration)) {
-            self.isShowing = state
-        }
-
-        DispatchQueue.main.asyncAfter(
-            deadline: .now() + BannerView.animationInOutDuration
-        ) {
-            completion?()
+    private func calculateOffset(height: CGFloat, placement: ThomasPresentationInfo.Banner.Placement) -> CGFloat {
+        switch(self.positionState) {
+        case .hidden:
+            return placement.position == .top ? -height : height
+        case .visible:
+            return 0
         }
     }
-
-#if !os(tvOS)
-    private func swipeGesture(placement: ThomasPresentationInfo.Banner.Placement) -> some Gesture {
-        let minSwipeDistance: CGFloat = bannerConstraints.size.height > 0
-        ? min(100.0, bannerConstraints.size.height * 0.5)
-        : 100.0
-
-        return DragGesture(minimumDistance: 10)
-            .onChanged { gesture in
-                withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
-                    let offset = gesture.translation.height
-                    let upwardSwipeTopPlacement = (placement.position == .top && offset < 0)
-                    let downwardSwipeBottomPlacement = (placement.position == .bottom && offset > 0)
-
-                    if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
-                        self.swipeOffset = offset
-                    }
-                }
-            }
-            .onEnded { gesture in
-                withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
-                    let offset = gesture.translation.height
-                    swipeOffset = offset
-
-                    let upwardSwipeTopPlacement = (placement.position == .top && offset < -minSwipeDistance)
-                    let downwardSwipeBottomPlacement = (placement.position == .bottom && offset > minSwipeDistance)
-
-                    if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
-                        thomasEnvironment.dismiss()
-                    } else {
-                        // Return to origin
-                        swipeOffset = 0
-                    }
-                }
-            }
-    }
-#endif
 }

@@ -20,7 +20,7 @@ struct InAppMessageBannerView: View {
     @State private var swipeOffset: CGFloat = 0
     @State private var isButtonTapsDisabled: Bool = false
 
-    @StateObject var timer: AirshipObservableTimer
+    @StateObject private var timer: BannerTimer
 
     var theme: InAppMessageTheme.Banner
     var onDismiss: () -> Void
@@ -102,7 +102,7 @@ struct InAppMessageBannerView: View {
         self.bannerConstraints = bannerConstraints
         self.theme = theme
         self.onDismiss = onDismiss
-        self._timer = StateObject(wrappedValue: AirshipObservableTimer(duration: displayContent.duration))
+        self._timer = StateObject(wrappedValue: BannerTimer(duration: displayContent.duration))
     }
 
     @ViewBuilder
@@ -147,12 +147,12 @@ struct InAppMessageBannerView: View {
             buttonsView
         }
         .padding(.horizontal, itemSpacing)
-        .airshipAddNub(
-            isTopPlacement: displayContent.placement == .top,
+        .addNub(
+            placement: displayContent.placement ?? .bottom,
             nub: AnyView(nub),
             itemSpacing: itemSpacing
         )
-        .airshipGeometryGroupCompat()
+        .geometryGroupCompat()
 
         if let actions = displayContent.actions {
             Button(
@@ -211,7 +211,7 @@ struct InAppMessageBannerView: View {
             )
             .showing(isShowing: isShowing)
             .padding(theme.padding)
-            .airshipApplyTransitioningPlacement(isTopPlacement: displayContent.placement == .top)
+            .applyTransitioningPlacement(placement: displayContent.placement ?? .bottom)
             .offset(x: 0, y: swipeOffset)
 #if !os(tvOS)
             .simultaneousGesture(swipeGesture)
@@ -298,9 +298,134 @@ struct InAppMessageBannerView: View {
 #endif
 }
 
+fileprivate extension View {
+    @ViewBuilder
+    func geometryGroupCompat() -> some View {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            self.geometryGroup()
+        } else {
+            self.transformEffect(.identity)
+        }
+    }
+
+    @ViewBuilder
+    func showing(isShowing: Bool) -> some View {
+        if isShowing {
+            self.opacity(1)
+        } else {
+            self.hidden().opacity(0)
+        }
+    }
+
+    @ViewBuilder
+    func addNub(
+        placement: InAppMessageDisplayContent.Banner.Placement,
+        nub: AnyView,
+        itemSpacing: CGFloat
+    ) -> some View {
+        VStack(spacing: 0) {
+            switch(placement) {
+            case .top:
+                self
+                nub.padding(.vertical, itemSpacing / 2)
+            default:
+                nub.padding(.vertical, itemSpacing / 2)
+                self
+            }
+        }
+    }
+
+    @ViewBuilder
+    func applyTransitioningPlacement(
+        placement: InAppMessageDisplayContent.Banner.Placement
+    ) -> some View {
+        switch placement {
+        case .top:
+            VStack {
+                self.applyTransition(placement: .top)
+                Spacer()
+            }
+        default:
+            VStack {
+                Spacer()
+                self.applyTransition(placement: .bottom)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func applyTransition(
+        placement: InAppMessageDisplayContent.Banner.Placement
+    ) -> some View {
+        switch(placement) {
+        case .top:
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: .top),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                )
+            )
+        default:
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: .bottom),
+                    removal: .move(edge: .bottom).combined(with: .opacity)
+                )
+            )
+        }
+    }
+}
+
 fileprivate struct InAppMessageCustomOpacityButtonStyle: ButtonStyle {
     let pressedOpacity: Double
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.opacity(configuration.isPressed ? pressedOpacity : 1.0)
+    }
+}
+
+
+
+@MainActor
+fileprivate final class BannerTimer: ObservableObject {
+    private static let tick: TimeInterval = 0.1
+    private var elapsedTime: TimeInterval = 0
+    private let duration: TimeInterval?
+
+    private var isStarted: Bool = false
+    private var task: Task<Void, any Error>?
+    var isPaused: Bool = false
+
+    @Published private(set) var isExpired: Bool = false
+
+    init(duration: TimeInterval?) {
+        self.duration = duration
+    }
+
+    func onAppear() {
+        guard !isStarted, !isExpired, let duration else {
+            return
+        }
+
+        self.isStarted = true
+
+        self.task = Task { @MainActor [weak self] in
+            while self?.isExpired == false, self?.isStarted == true {
+                try await Task.sleep(nanoseconds: UInt64(Self.tick * 1_000_000_000))
+                guard let self, self.isStarted, !Task.isCancelled else { return }
+
+                if !self.isPaused {
+                    self.elapsedTime += Self.tick
+                    if self.elapsedTime >= duration {
+                        self.isExpired = true
+                        self.task?.cancel()
+                    }
+                }
+            }
+        }
+    }
+
+    func onDisappear() {
+        isStarted = false
+        task?.cancel()
     }
 }

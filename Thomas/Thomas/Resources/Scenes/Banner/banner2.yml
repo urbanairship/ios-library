@@ -1,0 +1,361 @@
+---
+version: 1
+presentation:
+  type: banner
+  placement_selectors:
+    - orientation: landscape
+      placement:
+        position: top
+        size:
+          width: 50%
+          height: 500
+        border:
+          radius: 20
+  default_placement:
+    size:
+      width: 100%
+      height: 500
+    position: top
+
+  duration_milliseconds: 5000
+view:
+  type: state_controller
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+    - size:
+        height: 100%
+        width: 100%
+      view:
+        identifier: 930e7d81-e509-4a48-99f1-288030ef6e8a
+        type: form_controller
+        form_enabled:
+        - form_submission
+        submit: submit_event
+        response_type: user_feedback
+        view:
+          type: container
+          items:
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: 100%
+            view:
+              type: container
+              items:
+              - size:
+                  width: 100%
+                  height: 100%
+                position:
+                  horizontal: center
+                  vertical: center
+                view:
+                  type: container
+                  items:
+                  - margin:
+                      bottom: 16
+                    position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 48
+                          bottom: 8
+                          start: 16
+                          end: 16
+                        view:
+                          type: label
+                          text: tes
+                          text_appearance:
+                            font_size: 20
+                            color:
+                              default:
+                                type: hex
+                                hex: "#000000"
+                                alpha: 1
+                              selectors:
+                              - platform: ios
+                                dark_mode: true
+                                color:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+                              - platform: android
+                                dark_mode: true
+                                color:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+                            alignment: start
+                            styles: []
+                            font_families:
+                            - sans-serif
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 8
+                          start: 16
+                          end: 16
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - margin:
+                              top: 0
+                              bottom: 8
+                            size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: test
+                              text_appearance:
+                                font_size: 20
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: "#000000"
+                                    alpha: 1
+                                  selectors:
+                                  - platform: ios
+                                    dark_mode: true
+                                    color:
+                                      type: hex
+                                      hex: "#FFFFFF"
+                                      alpha: 1
+                                  - platform: android
+                                    dark_mode: true
+                                    color:
+                                      type: hex
+                                      hex: "#FFFFFF"
+                                      alpha: 1
+                                alignment: start
+                                styles: []
+                                font_families:
+                                - sans-serif
+                          - margin:
+                              top: 0
+                              bottom: 8
+                            size:
+                              width: 100%
+                              height: 75
+                            view:
+                              background_color:
+                                default:
+                                  type: hex
+                                  hex: "#eae9e9"
+                                  alpha: 1
+                              border:
+                                radius: 2
+                                stroke_width: 1
+                                stroke_color:
+                                  default:
+                                    type: hex
+                                    hex: "#63656b"
+                                    alpha: 1
+                              type: text_input
+                              text_appearance:
+                                alignment: start
+                                font_size: 14
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: "#000000"
+                                    alpha: 1
+                              identifier: 4e1a5c5f-a4cb-4599-a612-199e06aeaebd
+                              input_type: text_multiline
+                              required: false
+                      - margin:
+                          top: 8
+                          bottom: 0
+                          start: 16
+                          end: 16
+                        size:
+                          height: auto
+                          width: 100%
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                          - margin:
+                              top: 4
+                              bottom: 16
+                              start: 0
+                              end: 0
+                            size:
+                              width: 100%
+                              height: 48
+                            view:
+                              type: label_button
+                              identifier: submit_feedback--test
+                              reporting_metadata:
+                                trigger_link_id: 1ffdb233-beef-4581-ab9a-c90579471aad
+                              label:
+                                type: label
+                                text: test
+                                text_appearance:
+                                  font_size: 16
+                                  color:
+                                    default:
+                                      type: hex
+                                      hex: "#000000"
+                                      alpha: 1
+                                    selectors:
+                                    - platform: ios
+                                      dark_mode: true
+                                      color:
+                                        type: hex
+                                        hex: "#FFFFFF"
+                                        alpha: 1
+                                    - platform: android
+                                      dark_mode: true
+                                      color:
+                                        type: hex
+                                        hex: "#FFFFFF"
+                                        alpha: 1
+                                  alignment: center
+                                  styles: []
+                                  font_families:
+                                  - sans-serif
+                              actions: {}
+                              enabled:
+                              - form_validation
+                              button_click:
+                              - form_submit
+                              - pager_next
+                              background_color:
+                                default:
+                                  type: hex
+                                  hex: "#63AFF1"
+                                  alpha: 1
+                                selectors:
+                                - platform: ios
+                                  dark_mode: true
+                                  color:
+                                    type: hex
+                                    hex: "#63AFF1"
+                                    alpha: 1
+                                - platform: android
+                                  dark_mode: true
+                                  color:
+                                    type: hex
+                                    hex: "#63AFF1"
+                                    alpha: 1
+                              border:
+                                radius: 0
+                                stroke_width: 1
+                                stroke_color:
+                                  default:
+                                    type: hex
+                                    hex: "#63AFF1"
+                                    alpha: 1
+                                  selectors:
+                                  - platform: ios
+                                    dark_mode: true
+                                    color:
+                                      type: hex
+                                      hex: "#63AFF1"
+                                      alpha: 1
+                                  - platform: android
+                                    dark_mode: true
+                                    color:
+                                      type: hex
+                                      hex: "#63AFF1"
+                                      alpha: 1
+                              event_handlers:
+                              - type: tap
+                                state_actions:
+                                - type: set
+                                  key: submitted
+                                  value: true
+                          background_color:
+                            default:
+                              type: hex
+                              hex: "#FFFFFF"
+                              alpha: 1
+                            selectors:
+                            - platform: ios
+                              dark_mode: true
+                              color:
+                                type: hex
+                                hex: "#000000"
+                                alpha: 1
+                            - platform: android
+                              dark_mode: true
+                              color:
+                                type: hex
+                                hex: "#000000"
+                                alpha: 1
+                      - size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items: []
+              background_color:
+                default:
+                  type: hex
+                  hex: "#FFFFFF"
+                  alpha: 1
+                selectors:
+                - platform: ios
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: android
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+            ignore_safe_area: false
+          - position:
+              horizontal: end
+              vertical: top
+            size:
+              width: 48
+              height: 48
+            view:
+              type: image_button
+              image:
+                scale: 0.4
+                type: icon
+                icon: close
+                color:
+                  default:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                  selectors:
+                  - platform: ios
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  - platform: android
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+              identifier: dismiss_button
+              button_click:
+              - dismiss
