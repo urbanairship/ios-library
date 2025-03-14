@@ -282,7 +282,9 @@ extension ChannelListView {
         window?.rootViewController = viewController
         window?.alpha = 0
         window?.animateIn()
-
+#if os(visionOS)
+        window?.layer.opacity = 0.9
+#endif
         return disposable
     }
 
