@@ -2818,6 +2818,7 @@ view:
                                     - form_validation
                                     button_click:
                                     - form_submit
+                                    - dismiss
                                     background_color:
                                       default:
                                         type: hex

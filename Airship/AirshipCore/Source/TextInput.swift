@@ -120,19 +120,14 @@ struct TextInput: View {
         .airshipOnChangeOf(self.formState.status) { status in
             updateValidationState(status)
         }
-        .onReceive(self.viewModel.$formData) { data in
-            guard let data else { return }
-
+        .onReceive(self.viewModel.$formField) { field in
+            guard let field else { return }
             if self.isValid != nil {
                 self.info.validation.onEdit?.stateActions.map(handleStateActions)
                 self.isValid = nil
             }
 
-            self.formDataCollector.updateFormInput(
-                data.formInput,
-                validator: data.validator,
-                pageID: pageID
-            )
+            self.formDataCollector.updateField(field, pageID: pageID)
 
             if formState.validationMode == .immediate {
                 updateValidationState(self.formState.status)
@@ -149,28 +144,44 @@ struct TextInput: View {
     }
 
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
-        thomasState.processStateActions(stateActions, formInput: self.viewModel.formData?.formInput)
+        thomasState.processStateActions(
+            stateActions,
+            formFieldValue: self.viewModel.formField?.input
+        )
     }
 
     private func restoreFormState() {
-        guard
-            case let .text(value) = self.formState.child(
-                identifier: self.info.properties.identifier
-            )?.value,
-            let value = value
-        else {
-            return
-        }
+        switch(self.info.properties.inputType) {
+        case .email:
+            guard
+                case .emailText(let value) = self.formState.field(
+                    identifier: self.info.properties.identifier
+                )?.input,
+                let value
+            else {
+                return
+            }
 
-        if (self.viewModel.input != value) {
+            self.viewModel.input = value
+        case .number, .text, .textMultiline:
+            guard
+                case .text(let value) = self.formState.field(
+                    identifier: self.info.properties.identifier
+                )?.input,
+                let value
+            else {
+                return
+            }
+
             self.viewModel.input = value
         }
     }
 
     @MainActor
     private func updateValidationState(
-        _ status: ThomasFormStatus
+        _ status: ThomasFormState.Status
     ) {
+
         switch (status) {
         case .valid:
             guard self.isValid == true else {
@@ -178,9 +189,20 @@ struct TextInput: View {
                 self.isValid = true
                 return
             }
-        case .error(let result), .invalid(let result):
-            let id = self.info.properties.identifier
-            if result.status[id] == .invalid {
+        case .error, .invalid:
+            guard let fieldStatus = self.formState.lastFieldStatus(
+                identifier: self.info.properties.identifier
+            ) else {
+                return
+            }
+
+            if fieldStatus.isValid {
+                guard self.isValid == true else {
+                    self.info.validation.onValid?.stateActions.map(handleStateActions)
+                    self.isValid = true
+                    return
+                }
+            } else if fieldStatus == .invalid {
                 guard
                     self.isValid == false
                 else {
@@ -190,12 +212,6 @@ struct TextInput: View {
                         self.info.validation.onError?.stateActions.map(handleStateActions)
                     }
                     self.isValid = false
-                    return
-                }
-            } else if result.status[id] == .valid {
-                guard self.isValid == true else {
-                    self.info.validation.onValid?.stateActions.map(handleStateActions)
-                    self.isValid = true
                     return
                 }
             }
@@ -219,13 +235,8 @@ struct TextInput: View {
         private let isRequired: Bool
         private let inputValidator: AirshipInputValidator = AirshipInputValidator()
 
-        struct FormData {
-            let formInput: ThomasFormInput
-            let validator: ThomasInputValidator
-        }
-
         @Published
-        var formData: FormData?
+        var formField: ThomasFormField?
         private var lastInput: String?
 
         @Published
@@ -238,20 +249,24 @@ struct TextInput: View {
             }
         }
 
-        var trimmedInput: String {
-            self.input.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-
         @Published
         var didEdit: Bool = false
 
         init(inputProperties: ThomasViewInfo.TextInput.Properties, isRequired: Bool) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
-            updateFormData()
+            self.formField = self.makeFormField(input: "")
         }
 
-        private func attribute(value: String) -> ThomasFormInput.Attribute? {
+        private func updateFormData() {
+            guard lastInput != self.input else {
+                return
+            }
+            self.lastInput = self.input
+            self.formField = self.makeFormField(input: input)
+        }
+
+        private func makeAttributes(value: String) -> [ThomasFormField.Attribute]? {
             guard
                 !value.isEmpty,
                 let name = inputProperties.attributeName
@@ -259,66 +274,84 @@ struct TextInput: View {
                 return nil
             }
 
-            return ThomasFormInput.Attribute(
-                attributeName: name,
-                attributeValue: .string(value)
-            )
+            return [
+                ThomasFormField.Attribute(
+                    attributeName: name,
+                    attributeValue: .string(value)
+                )
+            ]
         }
 
-        private func updateFormData() {
-            let trimmedInput = self.trimmedInput
-            guard lastInput != trimmedInput else {
-                return
+        private func makeChannels(value: String) -> [ThomasFormField.Channel]? {
+            guard
+                !value.isEmpty,
+                let options = inputProperties.emailRegistration
+            else {
+                return nil
             }
-            self.lastInput = trimmedInput
 
-            guard !trimmedInput.isEmpty else {
-                let value: ThomasFormInput.Value = switch(self.inputProperties.inputType) {
-                case .email: .emailText(nil)
-                case .number, .text, .textMultiline: .text(nil)
-                }
+            return [.email(value, options)]
+        }
 
-                self.formData = FormData(
-                    formInput: ThomasFormInput(
-                        inputProperties.identifier,
-                        value: value
-                    ),
-                    validator: .just(!isRequired)
-                )
-                return
-            }
+        private func makeFormField(input: String) -> ThomasFormField {
+            let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
 
             switch(self.inputProperties.inputType) {
-            case .email:
-                let email = AirshipInputValidator.Email(trimmedInput)
 
-                var channelRegistration: ThomasFormInput.ChannelRegistration?
-                if let options = inputProperties.emailRegistration {
-                    channelRegistration = .email(email.address, options)
+            case .email:
+                guard !trimmed.isEmpty else {
+                    return if isRequired {
+                        ThomasFormField.invalidField(
+                            identifier: inputProperties.identifier,
+                            input: .emailText(input)
+                        )
+                    } else {
+                        ThomasFormField.validField(
+                            identifier: inputProperties.identifier,
+                            input: .emailText(input),
+                            result: .init(value: .emailText(trimmed))
+                        )
+                    }
                 }
 
-                self.formData = FormData(
-                    formInput: ThomasFormInput(
-                        inputProperties.identifier,
-                        value: .emailText(input),
-                        attribute: self.attribute(value: input),
-                        channelRegistration: channelRegistration
-                    ),
-                    validator: .async { [inputValidator] in
-                        return inputValidator.validate(email: email)
+                return ThomasFormField.asyncField(
+                    identifier: inputProperties.identifier,
+                    input: .emailText(input)
+                ) { [inputValidator, weak self] in
+                    print("validating \(trimmed)")
+                    let email = AirshipInputValidator.Email(trimmed)
+                    guard inputValidator.validate(email: email) else {
+                        return .invalid
                     }
-                )
+
+                    guard let self else { return .invalid }
+
+                    return .valid(
+                        .init(
+                            value: .emailText(email.address),
+                            channels: self.makeChannels(value: email.address),
+                            attributes: self.makeAttributes(value: email.address)
+                        )
+                    )
+                }
+
 
             case .number, .text, .textMultiline:
-                self.formData = FormData(
-                    formInput: ThomasFormInput(
-                        inputProperties.identifier,
-                        value: .text(trimmedInput),
-                        attribute: self.attribute(value: trimmedInput)
-                    ),
-                    validator: .just(true)
-                )
-
+                return if trimmed.isEmpty, isRequired {
+                    ThomasFormField.invalidField(
+                        identifier: inputProperties.identifier,
+                        input: .text(input)
+                    )
+                } else {
+                    ThomasFormField.validField(
+                        identifier: inputProperties.identifier,
+                        input: .text(input),
+                        result: .init(
+                            value: .text(trimmed),
+                            attributes: self.makeAttributes(value: trimmed)
+                        )
+                    )
+                }
             }
         }
     }

@@ -22,7 +22,7 @@ struct RootView<Content: View>: View {
 #endif
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
-
+    @StateObject var thomasState: ThomasState
     let layout: AirshipLayout
     let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
@@ -35,6 +35,7 @@ struct RootView<Content: View>: View {
         self.layout = layout
         self.content = content
         self.isForeground = AppStateTracker.shared.isForegrounded
+        self._thomasState = StateObject(wrappedValue: ThomasState(formState: thomasEnvironment.defaultFormState, mutableState: thomasEnvironment.defaultMutableState))
     }
 
     @ViewBuilder
@@ -43,10 +44,7 @@ struct RootView<Content: View>: View {
             .environmentObject(thomasEnvironment)
             .environmentObject(thomasEnvironment.defaultFormState)
             .environmentObject(
-                ThomasState(
-                    formState: thomasEnvironment.defaultFormState,
-                    mutableState: thomasEnvironment.defaultMutableState
-                )
+                self.thomasState
             )
             .environmentObject(thomasEnvironment.defaultPagerState)
             .environmentObject(

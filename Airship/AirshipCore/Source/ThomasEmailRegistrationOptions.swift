@@ -2,12 +2,12 @@
 
 import Foundation
 
-enum ThomasEmailRegistrationOptions: ThomasSerializable {
+enum ThomasEmailRegistrationOptions: ThomasSerializable, Hashable {
     case doubleOptIn(DoubleOptIn)
     case commercial(Commercial)
     case transactional(Transactional)
 
-    struct DoubleOptIn: ThomasSerializable {
+    struct DoubleOptIn: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .doubleOptIn
         var properties: AirshipJSON?
 
@@ -17,7 +17,7 @@ enum ThomasEmailRegistrationOptions: ThomasSerializable {
         }
     }
 
-    struct Commercial: ThomasSerializable {
+    struct Commercial: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .commercial
         var optedIn: Bool
         var properties: AirshipJSON?
@@ -29,7 +29,7 @@ enum ThomasEmailRegistrationOptions: ThomasSerializable {
         }
     }
 
-    struct Transactional: ThomasSerializable {
+    struct Transactional: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .transactional
         var properties: AirshipJSON?
 

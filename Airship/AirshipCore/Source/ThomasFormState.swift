@@ -4,77 +4,47 @@ import Foundation
 import Combine
 
 @MainActor
-class ThomasFormDataCollector: ObservableObject {
-    let formState: ThomasFormState?
-    let pagerState: PagerState?
-
-    private var subscriptions: Set<AnyCancellable> = Set()
-
-    init(formState: ThomasFormState? = nil, pagerState: PagerState? = nil) {
-        self.formState = formState
-        self.pagerState = pagerState
-
-        pagerState?.$currentPageId
-            .removeDuplicates()
-            // Using this over RunLoop.main as it seems to prevent
-            // some unwanted UI jank with form validation enablement
-            .receive(on: DispatchQueue.main)
-            .sink { [weak formState] _ in
-                formState?.updateData()
-            }
-            .store(in: &subscriptions)
-    }
-
-    func copy(
-        formState: ThomasFormState? = nil,
-        pagerState: PagerState? = nil
-    ) -> ThomasFormDataCollector {
-        return .init(
-            formState: formState ?? self.formState,
-            pagerState: pagerState ?? self.pagerState
-        )
-    }
-
-    func updateFormInput(
-        _ data: ThomasFormInput,
-        validator: ThomasInputValidator,
-        pageID: String?
-    ) {
-        formState?.updateFormInput(data, validator: validator) { [weak pagerState] in
-            guard let pageID else { return true }
-            guard let pagerState else { return false }
-
-            let pageIDs = pagerState.pageItems.map { $0.id }
-
-            // Make sure the page ID is within the current history
-            guard
-                let current = pagerState.currentPageId,
-                let currentIndex = pageIDs.lastIndex(of: current),
-                let lastIndex = pageIDs.lastIndex(of: pageID),
-                lastIndex <= currentIndex
-            else {
-                return false
-            }
-            return true
-        }
-    }
-}
-
-
-@MainActor
 class ThomasFormState: ObservableObject {
+
+    /// Represents the possible statuses of a form during its lifecycle.
+    enum Status: String, Equatable, Sendable, Hashable {
+        /// The form is valid and all its fields are correctly filled out.
+        case valid
+
+        /// The form is invalid, possibly due to incorrect or missing information.
+        case invalid
+
+        /// An error occurred during form validation or submission.
+        case error
+
+        /// The form is currently being validated.
+        case validating
+
+        /// The form is awaiting validation to be processed.
+        case pendingValidation = "pending_validation"
+
+        /// The form has been submitted.
+        case submitted
+    }
+
+    enum FormType: Sendable, Equatable {
+        case nps(String)
+        case form
+    }
+
+    @MainActor
+    private struct Child {
+        var field: ThomasFormField
+        var watchTask: Task<Void, Never>
+        var predicate: (@MainActor @Sendable () -> Bool)?
+    }
 
     // Minimum time to wait when doing async validation if
     // all the form results are yet to be ready onValidate
     private static let minAsyncValidationTime: TimeInterval = 1.0
 
-    enum FormType: Sendable {
-        case nps(String)
-        case form
-    }
-
     @Published
-    var status: ThomasFormStatus = .pendingValidation {
+    private(set) var status: Status {
         didSet {
             updateFormInputEnabled(
                 isParentEnabled: self.parentFormState?.isFormInputEnabled
@@ -83,14 +53,13 @@ class ThomasFormState: ObservableObject {
     }
 
     @Published
-    private(set) var data: ThomasFormInput
-
-    func child(identifier: String) -> ThomasFormInput? {
-        self.children[identifier]?.field
-    }
+    private(set) var activeFields: [String: ThomasFormField] = [:]
 
     @Published
     private(set) var isVisible: Bool = false
+
+    @Published
+    private(set) var isFormInputEnabled: Bool = true
 
     @Published
     var isEnabled: Bool = true {
@@ -101,29 +70,18 @@ class ThomasFormState: ObservableObject {
         }
     }
 
-
-    @Published
-    var isFormInputEnabled: Bool = true
-
     // On submit block
-    var onSubmit: (@Sendable @MainActor (ThomasFormState, LayoutState) throws -> Void)?
+    var onSubmit: (@Sendable @MainActor (String, ThomasFormField.Result, LayoutState) throws -> Void)?
 
-    let validationMode: ThomasFormValidationMode
     let identifier: String
     let formType: FormType
     let formResponseType: String?
+    let validationMode: ThomasFormValidationMode
 
-    @MainActor
-    private struct Child {
-        var field: ThomasFormInput
-        var validator: ThomasInputValidator
-        var predicate: (@MainActor @Sendable () -> Bool)?
-    }
-
-    private var children: [String: Child] = [:]
+    private var children: [Child] = []
     private var subscriptions: Set<AnyCancellable> = Set()
-    private var validationTask: Task<Bool, Never>?
-    private var childResults: [String: ThomasFormStatus.ChildValidationStatus] = [:]
+    private var processTask: Task<Bool, Never>?
+    private var lastChildStatus: [String: ThomasFormField.Status] = [:]
     private var parentFormState: ThomasFormState?
 
     init(
@@ -138,16 +96,25 @@ class ThomasFormState: ObservableObject {
         self.formResponseType = formResponseType
         self.validationMode = validationMode
         self.parentFormState = parentFormState
-
-        self.data = formType.makeFormData(
-            identifier: identifier,
-            responseType: formResponseType,
-            children: []
-        )
-
+        self.status = if validationMode == .immediate {
+            .invalid
+        } else {
+            .pendingValidation
+        }
+        
         parentFormState?.$isFormInputEnabled.sink { [weak self] parentEnabled in
             self?.updateFormInputEnabled(isParentEnabled: parentEnabled)
         }.store(in: &subscriptions)
+    }
+
+    func field(identifier: String) -> ThomasFormField? {
+        return self.children.first { child in
+            child.field.identifier == identifier
+        }?.field
+    }
+
+    func lastFieldStatus(identifier: String) -> ThomasFormField.Status? {
+        return self.lastChildStatus[identifier]
     }
 
     func markVisible() {
@@ -157,189 +124,289 @@ class ThomasFormState: ObservableObject {
     }
 
     func validate() async -> Bool {
-        await self.validateChildren()
-    }
-
-    private func markSubmitted() {
-        self.status = .submitted
+        return await self.processChildren(children: self.filteredChildren())
     }
 
     func submit(layoutState: LayoutState) async throws {
-        guard let onSubmit else {
-            throw AirshipErrors.error("onSubmit block missing")
-        }
-
         guard self.status != .submitted else {
             throw AirshipErrors.error("Form already submitted")
         }
 
-        guard await self.validate() else {
+        guard let onSubmit else {
+            throw AirshipErrors.error("onSubmit block missing")
+        }
+
+        // Grab a snapshot of the children since this is a async
+        // task so data might change while we process and submit
+        let children = self.filteredChildren()
+        guard await self.processChildren(children: children) else {
             throw AirshipErrors.error("Form not valid")
         }
 
-        try onSubmit(self, layoutState)
-    }
+        var attributesResult: [ThomasFormField.Attribute] = []
+        var channelsResult: [ThomasFormField.Channel] = []
+        var resultMap: [String: ThomasFormField.Value] = [:]
 
-    private func validateChildren() async -> Bool {
-        guard self.status != .submitted else { return true }
+        try children.forEach {
+            if case let .valid(result) = $0.field.status {
+                resultMap[$0.field.identifier] = result.value
+                if let channels = result.channels {
+                    channelsResult.append(contentsOf: channels)
+                }
 
-        self.updateData()
-        validationTask?.cancel()
-
-        guard let result = self.validateChildrenSync() else {
-            self.status = .validating
-            let task = Task { @MainActor [weak self] in
-                return await self?.validateChildrenAsync() ?? false
+                if let attributes = result.attributes {
+                    attributesResult.append(contentsOf: attributes)
+                }
+            } else {
+                throw AirshipErrors.error("Form is not valid")
             }
-            validationTask = task
-            return await task.value
         }
 
-        return result
-    }
+        guard !resultMap.isEmpty else {
+            throw AirshipErrors.error("Form has no data")
+        }
 
-    fileprivate func updateData() {
-        guard self.status != .submitted else { return }
-
-        let filtered = filteredChildren()
-
-        let data = formType.makeFormData(
-            identifier: identifier,
-            responseType: formResponseType,
-            children: Array(filtered.values.map { $0.field })
+        let formResult = ThomasFormField.Result(
+            value: self.formType.makeField(
+                responseType: self.formResponseType,
+                children: resultMap
+            ),
+            channels: channelsResult,
+            attributes: attributesResult
         )
 
-        guard data != self.data else { return }
+        try onSubmit(self.identifier, formResult, layoutState)
+        updateStatus(.submitted)
+    }
 
-        self.data = data
+    func dataChanged() {
+        guard self.status != .submitted else { return }
+
+        let children = self.filteredChildren()
+        self.updateActiveFields(children: children)
 
         switch(self.status) {
         case .error, .valid, .invalid, .pendingValidation:
-            updateValidationStatusForPending(filtered)
-        case .validating:
-            validationTask?.cancel()
-            self.status = .pendingValidation
-        case .submitted:
+            let childStatuses = children.compactMap { lastChildStatus[$0.field.identifier] }
+
+            switch (self.validationMode) {
+            case .onDemand:
+                // On demand we want to leave the child in an invalid or error state
+                // until the next validation request.
+                if childStatuses.contains(.invalid) {
+                    self.updateStatus(.invalid)
+                } else if status == .error, !childStatuses.contains(.error) {
+                    self.updateStatus(.pendingValidation)
+                } else if childStatuses.contains(.pending) {
+                    self.updateStatus(.pendingValidation)
+                } else if status != .pendingValidation {
+                    if childStatuses.contains(.error) {
+                        self.updateStatus(.error)
+                    } else {
+                        self.updateStatus(.valid)
+                    }
+                }
+            case .immediate:
+                // Immediate we want to go to pending if any pending since
+                // and schedule a task to validate
+                if childStatuses.contains(.pending) {
+                    self.updateStatus(.pendingValidation)
+                } else if childStatuses.contains(.invalid) {
+                    self.updateStatus(.invalid)
+                } else if status == .error, !childStatuses.contains(.error) {
+                    self.updateStatus(.pendingValidation)
+                } else if status != .pendingValidation {
+                    if childStatuses.contains(.error) {
+                        self.updateStatus(.error)
+                    } else {
+                        self.updateStatus(.valid)
+                    }
+                }
+            }
+
+        case .submitted, .validating:
             break
+        }
+
+        guard validationMode == .immediate else { return }
+
+        if status != .valid, status != .invalid {
+            Task { [weak self] in
+                await self?.validate()
+            }
         }
     }
 
-    private func filteredChildren() -> [String: Child] {
-        return self.children.filter { _, value in
+    func updateField(
+        _ field: ThomasFormField,
+        predicate: (@Sendable @MainActor () -> Bool)? = nil
+    ) {
+        guard self.status != .submitted else { return }
+
+        self.processTask?.cancel()
+
+        if self.status == .validating {
+            updateStatus(.pendingValidation)
+        }
+
+        // If we are in onDemand mode and the old value is invalid, make sure
+        // the incoming value is not also invalid. This helps prevent removing
+        // the invalid status until we know its valid or pending.
+        if self.validationMode == .onDemand, lastChildStatus[field.identifier] == .invalid {
+            if field.status != .invalid {
+                lastChildStatus[field.identifier] = .pending
+            }
+        } else {
+            lastChildStatus[field.identifier] = .pending
+        }
+
+        self.children.removeAll { child in
+            if child.field.identifier == field.identifier {
+                child.watchTask.cancel()
+                return true
+            }
+            return false
+        }
+
+        if self.activeFields[field.identifier] != nil  {
+            self.activeFields[field.identifier] = field
+        }
+        
+        self.children.append(
+            Child(
+                field: field,
+                watchTask: Task { [weak self, field] in
+                    for await _ in field.statusUpdates {
+                        guard !Task.isCancelled else { return }
+                        self?.updateActiveFields()
+                    }
+                },
+                predicate: predicate
+            )
+        )
+
+        self.dataChanged()
+    }
+
+    private func processChildren(children: [Child]) async -> Bool  {
+        guard self.status != .submitted else { return false }
+        self.processTask?.cancel()
+
+        let needsAsync = children.contains { child in
+            child.field.status == .error || child.field.status == .pending
+        }
+
+        updateStatus(.validating)
+        let task = Task { [weak self] in
+
+            guard needsAsync else {
+                return self?.processingFinished(children: children) ?? false
+            }
+
+            let start = AirshipDate.shared.now
+            await withTaskGroup(of: Void.self) { group in
+                for child in children {
+                    group.addTask {
+                        await child.field.process(retryErrors: true)
+                    }
+                }
+                await group.waitForAll()
+            }
+
+            // Make sure it took the min time to avoid UI glitches
+            let end = AirshipDate.shared.now
+            let remaining = Self.minAsyncValidationTime - end.timeIntervalSince(start)
+            if (remaining > 0) {
+                try? await DefaultAirshipTaskSleeper.shared.sleep(timeInterval: remaining)
+            }
+
+            guard !Task.isCancelled else { return false }
+            return self?.processingFinished(children: children) ?? false
+        }
+
+        self.processTask = task
+        return await task.value
+    }
+
+    private func updateStatus(_ status: Status) {
+        guard self.status != .submitted, self.status != status else {
+            return
+        }
+        print("updating status \(self.status) => \(status)")
+        self.status = status
+    }
+
+    private func updateActiveFields(children: [Child]) {
+        let currentKeys = Set(self.activeFields.values.map { $0.identifier })
+        let incomingKeys = Set(children.map { $0.field.identifier })
+        guard currentKeys != incomingKeys else { return }
+
+        self.activeFields = Dictionary(
+            uniqueKeysWithValues: children.map {
+                ($0.field.identifier, $0.field)
+            }
+        )
+    }
+
+    private func updateActiveFields() {
+        self.updateActiveFields(children: self.filteredChildren())
+    }
+
+    private func filteredChildren() -> [Child] {
+        return self.children.filter { value in
             value.predicate?() ?? true
         }
     }
 
-    fileprivate func updateFormInput(
-        _ field: ThomasFormInput,
-        validator: ThomasInputValidator,
-        predicate: (@Sendable @MainActor () -> Bool)? = nil
-    ) {
-        guard self.status != .submitted else { return }
-        validationTask?.cancel()
-
-        // Remove the invalid flag if we know the incoming value is not valid
-        // This helps prevent removing the invalid status for things like checkbox
-        // controllers if they have yet to select the right number of items.
-        if childResults[field.identifier] != .invalid || validator.result != .invalid {
-            childResults[field.identifier] = .pendingValidation
+    private func processingFinished(children: [Child]) -> Bool {
+        defer {
+            self.dataChanged()
         }
 
-        self.children[field.identifier] = Child(field: field, validator: validator, predicate: predicate)
+        var containsError: Bool = false
+        var containsInvalid: Bool = false
+        var containsValid: Bool = false
 
-        self.updateData()
+        for child in children {
+            let status = child.field.status
 
-        if validationMode == .immediate, validateChildrenSync() == nil {
-            Task { [weak self] in
-                _ = await self?.validateChildren()
-            }
-        }
-    }
-
-    private func validateChildrenSync() -> Bool? {
-        guard status != .submitted else { return false }
-
-        var childResults: [String: ThomasInputValidator.Result] = [:]
-        for (id, child) in self.filteredChildren() {
-            if let result = child.validator.result, result != .error {
-                childResults[id] = result
-            } else {
-                return nil
-            }
-        }
-        return processChildValidationResults(childResults)
-    }
-
-    private func validateChildrenAsync() async -> Bool {
-        guard status != .submitted else { return false }
-
-        let start = AirshipDate.shared.now
-
-        let children = self.filteredChildren()
-        let result = await withTaskGroup(
-            of: (String, ThomasInputValidator.Result).self,
-            returning: [String: ThomasInputValidator.Result].self
-        ) { group in
-            for (id, child) in children {
-                let validator = child.validator
-                group.addTask {
-                    let result = await validator.waitResult()
-                    return (id, result)
-                }
+            if status == .error {
+                containsError = true
             }
 
-            var results: [String: ThomasInputValidator.Result] = [:]
-            for await result in group {
-                results[result.0] = result.1
+            if status == .invalid {
+                containsInvalid = true
             }
 
-            return results
-        }
-
-        // Make sure it took the min time to avoid UI glitches
-        let end = AirshipDate.shared.now
-        let remaining = Self.minAsyncValidationTime - end.timeIntervalSince(start)
-        if (remaining > 0) {
-            try? await DefaultAirshipTaskSleeper.shared.sleep(timeInterval: remaining)
-        }
-
-        guard !Task.isCancelled else { return false }
-        return processChildValidationResults(result)
-    }
-
-    private func processChildValidationResults(
-        _ results: [String: ThomasInputValidator.Result]
-    ) -> Bool {
-        let newResults: [String: ThomasFormStatus.ChildValidationStatus] = results.mapValues { result in
-            switch(result) {
-            case .valid: .valid
-            case .invalid: .invalid
-            case .error: .error
+            if status.isValid {
+                containsValid = true
             }
-        }
-        self.childResults.merge(newResults) { _, new in new }
 
-        guard !newResults.values.contains(.invalid) else {
-            self.status = .invalid(.init(status: childResults))
+            lastChildStatus[child.field.identifier] = status
+        }
+
+        if containsInvalid {
+            updateStatus(.invalid)
             return false
-        }
+        } else if containsError {
+            updateStatus(.error)
 
-        guard !newResults.values.contains(.error) else {
-            self.status = .error(.init(status: childResults))
-
-            // If we are in immediate validation mode and we hit an error
-            // retry. Backoff is handled in the validators.
+            // If we are in immediate validation mode and we hit an error we need
+            // to retry right away since the submit button to update wont be available
+            // to retrigger a retry.
             if validationMode == .immediate {
                 Task { [weak self] in
                     _ = await self?.validate()
                 }
             }
-
+            return false
+        } else if containsValid {
+            updateStatus(.valid)
+            return true
+        } else {
+            updateStatus(.invalid)
             return false
         }
-
-        self.status = .valid
-        return true
     }
 
     private func updateFormInputEnabled(isParentEnabled: Bool?) {
@@ -366,48 +433,20 @@ class ThomasFormState: ObservableObject {
             self.isFormInputEnabled = true
         }
     }
-
-    private func updateValidationStatusForPending(_ filteredChildren: [String: Child]) {
-        let filteredIDs = Set(filteredChildren.map { $0.key })
-
-        let filteredResults = self.childResults.filter {
-            filteredIDs.contains($0.key)
-        }
-
-        guard !filteredResults.values.contains(.invalid) else {
-            self.status = .invalid(.init(status: childResults))
-            return
-        }
-
-        // Avoid going form invalid -> error after validation
-        guard self.status.isError, filteredResults.values.contains(.error) else {
-            if status != .pendingValidation {
-                self.status = .pendingValidation
-            }
-            return
-        }
-
-        self.status = .error(.init(status: childResults))
-    }
 }
 
 fileprivate extension ThomasFormState.FormType {
-    func makeFormData(
-        identifier: String,
+    @MainActor
+    func makeField(
         responseType: String?,
-        children: [ThomasFormInput]
-    ) -> ThomasFormInput {
+        children: [String: ThomasFormField.Value]
+    ) -> ThomasFormField.Value {
         return switch(self) {
         case .form:
-            ThomasFormInput(
-                identifier,
-                value: .form(responseType: responseType, children: children)
-            )
+                .form(responseType: responseType, children: children)
         case .nps(let scoreID):
-            ThomasFormInput(
-                identifier,
-                value: .npsForm(responseType: responseType, scoreID: scoreID, children: children)
-            )
+                .npsForm(responseType: responseType, scoreID: scoreID, children: children)
         }
     }
 }
+

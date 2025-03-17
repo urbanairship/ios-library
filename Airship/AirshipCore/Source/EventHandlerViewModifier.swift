@@ -25,27 +25,33 @@ internal struct EventHandlerViewModifier: ViewModifier {
                 handleEvent(type: .tap)
             }
         }
-        .airshipApplyIf(types.contains(.formInput) && formInputID != nil) { view in
-            view.onReceive(self.formState.$data) { incoming in
-                handleEvent(type: .formInput, formInput: incoming)
+        .airshipApplyIf(types.contains(.formInput)) { view in
+            if let formInputID {
+                view.airshipOnChangeOf(self.formState.field(identifier: formInputID)?.input) { input in
+                    handleEvent(type: .formInput, formFieldValue: input)
+                }
+
             }
         }
     }
 
-    private func handleEvent(type: ThomasEventHandler.EventType, formInput: ThomasFormInput? = nil) {
+    private func handleEvent(
+        type: ThomasEventHandler.EventType,
+        formFieldValue: ThomasFormField.Value? = nil
+    ) {
         let handlers = eventHandlers.filter { $0.type == type }
 
         // Process
         handlers.forEach { handler in
-            handleStateAction(handler.stateActions, formInput: formInput)
+            handleStateAction(handler.stateActions, formFieldValue: formFieldValue)
         }
     }
-    
+
     private func handleStateAction(
         _ stateActions: [ThomasStateAction],
-        formInput: ThomasFormInput? = nil
+        formFieldValue: ThomasFormField.Value?
     ) {
-        thomasState.processStateActions(stateActions, formInput: formInput)
+        thomasState.processStateActions(stateActions, formFieldValue: formFieldValue)
     }
 }
 
@@ -70,3 +76,5 @@ extension View {
         }
     }
 }
+
+

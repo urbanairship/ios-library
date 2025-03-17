@@ -53,7 +53,7 @@ struct CheckboxController: View {
 
     @MainActor
     private func updateValidationState(
-        _ status: ThomasFormStatus
+        _ status: ThomasFormState.Status
     ) {
         switch (status) {
         case .valid:
@@ -62,20 +62,25 @@ struct CheckboxController: View {
                 self.isValid = true
                 return
             }
-        case .error(let result), .invalid(let result):
-            let id = self.info.properties.identifier
-            if result.status[id] == .invalid {
+        case .error, .invalid:
+            guard let fieldStatus = self.formState.lastFieldStatus(
+                identifier: self.info.properties.identifier
+            ) else {
+                return
+            }
+
+            if fieldStatus.isValid {
+                guard self.isValid == true else {
+                    self.info.validation.onValid?.stateActions.map(handleStateActions)
+                    self.isValid = true
+                    return
+                }
+            } else if fieldStatus == .invalid {
                 guard
                     self.isValid == false
                 else {
                     self.info.validation.onError?.stateActions.map(handleStateActions)
                     self.isValid = false
-                    return
-                }
-            } else if result.status[id] == .valid {
-                guard self.isValid == true else {
-                    self.info.validation.onValid?.stateActions.map(handleStateActions)
-                    self.isValid = true
                     return
                 }
             }
@@ -86,43 +91,55 @@ struct CheckboxController: View {
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
         thomasState.processStateActions(
             stateActions,
-            formInput: self.formState.child(identifier: self.info.properties.identifier)
+            formFieldValue: .multipleCheckbox(self.checkboxState.selectedItems)
         )
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.child(
-            identifier: self.info.properties.identifier
-        )?.value
-
-        guard case let .multipleCheckbox(value) = formValue,
-            let value = value
+        guard
+            case .multipleCheckbox(let value) = self.formState.field(
+                identifier: self.info.properties.identifier
+            )?.input
         else {
             updateFormState(self.checkboxState.selectedItems)
             return
         }
 
-        self.checkboxState.selectedItems = Set<String>(value)
+        self.checkboxState.selectedItems = Set(value)
+    }
+
+    private func checkValid(_ value: Set<String>) -> Bool {
+        let min = info.properties.minSelection ?? 0
+        let max = info.properties.maxSelection ?? Int.max
+
+        guard value.count >= min, value.count <= max else {
+            return false
+        }
+
+        guard !value.isEmpty else {
+            return info.validation.isRequired != true
+        }
+
+        return true
     }
 
     private func updateFormState(_ value: Set<String>) {
-        let selected = Array(value)
-        let isFilled =
-        selected.count >= (info.properties.minSelection ?? 0)
-            && selected.count
-        <= (info.properties.maxSelection ?? Int.max)
+        let formValue: ThomasFormField.Value = .multipleCheckbox(value)
+        let field: ThomasFormField = if checkValid(value) {
+            ThomasFormField.validField(
+                identifier: self.info.properties.identifier,
+                input: formValue,
+                result: .init(
+                    value: formValue
+                )
+           )
+        } else {
+            ThomasFormField.invalidField(
+                identifier: self.info.properties.identifier,
+                input: formValue
+            )
+        }
 
-        let isValid = isFilled || (selected.count == 0 && info.validation.isRequired == false)
-
-        let data = ThomasFormInput(
-            self.info.properties.identifier,
-            value: .multipleCheckbox(selected)
-        )
-
-        self.formDataCollector.updateFormInput(
-            data,
-            validator: .just(isValid),
-            pageID: pageID
-        )
+        self.formDataCollector.updateField(field, pageID: pageID)
     }
 }

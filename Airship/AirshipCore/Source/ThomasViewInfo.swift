@@ -689,6 +689,14 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             )
         }
 
+
+        init(commonProperties: CommonViewProperties, commonOverrides: CommonViewOverrides? = nil, properties: Properties) {
+            self.commonProperties = commonProperties
+            self.commonOverrides = commonOverrides
+            self.properties = properties
+        }
+
+
         init(from decoder: any Decoder) throws {
             self.commonProperties = try decoder.decodeProperties()
             self.properties = try decoder.decodeProperties()

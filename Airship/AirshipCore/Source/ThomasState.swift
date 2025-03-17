@@ -21,23 +21,26 @@ class ThomasState: ObservableObject {
             mutableState: mutableState ?? self.mutableState
         )
     }
-    
 
     init(formState: ThomasFormState, mutableState: MutableState = .init()) {
         self.formState = formState
         self.mutableState = mutableState
 
         self.state = ThomasStatePayload(
-            formStatus: formState.status,
-            formData: formState.data.innerData,
+            formData: ThomasFormPayloadGenerator.makeFormStatePayload(
+                status: formState.status,
+                fields: formState.activeFields.map { $0.value }
+            ),
             mutableState: mutableState.state
         ).json
 
-        Publishers.CombineLatest3(formState.$status, formState.$data, mutableState.$state)
-            .map { formStatus, formData, mutableState in
+        Publishers.CombineLatest3(formState.$status, formState.$activeFields, mutableState.$state)
+            .map { formStatus, activeFields, mutableState in
                 ThomasStatePayload(
-                    formStatus: formStatus,
-                    formData: formData.innerData,
+                    formData: ThomasFormPayloadGenerator.makeFormStatePayload(
+                        status: formStatus,
+                        fields: activeFields.map { $0.value }
+                    ),
                     mutableState: mutableState
                 ).json
             }
@@ -50,7 +53,7 @@ class ThomasState: ObservableObject {
 
     func processStateActions(
         _ stateActions: [ThomasStateAction],
-        formInput: ThomasFormInput? = nil
+        formFieldValue: ThomasFormField.Value? = nil
     ) {
         stateActions.forEach { action in
             switch action {
@@ -63,18 +66,10 @@ class ThomasState: ObservableObject {
             case .clearState:
                 self.mutableState.clearState()
             case .formValue(let details):
-                if let formInput {
-                    do {
-                        self.mutableState.set(
-                            key: details.key,
-                            value: try AirshipJSON.wrap(formInput.value)
-                        )
-                    } catch {
-                        AirshipLogger.warn("Failed to wrap form value \(error)")
-                    }
-                } else {
-                    AirshipLogger.warn("Unable to handle state actions for form value")
-                }
+                self.mutableState.set(
+                    key: details.key,
+                    value: formFieldValue?.stateFormValue
+                )
             }
         }
     }
@@ -152,38 +147,19 @@ class ThomasState: ObservableObject {
     }
 }
 
-fileprivate extension ThomasFormInput {
-    // For current form data we need the inner form values with the
-    // form id.
-    var innerData: AirshipJSON {
-        do {
-            return try AirshipJSON.wrap(self.getData())
-        } catch {
-            AirshipLogger.error("Failed to wrap form data \(error)")
-            return .null
-        }
-    }
-}
-
-
-
 fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
     private let state: AirshipJSON?
     private let forms: FormsHolder
 
     @MainActor
     init(
-        formStatus: ThomasFormStatus,
         formData: AirshipJSON,
         mutableState: AirshipJSON
     ) {
         self.state = mutableState
         self.forms = FormsHolder(
             forms: Forms(
-                current: Form(
-                    status: formStatus,
-                    data: formData
-                )
+                current: formData
             )
         )
     }
@@ -206,12 +182,7 @@ fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
     }
 
     struct Forms: Encodable, Sendable, Equatable {
-        let current: Form
-    }
-
-    struct Form: Encodable, Sendable, Equatable {
-        let status: ThomasFormStatus
-        let data: AirshipJSON
+        let current: AirshipJSON
     }
 
     var json: AirshipJSON {
@@ -221,5 +192,27 @@ fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
             AirshipLogger.error("Failed to wrap state \(error)")
             return .null
         }
+    }
+}
+
+
+fileprivate extension ThomasFormField.Value {
+    var stateFormValue: AirshipJSON? {
+        switch(self) {
+        case .toggle(let value):
+            return .bool(value)
+        case .multipleCheckbox(let value):
+            return .array(value.map { .string($0) })
+        case .radio(let value), .emailText(let value), .text(let value):
+            guard let value else { return nil }
+            return .string(value)
+        case .score(let value):
+            guard let value else { return nil }
+            return .number(Double(value))
+        case .form, .npsForm:
+            // not supported
+            return nil
+        }
+
     }
 }

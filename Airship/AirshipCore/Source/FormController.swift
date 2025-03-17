@@ -29,6 +29,7 @@ struct FormController: View {
             parentFormDataCollector: formDataCollector,
             parentState: state
         )
+        .id(info.identifier)
     }
 
     private struct Content: View {
@@ -67,14 +68,26 @@ struct FormController: View {
             }
 
             if info.isParent {
-                formState.onSubmit = { [weak environment] form, layoutState in
+                formState.onSubmit = { [weak environment] identifier, result, layoutState in
                     guard let environment else { throw AirshipErrors.error("Missing environment") }
-                    environment.submitForm(form, layoutState: layoutState)
+                    environment.submitForm(
+                        result: ThomasFormResult(
+                            identifier: identifier,
+                            formData: try ThomasFormPayloadGenerator.makeFormEventPayload(
+                                identifier: identifier,
+                                formValue: result.value
+                            )
+                        ),
+                        channels: result.channels ?? [],
+                        attributes: result.attributes ?? [],
+                        layoutState: layoutState
+                    )
                 }
             } else {
-                formState.onSubmit = { [weak parentFormDataCollector] form, layoutState in
+                formState.onSubmit = { [weak parentFormDataCollector] identifier, result, layoutState in
                     guard let parentFormDataCollector else { throw AirshipErrors.error("Missing form collector") }
-                    parentFormDataCollector.updateFormInput(form.data, validator: .just(true), pageID: layoutState.pagerState?.currentPageId)
+                    let field = ThomasFormField.validField(identifier: identifier, input: result.value, result: result)
+                    parentFormDataCollector.updateField(field, pageID: layoutState.pagerState?.currentPageId)
                 }
             }
 
@@ -115,7 +128,7 @@ struct FormControllerDebug: View {
     @EnvironmentObject var state: ThomasFormState
 
     var body: some View {
-        Text(String(describing: state.data.toPayload()))
+        Text(String(describing: state))
     }
 }
 

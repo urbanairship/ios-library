@@ -31,47 +31,40 @@ internal struct ValidFormButtonEnableBehavior: ViewModifier {
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if let onApply = onApply {
+        if isVisible {
             content.airshipOnChangeOf(
-                [isValid, isVisible],
+                self.formState.status,
                 initial: true
-            ) { _ in
-                if (isVisible) {
-                    onApply(!isValid, .formValidation)
+            ) { status in
+                print("value: \(status)")
+
+                let isEnabled = switch(formState.validationMode) {
+                case .onDemand:
+                    switch(status) {
+                    case .error, .valid, .pendingValidation: true
+                    case .invalid, .validating, .submitted: false
+                    }
+                case .immediate:
+                    switch(status) {
+                    case .error, .valid: true
+                    case .pendingValidation, .invalid, .validating, .submitted: false
+                    }
                 }
-            }
-        } else {
-            content.airshipOnChangeOf(
-                [isValid, isVisible],
-                initial: true
-            ) { _ in
-                // We have some disable state flash when going from a page that is invalid,
-                // back, then forward back to the invalid page. This small delays
-                // prevents the extra enable/disable
-                if (isVisible) {
+
+                if let onApply = onApply {
+                    onApply(!isEnabled, .formValidation)
+                } else {
                     DispatchQueue.main.async {
-                        isEnabled = isValid
+                        self.isEnabled = isEnabled
                     }
                 }
             }
             .disabled(isEnabled == false)
+        } else {
+            content
         }
     }
 
-    var isValid: Bool {
-        return switch(formState.validationMode) {
-        case .onDemand:
-            switch(formState.status) {
-            case .error, .valid, .pendingValidation: true
-            case .invalid, .validating, .submitted: false
-            }
-        case .immediate:
-            switch(formState.status) {
-            case .error, .valid: true
-            case .pendingValidation, .invalid, .validating, .submitted: false
-            }
-        }
-    }
 }
 
 internal struct PagerNextButtonEnableBehavior: ViewModifier {

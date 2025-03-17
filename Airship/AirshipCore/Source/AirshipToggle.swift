@@ -41,7 +41,7 @@ struct AirshipToggle: View {
             )
     }
 
-    private var attribute: ThomasFormInput.Attribute? {
+    private var attributes: [ThomasFormField.Attribute]? {
         guard
             let name = self.info.properties.attributeName,
             let value = self.info.properties.attributeValue
@@ -49,37 +49,48 @@ struct AirshipToggle: View {
             return nil
         }
 
-        return ThomasFormInput.Attribute(
-            attributeName: name,
-            attributeValue: value
-        )
+        return [
+            ThomasFormField.Attribute(
+                attributeName: name,
+                attributeValue: value
+            )
+        ]
+    }
+    private func checkValid(_ isOn: Bool) -> Bool {
+        return isOn || self.info.validation.isRequired != true
     }
 
     private func updateValue(_ isOn: Bool) {
-        let isValid = isOn || !(self.info.validation.isRequired ?? false)
-        let data = ThomasFormInput(
-            self.info.properties.identifier,
-            value: .toggle(isOn),
-            attribute: isOn ? self.attribute : nil
-        )
+        let formValue: ThomasFormField.Value = .toggle(isOn)
 
-        self.formDataCollector.updateFormInput(
-            data,
-            validator: .just(isValid),
-            pageID: pageID
-        )
+        let field: ThomasFormField = if checkValid(isOn) {
+            ThomasFormField.validField(
+                identifier: self.info.properties.identifier,
+                input: formValue,
+                result: .init(
+                    value: formValue
+                )
+           )
+        } else {
+            ThomasFormField.invalidField(
+                identifier: self.info.properties.identifier,
+                input: formValue
+            )
+        }
+
+        self.formDataCollector.updateField(field, pageID: pageID)
     }
 
     private func restoreFormState() {
-        let formValue = self.formState.child(
-            identifier: self.info.properties.identifier
-        )?.value
-
-        guard case let .toggle(value) = formValue else {
+        guard
+            case .toggle(let value) = self.formState.field(
+                identifier: self.info.properties.identifier
+            )?.input
+        else {
+            self.updateValue(self.isOn)
             return
         }
 
         self.isOn = value
     }
-
 }

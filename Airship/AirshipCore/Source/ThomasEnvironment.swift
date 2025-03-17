@@ -69,22 +69,23 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func submitForm(_ formState: ThomasFormState, layoutState: LayoutState) {
-        guard formState.status != .submitted else {
-            return
-        }
-
+    func submitForm(
+        result: ThomasFormResult,
+        channels: [ThomasFormField.Channel],
+        attributes: [ThomasFormField.Attribute],
+        layoutState: LayoutState
+    ) {
         self.delegate.onFormSubmitted(
-            formResult: formState.toFormResult(),
+            formResult: result,
             layoutContext: layoutState.toLayoutContext()
         )
 
-        applyAttributes(formState: formState)
-        registerChannels(formState: formState)
+        applyAttributes(attributes)
+        registerChannels(channels)
     }
 
-    private func registerChannels(formState: ThomasFormState) {
-        formState.data.channels.forEach { channelRegistration in
+    private func registerChannels(_ channels: [ThomasFormField.Channel]) {
+        channels.forEach { channelRegistration in
             switch(channelRegistration) {
             case .email(let address, let options):
                 Airship.contact.registerEmail(
@@ -95,11 +96,12 @@ class ThomasEnvironment: ObservableObject {
         }
     }
 
-    private func applyAttributes(formState: ThomasFormState) {
+    private func applyAttributes(_ attributes: [ThomasFormField.Attribute]) {
+        guard !attributes.isEmpty else { return }
         let channelEditor = Airship.channel.editAttributes()
         let contactEditor = Airship.contact.editAttributes()
 
-        formState.data.attributes.forEach { attribute in
+        attributes.forEach { attribute in
 
             if let name = attribute.attributeName.channel {
                 channelEditor.set(
@@ -326,13 +328,6 @@ extension ThomasFormState {
         case .nps(_):
             return "nps"
         }
-    }
-
-    fileprivate func toFormResult() -> ThomasFormResult {
-        return ThomasFormResult(
-            identifier: self.identifier,
-            formData: self.data.toPayload() 
-        )
     }
 }
 

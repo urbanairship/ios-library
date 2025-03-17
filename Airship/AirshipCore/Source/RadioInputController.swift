@@ -13,7 +13,6 @@ struct RadioInputController: View {
     @EnvironmentObject var thomasState: ThomasState
     @StateObject var radioInputState: RadioInputState = RadioInputState()
     @State private var isValid: Bool?
-    @State var formInput: ThomasFormInput?
 
     var body: some View {
         ViewFactory.createView(self.info.properties.view, constraints: constraints)
@@ -43,10 +42,10 @@ struct RadioInputController: View {
 
     private func restoreFormState() {
         guard
-            case let .radio(value) = self.formState.child(
+            case .radio(let value) = self.formState.field(
                 identifier: self.info.properties.identifier
-            )?.value,
-            let value = value
+            )?.input,
+            let value
         else {
             updateFormState(self.radioInputState.selectedItem)
             return
@@ -57,7 +56,7 @@ struct RadioInputController: View {
 
     @MainActor
     private func updateValidationState(
-        _ status: ThomasFormStatus
+        _ status: ThomasFormState.Status
     ) {
         switch (status) {
         case .valid:
@@ -66,20 +65,25 @@ struct RadioInputController: View {
                 self.isValid = true
                 return
             }
-        case .error(let result), .invalid(let result):
-            let id = self.info.properties.identifier
-            if result.status[id] == .invalid {
+        case .error, .invalid:
+            guard let fieldStatus = self.formState.lastFieldStatus(
+                identifier: self.info.properties.identifier
+            ) else {
+                return
+            }
+
+            if fieldStatus.isValid {
+                guard self.isValid == true else {
+                    self.info.validation.onValid?.stateActions.map(handleStateActions)
+                    self.isValid = true
+                    return
+                }
+            } else if fieldStatus == .invalid {
                 guard
                     self.isValid == false
                 else {
                     self.info.validation.onError?.stateActions.map(handleStateActions)
                     self.isValid = false
-                    return
-                }
-            } else if result.status[id] == .valid {
-                guard self.isValid == true else {
-                    self.info.validation.onValid?.stateActions.map(handleStateActions)
-                    self.isValid = true
                     return
                 }
             }
@@ -90,36 +94,48 @@ struct RadioInputController: View {
     private func handleStateActions(_ stateActions: [ThomasStateAction]) {
         thomasState.processStateActions(
             stateActions,
-            formInput: self.formState.child(identifier: self.info.properties.identifier)
+            formFieldValue: .radio(self.radioInputState.selectedItem)
         )
     }
 
-    private var attribute: ThomasFormInput.Attribute? {
+    private func checkValid(value: String?) -> Bool {
+        return value != nil || info.validation.isRequired != true
+    }
+
+    private var attributes: [ThomasFormField.Attribute]? {
         guard
             let name = info.properties.attributeName,
             let value = self.radioInputState.attributeValue
         else {
             return nil
         }
-        
-        return ThomasFormInput.Attribute(
-            attributeName: name,
-            attributeValue: value
-        )
+
+        return  [
+            ThomasFormField.Attribute(
+                attributeName: name,
+                attributeValue: value
+            )
+        ]
     }
 
     private func updateFormState(_ value: String?) {
-        let data = ThomasFormInput(
-            self.info.properties.identifier,
-            value: .radio(value),
-            attribute: self.attribute
-        )
+        let field: ThomasFormField = if checkValid(value: value) {
+            ThomasFormField.validField(
+                identifier: self.info.properties.identifier,
+                input: .radio(value),
+                result: .init(
+                    value: .radio(value),
+                    attributes: self.attributes
+                )
+           )
+        } else {
+            ThomasFormField.invalidField(
+                identifier: self.info.properties.identifier,
+                input: .radio(value)
+            )
+        }
         
-        self.formDataCollector.updateFormInput(
-            data,
-            validator: .just(value != nil || self.info.validation.isRequired != true),
-            pageID: pageID
-        )
+        self.formDataCollector.updateField(field, pageID: pageID)
     }
 
 }
